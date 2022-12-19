@@ -237,7 +237,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return transactionTemplate.execute(status -> {
             val factory = getJpaTicketEntityFactory();
             if (!casProperties.getLogout().isRemoveDescendantTickets()) {
-            	val selectSql = String.format("SELECT t FROM %s t WHERE t.parentId = :id", factory.getEntityName());
+                // Find all tickets related to this ticket
+                val selectSql = String.format("SELECT t FROM %s t WHERE t.parentId = :id", factory.getEntityName());
                 var selectQuery = entityManager.createQuery(selectSql);
                 selectQuery.setParameter("id", ticketId);
                 var selectedTickets = jpaBeanFactory
@@ -246,28 +247,20 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     .map(factory::toTicket)
                     .map(this::decodeTicket)
                     .filter(t -> {
+                        // Filter out tickets which are excluded
                         return !ticketCatalog.find(t.getId()).getProperties().isExcludeFromCascade();
                     }).map(t -> {
+                        // Dncode this ID
                         return encodeTicketId(t.getId());
                     }).collect(Collectors.toUnmodifiableList());
                 var delChilds = 0;
-//                var ticket = getTicket(ticketId);
-//                if (ticket instanceof TicketGrantingTicket) {
-//                    var descendantTickets = TicketGrantingTicket.class.cast(ticket).getDescendantTickets();
-//                    var selectedTickets = descendantTickets.stream()
-//                        .filter(t -> {
-//                            return !ticketCatalog.find(t).getProperties().isExcludeFromCascade();
-//                        }).map(t -> {
-//                            return encodeTicketId(t);
-//                        }).collect(Collectors.toUnmodifiableList());
-                    if (!selectedTickets.isEmpty()) {
-                        var delChildSql = String.format("DELETE FROM %s t WHERE t.id IN (:ids)", factory.getEntityName());
-                        LOGGER.trace("Creating delete query [{}] for ticket ids [{}]", delChildSql, selectedTickets);
-                        var delChildQuery = entityManager.createQuery(delChildSql);
-                        delChildQuery.setParameter("ids", selectedTickets);
-                        delChilds = delChildQuery.executeUpdate();
-                    }
-//                }
+                if (!selectedTickets.isEmpty()) {
+                    var delChildSql = String.format("DELETE FROM %s t WHERE t.id IN (:ids)", factory.getEntityName());
+                    LOGGER.trace("Creating delete query [{}] for ticket ids [{}]", delChildSql, selectedTickets);
+                    var delChildQuery = entityManager.createQuery(delChildSql);
+                    delChildQuery.setParameter("ids", selectedTickets);
+                    delChilds = delChildQuery.executeUpdate();
+                }
 
                 var sql = String.format("DELETE FROM %s t WHERE t.id = :id", factory.getEntityName());
                 LOGGER.trace("Creating delete query [{}] for parent-ticket id [{}]", sql, ticketId);
