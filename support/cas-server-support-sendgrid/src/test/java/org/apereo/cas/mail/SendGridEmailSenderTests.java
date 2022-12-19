@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasSendGridConfiguration.class
 }, properties = "spring.sendgrid.api-key=12345667890")
+@Tag("Mail")
 public class SendGridEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
