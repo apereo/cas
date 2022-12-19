@@ -7,7 +7,6 @@ import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.sendgrid.SendGridAPI;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,7 +15,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.mail.javamail.JavaMailSender;
 
 /**
  * This is {@link CasSendGridConfiguration}.
