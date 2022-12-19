@@ -1,0 +1,5 @@
+cas:
+  ticket:
+    registry:
+      jpa:
+        leak-threshold: 400
