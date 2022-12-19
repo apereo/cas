@@ -91,6 +91,10 @@ Several Docker images that are used for integration tests are now updated to use
 - CAS Server
 - SCIM Server
 
+### Twilio SendGrid
+
+You may also instruct CAS to use [Twilio SendGrid](../notifications/Sending-Email-Configuration.html) for sending emails.
+
 ### CAS Intializr UI
 
 The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a user interface:
