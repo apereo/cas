@@ -26,10 +26,6 @@ when there is a need to access components and APIs at compile-time.
 The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="health" healthIndicators="mailHealthIndicator" %}
-
-## Email Server Settings
-
-{% include_cached {{ version }}/email-notifications-configuration.md %}
             
 ## Email Message Body
 
@@ -41,10 +37,8 @@ constructed using the following strategies.
 {% tab emailmessagebody Default %}
 
 By default, the body of the email message that is defined in the CAS configuration is
-formatted using special placeholders for variables that are marked as `%s`. The
-formatting of the message closely follows the semantics of JDK's `String.format()`.
-Arguments referenced by the format specifiers in the format string are passed by CAS depending on the context or feature.
-If there are more arguments than format specifiers, the extra arguments are ignored.
+formatted using special placeholders for variables that are marked as `${...}`. Such variables
+are substituted at runtime with the appropriate values available to the feature that is being used.
 
 {% endtab %}
 
@@ -102,8 +96,28 @@ The outcome of the script should be message body text.
 {% endtab %}
 
 {% endtabs %}
+   
+## Email Strategies
 
-## Custom
+The following approaches may be used to send emails.
+
+### Default
+    
+The default strategy uses the `JavaMail` API which provides a platform-independent and 
+protocol-independent framework to build mail and messaging applications, primarily using SMTP:
+
+{% include_cached {{ version }}/email-notifications-configuration.md %}
+  
+### Twilio SendGrid
+   
+You may also instruct CAS to use [Twilio SendGrid](https://sendgrid.com/) for sending emails.
+Support is enabled by including the the following module:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sendgrid" %}
+
+{% include_cached casproperties.html thirdPartyStartsWith="spring.sendgrid" %}
+
+### Custom
 
 You may also define your own email sender that would be tasked to submit emails, etc using the following
 bean definition and by implementing `EmailSender`:

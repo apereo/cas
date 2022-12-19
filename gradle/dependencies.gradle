@@ -31,6 +31,13 @@ ext.libraries = [
                 dependencies.create("org.aspectj:aspectjweaver:$aspectjVersion") {
                 }
         ],
+        sendgrid                   : [
+                dependencies.create("com.sendgrid:sendgrid-java:$sendGridVersion") {
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         javamelody                 : [
                 dependencies.create("net.bull.javamelody:javamelody-spring-boot-starter:$javaMelodyVersion") {
                     exclude(group: "ch.qos.logback", module: "logback-core")
@@ -657,7 +664,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-        httpclient4              : [
+        httpclient4                : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclient4Version") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1002,7 +1009,7 @@ ext.libraries = [
                 dependencies.create("com.samskivert:jmustache:${mustacheVersion}") {
                 }
         ],
-        scimsdk              : [
+        scimsdk                    : [
                 dependencies.create("de.captaingoldfish:scim-sdk-client:${scimSdkClientVersion}") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
