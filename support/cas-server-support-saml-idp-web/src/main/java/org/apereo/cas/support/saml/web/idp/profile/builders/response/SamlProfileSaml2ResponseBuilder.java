@@ -18,6 +18,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
@@ -84,12 +85,13 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
         val finalAssertion = encryptAssertion(assertion, context);
         if (finalAssertion.isPresent()) {
-            if (finalAssertion.get() instanceof EncryptedAssertion) {
+            val result = finalAssertion.get();
+            if (result instanceof EncryptedAssertion) {
                 LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
-                samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
+                samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(result));
             } else {
                 LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
-                samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion.get()));
+                samlResponse.getAssertions().add(Assertion.class.cast(result));
             }
         }
 
@@ -108,13 +110,13 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         return samlResponse;
     }
 
-    private Status determineResponseStatus(final SamlProfileBuilderContext context) {
+    protected Status determineResponseStatus(final SamlProfileBuilderContext context) {
         if (context.getAuthenticatedAssertion().isEmpty()) {
             if (context.getSamlRequest() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
                 val message = """
                     SAML2 authentication request from %s indicated a passive authentication request, \
-                    but the identity provider is unable to satify and support this requirement, likely because \
-                    no existing single sign-on session is available to build the SAML2 response.
+                    but CAS is unable to satify and support this requirement, likely because \
+                    no existing single sign-on session is available yet to build the SAML2 response.
                     """.formatted(context.getAdaptor().getEntityId()).stripIndent().trim();
                 return newStatus(StatusCode.NO_PASSIVE, message);
             }
