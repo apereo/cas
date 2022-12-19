@@ -14,8 +14,7 @@ This document describes how SAML2 service providers registered with CAS can cont
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,health" 
-healthIndicators="samlRegisteredServiceMetadataHealthIndicator" %}
+{% include_cached actuators.html endpoints="health" healthIndicators="samlRegisteredServiceMetadataHealthIndicator" %}
 
 ## Metadata Aggregates
 
@@ -50,7 +49,16 @@ The expiration policy of the service metadata is controlled using the following 
 1. `CacheDuration` setting found inside the SAML2 service provider metadata, if any.
 2. Metadata expiration policy and duration defined for the SAML2 registered service defined with CAS.
 3. Global metadata expiration policy controlled via CAS settings.
-   
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
+
+<div class="alert alert-info"><strong>Metadata Cache</strong><p>
+Note that the state of the cache belongs to the CAS server node's own memory and will not distributed in case you have multiple CAS server nodes in a cluster. 
+In an HA clustered environment, you would need to bypass load balancers, etc to reach the actual CAS server node(s) before the cache can be accessed.
+Otherwise, you run the risk of manipulating and interacting with the metadata cache managed by one CAS server where metadata caches changes would be 
+unseen by other CAS servers, until and unless their own cached entries are either forcefully removed or expire.
+</p></div>
+
 ## Metadata Storage
 
 SAML2 service providers that are registered with CAS can be configured to present their metadata using the following options.
