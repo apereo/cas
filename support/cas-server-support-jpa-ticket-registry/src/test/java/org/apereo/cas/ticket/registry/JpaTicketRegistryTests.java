@@ -132,6 +132,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
         val token = securityTokenTicketFactory.create(tgt, "dummy-token".getBytes(StandardCharsets.UTF_8));
         this.newTicketRegistry.addTicket(token);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(token.getId()));
         this.newTicketRegistry.deleteTicket(token);
@@ -139,7 +140,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyLogoutCascades() throws Exception {
+    public void verifyLogoutCascadesCode() throws Exception {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
@@ -150,8 +151,8 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
             originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
             "client_id", Collections.emptyMap(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-
         this.newTicketRegistry.addTicket(oAuthCode);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(oAuthCode.getId()));
         this.newTicketRegistry.deleteTicket(tgt.getId());
@@ -171,6 +172,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
                 Collections.emptyMap(), OAuth20ResponseTypes.TOKEN,
                 OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.newTicketRegistry.addTicket(oAuthAt);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(oAuthAt.getId()));
         this.newTicketRegistry.deleteTicket(tgt.getId());
@@ -190,6 +192,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
                 Collections.emptyMap(), OAuth20ResponseTypes.TOKEN,
                 OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.newTicketRegistry.addTicket(oAuthRt);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(oAuthRt.getId()));
         this.newTicketRegistry.deleteTicket(tgt.getId());

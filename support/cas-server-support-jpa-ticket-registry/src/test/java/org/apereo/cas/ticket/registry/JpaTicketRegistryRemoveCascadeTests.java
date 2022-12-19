@@ -92,8 +92,8 @@ public class JpaTicketRegistryRemoveCascadeTests extends BaseTicketRegistryTests
             originalAuthn, tgt, Collections.emptySet(), "challenge", "challenge_method",
             "client_id", Collections.emptyMap(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-
         this.newTicketRegistry.addTicket(oAuthCode);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(oAuthCode.getId()));
         this.newTicketRegistry.deleteTicket(tgt.getId());
@@ -113,6 +113,7 @@ public class JpaTicketRegistryRemoveCascadeTests extends BaseTicketRegistryTests
                 Collections.emptyMap(), OAuth20ResponseTypes.TOKEN,
                 OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.newTicketRegistry.addTicket(oAuthAt);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(oAuthAt.getId()));
         this.newTicketRegistry.deleteTicket(tgt.getId());
@@ -132,6 +133,7 @@ public class JpaTicketRegistryRemoveCascadeTests extends BaseTicketRegistryTests
                 Collections.emptyMap(), OAuth20ResponseTypes.TOKEN,
                 OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.newTicketRegistry.addTicket(oAuthRt);
+        this.newTicketRegistry.updateTicket(tgt);
 
         assertNotNull(this.newTicketRegistry.getTicket(oAuthRt.getId()));
         this.newTicketRegistry.deleteTicket(tgt.getId());

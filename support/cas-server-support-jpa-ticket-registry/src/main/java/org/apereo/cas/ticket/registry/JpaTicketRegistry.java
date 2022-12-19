@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -235,11 +236,54 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     protected int deleteTicketGrantingTickets(final String ticketId) {
         return transactionTemplate.execute(status -> {
             val factory = getJpaTicketEntityFactory();
-            var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", factory.getEntityName());
-            LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
-            var query = entityManager.createQuery(sql);
-            query.setParameter("id", ticketId);
-            return query.executeUpdate();
+            if (!casProperties.getLogout().isRemoveDescendantTickets()) {
+            	val selectSql = String.format("SELECT t FROM %s t WHERE t.parentId = :id", factory.getEntityName());
+                var selectQuery = entityManager.createQuery(selectSql);
+                selectQuery.setParameter("id", ticketId);
+                var selectedTickets = jpaBeanFactory
+                    .streamQuery(selectQuery)
+                    .map(BaseTicketEntity.class::cast)
+                    .map(factory::toTicket)
+                    .map(this::decodeTicket)
+                    .filter(t -> {
+                        return !ticketCatalog.find(t.getId()).getProperties().isExcludeFromCascade();
+                    }).map(t -> {
+                        return encodeTicketId(t.getId());
+                    }).collect(Collectors.toUnmodifiableList());
+                var delChilds = 0;
+//                var ticket = getTicket(ticketId);
+//                if (ticket instanceof TicketGrantingTicket) {
+//                    var descendantTickets = TicketGrantingTicket.class.cast(ticket).getDescendantTickets();
+//                    var selectedTickets = descendantTickets.stream()
+//                        .filter(t -> {
+//                            return !ticketCatalog.find(t).getProperties().isExcludeFromCascade();
+//                        }).map(t -> {
+//                            return encodeTicketId(t);
+//                        }).collect(Collectors.toUnmodifiableList());
+                    if (!selectedTickets.isEmpty()) {
+                        var delChildSql = String.format("DELETE FROM %s t WHERE t.id IN (:ids)", factory.getEntityName());
+                        LOGGER.trace("Creating delete query [{}] for ticket ids [{}]", delChildSql, selectedTickets);
+                        var delChildQuery = entityManager.createQuery(delChildSql);
+                        delChildQuery.setParameter("ids", selectedTickets);
+                        delChilds = delChildQuery.executeUpdate();
+                    }
+//                }
+
+                var sql = String.format("DELETE FROM %s t WHERE t.id = :id", factory.getEntityName());
+                LOGGER.trace("Creating delete query [{}] for parent-ticket id [{}]", sql, ticketId);
+                var query = entityManager.createQuery(sql);
+                query.setParameter("id", ticketId);
+                var delParent = query.executeUpdate();
+
+                return delChilds + delParent;
+            }
+            else {
+                var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", factory.getEntityName());
+                LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
+                var query = entityManager.createQuery(sql);
+                query.setParameter("id", ticketId);
+                return query.executeUpdate();
+            }
         });
     }
 }
