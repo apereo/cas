@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SendGridAutoConfiguration.class,
     CasCoreWebConfiguration.class,
     CasSendGridConfiguration.class
-}, properties = "spring.sendgrid.api-key=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")
+}, properties = "spring.sendgrid.api-key=12345667890")
 public class SendGridEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
