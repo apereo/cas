@@ -54,5 +54,6 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
         getCloneDirectory().setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-saml-metadata")));
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        schedule.setEnabled(false);
     }
 }
