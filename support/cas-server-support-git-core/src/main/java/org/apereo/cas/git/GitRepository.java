@@ -35,6 +35,14 @@ public interface GitRepository extends DisposableBean {
     File getRepositoryDirectory();
 
     /**
+     * Gets repository remote.
+     *
+     * @param name the name
+     * @return the repository remote
+     */
+    String getRepositoryRemote(String name);
+
+    /**
      * Gets objects in repository.
      *
      * @return the objects in repository

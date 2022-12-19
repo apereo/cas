@@ -19,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,7 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion(Map.of("customNameId", List.of(UUID.randomUUID().toString()))))
+            .authenticatedAssertion(Optional.of(getAssertion(Map.of("customNameId", List.of(UUID.randomUUID().toString())))))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -76,7 +77,7 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion(Map.of("customNameId", List.of(UUID.randomUUID().toString()))))
+            .authenticatedAssertion(Optional.of(getAssertion(Map.of("customNameId", List.of(UUID.randomUUID().toString())))))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -101,7 +102,7 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion(Map.of("emptyAttributeCol", List.of())))
+            .authenticatedAssertion(Optional.of(getAssertion(Map.of("emptyAttributeCol", List.of()))))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -126,10 +127,10 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion(Map.of("urn:oid:0.9.2342.19200300.100.1.1", "casuser",
+            .authenticatedAssertion(Optional.of(getAssertion(Map.of("urn:oid:0.9.2342.19200300.100.1.1", "casuser",
                 "urn:oid:2.5.4.20", "+13477465341",
                 "urn:oid:1.3.6.1.4.1.5923.1.1.1.6", "casuser-principal",
-                "urn:oid:0.9.2342.19200300.100.1.3", "cas@example.org")))
+                "urn:oid:0.9.2342.19200300.100.1.3", "cas@example.org"))))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)

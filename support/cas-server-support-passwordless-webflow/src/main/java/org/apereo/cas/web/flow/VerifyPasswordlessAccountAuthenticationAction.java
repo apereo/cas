@@ -38,14 +38,14 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
             return error();
         }
         val user = account.get();
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
         if (user.isRequestPassword()) {
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             val isDelegationActive = isDelegatedAuthenticationActiveFor(requestContext, user);
             DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
         return success();
     }
 }

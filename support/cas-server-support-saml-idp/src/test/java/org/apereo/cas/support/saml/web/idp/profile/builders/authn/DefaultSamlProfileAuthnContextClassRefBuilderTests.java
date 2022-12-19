@@ -15,6 +15,7 @@ import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -38,7 +39,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();
@@ -53,11 +54,12 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredAuthenticationContextClass("some-context-class");
         val authnRequest = getAuthnRequestFor(service);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();
@@ -74,11 +76,12 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
         val context = mock(RequestedAuthnContext.class);
         when(context.getAuthnContextClassRefs()).thenReturn(List.of());
         when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();
@@ -97,11 +100,12 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
         val context = mock(RequestedAuthnContext.class);
         when(context.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
         when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();
@@ -131,7 +135,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();
@@ -157,7 +161,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();
@@ -181,7 +185,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilderTests extends BaseSaml
         val assertion = getAssertion(Map.of());
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor.get())
             .build();

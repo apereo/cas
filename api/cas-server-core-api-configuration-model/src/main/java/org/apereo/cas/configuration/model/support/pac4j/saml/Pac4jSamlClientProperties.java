@@ -17,6 +17,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link Pac4jSamlClientProperties}.
@@ -302,6 +304,40 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * @see <a href="https://www.pac4j.org/docs/clients/saml.html">Pac4j</a>
      */
     private String saml2AttributeConverter;
+
+    /**
+     * Logouts are only successful if the IdP was able to inform all services, otherwise it will
+     * respond with {@code PartialLogout}. This setting allows clients such as CAS to ignore such server-side behavior.
+     * If the IdP reports back a partial logout, this setting instructs CAS whether it should accept or deny that response.
+     */
+    private boolean partialLogoutAsSuccess = true;
+
+    /**
+     * When validating the response, ensure it has a value set for the {@code Destination} attribute.
+     */
+    private boolean responseDestinationMandatory = true;
+
+    /**
+     * When generating SAML2 metadata, configure and set the request initiator location attribute.
+     */
+    private String requestInitiatorUrl;
+
+    /**
+     * When generating SAML2 metadata, configure and set the single logout service URL attribute.
+     */
+    private String singleLogoutServiceUrl;
+
+    /**
+     * Control the logout response binding type during logout operations as invoked
+     * by an external IdP and in response to logout requests.
+     */
+    private String logoutResponseBindingType;
+
+    /**
+     * When generating SAML2 metadata, configure and set the list of supported protocols in the metadata.
+     */
+    private List<String> supportedProtocols = Stream.of("urn:oasis:names:tc:SAML:2.0:protocol").collect(Collectors.toList());
+
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter

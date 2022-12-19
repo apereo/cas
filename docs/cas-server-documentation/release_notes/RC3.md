@@ -47,14 +47,15 @@ The migration of the entire codebase to Spring Boot `3.0.0` and Jakarta APIs is 
 that affects almost every CAS module and dependency. As a result, a very large number of internal libraries are 
 also upgraded to remain compatible. These include Spring Data, Spring Security, Spring Cloud, Spring Shell, Pac4j and many many more. 
 
-Switching to Spring Boot also means that CAS has now switched to support [Jakarta EE 10](https://jakarta.ee/release/10/) and 
+Switching to Spring Boot `3.0.0` also means that CAS has now switched to support [Jakarta EE 10](https://jakarta.ee/release/10/) and 
 Servlet specification `6.0.0`. This change does impact supported servlet containers such as Apache Tomcat and Undertow, where 
 the minimum supported version is now required to be `10.1.x` and `2.3.x`, accordingly.
 
 - Jetty does not support the servlet specification `6.0.0` yet. Deployments that use an embedded Jetty 
 servlet container may need to downgrade the version of the Servlet specification manually to `5.0.0`. It is likely that this might 
 be sorted out prior to the final GA release by the time Jetty `12` is released.
-- A handful dependencies and libraries (i.e. OpenSAML) have yet to provide a final release version compatible with Spring Boot `3` and/or Jakarta APIs. These 
+- A handful of dependencies and libraries (i.e. OpenSAML) have yet to provide a final release version compatible with Spring Boot `3` and/or Jakarta APIs. 
+  These 
   should hopefully finalize and publish a GA release in the next few release candidates.  
 - Apache BVal has been replaced with Hibernate Validator as the primary libary for bean validation. The former provides no support for Jakarta APIs, yet.
 - Support for Spring Cloud Sleuth has been removed, and will later on be replaced with Micrometer Tracing.
@@ -68,7 +69,7 @@ release candidates and/or follow-up snapshots. For additional warranties, please
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `374` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `375` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Apache Http Client 5
@@ -96,7 +97,7 @@ The [CAS Initializr](https://casinit.herokuapp.com/ui) project now provides a us
 
 <img width="1600" alt="image" src="https://user-images.githubusercontent.com/1205228/205378501-a0e6ad1b-bf81-42ea-8a69-5ad13c0dde39.png">
 
-Note that CAS Initializr is now updated to support generating projects based on JDK `17` and CAS `v7`.
+Note that CAS Initializr is now updated to support generating projects based on JDK `17` and CAS `7`.
      
 ### Passwordless Authentication
 
