@@ -18,7 +18,6 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;

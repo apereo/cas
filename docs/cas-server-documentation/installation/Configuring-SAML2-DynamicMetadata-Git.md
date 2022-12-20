@@ -24,7 +24,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
   "serviceId" : "the-entity-id-of-the-sp",
   "name" : "SAMLService",
-  "id" : 10000003,
+  "id" : 1,
   "description" : "A Git-based metadata resolver",
   "metadataLocation" : "git://"
 }
@@ -45,7 +45,7 @@ SAML metadata for registered service provider must be fetched from Git repositor
 By default, SAML2 service provider metadata is pulled from git repositories when there is a need to resolve and fetch metadata.
 You could also configure CAS to activate and turn on a background job to pull metadata periodically using a background scheduler. 
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.git.schedule" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.git.schedule" id="scheduler" %}
 
 ## Identity Provider Metadata
 
