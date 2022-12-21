@@ -104,7 +104,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         try {
             val userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
-            LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
+            LOGGER.debug("Contacting Duo Security to inquire about username [{}]", username);
             val userResponse = getHttpResponse(userRequest);
             val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8);
             LOGGER.debug("Received Duo response [{}]", jsonResponse);
