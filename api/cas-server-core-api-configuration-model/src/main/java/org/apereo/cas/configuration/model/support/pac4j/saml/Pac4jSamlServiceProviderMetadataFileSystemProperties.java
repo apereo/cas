@@ -1,18 +1,19 @@
 package org.apereo.cas.configuration.model.support.pac4j.saml;
 
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * This is {@link Pac4jSamlServiceProviderMetadataProperties}.
+ * This is {@link Pac4jSamlServiceProviderMetadataFileSystemProperties}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -21,16 +22,16 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jSamlServiceProviderMetadataProperties")
-public class Pac4jSamlServiceProviderMetadataProperties implements Serializable {
+@JsonFilter("Pac4jSamlServiceProviderMetadataFileSystemProperties")
+public class Pac4jSamlServiceProviderMetadataFileSystemProperties implements Serializable {
     @Serial
-    private static final long serialVersionUID = -552809796533384951L;
+    private static final long serialVersionUID = -992809796533384951L;
 
     /**
      * Location of the SP metadata to use and generate
      * on the file system. If the metadata file already exists,
      * it will be ignored and reused.
      */
-    @NestedConfigurationProperty
-    private Pac4jSamlServiceProviderMetadataFileSystemProperties fileSystem = new Pac4jSamlServiceProviderMetadataFileSystemProperties();
+    @RequiredProperty
+    private String location = Beans.getTempFilePath("samlSpMetadata", ".xml");
 }
