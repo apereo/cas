@@ -49,7 +49,7 @@ public class TicketGrantingCookieProperties extends PinnableCookieProperties {
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public TicketGrantingCookieProperties() {
-        super.setName("TGC");
+        setName("TGC");
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
