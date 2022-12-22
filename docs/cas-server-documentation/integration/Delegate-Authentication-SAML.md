@@ -27,7 +27,32 @@ endpoints or view the CAS login screen. This is required because today, generati
 access to the HTTP request/response. In the event that metadata cannot 
 be resolved, a status code of `406 - Not Acceptable` is returned.
 
-{% include_cached casproperties.html properties="cas.authn.pac4j.saml" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml" excludes=".metadata" %}
+
+## Metadata Management
+
+SAML2 metadata for both the delegated identity provider as well as the (CAS) service provider can managed via the following settings.
+
+{% tabs pac4jsaml2md %}
+
+{% tab pac4jsaml2md Identity Provider %}
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata" includes=".identity" id="pac4jsaml2metadata" %}
+
+{% endtab %}
+
+{% tab pac4jsaml2md Service Provider %}
+
+SAML2 metadata for CAS as the SAML2 service provider is typically managed on disk, and generated on startup if the metadata file
+is not found. Future and subsequent changes to this metadata file, if necessary, must be handled manually and the file might
+need to be curated and edited to fit your purposes.
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider"  id="pac4jsaml2metadata" %}
+
+{% endtab %}
+
+{% endtabs %}
+
  
 ## Per Service Customizations
 

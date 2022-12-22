@@ -468,12 +468,11 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             .stream()
             .filter(saml -> saml.isEnabled()
                             && StringUtils.isNotBlank(saml.getKeystorePath())
-                            && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
-                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
-                            && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
+                            && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
+                            && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
             .map(saml -> {
                 val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+                    saml.getPrivateKeyPassword(), saml.getMetadata().getIdentityProviderMetadataPath());
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
@@ -492,7 +491,10 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
-                cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
+
+                FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(),
+                    location -> cfg.setServiceProviderMetadataPath(location.getFile().getAbsolutePath()));
+
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
                 cfg.setForceAuth(saml.isForceAuth());
