@@ -67,6 +67,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -884,11 +885,9 @@ public class CasDocumentationApplication {
         var annotatedMethods = new ArrayList<Method>();
         try {
             var methods = clazz.getMethods();
-            for (var method : methods) {
-                if (method.isAnnotationPresent(annotationClass)) {
-                    annotatedMethods.add(method);
-                }
-            }
+            annotatedMethods = Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(annotationClass))
+                .collect(Collectors.toCollection(ArrayList::new));
         } catch (final Throwable throwable) {
             LOGGER.info("Failed to locate annotated methods: {}", throwable.getMessage());
         }
