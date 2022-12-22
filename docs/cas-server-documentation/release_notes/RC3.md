@@ -114,6 +114,12 @@ to cover quite a number of scenarios and use cases.
 The ability to manage and store [OpenID Connect JWKS](../authentication/OIDC-Authentication-JWKS-Storage.html) resources is now split
 to support relational databases and MongoDb separately via dedicated extension modules.
 
+
+### SAML2 Delegated Authentication
+
+SAML2 service provider metadata used and managed during [delegated authentication](../integration/Delegate-Authentication-SAML.html) 
+can now be stored in MongoDb.
+
 ## Other Stuff
               
 - The [Groovy username provider](../integration/Attribute-Release-PrincipalId-Groovy.html) is now able to support better caching techniques. 
@@ -125,6 +131,7 @@ to support relational databases and MongoDb separately via dedicated extension m
 - Multiple email attribute names can now be specified in the configuration, when locating email addresses for principals.
 - The [Return Allowed](../integration/Attribute-Release-Policy-ReturnAllowed.html) attribute release policy is now able to support inline Groovy scripts.
 - Dependency and module versions used by CAS [are now documented](../installation/Dependency-Management-Versions.html). 
+- Small documentation improvements to ensure default values for settings are picked up dynamically and correctly as much as possible.
 
 ## Library Upgrades
 

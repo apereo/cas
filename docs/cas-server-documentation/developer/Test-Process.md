@@ -174,8 +174,9 @@ The following command-line options are supported for test execution:
 | `--bo`                                    | A combination of `--build` and Gradle's `--offline` flag.                                |
 | `--hr`                                    | A combination of `--headless` and `--resume`.                                            |
 | `--ho`                                    | A combination of `--headless` and Gradle's `--offline` flag.                             |
+| `--hd`                                    | A combination of `--headless` and `--debug`.                                             |
 | `--hb`                                    | A combination of `--headless` and `--build`.                                             |
-| `--body`, `--body`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
+| `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
 
 For example, the `login-success` test scenario may be run using: 
