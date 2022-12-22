@@ -48,7 +48,7 @@ import java.util.function.Supplier;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnClass(JpaBeanFactory.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect, module = "jpa", enabledByDefault = false)
 @AutoConfiguration
 public class OidcJwksJpaConfiguration {
 
