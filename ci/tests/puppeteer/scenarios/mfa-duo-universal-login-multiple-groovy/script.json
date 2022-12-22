@@ -4,10 +4,8 @@
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
   },
   "properties": [
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.springframework.webflow=warn",
-
-    "--cas.authn.attribute-repository.stub.attributes.bypassEnabled=TRUE",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -17,6 +15,10 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
     "--cas.authn.accept.users=duobypass::Mellon",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+
+    "--cas.authn.mfa.groovy-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyMfa.groovy",
 
     "--cas.authn.mfa.duo[0].account-status-enabled=false",
     "--cas.authn.mfa.duo[0].name=RegularDuoSecurity",
