@@ -43,14 +43,6 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
         return finalizeResponseEvent(requestContext, service, response);
     }
 
-    /**
-     * Finalize response event event.
-     *
-     * @param requestContext the request context
-     * @param service        the service
-     * @param response       the response
-     * @return the event
-     */
     protected Event finalizeResponseEvent(final RequestContext requestContext, final WebApplicationService service, final Response response) {
         WebUtils.putServiceResponseIntoRequestScope(requestContext, response);
         WebUtils.putServiceOriginalUrlIntoRequestScope(requestContext, service);
@@ -58,14 +50,6 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
         return new EventFactorySupport().event(this, eventId);
     }
 
-    /**
-     * Gets final response event id.
-     *
-     * @param service        the service
-     * @param response       the response
-     * @param requestContext the request context
-     * @return the final response event id
-     */
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {
         val eventId = response.responseType().name().toLowerCase();
         LOGGER.debug("Signaling flow to redirect to service [{}] via event [{}]", service, eventId);
