@@ -286,6 +286,18 @@ public class MongoDbConnectionFactory {
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
+    /**
+     * Build mongo template.
+     *
+     * @param mongoClient the mongo client
+     * @param mongo       the mongo
+     * @return the cas mongo operations
+     */
+    public CasMongoOperations buildMongoTemplate(final MongoClient mongoClient, final BaseMongoDbProperties mongo) {
+        val mongoDbFactory = mongoDbFactory(mongoClient, mongo);
+        return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
+    }
+
     protected Collection<String> getMappingBasePackages() {
         return CollectionUtils.wrap(getClass().getPackage().getName());
     }
@@ -293,14 +305,14 @@ public class MongoDbConnectionFactory {
     private MongoMappingContext mongoMappingContext() {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
-        mappingContext.setSimpleTypeHolder(this.customConversions.getSimpleTypeHolder());
+        mappingContext.setSimpleTypeHolder(customConversions.getSimpleTypeHolder());
         mappingContext.setFieldNamingStrategy(MongoDbConnectionFactory.fieldNamingStrategy());
         return mappingContext;
     }
 
     private MappingMongoConverter mappingMongoConverter(final MongoDatabaseFactory mongoDbFactory) {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-        val converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
+        val converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
         converter.setCustomConversions(customConversions);
         converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();
