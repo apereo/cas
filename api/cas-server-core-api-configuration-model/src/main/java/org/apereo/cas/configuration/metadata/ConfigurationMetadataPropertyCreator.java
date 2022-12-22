@@ -88,10 +88,22 @@ public class ConfigurationMetadataPropertyCreator {
         val indexedName = indexedGroup.concat(".").concat(name);
 
         val prop = new ConfigurationMetadataProperty();
+
         if (fieldDecl.getJavadoc().isPresent()) {
-            val description = fieldDecl.getJavadoc().get().getDescription().toText();
+            var description = StringUtils.EMPTY;
+            if (indexedName.endsWith(".location")) {
+                val groupProperty = properties.stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(indexedGroup))
+                    .findFirst();
+                if (groupProperty.isPresent()) {
+                    description = groupProperty.get().getDescription() + '\n';
+                }
+            }
+            description += fieldDecl.getJavadoc().get().getDescription().toText();
+
             prop.setDescription(description);
             prop.setShortDescription(StringUtils.substringBefore(description, "."));
+
         } else {
             LOGGER.error("No Javadoc found for field [{}]", indexedName);
         }

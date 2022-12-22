@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SendGridEmailSender}.
@@ -50,7 +49,7 @@ public class SendGridEmailSender implements EmailSender {
                     .build();
             },
                 e -> EmailCommunicationResult.builder().success(false).body(e.getMessage()).build()).get())
-            .collect(Collectors.toList());
+            .toList();
 
         return results
             .stream()

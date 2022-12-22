@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
 properties = {
-    "cas.authn.pac4j.saml[0].service-provider-metadata-path=/tmo/sp-metadata.xml",
-    "cas.authn.pac4j.saml[0].identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
+    "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=/tmp/sp-metadata.xml",
+    "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
 })
 @Tag("SAML2Web")
 public class DelegatedSaml2ClientMetadataControllerTests {

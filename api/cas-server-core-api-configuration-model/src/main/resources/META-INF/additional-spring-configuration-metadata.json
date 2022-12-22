@@ -1,6 +1,24 @@
 {
   "properties": [
     {
+      "name": "cas.authn.pac4j.saml[0].service-provider-metadata-path",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location",
+        "reason": "This setting should is now moved into a metadata namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path",
+        "reason": "This setting should is now moved into a metadata namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.oidc.core.include-id-token-claims",
       "type": "java.lang.Boolean",
       "deprecation": {
