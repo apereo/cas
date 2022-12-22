@@ -492,8 +492,10 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
 
-                FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(),
-                    location -> cfg.setServiceProviderMetadataPath(location.getFile().getAbsolutePath()));
+                FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(), location -> {
+                    val resource = ResourceUtils.getRawResourceFrom(location);
+                    cfg.setServiceProviderMetadataResource(resource);
+                });
 
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
