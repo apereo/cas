@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -45,6 +46,11 @@ public class ResourceUtils {
      * Empty resource.
      */
     public static final Resource EMPTY_RESOURCE = new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY);
+
+    /**
+     * Null unknown resource.
+     */
+    public static final Resource NULL_RESOURCE = new DescriptiveResource("Unknown Resource");
 
     private static final String HTTP_URL_PREFIX = "http";
 

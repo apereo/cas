@@ -43,17 +43,33 @@ SAML2 metadata for both the delegated identity provider as well as the (CAS) ser
 
 {% tab pac4jsaml2md Service Provider %}
 
+### Default
+
 SAML2 metadata for CAS as the SAML2 service provider is typically managed on disk, and generated on startup if the metadata file
 is not found. Future and subsequent changes to this metadata file, if necessary, must be handled manually and the file might
 need to be curated and edited to fit your purposes.
 
-{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider"  id="pac4jsaml2metadata" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider"  includes=".file-system" %}
+
+### MongoDb
+
+SAML2 metadata for CAS as the SAML2 service provider may also be managed inside a MongoDb instance. To active this feature, you need to start by including 
+the following module in the overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-core" %}
+
+Next, you should activate and turn on the feature:
+
+{% include_cached featuretoggles.html features="DelegatedAuthentication.saml-mongodb" %}
+                                                                                    
+Finally, please make sure you have specified a collection name in your CAS settings that would ultimately house the generated SAML2 metadata.
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider" includes="mongo" %}
 
 {% endtab %}
 
 {% endtabs %}
 
- 
 ## Per Service Customizations
 
 Th configuration for the external SAML2 identity provider is typically done at build time

@@ -33,4 +33,11 @@ public class Pac4jSamlServiceProviderMetadataProperties implements Serializable 
      */
     @NestedConfigurationProperty
     private Pac4jSamlServiceProviderMetadataFileSystemProperties fileSystem = new Pac4jSamlServiceProviderMetadataFileSystemProperties();
+
+    /**
+     * Location of the SP metadata to use and generate
+     * using a MongoDb instance.
+     */
+    @NestedConfigurationProperty
+    private Pac4jSamlServiceProviderMetadataMongoDbProperties mongo = new Pac4jSamlServiceProviderMetadataMongoDbProperties();
 }
