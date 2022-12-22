@@ -68,10 +68,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         val result = resolveMultifactorAuthenticationProvider(Optional.empty(), registeredService, principal);
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            if (id.isEmpty()) {
-                return Optional.empty();
-            }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
+            return id.flatMap(o -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(o.toString(), applicationContext));
         }
 
         return Optional.empty();
