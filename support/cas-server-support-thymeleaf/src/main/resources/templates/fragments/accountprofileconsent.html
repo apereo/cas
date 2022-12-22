@@ -13,38 +13,44 @@
 <body>
 <span th:fragment="consent">
         <script type="text/javascript">
-            (material => {
+            ((material, bootstrap) => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#consentTable').DataTable();
-                    let consentDialog = material.dialog.MDCDialog.attachTo(document.getElementById('attribute-consent-dialog'));
+                    let dialogId = 'attribute-consent-dialog';
+                    let dialog = material ?
+                        material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
+                        new bootstrap.Modal(document.getElementById(dialogId), {});
                     document.getElementsByName("viewConsentEntryDetails").forEach(btn => {
                         btn.addEventListener('click', event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#consentEntryDetails").text(json);
                             hljs.highlightAll();
-                            consentDialog.open();
+                            dialog[material ? 'open' : 'show']();
                             event.preventDefault();
                         }, false);
                     });
+                    
                 });
-            })(mdc);
+            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
 
-        <div class="mdc-dialog" id="attribute-consent-dialog" role="alertdialog"
+        <div class="mdc-dialog modal" id="attribute-consent-dialog" role="alertdialog"
          aria-modal="true" aria-labelledby="attribute-consent-dialog-title" aria-describedby="attribute-consent-dialog-content">
-            <div class="mdc-dialog__container w-100">
-                <div class="mdc-dialog__surface mw-100">
-                    <h1 class="mdc-dialog__title mt-lg-2" id="attribute-consent-dialog-title">
+            <div class="mdc-dialog__container modal-dialog w-100">
+                <div class="mdc-dialog__surface mw-100 modal-content">
+                    <h1 class="mdc-dialog__title mt-lg-2 modal-header" id="attribute-consent-dialog-title">
                         Attribute Consent Entry Details
                     </h1>
-                    <div class="mdc-dialog__content" id="attribute-consent-dialog-content">
+                    <div class="mdc-dialog__content modal-body" id="attribute-consent-dialog-content">
                         <p>Here are the details for this attribute-consent record entry.</p>
                         <pre><code id="consentEntryDetails" class="border-rounded language-json">Text</code></pre>
                     </div>
-                    <footer class="mdc-dialog__actions">
+                    <footer class="mdc-dialog__actions modal-footer">
                         <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
-                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                                data-mdc-dialog-action="accept"
+                                 data-mdc-dialog-button-default
+                                 data-bs-dismiss="modal">
                             <span class="mdc-button__label">Close</span>
                         </button>
                     </footer>
@@ -86,10 +92,10 @@
                     </td>
                     <td class="mdc-data-table__cell" th:utext="${entry.reminder}">Value</td>
                     <td class="mdc-data-table__cell">
-                        <a name="viewConsentEntryDetails" href="#">
-                            <i class="mdi mdi-account-details fas fa-add"></i>
+                        <button type="button" class="btn btn-link" name="viewConsentEntryDetails">
+                            <i class="mdi mdi-account-details fas fa-eye"></i>
                             <span style="display: none" th:utext="${entry.json}"/>
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 </tbody>

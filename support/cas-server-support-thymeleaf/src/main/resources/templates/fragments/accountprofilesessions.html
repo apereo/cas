@@ -13,39 +13,41 @@
 <body>
 <span th:fragment="sessions">
         <script type="text/javascript">
-            (material => {
+            ((material, bootstrap) => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#sessionsTable').DataTable();
-                    let sessionsDialog = material.dialog.MDCDialog.attachTo(document.getElementById('sessions-dialog'));
-
+                    let dialogId = 'sessions-dialog';
+                    let dialog = material ?
+                        material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
+                        new bootstrap.Modal(document.getElementById(dialogId), {});
                     document.getElementsByName("viewSessionDetails").forEach(btn => {
                         btn.addEventListener('click', event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#sessionDetails").text(json);
                             hljs.highlightAll();
-                            sessionsDialog.open();
+                            dialog[material ? 'open' : 'show']();
                             event.preventDefault();
                         }, false);
                     });
                 });
-            })(mdc);
+            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
 
-        <div class="mdc-dialog" id="sessions-dialog" role="alertdialog"
+        <div class="mdc-dialog modal" id="sessions-dialog" role="alertdialog"
              aria-modal="true" aria-labelledby="session-dialog-title" aria-describedby="session-dialog-content">
-            <div class="mdc-dialog__container w-100">
-                <div class="mdc-dialog__surface mw-100">
-                    <h1 class="mdc-dialog__title mt-lg-2" id="session-dialog-title">
+            <div class="mdc-dialog__container w-100 modal-dialog">
+                <div class="mdc-dialog__surface mw-100 modal-content">
+                    <h1 class="mdc-dialog__title mt-lg-2 modal-header" id="session-dialog-title">
                         Entry Details
                     </h1>
-                    <div class="mdc-dialog__content" id="session-dialog-content">
+                    <div class="mdc-dialog__content modal-body" id="session-dialog-content">
                         <p>Here are the details for this record entry.</p>
                         <pre><code id="sessionDetails" class="border-rounded language-json">Text</code></pre>
                     </div>
-                    <footer class="mdc-dialog__actions">
+                    <footer class="mdc-dialog__actions modal-footer">
                         <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
-                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default data-bs-dismiss="modal">
                             <span class="mdc-button__label">Close</span>
                         </button>
                     </footer>
@@ -88,24 +90,24 @@
 
                     <td class="mdc-data-table__cell">
                         <form id="fm1" method="post" th:action="@{/account}">
-                            <a style="cursor: pointer" name="viewSessionDetails" th:if="${entry.payload}">
-                                <i class="mdi mdi-account-details fas fa-add"></i>
-                                <span style="display: none" th:utext="${entry.payload}"/>
-                            </a>
-                            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                            <input type="hidden" name="id" th:value="${entry.id}"/>
-                            <input type="hidden" name="_eventId" value="delete"/>
-                            <a onclick="$('#fm1').submit();">
-                                <i class="mdi mdi-delete fas fa-delete"></i>
-                            </a>
+                            <div class="d-flex">
+                                <button name="viewSessionDetails" th:if="${entry.payload}" class="btn btn-link" type="button">
+                                    <i class="mdi mdi-account-details fas fa-eye"></i>
+                                    <span style="display: none" th:utext="${entry.payload}"/>
+                                </button>
+                                <button class="btn btn-link text-danger">
+                                    <i class="mdi mdi-delete fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                            <input type="hidden" name="id" th:value="${entry.id}" />
+                            <input type="hidden" name="_eventId" value="delete" />
                         </form>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-
-
     </span>
 </body>
 
