@@ -77,8 +77,8 @@ dependencyResolutionManagement {
                 includeGroupByRegex "org.apache.wss4j"
             }
             credentials {
-                username "mmoayyed"
-                password System.getenv("GTIHUB_TOKEN")
+                username System.getenv("GH_PACKAGE_REGISTRY_USER")
+                password System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
             }
         }
     }
