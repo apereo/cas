@@ -71,6 +71,16 @@ dependencyResolutionManagement {
             }
             mavenContent { releasesOnly() }
         }
+        maven {
+            url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
+            content {
+                includeGroupByRegex "org.apache.wss4j"
+            }
+            credentials {
+                username "mmoayyed"
+                password System.getenv("GTIHUB_TOKEN")
+            }
+        }
     }
 }
 
