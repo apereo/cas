@@ -19,54 +19,52 @@
         <h2 th:utext="#{cas.screen.acct.title}" />
         <p class="intro" th:utext="#{cas.screen.acct.intro}" />
                  
-        <form method="post" id="fm1">
+        <form method="post" id="fm1" novalidate class="needs-validation">
             <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="${message.text}">Message Text</p>
             </div>
 
 
-            <section th:each="entry : ${registrationProperties}" class="cas-field my-3">
-                <div>
-                    <label class="mdc-text-field mdc-text-field--outlined"
-                           th:if="${entry.type != 'select'}">
-                        <input class="mdc-text-field__input"
-                               th:id="${entry.name}"
-                               th:name="${entry.name}"
-                               size="25"
-                               th:classappend="${entry.cssClass}"
-                               th:type="${entry.type}"
-                               th:attr="required=${entry.required ? 'true' : 'false'},pattern=${entry.pattern}"
-                               autocapitalize="none"
-                               th:title="#{${entry.title}}"
-                               spellcheck="false"
-                               th:autocomplete="${entry.name}"/>
-                        <span class="mdc-notched-outline">
-                            <span class="mdc-notched-outline__leading"></span>
-                            <span class="mdc-notched-outline__notch">
-                              <span class="mdc-floating-label" th:utext="#{${entry.label}}">Label</span>
-                            </span>
-                            <span class="mdc-notched-outline__trailing"></span>
-                       </span>
-                    </label>
-
-                    <select th:if="${entry.type == 'select'}"
+            <section th:each="entry : ${registrationProperties}" class="cas-field form-group my-3">
+                <label class="mdc-text-field mdc-text-field--outlined control-label"
+                        th:if="${entry.type != 'select'}">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label" th:utext="#{${entry.label}}">Label</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control"
                             th:id="${entry.name}"
-                            th:title="#{${entry.title}}"
                             th:name="${entry.name}"
-                            th:classappend="${'custom-select ' + entry.cssClass}">
-                            <option th:each="option,status : ${entry.values}" th:value="${status.index}" th:text="${option}" />
-                    </select>
-                    
-                    <div class="mdc-text-field-helper-line" th:if="${entry.validationMessage != null}">
+                            size="25"
+                            th:classappend="${entry.cssClass}"
+                            th:type="${entry.type}"
+                            th:attr="required=${entry.required ? 'true' : 'false'},pattern=${entry.pattern}"
+                            autocapitalize="none"
+                            th:title="#{${entry.title}}"
+                            spellcheck="false"
+                            th:autocomplete="${entry.name}"/>
+                    <div class="mdc-text-field-helper-line invalid-feedback" th:if="${entry.validationMessage != null}">
                         <div th:id="${'helpertext-' + entry.name}"
-                             class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
-                             aria-hidden="true">
-                            <span th:if="${entry.validationMessage != null}"
-                                  th:utext="#{${entry.validationMessage}}"></span>
+                            class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                            <span th:if="${entry.validationMessage != null}" th:utext="#{${entry.validationMessage}}"></span>
                         </div>
                     </div>
-                </div>
+                </label>
+
+                <select class="form-control"
+                        th:if="${entry.type == 'select'}"
+                        th:id="${entry.name}"
+                        th:title="#{${entry.title}}"
+                        th:name="${entry.name}"
+                        th:classappend="${'custom-select ' + entry.cssClass}">
+                        <option th:each="option,status : ${entry.values}" th:value="${status.index}" th:text="${option}" />
+                </select>
+                
+                
 
             </section>
             
@@ -77,7 +75,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
             <div class="form-actions d-flex justify-content-center">
-                <button class="mdc-button mdc-button--raised me-2"
+                <button class="mdc-button mdc-button--raised me-2 btn btn-primary"
                         name="submit"
                         th:value="#{cas.screen.acct.button.submit}"
                         id="submit"
@@ -85,7 +83,7 @@
                     <span class="mdc-button__label" th:value="#{cas.screen.acct.button.submit}">Submit</span>
                 </button>
                 &nbsp;
-                <button class="mdc-button mdc-button--outlined"
+                <button class="mdc-button mdc-button--outlined btn btn-secondary"
                         name="cancel"
                         th:value="#{cas.screen.acct.button.cancel}"
                         accesskey="c"
