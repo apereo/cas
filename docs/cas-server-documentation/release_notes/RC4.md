@@ -32,11 +32,7 @@ maintenance and release planning, especially when it comes to addressing critica
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## New & Noteworthy
-
-The following items are new improvements and enhancements presented in this release.
-
-### JDK Requirement
+## System Requirements
 
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
@@ -47,8 +43,4 @@ The following items are new improvements and enhancements presented in this rele
 
 ## Other Stuff
 
-
-
 ## Library Upgrades
-
-
