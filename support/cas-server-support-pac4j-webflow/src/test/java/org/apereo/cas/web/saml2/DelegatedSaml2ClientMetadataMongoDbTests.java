@@ -4,7 +4,6 @@ import org.apereo.cas.config.DelegatedAuthenticationSAMLConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.webflow.execution.Action;
 
 import static org.junit.jupiter.api.Assertions.*;
 

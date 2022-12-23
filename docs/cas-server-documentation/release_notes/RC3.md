@@ -55,8 +55,7 @@ the minimum supported version is now required to be `10.1.x` and `2.3.x`, accord
 servlet container may need to downgrade the version of the Servlet specification manually to `5.0.0`. It is likely that this might 
 be sorted out prior to the final GA release by the time Jetty `12` is released.
 - A handful of dependencies and libraries (i.e. OpenSAML) have yet to provide a final release version compatible with Spring Boot `3` and/or Jakarta APIs. 
-  These 
-  should hopefully finalize and publish a GA release in the next few release candidates.  
+  These should hopefully finalize and publish a GA release in the next few release candidates.  
 - Apache BVal has been replaced with Hibernate Validator as the primary libary for bean validation. The former provides no support for Jakarta APIs, yet.
 - Support for Spring Cloud Sleuth has been removed, and will later on be replaced with Micrometer Tracing.
 - The [SCIM 2](https://github.com/pingidentity/scim2) library is replaced with an alternative that supports Jakarta APIs.  
@@ -69,7 +68,7 @@ release candidates and/or follow-up snapshots. For additional warranties, please
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `375` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `377` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Apache Http Client 5
@@ -114,8 +113,7 @@ to cover quite a number of scenarios and use cases.
 The ability to manage and store [OpenID Connect JWKS](../authentication/OIDC-Authentication-JWKS-Storage.html) resources is now split
 to support relational databases and MongoDb separately via dedicated extension modules.
 
-
-### SAML2 Delegated Authentication
+### SAML2 Delegated Authentication Metadata
 
 SAML2 service provider metadata used and managed during [delegated authentication](../integration/Delegate-Authentication-SAML.html) 
 can now be stored in MongoDb.
