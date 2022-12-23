@@ -144,9 +144,13 @@ can now be stored in MongoDb.
 - Spring Cloud
 - Jetty
 - Undertow
+- Slf4j
+- Logback
 - Jakarta Servlet API
 - Pac4j
 - Apache Http Client
+- Apache CXF
+- Classgraph
 - Hibernate
 - Hibernate Validator
 - OpenSAML
