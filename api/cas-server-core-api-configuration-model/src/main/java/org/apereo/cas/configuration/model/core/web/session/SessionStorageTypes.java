@@ -21,7 +21,8 @@ public enum SessionStorageTypes {
     /**
      * Authentication requests, and other session data collected as part of authentication protocol flows and requests
      * are tracked as CAS tickets in the registry and replicated across the entire cluster
-     * as tickets.
+     * as tickets. This state is tied to the user's agent/browser using a special cookie that would be used
+     * to locate and restore that state. The cookie content may be signed and encrypted.
      */
     TICKET_REGISTRY
 }
