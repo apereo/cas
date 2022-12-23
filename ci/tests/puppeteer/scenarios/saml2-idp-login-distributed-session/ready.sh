@@ -1,9 +1,5 @@
 #!/bin/bash
 
-echo "Starting Redis database"
-"${PWD}/ci/tests/redis/run-redis-server.sh"
-echo "Redis started"
-
 echo "Running SAML server..."
 metadataDirectory="${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md"
 

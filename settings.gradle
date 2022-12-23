@@ -1,6 +1,8 @@
 ext.isCiServer = System.getenv().containsKey("CI")
 ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
 ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
+ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
+ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
 buildCache {
     local {
@@ -71,14 +73,16 @@ dependencyResolutionManagement {
             }
             mavenContent { releasesOnly() }
         }
-        maven {
-            url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
-            content {
-                includeGroupByRegex "org.apache.wss4j"
-            }
-            credentials {
-                username System.getenv("GH_PACKAGE_REGISTRY_USER")
-                password System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
+        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
+            maven {
+                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
+                content {
+                    includeGroupByRegex "org.apache.wss4j"
+                }
+                credentials {
+                    username System.getenv("GH_PACKAGE_REGISTRY_USER")
+                    password System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
+                }
             }
         }
     }
