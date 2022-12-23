@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
         await cas.loginWith(page, "casuser", "Mellon");
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        let json = JSON.parse(body)
+        let json = JSON.parse(body);
         console.dir(json, {depth: null, colors: true});
         
         let success = json.serviceResponse.authenticationSuccess;

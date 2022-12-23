@@ -54,8 +54,8 @@ the minimum supported version is now required to be `10.1.x` and `2.3.x`, accord
 - Jetty does not support the servlet specification `6.0.0` yet. Deployments that use an embedded Jetty 
 servlet container may need to downgrade the version of the Servlet specification manually to `5.0.0`. It is likely that this might 
 be sorted out prior to the final GA release by the time Jetty `12` is released.
-- A handful of dependencies and libraries (i.e. OpenSAML) have yet to provide a final release version compatible with Spring Boot `3` and/or Jakarta APIs. 
-  These should hopefully finalize and publish a GA release in the next few release candidates.  
+- A handful of dependencies and libraries (i.e. OpenSAML, Pac4j, Spring Retry,) have yet to provide a final release version compatible with Spring Boot `3` 
+  and/or Jakarta APIs. These should hopefully finalize and publish a GA release in the next few release candidates.  
 - Apache BVal has been replaced with Hibernate Validator as the primary libary for bean validation. The former provides no support for Jakarta APIs, yet.
 - Support for Spring Cloud Sleuth has been removed, and will later on be replaced with Micrometer Tracing.
 - The [SCIM 2](https://github.com/pingidentity/scim2) library is replaced with an alternative that supports Jakarta APIs.  
@@ -119,7 +119,9 @@ SAML2 service provider metadata used and managed during [delegated authenticatio
 can now be stored in MongoDb.
 
 ## Other Stuff
-              
+   
+- The session cookie (i.e. `DISSESSION`) typically used for distributed session management when CAS is acting as a SAML2 identity provider can now be signed 
+  and encrypted. 
 - The [Groovy username provider](../integration/Attribute-Release-PrincipalId-Groovy.html) is now able to support better caching techniques. 
 - Support for OpenID Connect `unmet_authentication_requirements` error code is now available.
 - Email templates and SMS notification messages for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) now have access to both 
