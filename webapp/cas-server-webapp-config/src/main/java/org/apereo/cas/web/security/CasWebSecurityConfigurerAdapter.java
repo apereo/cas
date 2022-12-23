@@ -297,21 +297,20 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                     context.getRequest().getHeader(casProperties.getAudit().getEngine().getAlternateClientAddrHeaderName()),
                     context.getRequest().getRemoteAddr());
 
-                val addresses = properties.getRequiredIpAddresses()
+                val granted = properties.getRequiredIpAddresses()
                     .stream()
-                    .filter(addr -> FunctionUtils.doAndHandle(() -> {
+                    .anyMatch(addr -> FunctionUtils.doAndHandle(() -> {
                         val ipAddressMatcher = new IpAddressMatcher(addr);
                         LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
                         return ipAddressMatcher.matches(remoteAddr);
                     }, e -> {
                         val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
                         LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
-                        return matcher.matches();
-                    }).get())
-                    .findFirst();
-                val granted = addresses.isPresent();
+                        return matcher.find();
+                    }).get());
                 if (!granted) {
-                    LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]", properties.getRequiredIpAddresses(), remoteAddr);
+                    LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]",
+                        properties.getRequiredIpAddresses(), remoteAddr);
                 }
                 return new AuthorizationDecision(granted);
             });
