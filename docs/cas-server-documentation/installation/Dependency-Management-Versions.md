@@ -24,7 +24,7 @@ The following libraries and modules are used by CAS:
 	</thead>
 	<tbody>
 		{% for cfg in allVersions %}
-		{% assign configBlock = cfg[1] %}
+		{% assign configBlock = cfg[1] | sort: "name" %}
 		{% for cmd in configBlock %}
 			<tr>
 				<td>
