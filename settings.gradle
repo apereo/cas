@@ -71,14 +71,6 @@ dependencyResolutionManagement {
             }
             mavenContent { releasesOnly() }
         }
-        maven {
-            url "https://jitpack.io"
-            content {
-                includeGroupByRegex "com.github.mmoayyed.scim2"
-                includeGroupByRegex "com.github.mmoayyed.ws-wss4j"
-            }
-            mavenContent { releasesOnly() }
-        }
     }
 }
 
