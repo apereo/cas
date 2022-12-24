@@ -22,7 +22,7 @@ sleep 5
 # we don't want to stop after this point so if it times out coming up, we can see status and logs
 set +e
 echo "Waiting for sonarqube pods to be ready"
-kubectl wait --namespace sonarqube --for condition=ready pod --selector=app=sonarqube --timeout=300s
+kubectl wait --namespace sonarqube --for condition=ready pod --selector=app=sonarqube --timeout=180s
 echo "Showing sonarqube pods status"
 kubectl get pods -n sonarqube
 kubectl logs -n sonarqube sonarqube-sonarqube-0
