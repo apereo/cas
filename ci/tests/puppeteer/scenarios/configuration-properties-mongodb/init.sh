@@ -6,7 +6,7 @@ echo "Waiting for MongoDb database to get ready..."
 sleep 5
 
 function runscript {
-  docker exec mongodb-server mongo \
+  docker exec mongodb-server mongosh \
     --authenticationDatabase admin mongodb://root:secret@localhost:27017/cas \
     --eval "$1"
   return 0;
