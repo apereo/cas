@@ -41,7 +41,7 @@ sonarProperties:
   sonar.auth.oidc.clientId.secured: 'sonarqube'
   sonar.auth.oidc.clientSecret.secured: 'S0n@rq#b3S3cr3t'
   sonar.core.serverBaseURL: 'https://host.k3d.internal'
-  sonar.log.level.web: "debug"
-  sonar.log.level.app: "debug"
+  sonar.log.level.web: "info"
+  sonar.log.level.app: "info"
   sonar.auth.oidc.allowUsersToSignUp: "true"
   sonar.auth.oidc.loginButtonText: "CAS OpenID Connect"
