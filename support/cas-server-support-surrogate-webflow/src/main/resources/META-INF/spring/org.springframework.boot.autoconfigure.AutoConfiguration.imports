@@ -1,1 +1,3 @@
 org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration
+org.apereo.cas.config.SurrogateAuthenticationPasswordlessConfiguration
+org.apereo.cas.config.SurrogateAuthenticationDelegationConfiguration

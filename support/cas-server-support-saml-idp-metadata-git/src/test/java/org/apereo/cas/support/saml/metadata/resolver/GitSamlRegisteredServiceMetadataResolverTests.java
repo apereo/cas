@@ -16,6 +16,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
+
+    "cas.authn.saml-idp.metadata.git.schedule.enabled=true",
     
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
@@ -44,6 +48,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @Tag("Git")
 public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
+    @Autowired
+    @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
+    private Runnable gitSamlRegisteredServiceRepositoryScheduler;
+    
     @BeforeAll
     public static void setup() {
         try {
@@ -102,8 +110,11 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         assertTrue(resolver.supports(service));
 
         assertDoesNotThrow(() -> {
+            gitSamlRegisteredServiceRepositoryScheduler.run();
+            
             resolver.resolve(null, null);
             resolver.saveOrUpdate(null);
+
         });
     }
 }

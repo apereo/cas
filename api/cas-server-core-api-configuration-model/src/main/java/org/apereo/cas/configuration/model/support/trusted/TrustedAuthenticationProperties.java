@@ -7,8 +7,12 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This is {@link TrustedAuthenticationProperties}.
@@ -21,7 +25,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("TrustedAuthenticationProperties")
-public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalResolverProperties {
+public class TrustedAuthenticationProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 279410895614233349L;
@@ -41,4 +45,18 @@ public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalRes
      * Order of the authentication handler in the chain.
      */
     private Integer order;
+
+    /**
+     * Regular expression that is applied to all request headers
+     * to extract them as principal attributes. The comparison is
+     * case insensitive. The pattern should use regular expression groups
+     * to extract inner matches from a header value.
+     */
+    private List<String> attributeHeaderPatterns = Stream.of("(.+)->(.+)").toList();
+
+    /**
+     * Principal resolution settings after successful authentication attempts.
+     */
+    @NestedConfigurationProperty
+    private PersonDirectoryPrincipalResolverProperties personDirectory = new PersonDirectoryPrincipalResolverProperties();
 }

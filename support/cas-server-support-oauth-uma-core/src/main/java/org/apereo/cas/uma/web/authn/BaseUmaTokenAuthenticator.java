@@ -19,6 +19,7 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 /**
  * This is {@link BaseUmaTokenAuthenticator}.
@@ -30,9 +31,11 @@ import java.util.LinkedHashMap;
 @Slf4j
 public abstract class BaseUmaTokenAuthenticator implements Authenticator {
     private final TicketRegistry ticketRegistry;
+
     private final JwtBuilder accessTokenJwtBuilder;
+
     @Override
-    public void validate(final Credentials creds, final WebContext webContext, final SessionStore sessionStore) {
+    public Optional<Credentials> validate(final Credentials creds, final WebContext webContext, final SessionStore sessionStore) {
         val credentials = (TokenCredentials) creds;
         val token = extractAccessTokenFrom(credentials.getToken().trim());
         val at = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
@@ -48,12 +51,13 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
         attributes.putAll(principal.getAttributes());
 
         profile.addAttributes(attributes);
-        profile.addPermissions(at.getScopes());
+        profile.addRoles(at.getScopes());
         profile.addAttribute(OAuth20AccessToken.class.getName(), at);
         profile.addAttribute(OAuth20Constants.CLIENT_ID, at.getClientId());
 
         LOGGER.debug("Authenticated access token [{}]", profile);
         credentials.setUserProfile(profile);
+        return Optional.of(credentials);
     }
 
     /**

@@ -133,6 +133,6 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
         });
         stopwatch.stop();
         var time = stopwatch.getTime(TimeUnit.SECONDS);
-        assertTrue(time <= 10);
+        assertTrue(time <= 15);
     }
 }

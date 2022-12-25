@@ -13,13 +13,16 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
 
+    implementation project(":support:cas-server-support-thymeleaf-core")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
-    implementation project(":support:cas-server-support-passwordless")
+    implementation project(":support:cas-server-support-passwordless-api")
+    implementation project(":support:cas-server-support-passwordless-authentication")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
 

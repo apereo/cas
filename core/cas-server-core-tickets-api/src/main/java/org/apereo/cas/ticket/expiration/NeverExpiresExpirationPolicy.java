@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -35,7 +34,7 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      * Static instance of the policy.
      */
     public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
-    
+
     private static final long MAX_EXPIRATION_IN_YEARS = 10L;
 
     @Serial

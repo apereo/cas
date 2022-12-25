@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.rest;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -10,7 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
         }
         val creds = new GoogleAuthenticatorTokenCredential(token,
             StringUtils.isNotBlank(id) ? Long.valueOf(id) : null);
+        creds.setCredentialMetadata(new BasicCredentialMetadata(creds));
         return CollectionUtils.wrap(creds);
     }
 }

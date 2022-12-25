@@ -29,6 +29,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
     private final HttpClient httpClient;
+
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     @Override
@@ -39,7 +40,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
         val callbackUrl = serviceCredentials.getCallbackUrl();
         val serviceCredentialsAsString = callbackUrl.toExternalForm();
         val bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
-            + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
+                           + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
 
         val stringBuffer = new StringBuilder(bufferLength)
             .append(serviceCredentialsAsString);

@@ -24,6 +24,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 public class DefaultAttributeDefinitionTests {
 
+    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
+        return AttributeDefinitionResolutionContext.builder()
+            .attributeValues(List.of("v1", "v2"))
+            .scope("example.org")
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .build();
+    }
+
     @Test
     public void verifyCaseCanonicalizationMode() {
         val applicationContext = new StaticApplicationContext();
@@ -155,15 +165,5 @@ public class DefaultAttributeDefinitionTests {
         val context = getAttributeDefinitionResolutionContext();
         val values = defn.resolveAttributeValues(context);
         assertNull(values);
-    }
-
-    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
-        return AttributeDefinitionResolutionContext.builder()
-            .attributeValues(List.of("v1", "v2"))
-            .scope("example.org")
-            .principal(CoreAuthenticationTestUtils.getPrincipal())
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
-            .build();
     }
 }

@@ -38,7 +38,7 @@ import static org.springframework.util.ResourceUtils.*;
  */
 @UtilityClass
 public final class CasCoreConfigurationUtils {
-    
+
     /**
      * Gets property name.
      *

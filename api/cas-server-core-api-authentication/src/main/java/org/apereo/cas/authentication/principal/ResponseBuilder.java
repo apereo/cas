@@ -7,6 +7,7 @@ import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
+
 /**
  * Represents the task of building a CAS response
  * that is returned by a service.

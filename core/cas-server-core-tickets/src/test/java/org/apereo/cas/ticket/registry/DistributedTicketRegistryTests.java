@@ -51,7 +51,7 @@ public class DistributedTicketRegistryTests {
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
-    
+
     @BeforeEach
     public void initialize() {
         ticketRegistry = new TestDistributedTicketRegistry(this);
@@ -91,16 +91,16 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyUpdateOfRegistry() throws Exception {
-        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), 
+        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(t);
         val returned = (TicketGrantingTicket) ticketRegistry.getTicket(TGT_ID);
-        val s = (ProxyGrantingTicketIssuerTicket) returned.grantServiceTicket("test2", 
+        val s = (ProxyGrantingTicketIssuerTicket) returned.grantServiceTicket("test2",
             RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE,
             false, this.serviceTicketSessionTrackingPolicy);
         ticketRegistry.addTicket(s);
         val s2 = (ProxyGrantingTicketIssuerTicket) ticketRegistry.getTicket("test2");
-        assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(), 
+        assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE));
         assertTrue(wasTicketUpdated);
         returned.markTicketExpired();
@@ -118,7 +118,7 @@ public class DistributedTicketRegistryTests {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_NAME, a, NeverExpiresExpirationPolicy.INSTANCE));
         val tgt = ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class);
         val service = CoreAuthenticationTestUtils.getService("TGT_DELETE_TEST");
-        val st1 = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket("ST1", 
+        val st1 = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket("ST1",
             service, NeverExpiresExpirationPolicy.INSTANCE, true, serviceTicketSessionTrackingPolicy);
         ticketRegistry.addTicket(st1);
         assertNotNull(ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
@@ -140,18 +140,6 @@ public class DistributedTicketRegistryTests {
         private final Map<String, Ticket> tickets = new HashMap<>();
 
         @Override
-        public Ticket updateTicket(final Ticket ticket) {
-            parent.setWasTicketUpdated(true);
-            return ticket;
-        }
-
-        @Override
-        public void addTicketInternal(final Ticket ticket) {
-            tickets.put(ticket.getId(), ticket);
-            updateTicket(ticket);
-        }
-
-        @Override
         public Ticket getTicket(final String ticketId) {
             return tickets.get(ticketId);
         }
@@ -162,13 +150,19 @@ public class DistributedTicketRegistryTests {
         }
 
         @Override
-        public Collection<Ticket> getTickets() {
-            return tickets.values();
+        public long countSessionsFor(final String principalId) {
+            return 0;
         }
 
         @Override
         public long deleteSingleTicket(final String ticketId) {
             return tickets.remove(ticketId) != null ? 1 : 0;
+        }
+
+        @Override
+        public void addTicketInternal(final Ticket ticket) {
+            tickets.put(ticket.getId(), ticket);
+            updateTicket(ticket);
         }
 
         @Override
@@ -179,8 +173,14 @@ public class DistributedTicketRegistryTests {
         }
 
         @Override
-        public long countSessionsFor(final String principalId) {
-            return 0;
+        public Collection<Ticket> getTickets() {
+            return tickets.values();
+        }
+
+        @Override
+        public Ticket updateTicket(final Ticket ticket) {
+            parent.setWasTicketUpdated(true);
+            return ticket;
         }
     }
 }

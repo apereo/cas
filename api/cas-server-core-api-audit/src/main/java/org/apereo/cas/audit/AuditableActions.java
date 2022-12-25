@@ -10,7 +10,7 @@ public interface AuditableActions {
     /**
      * Auditable action {@code MULTIFACTOR_AUTHENTICATION_BYPASS}.
      */
-    String MULTIFACTOR_AUTHENTICATION_BYPASS = "MULTIFACTOR_AUTHENTICATION_BYPASS";
+    String MULTIFACTOR_AUTHENTICATION_BYPASS = "MULTIFACTOR_AUTHENTICATION_BYPASS_EVALUATION";
     /**
      * Auditable action {@code AUTHENTICATION_EVENT}.
      */

@@ -27,10 +27,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-logout-api")
-
-    compileOnly project(":support:cas-server-support-mongo-core")
-    compileOnly libraries.mongo
-
+    
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.jose4j

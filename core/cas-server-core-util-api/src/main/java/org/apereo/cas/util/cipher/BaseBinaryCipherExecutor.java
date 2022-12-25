@@ -19,6 +19,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
 import java.nio.charset.StandardCharsets;
 import java.security.spec.AlgorithmParameterSpec;
 
@@ -37,7 +38,9 @@ import java.security.spec.AlgorithmParameterSpec;
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final int GCM_TAG_LENGTH = 128;
+
     private static final int MINIMUM_ENCRYPTION_KEY_LENGTH = 32;
+
     private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
 
     /**

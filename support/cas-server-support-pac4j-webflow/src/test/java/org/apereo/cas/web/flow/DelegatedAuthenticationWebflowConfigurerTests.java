@@ -36,7 +36,7 @@ public class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowCo
     @TestConfiguration("DelegatedTestConfiguration")
     public static class DelegatedTestConfiguration {
         @Bean
-        public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
+        public DelegatedClientWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer() {
             return BeanSupplier.of(DelegatedClientWebflowCustomizer.class)
                 .otherwiseProxy().get();
         }

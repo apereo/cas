@@ -33,7 +33,7 @@ public class MultifactorAuthenticationProviderMetadataPopulatorTests {
 
         val servicesManager = mock(ServicesManager.class);
         val populator = new MultifactorAuthenticationProviderMetadataPopulator("contextClass",
-             new DirectObjectProvider<>(provider), servicesManager);
+            new DirectObjectProvider<>(provider), servicesManager);
         assertTrue(populator.supports(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();

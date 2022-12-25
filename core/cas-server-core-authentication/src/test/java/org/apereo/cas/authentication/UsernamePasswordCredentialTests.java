@@ -22,6 +22,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.validation.DefaultValidationContext;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -74,27 +75,27 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetUsername() {
-        val c = new UsernamePasswordCredential();
+        val credential = new UsernamePasswordCredential();
         val userName = "test";
-        c.setUsername(userName);
-        assertEquals(userName, c.getUsername());
+        credential.setUsername(userName);
+        assertEquals(userName, credential.getUsername());
     }
 
     @Test
     public void verifySetGetPassword() {
-        val c = new UsernamePasswordCredential();
+        val credential = new UsernamePasswordCredential();
         val password = "test";
 
-        c.assignPassword(password);
-        assertEquals(password, c.toPassword());
+        credential.assignPassword(password);
+        assertEquals(password, credential.toPassword());
     }
 
     @Test
     public void verifyEquals() {
-        assertNotEquals(null, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
-        assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-        assertEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(),
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        val c1 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
+        assertNotEquals(null, c1);
+        val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+        val c3 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", UUID.randomUUID().toString());
+        assertEquals(c3, c2);
     }
 }

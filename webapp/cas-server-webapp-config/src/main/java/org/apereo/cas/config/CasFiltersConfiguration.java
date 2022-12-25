@@ -78,7 +78,7 @@ public class CasFiltersConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "CasFiltersResponseHeadersConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureAfter(CasCoreServicesConfiguration.class)
@@ -100,14 +100,10 @@ public class CasFiltersConfiguration {
         @Bean
         public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
             final CasConfigurationProperties casProperties,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ObjectProvider<ArgumentExtractor> argumentExtractor,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies) {
+            @Qualifier(ArgumentExtractor.BEAN_NAME) final ObjectProvider<ArgumentExtractor> argumentExtractor,
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies) {
             val header = casProperties.getHttpWebRequest().getHeader();
             val initParams = new HashMap<String, String>();
             initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, BooleanUtils.toStringTrueFalse(header.isCache()));
@@ -169,16 +165,15 @@ public class CasFiltersConfiguration {
     @Configuration(value = "CasFiltersCorsConfiguration", proxyBeanMethods = false)
     public static class CasFiltersCorsConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.http-web-request.cors.enabled").isTrue();
+
         @Bean
         @ConditionalOnMissingBean(name = "corsHttpWebRequestConfigurationSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CorsConfigurationSource corsHttpWebRequestConfigurationSource(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return BeanSupplier.of(CorsConfigurationSource.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new RegisteredServiceCorsConfigurationSource(casProperties, servicesManager, argumentExtractor))
@@ -190,8 +185,7 @@ public class CasFiltersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<CorsFilter> casCorsFilter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("corsHttpWebRequestConfigurationSource")
-            final CorsConfigurationSource corsHttpWebRequestConfigurationSource) {
+            @Qualifier("corsHttpWebRequestConfigurationSource") final CorsConfigurationSource corsHttpWebRequestConfigurationSource) {
             val bean = new FilterRegistrationBean<>(new CorsFilter(corsHttpWebRequestConfigurationSource));
             bean.setName("casCorsFilter");
             bean.setAsyncSupported(true);

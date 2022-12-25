@@ -32,7 +32,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.context.session.SessionStore;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 
 /**
@@ -66,17 +67,16 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
-        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, this.principalFactory.createPrincipal(httpCredential.getId()));
+        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, principalFactory.createPrincipal(httpCredential.getId()));
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof HttpBasedServiceCredential;
     }
 
     @Override
     public boolean supports(final Class<? extends Credential> clazz) {
         return HttpBasedServiceCredential.class.isAssignableFrom(clazz);
-    }
-
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof HttpBasedServiceCredential;
     }
 }

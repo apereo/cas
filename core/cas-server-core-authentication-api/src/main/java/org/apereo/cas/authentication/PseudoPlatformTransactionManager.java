@@ -7,6 +7,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
 import javax.annotation.Nonnull;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -28,13 +29,11 @@ public class PseudoPlatformTransactionManager implements PlatformTransactionMana
 
     @Override
     public void commit(
-        @Nonnull
-        final TransactionStatus transactionStatus) throws TransactionException {
+        @Nonnull final TransactionStatus transactionStatus) throws TransactionException {
     }
 
     @Override
     public void rollback(
-        @Nonnull
-        final TransactionStatus transactionStatus) throws TransactionException {
+        @Nonnull final TransactionStatus transactionStatus) throws TransactionException {
     }
 }

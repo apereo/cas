@@ -9,7 +9,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpMethod;
@@ -52,7 +52,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 LOGGER.debug("Provisioned principal [{}] with status result [{}]", principal.getId(), status);
             }
         } catch (final Exception e) {

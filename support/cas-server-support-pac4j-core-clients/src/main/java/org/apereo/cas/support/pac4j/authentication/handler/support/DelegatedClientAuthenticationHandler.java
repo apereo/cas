@@ -4,12 +4,15 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +22,10 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,16 +43,19 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
 
-    public DelegatedClientAuthenticationHandler(final String name,
-                                                final Integer order,
+    private final ConfigurableApplicationContext applicationContext;
+
+    public DelegatedClientAuthenticationHandler(final Pac4jDelegatedAuthenticationCoreProperties properties,
                                                 final ServicesManager servicesManager,
                                                 final PrincipalFactory principalFactory,
                                                 final Clients clients,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,
-                                                final SessionStore sessionStore) {
-        super(name, servicesManager, principalFactory, order, sessionStore);
+                                                final SessionStore sessionStore,
+                                                final ConfigurableApplicationContext applicationContext) {
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), sessionStore);
         this.clients = clients;
         this.profileProvisioner = profileProvisioner;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -56,7 +65,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws PreventedException {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
@@ -81,15 +90,27 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             userProfile.setClientName(clientCredentials.getClientName());
             storeUserProfile(webContext, userProfile);
-            return createResult(clientCredentials, userProfile, client);
-        } catch (final Exception e) {
+            return createResult(clientCredentials, userProfile, client, service);
+        }, e -> {
             throw new PreventedException(e);
-        }
+        }).get();
     }
 
     @Override
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                          final UserProfile profile, final BaseClient client) {
+                                                          final UserProfile profile, final BaseClient client, final Service service) {
         profileProvisioner.execute(principal, profile, client, credentials);
+    }
+
+    @Override
+    protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
+                                                        final ClientCredential credential, final Service service) {
+        val processors = new ArrayList<>(applicationContext.getBeansOfType(DelegatedAuthenticationPreProcessor.class).values());
+        AnnotationAwareOrderComparator.sortIfNecessary(processors);
+        var processingPrincipal = initialPrincipal;
+        for (val processor : processors) {
+            processingPrincipal = processor.process(processingPrincipal, client, credential, service);
+        }
+        return processingPrincipal;
     }
 }

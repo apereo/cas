@@ -10,7 +10,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.

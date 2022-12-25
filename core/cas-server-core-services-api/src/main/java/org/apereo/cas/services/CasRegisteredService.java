@@ -22,7 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class CasRegisteredService extends BaseWebBasedRegisteredService implements CasModelRegisteredService {
-    
+
     /**
      * The friendly name for this client.
      */
@@ -44,7 +44,7 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
     private Set<String> supportedProtocols = new LinkedHashSet<>(0);
 
     private String responseType;
-    
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
@@ -156,11 +155,10 @@ public class CasKryoTranscoderTests {
             .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()));
-        bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
+        bldr.addCredential(userPassCredential);
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
-            new AcceptUsersAuthenticationHandler(StringUtils.EMPTY),
-            new BasicCredentialMetaData(userPassCredential)));
+            new AcceptUsersAuthenticationHandler(StringUtils.EMPTY), userPassCredential));
 
         val authentication = bldr.build();
         val expectedTGT = new TicketGrantingTicketImpl(TGT_ID,

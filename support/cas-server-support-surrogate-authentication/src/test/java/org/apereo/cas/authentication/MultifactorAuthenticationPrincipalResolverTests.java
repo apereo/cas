@@ -36,7 +36,7 @@ public class MultifactorAuthenticationPrincipalResolverTests {
 
     @Test
     public void verifyOperation() {
-        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(
+        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
             new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
         val primary = CoreAuthenticationTestUtils.getPrincipal();

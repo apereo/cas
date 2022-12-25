@@ -59,30 +59,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         this(new DefaultPrettyPrinter());
     }
 
-    private boolean isJsonFormat() {
-        return !(getObjectMapper().getFactory() instanceof YAMLFactory);
-    }
-
-    @Override
-    public List<T> fromList(final String json) {
-        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
-        return readObjectsFromString(jsonString);
-    }
-
     @Override
     public T from(final String json) {
         val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
         return readObjectFromString(jsonString);
-    }
-
-    @Override
-    public T from(final File json) {
-        return FunctionUtils.doAndHandle(() -> {
-            val data = isJsonFormat()
-                ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
-                : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
-            return readObjectFromString(data);
-        }, throwable -> null).get();
     }
 
     @Override
@@ -96,11 +76,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
-    public T from(final Writer writer) {
-        return from(writer.toString());
-    }
-
-    @Override
     public T from(final InputStream json) {
         return FunctionUtils.doAndHandle(() -> {
             val jsonString = readJsonFrom(json);
@@ -108,17 +83,19 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         }, throwable -> null).get();
     }
 
-    /**
-     * Read json from stream.
-     *
-     * @param json the json
-     * @return the string
-     * @throws IOException the io exception
-     */
-    protected String readJsonFrom(final InputStream json) throws IOException {
-        return isJsonFormat()
-            ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
-            : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
+    @Override
+    public T from(final File json) {
+        return FunctionUtils.doAndHandle(() -> {
+            val data = isJsonFormat()
+                ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
+                : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
+            return readObjectFromString(data);
+        }, throwable -> null).get();
+    }
+
+    @Override
+    public T from(final Writer writer) {
+        return from(writer.toString());
     }
 
     @Override
@@ -174,6 +151,44 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 return writer.toString();
             }
         });
+    }
+
+    @Override
+    public List<T> fromList(final String json) {
+        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        return readObjectsFromString(jsonString);
+    }
+
+    /**
+     * Gets object mapper and builds on if uninitialized.
+     *
+     * @return the object mapper
+     */
+    @Synchronized
+    public ObjectMapper getObjectMapper() {
+        if (this.objectMapper == null) {
+            this.objectMapper = JacksonObjectMapperFactory
+                .builder()
+                .defaultTypingEnabled(isDefaultTypingEnabled())
+                .jsonFactory(getJsonFactory())
+                .build()
+                .toObjectMapper();
+            configureObjectMapper(objectMapper);
+        }
+        return this.objectMapper;
+    }
+
+    /**
+     * Read json from stream.
+     *
+     * @param json the json
+     * @return the string
+     * @throws IOException the io exception
+     */
+    protected String readJsonFrom(final InputStream json) throws IOException {
+        return isJsonFormat()
+            ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
+            : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
 
     /**
@@ -232,23 +247,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return null;
     }
 
-    /**
-     * Gets object mapper and builds on if uninitialized.
-     *
-     * @return the object mapper
-     */
-    @Synchronized
-    public ObjectMapper getObjectMapper() {
-        if (this.objectMapper == null) {
-            this.objectMapper = JacksonObjectMapperFactory
-                .builder()
-                .defaultTypingEnabled(isDefaultTypingEnabled())
-                .jsonFactory(getJsonFactory())
-                .build()
-                .toObjectMapper();
-            configureObjectMapper(objectMapper);
-        }
-        return this.objectMapper;
+    private boolean isJsonFormat() {
+        return !(getObjectMapper().getFactory() instanceof YAMLFactory);
     }
 
     private Stringify getJsonFormattingOptions() {

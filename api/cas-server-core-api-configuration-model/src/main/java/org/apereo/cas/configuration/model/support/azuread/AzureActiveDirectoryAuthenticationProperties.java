@@ -61,6 +61,13 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
     private String clientId;
 
     /**
+     * Client secret of the registered app in microsoft azure portal.
+     */
+    @RequiredProperty
+    @ExpressionLanguageCapable
+    private String clientSecret;
+
+    /**
      * This URL of the security token service that CAS goes to for acquiring
      * tokens for resources and users
      * This URL allows CAS to establish what is called an 'authority'.
@@ -98,6 +105,13 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * </ul>
      */
     private String credentialCriteria;
+
+    /**
+     * The microsoft tenant id.
+     */
+    @RequiredProperty
+    @ExpressionLanguageCapable
+    private String tenant;
 
     /**
      * Define the scope and state of this authentication handler

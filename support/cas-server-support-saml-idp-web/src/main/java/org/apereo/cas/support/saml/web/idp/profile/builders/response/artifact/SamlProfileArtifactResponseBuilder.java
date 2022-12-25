@@ -18,6 +18,7 @@ import org.opensaml.soap.soap11.Header;
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileArtifactResponseBuilder}.
@@ -34,8 +35,8 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
     }
 
     @Override
-    protected Envelope buildResponse(final Assertion assertion, final SamlProfileBuilderContext context) throws Exception {
-        val ticket = (SamlArtifactTicket) context.getAuthenticatedAssertion().getAttributes().get("artifact");
+    protected Envelope buildResponse(final Optional<Assertion> assertion, final SamlProfileBuilderContext context) throws Exception {
+        val ticket = (SamlArtifactTicket) context.getAuthenticatedAssertion().get().getAttributes().get("artifact");
         val artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));

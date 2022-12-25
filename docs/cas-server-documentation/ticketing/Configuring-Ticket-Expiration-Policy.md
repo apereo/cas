@@ -33,7 +33,7 @@ to obtain a new (valid) `TGT`.
 
 This is the default option, which provides a hard-time out as well as a sliding window.
 
-{% include_cached casproperties.html properties="cas.ticket.tgt.core,cas.ticket.tgt.primary" %}
+{% include_cached casproperties.html properties="cas.ticket.tgt.core,cas.ticket.tgt.primary" includes=".ticket,.primary" %}
 
 Ticket expiration policies are activated in the following conditions:
 

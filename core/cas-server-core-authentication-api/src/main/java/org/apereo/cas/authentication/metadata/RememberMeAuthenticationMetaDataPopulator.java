@@ -26,7 +26,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 @RequiredArgsConstructor
 public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     private final RememberMeAuthenticationProperties properties;
-    
+
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(r -> {
@@ -38,7 +38,7 @@ public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticatio
                 if (clientInfo != null) {
                     if (StringUtils.isNotBlank(properties.getSupportedUserAgents()) && StringUtils.isNotBlank(properties.getSupportedIpAddresses())) {
                         rememberMe = RegexUtils.find(properties.getSupportedUserAgents(), clientInfo.getUserAgent())
-                            && RegexUtils.find(properties.getSupportedIpAddresses(), clientInfo.getClientIpAddress());
+                                     && RegexUtils.find(properties.getSupportedIpAddresses(), clientInfo.getClientIpAddress());
                     } else if (StringUtils.isNotBlank(properties.getSupportedUserAgents())) {
                         rememberMe = RegexUtils.find(properties.getSupportedUserAgents(), clientInfo.getUserAgent());
                     } else if (StringUtils.isNotBlank(properties.getSupportedIpAddresses())) {

@@ -37,18 +37,18 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     @Serial
     private static final long serialVersionUID = 6704726217030836315L;
 
-    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
-    
     private final PrincipalFactory principalFactory;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
     private final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver;
+
+    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     public DefaultPrincipalElectionStrategy() {
         this(PrincipalFactoryUtils.newPrincipalFactory(), PrincipalElectionStrategyConflictResolver.last());
     }
-    
+
     public DefaultPrincipalElectionStrategy(final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver) {
         this(PrincipalFactoryUtils.newPrincipalFactory(), principalElectionConflictResolver);
     }

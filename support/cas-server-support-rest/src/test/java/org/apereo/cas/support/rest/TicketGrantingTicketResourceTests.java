@@ -50,8 +50,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
+import jakarta.servlet.http.HttpServletRequest;
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;

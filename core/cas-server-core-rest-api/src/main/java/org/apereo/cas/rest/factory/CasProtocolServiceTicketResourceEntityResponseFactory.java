@@ -32,6 +32,16 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 
+    @Override
+    public boolean supports(final WebApplicationService service, final AuthenticationResult authenticationResult) {
+        return service instanceof SimpleWebApplicationServiceImpl;
+    }
+
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE;
+    }
+
     /**
      * Grant service ticket service ticket.
      *
@@ -46,15 +56,5 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
 
         LOGGER.debug("Generated service ticket [{}]", ticket.getId());
         return ticket.getId();
-    }
-
-    @Override
-    public boolean supports(final WebApplicationService service, final AuthenticationResult authenticationResult) {
-        return service instanceof SimpleWebApplicationServiceImpl;
-    }
-
-    @Override
-    public int getOrder() {
-        return Integer.MAX_VALUE;
     }
 }

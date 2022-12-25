@@ -43,7 +43,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.
@@ -197,12 +197,21 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
+            @Qualifier("ticketTransactionManager")
+            final PlatformTransactionManager ticketTransactionManager,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
             final CloseableDataSource dataSourceTicket) {
             return BeanSupplier.of(org.springframework.integration.jdbc.lock.LockRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket))
+                .supply(() -> {
+                    val repo = new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket);
+                    repo.setApplicationContext(applicationContext);
+                    repo.setTransactionManager(ticketTransactionManager);
+                    repo.afterPropertiesSet();
+                    repo.afterSingletonsInstantiated();
+                    return repo;
+                })
                 .otherwiseProxy()
                 .get();
         }

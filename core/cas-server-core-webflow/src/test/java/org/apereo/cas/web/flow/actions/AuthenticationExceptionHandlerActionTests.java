@@ -27,6 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
+
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
@@ -127,13 +128,13 @@ public class AuthenticationExceptionHandlerActionTests {
 
     private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
         @Override
-        public Optional<String> getCode() {
-            return Optional.of("CUSTOM_CODE");
+        public Object getContext() {
+            return null;
         }
 
         @Override
-        public Object getContext() {
-            return null;
+        public Optional<String> getCode() {
+            return Optional.of("CUSTOM_CODE");
         }
 
         @Override

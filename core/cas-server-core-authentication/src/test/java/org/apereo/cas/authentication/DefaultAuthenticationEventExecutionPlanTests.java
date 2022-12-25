@@ -35,7 +35,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
         val h1 = new AcceptUsersAuthenticationHandler("Handler1");
         val h2 = new AcceptUsersAuthenticationHandler(h1.getName());
         assertEquals(h1, h2);
-        
+
         val plan = new DefaultAuthenticationEventExecutionPlan();
         assertTrue(plan.registerAuthenticationHandler(h1));
         assertFalse(plan.registerAuthenticationHandler(h2));

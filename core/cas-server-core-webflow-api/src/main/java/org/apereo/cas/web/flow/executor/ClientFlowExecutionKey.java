@@ -71,7 +71,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
             throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT);
         }
     }
-    
+
     @Override
     public String toString() {
         return this.id + "_" + CodecUtil.b64(this.data);

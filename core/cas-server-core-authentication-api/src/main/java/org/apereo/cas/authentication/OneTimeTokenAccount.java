@@ -13,13 +13,14 @@ import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.jooq.lambda.Unchecked;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -88,6 +89,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Column
     @JsonProperty("lastUsedDateTime")
     private String lastUsedDateTime;
+
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
         return new CompareToBuilder()

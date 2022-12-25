@@ -9,7 +9,7 @@ clear
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 dockerPlatform="unknown"
-type docker &> /dev/null
+docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
   echo "Docker engine is not available."
 else
@@ -237,7 +237,13 @@ while (( "$#" )); do
             groovy|script)
                 task+="testGroovy "
                 ;;
-            jdbc|jpa|database|db|hibernate|rdbms|hsql)
+            hibernate)
+                task+="testHibernate "
+                ;;
+            jdbcmfa)
+                task+="testJDBCMFA "
+                ;;
+            jdbc|jpa|database|db|rdbms|hsql)
                 task+="testJDBC "
                 ;;
             jdbcauthentication|jdbcauthn)
@@ -327,9 +333,9 @@ while (( "$#" )); do
             spnego)
                 task+="testSpnego "
                 ;;
-            cosmosdb|cosmos)
+            azure|cosmosdb)
                 isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
-                task+="testCosmosDb "
+                task+="testAzure "
                 ;;
             simple|unit)
                 task+="testSimple "
@@ -350,6 +356,10 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true
                 task+="testActiveDirectory "
                 ;;
+            ldapservices)
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                task+="testLdapServices "
+                ;;
             ldaprepository|ldaprepo)
                 isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
                 task+="testLdapRepository "
@@ -369,6 +379,10 @@ while (( "$#" )); do
             couchbase)
                 isDockerOnLinux && ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
+                ;;
+            mongodbmfa)
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
+                task+="testMongoDbMFA "
                 ;;
             mongo|mongodb)
                 isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh

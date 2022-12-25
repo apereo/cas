@@ -46,10 +46,8 @@ public class HttpBasedServiceCredential extends AbstractCredential {
 
     @JsonCreator
     public HttpBasedServiceCredential(
-        @JsonProperty("callbackUrl")
-        final String callbackUrl,
-        @JsonProperty("service")
-        final CasModelRegisteredService service) {
+        @JsonProperty("callbackUrl") final String callbackUrl,
+        @JsonProperty("service") final CasModelRegisteredService service) {
         this.callbackUrl = FunctionUtils.doUnchecked(() -> new URL(callbackUrl));
         this.service = service;
     }

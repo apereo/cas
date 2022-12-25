@@ -15,4 +15,4 @@ and/or email to the end-user. Tokens may also be shared via notification strateg
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html), or [this guide](../notifications/Notifications-Configuration.html).
 
-{% include_cached casproperties.html properties="cas.authn.mfa.simple.mail,cas.authn.mfa.simple.sms" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.simple" includes=".mail,.sms" %}

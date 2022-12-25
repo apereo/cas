@@ -12,6 +12,7 @@
         <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="info" />
         <Logger name="org.springframework.jdbc" level="error" />
         <Logger name="org.springframework.transaction" level="error" />
+        <Logger name="org.springframework.integration" level="debug" />
         <Logger name="org.hibernate.sql" level="warn" />
         <Logger name="org.hibernate.engine" level="warn" />
         <Root level="off">

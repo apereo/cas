@@ -60,11 +60,6 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String scope;
 
     /**
-     * Profile path portion of the profile endpoint of the provider.
-     */
-    private String profilePath;
-
-    /**
      * Http method to use when asking for profile.
      */
     private String profileVerb = "POST";

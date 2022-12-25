@@ -18,7 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class GroovyLoginWebflowDecorator implements WebflowDecorator {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyLoginWebflowDecorator(final Resource groovyScript) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);

@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +39,7 @@ public class DelegatedAuthenticationClientRetryActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
+        DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         val result = retryAction.execute(context);
         assertNull(result);
         assertNotNull(response.getHeaderValue("Location"));

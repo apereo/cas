@@ -42,7 +42,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
             this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
-    
+
     @Test
     public void verifyOperationByPolicyForPrincipal() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);

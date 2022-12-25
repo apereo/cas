@@ -41,10 +41,11 @@ public class Pac4jBaseClientProperties implements Serializable {
     private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.NONE;
 
     /**
-     * The attribute to use as the principal identifier built
-     * during and upon a successful authentication attempt.
+     * The attribute found in the identity provider response
+     * that may be used to establish the authenticated
+     * user and build a profile for CAS.
      */
-    private String principalAttributeId;
+    private String principalIdAttribute;
 
     /**
      * Whether the client/external identity provider should be considered

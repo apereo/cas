@@ -14,8 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedHashMap;
@@ -39,8 +40,11 @@ public class HttpRequestUtils {
     public static final String USER_AGENT_HEADER = "user-agent";
 
     private static final int GEO_LOC_LAT_INDEX = 0;
+
     private static final int GEO_LOC_LONG_INDEX = 1;
+
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
+
     private static final int GEO_LOC_TIME_INDEX = 3;
 
     private static final int PING_URL_TIMEOUT = 5_000;

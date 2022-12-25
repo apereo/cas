@@ -38,7 +38,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the authentication builder
      * @since 4.2.0
      */
-    AuthenticationBuilder addCredentials(List<CredentialMetaData> credentials);
+    AuthenticationBuilder addCredentials(List<Credential> credentials);
 
     /**
      * Adds metadata about a credential presented for authentication.
@@ -46,7 +46,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param credential Credential metadata.
      * @return This builder instance.
      */
-    AuthenticationBuilder addCredential(CredentialMetaData credential);
+    AuthenticationBuilder addCredential(Credential credential);
 
     /**
      * Add warnings to authentication builder.
@@ -142,14 +142,6 @@ public interface AuthenticationBuilder extends Serializable {
     AuthenticationBuilder addSuccess(String key, AuthenticationHandlerExecutionResult value);
 
     /**
-     * Sets the authentication date and returns this instance.
-     *
-     * @param d Authentication date.
-     * @return This builder instance.
-     */
-    AuthenticationBuilder setAuthenticationDate(ZonedDateTime d);
-
-    /**
      * Creates an immutable authentication instance from builder data.
      *
      * @return Immutable authentication.
@@ -208,9 +200,18 @@ public interface AuthenticationBuilder extends Serializable {
 
     /**
      * Retrieve the authentication date/time as indicated by this builder.
+     *
      * @return authn date/time
      */
     ZonedDateTime getAuthenticationDate();
+
+    /**
+     * Sets the authentication date and returns this instance.
+     *
+     * @param d Authentication date.
+     * @return This builder instance.
+     */
+    AuthenticationBuilder setAuthenticationDate(ZonedDateTime d);
 
     /**
      * Has attribute boolean.

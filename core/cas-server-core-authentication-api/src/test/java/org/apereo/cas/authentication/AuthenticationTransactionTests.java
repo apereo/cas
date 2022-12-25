@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
@@ -41,11 +42,6 @@ public class AuthenticationTransactionTests {
             private static final long serialVersionUID = -8503574003503719399L;
 
             @Override
-            public Collection<Authentication> getAuthentications() {
-                return List.of();
-            }
-
-            @Override
             public AuthenticationTransaction collect(final Collection<Authentication> authentications) {
                 return this;
             }
@@ -59,6 +55,11 @@ public class AuthenticationTransactionTests {
             public Collection<Credential> getCredentials() {
                 return List.of(new TestCredentialType1());
             }
+
+            @Override
+            public Collection<Authentication> getAuthentications() {
+                return List.of();
+            }
         };
         assertNotNull(transaction.getPrimaryCredential());
         assertNotNull(transaction.getAuthentications());
@@ -69,6 +70,11 @@ public class AuthenticationTransactionTests {
     public abstract static class BaseTestCredential implements Credential {
         @Serial
         private static final long serialVersionUID = -6933725969701066361L;
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
+        }
     }
 
     public static class TestCredentialType1 extends BaseTestCredential {
@@ -88,6 +94,11 @@ public class AuthenticationTransactionTests {
         @Override
         public String getId() {
             return null;
+        }
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
         }
     }
 }

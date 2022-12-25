@@ -45,10 +45,9 @@ public class ClientInfoAuthenticationMetaDataPopulator extends BaseAuthenticatio
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         val clientInfo = ClientInfoHolder.getClientInfo();
-
         if (clientInfo != null) {
             transaction.getPrimaryCredential()
-                .ifPresent(c -> {
+                .ifPresent(credential -> {
                     addAttribute(builder, ATTRIBUTE_CLIENT_IP_ADDRESS, clientInfo.getClientIpAddress());
                     addAttribute(builder, ATTRIBUTE_SERVER_IP_ADDRESS, clientInfo.getServerIpAddress());
                     addAttribute(builder, ATTRIBUTE_USER_AGENT, clientInfo.getUserAgent());

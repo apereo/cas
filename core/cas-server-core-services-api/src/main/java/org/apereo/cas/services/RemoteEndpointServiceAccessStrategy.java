@@ -65,7 +65,7 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
                 .build();
             val response = HttpUtils.execute(exec);
             val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
-            return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
+            return response != null && currentCodes.contains(String.valueOf(response.getCode()));
         }).get();
     }
 

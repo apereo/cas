@@ -4,8 +4,9 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.MutableCredential;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -34,7 +35,7 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
      */
     public static final String PARAMETER_NAME_SURROGATE_TARGET = "surrogateTarget";
 
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     @Audit(action = AuditableActions.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION,
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,
@@ -44,7 +45,7 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
         val resultMap = new HashMap<String, Object>();
         try {
             val credential = WebUtils.getCredential(requestContext);
-            if (credential instanceof UsernamePasswordCredential) {
+            if (credential instanceof MutableCredential mutableCredential) {
                 val target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
                 LOGGER.debug("Located surrogate target as [{}]", target);
                 if (StringUtils.isNotBlank(target)) {
@@ -53,14 +54,15 @@ public class SurrogateSelectionAction extends BaseCasWebflowAction {
                     resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, target);
                     val registeredService = WebUtils.getRegisteredService(requestContext);
                     val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                    val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(builder, credential, target, registeredService);
+                    mutableCredential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(target));
+                    val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(builder, mutableCredential, registeredService);
                     result.ifPresent(bldr -> WebUtils.putAuthenticationResultBuilder(bldr, requestContext));
                 } else {
                     LOGGER.warn("No surrogate identifier was selected or provided");
                 }
                 resultMap.put("primary", credential.getId());
             } else {
-                LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
+                LOGGER.debug("Credential is not supported [{}]", credential);
             }
             return success(resultMap);
         } catch (final Exception e) {

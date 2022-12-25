@@ -48,7 +48,7 @@ public class RedisObjectFactoryTests {
             .setHost("localhost"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6380)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())
@@ -56,7 +56,7 @@ public class RedisObjectFactoryTests {
             .setReplicaOf("redis_server_master"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6381)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())
@@ -80,7 +80,7 @@ public class RedisObjectFactoryTests {
             .setHost("localhost"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6380)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())
@@ -88,7 +88,7 @@ public class RedisObjectFactoryTests {
             .setReplicaOf("redis_server_master"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6381)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())

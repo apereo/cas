@@ -17,6 +17,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oidc.client.OidcClient;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,11 +44,12 @@ import static org.mockito.Mockito.*;
 @TestConfiguration(value = "DelegatedAuthenticationClientsTestConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationClientsTestConfiguration {
     @Bean
-    public Clients builtClients() throws Exception {
+    public Clients builtClients(final Collection<DelegatedClientFactoryCustomizer> customizers) throws Exception {
         val saml2Config = getSAML2Configuration();
         val saml2Client = new SAML2Client(saml2Config);
         saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);
         saml2Client.setCallbackUrl("http://callback.example.org");
+        customizers.forEach(customizer -> customizer.customize(saml2Client));
         saml2Client.init();
 
         val saml2PostConfig = getSAML2Configuration();
@@ -54,11 +57,13 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         val saml2PostClient = new SAML2Client(saml2PostConfig);
         saml2PostClient.setCallbackUrl("http://callback.example.org");
         saml2PostClient.setName("SAML2ClientPostBinding");
+        customizers.forEach(customizer -> customizer.customize(saml2PostClient));
         saml2PostClient.init();
 
         val casClient = new CasClient(new CasConfiguration("https://sso.example.org/cas/login"));
         casClient.setCallbackUrl("http://callback.example.org");
         casClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.SERVER);
+        customizers.forEach(customizer -> customizer.customize(casClient));
         casClient.init();
 
         val oidcCfg = new OidcConfiguration();
@@ -67,11 +72,12 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         oidcCfg.setDiscoveryURI("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
         val oidcClient = new OidcClient(oidcCfg);
         oidcClient.setCallbackUrl("http://callback.example.org");
+        customizers.forEach(customizer -> customizer.customize(oidcClient));
         oidcClient.init();
 
         val facebookClient = new FacebookClient() {
             @Override
-            public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore) {
+            public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore, final ProfileManagerFactory profileManagerFactory) {
                 return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
@@ -86,15 +92,18 @@ public class DelegatedAuthenticationClientsTestConfiguration {
             return Optional.of(profile);
         });
         facebookClient.setName(FacebookClient.class.getSimpleName());
+        customizers.forEach(customizer -> customizer.customize(facebookClient));
 
         val mockClientNoCredentials = mock(BaseClient.class);
         when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
-        when(mockClientNoCredentials.getCredentials(any(), any())).thenThrow(new OkAction(StringUtils.EMPTY));
+        when(mockClientNoCredentials.getCredentials(any(WebContext.class), any(SessionStore.class), any(ProfileManagerFactory.class)))
+            .thenThrow(new OkAction(StringUtils.EMPTY));
         when(mockClientNoCredentials.isInitialized()).thenReturn(true);
 
         val failingClient = mock(IndirectClient.class);
         when(failingClient.getName()).thenReturn("FailingIndirectClient");
         doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
+        customizers.forEach(customizer -> customizer.customize(failingClient));
 
         return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
             facebookClient, oidcClient, mockClientNoCredentials, failingClient, saml2PostClient));

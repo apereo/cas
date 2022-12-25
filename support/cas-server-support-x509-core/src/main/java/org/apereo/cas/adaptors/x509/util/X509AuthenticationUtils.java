@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 
 import javax.security.auth.x500.X500Principal;
 
+
 /**
  * This is {@link X509AuthenticationUtils}.
  *

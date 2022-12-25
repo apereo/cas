@@ -49,7 +49,7 @@ public class AcceptAuthenticationProperties implements Serializable {
      * Order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
-    
+
     /**
      * Name of the authentication handler.
      */

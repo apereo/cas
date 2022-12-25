@@ -37,7 +37,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";
 
     protected IPersonAttributeDao dao;
-
+    
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     private Map<String, List<Object>> attributes;
@@ -61,7 +61,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         val person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
-        when(dao.getPerson(any(String.class), any(IPersonAttributeDaoFilter.class))).thenReturn(person);
+        when(dao.getPerson(any(String.class), any(), any(IPersonAttributeDaoFilter.class))).thenReturn(person);
         when(dao.getPeople(any(Map.class), any(IPersonAttributeDaoFilter.class))).thenReturn(Set.of(person));
         when(dao.getId()).thenReturn(new String[]{"Stub"});
 

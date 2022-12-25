@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-support-passwordless")
+@RequiresModule(name = "cas-server-support-passwordless-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)

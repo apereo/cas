@@ -20,7 +20,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -78,8 +79,8 @@ public class ReturnRestfulAttributeReleasePolicy extends BaseMappedAttributeRele
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && HttpStatus.resolve(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);
                 val returnedAttributes = MAPPER.readValue(result, new TypeReference<Map<String, List<Object>>>() {
                 });

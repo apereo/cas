@@ -117,10 +117,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
             @Qualifier("microsoftAzureActiveDirectoryPrincipalFactory")
             final PrincipalFactory factory) {
             val azure = casProperties.getAuthn().getAzureActiveDirectory();
-            val handler = new AzureActiveDirectoryAuthenticationHandler(azure.getName(),
-                servicesManager, factory, azure.getOrder(),
-                SpringExpressionLanguageValueResolver.getInstance().resolve(azure.getClientId()),
-                azure.getLoginUrl(), azure.getResource());
+            val handler = new AzureActiveDirectoryAuthenticationHandler(servicesManager, factory, azure);
             handler.setState(azure.getState());
             handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
             handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));

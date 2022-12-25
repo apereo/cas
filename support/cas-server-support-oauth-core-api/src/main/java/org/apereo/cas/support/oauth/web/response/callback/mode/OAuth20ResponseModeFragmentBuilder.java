@@ -8,10 +8,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
     @Override
     public ModelAndView build(final RegisteredService registeredService, final String redirectUrl,
                               final Map<String, String> parameters) throws Exception {
+
         val urlBuilder = new URIBuilder(redirectUrl);
         val currentParams = urlBuilder.getQueryParams();
         urlBuilder.removeQuery();
@@ -42,10 +46,16 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
             .stream()
             .map(entry -> entry.getKey() + '=' + entry.getValue())
             .collect(Collectors.joining("&"));
-        urlBuilder.setFragment(fragment);
-        urlBuilder.setParameters(currentParams);
 
-        val resultUrl = urlBuilder.build().toURL().toExternalForm();
+        val queryParams = new LinkedMultiValueMap<String, String>(currentParams.size());
+        currentParams.forEach(param -> queryParams.put(param.getName(), List.of(param.getValue())));
+        
+        val resultUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+            .fragment(fragment)
+            .queryParams(queryParams)
+            .build()
+            .toUriString();
+        
         LOGGER.debug("Redirecting to [{}]", resultUrl);
         val mv = new RedirectView(resultUrl);
         return new ModelAndView(mv);

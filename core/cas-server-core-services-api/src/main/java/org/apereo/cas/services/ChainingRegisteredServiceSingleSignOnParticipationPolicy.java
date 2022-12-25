@@ -65,6 +65,12 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
         policies.addAll(Arrays.stream(policy).toList());
     }
 
+    @Override
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
+        return policies.stream()
+            .allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
+    }
+
     @JsonIgnore
     @Override
     public TriStateBoolean getCreateCookieOnRenewedAuthentication() {
@@ -73,11 +79,5 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
             .filter(p -> p.getCreateCookieOnRenewedAuthentication() != null)
             .allMatch(p -> p.getCreateCookieOnRenewedAuthentication().isTrue() || p.getCreateCookieOnRenewedAuthentication().isUndefined());
         return TriStateBoolean.fromBoolean(result);
-    }
-
-    @Override
-    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
-        return policies.stream()
-            .allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
     }
 }

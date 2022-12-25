@@ -86,7 +86,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             val profile = CommonProfile.class.cast(profileResult.get());
             LOGGER.debug("Authenticated profile: [{}]", profile);
             val clientCredential = new ClientCredential(credentials, authenticator.getClass().getSimpleName());
-            return createResult(clientCredential, profile, null);
+            return createResult(clientCredential, profile, null, service);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());

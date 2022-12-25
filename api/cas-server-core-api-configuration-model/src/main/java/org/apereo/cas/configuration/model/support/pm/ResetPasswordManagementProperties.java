@@ -79,7 +79,6 @@ public class ResetPasswordManagementProperties implements Serializable {
     private int numberOfUses = -1;
 
     public ResetPasswordManagementProperties() {
-        mail.setAttributeName("mail");
         mail.setText("Reset your password via this link: ${url}");
         sms.setText("Reset your password via this link: ${url}");
         mail.setSubject("Password Reset");

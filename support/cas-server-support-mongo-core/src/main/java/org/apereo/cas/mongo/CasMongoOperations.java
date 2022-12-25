@@ -15,5 +15,5 @@ public interface CasMongoOperations extends MongoOperations {
      *
      * @return the mongo db factory
      */
-    MongoDatabaseFactory getMongoDbFactory();
+    MongoDatabaseFactory getMongoDatabaseFactory();
 }

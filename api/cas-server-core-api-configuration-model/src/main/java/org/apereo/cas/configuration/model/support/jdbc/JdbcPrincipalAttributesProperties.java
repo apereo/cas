@@ -110,7 +110,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
-    
+
     /**
      * Map of attributes to fetch from the database.
      * Attributes are defined using a key-value structure

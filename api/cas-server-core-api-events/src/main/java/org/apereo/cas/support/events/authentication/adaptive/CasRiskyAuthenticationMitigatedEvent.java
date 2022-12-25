@@ -23,7 +23,9 @@ public class CasRiskyAuthenticationMitigatedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 291198069766263578L;
 
     private final Authentication authentication;
+
     private final RegisteredService service;
+
     private final Object response;
 
     public CasRiskyAuthenticationMitigatedEvent(final Object source, final Authentication authentication,

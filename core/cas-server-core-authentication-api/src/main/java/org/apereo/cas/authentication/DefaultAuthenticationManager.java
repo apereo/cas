@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -270,7 +269,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         }
 
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
-        credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
+        credentials.forEach(builder::addCredential);
 
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);

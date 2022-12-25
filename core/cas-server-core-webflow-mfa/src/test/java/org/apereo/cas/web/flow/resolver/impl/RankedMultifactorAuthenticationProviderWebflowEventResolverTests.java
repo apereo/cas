@@ -50,13 +50,14 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasDelegatingWebflowEventResolver resolver;
+
     @Override
     @BeforeEach
     public void setup() {
         super.setup();
         servicesManager.deleteAll();
     }
-    
+
     @Test
     public void verifyWithNoTicketOrService() {
         val context = new MockRequestContext();
@@ -206,19 +207,19 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
         assertEquals(TestMultifactorAuthenticationProvider.ID, resolver.resolveSingle(context).getId());
     }
 
-    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
-    public static class MultifactorTestConfiguration {
-        @Bean
-        public MultifactorAuthenticationProvider dummyProvider() {
-            return new TestMultifactorAuthenticationProvider();
-        }
-    }
-    
     @Test
     public void verifyAddDelegate() {
         assertDoesNotThrow(() -> {
             resolver.addDelegate(mock(CasWebflowEventResolver.class));
             resolver.addDelegate(mock(CasWebflowEventResolver.class), 0);
         });
+    }
+
+    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
+    public static class MultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 @Tag("Redis")
 @Slf4j
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
-    private static final int COUNT = 1000;
+    private static final int COUNT = 500;
 
     @RepeatedTest(2)
     public void verifyLargeDataset() {
@@ -87,7 +87,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         stopwatch.stop();
         val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
         LOGGER.info("[{}]: [{}]ms", name, time);
-        assertTrue(time <= 5000);
+        assertTrue(time <= 8000);
         return result;
     }
 
@@ -98,7 +98,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         stopwatch.stop();
         val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
         LOGGER.info("[{}]: [{}]ms", name, time);
-        assertTrue(time <= 2000);
+        assertTrue(time <= 5000);
     }
 
     @RepeatedTest(2)

@@ -22,14 +22,16 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -109,7 +111,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
 
             LOGGER.trace("CAS assertion to use for building ECP SAML2 response is [{}]", casAssertion);
             buildSamlResponse(context.getHttpResponse(), context.getHttpRequest(),
-                authenticationContext, casAssertion, context.getBinding());
+                authenticationContext, Optional.of(casAssertion), context.getBinding());
         } catch (final AuthenticationException e) {
             LoggingUtils.error(LOGGER, e);
             val error = e.getHandlerErrors().values()
@@ -160,7 +162,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                                                             final HttpServletResponse response) {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
-        val credentialsResult = extractor.extract(webContext, configurationContext.getSessionStore());
+        val credentialsResult = extractor.extract(webContext, configurationContext.getSessionStore(), ProfileManagerFactory.DEFAULT);
         if (credentialsResult.isPresent()) {
             val credentials = (UsernamePasswordCredentials) credentialsResult.get();
             LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);

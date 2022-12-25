@@ -21,10 +21,8 @@ public record DefaultAuthenticationTransactionManager(ApplicationEventPublisher 
     @Override
     @CanIgnoreReturnValue
     public AuthenticationTransactionManager handle(
-        @NonNull
-        final AuthenticationTransaction authenticationTransaction,
-        @NonNull
-        final AuthenticationResultBuilder authenticationResult)
+        @NonNull final AuthenticationTransaction authenticationTransaction,
+        @NonNull final AuthenticationResultBuilder authenticationResult)
         throws AuthenticationException {
         if (authenticationTransaction.getCredentials().isEmpty()) {
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");

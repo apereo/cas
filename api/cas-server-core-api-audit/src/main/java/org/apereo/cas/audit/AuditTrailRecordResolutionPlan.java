@@ -18,7 +18,7 @@ public interface AuditTrailRecordResolutionPlan {
      * Register audit resource resolver.
      *
      * @param resolver the resolver
-     * @param keys      the key
+     * @param keys     the key
      */
     default void registerAuditResourceResolver(final AuditResourceResolver resolver, final String... keys) {
         Arrays.stream(keys).forEach(k -> registerAuditResourceResolver(k, resolver));
