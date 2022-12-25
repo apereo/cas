@@ -27,7 +27,7 @@ public class Pac4jDelegatedAuthenticationLinkedInProperties extends Pac4jIdentif
      * The requested scope.
      */
     private String scope;
-    
+
     public Pac4jDelegatedAuthenticationLinkedInProperties() {
         setClientName("LinkedIn");
     }

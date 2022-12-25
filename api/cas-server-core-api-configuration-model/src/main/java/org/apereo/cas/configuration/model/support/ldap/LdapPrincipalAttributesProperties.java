@@ -78,5 +78,5 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      */
     private Map<String, String> queryAttributes = new HashMap<>(0);
 
-    
+
 }

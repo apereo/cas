@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The {@link ServiceFactory} is responsible for creating service objects.

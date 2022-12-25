@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSele
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.model.TriStateBoolean;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -85,7 +84,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .username("casuser")
                 .name("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
@@ -122,7 +121,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .name("casuser")
                 .multifactorAuthenticationEligible(TriStateBoolean.FALSE)
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
@@ -140,7 +139,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .name("casuser")
                 .multifactorAuthenticationEligible(TriStateBoolean.TRUE)
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
@@ -165,7 +164,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
             val account = PasswordlessUserAccount.builder()
                 .username("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }
 
@@ -183,7 +182,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
                 .username("casuser")
                 .name("casuser")
                 .build();
-            WebUtils.putPasswordlessAuthenticationAccount(context, account);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(TestMultifactorAuthenticationProvider.ID, determineMultifactorPasswordlessAuthenticationAction.execute(context).getId());
         }

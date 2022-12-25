@@ -68,7 +68,7 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
      * questions and how many, to complete the registration process.
      */
     private int securityQuestionsCount = 2;
-    
+
     /**
      * Crypto settings on how to generate registration requests.
      */

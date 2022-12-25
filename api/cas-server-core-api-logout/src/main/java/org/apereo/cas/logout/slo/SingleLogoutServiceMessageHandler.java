@@ -20,7 +20,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * Handle logout for slo service.
      *
      * @param singleLogoutService the service
-     * @param sessionIdentifier            the ticket id
+     * @param sessionIdentifier   the ticket id
      * @param context             the ticket granting ticket
      * @return the logout request
      */

@@ -15,7 +15,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * adjusting the CAS webflow context for x509 integration.
  * <p>
  * Creates a flow that starts by trying to construct credentials using an X509
- * certificate found as request attribute with key javax.servlet.request.X509Certificate
+ * certificate found as request attribute with key {@code jakarta.servlet.request.X509Certificate}
  * {@link X509CertificateCredentialsNonInteractiveAction}.
  * If the check of the certificate is valid, flow goes to sendTicketGrantingTicket.
  * On error or authenticationFailure, the user is sent to the login page.

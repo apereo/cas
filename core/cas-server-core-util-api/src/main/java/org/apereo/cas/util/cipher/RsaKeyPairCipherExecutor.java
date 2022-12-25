@@ -39,7 +39,7 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     public RsaKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning,
-        final String privateKeyEncryption, final String publicKeyEncryption) {
+                                    final String privateKeyEncryption, final String publicKeyEncryption) {
         this.privateKeySigning = extractPrivateKeyFromResource(privateKeySigning);
         this.publicKeySigning = extractPublicKeyFromResource(publicKeySigning);
 

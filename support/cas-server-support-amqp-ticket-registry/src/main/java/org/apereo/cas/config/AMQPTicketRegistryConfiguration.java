@@ -11,11 +11,11 @@ import org.apereo.cas.ticket.registry.queue.AMQPTicketRegistryQueuePublisher;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Declarables;
 import org.springframework.amqp.core.Queue;
@@ -55,9 +55,8 @@ public class AMQPTicketRegistryConfiguration {
         final CasConfigurationProperties casProperties) {
         val bean = new PublisherIdentifier();
         val amqp = casProperties.getTicket().getRegistry().getAmqp();
-        if (StringUtils.isNotBlank(amqp.getQueueIdentifier())) {
-            bean.setId(amqp.getQueueIdentifier());
-        }
+
+        FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
         return bean;
     }
 

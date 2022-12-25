@@ -43,6 +43,12 @@ public class ServiceTicketImplTests {
 
     private ObjectMapper mapper;
 
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
+    }
+
     @BeforeEach
     public void initialize() {
         mapper = Jackson2ObjectMapperBuilder.json()
@@ -114,12 +120,6 @@ public class ServiceTicketImplTests {
             false, getTrackingPolicy());
         t.markTicketExpired();
         assertFalse(s.isExpired());
-    }
-
-    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 
     @Test

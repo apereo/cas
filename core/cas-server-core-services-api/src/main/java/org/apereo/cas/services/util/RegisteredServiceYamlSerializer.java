@@ -29,11 +29,6 @@ public class RegisteredServiceYamlSerializer extends RegisteredServiceJsonSerial
     }
 
     @Override
-    protected JsonFactory getJsonFactory() {
-        return new YAMLFactory();
-    }
-
-    @Override
     public boolean supports(final File file) {
         try {
             val contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
@@ -52,5 +47,10 @@ public class RegisteredServiceYamlSerializer extends RegisteredServiceJsonSerial
     @Override
     public List<MediaType> getContentTypes() {
         return List.of(MediaType.valueOf("application/yaml"), MediaType.valueOf("application/yml"));
+    }
+
+    @Override
+    protected JsonFactory getJsonFactory() {
+        return new YAMLFactory();
     }
 }

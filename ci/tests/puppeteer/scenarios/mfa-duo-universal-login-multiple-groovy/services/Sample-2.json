@@ -1,0 +1,5 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^https://httpbin.org/anything/.*",
+  "id" : 2
+}

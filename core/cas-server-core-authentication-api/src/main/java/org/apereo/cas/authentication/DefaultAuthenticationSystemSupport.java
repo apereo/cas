@@ -30,16 +30,6 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final AuthenticationTransactionFactory authenticationTransactionFactory;
 
     @Override
-    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
-                                                                              final Credential... credential) throws AuthenticationException {
-        val builder = authenticationResultBuilderFactory.newBuilder();
-        if (credential != null) {
-            Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
-        }
-        return this.handleAuthenticationTransaction(service, builder, credential);
-    }
-
-    @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
                                                                                  final Credential credentials) {
         return establishAuthenticationContextFromInitial(authentication).collect(credentials);
@@ -48,6 +38,16 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication) {
         return authenticationResultBuilderFactory.newBuilder().collect(authentication);
+    }
+
+    @Override
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
+                                                                              final Credential... credential) throws AuthenticationException {
+        val builder = authenticationResultBuilderFactory.newBuilder();
+        if (credential != null) {
+            Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
+        }
+        return this.handleAuthenticationTransaction(service, builder, credential);
     }
 
     @Override

@@ -58,6 +58,10 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
         return authorizeReleaseOfAllowedAttributes(context, attrs);
     }
 
+    @Override
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
+        return getAllowedAttributes();
+    }
 
     /**
      * Authorize release of allowed attributes map.
@@ -99,10 +103,5 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
                 attributesToRelease.put(attr, encodedValues);
             });
         return attributesToRelease;
-    }
-
-    @Override
-    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return getAllowedAttributes();
     }
 }

@@ -5,8 +5,9 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
@@ -29,7 +30,7 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
 
     private final MultifactorAuthenticationProviderFactoryBean<T, P> providerFactory;
 
-    private final DefaultListableBeanFactory beanFactory;
+    private final SingletonBeanRegistry beanFactory;
 
     private final List<P> properties;
 
@@ -37,7 +38,6 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
     public void afterPropertiesSet() {
         properties.forEach(p -> {
             val name = providerFactory.beanName(p.getId());
-            beanFactory.destroySingleton(name);
             beanFactory.registerSingleton(name, providerFactory.createProvider(p));
         });
     }
@@ -49,7 +49,7 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
      * @return {@link MultifactorAuthenticationProvider}
      */
     public T getProvider(final String id) {
-        return (T) beanFactory.getBean(providerFactory.beanName(id));
+        return (T) ((BeanFactory) beanFactory).getBean(providerFactory.beanName(id));
     }
 
     /**

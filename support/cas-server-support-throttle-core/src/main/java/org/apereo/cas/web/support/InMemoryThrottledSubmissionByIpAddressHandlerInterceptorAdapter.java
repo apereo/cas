@@ -2,7 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Throttles access attempts for failed logins by IP Address. This stores the attempts in memory.

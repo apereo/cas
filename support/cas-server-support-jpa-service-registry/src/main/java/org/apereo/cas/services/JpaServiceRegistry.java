@@ -10,8 +10,8 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;

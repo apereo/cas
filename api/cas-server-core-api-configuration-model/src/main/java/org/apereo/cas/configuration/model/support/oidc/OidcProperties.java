@@ -33,7 +33,7 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcResponseProperties response = new OidcResponseProperties();
-    
+
     /**
      * Configuration properties managing the jwks settings for OIDC.
      */

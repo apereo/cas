@@ -3,8 +3,10 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     implementation project(":support:cas-server-support-surrogate-authentication")
+    implementation project(":support:cas-server-support-surrogate-core")
     implementation project(":support:cas-server-support-surrogate-api")
     implementation project(":support:cas-server-support-jpa-util")
+    
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-configuration-api")

@@ -20,10 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -96,16 +97,17 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
-    private String cleanCookiePath(final String givenPath) {
-        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
-            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
-            return StringUtils.defaultIfBlank(path, "/");
-        }, () -> givenPath).get();
-    }
-
     @Override
     public void setCookieDomain(final String cookieDomain) {
         super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
+    }
+
+    @Nonnull
+    @Override
+    protected Cookie createCookie(@NonNull final String cookieValue) {
+        val cookie = super.createCookie(cookieValue);
+        cookie.setPath(cleanCookiePath(cookie.getPath()));
+        return cookie;
     }
 
     @Override
@@ -117,7 +119,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (rememberMe) {
             LOGGER.trace("Creating CAS cookie [{}] for remember-me authentication", getCookieName());
             cookie.setMaxAge(cookieGenerationContext.getRememberMeMaxAge());
-            cookie.setComment(String.format("%s Remember-Me", cookieGenerationContext.getComment()));
         } else {
             LOGGER.trace("Creating CAS cookie [{}]", getCookieName());
             if (getCookieMaxAge() != null) {
@@ -181,21 +182,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                         crm.setPath(path);
                         crm.setSecure(cookie.getSecure());
                         crm.setHttpOnly(cookie.isHttpOnly());
-                        crm.setComment(cookie.getComment());
                         LOGGER.debug("Removing cookie [{}] with path [{}] and [{}]", crm.getName(), crm.getPath(), crm.getValue());
                         response.addCookie(crm);
                     })));
-    }
-
-    @Nonnull
-    @Override
-    protected Cookie createCookie(
-        @NonNull
-        final String cookieValue) {
-        val c = super.createCookie(cookieValue);
-        c.setComment(cookieGenerationContext.getComment());
-        c.setPath(cleanCookiePath(c.getPath()));
-        return c;
     }
 
     /**
@@ -239,5 +228,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             .filter(header -> !header.startsWith(cookie.getName() + '='))
             .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
+    }
+
+    private String cleanCookiePath(final String givenPath) {
+        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
+            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+            return StringUtils.defaultIfBlank(path, "/");
+        }, () -> givenPath).get();
     }
 }

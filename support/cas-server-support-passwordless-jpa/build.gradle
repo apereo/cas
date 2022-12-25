@@ -2,6 +2,7 @@ description = "Apereo CAS Passwordless Authentication JPA Support"
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
@@ -14,7 +15,8 @@ dependencies {
 
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
-    implementation project(":support:cas-server-support-passwordless")
+    implementation project(":support:cas-server-support-passwordless-authentication")
+    implementation project(":support:cas-server-support-passwordless-api")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-jpa-hibernate")
     
@@ -28,7 +30,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
-    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     
@@ -41,5 +42,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-passwordless", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-passwordless-authentication", configuration: "tests")
 }

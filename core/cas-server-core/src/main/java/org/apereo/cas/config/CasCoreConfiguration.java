@@ -73,8 +73,7 @@ public class CasCoreConfiguration {
         @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceMatchingStrategy serviceMatchingStrategy(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultServiceMatchingStrategy(servicesManager);
         }
     }
@@ -87,34 +86,23 @@ public class CasCoreConfiguration {
         @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CentralAuthenticationService centralAuthenticationService(
-            @Qualifier("centralAuthenticationServiceContext")
-            final CentralAuthenticationServiceContext centralAuthenticationServiceContext) {
+            @Qualifier("centralAuthenticationServiceContext") final CentralAuthenticationServiceContext centralAuthenticationServiceContext) {
             return new DefaultCentralAuthenticationService(centralAuthenticationServiceContext);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CentralAuthenticationServiceContext centralAuthenticationServiceContext(
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor cipherExecutor,
-            @Qualifier("principalFactory")
-            final PrincipalFactory principalFactory,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("authenticationPolicyFactory")
-            final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
-            @Qualifier("serviceMatchingStrategy")
-            final ServiceMatchingStrategy serviceMatchingStrategy,
-            @Qualifier(LockRepository.BEAN_NAME)
-            final LockRepository casTicketRegistryLockRepository,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor,
+            @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("authenticationPolicyFactory") final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+            @Qualifier("serviceMatchingStrategy") final ServiceMatchingStrategy serviceMatchingStrategy,
+            @Qualifier(LockRepository.BEAN_NAME) final LockRepository casTicketRegistryLockRepository,
             final ConfigurableApplicationContext applicationContext) {
             return CentralAuthenticationServiceContext.builder()
                 .authenticationServiceSelectionPlan(authenticationServiceSelectionPlan)

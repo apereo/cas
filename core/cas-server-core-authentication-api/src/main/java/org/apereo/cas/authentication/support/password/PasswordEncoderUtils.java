@@ -30,7 +30,13 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 @Slf4j
 @UtilityClass
 public class PasswordEncoderUtils {
-    private static final int HASH_WIDTH = 256;
+    private static final int DEFAULT_CPU_COST = 65536;
+
+    private static final int DEFAULT_MEMORY_COST = 8;
+
+    private static final int DEFAULT_PARALLELISM = 1;
+
+    private static final int DEFAULT_KEY_LENGTH = 32;
 
     private static final int ARGON2_DEFAULT_MEMORY = 4096;
 
@@ -93,17 +99,18 @@ public class PasswordEncoderUtils {
                 return new BCryptPasswordEncoder(properties.getStrength(), RandomUtils.getNativeInstance());
             case SCRYPT:
                 LOGGER.debug("Creating SCRYPT encoder");
-                return new SCryptPasswordEncoder();
+                return new SCryptPasswordEncoder(DEFAULT_CPU_COST, DEFAULT_MEMORY_COST, DEFAULT_PARALLELISM,
+                    DEFAULT_KEY_LENGTH, properties.getStrength());
             case SSHA:
                 LOGGER.warn("Creating SSHA encoder; digest based password encoding is not considered secure. "
                             + "This strategy is here to support legacy implementations and using it is considered insecure.");
                 return new LdapShaPasswordEncoder();
             case PBKDF2:
-                if (StringUtils.isBlank(properties.getSecret())) {
-                    LOGGER.trace("Creating PBKDF2 encoder without secret");
-                    return new Pbkdf2PasswordEncoder();
-                }
-                return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), HASH_WIDTH);
+                val encodingAlgorithm = StringUtils.defaultString(properties.getEncodingAlgorithm(),
+                    Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256.name());
+                return new Pbkdf2PasswordEncoder(properties.getSecret(),
+                    properties.getStrength(), properties.getIterations(),
+                    Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.valueOf(encodingAlgorithm));
             case GLIBC_CRYPT:
                 val hasSecret = StringUtils.isNotBlank(properties.getSecret());
                 val msg = String.format("Creating glibc CRYPT encoder with encoding alg [%s], strength [%s] and %ssecret",

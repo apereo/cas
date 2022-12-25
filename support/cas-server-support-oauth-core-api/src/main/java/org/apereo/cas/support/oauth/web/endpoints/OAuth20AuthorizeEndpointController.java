@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -251,7 +251,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 Map.of("Service", service.getId(), "Client ID", payload.getClientId(),
                     "Response Mode", payload.getResponseMode(), "Response Type", payload.getResponseType(),
                     "Redirect URI", payload.getRedirectUri()),
-                JsonUtils.render(result.getModel()));
+                result.getModel().isEmpty() ? StringUtils.EMPTY : JsonUtils.render(result.getModel()));
         }
         return result;
     }

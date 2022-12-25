@@ -8,7 +8,11 @@
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
+    "--cas.authn.attribute-repository.stub.order=1",
 
+    "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
+    "--cas.authn.attribute-repository.groovy[0].order=2",
+    
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
     "--cas.authn.saml-idp.metadata.http.force-metadata-refresh=false",

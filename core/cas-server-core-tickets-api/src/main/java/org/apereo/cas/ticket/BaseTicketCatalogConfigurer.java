@@ -24,7 +24,7 @@ public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfig
         }
         return new DefaultTicketDefinition(impl, api, prefix, Ordered.LOWEST_PRECEDENCE);
     }
-    
+
     protected void registerTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         plan.register(metadata);
     }

@@ -6,8 +6,8 @@ import org.apereo.cas.util.MockWebServer;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
@@ -41,16 +42,16 @@ public class SimpleHttpClientTests {
     private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() {
         val trm = new X509TrustManager() {
             @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-            @Override
             public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
             }
 
             @Override
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
             }
         };
         val sc = SSLContext.getInstance("SSL");

@@ -15,9 +15,13 @@ const cas = require('../../cas.js');
     assert(result.authentication.principal.id === "casuser");
     assert(result.authentication.attributes.authnContextClass[0] === "mfa-duo");
 
-    assert(result.authentication.successes["STATIC"].principal.id === "casuser");
-    assert(result.authentication.successes["STATIC"].credentialMetaData.credentialClass.includes("UsernamePasswordCredential"));
+    const staticAuthN = result.authentication.successes["STATIC"];
+    assert(staticAuthN.principal.id === "casuser");
+    assert(staticAuthN.credential.credentialMetadata.credentialClass.includes("UsernamePasswordCredential"));
+    assert(staticAuthN.credential.credentialMetadata.id === "casuser");
 
-    assert(result.authentication.successes["DuoSecurityAuthenticationHandler"].credentialMetaData.credentialClass.includes("DuoSecurityPasscodeCredential"));
-    assert(result.authentication.successes["DuoSecurityAuthenticationHandler"].principal.id === "casuser");
+    const handler = result.authentication.successes["DuoSecurityAuthenticationHandler"];
+    assert(handler.credential.credentialMetadata.credentialClass.includes("DuoSecurityPasscodeCredential"));
+    assert(handler.credential.credentialMetadata.id === "casuser");
+    assert(handler.principal.id === "casuser");
 })();

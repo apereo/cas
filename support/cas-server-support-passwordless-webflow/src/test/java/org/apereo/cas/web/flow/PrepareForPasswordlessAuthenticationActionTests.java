@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -47,7 +46,7 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
             .username("casuser")
             .name("casuser")
             .build();
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         assertNull(prepareLoginAction.execute(context));
     }
 }

@@ -21,6 +21,20 @@ public class DefaultServiceTicketSessionTrackingPolicy implements ServiceTicketS
 
     private final TicketRegistry ticketRegistry;
 
+    /**
+     * Normalize the path of a service by removing the query string and everything after a semi-colon.
+     *
+     * @param service the service to normalize
+     * @return the normalized path
+     */
+    private static String normalizePath(final Service service) {
+        var path = service.getId();
+        path = StringUtils.substringBefore(path, "?");
+        path = StringUtils.substringBefore(path, ";");
+        path = StringUtils.substringBefore(path, "#");
+        return path;
+    }
+
     @Override
     public synchronized void track(final AuthenticatedServicesAwareTicketGrantingTicket ownerTicket,
                                    final ServiceTicket serviceTicket) {
@@ -44,19 +58,5 @@ public class DefaultServiceTicketSessionTrackingPolicy implements ServiceTicketS
             }));
         }
         ownerTicket.getServices().put(serviceTicket.getId(), serviceTicket.getService());
-    }
-
-    /**
-     * Normalize the path of a service by removing the query string and everything after a semi-colon.
-     *
-     * @param service the service to normalize
-     * @return the normalized path
-     */
-    private static String normalizePath(final Service service) {
-        var path = service.getId();
-        path = StringUtils.substringBefore(path, "?");
-        path = StringUtils.substringBefore(path, ";");
-        path = StringUtils.substringBefore(path, "#");
-        return path;
     }
 }

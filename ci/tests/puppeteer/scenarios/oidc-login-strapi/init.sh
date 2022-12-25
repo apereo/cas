@@ -7,7 +7,7 @@ PROJECT=getstarted
 if [[ ! -d $STRAPI_FOLDER/$PROJECT ]] ; then
   mkdir -p $STRAPI_FOLDER
   cd $STRAPI_FOLDER
-  npx -y create-strapi-app $PROJECT --quickstart --no-run
+  npx -y create-strapi-app@experimental $PROJECT --quickstart --no-run
   cd -
 fi
 

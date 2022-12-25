@@ -6,7 +6,6 @@ package org.apereo.cas.authentication;
  * @author Travis Schmidt
  * @since 6.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationCredential extends Credential {
 
     /**

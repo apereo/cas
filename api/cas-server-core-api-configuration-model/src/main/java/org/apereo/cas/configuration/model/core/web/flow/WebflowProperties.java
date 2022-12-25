@@ -40,7 +40,7 @@ public class WebflowProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties autoConfiguration = new WebflowAutoConfigurationProperties();
-    
+
     /**
      * Webflow session management settings.
      */

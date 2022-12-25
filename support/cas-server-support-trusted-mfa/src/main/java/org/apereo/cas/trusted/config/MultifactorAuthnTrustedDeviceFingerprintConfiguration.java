@@ -176,12 +176,13 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CipherExecutor deviceFingerprintCookieCipherExecutor(final CasConfigurationProperties casProperties) {
-            val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
+            val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+            val crypto = cookie.getCrypto();
             var enabled = crypto.isEnabled();
             if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
-                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet "
+                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration for cookie [{}], yet "
                             + "signing/encryption keys are defined for operations. CAS will proceed to enable the cookie "
-                            + "encryption/signing functionality.");
+                            + "encryption/signing functionality.", cookie.getName());
                 enabled = true;
             }
             if (enabled) {

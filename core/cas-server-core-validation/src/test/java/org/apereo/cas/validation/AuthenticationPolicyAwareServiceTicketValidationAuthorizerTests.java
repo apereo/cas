@@ -96,6 +96,32 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
+        val assertion = mock(Assertion.class);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers,
+            Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
+                handlers.values().stream().map(AuthenticationHandler::getName).collect(Collectors.toList()))).build();
+        when(assertion.primaryAuthentication()).thenReturn(authentication);
+        return assertion;
+    }
+
+    private static SimpleTestUsernamePasswordAuthenticationHandler getSimpleTestAuthenticationHandler() {
+        return new SimpleTestUsernamePasswordAuthenticationHandler();
+    }
+
+    private static AcceptUsersAuthenticationHandler getAcceptUsersAuthenticationHandler() {
+        return new AcceptUsersAuthenticationHandler(Map.of("casuser", "Mellon"));
+    }
+
+    private static OneTimePasswordCredential getOtpCredential() {
+        return new OneTimePasswordCredential("test", "123456789");
+    }
+
+    private static TestOneTimePasswordAuthenticationHandler getTestOtpAuthenticationHandler() {
+        return new TestOneTimePasswordAuthenticationHandler(Map.of("casuser", "123456789"));
+    }
+
     @Test
     public void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
         val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
@@ -185,36 +211,10 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     }
 
     private ServiceTicketValidationAuthorizer getAuthorizer(final AuthenticationPolicy policy,
-        final List<? extends AuthenticationHandler> authenticationHandlers) {
+                                                            final List<? extends AuthenticationHandler> authenticationHandlers) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlers(authenticationHandlers);
         plan.registerAuthenticationPolicy(policy);
         return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);
-    }
-
-    private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
-        val assertion = mock(Assertion.class);
-        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers,
-            Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
-                handlers.values().stream().map(AuthenticationHandler::getName).collect(Collectors.toList()))).build();
-        when(assertion.primaryAuthentication()).thenReturn(authentication);
-        return assertion;
-    }
-
-    private static SimpleTestUsernamePasswordAuthenticationHandler getSimpleTestAuthenticationHandler() {
-        return new SimpleTestUsernamePasswordAuthenticationHandler();
-    }
-
-    private static AcceptUsersAuthenticationHandler getAcceptUsersAuthenticationHandler() {
-        return new AcceptUsersAuthenticationHandler(Map.of("casuser", "Mellon"));
-    }
-
-    private static OneTimePasswordCredential getOtpCredential() {
-        return new OneTimePasswordCredential("test", "123456789");
-    }
-
-    private static TestOneTimePasswordAuthenticationHandler getTestOtpAuthenticationHandler() {
-        return new TestOneTimePasswordAuthenticationHandler(Map.of("casuser", "123456789"));
     }
 }

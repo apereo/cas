@@ -22,8 +22,7 @@ public class CasApplicationContextInitializer implements ApplicationContextIniti
 
     @Override
     public void initialize(
-        @Nonnull
-        final ConfigurableApplicationContext applicationContext) {
+        @Nonnull final ConfigurableApplicationContext applicationContext) {
         if (!Boolean.getBoolean("SKIP_CONFIG_VALIDATION")) {
             val validator = new CasConfigurationPropertiesValidator(applicationContext);
             val results = validator.validate();

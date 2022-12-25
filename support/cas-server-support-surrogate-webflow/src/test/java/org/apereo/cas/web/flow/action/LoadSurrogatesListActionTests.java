@@ -3,8 +3,9 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -34,7 +36,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthenticationActionTests {
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+public class LoadSurrogatesListActionTests extends BaseSurrogateAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
     private Action loadSurrogatesListAction;
@@ -61,16 +65,16 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true));
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
-        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(principal), context);
 
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        val creds = new SurrogateUsernamePasswordCredential();
+        val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
         creds.setUsername("casuser");
-        creds.setSurrogateUsername("cassurrogate");
+        creds.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);
@@ -96,10 +100,10 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        val creds = new SurrogateUsernamePasswordCredential();
+        val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
         creds.setUsername("casuser");
-        creds.setSurrogateUsername("unknown-user");
+        creds.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("unknown-user"));
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);
@@ -126,10 +130,10 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        val creds = new SurrogateUsernamePasswordCredential();
+        val creds = new UsernamePasswordCredential();
         creds.assignPassword("Mellon");
         creds.setUsername("someuser");
-        creds.setSurrogateUsername("others");
+        creds.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("others"));
         WebUtils.putCredential(context, creds);
 
         val builder = mock(AuthenticationResultBuilder.class);

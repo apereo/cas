@@ -68,5 +68,5 @@ public class EventsProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RedisEventsProperties redis = new RedisEventsProperties();
-    
+
 }

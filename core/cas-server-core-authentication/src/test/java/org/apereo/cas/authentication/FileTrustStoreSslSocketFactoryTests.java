@@ -6,8 +6,8 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("FileSystem")
 public class FileTrustStoreSslSocketFactoryTests {
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
+
     private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");
 
     @SneakyThrows

@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +25,11 @@ public class DelegatedClientAuthenticationCredentialSelectionAction extends Base
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val profiles = WebUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext,
+        val profiles = DelegationWebflowUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext,
             DelegatedAuthenticationCandidateProfile.class);
         if (profiles.size() == 1) {
             val profile = profiles.get(0);
-            WebUtils.putDelegatedClientAuthenticationCandidateProfile(requestContext, profile);
+            DelegationWebflowUtils.putDelegatedClientAuthenticationCandidateProfile(requestContext, profile);
             return new Event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE,
                 new LocalAttributeMap<>("profile", profile));
         }

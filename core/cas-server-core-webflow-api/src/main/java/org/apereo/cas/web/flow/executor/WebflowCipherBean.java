@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.cryptacular.bean.CipherBean;
 
 import javax.naming.OperationNotSupportedException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 

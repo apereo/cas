@@ -51,7 +51,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
     @Test
     public void verifyDeleteEmptyDomains() {
         servicesManager.deleteAll();
-        
+
         var r = new CasRegisteredService();
         r.setId(10);
         r.setName("domainService1");
@@ -69,7 +69,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
 
         assertNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://whatever.com")));
         assertNotNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
-        
+
         servicesManager.deleteAll();
         assertEquals(0, domainServicesManager.getDomains().count());
     }

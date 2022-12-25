@@ -108,6 +108,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -205,10 +206,9 @@ public class OidcConfiguration {
             final SecurityLogic oidcAuthorizationSecurityLogic,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            val interceptor = SecurityInterceptor.build(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT,
-                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
-                oidcAuthorizationSecurityLogic);
-            return interceptor;
+            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic),
+                Authenticators.CAS_OAUTH_CLIENT,
+                DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
         }
     }
 
@@ -716,11 +716,14 @@ public class OidcConfiguration {
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ArgumentExtractor argumentExtractor,
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
+                .argumentExtractor(argumentExtractor)
                 .responseModeJwtBuilder(oidcResponseModeJwtBuilder)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .discoverySettings(oidcServerDiscoverySettings)

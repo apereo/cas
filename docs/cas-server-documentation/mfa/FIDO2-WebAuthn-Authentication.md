@@ -18,7 +18,7 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
 
-{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.core,cas.authn.mfa.web-authn.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.web-authn" includes=".core,.crypto" %}
 
 ## Discoverable Credentials
 

@@ -18,9 +18,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,35 +85,26 @@ public class RefreshableHandlerInterceptorTests {
             return new HandlerInterceptor() {
                 @Override
                 public boolean preHandle(
-                    @Nonnull
-                    final HttpServletRequest request,
-                    @Nonnull
-                    final HttpServletResponse response,
-                    @Nonnull
-                    final Object handler) {
+                    @Nonnull final HttpServletRequest request,
+                    @Nonnull final HttpServletResponse response,
+                    @Nonnull final Object handler) {
                     request.setAttribute("preHandle", true);
                     return true;
                 }
 
                 @Override
                 public void postHandle(
-                    @Nonnull
-                    final HttpServletRequest request,
-                    @Nonnull
-                    final HttpServletResponse response,
-                    @Nonnull
-                    final Object handler, final ModelAndView modelAndView) {
+                    @Nonnull final HttpServletRequest request,
+                    @Nonnull final HttpServletResponse response,
+                    @Nonnull final Object handler, final ModelAndView modelAndView) {
                     request.setAttribute("postHandle", true);
                 }
 
                 @Override
                 public void afterCompletion(
-                    @Nonnull
-                    final HttpServletRequest request,
-                    @Nonnull
-                    final HttpServletResponse response,
-                    @Nonnull
-                    final Object handler, final Exception ex) {
+                    @Nonnull final HttpServletRequest request,
+                    @Nonnull final HttpServletResponse response,
+                    @Nonnull final Object handler, final Exception ex) {
                     request.setAttribute("afterCompletion", true);
                 }
             };

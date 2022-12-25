@@ -6,7 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -45,7 +45,7 @@ public class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends 
             .username("casuser")
             .allowedDelegatedClients(List.of())
             .build();
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         assertTrue(isAuthorized(context));
     }
 
@@ -56,7 +56,7 @@ public class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends 
             .username("casuser")
             .allowedDelegatedClients(List.of("CasClient"))
             .build();
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         assertTrue(isAuthorized(context));
     }
 
@@ -67,7 +67,7 @@ public class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends 
             .username("casuser")
             .allowedDelegatedClients(List.of("AnotherClient"))
             .build();
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
         assertFalse(isAuthorized(context));
     }
 

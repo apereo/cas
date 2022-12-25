@@ -47,7 +47,7 @@ public class AdaptiveAuthenticationPolicyProperties implements Serializable {
      * be rejected from participating in authentication transactions.
      */
     private String rejectIpAddresses;
-    
+
     /**
      * A map of ({@code mfaProviderId -> adaptiveRegexPattern}) that tells
      * CAS when to trigger an MFA authentication transaction.

@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @SpringBootTest(classes = {
     GoogleAuthenticatorMongoDbConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,

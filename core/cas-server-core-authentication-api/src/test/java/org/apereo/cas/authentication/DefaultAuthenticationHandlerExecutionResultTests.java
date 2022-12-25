@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -22,9 +21,9 @@ public class DefaultAuthenticationHandlerExecutionResultTests {
 
     @Test
     public void verifyOperation() {
-        val otp = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val res = new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
-            new BasicCredentialMetaData(otp), CollectionUtils.wrapList(new DefaultMessageDescriptor("code1")));
+            credential, CollectionUtils.wrapList(new DefaultMessageDescriptor("code1")));
         assertFalse(res.getWarnings().isEmpty());
         res.clearWarnings();
         assertTrue(res.getWarnings().isEmpty());

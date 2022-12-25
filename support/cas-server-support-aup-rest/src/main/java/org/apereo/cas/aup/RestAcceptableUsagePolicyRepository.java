@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -67,7 +68,8 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response == null ? HttpStatus.SERVICE_UNAVAILABLE.value() : response.getCode();
+            LOGGER.debug("AUP submit policy request returned with response code [{}]", statusCode);
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
@@ -81,21 +83,24 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val rest = aupProperties.getRest();
             val url = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("policy");
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
                 .url(url)
-                .parameters(CollectionUtils.wrap("username", principal.getId()))
+                .parameters(CollectionUtils.wrap("username", principal.getId(),
+                    "locale", request.getLocale().toString()))
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response.getCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val terms = MAPPER.readValue(JsonValue.readHjson(result).toString(), AcceptableUsagePolicyTerms.class);
                 return Optional.ofNullable(terms);
             }
+            LOGGER.warn("AUP fetch policy request returned with response code [{}] check your API for problems", statusCode);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {

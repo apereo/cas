@@ -57,7 +57,6 @@ public class JsonWebKeySetStringCipherExecutorTests {
         }
     }
 
-    
 
     @Test
     public void verifyEmptyFileForEncoding() throws Exception {

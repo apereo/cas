@@ -27,8 +27,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -104,7 +104,8 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val authExtractor = new BasicAuthExtractor();
 
             val context = new JEEContext(request, response);
-            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore());
+            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore(),
+                getConfigurationContext().getOauthConfig().getProfileManagerFactory());
 
             if (credentialsResult.isEmpty()) {
                 LOGGER.warn("Unable to locate and extract credentials from the request");

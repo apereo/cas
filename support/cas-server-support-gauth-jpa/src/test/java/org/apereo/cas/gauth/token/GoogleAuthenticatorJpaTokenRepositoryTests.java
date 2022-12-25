@@ -86,7 +86,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
-@Tag("JDBC")
+@Tag("JDBCMFA")
 @EnableRetry
 public class GoogleAuthenticatorJpaTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 }

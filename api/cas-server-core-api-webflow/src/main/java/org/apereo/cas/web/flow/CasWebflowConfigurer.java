@@ -206,7 +206,7 @@ public interface CasWebflowConfigurer extends Ordered {
      */
     DecisionState createDecisionState(Flow flow, String id, String testExpression,
                                       String thenStateId, String elseStateId);
-    
+
     /**
      * Sets start state.
      *
@@ -343,7 +343,7 @@ public interface CasWebflowConfigurer extends Ordered {
     /**
      * Build flow.
      *
-     * @param id       the id
+     * @param id the id
      * @return the flow
      */
     Flow buildFlow(String id);

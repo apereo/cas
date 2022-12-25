@@ -83,16 +83,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
      */
     @JsonCreator
     public TicketGrantingTicketImpl(
-        @JsonProperty("id")
-        final String id,
-        @JsonProperty("proxiedBy")
-        final Service proxiedBy,
-        @JsonProperty("ticketGrantingTicket")
-        final TicketGrantingTicket parentTicketGrantingTicket,
-        @JsonProperty("authentication")
-        final @NonNull Authentication authentication,
-        @JsonProperty("expirationPolicy")
-        final ExpirationPolicy policy) {
+        @JsonProperty("id") final String id,
+        @JsonProperty("proxiedBy") final Service proxiedBy,
+        @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+        @JsonProperty("authentication") final @NonNull Authentication authentication,
+        @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent ticket-granting ticket");

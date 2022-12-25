@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.client.authentication.AttributePrincipalImpl;
+import org.apereo.cas.client.validation.AssertionImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
@@ -130,14 +132,13 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
@@ -153,7 +154,9 @@ import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.JEEContextFactory;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -295,11 +298,14 @@ public class CasOAuth20Configuration {
             final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
             @Qualifier("oauthCasAuthenticationBuilder")
             final OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder,
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ArgumentExtractor argumentExtractor,
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
             @Qualifier("oauthTokenGenerator")
             final OAuth20TokenGenerator oauthTokenGenerator) {
             return OAuth20ConfigurationContext.builder()
+                .argumentExtractor(argumentExtractor)
                 .requestParameterResolver(oauthRequestParameterResolver)
                 .applicationContext(applicationContext)
                 .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor)
@@ -578,6 +584,8 @@ public class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             val config = new Config(callbackUrl, oauthSecConfigClients.toList());
+            config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
+            config.setWebContextFactory(JEEContextFactory.INSTANCE);
             config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
             config.setMatcher(oauthSecCsrfTokenMatcher);
             config.setProfileManagerFactory((webContext, sessionStore) ->
@@ -707,9 +715,11 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
+            @Qualifier("oauthSecConfig")
+            final ObjectProvider<Config> oauthSecConfig,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder);
+            return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder, oauthSecConfig);
         }
 
         @ConditionalOnMissingBean(name = "oauthPrincipalFactory")

@@ -1,6 +1,8 @@
 ext.isCiServer = System.getenv().containsKey("CI")
 ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
 ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
+ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
+ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
 buildCache {
     local {
@@ -22,6 +24,14 @@ dependencyResolutionManagement {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
         maven {
             url "https://build.shibboleth.net/maven/releases/"
             content {
@@ -46,21 +56,35 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex ".*splunk.*"
             }
-            mavenContent { releasesOnly() }
+            mavenContent {releasesOnly() }
         }
-        maven {
-            url "https://repo.terracotta.org/maven2"
-            mavenContent { releasesOnly() }
-            content {
-                includeGroupByRegex "org.terracotta.*"
-            }
-        }
-        
         maven {
             url "https://repo.spring.io/milestone"
+            mavenContent {releasesOnly() }
+        }
+        maven {
+            url "https://repo.spring.io/snapshot"
+            mavenContent {snapshotsOnly() }
+        }
+        maven {
+            url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
+            content {
+                includeGroupByRegex ".*netflix.*"
+            }
             mavenContent { releasesOnly() }
         }
-        
+        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
+            maven {
+                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
+                content {
+                    includeGroupByRegex "org.apache.wss4j"
+                }
+                credentials {
+                    username System.getenv("GH_PACKAGE_REGISTRY_USER")
+                    password System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
+                }
+            }
+        }
     }
 }
 
@@ -109,6 +133,7 @@ include "core:cas-server-core-logging-api"
 include "core:cas-server-core-logout"
 include "core:cas-server-core-logout-api"
 include "core:cas-server-core-monitor"
+include "core:cas-server-core-notifications-api"
 include "core:cas-server-core-notifications"
 include "core:cas-server-core-rest"
 include "core:cas-server-core-rest-api"
@@ -305,6 +330,8 @@ include "support:cas-server-support-oauth-webflow"
 include "support:cas-server-support-oidc"
 include "support:cas-server-support-oidc-core-api"
 include "support:cas-server-support-oidc-core"
+include "support:cas-server-support-oidc-jpa"
+include "support:cas-server-support-oidc-mongo"
 include "support:cas-server-support-oidc-services"
 include "support:cas-server-support-okta-authentication"
 include "support:cas-server-support-otp-mfa"
@@ -315,7 +342,8 @@ include "support:cas-server-support-pac4j-authentication"
 include "support:cas-server-support-pac4j-core"
 include "support:cas-server-support-pac4j-core-clients"
 include "support:cas-server-support-pac4j-webflow"
-include "support:cas-server-support-passwordless"
+include "support:cas-server-support-passwordless-api"
+include "support:cas-server-support-passwordless-authentication"
 include "support:cas-server-support-passwordless-jpa"
 include "support:cas-server-support-passwordless-ldap"
 include "support:cas-server-support-passwordless-mongo"
@@ -369,6 +397,7 @@ include "support:cas-server-support-saml-mdui-core"
 include "support:cas-server-support-saml-sp-integrations"
 include "support:cas-server-support-scim-core"
 include "support:cas-server-support-scim"
+include "support:cas-server-support-sendgrid"
 include "support:cas-server-support-sentry"
 include "support:cas-server-support-service-registry-stream"
 include "support:cas-server-support-service-registry-stream-hazelcast"
@@ -382,7 +411,6 @@ include "support:cas-server-support-shell"
 include "support:cas-server-support-shibboleth"
 include "support:cas-server-support-simple-mfa-core"
 include "support:cas-server-support-simple-mfa"
-include "support:cas-server-support-sleuth"
 include "support:cas-server-support-sms-aws-sns"
 include "support:cas-server-support-sms-clickatell"
 include "support:cas-server-support-sms-smsmode"
@@ -393,6 +421,7 @@ include "support:cas-server-support-soap-authentication"
 include "support:cas-server-support-spnego"
 include "support:cas-server-support-spnego-webflow"
 include "support:cas-server-support-surrogate-api"
+include "support:cas-server-support-surrogate-core"
 include "support:cas-server-support-surrogate-authentication"
 include "support:cas-server-support-surrogate-authentication-couchdb"
 include "support:cas-server-support-surrogate-authentication-jdbc"
@@ -413,6 +442,7 @@ include "support:cas-server-support-throttle-jdbc"
 include "support:cas-server-support-throttle-ldap"
 include "support:cas-server-support-throttle-mongo"
 include "support:cas-server-support-throttle-redis"
+include "support:cas-server-support-thymeleaf-core"
 include "support:cas-server-support-thymeleaf"
 include "support:cas-server-support-token-authentication"
 include "support:cas-server-support-token-core-api"

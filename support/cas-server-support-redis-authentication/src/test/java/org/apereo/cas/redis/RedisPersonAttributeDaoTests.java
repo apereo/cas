@@ -29,7 +29,6 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -105,7 +104,7 @@ public class RedisPersonAttributeDaoTests {
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson(USER_ID, IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson(USER_ID);
         assertNotNull(person);
         val attributes = person.getAttributes();
         assertEquals(USER_ID, person.getName());

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.Nonnull;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +44,17 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     @Override
     public Class getObjectType() {
         return PrivateKey.class;
+    }
+
+    @Nonnull
+    @Override
+    protected PrivateKey createInstance() {
+        var key = readPemPrivateKey();
+        if (key == null) {
+            LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);
+            key = readDERPrivateKey();
+        }
+        return key;
     }
 
     private PrivateKey readPemPrivateKey() {
@@ -77,17 +89,6 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
             LOGGER.debug("Unable to read key", e);
             return null;
         }
-    }
-
-    @Nonnull
-    @Override
-    protected PrivateKey createInstance() {
-        var key = readPemPrivateKey();
-        if (key == null) {
-            LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);
-            key = readDERPrivateKey();
-        }
-        return key;
     }
 
 }

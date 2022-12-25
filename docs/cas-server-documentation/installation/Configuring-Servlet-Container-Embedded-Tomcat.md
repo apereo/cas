@@ -113,7 +113,7 @@ backend cas-pool
 
 #### Apache Portable Runtime (APR)
 
-Apache Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior
+Apache Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-10.1-doc/apr.html) to provide superior
 scalability, performance, and better integration with native server technologies.
 
 {% include_cached casproperties.html properties="cas.server.tomcat.apr" %}
@@ -126,10 +126,8 @@ the location of the APR library binaries (i.e. `usr/local/opt/tomcat-native/lib`
 ```
 
 #### Connector IO
-                      
 
 {% include_cached casproperties.html properties="cas.server.tomcat.socket." %}
-                                  
 
 #### Session Clustering & Replication
 
@@ -137,7 +135,7 @@ Enable in-memory session replication to replicate web application session deltas
 
 | Clustering Type | Description                                                                                                                                                                                                                                                                     |
 |-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `DEFAULT`       | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpleTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html)                                              |
+| `DEFAULT`       | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpleTcpCluster with McastService](http://tomcat.apache.org/tomcat-10.1-doc/cluster-howto.html)                                             |
 | `CLOUD`         | For use in Kubernetes where members are discovered via accessing the Kubernetes API or doing a DNS lookup of the members of a Kubernetes service. [Documentation](https://cwiki.apache.org/confluence/display/TOMCAT/ClusteringCloud) is currently light, see code for details. |
 
 | Membership Providers       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |

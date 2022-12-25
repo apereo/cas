@@ -29,7 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class OAuth20Utils {
     public static ModelAndView writeError(final HttpServletResponse response,
                                           final String error, final String description) {
         val model = getErrorResponseBody(error, description);
-        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
+        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;

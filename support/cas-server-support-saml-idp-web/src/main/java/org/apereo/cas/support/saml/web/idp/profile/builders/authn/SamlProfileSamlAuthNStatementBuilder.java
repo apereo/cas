@@ -70,8 +70,11 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         val authenticationMethod = authnContextClassRefBuilder.build(context);
         val id = buildAuthnStatementSessionIdex(context);
         val statement = newAuthnStatement(authenticationMethod,
-            DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getAuthenticationDate()), id);
-        statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
+            DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate()), id);
+
+        if (!context.getRegisteredService().isSkipGeneratingSessionNotOnOrAfter()) {
+            statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
+        }
 
         val subjectLocality = buildSubjectLocality(context);
         if (subjectLocality != null) {
@@ -93,8 +96,8 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     protected Instant buildSessionNotOnOrAfter(final SamlProfileBuilderContext context) {
-        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
-        val skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
+        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getValidUntilDate());
+        val skewAllowance = context.getRegisteredService().getSkewAllowance() != 0
             ? context.getRegisteredService().getSkewAllowance()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
         return dt.plusSeconds(skewAllowance).toInstant();

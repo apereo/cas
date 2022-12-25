@@ -54,6 +54,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.http.client.direct.HeaderClient;
+import org.pac4j.jee.context.JEEContextFactory;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -193,10 +194,10 @@ public class CasOAuthUmaConfiguration {
             headerClient.setName(clientName);
             val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-            config.setSessionStore(oauthDistributedSessionStore);
-            val interceptor = new SecurityInterceptor(config, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
+            config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
+            config.setWebContextFactory(JEEContextFactory.INSTANCE);
+            return new SecurityInterceptor(config, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
                     DefaultMatchers.SECURITYHEADERS);
-            return interceptor;
         }
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

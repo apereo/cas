@@ -1,11 +1,15 @@
 // CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The generated SOAP class.
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,11 +35,9 @@ public class LoginSearchResponse {
 
     /**
      * Obtient la valeur de la propriété loginSearchReturn.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LoginSearchResult }
-     *     
+     *
+     * @return possible object is
+     * {@link LoginSearchResult }
      */
     public LoginSearchResult getLoginSearchReturn() {
         return loginSearchReturn;
@@ -43,11 +45,9 @@ public class LoginSearchResponse {
 
     /**
      * Définit la valeur de la propriété loginSearchReturn.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LoginSearchResult }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LoginSearchResult }
      */
     public void setLoginSearchReturn(LoginSearchResult value) {
         this.loginSearchReturn = value;

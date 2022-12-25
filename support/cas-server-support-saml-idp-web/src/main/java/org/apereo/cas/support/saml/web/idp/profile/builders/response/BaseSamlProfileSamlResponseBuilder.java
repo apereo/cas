@@ -23,6 +23,7 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The {@link BaseSamlProfileSamlResponseBuilder} is responsible for
@@ -51,19 +52,13 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         resourceResolverName = AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public T build(final SamlProfileBuilderContext context) throws Exception {
-        val assertion = buildSamlAssertion(context);
+        val assertion = context.getAuthenticatedAssertion().isPresent()
+            ? Optional.of(buildSamlAssertion(context))
+            : Optional.<Assertion>empty();
         val finalResponse = buildResponse(assertion, context);
         return encodeFinalResponse(context, finalResponse);
     }
 
-    /**
-     * Encode final response.
-     *
-     * @param context       the context
-     * @param finalResponse the final response
-     * @return the response
-     * @throws Exception the exception
-     */
     protected T encodeFinalResponse(final SamlProfileBuilderContext context,
                                     final T finalResponse) throws Exception {
         val scratch = context.getMessageContext().getSubcontext(ScratchContext.class, true);
@@ -78,26 +73,11 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         return finalResponse;
     }
 
-    /**
-     * Build saml assertion assertion.
-     *
-     * @param context the context
-     * @return the assertion
-     * @throws Exception the exception
-     */
     protected Assertion buildSamlAssertion(final SamlProfileBuilderContext context) throws Exception {
         return configurationContext.getSamlProfileSamlAssertionBuilder().build(context);
     }
 
-    /**
-     * Build response.
-     *
-     * @param assertion the assertion
-     * @param context   the context
-     * @return the response
-     * @throws Exception the exception
-     */
-    protected abstract T buildResponse(Assertion assertion, SamlProfileBuilderContext context) throws Exception;
+    protected abstract T buildResponse(Optional<Assertion> assertion, SamlProfileBuilderContext context) throws Exception;
 
     /**
      * Build entity issuer issuer.
@@ -124,28 +104,24 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                 T samlResponse,
                                 String relayState) throws Exception;
 
-    /**
-     * Encrypt assertion.
-     *
-     * @param assertion the assertion
-     * @param context   the context
-     * @return the saml object
-     */
-    protected SAMLObject encryptAssertion(final Assertion assertion, final SamlProfileBuilderContext context) {
-        if (context.getRegisteredService().isEncryptAssertions()) {
-            LOGGER.debug("SAML service [{}] requires assertions to be encrypted", context.getAdaptor().getEntityId());
-            val encrypted = configurationContext.getSamlObjectEncrypter().encode(assertion,
-                context.getRegisteredService(), context.getAdaptor());
-            if (encrypted == null) {
-                LOGGER.debug("SAML registered service [{}] is unable to encrypt assertions",
-                    context.getAdaptor().getEntityId());
-                return assertion;
+
+    protected Optional<SAMLObject> encryptAssertion(final Optional<Assertion> assertion, final SamlProfileBuilderContext context) {
+        return assertion.map(result -> {
+            if (context.getRegisteredService().isEncryptAssertions()) {
+                LOGGER.debug("SAML service [{}] requires assertions to be encrypted", context.getAdaptor().getEntityId());
+                val encrypted = configurationContext.getSamlObjectEncrypter().encode(assertion.get(),
+                    context.getRegisteredService(), context.getAdaptor());
+                if (encrypted == null) {
+                    LOGGER.debug("SAML registered service [{}] is unable to encrypt assertions",
+                        context.getAdaptor().getEntityId());
+                    return assertion.get();
+                }
+                return encrypted;
             }
-            return encrypted;
-        }
-        LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted",
-            context.getAdaptor().getEntityId());
-        return assertion;
+            LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted",
+                context.getAdaptor().getEntityId());
+            return assertion.get();
+        });
 
     }
 }

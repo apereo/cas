@@ -29,7 +29,7 @@ public class Pac4jDelegatedAuthenticationCookieProperties extends CookieProperti
      * path is not configured.
      */
     private boolean autoConfigureCookiePath = true;
-    
+
     /**
      * Determine whether cookie settings
      * should be enabled to track delegated authentication

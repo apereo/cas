@@ -220,7 +220,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected String prepareNameIdAttribute(final SamlProfileBuilderContext context,
                                             final String nameFormat) {
-        LOGGER.debug("Preparing NameID attribute for principal [{}]", context.getAuthenticatedAssertion().getName());
+        val principalId = context.getAuthenticatedAssertion().get().getName();
+        LOGGER.debug("Preparing NameID attribute for principal [{}]", principalId);
         val nameIdValue = getNameIdValueFromNameFormat(nameFormat, context);
         LOGGER.debug("NameID attribute value is set to [{}]", nameIdValue);
         return nameIdValue;
@@ -228,18 +229,17 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private String getNameIdValueFromNameFormat(final String nameFormat,
                                                 final SamlProfileBuilderContext context) {
+        val principalId = context.getAuthenticatedAssertion().get().getName();
         if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
             val entityId = context.getAdaptor().getEntityId();
             if (context.getRegisteredService().isSkipGeneratingTransientNameId()) {
-                LOGGER.debug("Generation of transient NameID value is skipped for [{}] and [{}] will be used instead",
-                    entityId, context.getAuthenticatedAssertion().getName());
+                LOGGER.debug("Generation of transient NameID value is skipped for [{}] and [{}] will be used instead", entityId, principalId);
             } else {
-                LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]",
-                    context.getAuthenticatedAssertion().getName(), entityId);
-                return persistentIdGenerator.generate(context.getAuthenticatedAssertion().getName(), entityId);
+                LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalId, entityId);
+                return persistentIdGenerator.generate(principalId, entityId);
             }
         }
-        return context.getAuthenticatedAssertion().getName();
+        return principalId;
     }
 
     private SAMLObject determineNameIdForAttributeQuery(final SamlProfileBuilderContext context) {

@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -86,7 +87,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
                 }
             }
 
-            if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+            if (DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context) == null
                 && provider.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
                 LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
                 return Optional.of(provider);

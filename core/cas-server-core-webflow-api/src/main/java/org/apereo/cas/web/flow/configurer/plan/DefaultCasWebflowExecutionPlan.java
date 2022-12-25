@@ -22,13 +22,21 @@ import java.util.List;
 @Getter
 @Slf4j
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
-    private boolean initialized;
-
     private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
 
     private final List<HandlerInterceptor> webflowInterceptors = new ArrayList<>(0);
 
     private final List<CasWebflowLoginContextProvider> webflowLoginContextProviders = new ArrayList<>(0);
+
+    private boolean initialized;
+
+    @Override
+    public void registerWebflowLoginContextProvider(final CasWebflowLoginContextProvider provider) {
+        if (BeanSupplier.isNotProxy(provider)) {
+            LOGGER.trace("Registering webflow login context provider [{}]", provider.getName());
+            this.webflowLoginContextProviders.add(provider);
+        }
+    }
 
     @Override
     public void registerWebflowConfigurer(final CasWebflowConfigurer cfg) {
@@ -43,14 +51,6 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
         if (BeanSupplier.isNotProxy(interceptor)) {
             LOGGER.trace("Registering webflow interceptor [{}]", interceptor.getClass().getSimpleName());
             this.webflowInterceptors.add(interceptor);
-        }
-    }
-
-    @Override
-    public void registerWebflowLoginContextProvider(final CasWebflowLoginContextProvider provider) {
-        if (BeanSupplier.isNotProxy(provider)) {
-            LOGGER.trace("Registering webflow login context provider [{}]", provider.getName());
-            this.webflowLoginContextProviders.add(provider);
         }
     }
 
