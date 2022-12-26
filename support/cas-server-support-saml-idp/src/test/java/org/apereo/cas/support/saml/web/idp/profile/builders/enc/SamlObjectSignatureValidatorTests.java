@@ -153,7 +153,6 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         val authnRequest = builder.build(saml2MessageContext);
 
         assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
-
     }
 
     @Test
