@@ -74,6 +74,10 @@ public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyEncNameId() throws Exception {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
+        registeredService.setEncryptionBlackListedAlgorithms(CollectionUtils.wrapArrayList("excludeAlg1"));
+        registeredService.setEncryptionWhiteListedAlgorithms(CollectionUtils.wrapArrayList("includeAlg1"));
+        registeredService.setWhiteListBlackListPrecedence("exclude");
+
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
@@ -84,6 +88,9 @@ public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         nameId.setFormat(NameIDType.ENCRYPTED);
         val encNameId = samlIdPObjectEncrypter.encode(nameId, registeredService, adaptor);
         assertNotNull(encNameId);
+
+        assertThrows(DecryptionException.class,
+            () -> samlIdPObjectEncrypter.decode(encNameId, registeredService, adaptor));
     }
 
     @Test

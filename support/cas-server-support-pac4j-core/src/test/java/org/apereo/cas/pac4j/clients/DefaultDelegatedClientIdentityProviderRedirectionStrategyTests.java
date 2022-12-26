@@ -150,7 +150,9 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         configureService(policy);
 
-        when(this.casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
+        DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
+        
+        when(casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
         val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(DelegationAutoRedirectTypes.SERVER, results.get().getAutoRedirectType());
