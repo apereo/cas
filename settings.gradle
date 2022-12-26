@@ -80,8 +80,8 @@ dependencyResolutionManagement {
                     includeGroupByRegex "org.apache.wss4j"
                 }
                 credentials {
-                    username System.getenv("GH_PACKAGE_REGISTRY_USER")
-                    password System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
+                    username githubPackageRegistryUser
+                    password githubPackageRegistryPassword
                 }
             }
         }
