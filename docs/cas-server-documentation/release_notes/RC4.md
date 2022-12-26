@@ -44,3 +44,5 @@ The following items are new improvements and enhancements presented in this rele
 ## Other Stuff
 
 ## Library Upgrades
+
+- Groovy
