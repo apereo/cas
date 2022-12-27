@@ -12,14 +12,14 @@
     "--cas.authn.throttle.failure.range-seconds=10",
     "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
 
-    "--cas.audit.jdbc.leak-threshold=10000",
+    "--cas.audit.jdbc.leak-threshold=PT10S",
     "--cas.audit.jdbc.user=postgres",
     "--cas.audit.jdbc.password=password",
     "--cas.audit.jdbc.driver-class=org.postgresql.Driver",
     "--cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "--cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
 
-    "--cas.authn.throttle.jdbc.leak-threshold=10000",
+    "--cas.authn.throttle.jdbc.leak-threshold=PT10S",
     "--cas.authn.throttle.jdbc.user=postgres",
     "--cas.authn.throttle.jdbc.password=password",
     "--cas.authn.throttle.jdbc.driver-class=org.postgresql.Driver",
