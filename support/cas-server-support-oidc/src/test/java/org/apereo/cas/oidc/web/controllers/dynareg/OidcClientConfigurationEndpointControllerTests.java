@@ -53,7 +53,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,
-            controller.handleUpdates(clientId, null, request, response).getStatusCodeValue());
+            controller.handleUpdates(clientId, null, request, response).getStatusCode().value());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
             ZonedDateTime.now(Clock.systemUTC()).toString()));
         servicesManager.save(service);
         assertEquals(HttpStatus.SC_OK,
-            controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+            controller.handleRequestInternal(clientId, request, response).getStatusCode().value());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
             "grant_types": ["client_credentials"],
             }""";
         val responseEntity = controller.handleUpdates(clientId, jsonBody, request, response);
-        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCodeValue());
+        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCode().value());
         assertNotNull(responseEntity.getBody());
         service = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
         assertNotEquals(service.getClientSecretExpiration(), clientSecretExpiration);
@@ -98,6 +98,6 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,
-            controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+            controller.handleRequestInternal(clientId, request, response).getStatusCode().value());
     }
 }

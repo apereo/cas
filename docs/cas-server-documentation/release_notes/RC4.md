@@ -41,8 +41,20 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### SAML2 Delegated Authentication Metadata
+
+SAML2 service provider metadata used and managed during [delegated authentication](../integration/Delegate-Authentication-SAML.html)
+can now be stored in relational databases.
+
 ## Other Stuff
+
+- The session cookie (typically and by default named `DISSESSION`) typically used for distributed session management when CAS is acting as an OAUTH or OpenID 
+  Connect provider can now be signed and encrypted.
 
 ## Library Upgrades
 
 - Groovy
+- Nimbus
+- Amazon SDK
+- Spring
+- Spring Boot

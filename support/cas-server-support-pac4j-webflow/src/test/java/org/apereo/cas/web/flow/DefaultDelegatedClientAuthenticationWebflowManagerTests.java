@@ -276,7 +276,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         peer.setEntityId("https://cas.example.org/idp");
         val md = peer.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(md);
-        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(saml2Client.getIdpMetadataResolver().resolve());
+        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(saml2Client.getIdentityProviderMetadataResolver().resolve());
         roleDescriptorResolver.initialize();
 
         md.setRoleDescriptor(roleDescriptorResolver.resolveSingle(new CriteriaSet(
@@ -289,7 +289,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val sp = self.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(sp);
-        val spResolver = new PredicateRoleDescriptorResolver(saml2Client.getSpMetadataResolver().resolve());
+        val spResolver = new PredicateRoleDescriptorResolver(saml2Client.getServiceProviderMetadataResolver().resolve());
         spResolver.initialize();
         sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
             new EntityIdCriterion(Objects.requireNonNull(self.getEntityId())),

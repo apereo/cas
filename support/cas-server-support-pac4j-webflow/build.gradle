@@ -42,6 +42,7 @@ dependencies {
     testImplementation libraries.casclient
     testImplementation libraries.mongo
 
+    compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-mongo-core")
 
@@ -58,12 +59,14 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-authentication-mfa")
 
+    testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-mongo-core")
     testImplementation project(":support:cas-server-support-hazelcast-core")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-jdbc-drivers")
 
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
