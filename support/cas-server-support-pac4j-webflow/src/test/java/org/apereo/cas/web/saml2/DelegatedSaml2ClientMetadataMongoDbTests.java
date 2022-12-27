@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This is {@link DelegatedSaml2ClientMetadataMongoDbTests}.
  *
  * @author Misagh Moayyed
- * @since 6.2.0
+ * @since 7.0.0
  */
 @SpringBootTest(classes = {
     DelegatedAuthenticationSAMLConfiguration.class,
