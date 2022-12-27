@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -126,6 +127,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val mockResponse = new MockHttpServletResponse();
         val redirect = oauthCasClient.getRedirectionAction(new JEEContext(mockRequest, mockResponse), oauthDistributedSessionStore);
         assertTrue(redirect.isPresent());
@@ -196,6 +198,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -227,6 +230,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -262,6 +266,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -322,6 +327,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -380,6 +386,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -440,6 +447,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -493,6 +501,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -549,6 +558,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
         mockRequest.setServerName(CAS_SERVER);
@@ -600,6 +610,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
@@ -651,8 +662,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyRedirectToApproval() throws Exception {
         clearAllServices();
 
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT
-                                                                            + OAuth20Constants.AUTHORIZE_URL);
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -693,6 +704,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         clearAllServices();
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -42,7 +43,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     @Audit(action = AuditableActions.OAUTH2_USER_PROFILE,
         actionResolverName = AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER)
-    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final JEEContext context) {
+    public Map<String, Object> createFrom(final OAuth20AccessToken accessToken, final WebContext context) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getObject().getServicesManager(), accessToken.getClientId());
 
@@ -61,7 +62,7 @@ public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20Configuration
     }
 
     protected Principal getAccessTokenAuthenticationPrincipal(final OAuth20AccessToken accessToken,
-                                                              final JEEContext context,
+                                                              final WebContext context,
                                                               final RegisteredService registeredService) {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());

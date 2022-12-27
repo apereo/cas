@@ -91,6 +91,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -413,6 +414,7 @@ public abstract class AbstractOidcTests {
         request.setServerName("sso.example.org");
         request.setServerPort(443);
         request.setRequestURI("/cas/oidc/" + endpoint);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         return request;
     }
 
