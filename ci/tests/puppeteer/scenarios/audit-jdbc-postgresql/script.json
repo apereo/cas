@@ -13,7 +13,7 @@
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.enabled=false",
     
-    "--cas.audit.jdbc.leak-threshold=10000",
+    "--cas.audit.jdbc.leak-threshold=PT10S",
     "--cas.audit.jdbc.user=postgres",
     "--cas.audit.jdbc.password=password",
     "--cas.audit.jdbc.driver-class=org.postgresql.Driver",
