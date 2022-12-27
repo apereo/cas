@@ -13,6 +13,13 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
+        googlecloudsecretsmanager   : [
+                dependencies.create("com.google.cloud:google-cloud-secretmanager:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                }
+        ],
         firebaseadmin              : [
                 dependencies.create("com.google.api-client:google-api-client:$googleApiClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
