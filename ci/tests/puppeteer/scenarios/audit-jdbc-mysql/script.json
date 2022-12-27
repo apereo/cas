@@ -22,7 +22,7 @@
     "--cas.audit.jdbc.schedule.start-delay=PT10S",
     "--cas.audit.jdbc.schedule.repeat-interval=PT5S",
     
-    "--cas.audit.jdbc.leak-threshold=10000",
+    "--cas.audit.jdbc.leak-threshold=PT10S",
     "--cas.audit.jdbc.ddl-auto=create",
     "--cas.audit.jdbc.user=root",
     "--cas.audit.jdbc.password=password",
