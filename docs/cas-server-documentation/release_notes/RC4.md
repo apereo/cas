@@ -49,7 +49,7 @@ can now be stored in relational databases.
 ## Other Stuff
 
 - The session cookie (typically and by default named `DISSESSION`) typically used for distributed session management when CAS is acting as an OAUTH or OpenID 
-  Connect provider can now be signed and encrypted.
+  Connect provider, or is delegating authentication to an external identity provider can now be signed and encrypted.
 
 ## Library Upgrades
 
