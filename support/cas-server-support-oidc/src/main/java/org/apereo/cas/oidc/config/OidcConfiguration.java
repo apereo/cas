@@ -206,7 +206,8 @@ public class OidcConfiguration {
             final SecurityLogic oidcAuthorizationSecurityLogic,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic),
+            val authzConfig = oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic);
+            return new SecurityInterceptor(authzConfig,
                 Authenticators.CAS_OAUTH_CLIENT,
                 DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
         }
