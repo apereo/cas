@@ -27,6 +27,11 @@ properties='{
     }
   },
   "cas": {
+    "audit": {
+      "slf4j": {
+        "use-single-line": true
+      }
+    },
     "tgc": {
       "name": "TGCEXT"
     },

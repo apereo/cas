@@ -152,6 +152,7 @@ import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.Matcher;
 import org.pac4j.core.matching.matcher.csrf.CsrfTokenGeneratorMatcher;
 import org.pac4j.core.matching.matcher.csrf.DefaultCsrfTokenGenerator;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -570,19 +571,32 @@ public class CasOAuth20Configuration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "oauthSecProfileManagerFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ProfileManagerFactory oauthSecProfileManagerFactory(
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
+            return (webContext, sessionStore) ->
+                new OAuth20ClientIdAwareProfileManager(webContext, oauthDistributedSessionStore,
+                    servicesManager, oauthRequestParameterResolver);
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "oauthSecConfig")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Config oauthSecConfig(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier("oauthSecProfileManagerFactory")
+            final ProfileManagerFactory oauthSecProfileManagerFactory,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("oauthSecCsrfTokenMatcher")
             final Matcher oauthSecCsrfTokenMatcher,
             @Qualifier("oauthSecConfigClients")
             final BeanContainer<Client> oauthSecConfigClients,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             val config = new Config(callbackUrl, oauthSecConfigClients.toList());
@@ -590,9 +604,7 @@ public class CasOAuth20Configuration {
             config.setWebContextFactory(JEEContextFactory.INSTANCE);
             config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
             config.setMatcher(oauthSecCsrfTokenMatcher);
-            config.setProfileManagerFactory((webContext, sessionStore) ->
-                new OAuth20ClientIdAwareProfileManager(webContext, oauthDistributedSessionStore,
-                    servicesManager, oauthRequestParameterResolver));
+            config.setProfileManagerFactory(oauthSecProfileManagerFactory);
             return config;
         }
     }
@@ -676,7 +688,7 @@ public class CasOAuth20Configuration {
                 },
                 CipherExecutor::noOp).get();
         }
-        
+
         @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
