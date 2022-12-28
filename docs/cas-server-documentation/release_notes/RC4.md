@@ -54,6 +54,7 @@ can now be stored in relational databases.
 ## Library Upgrades
 
 - Groovy
+- Pac4j
 - Nimbus
 - Amazon SDK
 - Spring
