@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Risk-based Authentication
 
 Risk-based authentication allows CAS to detect suspicious and 
@@ -33,81 +32,12 @@ Note that evaluation of attempts and mitigation of risks are all recorded in the
 If you need to preemptively evaluate authentication attempts based on various characteristics of the request,
 you may be interested in <a href="../mfa/Configuring-Adaptive-Authentication.html">this guide</a> instead.</p></div>
 
-## Risk Calculation
+A few notes to remember:
 
-One or more risk calculators may be enabled to allow an analysis of authentication requests.
-
-A high-level explanation of the risk calculation strategy follows:
-
-- If there is no recorded event at all present for the principal, consider the request suspicious.
-- If the number of recorded events for the principal based on the active criteria matches the total number of events, consider the
-request safe.
-
-{% tabs adaptiveriskcalc %}
-
-{% tab adaptiveriskcalc IP Address %}
-
-This calculator looks into past authentication events that match the client ip address. It is applicable if you wish
-to consider authentication requests from unknown ip addresses suspicious for the user. The story here is:
-
-> Find all past authentication events that match the current client ip address and calculate an averaged score.
-
-{% include_cached casproperties.html properties="cas.authn.adaptive.risk.ip" %}
-
-{% endtab %}
-
-{% tab adaptiveriskcalc Browser User Agent %}
-
-This calculator looks into past authentication events that match the client's `user-agent` string. It is applicable if you wish
-to consider authentication requests from unknown browsers suspicious for the user. The story here is:
-
-> Find all past authentication events that match the current client browser and calculate an averaged score.
-
-{% include_cached casproperties.html properties="cas.authn.adaptive.risk.agent" %}
-
-{% endtab %}
-
-{% tab adaptiveriskcalc Geolocation %}
-
-This calculator looks into past authentication events that contain geolocation data, and compares those with the current geolocation.
-If current geolocation data is unavailable, it will attempt to geocode the location based on the current client ip address. This feature
-mostly depends on whether or not geodata is made available to CAS via the client browser and
-requires [geotracking of authentication requests](GeoTracking-Authentication-Requests.html).
-
-The story here is:
-
-> Find all past authentication events that match the current client location and calculate an average score.
-
-{% include_cached casproperties.html properties="cas.authn.adaptive.risk.geo-location" %}
-
-{% endtab %}
-
-{% tab adaptiveriskcalc Date/Time %}
-
-This calculator looks into past authentication events that fit within the defined time-window. It is applicable if you wish
-to consider authentication requests outside that window suspicious for the user. The story here is:
-
-> Find all past authentication events that are established X hours before/after now and calculate an averaged score.
-
-{% include_cached casproperties.html properties="cas.authn.adaptive.risk.date-time" %}
-
-{% endtab %}
-
-{% endtabs %}
-
-## Risk Mitigation
-
-Once an authentication attempt is deemed risky, a contingency plan may be enabled to mitigate risk. If configured and allowed,
-CAS may notify both the principal and deployer via both email and sms.
-
-### Block Authentication
-
-Prevent the authentication flow to proceed and disallow the establishment of the SSO session.
-
-### Multifactor Authentication
-
-Force the authentication event into a [multifactor flow of choice](../mfa/Configuring-Multifactor-Authentication.html),
-identified by the provider id.
+- You **MUST** allow and configure CAS to track and record [authentication events](Configuring-Authentication-Events.html).
+- You **MUST** allow and configure CAS to [geolocate authentication requests](GeoTracking-Authentication-Requests.html).
+- If the selected contingency plan is to force the user into a multifactor authentication flow, you then **MUST** configure CAS for
+  [multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html) and the relevant provider.
 
 ## Configuration
 
@@ -115,18 +45,19 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-electrofence" %}
 
-{% include_cached casproperties.html properties="cas.authn.adaptive.policy,cas.authn.adaptive.risk.core" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.risk.core" %}
 
-### Messaging & Notifications
+## Risk Calculation
 
-{% include_cached casproperties.html properties="cas.authn.adaptive.risk.response" includes=".mail,.sms" %}
+You need to configure CAS to allow it to detect suspicious and
+seemingly-fraudulent authentication requests based on past user behavior
+and collected authentication events, statistics, etc. 
 
-To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
-or [this guide](../notifications/Sending-Email-Configuration.html).
+[See this guide](Configuring-RiskBased-Authentication-Calculation.html) for more info.
 
-### Remember
+## Risk Mitigation
 
-- You **MUST** allow and configure CAS to track and record [authentication events](Configuring-Authentication-Events.html).
-- You **MUST** allow and configure CAS to [geolocate authentication requests](GeoTracking-Authentication-Requests.html).
-- If the selected contingency plan is to force the user into a multifactor authentication flow, you then **MUST** configure CAS for
-[multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html) and the relevant provider.
+Once an authentication attempt is deemed risky, you need to configure CAS to decide how to
+handle and respond to the authentication attempt.
+
+[See this guide](Configuring-RiskBased-Authentication-Mitigation.html) for more info.
