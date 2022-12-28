@@ -115,7 +115,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-electrofence" %}
 
-{% include_cached casproperties.html properties="cas.authn.adaptive.policy" %}
+{% include_cached casproperties.html properties="cas.authn.adaptive.policy,cas.authn.adaptive.risk.core" %}
 
 ### Messaging & Notifications
 
