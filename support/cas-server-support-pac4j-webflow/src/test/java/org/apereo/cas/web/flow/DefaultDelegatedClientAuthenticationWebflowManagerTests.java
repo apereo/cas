@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import lombok.val;
@@ -100,6 +101,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void setup() {
         val service = RegisteredServiceTestUtils.getService();
         httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
 

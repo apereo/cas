@@ -16,6 +16,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
@@ -82,6 +83,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyCredentialSelectionStart() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
@@ -105,6 +107,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyCredentialSelectionFinish() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
             val context = new MockRequestContext();
@@ -146,6 +149,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyExecutionFailureWithUnauthzResponse() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
@@ -169,6 +173,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyFinishAuthenticationAuthzFailure() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
@@ -194,6 +199,7 @@ public class DelegatedClientAuthenticationActionTests {
             val client = builtClients.findClient("SAML2Client").get();
 
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
             val webContext = new JEEContext(request, new MockHttpServletResponse());
             request.setMethod("POST");
@@ -222,6 +228,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyFinishAuthentication() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
             request.addParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
@@ -259,6 +266,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyFailedAuthentication() throws Exception {
             val mockRequest = new MockHttpServletRequest();
+            mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             mockRequest.setParameter("error_message", "bad authn");
             mockRequest.setParameter("error_code", "403");
             mockRequest.setParameter("error_description", "authentication failed");
@@ -281,6 +289,7 @@ public class DelegatedClientAuthenticationActionTests {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val client = builtClients.findClient("FacebookClient").orElse(null);
             val webContext = new JEEContext(request, new MockHttpServletResponse());
 
@@ -313,6 +322,7 @@ public class DelegatedClientAuthenticationActionTests {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val client = builtClients.findClient("FacebookClient").orElse(null);
             val webContext = new JEEContext(request, new MockHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
@@ -340,6 +350,7 @@ public class DelegatedClientAuthenticationActionTests {
             request.addParameter("error_message", "Auth+failed");
             val response = new MockHttpServletResponse();
 
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val client = builtClients.findClient("FacebookClient").get();
             val webContext = new JEEContext(request, new MockHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
@@ -363,6 +374,7 @@ public class DelegatedClientAuthenticationActionTests {
         @Test
         public void verifyLogoutRequestWithOkAction() throws Exception {
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "MockClientNoCredentials");
             request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "true");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
@@ -383,6 +395,7 @@ public class DelegatedClientAuthenticationActionTests {
         public void verifyServerSideRedirectAuthentication() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val response = new MockHttpServletResponse();
 
             val service = CoreAuthenticationTestUtils.getService("https://delegated2.example.org");
@@ -407,6 +420,7 @@ public class DelegatedClientAuthenticationActionTests {
         public void verifySsoAuthenticationUnauthz() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val response = new MockHttpServletResponse();
 
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
