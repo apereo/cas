@@ -337,7 +337,10 @@ layout: null
         *   [Overview](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
         *   [GeoTracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
         *   [IP Intelligence](/cas/{{ version }}/mfa/Adaptive-Authentication-IP-Intelligence.html)
-        *   [Risk Assessment](/cas/{{ version }}/authentication/Configuring-RiskBased-Authentication.html)
+        *   [Risk Assessment](#riskassessmentauthn)
+            *   [Overview](/cas/{{ version }}/authentication/Configuring-RiskBased-Authentication.html) 
+            *   [Calculation](/cas/{{ version }}/authentication/Configuring-RiskBased-Authentication-Calculation.html) 
+            *   [Mitigation](/cas/{{ version }}/authentication/Configuring-RiskBased-Authentication-Mitigation.html) 
 
 * [SSO & SLO](#ssoandslo)
     *   [SSO Session](/cas/{{ version }}/authentication/Configuring-SSO.html)
