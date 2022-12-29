@@ -281,8 +281,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Calculated attributes for release per the release policy are [{}]",
                 attributesToRelease.keySet());
 
-            val principalId = registeredService.getUsernameAttributeProvider()
-                .resolveUsername(principal, selectedService, registeredService);
             val builder = DefaultAuthenticationBuilder.of(
                 principal,
                 configurationContext.getPrincipalFactory(),
@@ -290,7 +288,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 selectedService,
                 registeredService,
                 authentication);
-            LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
+            LOGGER.debug("Principal determined for release to [{}] is [{}]",
+                registeredService.getServiceId(), builder.getPrincipal().getId());
 
             builder.addAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
                 CollectionUtils.wrap(((RenewableServiceTicket) serviceTicket).isFromNewLogin()));
