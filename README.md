@@ -79,8 +79,6 @@ The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/
 
 ## Development [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
 
-[![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas?style=for-the-badge&logo=apache)][cascla]
-
 - To build the project locally, please follow [this guide][casbuildprocess].
 - The release schedule is [available here][releaseschedule].
 
@@ -91,8 +89,7 @@ community has access to all releases of the CAS software with absolutely no cost
 types and sizes. The time and effort to develop and maintain this project is dedicated by a group
 of [volunteers and contributors][githubcontributors]. Support options may be [found here][cassupport].
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
-  
-[cascla]: https://cla-assistant.io/apereo/cas 
+
 [cascodecov]: https://codecov.io/gh/apereo/cas
 [maintenance]: https://apereo.github.io/cas/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones

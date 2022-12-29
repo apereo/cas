@@ -34,6 +34,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -70,6 +71,7 @@ public class RedisTicketRegistryConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageListenerContainer")
+        @Lazy(false)
         public RedisMessageListenerContainer redisTicketRegistryMessageListenerContainer(
             @Qualifier("redisTicketRegistryMessageTopic")
             final ChannelTopic redisTicketRegistryMessageTopic,
@@ -98,6 +100,7 @@ public class RedisTicketRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageListener")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public MessageListener redisTicketRegistryMessageListener(
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
@@ -112,6 +115,7 @@ public class RedisTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessagePublisher")
+        @Lazy(false)
         public RedisTicketRegistryMessagePublisher redisTicketRegistryMessagePublisher(
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
