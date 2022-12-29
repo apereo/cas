@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 
@@ -36,6 +37,7 @@ public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreEnvironmentManagerConfiguration {
         @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
         @Bean
@@ -47,6 +49,7 @@ public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreEnvironmentFactoryConfiguration {
         @ConfigurationPropertiesBinding
         @Bean
@@ -72,6 +75,7 @@ public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreEnvironmentLocatorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
