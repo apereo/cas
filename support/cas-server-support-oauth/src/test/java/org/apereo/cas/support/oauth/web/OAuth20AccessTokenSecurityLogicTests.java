@@ -65,6 +65,7 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         config.setSessionStoreFactory(JEESessionStoreFactory.INSTANCE);
         config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
         config.setWebContextFactory(JEEContextFactory.INSTANCE);
+        config.setProfileManagerFactory((webContext, sessionStore) -> profileManager);
         
         val result = (UserProfile) logic.perform(config,
             (webContext, sessionStore, collection) -> collection.iterator().next(),
