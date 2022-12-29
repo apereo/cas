@@ -46,6 +46,12 @@ The following items are new improvements and enhancements presented in this rele
 SAML2 service provider metadata used and managed during [delegated authentication](../integration/Delegate-Authentication-SAML.html)
 can now be stored in relational databases.
 
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `378` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
 ### Authentication Geolocation via Maxmind
 
 Geolocating authentication requests via Maxmind can now support [Maxmind Web Services](../authentication/GeoTracking-Authentication-Requests.html).
