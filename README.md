@@ -4,12 +4,12 @@
 
 # Central Authentication Service (CAS)
 
-[![License](https://img.shields.io/hexpm/l/plug.svg?style=for-the-badge)](https://github.com/apereo/cas/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg?style=for-the-badge)](https://twitter.com/apereo)
+[![License](https://img.shields.io/hexpm/l/plug.svg?style=for-the-badge&logo=apache)](https://github.com/apereo/cas/blob/master/LICENSE)
+[![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg?style=for-the-badge&logo=twitter)](https://twitter.com/apereo)
+[![Gitter](https://img.shields.io/badge/Gitter-join%20chat-blue.svg?style=for-the-badge&colorB=a832a6&logo=gitter)][casgitter]
+[![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge&logo=slack)][casslack]
+[![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg?style=for-the-badge&logo=stackoverflow)](http://stackoverflow.com/questions/tagged/cas)
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4&style=for-the-badge)][cassupport]
-[![Gitter](https://img.shields.io/badge/Gitter-join%20chat-blue.svg?style=for-the-badge&colorB=a832a6)][casgitter]
-[![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge)][casslack]
-[![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg?style=for-the-badge)](http://stackoverflow.com/questions/tagged/cas)
 
 ## Introduction
 
@@ -21,20 +21,20 @@ component by the same name hosted here, with support for a plethora of additiona
 
 ## Contributions
 
-[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=for-the-badge)][contribute]
-[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=for-the-badge)][contribute]
+[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=for-the-badge&logo=github)][contribute]
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=for-the-badge&logo=github)][contribute]
 
 - [How to contribute][contribute]
 
 If you have already identified an enhancement or a bug, it is STRONGLY recommended that you submit a pull request to address the case.
 There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
-## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg?style=for-the-badge)](https://www.javadoc.io/doc/org.apereo.cas/cas-server-core)
+## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg?style=for-the-badge&logo=readme)][casjavadocs]
 
-| Version                                                                        | Reference                                        |
-|--------------------------------------------------------------------------------|--------------------------------------------------|
-| ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=for-the-badge) | [Link](https://apereo.github.io/cas/development) |
-| ![](https://img.shields.io/badge/6.6.x-Current-green.svg?style=for-the-badge)  | [Link](https://apereo.github.io/cas/6.6.x)       |
+| Version                                                                                    | Reference                                        |
+|--------------------------------------------------------------------------------------------|--------------------------------------------------|
+| ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=for-the-badge&logo=github) | [Link](https://apereo.github.io/cas/development) |
+| ![](https://img.shields.io/badge/6.6.x-Current-green.svg?style=for-the-badge&logo=github)  | [Link](https://apereo.github.io/cas/6.6.x)       |
 
 Additional resources are available as follows:
 
@@ -46,11 +46,10 @@ Additional resources are available as follows:
 
 ## Deployment
 
-[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=for-the-badge)][contribute]
-[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=for-the-badge)][contribute]
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
-[![Github Releases](https://img.shields.io/github/release/apereo/cas.svg?style=for-the-badge)](https://github.com/apereo/cas/releases)
-
+[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=for-the-badge&logo=github)][contribute]
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=for-the-badge&logo=github)][contribute]
+[![Maven Central](https://img.shields.io/maven-central/v/org.apereo.cas/cas-server-webapp?style=for-the-badge&logo=apachemaven)][casmavencentral]
+[![Github Releases](https://img.shields.io/github/release/apereo/cas.svg?style=for-the-badge&logo=github)][githubreleases]
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase
 is **ONLY** required if you wish to contribute to the development of the project.
@@ -78,32 +77,38 @@ The following features are supported by the CAS project:
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
 [Spring Cloud](http://projects.spring.io/spring-cloud/).
 
-## Development [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)](https://codecov.io/gh/apereo/cas)
+## Development [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
 
-[![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas?style=for-the-badge)](https://cla-assistant.io/apereo/cas)
+[![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas?style=for-the-badge&logo=apache)][cascla]
 
-To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
-The release schedule is [available here][releaseschedule].
+- To build the project locally, please follow [this guide][casbuildprocess].
+- The release schedule is [available here][releaseschedule].
 
 ## Support
 
 CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our
 community has access to all releases of the CAS software with absolutely no costs. We welcome contributions from our community of all
 types and sizes. The time and effort to develop and maintain this project is dedicated by a group
-of [volunteers and contributors](https://github.com/apereo/cas/graphs/contributors). Support options may be [found here][cassupport].
+of [volunteers and contributors][githubcontributors]. Support options may be [found here][cassupport].
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
-
+  
+[cascla]: https://cla-assistant.io/apereo/cas 
+[cascodecov]: https://codecov.io/gh/apereo/cas
 [maintenance]: https://apereo.github.io/cas/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
+[githubreleases]: https://github.com/apereo/cas/releases
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: https://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
-[casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
+[casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
 [releasenotes]: https://github.com/apereo/cas/releases
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
+[casbuildprocess]: https://apereo.github.io/cas/developer/Build-Process.html
+[githubcontributors]: https://github.com/apereo/cas/graphs/contributors
+[casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas/cas-server-core
