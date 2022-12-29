@@ -22,11 +22,13 @@ async function cleanUp() {
         console.log("Fetching Scratch codes from /cas/actuator...");
         let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
         console.log(`Using scratch code ${scratch} to login...`);
+        await cas.screenshot(page);
         await cas.type(page,'#token', scratch);
         await page.keyboard.press('Enter');
         await page.waitForNavigation();
         console.log(`Page URL: ${page.url()}`);
         await page.waitForTimeout(3000);
+        await cas.screenshot(page);
         await cas.assertInnerText(page, "#principal", "casuser");
         await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa");
         await browser.close();

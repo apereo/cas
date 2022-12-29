@@ -33,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.nio.charset.StandardCharsets;
@@ -63,6 +64,7 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
+    @Lazy(false)
     public AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final AMQPTicketRegistry ticketRegistry,
@@ -121,6 +123,7 @@ public class AMQPTicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "amqpTicketRegistryMessageListenerContainer")
+    @Lazy(false)
     public MessageListenerContainer amqpTicketRegistryMessageListenerContainer(
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
@@ -138,6 +141,7 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amqpTicketRegistryListenerAdapter")
+    @Lazy(false)
     public MessageListenerAdapter amqpTicketRegistryListenerAdapter(
         @Qualifier("messageQueueTicketRegistryReceiver")
         final AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver,
