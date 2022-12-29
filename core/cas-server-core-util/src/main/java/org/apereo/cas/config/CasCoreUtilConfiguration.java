@@ -33,6 +33,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
@@ -67,6 +68,7 @@ public class CasCoreUtilConfiguration {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public ApplicationContextProvider casApplicationContextProvider() {
         return new ApplicationContextProvider();
     }
@@ -76,6 +78,7 @@ public class CasCoreUtilConfiguration {
     public static class CasCoreUtilContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public InitializingBean casCoreUtilInitialization(
             @Qualifier("casApplicationContextProvider") final ApplicationContextProvider casApplicationContextProvider,
             @Qualifier("zonedDateTimeToStringConverter") final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
@@ -90,6 +93,7 @@ public class CasCoreUtilConfiguration {
 
     @Configuration(value = "CasCoreUtilConverterConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreUtilConverterConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -113,6 +117,7 @@ public class CasCoreUtilConfiguration {
 
     @Configuration(value = "CasCoreUtilEssentialConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreUtilEssentialConfiguration {
 
         /**
@@ -123,6 +128,7 @@ public class CasCoreUtilConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
+
         public static BeanPostProcessor casBeanValidationPostProcessor() {
             return new BeanValidationPostProcessor();
         }

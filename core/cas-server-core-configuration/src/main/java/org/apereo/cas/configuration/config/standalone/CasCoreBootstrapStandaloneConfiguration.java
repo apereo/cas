@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
@@ -41,6 +42,7 @@ public class CasCoreBootstrapStandaloneConfiguration {
 
     @Configuration(value = "CasCoreBootstrapStandaloneSourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
 
         @Bean
@@ -72,6 +74,7 @@ public class CasCoreBootstrapStandaloneConfiguration {
         CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE,
         CasConfigurationPropertiesSourceLocator.PROFILE_EMBEDDED
     })
+    @Lazy(false)
     public static class CasCoreBootstrapStandaloneLocatorConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean

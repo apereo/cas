@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -26,12 +27,14 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
 @AutoConfiguration
+@Lazy(false)
 public class CasCoreConfigurationWatchConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public InitializingBean casConfigurationWatchService(
-        @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
-        final ConfigurableApplicationContext applicationContext) throws Exception {
+        @Qualifier("configurationPropertiesEnvironmentManager")
+        final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+        final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(InitializingBean.class)
             .when(BeanCondition.on("cas.events.core.track-configuration-modifications").isTrue().given(applicationContext.getEnvironment()))
             .supply(() -> new CasConfigurationWatchService(configurationPropertiesEnvironmentManager, applicationContext))
