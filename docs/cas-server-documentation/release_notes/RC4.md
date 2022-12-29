@@ -58,7 +58,7 @@ Geolocating authentication requests via Maxmind can now support [Maxmind Web Ser
 
 ## Other Stuff
 
-- The session cookie (typically and by default named `DISSESSION`) typically used for distributed session management can now be signed and encrypted in 
+- The session cookie (typically and by default named `DISSESSION`) used for distributed session management can now be signed and encrypted in 
   scenarios where CAS is acting as an OAUTH or OpenID Connect provider, or is delegating authentication to an external identity provider.
 
 ## Library Upgrades
