@@ -1,7 +1,7 @@
 <?php
-$idp_entityId = $_ENV['IDP_ENTITYID'];
-$idp_signingCert = $_ENV['IDP_SIGNING_CERTIFICATE'] ?? '';
-$idp_encryptionCert = $_ENV['IDP_ENCRYPTION_CERTIFICATE'] ?? '';
+$idp_entityId = getenv('IDP_ENTITYID');
+$idp_signingCert = getenv('IDP_SIGNING_CERTIFICATE') ?? '';
+$idp_encryptionCert = getenv('IDP_ENCRYPTION_CERTIFICATE') ?? '';
 
 $metadata[$idp_entityId] = [
     'entityid' => $idp_entityId,
