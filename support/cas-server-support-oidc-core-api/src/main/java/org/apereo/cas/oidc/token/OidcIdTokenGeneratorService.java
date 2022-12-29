@@ -117,11 +117,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
-
-        val subject = registeredService.getUsernameAttributeProvider().resolveUsername(principal,
-            accessToken.getService(), registeredService);
-        LOGGER.debug("Calculated ID token subject claim to be [{}]", subject);
-        claims.setSubject(subject);
+        claims.setSubject(principal.getId());
 
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
         val attributes = authentication.getAttributes();

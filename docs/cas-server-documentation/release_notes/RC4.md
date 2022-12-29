@@ -63,3 +63,4 @@ Geolocating authentication requests via Maxmind can now support [Maxmind Web Ser
 - Amazon SDK
 - Spring
 - Spring Boot
+- Mockito
