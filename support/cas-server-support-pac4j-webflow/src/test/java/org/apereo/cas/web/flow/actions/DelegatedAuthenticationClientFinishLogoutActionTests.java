@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -49,6 +50,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     public void verifyOperationWithRedirect() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
@@ -68,6 +70,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     public void verifyOperationNoLogoutRedirectUrl() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
@@ -87,6 +90,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     public void verifyOperationWithRelay() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -102,6 +106,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     public void verifyOperationFailsWithError() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));

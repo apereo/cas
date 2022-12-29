@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -78,7 +79,9 @@ public class DelegatedClientAuthenticationRedirectActionTests {
     private static MockRequestContext getMockRequestContext() {
         val context = new MockRequestContext();
         val externalContext = new MockExternalContext();
-        externalContext.setNativeRequest(new MockHttpServletRequest());
+        val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        externalContext.setNativeRequest(request);
         externalContext.setNativeResponse(new MockHttpServletResponse());
         context.setExternalContext(externalContext);
         RequestContextHolder.setRequestContext(context);
