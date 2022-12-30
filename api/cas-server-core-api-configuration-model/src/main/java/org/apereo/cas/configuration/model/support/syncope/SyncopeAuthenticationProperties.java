@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -56,6 +57,7 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties imple
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**

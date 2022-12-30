@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -63,6 +64,7 @@ public class HttpClientProperties implements Serializable {
     /**
      * If specified the regular expression will be used to validate the url's authority.
      */
+    @RegularExpressionCapable
     private String authorityValidationRegex;
 
     /**
