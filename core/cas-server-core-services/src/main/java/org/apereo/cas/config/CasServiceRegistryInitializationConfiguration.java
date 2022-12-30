@@ -36,6 +36,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -76,6 +77,7 @@ public class CasServiceRegistryInitializationConfiguration {
     public static class CasServiceRegistryInitializationEventsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryInitializer") final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer) {

@@ -429,6 +429,7 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public SamlIdPCasEventListener samlIdPCasEventListener(
             @Qualifier("samlIdPMetadataGenerator")
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
