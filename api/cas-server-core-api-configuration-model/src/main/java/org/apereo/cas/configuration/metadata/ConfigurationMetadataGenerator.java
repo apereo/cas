@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.metadata;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -158,6 +159,13 @@ public class ConfigurationMetadataGenerator {
                                 val propertyHint = new ValueHint();
                                 propertyHint.setDescription(ExpressionLanguageCapable.class.getName());
                                 propertyHint.setValue(toJson(List.of(ExpressionLanguageCapable.class.getName())));
+                                hint.getValues().add(propertyHint);
+                            }
+
+                            if (f != null && f.isAnnotationPresent(RegularExpressionCapable.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setDescription(RegularExpressionCapable.class.getName());
+                                propertyHint.setValue(toJson(List.of(RegularExpressionCapable.class.getName())));
                                 hint.getValues().add(propertyHint);
                             }
                         }));

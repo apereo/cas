@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -43,6 +44,7 @@ public class ActuatorEndpointProperties implements Serializable {
     /**
      * Required ip addresses.
      */
+    @RegularExpressionCapable
     private List<String> requiredIpAddresses = new ArrayList<>(0);
 
     /**

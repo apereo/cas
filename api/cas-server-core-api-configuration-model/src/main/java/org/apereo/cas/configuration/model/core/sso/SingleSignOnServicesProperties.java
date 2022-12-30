@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.sso;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -46,5 +47,6 @@ public class SingleSignOnServicesProperties implements Serializable {
      * Services that establish a session with CAS typically do so
      * by receiving a service ticket from CAS.
      */
+    @RegularExpressionCapable
     private String requiredServicePattern;
 }
