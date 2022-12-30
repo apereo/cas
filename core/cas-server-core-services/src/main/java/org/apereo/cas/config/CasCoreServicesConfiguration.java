@@ -67,6 +67,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
@@ -113,6 +114,7 @@ public class CasCoreServicesConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,

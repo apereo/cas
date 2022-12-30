@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -30,6 +31,7 @@ public class CasCloudBusEventsConfigEnvironmentConfiguration {
     @ConditionalOnMissingBean(name = "casCloudBusConfigurationEventListener")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public CasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager manager) {
