@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '18'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
-  SCENARIO_REGEX: ".*discovery-profile.*"
+  SCENARIO_REGEX: ".*"
 
 on:
   push:
