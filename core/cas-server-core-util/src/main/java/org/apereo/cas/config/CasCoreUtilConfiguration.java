@@ -128,7 +128,6 @@ public class CasCoreUtilConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
-
         public static BeanPostProcessor casBeanValidationPostProcessor() {
             return new BeanValidationPostProcessor();
         }
@@ -145,7 +144,11 @@ public class CasCoreUtilConfiguration {
         public CasRuntimeModuleLoader casRuntimeModuleLoader() {
             return new DefaultCasRuntimeModuleLoader();
         }
+    }
 
+    @Configuration(value = "CasCoreMessageSanitationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreMessageSanitationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
