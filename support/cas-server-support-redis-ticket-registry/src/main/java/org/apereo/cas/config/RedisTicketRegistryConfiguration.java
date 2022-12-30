@@ -61,6 +61,7 @@ public class RedisTicketRegistryConfiguration {
 
     @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class RedisTicketRegistryCoreConfiguration {
 
         @Bean
@@ -71,7 +72,6 @@ public class RedisTicketRegistryConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageListenerContainer")
-        @Lazy(false)
         public RedisMessageListenerContainer redisTicketRegistryMessageListenerContainer(
             @Qualifier("redisTicketRegistryMessageTopic")
             final ChannelTopic redisTicketRegistryMessageTopic,
@@ -115,7 +115,6 @@ public class RedisTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessagePublisher")
-        @Lazy(false)
         public RedisTicketRegistryMessagePublisher redisTicketRegistryMessagePublisher(
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
