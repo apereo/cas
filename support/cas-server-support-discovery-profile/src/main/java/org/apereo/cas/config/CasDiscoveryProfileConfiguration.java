@@ -47,7 +47,7 @@ public class CasDiscoveryProfileConfiguration {
     public static class DiscoveryProfileCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "casServerProfileRegistrar")
+        @ConditionalOnMissingBean(name = CasServerProfileRegistrar.BEAN_NAME)
         public CasServerProfileRegistrar casServerProfileRegistrar(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -62,19 +62,19 @@ public class CasDiscoveryProfileConfiguration {
         }
     }
 
-//    @Configuration(value = "DiscoveryProfileWebConfiguration", proxyBeanMethods = false)
-//    @EnableConfigurationProperties(CasConfigurationProperties.class)
-//    public static class DiscoveryProfileWebConfiguration {
-//        @Bean
-//        @ConditionalOnAvailableEndpoint
-//        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-//        public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
-//            final CasConfigurationProperties casProperties,
-//            @Qualifier("casServerProfileRegistrar")
-//            final CasServerProfileRegistrar casServerProfileRegistrar) {
-//            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
-//        }
-//    }
+    @Configuration(value = "DiscoveryProfileWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DiscoveryProfileWebConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
+            final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
+            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
+        }
+    }
 
     @Configuration(value = "DiscoveryProfileAttributesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
