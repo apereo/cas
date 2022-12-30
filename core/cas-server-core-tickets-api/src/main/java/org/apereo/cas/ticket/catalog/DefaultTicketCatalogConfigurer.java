@@ -32,10 +32,8 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor
 public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
     protected final CasConfigurationProperties casProperties;
-
-    private final ObjectProvider<CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
-
     protected final ConfigurableApplicationContext applicationContext;
+    private final ObjectProvider<CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
 
     @Override
     public final void configureTicketCatalog(final TicketCatalog plan,
