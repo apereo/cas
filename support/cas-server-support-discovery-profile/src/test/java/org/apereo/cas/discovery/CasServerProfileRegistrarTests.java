@@ -69,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class CasServerProfileRegistrarTests {
     @Autowired
-    @Qualifier("casServerProfileRegistrar")
+    @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
     private CasServerProfileRegistrar casServerProfileRegistrar;
 
     @Autowired

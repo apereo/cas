@@ -8,6 +8,12 @@ package org.apereo.cas.discovery;
  */
 @FunctionalInterface
 public interface CasServerProfileRegistrar {
+
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "casServerProfileRegistrar";
+    
     /**
      * Gets profile.
      *
