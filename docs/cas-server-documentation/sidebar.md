@@ -627,11 +627,13 @@ layout: null
 
 * [Webflow Management](#webflowmgmt)
     *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization.html)
+    *   [AutoConfiguration](/cas/{{ version }}/webflow/Webflow-Customization-AutoConfiguration.html)
     *   [Custom Properties](/cas/{{ version }}/webflow/Webflow-Customization-CustomProperties.html)
     *   [Error Handling](/cas/{{ version }}/webflow/Webflow-Customization-Exceptions.html)
     *   [Extending Webflow](/cas/{{ version }}/webflow/Webflow-Customization-Extensions.html)
     *   [Dynamic Decorations](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html)
     *   [Session Persistence](/cas/{{ version }}/webflow/Webflow-Customization-Sessions.html)
+    *   [SSO & Services](/cas/{{ version }}/webflow/Webflow-Customization-Services.html)
 
 * [High Availability](#highavailability)
     *   [Overview](/cas/{{ version }}/high_availability/High-Availability-Guide.html)
