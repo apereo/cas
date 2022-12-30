@@ -55,6 +55,23 @@ test coverage of the CAS codebase is approximately `94%`.
 ### Authentication Geolocation via Maxmind
 
 Geolocating authentication requests via Maxmind can now support [Maxmind Web Services](../authentication/GeoTracking-Authentication-Requests.html).
+ 
+### Lazy Initialization
+ 
+Application components that are bootstrapped by CAS or other third-party libraries are now created lazily by default. In a nutshell, this means
+that application components (and all other components and turtles that depend on those) will only be created once and when they are needed. This means
+that lazy initialization may reduce the number of beans created when CAS is starting up which in turn improves the startup time. Initial test results
+show that startup improvements are anywhere between `8` to `10` seconds, depending on the features and modules included in the final CAS build. At the same 
+time, certain issues might be *masked* and may only be revealed at runtime since component creation is deferred. HTTP requests may also
+see a small *initial* delay as the responsible component is created on-demand (but only once; this is important) to respond to the request. To accomodate 
+specific use cases, certain components in CAS are also explicitly marked to always be created eagerly and skip laziness. 
+
+If you encounter component initialization issues, deadlocks and long wait-times during CAS startup, you may of course disable this behavior via the 
+following setting and revert back to the previous behavior:
+
+```properties
+spring.main.lazy-initialization=false
+```
 
 ## Other Stuff
 
