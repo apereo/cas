@@ -35,6 +35,6 @@ public class CasCoreTicketCatalogConfiguration {
         final CasConfigurationProperties casProperties,
         final ObjectProvider<CasTicketCatalogConfigurationValuesProvider> valuesProvider,
         final ConfigurableApplicationContext applicationContext) {
-        return new DefaultTicketCatalogConfigurer(casProperties, valuesProvider, applicationContext);
+        return new DefaultTicketCatalogConfigurer(casProperties, applicationContext, valuesProvider);
     }
 }
