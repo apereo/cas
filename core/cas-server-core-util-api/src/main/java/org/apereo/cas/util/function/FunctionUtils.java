@@ -288,7 +288,6 @@ public class FunctionUtils {
                 return function.apply(t);
             } catch (final Throwable e) {
                 try {
-                    LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     throw new IllegalArgumentException(ex.getMessage());
@@ -312,7 +311,6 @@ public class FunctionUtils {
                 function.accept(value);
             } catch (final Throwable e) {
                 try {
-                    LoggingUtils.warn(LOGGER, e);
                     errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     throw new IllegalArgumentException(ex);
@@ -367,7 +365,6 @@ public class FunctionUtils {
                 return function.get();
             } catch (final Throwable e) {
                 try {
-                    LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     if (ex instanceof RuntimeException) {
