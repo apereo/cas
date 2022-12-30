@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.LinkedHashSet;
@@ -38,58 +39,72 @@ import java.util.Set;
 @AutoConfiguration
 public class CasDiscoveryProfileConfiguration {
 
-    private static Set<String> transformAttributes(final List<String> attributes) {
-        val attributeSet = new LinkedHashSet<String>(attributes.size());
-        CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes).values().forEach(v -> attributeSet.add(v.toString()));
-        return attributeSet;
+    @Configuration(value = "DiscoveryProfileCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DiscoveryProfileCoreConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasServerProfileRegistrar casServerProfileRegistrar(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("builtClients")
+            final ObjectProvider<Clients> builtClients,
+            @Qualifier("discoveryProfileAvailableAttributes")
+            final BeanContainer<String> discoveryProfileAvailableAttributes,
+            @Qualifier("authenticationEventExecutionPlan")
+            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            return new CasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
+                discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan);
+        }
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CasServerProfileRegistrar casServerProfileRegistrar(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("builtClients")
-        final ObjectProvider<Clients> builtClients,
-        @Qualifier("discoveryProfileAvailableAttributes")
-        final BeanContainer<String> discoveryProfileAvailableAttributes,
-        @Qualifier("authenticationEventExecutionPlan")
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
-        return new CasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
-            discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan);
+    @Configuration(value = "DiscoveryProfileWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DiscoveryProfileWebConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casServerProfileRegistrar")
+            final CasServerProfileRegistrar casServerProfileRegistrar) {
+            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
+        }
     }
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("casServerProfileRegistrar")
-        final CasServerProfileRegistrar casServerProfileRegistrar) {
-        return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
+    @Configuration(value = "DiscoveryProfileAttributesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DiscoveryProfileAttributesConfiguration {
+        private static Set<String> transformAttributes(final List<String> attributes) {
+            val attributeSet = new LinkedHashSet<String>(attributes.size());
+            CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes).values().forEach(v -> attributeSet.add(v.toString()));
+            return attributeSet;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public BeanContainer<String> discoveryProfileAvailableAttributes(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final IPersonAttributeDao attributeRepository) {
+            val attributes = new LinkedHashSet<String>(0);
+            val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
+            if (possibleUserAttributeNames != null) {
+                attributes.addAll(possibleUserAttributeNames);
+            }
+            val ldapProps = casProperties.getAuthn().getLdap();
+            if (ldapProps != null) {
+                ldapProps.forEach(ldap -> {
+                    attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
+                    attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
+                });
+            }
+            val jdbcProps = casProperties.getAuthn().getJdbc();
+            if (jdbcProps != null) {
+                jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
+            }
+            return BeanContainer.of(attributes);
+        }
     }
 
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public BeanContainer<String> discoveryProfileAvailableAttributes(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
-        val attributes = new LinkedHashSet<String>(0);
-        val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
-        if (possibleUserAttributeNames != null) {
-            attributes.addAll(possibleUserAttributeNames);
-        }
-        val ldapProps = casProperties.getAuthn().getLdap();
-        if (ldapProps != null) {
-            ldapProps.forEach(ldap -> {
-                attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
-                attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
-            });
-        }
-        val jdbcProps = casProperties.getAuthn().getJdbc();
-        if (jdbcProps != null) {
-            jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
-        }
-        return BeanContainer.of(attributes);
-    }
+
 }
