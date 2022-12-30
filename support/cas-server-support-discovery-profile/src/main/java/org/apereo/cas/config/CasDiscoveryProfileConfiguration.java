@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
+import org.apereo.cas.discovery.DefaultCasServerProfileRegistrar;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -18,8 +19,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -44,32 +47,34 @@ public class CasDiscoveryProfileConfiguration {
     public static class DiscoveryProfileCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casServerProfileRegistrar")
         public CasServerProfileRegistrar casServerProfileRegistrar(
             final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("builtClients")
             final ObjectProvider<Clients> builtClients,
             @Qualifier("discoveryProfileAvailableAttributes")
             final BeanContainer<String> discoveryProfileAvailableAttributes,
             @Qualifier("authenticationEventExecutionPlan")
             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
-            return new CasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
-                discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan);
+            return new DefaultCasServerProfileRegistrar(casProperties, builtClients.getIfAvailable(),
+                discoveryProfileAvailableAttributes.toSet(), authenticationEventExecutionPlan, applicationContext);
         }
     }
 
-    @Configuration(value = "DiscoveryProfileWebConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class DiscoveryProfileWebConfiguration {
-        @Bean
-        @ConditionalOnAvailableEndpoint
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("casServerProfileRegistrar")
-            final CasServerProfileRegistrar casServerProfileRegistrar) {
-            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
-        }
-    }
+//    @Configuration(value = "DiscoveryProfileWebConfiguration", proxyBeanMethods = false)
+//    @EnableConfigurationProperties(CasConfigurationProperties.class)
+//    public static class DiscoveryProfileWebConfiguration {
+//        @Bean
+//        @ConditionalOnAvailableEndpoint
+//        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+//        public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
+//            final CasConfigurationProperties casProperties,
+//            @Qualifier("casServerProfileRegistrar")
+//            final CasServerProfileRegistrar casServerProfileRegistrar) {
+//            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
+//        }
+//    }
 
     @Configuration(value = "DiscoveryProfileAttributesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -82,15 +87,20 @@ public class CasDiscoveryProfileConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "discoveryProfileAvailableAttributes")
         public BeanContainer<String> discoveryProfileAvailableAttributes(
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final IPersonAttributeDao attributeRepository) {
+            final ObjectProvider<IPersonAttributeDao> attributeRepository) {
+
             val attributes = new LinkedHashSet<String>(0);
-            val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
-            if (possibleUserAttributeNames != null) {
-                attributes.addAll(possibleUserAttributeNames);
-            }
+            attributeRepository.ifAvailable(repository -> {
+                val possibleUserAttributeNames = repository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
+                if (possibleUserAttributeNames != null) {
+                    attributes.addAll(possibleUserAttributeNames);
+                }
+            });
+            
             val ldapProps = casProperties.getAuthn().getLdap();
             if (ldapProps != null) {
                 ldapProps.forEach(ldap -> {
