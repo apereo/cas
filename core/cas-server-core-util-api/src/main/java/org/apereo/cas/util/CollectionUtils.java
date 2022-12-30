@@ -433,7 +433,7 @@ public class CollectionUtils {
         val list = new ArrayList<T>();
         if (source != null) {
             if (source instanceof Collection) {
-                val it = ((Collection) source).iterator();
+                val it = ((Iterable) source).iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
@@ -442,7 +442,7 @@ public class CollectionUtils {
                     list.add(source);
                 } else {
                     val elements = Arrays.stream((Object[]) source).toList();
-                    list.addAll((List) elements);
+                    list.addAll((Collection<? extends T>) elements);
                 }
             } else {
                 list.add(source);

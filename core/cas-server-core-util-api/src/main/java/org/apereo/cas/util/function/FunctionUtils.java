@@ -87,7 +87,7 @@ public class FunctionUtils {
      * @return the consumer
      */
     public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction) {
-        return doIf(condition, trueFunction, t -> {
+        return doIf(condition, trueFunction, __ -> {
         });
     }
 

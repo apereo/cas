@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +114,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            (Collection<RegisteredService>) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -135,7 +136,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            (Collection<RegisteredService>) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -156,7 +157,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(SAML_AUTHN_REQUEST2)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            (Collection<RegisteredService>) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -177,7 +178,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            (Collection<RegisteredService>) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -198,7 +199,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlIdPConstants.PROVIDER_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            (Collection<RegisteredService>) candidateServices, service);
         assertNotNull(result);
     }
 
