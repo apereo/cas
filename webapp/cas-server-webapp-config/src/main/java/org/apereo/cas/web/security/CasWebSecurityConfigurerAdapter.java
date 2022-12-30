@@ -299,15 +299,18 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
                 val granted = properties.getRequiredIpAddresses()
                     .stream()
-                    .anyMatch(addr -> FunctionUtils.doAndHandle(() -> {
-                        val ipAddressMatcher = new IpAddressMatcher(addr);
-                        LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
-                        return ipAddressMatcher.matches(remoteAddr);
-                    }, e -> {
-                        val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
-                        LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
-                        return matcher.find();
-                    }).get());
+                    .anyMatch(addr -> {
+                        try {
+                            val ipAddressMatcher = new IpAddressMatcher(addr);
+                            LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
+                            return ipAddressMatcher.matches(remoteAddr);
+                        } catch (final IllegalArgumentException e) {
+                            LOGGER.trace("Falling back to regex match. Couldn't treat [{}] as an IP address or netmask: [{}]", addr, e.getMessage());
+                            val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
+                            LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
+                            return matcher.find();
+                        }
+                    });
                 if (!granted) {
                     LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]",
                         properties.getRequiredIpAddresses(), remoteAddr);
