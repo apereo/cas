@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -95,7 +96,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
 
-        assertFalse(authenticationHandler.supports((SpnegoCredential) null));
+        assertFalse(authenticationHandler.supports((Credential) null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
         assertFalse(authenticationHandler.supports(new UsernamePasswordCredential()));
     }

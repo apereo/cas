@@ -23,6 +23,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.UUID;
@@ -126,7 +127,7 @@ public class OidcAuthorizeEndpointControllerTests {
             val modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
             val view = modelAndView.getView();
             assertTrue(view instanceof RedirectView);
-            val url = ((RedirectView) view).getUrl();
+            val url = ((AbstractUrlBasedView) view).getUrl();
             assertTrue(url.startsWith("https://oauth.example.org/"));
 
             val fragment = new URIBuilder(url).getFragment();
