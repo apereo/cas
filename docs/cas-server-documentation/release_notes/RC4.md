@@ -49,7 +49,7 @@ can now be stored in relational databases.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `378` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `380` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Authentication Geolocation via Maxmind
@@ -77,6 +77,7 @@ spring.main.lazy-initialization=false
 
 - The session cookie (typically and by default named `DISSESSION`) used for distributed session management can now be signed and encrypted in 
   scenarios where CAS is acting as an OAUTH or OpenID Connect provider, or is delegating authentication to an external identity provider.
+- Configuration settings in the CAS documentation are now able to automatically indicate whether they support regular expression patterns as their value.
 
 ## Library Upgrades
 
