@@ -87,3 +87,5 @@ spring.main.lazy-initialization=false
 - Spring
 - Spring Boot
 - Mockito
+- Kryo
+- ErrorProne
