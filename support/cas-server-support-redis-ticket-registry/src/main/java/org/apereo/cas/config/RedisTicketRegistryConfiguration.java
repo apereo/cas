@@ -72,7 +72,7 @@ public class RedisTicketRegistryConfiguration {
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageListenerContainer")
         public RedisMessageListenerContainer redisTicketRegistryMessageListenerContainer(
             @Qualifier("redisTicketRegistryMessageTopic")
-            final ChannelTopic redisTicketRegistryMessageTopic,
+            final Topic redisTicketRegistryMessageTopic,
             @Qualifier("redisTicketRegistryMessageListener")
             final MessageListener redisTicketRegistryMessageListener,
             @Qualifier("redisTicketConnectionFactory")
