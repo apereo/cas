@@ -85,8 +85,8 @@ public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
             val properties = ticketDefinition.getProperties();
             properties.setStorageName(provider.getServiceTicketStorageName().apply(casProperties));
             properties.setStorageTimeout(provider.getServiceTicketStorageTimeout().apply(applicationContext));
-            registerTicketDefinition(plan, ticketDefinition);
         });
+        registerTicketDefinition(plan, ticketDefinition);
     }
 
     protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition ticketDefinition) {
@@ -95,8 +95,8 @@ public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
             properties.setCascadeRemovals(provider.getTicketGrantingTicketCascadeRemovals().apply(applicationContext));
             properties.setStorageName(provider.getTicketGrantingTicketStorageName().apply(casProperties));
             properties.setStorageTimeout(provider.getTicketGrantingTicketStorageTimeout().apply(applicationContext));
-            registerTicketDefinition(plan, ticketDefinition);
         });
+        registerTicketDefinition(plan, ticketDefinition);
     }
 
     protected void buildAndRegisterTransientSessionTicketDefinition(final TicketCatalog plan, final TicketDefinition ticketDefinition) {
@@ -106,7 +106,7 @@ public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
             properties.setExcludeFromCascade(true);
             properties.setStorageName(provider.getTransientSessionStorageName().apply(casProperties));
             properties.setStorageTimeout(provider.getTransientSessionStorageTimeout().apply(applicationContext));
-            registerTicketDefinition(plan, ticketDefinition);
         });
+        registerTicketDefinition(plan, ticketDefinition);
     }
 }
