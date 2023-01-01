@@ -90,3 +90,5 @@ spring.main.lazy-initialization=false
 - Mockito
 - Kryo
 - ErrorProne
+- Checkstyle
+- JavaParser
