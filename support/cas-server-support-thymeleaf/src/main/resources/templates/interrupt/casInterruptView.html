@@ -16,7 +16,7 @@
 
         if (autoRedirect && !emptyLinks) {
 
-            var link = /*[[${interrupt.links.values().iterator().next()}]]*/;
+            var link = /*[[${interrupt.links.values().toArray()[0]}]]*/;
             var redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/;
 
             setTimeout(function () {
