@@ -5,11 +5,11 @@ import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointPropertie
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
+import org.apereo.cas.web.security.authentication.IpAddressAuthorizationManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +26,12 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
-import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -166,9 +163,10 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
         protocolEndpointWebSecurityConfigurers.forEach(cfg -> cfg.configure(http));
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
-        endpoints.forEach(Unchecked.biConsumer((key, v) -> {
+        endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
             val endpoint = EndpointRequest.to(key);
-            v.getAccess().forEach(Unchecked.consumer(access -> configureEndpointAccess(http, requests, access, v, endpoint)));
+            endpointProps.getAccess().forEach(Unchecked.consumer(
+                access -> configureEndpointAccess(http, requests, access, endpointProps, endpoint)));
         }));
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
@@ -190,12 +188,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         return http;
     }
 
-    /**
-     * Configure endpoint access to deny undefined.
-     *
-     * @param http     the http
-     * @param requests the requests
-     */
+
     protected void configureEndpointAccessToDenyUndefined(
         final HttpSecurity http,
         final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests) {
@@ -215,11 +208,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         });
     }
 
-    /**
-     * Configure endpoint access for static resources.
-     *
-     * @param requests the requests
-     */
     protected void configureEndpointAccessForStaticResources(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests) {
         requests
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
@@ -231,12 +219,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .permitAll();
     }
 
-    /**
-     * Configure endpoint access by form login.
-     *
-     * @param http the http
-     * @throws Exception the exception
-     */
     protected void configureEndpointAccessByFormLogin(final HttpSecurity http) throws Exception {
         if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
             http.formLogin().loginPage(ENDPOINT_URL_ADMIN_FORM_LOGIN).permitAll();
@@ -245,16 +227,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         }
     }
 
-    /**
-     * Configure endpoint access.
-     *
-     * @param httpSecurity the httpSecurity
-     * @param requests     the requests
-     * @param access       the access
-     * @param properties   the properties
-     * @param endpoint     the endpoint
-     * @throws Exception the exception
-     */
     protected void configureEndpointAccess(final HttpSecurity httpSecurity,
                                            final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests,
                                            final ActuatorEndpointProperties.EndpointAccessLevel access,
@@ -292,34 +264,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
                                                       final EndpointRequest.EndpointRequestMatcher endpoint) {
         requests
             .requestMatchers(endpoint)
-            .access((authentication, context) -> {
-                val remoteAddr = StringUtils.defaultIfBlank(
-                    context.getRequest().getHeader(casProperties.getAudit().getEngine().getAlternateClientAddrHeaderName()),
-                    context.getRequest().getRemoteAddr());
-
-                val granted = properties.getRequiredIpAddresses()
-                    .stream()
-                        .anyMatch(addr -> FunctionUtils.doAndHandle(() -> {
-                            try {
-                                val ipAddressMatcher = new IpAddressMatcher(addr);
-                                LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, addr);
-                                return ipAddressMatcher.matches(remoteAddr);
-                            } catch (final IllegalArgumentException e) {
-                                LOGGER.trace("Falling back to regex match. Couldn't treat [{}] as an IP address or netmask: [{}]", addr, e.getMessage());
-                                val matcher = RegexUtils.createPattern(addr, Pattern.CASE_INSENSITIVE).matcher(remoteAddr);
-                                LOGGER.trace("Attempting to match [{}] against [{}] as a regular expression", remoteAddr, addr);
-                                return matcher.find();
-                            }
-                        }, e -> {
-                            LOGGER.warn("Error evaluating address [{}]: [{}]", addr, e.getMessage());
-                            return false;
-                        }).get());
-                if (!granted) {
-                    LOGGER.warn("Provided regular expression or IP/netmask [{}] does not match [{}]",
-                        properties.getRequiredIpAddresses(), remoteAddr);
-                }
-                return new AuthorizationDecision(granted);
-            });
+            .access(new IpAddressAuthorizationManager(casProperties, properties));
     }
 
     protected void configureEndpointAccessAuthenticated(
