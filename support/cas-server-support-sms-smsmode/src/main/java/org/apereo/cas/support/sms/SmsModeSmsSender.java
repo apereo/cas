@@ -44,6 +44,7 @@ public record SmsModeSmsSender(SmsModeProperties properties) implements SmsSende
             parameters.put("from", from);
             parameters.put(properties.getToAttribute(), to);
             parameters.put(properties.getMessageAttribute(), message);
+            parameters.put("accessToken", properties.getAccessToken());
 
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.TEXT_PLAIN_VALUE);
             headers.putAll(properties.getHeaders());
