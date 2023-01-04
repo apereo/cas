@@ -3,7 +3,6 @@ package org.apereo.cas.web.security.authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

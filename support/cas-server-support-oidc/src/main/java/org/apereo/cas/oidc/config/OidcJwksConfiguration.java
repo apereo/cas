@@ -70,6 +70,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable oidcJsonWebKeystoreRotationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
@@ -84,6 +85,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRevocationScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable oidcJsonWebKeystoreRevocationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")

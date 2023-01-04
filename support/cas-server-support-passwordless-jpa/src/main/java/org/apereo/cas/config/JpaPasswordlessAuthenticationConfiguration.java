@@ -27,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -130,6 +131,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "jpaPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Cleanable jpaPasswordlessAuthenticationTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PasswordlessTokenRepository.BEAN_NAME)

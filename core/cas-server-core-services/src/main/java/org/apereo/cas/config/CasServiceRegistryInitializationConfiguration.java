@@ -94,6 +94,7 @@ public class CasServiceRegistryInitializationConfiguration {
     public static class CasServiceRegistryInitializationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public ServiceRegistryInitializer serviceRegistryInitializer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("embeddedJsonServiceRegistry") final ServiceRegistry embeddedJsonServiceRegistry,
