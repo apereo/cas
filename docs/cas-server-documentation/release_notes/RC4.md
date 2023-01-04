@@ -66,8 +66,9 @@ time, certain issues might be *masked* and may only be revealed at runtime since
 see a small *initial* delay as the responsible component is created on-demand (but only once; this is important) to respond to the request. To accomodate 
 specific use cases, certain components in CAS are also explicitly marked to always be created eagerly and skip laziness. 
 
-If you encounter component initialization issues, deadlocks and long wait-times during CAS startup, you may of course disable this behavior via the 
-following setting and revert back to the previous behavior:
+If you encounter component initialization issues, deadlocks and long wait-times during CAS startup, or if you notice that background jobs, threads, event 
+listeners or cleaners are not quite starting doing their job, you may of course disable this behavior via the following setting and revert back to the 
+previous behavior:
 
 ```properties
 spring.main.lazy-initialization=false
