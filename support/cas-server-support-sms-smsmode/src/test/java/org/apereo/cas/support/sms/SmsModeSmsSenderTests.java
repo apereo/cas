@@ -42,17 +42,17 @@ public class SmsModeSmsSenderTests {
         assertNotNull(smsSender);
         assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
         val server = HttpServer.create(new InetSocketAddress(8099), 0);
-        server.createContext("/", new SmsModeHandler());
-        server.setExecutor(null);
-        server.start();
         try {
+            server.createContext("/", new SmsModeHandler());
+            server.setExecutor(null);
+            server.start();
             assertTrue(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
         } finally {
             server.stop(5);
         }
     }
 
-    static class SmsModeHandler implements HttpHandler {
+    private static class SmsModeHandler implements HttpHandler {
         @Override
         public void handle(final HttpExchange exchange) throws IOException {
             val uri = exchange.getRequestURI().toString();
