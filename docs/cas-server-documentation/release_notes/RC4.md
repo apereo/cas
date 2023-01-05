@@ -67,7 +67,7 @@ see a small *initial* delay as the responsible component is created on-demand (b
 specific use cases, certain components in CAS are also explicitly marked to always be created eagerly and skip laziness. 
 
 If you encounter component initialization issues, deadlocks and long wait-times during CAS startup, or if you notice that background jobs, threads, event 
-listeners or cleaners are not quite starting doing their job, you may of course disable this behavior via the following setting and revert back to the 
+listeners or cleaners are not doing their job, you may of course disable this behavior via the following setting and revert back to the 
 previous behavior:
 
 ```properties
