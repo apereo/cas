@@ -10,8 +10,6 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link SmsModeProperties}.
@@ -36,26 +34,8 @@ public class SmsModeProperties implements Serializable {
     private String accessToken;
 
     /**
-     * Query attribute name for the message.
-     */
-    private String messageAttribute = "message";
-
-    /**
-     * Query attribute name for the to field.
-     */
-    private String toAttribute = "numero";
-
-    /**
-     * URL to contact and send messages (GET only).
+     * URL to contact and send messages (POST only).
      */
     @RequiredProperty
-    private String url = "https://api.smsmode.com/http/1.6/sendSMS.do";
-
-    /**
-     * Headers, defined as a Map, to include in the request when making the HTTP call.
-     * Will overwrite any header that CAS is pre-defined to
-     * send and include in the request. Key in the map should be the header name
-     * and the value in the map should be the header value.
-     */
-    private Map<String, String> headers = new HashMap<>();
+    private String url = "https://rest.smsmode.com/sms/v1/messages";
 }
