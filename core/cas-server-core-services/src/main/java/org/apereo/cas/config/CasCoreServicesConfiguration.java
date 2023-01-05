@@ -335,6 +335,7 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesSchedulingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable servicesManagerScheduledLoader(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryExecutionPlan") final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
