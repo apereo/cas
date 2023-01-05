@@ -2,10 +2,8 @@ package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.SmsModeSmsConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.MockWebServer;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,12 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
+import org.springframework.core.io.ByteArrayResource;
 
 import static java.nio.charset.StandardCharsets.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link SmsModeSmsSenderTests}.
@@ -27,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    SmsModeSmsConfiguration.class
+        RefreshAutoConfiguration.class,
+        SmsModeSmsConfiguration.class
 },
-    properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
+        properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
 @Tag("SMS")
 public class SmsModeSmsSenderTests {
     @Autowired
@@ -38,32 +35,13 @@ public class SmsModeSmsSenderTests {
     private SmsSender smsSender;
 
     @Test
-    public void verifyOperation() throws IOException {
+    public void verifyOperation() {
         assertNotNull(smsSender);
         assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
-        val server = HttpServer.create(new InetSocketAddress(8099), 0);
-        try {
-            server.createContext("/", new SmsModeHandler());
-            server.setExecutor(null);
-            server.start();
+        try (val webServer = new MockWebServer(8099,
+                new ByteArrayResource("0".getBytes(UTF_8), "Output"), OK)) {
+            webServer.start();
             assertTrue(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
-        } finally {
-            server.stop(5);
-        }
-    }
-
-    private static class SmsModeHandler implements HttpHandler {
-        @Override
-        public void handle(final HttpExchange exchange) throws IOException {
-            val uri = exchange.getRequestURI().toString();
-            var response = "0";
-            if (!uri.contains("accessToken")) {
-                response = "35";
-            }
-            exchange.sendResponseHeaders(200, response.length());
-            val os = exchange.getResponseBody();
-            os.write(response.getBytes(UTF_8));
-            os.close();
         }
     }
 }
