@@ -92,6 +92,24 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
+    public void verifyInlineGroovyOperation() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val cacheMgr = new GroovyScriptResourceCacheManager();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(appCtx);
+        val props = new EmailProperties().setText("groovy { key + ', ' + key2 }");
+        val results = EmailMessageBodyBuilder.builder()
+            .properties(props)
+            .locale(Optional.of(Locale.CANADA))
+            .parameters(CollectionUtils.wrap("key", "Hello"))
+            .build()
+            .addParameter("key2", "World");
+        val result = results.get();
+        assertEquals("Hello, World", result);
+    }
+
+    @Test
     public void verifyGroovyOperation() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
