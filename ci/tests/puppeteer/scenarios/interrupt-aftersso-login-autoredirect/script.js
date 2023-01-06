@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
+const assert = require('assert');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -13,9 +14,9 @@ const cas = require('../../cas.js');
     await cas.assertTextContent(page, "#interruptMessage", "We interrupted your login");
     await cas.assertCookie(page);
     await cas.assertVisibility(page, '#interruptLinks');
-    await page.waitForTimeout(1000);
-    await cas.click(page, "#casapplication");
-    await page.waitForNavigation();
-    await cas.assertTicketParameter(page);
+    await page.waitForTimeout(3000);
+    const url = `${page.url()}`;
+    console.log(`Page URL: ${url}`);
+    assert(url.includes("https://www.google.com"));
     await browser.close();
 })();
