@@ -99,7 +99,6 @@ public class DistributedJEESessionStore implements SessionStore {
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
             FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(ticketId));
-
             val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());
             LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);

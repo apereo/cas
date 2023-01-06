@@ -79,6 +79,8 @@ spring.main.lazy-initialization=false
 - The session cookie (typically and by default named `DISSESSION`) used for distributed session management can now be signed and encrypted in 
   scenarios where CAS is acting as an OAUTH or OpenID Connect provider, or is delegating authentication to an external identity provider.
 - Configuration settings in the CAS documentation are now able to automatically indicate whether they support regular expression patterns as their value.
+- Integration with [SmsMode](../notifications/SMS-Messaging-Configuration-SmsMode.html) is now upgraded to use their most recent APIs. 
+- Small enhancements to distributed session management to ensure orphan `DISSESSION` cookies are not generated when locating session identifiers.
 
 ## Library Upgrades
 
