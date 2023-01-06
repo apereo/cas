@@ -93,6 +93,14 @@ The following parameters are passed to the script:
 
 The outcome of the script should be message body text.
 
+Simiarly, the email message body may be defined using an inline groovy script. In this case the configuration setting should be defined as:
+
+```groovy
+groovy { return 'This is your email message!' }
+```
+
+The script bindings prior to execution are prepared with a collection of parameters appropriate for that feature.   
+
 {% endtab %}
 
 {% endtabs %}
