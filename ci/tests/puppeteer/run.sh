@@ -112,7 +112,7 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hbdo)
+  --hbdo|--hbod)
     export HEADLESS="true"
     REBUILD="true"
     DEBUG="true"
