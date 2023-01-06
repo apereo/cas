@@ -182,27 +182,28 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         public SAMLTokenProvider transportSamlTokenProvider(final CasConfigurationProperties casProperties,
                                                             @Qualifier("securityTokenServiceRealms") final Map<String, RealmProperties> securityTokenServiceRealms) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-            val s = new DefaultSubjectProvider();
+            val subProvider = new DefaultSubjectProvider();
 
-            FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(), __ -> s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
+            FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(),
+                __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
-                case "email" -> s.setSubjectNameIDFormat(NameIDType.EMAIL);
-                case "entity" -> s.setSubjectNameIDFormat(NameIDType.ENTITY);
-                case "transient" -> s.setSubjectNameIDFormat(NameIDType.TRANSIENT);
-                case "persistent" -> s.setSubjectNameIDFormat(NameIDType.PERSISTENT);
-                default -> s.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
+                case "email" -> subProvider.setSubjectNameIDFormat(NameIDType.EMAIL);
+                case "entity" -> subProvider.setSubjectNameIDFormat(NameIDType.ENTITY);
+                case "transient" -> subProvider.setSubjectNameIDFormat(NameIDType.TRANSIENT);
+                case "persistent" -> subProvider.setSubjectNameIDFormat(NameIDType.PERSISTENT);
+                default -> subProvider.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
             }
-            val c = new DefaultConditionsProvider();
-            c.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
-            c.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
-            c.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
-            c.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
-            c.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
+            val condProvider = new DefaultConditionsProvider();
+            condProvider.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
+            condProvider.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
+            condProvider.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
+            condProvider.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
+            condProvider.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
             val provider = new SamlTokenProvider();
             provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
             provider.setRealmMap(securityTokenServiceRealms);
-            provider.setConditionsProvider(c);
-            provider.setSubjectProvider(s);
+            provider.setConditionsProvider(condProvider);
+            provider.setSubjectProvider(subProvider);
             provider.setSignToken(wsfed.isSignTokens());
             return provider;
         }
