@@ -157,6 +157,7 @@ while (( "$#" )); do
                 ;;
             consent)
                 task+="testConsent "
+                task+="testConsent "
                 ;;
             duo|duosecurity)
                 task+="testDuoSecurity "
@@ -236,6 +237,15 @@ while (( "$#" )); do
                 ;;
             groovy|script)
                 task+="testGroovy "
+                ;;
+            groovyauthentication)
+                task+="testGroovyAuthentication "
+                ;;
+            groovymfa)
+                task+="testGroovyMfa "
+                ;;
+            groovyservices)
+                task+="testGroovyServices "
                 ;;
             hibernate)
                 task+="testHibernate "
