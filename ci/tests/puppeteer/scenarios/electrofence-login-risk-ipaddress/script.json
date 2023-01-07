@@ -1,5 +1,5 @@
 {
-  "dependencies": "events,electrofence,geolocation",
+  "dependencies": "events-memory,electrofence,geolocation",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

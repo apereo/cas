@@ -82,7 +82,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @param resourceOperatedUpon - resource operated on.
      * @return - the audit log
      */
-    @WriteOperation(produces = {"application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @WriteOperation(produces = {MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Provide a report of the audit log. Each filter other than `interval` can accept a regular expression to match against.",
         parameters = {
             @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"),
