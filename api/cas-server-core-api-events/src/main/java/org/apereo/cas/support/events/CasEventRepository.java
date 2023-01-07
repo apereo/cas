@@ -27,6 +27,11 @@ public interface CasEventRepository {
     }
 
     /**
+     * Remove all.
+     */
+    void removeAll();
+
+    /**
      * Save.
      *
      * @param event the event
