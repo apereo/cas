@@ -124,6 +124,9 @@ public class CasEventsReportEndpointTests {
 
     @Test
     public void verifyBulkImportAsZip() throws Exception {
+        val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
+        endpoint.deleteAllEvents();
+        
         val request = new MockHttpServletRequest();
         request.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         try (val out = new ByteArrayOutputStream(2048);
@@ -148,7 +151,6 @@ public class CasEventsReportEndpointTests {
             zipStream.closeEntry();
             request.setContent(out.toByteArray());
         }
-        val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         assertEquals(HttpStatus.OK, endpoint.uploadEvents(request).getStatusCode());
     }
 
@@ -163,6 +165,11 @@ public class CasEventsReportEndpointTests {
                 public CasEvent saveInternal(final CasEvent event) {
                     events.add(event);
                     return event;
+                }
+
+                @Override
+                public void removeAll() {
+                    events.clear();
                 }
 
                 @Override

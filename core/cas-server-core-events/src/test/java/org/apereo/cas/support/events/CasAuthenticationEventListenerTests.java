@@ -141,6 +141,11 @@ public class CasAuthenticationEventListenerTests {
                 }
 
                 @Override
+                public void removeAll() {
+                    events.clear();
+                }
+
+                @Override
                 public Stream<CasEvent> load() {
                     return events.stream();
                 }
