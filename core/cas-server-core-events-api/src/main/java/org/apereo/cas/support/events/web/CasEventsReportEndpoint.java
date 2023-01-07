@@ -16,6 +16,7 @@ import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEn
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +26,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
@@ -49,6 +49,19 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
+     * Delete all events response entity.
+     *
+     * @return the response entity
+     */
+    @DeleteMapping
+    @Operation(summary = "Delete all CAS events in the event repository")
+    public ResponseEntity deleteAllEvents() {
+        val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
+        eventRepository.removeAll();
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * Collect CAS events.
      *
      * @return the collection
@@ -62,12 +75,13 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
     })
     @Operation(summary = "Provide a report of CAS events in the event repository",
         parameters = @Parameter(name = "limit", required = false))
-    public List<? extends CasEvent> events(@RequestParam(required = false, defaultValue = "1000") final int limit) {
+    public ResponseEntity events(@RequestParam(required = false, defaultValue = "1000") final int limit) throws Exception {
         val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
-        return eventRepository.load()
+        val results = eventRepository.load()
             .sorted(Comparator.comparingLong(CasEvent::getTimestamp).reversed())
             .limit(limit)
             .collect(Collectors.toList());
+        return ResponseEntity.ok(MAPPER.writeValueAsString(results));
     }
 
     /**
