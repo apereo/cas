@@ -91,7 +91,6 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createRedirectToInterruptLinkState(final Flow flow) {
         val endState = createEndState(flow, CasWebflowConstants.STATE_ID_REDIRECT_INTERRUPT_LINK);
-        endState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT));
         val expression = createExpression("requestParameters.link");
         endState.getEntryActionList().add(new ExternalRedirectAction(expression));
     }
