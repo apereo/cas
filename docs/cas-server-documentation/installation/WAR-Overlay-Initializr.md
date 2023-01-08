@@ -51,13 +51,13 @@ sure you have `curl`, `http` and/or [jq](https://stedolan.github.io/jq/) install
 The [CAS Initializr][initializr] can be invoked using curl to generate different types of overlay projects.
 The project selection is indicated using a `type` parameter. The following types are supported:
 
-| Type                           | Description                                                                                                                 |
-|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `cas-overlay`                  | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).                                      |
-| `cas-bootadmin-server-overlay` | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).       |
-| `cas-config-server-overlay`    | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html). |
-| `cas-discovery-server-overlay` | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).            |
-| `cas-management-overlay`       | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).          |
+| Type                           | Description                                                                                                     | Template Repository                                                        |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| `cas-overlay`                  | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).                          | [See this repository](https://github.com/apereo/cas-overlay-template).     |
+| `cas-bootadmin-server-overlay` | WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).       | Not available yet.                                                         |
+| `cas-config-server-overlay`    | WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html). | [See this repository](https://github.com/apereo/cas-configserver-overlay). |
+| `cas-discovery-server-overlay` | WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).            | Not available yet.                                                         |
+| `cas-management-overlay`       | WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).          | [See this repository](https://github.com/apereo/cas-management-overlay).   |
 
 ## Project Versions
 
@@ -72,6 +72,9 @@ The following request parameters control the version selection:
 Note that mixing and matching different versions generally will lead to unstable projects builds. Do so at your own risk! The specification
 of version numbers in the project generation request is unnecessary, and [CAS Initializr][initializr] will always
 use trusted defaults to handle the generation task.
+
+<div class="alert alert-info"><strong>Remember</strong><p>The only version you <i>might</i> need to specify is the CAS server version. Overriding 
+other aspects of the build or component versions such as Spring Boot often leads to an unstable build and deployment environment.</p></div>
 
 To review the list of supported versions for the CAS Initializr on [Heroku][initializr], you may use:
 
@@ -191,8 +194,8 @@ curl <cas-initializr-url>/actuator/info | jq
 ```
 
 Furthermore, CAS Initializr publishes metadata about its capabilities, that is the
-available options for all request parameters (dependencies, type, etc.) A client to the
-service uses that information to initialize the select options and the tree of available dependencies.
+available options for all request parameters (dependencies, type, etc.) A client of this
+service may use this information to initialize the select options and the range of available dependencies.
 
 You can grab the metadata on the root endpoint with the appropriate `Accept` header:
 
