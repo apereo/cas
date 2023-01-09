@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.dao.CasEvent;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.Entity;
@@ -23,6 +24,7 @@ import java.io.Serial;
 @Entity
 @Setter
 @Table(name = "CasEvent")
+@Accessors(chain = true)
 public class JpaCasEvent extends CasEvent {
     @Serial
     private static final long serialVersionUID = -1176976165442671412L;

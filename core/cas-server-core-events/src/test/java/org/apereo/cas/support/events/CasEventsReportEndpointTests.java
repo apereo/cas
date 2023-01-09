@@ -29,6 +29,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -85,14 +86,14 @@ public class CasEventsReportEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         publishEvent();
         assertFalse(casEventRepository.load().findAny().isEmpty());
-
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         val result = endpoint.events(100);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertEquals(HttpStatusCode.valueOf(HttpStatus.OK.value()), result.getStatusCode());
+        assertNotNull(result.getBody());
     }
 
     private void publishEvent() {
@@ -126,7 +127,7 @@ public class CasEventsReportEndpointTests {
     public void verifyBulkImportAsZip() throws Exception {
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         endpoint.deleteAllEvents();
-        
+
         val request = new MockHttpServletRequest();
         request.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         try (val out = new ByteArrayOutputStream(2048);

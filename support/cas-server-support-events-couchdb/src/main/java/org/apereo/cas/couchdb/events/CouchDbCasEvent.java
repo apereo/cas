@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
+@Accessors(chain = true)
 public class CouchDbCasEvent extends CasEvent {
 
     @Serial
