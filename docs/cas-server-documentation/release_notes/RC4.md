@@ -87,6 +87,7 @@ spring.main.lazy-initialization=false
 
 - Groovy
 - Pac4j
+- Puppeteer
 - Nimbus
 - jQuery
 - Amazon SDK
