@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -88,6 +89,7 @@ public class GoogleRecaptchaProperties implements Serializable {
      * captcha should be activated when the remote IP address
      * matches this pattern, and otherwise skipped and disabled.
      */
+    @RegularExpressionCapable
     private String activateForIpAddressPattern;
 
     /**

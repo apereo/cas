@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.ticket.catalog;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -43,7 +43,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return ST storage timeout function
      */
     default Function<ConfigurableApplicationContext, Long> getServiceTicketStorageTimeout() {
-        return c -> c.getBean(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
+        return ctx -> ctx.getBean(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
             .buildTicketExpirationPolicy().getTimeToLive();
     }
 
@@ -53,7 +53,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return ST storage name function
      */
     default Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-        return p -> STORAGE_NAME_SERVICE_TICKETS;
+        return __ -> STORAGE_NAME_SERVICE_TICKETS;
     }
 
     /**
@@ -62,7 +62,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PT storage timeout function
      */
     default Function<ConfigurableApplicationContext, Long> getProxyTicketStorageTimeout() {
-        return c -> c.getBean(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
+        return ctx -> ctx.getBean(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
             .buildTicketExpirationPolicy().getTimeToLive();
     }
 
@@ -72,7 +72,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PT storage name function
      */
     default Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-        return p -> STORAGE_NAME_PROXY_TICKET;
+        return __ -> STORAGE_NAME_PROXY_TICKET;
     }
 
     /**
@@ -81,7 +81,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return TGT storage timeout function
      */
     default Function<ConfigurableApplicationContext, Long> getTicketGrantingTicketStorageTimeout() {
-        return c -> c.getBean(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
+        return ctx -> ctx.getBean(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
             .buildTicketExpirationPolicy().getTimeToLive();
     }
 
@@ -91,7 +91,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return TGT storage name function
      */
     default Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-        return p -> STORAGE_NAME_TICKET_GRANTING_TICKETS;
+        return __ -> STORAGE_NAME_TICKET_GRANTING_TICKETS;
     }
 
     /**
@@ -100,7 +100,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PGT storage timeout function
      */
     default Function<ConfigurableApplicationContext, Long> getProxyGrantingTicketStorageTimeout() {
-        return c -> c.getBean(ExpirationPolicyBuilder.BEAN_NAME_PROXY_GRANTING_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
+        return ctx -> ctx.getBean(ExpirationPolicyBuilder.BEAN_NAME_PROXY_GRANTING_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
             .buildTicketExpirationPolicy().getTimeToLive();
     }
 
@@ -110,7 +110,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PGT storage name function
      */
     default Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-        return p -> STORAGE_NAME_PROXY_GRANTING_TICKETS;
+        return __ -> STORAGE_NAME_PROXY_GRANTING_TICKETS;
     }
 
     /**
@@ -119,7 +119,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return TST storage timeout function
      */
     default Function<ConfigurableApplicationContext, Long> getTransientSessionStorageTimeout() {
-        return c -> c.getBean(ExpirationPolicyBuilder.BEAN_NAME_TRANSIENT_SESSION_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
+        return ctx -> ctx.getBean(ExpirationPolicyBuilder.BEAN_NAME_TRANSIENT_SESSION_TICKET_EXPIRATION_POLICY, ExpirationPolicyBuilder.class)
             .buildTicketExpirationPolicy().getTimeToLive();
     }
 
@@ -130,5 +130,13 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      */
     default Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
         return p -> STORAGE_NAME_TRANSIENT_SESSION_TICKETS;
+    }
+
+    default Function<ConfigurableApplicationContext, Boolean> getProxyGrantingTicketCascadeRemovals() {
+        return __ -> false;
+    }
+
+    default Function<ConfigurableApplicationContext, Boolean> getTicketGrantingTicketCascadeRemovals() {
+        return __ -> false;
     }
 }

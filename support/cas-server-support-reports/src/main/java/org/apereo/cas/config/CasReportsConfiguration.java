@@ -40,6 +40,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangesEndpoint;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
@@ -183,7 +184,7 @@ public class CasReportsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasInfoEndpointContributor casInfoEndpointContributor(
+        public InfoContributor casInfoEndpointContributor(
             @Qualifier("casRuntimeModuleLoader")
             final CasRuntimeModuleLoader casRuntimeModuleLoader) {
             return new CasInfoEndpointContributor(casRuntimeModuleLoader);

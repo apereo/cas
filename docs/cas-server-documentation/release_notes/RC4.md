@@ -32,11 +32,7 @@ maintenance and release planning, especially when it comes to addressing critica
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## New & Noteworthy
-
-The following items are new improvements and enhancements presented in this release.
-
-### JDK Requirement
+## System Requirements
 
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
@@ -45,10 +41,55 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### SAML2 Delegated Authentication Metadata
+
+SAML2 service provider metadata used and managed during [delegated authentication](../integration/Delegate-Authentication-SAML.html)
+can now be stored in relational databases.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `380` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
+### Authentication Geolocation via Maxmind
+
+Geolocating authentication requests via Maxmind can now support [Maxmind Web Services](../authentication/GeoTracking-Authentication-Requests.html).
+ 
+### Lazy Initialization
+ 
+Application components that are bootstrapped by CAS or other third-party libraries are now created lazily by default. In a nutshell, this means
+that application components (and all other components and turtles that depend on those) will only be created once and when they are needed. This means
+that lazy initialization may reduce the number of beans created when CAS is starting up which in turn improves the startup time. Initial test results
+show that startup improvements are anywhere between `8` to `10` seconds, depending on the features and modules included in the final CAS build. At the same 
+time, certain issues might be *masked* and may only be revealed at runtime since component creation is deferred. HTTP requests may also
+see a small *initial* delay as the responsible component is created on-demand (but only once; this is important) to respond to the request. To accomodate 
+specific use cases, certain components in CAS are also explicitly marked to always be created eagerly and skip laziness. 
+
+If you encounter component initialization issues, deadlocks and long wait-times during CAS startup, or if you notice that background jobs, threads, event 
+listeners or cleaners are not doing their job, you may of course disable this behavior via the following setting and revert back to the 
+previous behavior:
+
+```properties
+spring.main.lazy-initialization=false
+```
+
 ## Other Stuff
 
-
+- The session cookie (typically and by default named `DISSESSION`) used for distributed session management can now be signed and encrypted in 
+  scenarios where CAS is acting as an OAUTH or OpenID Connect provider, or is delegating authentication to an external identity provider.
+- Configuration settings in the CAS documentation are now able to automatically indicate whether they support regular expression patterns as their value.
 
 ## Library Upgrades
 
-
+- Groovy
+- Pac4j
+- Nimbus
+- Amazon SDK
+- Spring
+- Spring Boot
+- Mockito
+- Kryo
+- ErrorProne
+- Checkstyle
+- JavaParser

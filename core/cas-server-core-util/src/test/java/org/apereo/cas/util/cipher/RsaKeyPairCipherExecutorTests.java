@@ -1,6 +1,7 @@
 package org.apereo.cas.util.cipher;
 
 import lombok.val;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +22,11 @@ public class RsaKeyPairCipherExecutorTests {
         val secretKeyEncryption = "classpath:keys/RSA2048Public.key";
         val secretKeySigning = "classpath:keys/RSA2048Private.key";
         val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
+        cipher1.setSigningAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
         assertNotNull(cipher1.encode("TestValue"));
 
         val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
+        cipher.setSigningAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA384);
         assertNotNull(cipher.encode("TestValue"));
     }
 

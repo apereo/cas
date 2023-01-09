@@ -31,6 +31,8 @@ import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectActi
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflowStateActionTests;
 import org.apereo.cas.web.flow.authz.DefaultDelegatedClientIdentityProviderAuthorizerTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataControllerTests;
+import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataJdbcTests;
+import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataMongoDbTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -45,6 +47,7 @@ import org.junit.platform.suite.api.Suite;
     DelegatedClientIdentityProviderRedirectionStrategyTests.class,
     DelegatedClientAuthenticationRedirectActionTests.class,
     DelegatedAuthenticationGenerateClientsActionTests.class,
+    DelegatedSaml2ClientMetadataJdbcTests.class,
     RefreshableDelegatedClientsTests.class,
     DelegatedClientsEndpointTests.class,
     DefaultDelegatedClientFactoryTests.class,
@@ -60,6 +63,7 @@ import org.junit.platform.suite.api.Suite;
     DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests.class,
     DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests.class,
     DelegatedClientAuthenticationActionTests.class,
+    DelegatedSaml2ClientMetadataMongoDbTests.class,
     DelegatedClientIdentityProviderConfigurationProducerTests.class,
     DelegatedAuthenticationErrorViewResolverTests.class,
     DefaultDelegatedAuthenticationNavigationControllerTests.class,

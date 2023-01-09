@@ -41,7 +41,7 @@ public class DelegatedSaml2ClientMetadataController {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
-        val md = saml2Client.getSpMetadataResolver().getMetadata();
+        val md = saml2Client.getServiceProviderMetadataResolver().getMetadata();
         return new ResponseEntity<>(md, headers, HttpStatus.OK);
     }
 

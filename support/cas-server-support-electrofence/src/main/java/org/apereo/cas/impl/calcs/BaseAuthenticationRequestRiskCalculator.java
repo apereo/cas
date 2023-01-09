@@ -89,7 +89,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
 
         val date = ZonedDateTime.now(ZoneOffset.UTC)
-            .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
+            .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getCore().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }
 

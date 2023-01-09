@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import lombok.val;
@@ -67,7 +68,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.pac4j.cookie.enabled=true")
+    properties = {
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw",
+        "cas.authn.pac4j.cookie.enabled=true"
+    })
 @Tag("Webflow")
 public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
@@ -96,6 +101,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void setup() {
         val service = RegisteredServiceTestUtils.getService();
         httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
 
@@ -276,7 +282,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         peer.setEntityId("https://cas.example.org/idp");
         val md = peer.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(md);
-        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(saml2Client.getIdpMetadataResolver().resolve());
+        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(saml2Client.getIdentityProviderMetadataResolver().resolve());
         roleDescriptorResolver.initialize();
 
         md.setRoleDescriptor(roleDescriptorResolver.resolveSingle(new CriteriaSet(
@@ -289,7 +295,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val sp = self.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(sp);
-        val spResolver = new PredicateRoleDescriptorResolver(saml2Client.getSpMetadataResolver().resolve());
+        val spResolver = new PredicateRoleDescriptorResolver(saml2Client.getServiceProviderMetadataResolver().resolve());
         spResolver.initialize();
         sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
             new EntityIdCriterion(Objects.requireNonNull(self.getEntityId())),

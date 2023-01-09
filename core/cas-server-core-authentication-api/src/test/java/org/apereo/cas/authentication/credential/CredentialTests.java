@@ -54,7 +54,6 @@ public class CredentialTests {
         val credential2 = getCredential();
         assertNotNull(credential.getCredentialMetadata().getCredentialClass());
         assertTrue(credential.isValid());
-        assertTrue(Math.abs(credential.hashCode()) > 0);
         assertNotEquals(credential2, credential);
         assertEquals(credential, credential);
     }

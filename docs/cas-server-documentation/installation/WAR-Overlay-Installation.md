@@ -53,7 +53,7 @@ The process of working with an overlay can be summarized in the following steps:
 - Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `build` directory for Gradle. Use the gradle `unzip` task.
 - Copy the identified artifacts from the identified above directories over to the `src/main/resources` directory.
 1. Create the `src/main/resources` directories, if they don't already exist.
-2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
+2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect.
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 

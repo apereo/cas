@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -93,6 +94,7 @@ public class AuditEngineProperties implements Serializable {
      * can be treated as a regular expression to match against built-in
      * CAS actions.
      */
+    @RegularExpressionCapable
     private List<String> supportedActions = Stream.of("*").toList();
 
     /**
@@ -101,6 +103,7 @@ public class AuditEngineProperties implements Serializable {
      * can be treated as a regular expression to match against built-in
      * CAS actions.
      */
+    @RegularExpressionCapable
     private List<String> excludedActions = new ArrayList<>();
 
     /**

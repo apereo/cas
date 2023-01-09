@@ -108,6 +108,9 @@ configurations.all {
                 if (requested.group == "org.apache.groovy")  {
                     details.useVersion("${groovyVersion}")
                 }
+                if (requested.group == "org.apache.cxf")  {
+                    details.useVersion("${apacheCxfVersion}")
+                }
                 if (requested.group == "com.zaxxer")  {
                     details.useVersion("${hikariVersion}")
                 }
@@ -152,10 +155,6 @@ configurations.all {
                 if (requested.group == "org.apache.logging.log4j") {
                     details.useVersion("${log4jVersion}")
                 }
-                if (requested.group == "org.apache.wss4j") {
-                    details.useTarget group: "com.github.mmoayyed.ws-wss4j", name: requested.name, version: "${wss4jVersion}"
-                    details.because "WSS4J library does not support OpenSAML v5"
-                }
             }
         }
     }
@@ -170,6 +169,7 @@ configurations.all {
     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
     exclude(group: "javax.annotation", module: "javax.annotation-api")
     exclude(group: "javax.activation", module: "activation")
+    exclude group: "com.sun.activation", module: "jakarta.activation"
     exclude(group: "commons-logging", module: "commons-logging")
     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
 }

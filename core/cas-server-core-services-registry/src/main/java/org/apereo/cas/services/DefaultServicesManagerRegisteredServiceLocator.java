@@ -31,7 +31,7 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
     };
 
     @Override
-    public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service) {
+    public RegisteredService locate(final Collection<? extends RegisteredService> candidates, final Service service) {
         return candidates
             .stream()
             .filter(registeredService -> supports(registeredService, service))

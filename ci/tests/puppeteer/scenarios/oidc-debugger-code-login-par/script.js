@@ -27,6 +27,7 @@ const assert = require("assert");
 
     const body = await cas.doRequest(`https://localhost:8443/cas/oidc/oidcPushAuthorize?${params}`, 'POST', {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
         'Authorization': authzHeader
     }, 201);
     let result = JSON.parse(body);

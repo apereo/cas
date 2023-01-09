@@ -543,8 +543,8 @@ exports.base64Decode = async (data) => {
 
 exports.screenshot = async (page) => {
     if (process.env.CI === "true") {
-        let index = Math.floor(Math.random() * 90000);
-        let filePath = path.join(__dirname, `/screenshot${index}.png`);
+        let index = Date.now();
+        let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
             let url = await page.url();
             console.log(`Page URL when capturing screenshot: ${url}`);

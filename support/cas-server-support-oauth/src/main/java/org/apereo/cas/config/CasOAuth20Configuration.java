@@ -58,6 +58,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestVali
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
+import org.apereo.cas.support.oauth.web.OAuth20DistributedSessionCookieCipherExecutor;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolver;
@@ -134,6 +135,7 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -150,6 +152,7 @@ import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.Matcher;
 import org.pac4j.core.matching.matcher.csrf.CsrfTokenGeneratorMatcher;
 import org.pac4j.core.matching.matcher.csrf.DefaultCsrfTokenGenerator;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -568,19 +571,32 @@ public class CasOAuth20Configuration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "oauthSecProfileManagerFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ProfileManagerFactory oauthSecProfileManagerFactory(
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
+            return (webContext, sessionStore) ->
+                new OAuth20ClientIdAwareProfileManager(webContext, oauthDistributedSessionStore,
+                    servicesManager, oauthRequestParameterResolver);
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "oauthSecConfig")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Config oauthSecConfig(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier("oauthSecProfileManagerFactory")
+            final ProfileManagerFactory oauthSecProfileManagerFactory,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("oauthSecCsrfTokenMatcher")
             final Matcher oauthSecCsrfTokenMatcher,
             @Qualifier("oauthSecConfigClients")
             final BeanContainer<Client> oauthSecConfigClients,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
             val callbackUrl = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
             val config = new Config(callbackUrl, oauthSecConfigClients.toList());
@@ -588,9 +604,7 @@ public class CasOAuth20Configuration {
             config.setWebContextFactory(JEEContextFactory.INSTANCE);
             config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
             config.setMatcher(oauthSecCsrfTokenMatcher);
-            config.setProfileManagerFactory((webContext, sessionStore) ->
-                new OAuth20ClientIdAwareProfileManager(webContext, oauthDistributedSessionStore,
-                    servicesManager, oauthRequestParameterResolver));
+            config.setProfileManagerFactory(oauthSecProfileManagerFactory);
             return config;
         }
     }
@@ -652,12 +666,39 @@ public class CasOAuth20Configuration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20SessionConfiguration {
 
+        @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieCipherExecutor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public CipherExecutor oauthDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val replication = casProperties.getAuthn().getOauth().getSessionReplication();
+            return FunctionUtils.doIf(replication.isReplicateSessions(),
+                () -> {
+                    val cookie = replication.getCookie();
+                    val crypto = cookie.getCrypto();
+                    var enabled = crypto.isEnabled();
+                    if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                        && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+                        LOGGER.warn("Encryption/Signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
+                                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", cookie.getName());
+                        enabled = true;
+                    }
+                    return enabled
+                        ? CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20DistributedSessionCookieCipherExecutor.class)
+                        : CipherExecutor.noOp();
+                },
+                CipherExecutor::noOp).get();
+        }
+
         @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasCookieBuilder oauthDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder oauthDistributedSessionCookieGenerator(
+            @Qualifier("oauthDistributedSessionCookieCipherExecutor")
+            final CipherExecutor oauthDistributedSessionCookieCipherExecutor,
+            final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
-            return CookieUtils.buildCookieRetrievingGenerator(cookie);
+            return CookieUtils.buildCookieRetrievingGenerator(cookie,
+                new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor, cookie));
         }
 
         @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")

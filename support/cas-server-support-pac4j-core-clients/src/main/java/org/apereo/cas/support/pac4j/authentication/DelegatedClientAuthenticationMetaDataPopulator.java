@@ -17,7 +17,7 @@ import lombok.val;
  * @since 3.5.0
  */
 @ToString(callSuper = true)
-public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
+public class DelegatedClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {

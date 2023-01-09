@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -46,5 +47,6 @@ public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchPro
      * The regular expression pattern is expected to contain at least a single group whose value on a
      * successful match indicates the qualified impersonated user by admin.
      */
+    @RegularExpressionCapable
     private String memberAttributeValueRegex;
 }

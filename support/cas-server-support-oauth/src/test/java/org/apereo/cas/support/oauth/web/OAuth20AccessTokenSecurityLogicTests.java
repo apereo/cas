@@ -65,9 +65,10 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         config.setSessionStoreFactory(JEESessionStoreFactory.INSTANCE);
         config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
         config.setWebContextFactory(JEEContextFactory.INSTANCE);
+        config.setProfileManagerFactory((webContext, sessionStore) -> profileManager);
         
         val result = (UserProfile) logic.perform(config,
-            (webContext, sessionStore, collection, objects) -> collection.iterator().next(),
+            (webContext, sessionStore, collection) -> collection.iterator().next(),
             "MockIndirectClient",
             DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
             new JEEFrameworkParameters(request, response));

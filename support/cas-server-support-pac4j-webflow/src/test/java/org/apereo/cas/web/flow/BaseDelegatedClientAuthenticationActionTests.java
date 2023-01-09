@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
@@ -98,6 +99,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
 
     protected void assertStartAuthentication(final Service service) throws Exception {
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         val response = new MockHttpServletResponse();
         val flow = new Flow("mockFlow");
         flow.addVariable(new FlowVariable("credential",

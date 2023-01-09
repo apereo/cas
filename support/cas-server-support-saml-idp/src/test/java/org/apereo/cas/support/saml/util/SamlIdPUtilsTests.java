@@ -22,7 +22,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 
@@ -159,7 +159,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, new MessageContext()), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://index9.testshib.org/Shibboleth.sso/SAML/POST", acs.getLocation());
-        assertEquals(9, ((AssertionConsumerService) acs).getIndex());
+        assertEquals(9, ((IndexedEndpoint) acs).getIndex());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(authnRequest, context), adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://index9.testshib.org/Shibboleth.sso/SAML/POST", acs.getLocation());
-        assertEquals(9, ((AssertionConsumerService) acs).getIndex());
+        assertEquals(9, ((IndexedEndpoint) acs).getIndex());
     }
 
     @Test
@@ -200,7 +200,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
             adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals("https://www.testshib.org/Shibboleth.sso/SAML2/POST", acs.getLocation());
-        assertEquals(7, ((AssertionConsumerService) acs).getIndex());
+        assertEquals(7, ((IndexedEndpoint) acs).getIndex());
     }
 
     @Test
