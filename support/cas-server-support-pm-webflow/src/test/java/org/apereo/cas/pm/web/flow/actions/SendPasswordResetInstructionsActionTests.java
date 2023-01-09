@@ -88,7 +88,7 @@ public class SendPasswordResetInstructionsActionTests {
             request.addParameter("username", "none");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         }
 
         @Test

@@ -126,7 +126,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val phone = passwordManagementService.findPhone(query);
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
-            return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
+            return success();
         }
 
         val service = WebUtils.getService(requestContext);
