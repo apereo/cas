@@ -502,10 +502,9 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
                     mustRunAfter(task)
                 }
             }
-            
             def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
             logger.info "${subproject.name} with execution file ${execFile}"
-            execFile.exists()
+            true
         }.collect {subproject ->
             subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
         }
