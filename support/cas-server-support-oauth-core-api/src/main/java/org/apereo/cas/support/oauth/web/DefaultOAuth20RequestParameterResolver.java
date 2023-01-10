@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -128,6 +129,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             .stream()
             .map(name -> {
                 val values = resolveRequestParameter(context, name)
+                    .map(EncodingUtils::urlDecode)
                     .map(value -> Arrays.stream(value.split(" ")).collect(Collectors.toSet()))
                     .orElseGet(Set::of);
                 return Pair.of(name, values);
@@ -158,7 +160,8 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                     if (Collection.class.isAssignableFrom(clazz)) {
                         return Optional.of(clazz.cast(CollectionUtils.wrapArrayList(values)));
                     }
-                    return Optional.of(clazz.cast(values[0]));
+                    val singleValue = EncodingUtils.urlDecode(values[0]);
+                    return Optional.of(clazz.cast(singleValue));
                 }
                 return Optional.empty();
             });
