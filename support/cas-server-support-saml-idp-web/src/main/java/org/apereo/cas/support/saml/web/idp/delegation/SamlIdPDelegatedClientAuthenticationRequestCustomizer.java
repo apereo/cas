@@ -20,6 +20,7 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -98,8 +99,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
                 .map(XSURI::getURI)
                 .collect(Collectors.toList());
             webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
-            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE,
-                requestedAuthnContext.getComparison().name());
+            Optional.ofNullable(requestedAuthnContext.getComparison())
+                .ifPresent(comparison -> webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE, comparison.name()));
         }
     }
 
