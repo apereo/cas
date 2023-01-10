@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.LegacyValidateControllerTests;
 import org.apereo.cas.web.ProxyControllerTests;
+import org.apereo.cas.web.ProxyValidateControllerTests;
 import org.apereo.cas.web.view.Cas10ResponseViewTests;
 import org.apereo.cas.web.view.Cas20ResponseViewTests;
 import org.apereo.cas.web.view.Cas30JsonResponseViewTests;
@@ -27,6 +28,7 @@ import org.junit.platform.suite.api.Suite;
     ProxyControllerTests.class,
     LegacyValidateControllerTests.class,
     Cas30JsonResponseViewTests.class,
+    ProxyValidateControllerTests.class,
     DefaultCas30ProtocolAttributesRendererTests.class,
     InlinedCas30ProtocolAttributesRendererTests.class,
     AttributeValuesPerLineProtocolAttributesRendererTests.class

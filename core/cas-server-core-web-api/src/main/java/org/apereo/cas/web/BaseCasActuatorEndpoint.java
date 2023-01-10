@@ -23,6 +23,8 @@ public abstract class BaseCasActuatorEndpoint {
      */
     protected static final String MEDIA_TYPE_SPRING_BOOT_V3_JSON = "application/vnd.spring-boot.actuator.v3+json";
 
+    protected static final String MEDIA_TYPE_CAS_YAML = "application/vnd.cas.services+yaml";
+
     /**
      * The CAS properties.
      */
