@@ -496,16 +496,17 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
 if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
     tasks.register('jacocoRootReport', JacocoReport) {
         def executions = subprojects.findAll { subproject ->
-            def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
-            logger.info "${subproject.name} with execution file ${execFile}"
-            execFile.exists()
-        }.collect {subproject ->
             if (!subproject.path.contains(":docs")) {
                 subproject.tasks.withType(Test).each{ task ->
                     dependsOn(task)
                     mustRunAfter(task)
                 }
             }
+            
+            def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            logger.info "${subproject.name} with execution file ${execFile}"
+            execFile.exists()
+        }.collect {subproject ->
             subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
         }
         println "Coverage execution data files: ${executions}"
