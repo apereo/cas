@@ -151,9 +151,10 @@ TestCategories.values().each({ category ->
         if (!tasks.getNames().contains(taskName)) {
             // println "Creating task ${taskName} for ${project.name}"
             tasks.register(taskName, Test) {
-                description = "Testing category ${category.name()}"
+                description = "Run unit/integration tests to verify the test category: ${category.name()}"
+                group = "CAS Tests"
                 enabled = shouldTest(project, category.name())
-                //finalizedBy jacocoTestReport
+                outputs.file(project.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile)
                 useJUnitPlatform {
                     includeTags category.name()
                 }
@@ -269,10 +270,15 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             failOnPassedAfterRetry = false
         }
     }
-    jacoco {
-        dumpOnExit = true
-        excludes = rootProject.excludedFilesFromTestCoverage
+    if (!project.path.contains(":docs")) {
+        jacoco {
+            dumpOnExit = true
+            excludes = rootProject.excludedFilesFromTestCoverage
+            destinationFile = layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
+        }
     }
+    
     filter {
         setFailOnNoMatchingTests(false)
         excludeTestsMatching "*TestsSuite"
