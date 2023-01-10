@@ -42,7 +42,7 @@ const assert = require('assert');
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret, scopes) {
-    const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=${clientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
     await cas.goto(page, url);
     console.log(`Authorize URL: ${page.url()}`);
     await page.waitForTimeout(1000);
