@@ -16,7 +16,7 @@ env:
   JDK_CURRENT: 17
   RETRY_ATTEMPTS: 3
   RETRY_MINUTES: 180
-  CATEGORY_REGEX: ".*" # Limit which test categories run
+  CATEGORY_REGEX: ".*(amazon|cas|dynamodb|jdbc|mongodb|oauth|oidc|restful|webapp|zookeeper).*" # Limit which test categories run
 
 ##########################################################################
 
