@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -286,12 +288,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -318,7 +315,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -345,12 +342,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
@@ -375,7 +367,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
         val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
         assertEquals(getDefaultAccessTokenExpiration(), Long.parseLong(expiresIn));
@@ -404,12 +396,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setJwtAccessToken(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
@@ -461,12 +448,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -492,7 +474,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -515,12 +497,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -548,7 +525,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -570,12 +547,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -601,7 +573,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -623,12 +595,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -654,7 +621,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -676,12 +643,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -718,12 +680,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setJwtAccessToken(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -757,8 +714,19 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+    }
+
+    protected static CasProfile buildCasProfile() {
+        val profile = new CasProfile();
+        profile.setId(ID);
+        val attributes = new HashMap<String, Object>();
+        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
+        attributes.put(Authentication.class.getName(), CoreAuthenticationTestUtils.getAuthentication());
+        profile.addAttributes(attributes);
+        return profile;
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {

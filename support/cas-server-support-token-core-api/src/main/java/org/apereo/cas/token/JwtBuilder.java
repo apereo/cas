@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -145,16 +146,21 @@ public class JwtBuilder {
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
 
-        payload.getAttributes().forEach((name, value) -> {
-            var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;
-            if (claimValue instanceof ZonedDateTime) {
-                claimValue = claimValue.toString();
-            }
-            claims.claim(name, claimValue);
-        });
+        payload.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
+            .forEach(entry -> {
+                val value = entry.getValue();
+                var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;
+                if (claimValue instanceof ZonedDateTime) {
+                    claimValue = claimValue.toString();
+                }
+                claims.claim(entry.getKey(), claimValue);
+            });
         claims.expirationTime(payload.getValidUntilDate());
         val claimsSet = claims.build();
-        
+
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = payload.getRegisteredService().isEmpty()
             ? locateRegisteredService(serviceAudience)
