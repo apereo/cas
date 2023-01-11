@@ -21,6 +21,7 @@ import java.util.List;
 @SuperBuilder
 public class DefaultAssertionBuilder {
     private final Authentication primaryAuthentication;
+    private final Authentication originalAuthentication;
 
     @Builder.Default
     private final List<Authentication> authentications = new ArrayList<>(0);
@@ -37,7 +38,7 @@ public class DefaultAssertionBuilder {
      * @return the assertion
      */
     public Assertion assemble() {
-        return new ImmutableAssertion(this.primaryAuthentication, this.authentications,
-            this.newLogin, this.service, this.registeredService);
+        return new ImmutableAssertion(this.primaryAuthentication, this.originalAuthentication,
+            this.authentications, this.newLogin, this.service, this.registeredService);
     }
 }
