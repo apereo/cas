@@ -44,9 +44,7 @@
             const parentElement = ev.target.parentElement;
             if (parentElement != null && parentElement.nextElementSibling != null) {
                 let el = parentElement.nextElementSibling.nextElementSibling;
-                if (el == null) {
-                    console.log("Unable to locate element for CAPSLOCK")
-                } else {
+                if (el != null) {
                     if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
                         // console.log('CAPSLOCK is on');
                         el.classList.remove("caps-warn");

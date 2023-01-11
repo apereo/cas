@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import groovy.lang.Script;
@@ -15,7 +17,10 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,6 +37,14 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyInlineGroovyScript() {
         assertTrue(ScriptingUtils.isInlineGroovyScript("groovy {return 0}"));
+        val script = ScriptingUtils.parseGroovyShellScript("return authentication.principal.id + ' @ ' + authentication.authenticationDate");
+        val authn = mock(Authentication.class);
+        when(authn.getAuthenticationDate()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
+        val principal = mock(Principal.class);
+        when(principal.getId()).thenReturn("casuser");
+        when(authn.getPrincipal()).thenReturn(principal);
+        val result = ScriptingUtils.executeGroovyShellScript(script, Map.of("authentication", authn), String.class);
+        assertTrue(Objects.requireNonNull(result).startsWith("casuser"));
     }
 
     @Test

@@ -136,6 +136,7 @@ layout: null
         *   [InfluxDb](/cas/{{ version }}/authentication/Configuring-Authentication-Events-InfluxDb.html)
         *   [JPA/JDBC](/cas/{{ version }}/authentication/Configuring-Authentication-Events-JPA.html)
         *   [Memory](/cas/{{ version }}/authentication/Configuring-Authentication-Events-Memory.html)
+        *   [Redis](/cas/{{ version }}/authentication/Configuring-Authentication-Events-Redis.html)
         *   [MongoDb](/cas/{{ version }}/authentication/Configuring-Authentication-Events-MongoDb.html)
     *   [ClearPass](/cas/{{ version }}/integration/ClearPass.html)
     *   [GUA](#guaoverview)

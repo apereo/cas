@@ -17,7 +17,8 @@ Welcome to the home of the [Central Authentication Service project](https://www.
 enterprise multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
-component by the same name hosted here, with support for a plethora of additional authentication protocols and features.
+component by the same name hosted here, with support for a plethora of additional authentication protocols and features such a SAML2, OpenID Connect
+and many many more.
 
 ## Contributions
 
@@ -44,15 +45,15 @@ Additional resources are available as follows:
 - [Maintenance Policy][maintenance]
 - [Release Schedule][releaseschedule]
 
-## Deployment
+## Getting Started
 
-[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=for-the-badge&logo=github)][contribute]
-[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=for-the-badge&logo=github)][contribute]
 [![Maven Central](https://img.shields.io/maven-central/v/org.apereo.cas/cas-server-webapp?style=for-the-badge&logo=apachemaven)][casmavencentral]
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg?style=for-the-badge&logo=github)][githubreleases]
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase
 is **ONLY** required if you wish to contribute to the development of the project.
+
+We recommend that you review [this page][gettingstarted] to get started with your CAS deployment.
 
 ## Features
 
@@ -95,6 +96,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
 [githubreleases]: https://github.com/apereo/cas/releases
+[gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: https://www.apereo.org/cas/download
