@@ -94,6 +94,8 @@ spring.main.lazy-initialization=false
 - Amazon SDK
 - Spring
 - Spring Boot
+- Spring Boot Admin
+- Spring Shell
 - Mockito
 - JUnit
 - Kryo
