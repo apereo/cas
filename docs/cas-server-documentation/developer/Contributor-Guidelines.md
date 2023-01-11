@@ -5,9 +5,9 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
-We want to start by saying thank you for using CAS. This project is a labor of love, and we appreciate the work done by all
-who catch bugs, make performance improvements and help with documentation. Every contribution is meaningful, so thank you
-for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your patch.
+We want to start by saying thank you for using CAS and for all the work done by all
+who catch bugs, build enhancements, identify performance improvements and help with documentation. Every contribution is meaningful, so thank you
+for participating. Here are a few guidelines that we ask you to follow so we can successfully address your contribution.
 
 The goal of this guide is to, very simply put, help you learn how to catch fish.
 
@@ -20,11 +20,22 @@ The overarching theme of this guide starts with the following questions:
 
 1. What is the Apereo CAS project policy on accepting contributions?
 2. How may one, seriously and in a step-wise fashion, get started with contributions?
+  
+## What do you mean by contribution? 
+ 
+In the context of the Apereo CAS project, a *contribution* generally means the giving or supplying 
+of bug fixes, modest feature enhancements, documentation improvements, test cases, etc back to the project typically in the form of a pull request or patch. 
+All such items and donations play a significant part in improving the state of the project and the software for all involved. Such contributions
+are concrete, actionable and measurable and signal back to the larger community that you, the contributor, are actively involved, engaged and concerned
+with the overal health status and future direction of the project. Of course, for non-technical forks, contributions do not always equal writing some 
+kind of code. That is only one of many possible options. We hope that you consider that as a good starting place and when all else fails,
+consider [suppprting the project](https://apereo.github.io/cas/Support.html).
 
 ## What do I work on?
 
-A certain number of projects in open source try to advertise work items and tasks 
-which they think might be [good candidates for contributions](https://github.com/spring-projects/spring-boot/issues?q=is%3Aopen+is%3Aissue+label%3A%22status%3A+ideal-for-contribution%22). This is generally and often *not* the Apereo CAS project policy. The policy is much simpler than that.
+A certain number of projects in open source try to advertise, label and tag work items, issues and tasks 
+which they think might be good candidates for contributions. This is generally and 
+often *not* the Apereo CAS project policy.The policy is much simpler than that.
 
 It goes something like this:
 
@@ -39,7 +50,8 @@ In other words,
 
 Of course, if you are a newcomer to the project and have just begun to understand the ins and outs of 
 the [CAS project codebase](https://apereo.github.io/2017/06/12/cas-codebase-overview/), there may certainly 
-be areas in which you might find more comfort to slowly get your feet wet. You're welcome to [ask for suggestions](https://apereo.github.io/cas/Mailing-Lists.html). For the most part, the work item you wish to work on should be something you find interesting and enjoyable with some degree of practicality.
+be areas in which you might find more comfort to slowly get your feet wet. You're welcome to [ask for suggestions](https://apereo.github.io/cas/Mailing-Lists.html). 
+For the most part, the work item you wish to work on should be something you find interesting and enjoyable with some degree of practicality.
 
 Remember that you are deploying open source software, which means you have automatically become 
 a project/community member and a potential maintainer, whether you realize it or not. Staying in *consume-only* mode generally leads to poor results.
