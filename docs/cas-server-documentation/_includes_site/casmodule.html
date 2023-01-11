@@ -64,9 +64,6 @@
 
 
     <div class='cas-module-tabs tab-content clearfix'>
-
-
-
         <div class='tab-pane fade in' id='maven{{ casModuleRandomNumber }}'>
             {% capture maven %}
             ```xml
@@ -75,8 +72,7 @@
                 <artifactId>{{include.module}}</artifactId>
                 <version>${cas.version}</version>
             </dependency>
-            ```
-            {% endcapture %}
+            ```{% endcapture %}
 
             <span>
       {{ maven | markdownify }}
@@ -89,14 +85,13 @@
             {% capture gradle %}
             ```groovy
             implementation "{{include.group}}:{{include.module}}"
-            ```
-            {% endcapture %}
+            ```{% endcapture %}
             <span>
     {{ gradle | markdownify }}
   </span>
 
         </div>
-        
+
         <div class='tab-pane fade in' id='bom{{ casModuleRandomNumber }}'>
             {% capture bom %}
             ```groovy
