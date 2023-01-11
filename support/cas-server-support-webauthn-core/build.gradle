@@ -11,7 +11,8 @@ dependencies {
 
     implementation libraries.springsecurityconfig
     implementation libraries.springsecurityweb
-
+    implementation libraries.bouncycastle
+    
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")

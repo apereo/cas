@@ -2209,6 +2209,26 @@ ext.libraries = [
                 },
                 dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
         ],
+        springbootpropertymigrator : [
+                dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
+                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-reactor-netty")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-parent")
+                }
+        ],
         springboot                 : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2295,24 +2315,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
-                },
-                dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
-                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
-                    exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "com.vaadin.external.google", module: "android-json")
-                    exclude(group: "com.vaadin.external.google", module: "android-json")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-reactor-netty")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-parent")
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
