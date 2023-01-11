@@ -24,6 +24,17 @@ public interface Assertion extends Serializable {
     Authentication primaryAuthentication();
 
     /**
+     * Original authentication tied to this assertion
+     * prior to any transformations. This is the authentication
+     * attempt on top of which this assertion was built and is
+     * used for tracking purposes particularly when the assertion
+     * is built manually where necessary.
+     *
+     * @return the authentication
+     */
+    Authentication originalAuthentication();
+
+    /**
      * Gets a list of all authentications that have occurred during a CAS SSO session.
      *
      * @return Non-null, non-empty list of authentications in leaf-first order (i.e. authentications on the root ticket

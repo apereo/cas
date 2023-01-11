@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -175,14 +176,19 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
+            val originalPrincipal = ((Authentication) profile.getAttribute(Authentication.class.getName())).getPrincipal();
+            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
+                authentication.getPrincipal().getAttributes());
+            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
+                .createPrincipal(authentication.getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(service)
-                .authentication(authentication)
                 .registeredService(registeredService)
+                .principal(accessStrategyPrincipal)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
-
+            
             val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
             return Optional.ofNullable(modelAndView)
                 .filter(ModelAndView::hasView)

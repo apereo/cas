@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -145,6 +146,8 @@ public class CasCoreWebflowConfiguration {
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier("principalFactory")
+            final PrincipalFactory principalFactory,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
@@ -184,6 +187,7 @@ public class CasCoreWebflowConfiguration {
                 .applicationContext(applicationContext)
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .authenticationEventExecutionPlan(authenticationEventExecutionPlan)
+                .principalFactory(principalFactory)
                 .build();
         }
     }
