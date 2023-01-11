@@ -92,10 +92,10 @@ public class ImmutableAssertionTests {
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val assertion1 = new ImmutableAssertion(auth,
-            CoreAuthenticationTestUtils.getAuthentication(), list1, true,
+            auth, list1, true,
             RegisteredServiceTestUtils.getService(), registeredService);
         val assertion2 = new ImmutableAssertion(auth,
-            CoreAuthenticationTestUtils.getAuthentication(), list2, true,
+            auth, list2, true,
             RegisteredServiceTestUtils.getService(), registeredService);
         assertEquals(assertion2, assertion1);
     }
