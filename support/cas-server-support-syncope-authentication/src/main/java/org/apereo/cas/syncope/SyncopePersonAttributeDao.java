@@ -70,7 +70,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         FunctionUtils.doUnchecked(u -> syncopeSearch(uid).filter(sr -> sr.has("result")).ifPresent(sr -> {
             val result = sr.get("result").iterator();
             if (result.hasNext()) {
-                attributes.putAll(SyncopeUserTOConverterUtils.convert(result.next()));
+                attributes.putAll(SyncopeUserTOConverterUtils.convert(result.next(), properties.getAttributeMappings()));
             }
         }));
         return new NamedPersonImpl(uid, attributes);
