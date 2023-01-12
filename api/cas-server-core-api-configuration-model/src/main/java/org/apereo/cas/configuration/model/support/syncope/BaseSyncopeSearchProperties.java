@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -54,5 +55,16 @@ public abstract class BaseSyncopeSearchProperties extends BaseSyncopeProperties 
      * and the value in the map should be the header value.
      */
     private Map<String, String> headers = new HashMap<>();
+
+    /**
+     * Map of attributes that optionally may be used to control the names
+     * of the collected attributes from Syncope. If an attribute is provided by Syncope,
+     * it can be listed here as the key of the map with a value that should be the name
+     * of that attribute as collected and recorded by CAS.
+     * For example, the convention {@code lastLoginDate->lastDate} will process the
+     * Syncope attribute {@code lastLoginDate} and will internally rename that to {@code lastDate}.
+     * If no mapping is specified, CAS defaults will be used instead.
+     */
+    private final Map<String, String> attributeMappings = new LinkedHashMap<>();
 
 }
