@@ -3,7 +3,9 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -31,6 +33,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -178,10 +182,21 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
+            val originalAttributes = Optional.ofNullable(profile.getAttribute(Authentication.class.getName()))
+                .map(Authentication.class::cast)
+                .map(Authentication::getPrincipal)
+                .map(Principal::getAttributes)
+                .orElseGet(HashMap::new);
+            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalAttributes,
+                authentication.getPrincipal().getAttributes());
+
+            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
+                .createPrincipal(authentication.getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
+                .principal(accessStrategyPrincipal)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

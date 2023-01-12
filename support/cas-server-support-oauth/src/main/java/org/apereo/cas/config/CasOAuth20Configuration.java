@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -411,10 +412,15 @@ public class CasOAuth20Configuration {
             val validator = new InternalTicketValidator(centralAuthenticationService,
                 webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
             cfg.setDefaultTicketValidator((ticket, service) -> {
-                val result = validator.validate(ticket, service);
-                val attrPrincipal = new AttributePrincipalImpl(result.getPrincipal().getId(), (Map) result.getPrincipal().getAttributes());
-                val registeredService = (RegisteredService) result.getContext().get(RegisteredService.class.getName());
-                val assertion = (Assertion) result.getContext().get(Assertion.class.getName());
+                val validationResult = validator.validate(ticket, service);
+                val assertion = (Assertion) validationResult.getContext().get(Assertion.class.getName());
+
+                val principalAttributes = new HashMap<String, Object>(validationResult.getPrincipal().getAttributes());
+                principalAttributes.put(Authentication.class.getName(), assertion.getOriginalAuthentication());
+
+                val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), principalAttributes);
+                val registeredService = (RegisteredService) validationResult.getContext().get(RegisteredService.class.getName());
+
                 val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
                     assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
                 return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes);

@@ -332,6 +332,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
             val assertion = DefaultAssertionBuilder.builder()
                 .primaryAuthentication(finalAuthentication)
+                .originalAuthentication(authentication)
                 .service(selectedService)
                 .registeredService(registeredService)
                 .authentications(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
@@ -383,9 +384,22 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     private void enforceRegisteredServiceAccess(final Authentication authentication, final Service service,
                                                 final RegisteredService registeredService) {
+        val attributeReleaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(authentication.getPrincipal())
+            .build();
+        val releasingAttributes = registeredService.getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
+        releasingAttributes.putAll(authentication.getAttributes());
+
+        val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(
+            authentication.getPrincipal().getAttributes(), releasingAttributes);
+        val accessStrategyPrincipal = configurationContext.getPrincipalFactory()
+            .createPrincipal(authentication.getPrincipal().getId(), accessStrategyAttributes);
         val audit = AuditableContext.builder()
             .service(service)
             .authentication(authentication)
+            .principal(accessStrategyPrincipal)
             .registeredService(registeredService)
             .build();
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);

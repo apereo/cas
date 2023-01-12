@@ -24,6 +24,13 @@ public interface Assertion extends Serializable {
     Authentication getPrimaryAuthentication();
 
     /**
+     * Gets original authentication.
+     *
+     * @return the original authentication
+     */
+    Authentication getOriginalAuthentication();
+
+    /**
      * Gets a list of all authentications that have occurred during a CAS SSO session.
      *
      * @return Non-null, non-empty list of authentications in leaf-first order (i.e. authentications on the root ticket

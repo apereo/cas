@@ -32,6 +32,8 @@ public class ImmutableAssertion implements Assertion {
      */
     private final @NonNull Authentication primaryAuthentication;
 
+    private final Authentication originalAuthentication;
+
     /**
      * Chained authentications.
      */
