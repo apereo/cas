@@ -201,6 +201,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .principal(authn.getPrincipal())
             .build();
         val releasingAttributes = registeredService.getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
+        releasingAttributes.putAll(authn.getAttributes());
 
         val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(
             authn.getPrincipal().getAttributes(), releasingAttributes);
