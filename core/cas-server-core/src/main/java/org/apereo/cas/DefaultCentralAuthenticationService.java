@@ -392,6 +392,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .principal(authentication.getPrincipal())
             .build();
         val releasingAttributes = registeredService.getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
+        releasingAttributes.putAll(authentication.getAttributes());
+
         val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(
             authentication.getPrincipal().getAttributes(), releasingAttributes);
         val accessStrategyPrincipal = configurationContext.getPrincipalFactory()
