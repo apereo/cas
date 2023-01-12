@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -38,17 +39,16 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final String syncopeUrl;
+    private final SyncopeAuthenticationProperties properties;
 
     private final String syncopeDomain;
 
-    public SyncopeAuthenticationHandler(final String name,
+    public SyncopeAuthenticationHandler(final SyncopeAuthenticationProperties properties,
                                         final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
-                                        final String syncopeUrl,
                                         final String syncopeDomain) {
-        super(name, servicesManager, principalFactory, null);
-        this.syncopeUrl = syncopeUrl;
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        this.properties = properties;
         this.syncopeDomain = syncopeDomain;
     }
 
@@ -66,7 +66,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
                 throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
             }
-            val principal = this.principalFactory.createPrincipal(user.get("username").asText(), SyncopeUserTOConverterUtils.convert(user));
+            val principal = this.principalFactory.createPrincipal(user.get("username").asText(),
+                SyncopeUserTOConverterUtils.convert(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
@@ -75,7 +76,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users/self");
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)

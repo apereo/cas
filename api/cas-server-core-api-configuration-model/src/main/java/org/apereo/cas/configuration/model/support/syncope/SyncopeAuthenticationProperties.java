@@ -56,6 +56,11 @@ public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties i
     private String credentialCriteria;
 
     /**
+     * The order of this authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * This is principal transformation properties.
      */
     @NestedConfigurationProperty
