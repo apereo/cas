@@ -19,7 +19,6 @@ import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyA
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
@@ -37,10 +36,10 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.webflow.execution.Action;
 
 import java.io.Serial;
 
@@ -147,9 +146,8 @@ public class Pac4jDelegatedAuthenticationConfiguration {
                 @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
                 final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                 final TicketRegistry ticketRegistry,
-                @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
-                final Action terminateSessionAction) {
-            return new TriggerCasSLOLogoutHandler(ticketGrantingTicketCookieGenerator, ticketRegistry, terminateSessionAction);
+                final ConfigurableApplicationContext applicationContext) {
+            return new TriggerCasSLOLogoutHandler(ticketGrantingTicketCookieGenerator, ticketRegistry, applicationContext);
         }
     }
 

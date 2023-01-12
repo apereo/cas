@@ -39,11 +39,14 @@ public class DelegatedTicketGrantingTicketFactory extends DefaultTicketGrantingT
     @Override
     protected void supplementTicket(final TicketGrantingTicketImpl ticket) {
         val requestContext = RequestContextHolder.getRequestContext();
-        if (requestContext instanceof ServletExternalContext sec) {
-            val request = (HttpServletRequest) sec.getNativeRequest();
-            val key = (String) request.getAttribute(DELEGATED_SESSION_KEY_REQUEST_ATTRIBUTE);
-            if (StringUtils.isNotBlank(key)) {
-                ticket.setDelegatedSessionKey(key);
+        if (requestContext != null) {
+            val externalContext = requestContext.getExternalContext();
+            if (externalContext instanceof ServletExternalContext sec) {
+                val request = (HttpServletRequest) sec.getNativeRequest();
+                val key = (String) request.getAttribute(DELEGATED_SESSION_KEY_REQUEST_ATTRIBUTE);
+                if (StringUtils.isNotBlank(key)) {
+                    ticket.setDelegatedSessionKey(key);
+                }
             }
         }
     }

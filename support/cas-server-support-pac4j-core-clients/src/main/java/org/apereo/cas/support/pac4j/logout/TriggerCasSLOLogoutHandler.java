@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.factory.DelegatedTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -37,7 +39,7 @@ public class TriggerCasSLOLogoutHandler implements LogoutHandler {
 
     private final TicketRegistry ticketRegistry;
 
-    private final Action terminateSessionAction;
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     public void recordSession(final WebContext context, final SessionStore sessionStore, final String key) {
@@ -62,28 +64,32 @@ public class TriggerCasSLOLogoutHandler implements LogoutHandler {
         profileManager.removeProfiles();
 
         val requestContext = RequestContextHolder.getRequestContext();
-        if (requestContext instanceof ServletExternalContext sec) {
-            val request = (HttpServletRequest) sec.getNativeRequest();
-            var tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-            LOGGER.debug("Found TGT cookie value: [{}]", tgtId);
-            if (StringUtils.isBlank(tgtId)) {
-                val predicate = (Predicate<Ticket>) ticket -> ticket instanceof TicketGrantingTicketImpl
-                                                    && !ticket.isExpired()
-                                                    && StringUtils.equals(((TicketGrantingTicketImpl) ticket).getDelegatedSessionKey(), key);
-                val optTicket = ticketRegistry.getTickets(predicate).findFirst();
-                LOGGER.debug("Found TGT: [{}] for key: [{}]", optTicket, key);
-                if (optTicket.isPresent()) {
-                    tgtId = optTicket.get().getId();
+        if (requestContext != null) {
+            val externalContext = requestContext.getExternalContext();
+            if (externalContext instanceof ServletExternalContext sec) {
+                val request = (HttpServletRequest) sec.getNativeRequest();
+                var tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+                LOGGER.debug("Found TGT cookie value: [{}]", tgtId);
+                if (StringUtils.isBlank(tgtId)) {
+                    val predicate = (Predicate<Ticket>) ticket -> ticket instanceof TicketGrantingTicketImpl
+                                                        && !ticket.isExpired()
+                                                        && StringUtils.equals(((TicketGrantingTicketImpl) ticket).getDelegatedSessionKey(), key);
+                    val optTicket = ticketRegistry.getTickets(predicate).findFirst();
+                    LOGGER.debug("Found TGT: [{}] for key: [{}]", optTicket, key);
+                    if (optTicket.isPresent()) {
+                        tgtId = optTicket.get().getId();
+                    }
                 }
-            }
 
-            if (StringUtils.isNotBlank(tgtId)) {
-                LOGGER.debug("Performing CAS SLO for tgt: [{}]", tgtId);
-                try {
-                    WebUtils.putTicketGrantingTicketInScopes(requestContext, tgtId);
-                    terminateSessionAction.execute(requestContext);
-                } catch (final Exception e) {
-                    LOGGER.error("Failed to process CAS SLO", e);
+                if (StringUtils.isNotBlank(tgtId)) {
+                    LOGGER.debug("Performing CAS SLO for tgt: [{}]", tgtId);
+                    try {
+                        WebUtils.putTicketGrantingTicketInScopes(requestContext, tgtId);
+                        val action = (Action) applicationContext.getBean(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION);
+                        action.execute(requestContext);
+                    } catch (final Exception e) {
+                        LOGGER.error("Failed to process CAS SLO", e);
+                    }
                 }
             }
         }

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.support.pac4j.logout.NoOpLogoutHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -88,6 +87,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public abstract class BaseDelegatedClientFactory implements DelegatedClientFactory {
     private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
+
+    private static final LogoutHandler NO_OP_LOGOUT_HANDLER = new LogoutHandler() {};
 
     protected final CasConfigurationProperties casProperties;
 
@@ -466,7 +467,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (oidc.isTriggerCasLogout()) {
             cfg.setLogoutHandler(pac4jLogoutHandler);
         } else {
-            cfg.setLogoutHandler(NoOpLogoutHandler.INSTANCE);
+            cfg.setLogoutHandler(NO_OP_LOGOUT_HANDLER);
         }
 
         return cfg;
@@ -592,7 +593,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 if (saml.isTriggerCasLogout()) {
                     cfg.setLogoutHandler(pac4jLogoutHandler);
                 } else {
-                    cfg.setLogoutHandler(NoOpLogoutHandler.INSTANCE);
+                    cfg.setLogoutHandler(NO_OP_LOGOUT_HANDLER);
                 }
 
                 val client = new SAML2Client(cfg);
@@ -634,7 +635,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 if (cas.isTriggerCasLogout()) {
                     cfg.setLogoutHandler(pac4jLogoutHandler);
                 } else {
-                    cfg.setLogoutHandler(NoOpLogoutHandler.INSTANCE);
+                    cfg.setLogoutHandler(NO_OP_LOGOUT_HANDLER);
                 }
 
                 val client = new CasClient(cfg);
