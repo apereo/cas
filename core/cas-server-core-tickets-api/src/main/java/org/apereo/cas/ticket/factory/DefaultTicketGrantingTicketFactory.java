@@ -77,12 +77,22 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
                                                                final Class<T> clazz) {
         val expirationPolicy = getTicketGrantingTicketExpirationPolicy(service);
         val result = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy);
+        supplementTicket(result);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                                          + " is of type " + result.getClass()
                                          + " when we were expecting " + clazz);
         }
         return (T) result;
+    }
+
+    /**
+     * Supplement the ticket granting ticket with extra information.
+     * It does nothing by default.
+     *
+     * @param ticket the ticket granting ticket
+     */
+    protected void supplementTicket(final TicketGrantingTicketImpl ticket) {
     }
 
     /**

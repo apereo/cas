@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.support.pac4j.logout.NoOpLogoutHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -31,6 +32,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
@@ -96,6 +98,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
     private final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
 
     private final Cache<String, Collection<IndirectClient>> clientsCache;
+
+    private final LogoutHandler pac4jLogoutHandler;
 
     protected abstract Collection<IndirectClient> loadClients();
 
@@ -427,7 +431,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
                                                                                  final Class<T> clazz) {
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(oidc.getScope()));
@@ -458,6 +462,13 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (!oidc.getMappedClaims().isEmpty()) {
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
+
+        if (oidc.isTriggerCasLogout()) {
+            cfg.setLogoutHandler(pac4jLogoutHandler);
+        } else {
+            cfg.setLogoutHandler(NoOpLogoutHandler.INSTANCE);
+        }
+
         return cfg;
     }
 
@@ -578,6 +589,12 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                     cfg.setMappedAttributes(CollectionUtils.convertDirectedListToMap(mappedAttributes));
                 }
 
+                if (saml.isTriggerCasLogout()) {
+                    cfg.setLogoutHandler(pac4jLogoutHandler);
+                } else {
+                    cfg.setLogoutHandler(NoOpLogoutHandler.INSTANCE);
+                }
+
                 val client = new SAML2Client(cfg);
                 configureClient(client, saml, casProperties);
 
@@ -613,6 +630,12 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+
+                if (cas.isTriggerCasLogout()) {
+                    cfg.setLogoutHandler(pac4jLogoutHandler);
+                } else {
+                    cfg.setLogoutHandler(NoOpLogoutHandler.INSTANCE);
+                }
 
                 val client = new CasClient(cfg);
                 configureClient(client, cas, casProperties);

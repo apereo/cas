@@ -5,12 +5,21 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.pac4j.logout.TriggerCasSLOLogoutHandler;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.factory.DelegatedTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
@@ -22,6 +31,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import lombok.val;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,6 +40,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.webflow.execution.Action;
 
 import java.io.Serial;
 
@@ -110,6 +121,35 @@ public class Pac4jDelegatedAuthenticationConfiguration {
             @Qualifier("pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy);
+        }
+    }
+
+    @Configuration(value = "Pac4jDelegatedAuthenticationTicketConfiguration", proxyBeanMethods = false)
+    public static class Pac4jDelegatedAuthenticationTicketConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory(
+                @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY) final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+                @Qualifier("protocolTicketCipherExecutor") final CipherExecutor protocolTicketCipherExecutor,
+                @Qualifier("ticketGrantingTicketUniqueIdGenerator") final UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator,
+                @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return new DelegatedTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator,
+                    grantingTicketExpirationPolicy, protocolTicketCipherExecutor, servicesManager);
+        }
+    }
+
+    @Configuration(value = "Pac4jDelegatedAuthenticationLogoutConfiguration", proxyBeanMethods = false)
+    public static class Pac4jDelegatedAuthenticationLogoutConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "pac4jLogoutHandler")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public LogoutHandler pac4jLogoutHandler(
+                @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+                final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+                final TicketRegistry ticketRegistry,
+                @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
+                final Action terminateSessionAction) {
+            return new TriggerCasSLOLogoutHandler(ticketGrantingTicketCookieGenerator, ticketRegistry, terminateSessionAction);
         }
     }
 

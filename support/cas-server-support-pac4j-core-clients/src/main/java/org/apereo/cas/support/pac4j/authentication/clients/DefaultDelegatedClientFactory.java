@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -27,8 +28,9 @@ public class DefaultDelegatedClientFactory extends BaseDelegatedClientFactory im
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,
         final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
-        final Cache<String, Collection<IndirectClient>> clientsCache) {
-        super(casProperties, customizers, casSSLContext, samlMessageStoreFactory, clientsCache);
+        final Cache<String, Collection<IndirectClient>> clientsCache,
+        final LogoutHandler pac4jLogoutHandler) {
+        super(casProperties, customizers, casSSLContext, samlMessageStoreFactory, clientsCache, pac4jLogoutHandler);
     }
 
     @Override

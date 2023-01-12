@@ -12,6 +12,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.val;
 
 import java.io.Serial;
@@ -70,6 +71,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
      * The ticket ids which are tied to this ticket.
      */
     private Set<String> descendantTickets = new HashSet<>(0);
+
+    /**
+     * The key associated to the delegated session.
+     */
+    @Setter
+    private String delegatedSessionKey;
 
     /**
      * Constructs a new TicketGrantingTicket.

@@ -55,6 +55,7 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
@@ -276,7 +277,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties,
             final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext) {
+            final CasSSLContext casSslContext,
+            @Qualifier("pac4jLogoutHandler")
+            final LogoutHandler pac4jLogoutHandler) {
 
             val core = casProperties.getAuthn().getPac4j().getCore();
             val clientsCache = Caffeine.newBuilder()
@@ -292,10 +295,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
             if (StringUtils.isNotBlank(casProperties.getAuthn().getPac4j().getRest().getUrl())) {
                 return new RestfulDelegatedClientFactory(customizers, casSslContext,
-                    casProperties, samlMessageStoreFactory, clientsCache);
+                    casProperties, samlMessageStoreFactory, clientsCache, pac4jLogoutHandler);
             }
             return new DefaultDelegatedClientFactory(casProperties,
-                customizers, casSslContext, samlMessageStoreFactory, clientsCache);
+                customizers, casSslContext, samlMessageStoreFactory, clientsCache, pac4jLogoutHandler);
         }
     }
 

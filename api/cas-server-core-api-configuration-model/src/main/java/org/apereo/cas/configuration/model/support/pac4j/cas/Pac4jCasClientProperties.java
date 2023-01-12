@@ -41,6 +41,11 @@ public class Pac4jCasClientProperties extends Pac4jBaseClientProperties implemen
     @RequiredProperty
     private String protocol = "CAS20";
 
+    /**
+     * Whether we should trigger the CAS server logout when receiving a logout request from the delegated identity provider.
+     */
+    private boolean triggerCasLogout;
+
     public Pac4jCasClientProperties() {
         setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);
     }

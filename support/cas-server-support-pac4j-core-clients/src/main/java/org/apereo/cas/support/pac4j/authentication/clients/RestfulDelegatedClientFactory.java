@@ -15,6 +15,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.hjson.JsonValue;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.logout.handler.LogoutHandler;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -47,8 +48,9 @@ public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
                                          final CasSSLContext casSSLContext,
                                          final CasConfigurationProperties casProperties,
                                          final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
-                                         final Cache<String, Collection<IndirectClient>> clientsCache) {
-        super(casProperties, customizers, casSSLContext, samlMessageStoreFactory, clientsCache);
+                                         final Cache<String, Collection<IndirectClient>> clientsCache,
+                                         final LogoutHandler pac4jLogoutHandler) {
+        super(casProperties, customizers, casSSLContext, samlMessageStoreFactory, clientsCache, pac4jLogoutHandler);
     }
 
     @Override

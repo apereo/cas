@@ -131,4 +131,9 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * the access token. If not, the token format could change at any time.
      */
     private boolean includeAccessTokenClaims;
+
+    /**
+     * Whether we should trigger the CAS server logout when receiving a logout request from the delegated identity provider.
+     */
+    private boolean triggerCasLogout;
 }

@@ -330,4 +330,9 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * When generating SAML2 metadata, configure and set the list of supported protocols in the metadata.
      */
     private List<String> supportedProtocols = Stream.of("urn:oasis:names:tc:SAML:2.0:protocol").toList();
+
+    /**
+     * Whether we should trigger the CAS server logout when receiving a logout request from the delegated identity provider.
+     */
+    private boolean triggerCasLogout;
 }
