@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.logout.handler.LogoutHandler;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -59,10 +58,6 @@ public class TriggerCasSLOLogoutHandler implements LogoutHandler {
     }
 
     protected void triggerCasSLO(final WebContext context, final SessionStore sessionStore, final String key) {
-
-        val profileManager = new ProfileManager(context, sessionStore);
-        profileManager.removeProfiles();
-
         val requestContext = RequestContextHolder.getRequestContext();
         if (requestContext != null) {
             val externalContext = requestContext.getExternalContext();
@@ -73,7 +68,7 @@ public class TriggerCasSLOLogoutHandler implements LogoutHandler {
                 if (StringUtils.isBlank(tgtId)) {
                     val predicate = (Predicate<Ticket>) ticket -> ticket instanceof TicketGrantingTicketImpl
                                                         && !ticket.isExpired()
-                                                        && StringUtils.equals(((TicketGrantingTicketImpl) ticket).getDelegatedSessionKey(), key);
+                                                        && StringUtils.equals(((TicketGrantingTicketImpl) ticket).getLinkedIdentifier(), key);
                     val optTicket = ticketRegistry.getTickets(predicate).findFirst();
                     LOGGER.debug("Found TGT: [{}] for key: [{}]", optTicket, key);
                     if (optTicket.isPresent()) {

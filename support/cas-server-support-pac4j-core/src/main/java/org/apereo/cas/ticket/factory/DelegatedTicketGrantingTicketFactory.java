@@ -45,7 +45,7 @@ public class DelegatedTicketGrantingTicketFactory extends DefaultTicketGrantingT
                 val request = (HttpServletRequest) sec.getNativeRequest();
                 val key = (String) request.getAttribute(DELEGATED_SESSION_KEY_REQUEST_ATTRIBUTE);
                 if (StringUtils.isNotBlank(key)) {
-                    ticket.setDelegatedSessionKey(key);
+                    ticket.setLinkedIdentifier(key);
                 }
             }
         }

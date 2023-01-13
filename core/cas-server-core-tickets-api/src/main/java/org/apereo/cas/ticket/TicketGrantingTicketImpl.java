@@ -73,10 +73,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Authenti
     private Set<String> descendantTickets = new HashSet<>(0);
 
     /**
-     * The key associated to the delegated session.
+     * Another identifier linked to this ticket.
      */
     @Setter
-    private String delegatedSessionKey;
+    private String linkedIdentifier;
 
     /**
      * Constructs a new TicketGrantingTicket.
