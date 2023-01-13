@@ -337,6 +337,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .registeredService(registeredService)
                 .authentications(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
+                .context(CollectionUtils.wrap(TicketGrantingTicket.class.getName(), serviceTicket.getTicketGrantingTicket().getRoot().getId()))
                 .build()
                 .assemble();
 

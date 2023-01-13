@@ -42,8 +42,8 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
 
         if (ticketGrantingTicket == null) {
             try {
-                ticketGrantingTicket = sessionStore
-                    .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                ticketGrantingTicket = manager.getProfile()
+                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
                     .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                     .orElse(null);
             } catch (final Exception e) {

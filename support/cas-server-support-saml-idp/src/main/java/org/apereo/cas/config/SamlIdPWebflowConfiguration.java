@@ -26,7 +26,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
-import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -90,14 +89,6 @@ public class SamlIdPWebflowConfiguration {
     @Configuration(value = "SamlIdPWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPWebflowActionsConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET)
-        public Action samlIdPSessionStoreTicketGrantingTicketAction(
-            @Qualifier("samlIdPDistributedSessionStore")
-            final SessionStore samlIdPDistributedSessionStore) {
-            return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
-        }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
         @Bean

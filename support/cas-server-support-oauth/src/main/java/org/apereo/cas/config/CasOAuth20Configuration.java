@@ -8,6 +8,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -394,6 +395,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client oauthCasClient(
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext,
             @Qualifier("oauthCasClientRedirectActionBuilder")
             final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder,
             @Qualifier("casCallbackUrlResolver")
@@ -416,7 +419,7 @@ public class CasOAuth20Configuration {
                 val assertion = (Assertion) validationResult.getContext().get(Assertion.class.getName());
 
                 val principalAttributes = new HashMap<String, Object>(validationResult.getPrincipal().getAttributes());
-                principalAttributes.put(Authentication.class.getName(), assertion.getOriginalAuthentication());
+                principalAttributes.putAll(validationResult.getContext());
 
                 val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), principalAttributes);
                 val registeredService = (RegisteredService) validationResult.getContext().get(RegisteredService.class.getName());
@@ -425,6 +428,9 @@ public class CasOAuth20Configuration {
                     assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
                 return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes);
             });
+
+            cfg.setHostnameVerifier(casSslContext.getHostnameVerifier());
+            cfg.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
             val oauthCasClient = new CasClient(cfg);
             oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore) ->
                 oauthCasClientRedirectActionBuilder.build(oauthCasClient, webContext));

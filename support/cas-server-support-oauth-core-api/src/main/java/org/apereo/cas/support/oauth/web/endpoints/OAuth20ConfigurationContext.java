@@ -43,6 +43,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -143,9 +144,12 @@ public class OAuth20ConfigurationContext {
             getTicketGrantingTicketCookieGenerator(),
             getTicketRegistry(), context.getNativeRequest());
         return Optional.ofNullable(ticketGrantingTicket)
-            .orElseGet(() -> getSessionStore()
-                .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                .map(ticketId -> getTicketRegistry().getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                .orElse(null));
+            .orElseGet(() -> {
+                val manager = new ProfileManager(context, getSessionStore());
+                return manager.getProfile()
+                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
+                    .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                    .orElse(null);
+            });
     }
 }

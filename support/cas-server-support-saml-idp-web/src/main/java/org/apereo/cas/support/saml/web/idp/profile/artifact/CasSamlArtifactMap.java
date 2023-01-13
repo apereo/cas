@@ -16,6 +16,7 @@ import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 
 import java.io.IOException;
@@ -48,8 +49,10 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         if (ticketGrantingTicket == null) {
-            ticketGrantingTicket = samlIdPDistributedSessionStore
-                .get(new JEEContext(request, response), WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+            val ctx = new JEEContext(request, response);
+            val manager = new ProfileManager(ctx, samlIdPDistributedSessionStore);
+            ticketGrantingTicket = manager.getProfile()
+                .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
                 .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null);
         }

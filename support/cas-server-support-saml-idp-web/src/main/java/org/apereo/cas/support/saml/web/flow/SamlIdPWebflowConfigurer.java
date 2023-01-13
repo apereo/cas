@@ -34,8 +34,6 @@ public class SamlIdPWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (flow != null) {
             val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER));
-            val createTicketState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-            createTicketState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET));
 
             val h = new TransitionExecutingFlowExecutionExceptionHandler();
             h.add(SamlException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);

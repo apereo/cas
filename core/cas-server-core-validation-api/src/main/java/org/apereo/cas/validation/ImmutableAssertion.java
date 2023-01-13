@@ -10,7 +10,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An immutable, serializable ticket validation assertion.
@@ -50,4 +52,11 @@ public class ImmutableAssertion implements Assertion {
     private final @NonNull WebApplicationService service;
 
     private final @NonNull RegisteredService registeredService;
+
+    /**
+     * Context map.
+     *
+     * @return the map
+     */
+    private final Map<String, Serializable> context;
 }

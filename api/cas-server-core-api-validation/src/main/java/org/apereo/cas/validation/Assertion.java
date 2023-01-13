@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a security assertion obtained from a successfully validated ticket.
@@ -61,4 +62,11 @@ public interface Assertion extends Serializable {
      * @return the registered service
      */
     RegisteredService getRegisteredService();
+
+    /**
+     * Context map.
+     *
+     * @return the map
+     */
+    Map<String, Serializable> getContext();
 }
