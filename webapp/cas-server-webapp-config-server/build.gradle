@@ -7,5 +7,7 @@ description = "Apereo CAS Spring Cloud Configuration Web Application Server"
 
 dependencies {
     implementation libraries.springboottomcat
+    implementation libraries.springcloudbootstrap
+    
     implementation project(":webapp:cas-server-webapp-init-config-server")
 }

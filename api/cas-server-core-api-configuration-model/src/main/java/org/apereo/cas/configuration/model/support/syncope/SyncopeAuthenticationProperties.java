@@ -14,6 +14,8 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link SyncopeAuthenticationProperties}.
@@ -43,6 +45,11 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties imple
     private String name;
 
     /**
+     * The order of this authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
+
+    /**
      * Password encoder settings for the authentication handler.
      */
     @NestedConfigurationProperty
@@ -59,6 +66,19 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties imple
      */
     @RegularExpressionCapable
     private String credentialCriteria;
+
+    /**
+     * Map of attributes that optionally may be used to control the names
+     * of the collected attributes from Syncope. If an attribute is provided by Syncope,
+     * it can be listed here as the key of the map with a value that should be the name
+     * of that attribute as collected and recorded by CAS.
+     * For example, the convention {@code lastLoginDate->lastDate} will process the
+     * Syncope attribute {@code lastLoginDate} and will internally rename that to {@code lastDate}.
+     * If no mapping is specified, CAS defaults will be used instead.
+     * In other words, this settings allows one to virtually rename and remap Syncopen attributes
+     * during the authentication event.
+     */
+    private final Map<String, String> attributeMappings = new LinkedHashMap<>();
 
     /**
      * This is principal transformation properties.
