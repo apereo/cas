@@ -1921,11 +1921,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_SAML_METADATA_UI_PARSER = "samlMetadataUIParserAction";
 
     /**
-     * Action id 'samlIdPSessionStoreTicketGrantingTicketAction'.
-     */
-    String ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET = "samlIdPSessionStoreTicketGrantingTicketAction";
-
-    /**
      * Action id 'samlIdPMetadataUIParserAction'.
      */
     String ACTION_ID_SAML_IDP_METADATA_UI_PARSER = "samlIdPMetadataUIParserAction";
@@ -1939,11 +1934,6 @@ public interface CasWebflowConstants {
      * Action id 'oauth20RegisteredServiceUIAction'.
      */
     String ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI = "oauth20RegisteredServiceUIAction";
-
-    /**
-     * Action id 'oauth20SessionStoreTicketGrantingTicketAction'.
-     */
-    String ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET = "oauth20SessionStoreTicketGrantingTicketAction";
 
     /**
      * Action id 'inweboPushAuthenticateAction'.
