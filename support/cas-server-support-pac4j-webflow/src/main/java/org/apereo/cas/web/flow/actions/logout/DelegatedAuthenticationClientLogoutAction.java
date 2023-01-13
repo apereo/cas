@@ -13,6 +13,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.state.SAML2StateGenerator;
@@ -77,7 +78,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             val targetUrl = service != null ? service.getId() : null;
             LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
 
-            val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
+            val actionResult = client.getLogoutAction(context, sessionStore, ProfileManagerFactory.DEFAULT, currentProfile, targetUrl);
             if (actionResult.isPresent()) {
                 val action = (HttpAction) actionResult.get();
                 val logoutAction = DelegatedAuthenticationClientLogoutRequest.builder().status(action.getCode())

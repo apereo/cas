@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +132,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val mockResponse = new MockHttpServletResponse();
-        val redirect = oauthCasClient.getRedirectionAction(new JEEContext(mockRequest, mockResponse), oauthDistributedSessionStore);
+        val redirect = oauthCasClient.getRedirectionAction(new JEEContext(mockRequest, mockResponse),
+            oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
         assertTrue(redirect.isPresent());
 
         val callbackUrl = ((WithLocationAction) redirect.get()).getLocation();
