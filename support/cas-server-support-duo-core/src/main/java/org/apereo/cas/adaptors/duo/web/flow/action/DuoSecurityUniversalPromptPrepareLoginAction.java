@@ -50,7 +50,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
 
         val client = duoProvider.getDuoAuthenticationService()
             .getDuoClient()
-            .map(c -> (Client) c)
+            .map(dc -> (Client) dc)
             .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client"));
         val state = client.generateState();
 

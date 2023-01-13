@@ -78,7 +78,7 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties imple
      * In other words, this settings allows one to virtually rename and remap Syncopen attributes
      * during the authentication event.
      */
-    private final Map<String, String> attributeMappings = new LinkedHashMap<>();
+    private Map<String, String> attributeMappings = new LinkedHashMap<>();
 
     /**
      * This is principal transformation properties.

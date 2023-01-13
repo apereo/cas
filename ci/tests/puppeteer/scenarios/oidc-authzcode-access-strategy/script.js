@@ -5,12 +5,12 @@ const assert = require('assert');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    //
-    // let url1 = "https://httpbin.org/anything/sample";
-    // await cas.logg(`Trying with URL ${url1}`);
-    // let payload = await getPayload(page, url1, "client", "secret");
-    // let decoded = await cas.decodeJwt(payload.id_token);
-    // assert(decoded["email"] === "cas@example.org");
+    
+    let url1 = "https://httpbin.org/anything/sample";
+    await cas.logg(`Trying with URL ${url1}`);
+    let payload = await getPayload(page, url1, "client", "secret");
+    let decoded = await cas.decodeJwt(payload.id_token);
+    assert(decoded["email"] === "cas@example.org");
 
     let url2 = "https://httpbin.org/anything/mapped";
     await cas.logg(`Trying with URL ${url2}`);

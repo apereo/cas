@@ -65,6 +65,6 @@ public abstract class BaseSyncopeSearchProperties extends BaseSyncopeProperties 
      * Syncope attribute {@code lastLoginDate} and will internally rename that to {@code lastDate}.
      * If no mapping is specified, CAS defaults will be used instead.
      */
-    private final Map<String, String> attributeMappings = new LinkedHashMap<>();
+    private Map<String, String> attributeMappings = new LinkedHashMap<>();
 
 }
