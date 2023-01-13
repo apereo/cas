@@ -45,7 +45,11 @@
         <li class='nav-item'><a class='nav-link active' onclick="javascript:tabClicked(1)" data-bs-toggle='tab' href='#gradle{{ casModuleRandomNumber }}'>Gradle</a></li>
 
         {% unless include.ignoreBOM == "true" %}
-        <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' href='#bom{{ casModuleRandomNumber }}'>BOM</a></li>
+        <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
+            href='#bom{{ casModuleRandomNumber }}'>BOM - Spring</a></li>
+
+        <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
+            href='#bomGradle{{ casModuleRandomNumber }}'>BOM - Gradle</a></li>
         {% endunless %}
 
         <li role='presentation' class='nav-item dropdown'>
@@ -83,11 +87,21 @@
 
 
         <div class='tab-pane fade in active show' id='gradle{{ casModuleRandomNumber }}'>
+            {% if include.module contains "-bom" %}
+{% capture gradle %}
+```groovy
+implementation enforcedPlatform("{{include.group}}:{{include.module}}:${project.'cas.version'}")
+```
+{% endcapture %}
+            {% endif %}
+
+            {% unless include.module contains "-bom" %}
             {% capture gradle %}
 ```groovy
-implementation "{{include.group}}:{{include.module}}"
+implementation "{{include.group}}:{{include.module}}:${project.'cas.version'}"
 ```
             {% endcapture %}
+            {% endunless %}
             <span>
     {{ gradle | markdownify }}
   </span>
@@ -104,6 +118,23 @@ dependencyManagement {
 }
 
 dependencies {
+    implementation "{{include.group}}:{{include.module}}"
+}
+```
+            {% endcapture %}
+            <span>
+    {{ bom | markdownify }}
+  </span>
+
+        </div>
+
+        <div class='tab-pane fade in' id='bomGradle{{ casModuleRandomNumber }}'>
+            {% capture bom %}
+```groovy
+dependencies {
+    implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+
     implementation "{{include.group}}:{{include.module}}"
 }
 ```
