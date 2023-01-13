@@ -69,6 +69,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
         val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
+        attributes.put(Pac4jConstants.CLIENT_NAME, CollectionUtils.wrap(profile.getClientName()));
         val initialPrincipal = principalFactory.createPrincipal(id, attributes);
 
         val principal = finalizeAuthenticationPrincipal(initialPrincipal, client, credentials, service);
