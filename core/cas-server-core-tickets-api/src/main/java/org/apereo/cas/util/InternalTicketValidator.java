@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -12,8 +13,8 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is a ticket validator that uses CAS back channels to validate ST.
@@ -40,13 +41,17 @@ public class InternalTicketValidator implements TicketValidator {
         val registeredService = servicesManager.findServiceBy(service);
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
             authentication, assertion, new HashMap<>(0), registeredService);
+        val context = CollectionUtils.<String, Serializable>wrap(
+            Authentication.class.getName(), assertion.originalAuthentication(),
+            Assertion.class.getName(), assertion,
+            RegisteredService.class.getName(), registeredService);
+        context.putAll(assertion.context());
+
         return ValidationResult.builder()
             .principal(principal)
             .service(service)
             .attributes(authenticationAttributes)
-            .context(Map.of(
-                Assertion.class.getName(), assertion,
-                RegisteredService.class.getName(), registeredService))
+            .context(context)
             .build();
     }
 }

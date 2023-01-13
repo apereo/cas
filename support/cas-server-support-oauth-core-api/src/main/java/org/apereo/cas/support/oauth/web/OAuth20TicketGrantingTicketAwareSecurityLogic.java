@@ -36,14 +36,12 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {
-
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, ((JEEContext) context).getNativeRequest());
-
         if (ticketGrantingTicket == null) {
             try {
-                ticketGrantingTicket = sessionStore
-                    .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                ticketGrantingTicket = manager.getProfile()
+                    .map(profile -> profile.getAttribute(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID))
                     .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                     .orElse(null);
             } catch (final Exception e) {
