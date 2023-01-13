@@ -2,8 +2,8 @@ package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,8 +45,9 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
-        profileManager.save(true, new BasicUserProfile(), false);
-        JEESessionStore.INSTANCE.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, UUID.randomUUID().toString());
+        val profile = new BasicUserProfile();
+        profile.addAttribute(TicketGrantingTicket.class.getName(), UUID.randomUUID().toString());
+        profileManager.save(true, profile, false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
         assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }
@@ -60,8 +61,10 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
         profileManager.save(true, new BasicUserProfile(), false);
 
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
-        JEESessionStore.INSTANCE.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt.getId());
+        val profile = new BasicUserProfile();
+        profile.addAttribute(TicketGrantingTicket.class.getName(), tgt.getId());
         ticketRegistry.addTicket(tgt);
+        profileManager.save(true, profile, false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
         assertFalse(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
     }

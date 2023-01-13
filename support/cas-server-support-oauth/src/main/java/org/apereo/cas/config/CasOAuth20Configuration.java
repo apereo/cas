@@ -438,7 +438,7 @@ public class CasOAuth20Configuration {
             cfg.setHostnameVerifier(casSslContext.getHostnameVerifier());
             cfg.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
             val oauthCasClient = new CasClient(cfg);
-            oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore) ->
+            oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore, __) ->
                 oauthCasClientRedirectActionBuilder.build(oauthCasClient, webContext));
             oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
             oauthCasClient.setUrlResolver(casCallbackUrlResolver);
