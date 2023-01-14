@@ -21,7 +21,7 @@ the contribution most likely will not be accepted into the codebase and ultimate
 
 The following types of test cases in the project are those that CAS developers/contributors need to review,
 
-<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are about to describe a problem, please try to put together a test case that concretely demonstrates
 the issue in an automated fashion in an environment that is fairly 
 isolated, <strong>WITHOUT</strong> manual instructions and guidance 
