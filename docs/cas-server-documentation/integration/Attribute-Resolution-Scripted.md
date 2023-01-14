@@ -10,7 +10,7 @@ category: Attributes
 
 The following configuration describes how to fetch and retrieve attributes from Scripted attribute repositories.
 
-<div class="alert alert-warning"><strong>Usage</strong>
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
 <p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
 </div>
 

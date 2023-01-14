@@ -20,7 +20,7 @@ Duo offers several options for authenticating users:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
-<div class="alert alert-warning"><strong>Usage</strong>
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
 <p>Please note that support for Duo multifactor authentication that is based on the Duo's Web SDK and the embedded iFrame
 is deprecated and scheduled to be removed on March 30, 2024. You should consider switching to the 'Universal Prompt' variant
 described in this document to avoid surprises in future upgrades.</p>
@@ -57,7 +57,7 @@ user account is not registered yet the new-user enrollment policy allows the use
 Duo Security altogether and shall not challenge the user and will also **NOT** report back a multifactor-enabled 
 authentication context back to the application.
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>In recent conversations with Duo Security, it 
+<div class="alert alert-warning">:warning: <strong>YMMV</strong><p>In recent conversations with Duo Security, it 
 turns out that the API behavior has changed (for security reasons) where it may no longer accurately 
 report back account status. This means even if the above conditions hold true, CAS may continue to route 
 the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly 

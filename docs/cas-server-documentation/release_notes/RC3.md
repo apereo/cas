@@ -60,7 +60,7 @@ be sorted out prior to the final GA release by the time Jetty `12` is released.
 - Support for Spring Cloud Sleuth has been removed, and will later on be replaced with Micrometer Tracing.
 - The [SCIM 2](https://github.com/pingidentity/scim2) library is replaced with an alternative that supports Jakarta APIs.  
 
-<div class="alert alert-info"><strong>Usage Warning</strong><p>Remember that this is a major upgrade and may possibly
+<div class="alert alert-info">:information_source: <strong>Usage Warning</strong><p>Remember that this is a major upgrade and may possibly
 be somewhat disruptive in the beginning. While most if not all CAS-specific configuration should remain exactly the same, 
 you may encounter unexpected hiccups and mishaps along the way. We recommend that you start early by experimenting with 
 release candidates and/or follow-up snapshots. For additional warranties, please see the project license.</p></div>

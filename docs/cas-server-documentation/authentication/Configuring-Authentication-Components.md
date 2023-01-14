@@ -37,7 +37,7 @@ There are a variety of authentication handlers and methods supported
 by CAS. Use the menu to navigate around the site and choose. By default, CAS is configured 
 to accept a pre-defined set of credentials that are supplied via the CAS configuration.
 
-<div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
+<div class="alert alert-warning">:warning: <strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>

@@ -33,7 +33,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 Give the above definition, the expectation is that the git repository
 contains a `SAMLService.xml` file which may optionally also be accompanied by a `SAMLService.pem` file.
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>git://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
 </p></div>

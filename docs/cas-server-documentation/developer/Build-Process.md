@@ -10,7 +10,7 @@ category: Developer
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
 If you are about to deploy and configure CAS, you are in the <strong>WRONG PLACE</strong>! To deploy CAS locally, use the 
 WAR Overlay method described in the project documentation for a specific CAS version. Cloning, downloading and building the 
 CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
@@ -56,7 +56,7 @@ When done, you may build the codebase via the following command:
 ./gradlew build --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
-<div class="alert alert-info"><strong>Gradle Wrapper & Gum</strong>
+<div class="alert alert-info">:information_source: <strong>Gradle Wrapper & Gum</strong>
 <p>Rather than using the Gradle Wrapper directly, you
 might want to <a href="https://github.com/kordamp/gm">use Gum</a>, which is able to 
 auto-detect the location of the Gradle Wrapper anywhere in the project structure.</p></div>
@@ -99,7 +99,7 @@ The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
 
-<div class="alert alert-info"><p>
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
 You should always use the latest version of the Intellij IDEA.
 </p></div>
 
@@ -189,7 +189,7 @@ cd cas-server
 Then, import the project into eclipse using "General\Existing Projects into Workspace" 
 and choose "Add Gradle Nature" from the "Configure" context menu of the project.
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based 
+<div class="alert alert-warning">:warning: <strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based 
 projects. While time changes everything and docs grow old, it is likely that you may experience issues with how Eclipse manages to 
 resolve Gradle dependencies and build the project. In the end, you're welcome to use what works best for you as the ultimate goal 
 is to find the appropriate tooling to build and contribute to CAS.</p></div>
