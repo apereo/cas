@@ -16,7 +16,7 @@ that are *owned* by CAS, noted by its very own prefix.
 
 {% include_cached casproperties.html properties="cas.custom.properties" %}
 
-<div class="alert alert-info"><strong>Usage</strong>
+<div class="alert alert-info">:information_source: <strong>Usage</strong>
 <p>If you are extending CAS to define your own components and business logic and need to find a way to define your own settings, 
 we generally recommend that you define your own setting namespace and prefix using your own <code>@ConfigurationProperties</code>
 conventions. Hijacking a CAS-owned configuration namespace should be seen as a poor design choice and must be avoided.</p></div>

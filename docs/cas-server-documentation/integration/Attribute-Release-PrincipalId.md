@@ -17,7 +17,7 @@ component determines what should be placed inside the `<cas:user>` tag in the fi
 application when the authentication flow is in the context of the CAS protocol. Each authentication protocol supported by CAS might have an equivalent
 concept that is then mapped and translated by the username attribute provider.
 
-<div class="alert alert-warning"><strong>Principal Id As Attribute</strong><p>You may also return the authenticated principal 
+<div class="alert alert-warning">:warning: <strong>Principal Id As Attribute</strong><p>You may also return the authenticated principal 
 id as an extra attribute in the final CAS validation payload, typically when using the CAS protocol. See <a href="Attribute-Release-Policies.html">this 
 guide</a> to learn more.</p></div>
 

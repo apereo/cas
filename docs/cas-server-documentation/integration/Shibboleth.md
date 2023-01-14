@@ -17,7 +17,7 @@ perform the requested action, e.g. attribute release.
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must
 authenticate before the IdP proceeds with the requested action.
 
-<div class="alert alert-info"><strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../authentication/Configuring-SAML2-Authentication.html">start here instead</a>.</p></div>
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../authentication/Configuring-SAML2-Authentication.html">start here instead</a>.</p></div>
 
 ## SSO for Shibboleth IdP (External)
 

@@ -48,7 +48,7 @@ If the attribute in question is not already resolved as principal attribute with
 it might be possible, depending on the [attribute release policy](Attribute-Release.html), to 
 resolve and create that attribute on the fly as an attribute definition that can produce values. 
 
-<div class="alert alert-info"><strong>Authorization</strong><p>
+<div class="alert alert-info">:information_source: <strong>Authorization</strong><p>
 Please note that as of this writing, attribute definitions cannot be used to drive authorization decisions via the likes of RBAC.
 Such definitions are typically evaluated during the attribute release phase which is too late for authorization decisions. If you need to
 produce attributes specifically for authorization decisions, consider defining a specific attribute repository which would be evaluated

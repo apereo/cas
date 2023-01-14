@@ -73,7 +73,7 @@ Note that mixing and matching different versions generally will lead to unstable
 of version numbers in the project generation request is unnecessary, and [CAS Initializr][initializr] will always
 use trusted defaults to handle the generation task.
 
-<div class="alert alert-info"><strong>Remember</strong><p>The only version you <i>might</i> need to specify is the CAS server version. Overriding 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>The only version you <i>might</i> need to specify is the CAS server version. Overriding 
 other aspects of the build or component versions such as Spring Boot often leads to an unstable build and deployment environment.</p></div>
 
 To review the list of supported versions for the CAS Initializr on [Heroku][initializr], you may use:
@@ -146,7 +146,7 @@ function getcas() {
 }
 ```
 
-<div class="alert alert-info"><strong>Note</strong><p>
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
 If you prefer, you could invoke the <code>/starter.zip</code> endpoint to get back a ZIP file instead.
 </p></div>
 
@@ -160,7 +160,7 @@ getcas --modules duo,oidc
 by [Duo Security](../mfa/DuoSecurity-Authentication.html) and
 support for [OpenID Connect](../authentication/OAuth-Authentication.html).
 
-<div class="alert alert-info"><strong>Note</strong>
+<div class="alert alert-info">:information_source: <strong>Note</strong>
 <p>To help keep the deployment costs down, the Heroku instance has turned on support for
 rate-limiting requests. Be aware that frequent requests may be throttled for access.</p></div>
 

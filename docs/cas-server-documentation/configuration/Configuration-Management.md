@@ -17,7 +17,7 @@ and leaving all else behind to be handled by the default CAS configuration.
 
 The following strategies may be used to fully extend the CAS configuration model.
 
-<div class="alert alert-info"><strong>YAML or Properties?</strong><p>CAS configuration allows for both
+<div class="alert alert-info">:information_source: <strong>YAML or Properties?</strong><p>CAS configuration allows for both
 YAML and Properties syntax in any of the below strategies used. It generally does not matter which syntax 
 is used, but when working with Unicode strings as properties values it does matter. Spring loads properties
 files using the `ISO-8859-1` encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
@@ -57,7 +57,7 @@ are considered in the following order:
 5. OS environment variables.
 6. Java System properties.
 
-<div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage
+<div class="alert alert-info">:information_source: <strong>Managing Configuration</strong><p>In order to manage
 the CAS configuration, you should configure access
 to <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
@@ -97,7 +97,7 @@ The idea is twofold:
 CAS will automatically take care of injecting appropriate beans and other components into the runtime application context,
 Depending on the presence of a module and/or its settings configured by the deployer.
 
-<div class="alert alert-info"><strong>No XML</strong><p>Again, the entire point of
+<div class="alert alert-info">:information_source: <strong>No XML</strong><p>Again, the entire point of
 the auto-configuration strategy is ensure deployers aren't swimming in a sea of XML files
 configuring beans and such. CAS should take care of it all. If you find an instance where
 this claim does not hold, consider that a "bug" and file a feature request.</p></div>

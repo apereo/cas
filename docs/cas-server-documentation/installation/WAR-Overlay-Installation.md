@@ -57,7 +57,7 @@ The process of working with an overlay can be summarized in the following steps:
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
-<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by 
+<div class="alert alert-warning">:warning: <strong>Be Exact</strong><p>Do NOT copy everything produced by 
 the build. Attempt to keep changes and customizations to a 
 minimum and only grab what you actually need. Make sure the deployment environment 
 is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
