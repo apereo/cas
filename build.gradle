@@ -508,7 +508,7 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
         }.collect {subproject ->
             subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
         }
-        println "Coverage execution data files: ${executions}"
+        logger.info "Coverage execution data files: ${executions}"
         executionData.from(executions)
 
         reports {
