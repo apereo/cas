@@ -14,7 +14,9 @@ broker while transparently providing access to multiple services without repetit
 improves the security environment, but there are several CAS configuration, policy, and deployment concerns that should
 be considered to achieve suitable security.
 
-<div class="alert alert-info">:information_source: <strong>Reporting Issues</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
+<div class="alert alert-info">:information_source: <strong>Reporting Issues</strong><p>The security team asks that you 
+please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues 
+properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
 
 ## Announcements
      
@@ -241,7 +243,7 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-{% include_cached casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request.cors" %}
 
 #### Security Response Headers
 
@@ -249,7 +251,7 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently on by default.
 
-{% include_cached casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request.header" %}
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
@@ -282,8 +284,7 @@ Long term authentication support must be explicitly enabled through
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 
-
-### Warn
+### Warning Before Redirect
 
 CAS supports optional notification of service access during an established SSO session. By default CAS
 transparently requests tickets needed for service access and presents them to the target service for validation,

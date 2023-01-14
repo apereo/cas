@@ -121,11 +121,7 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
 }
 ```
 
-Configuration classes need to be registered with CAS inside a `src/main/resources/META-INF/spring.factories` file:
-
-```properties
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.example.something.SomethingConfiguration
-```
+Configuration classes need to be registered with CAS via the strategy [outlined here](../configuration/Configuration-Management-Extensions.html).
 
 <div class="alert alert-info">:information_source: <strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
 piece of Java code that is put into the CAS Overlay may require additional CAS modules and dependencies on the classpath. You will need
