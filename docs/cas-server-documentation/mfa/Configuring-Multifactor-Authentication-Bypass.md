@@ -89,7 +89,7 @@ with the specified value(s).
 
 Matching and comparison operations are case insensitive.
 
-<div class="alert alert-info"><strong>Remember</strong>
+<div class="alert alert-info">:information_source: <strong>Remember</strong>
 <p>Setting the <code>bypassEnabled</code> flag here is unnecessary and may cause side-effects. Once principal attribute name and match value
 are defined, the <code>bypassEnabled</code> is expected to be <code>true</code> anyway.</p>
 </div>

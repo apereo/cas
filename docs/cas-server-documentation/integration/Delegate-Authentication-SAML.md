@@ -142,7 +142,7 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ## Identity Provider Discovery Service
 
-<div class="alert alert-info"><strong>Note</strong><p>Using identity provider discovery requires 
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>Using identity provider discovery requires 
 delegated authentication to be available. This feature cannot be used on its own
 as a standalone discovery service.</p></div>
 

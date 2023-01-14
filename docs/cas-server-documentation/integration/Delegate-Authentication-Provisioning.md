@@ -67,7 +67,7 @@ Provisioning tasks can be carried out using the CAS [SCIM Provisioning](../integ
 Once enabled and configured, authenticated profiles established from the external identity provider may be
 provisioned via SCIM to other systems.
 
-<div class="alert alert-info"><strong>Usage</strong><p>SCIM integration support for 
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>SCIM integration support for 
 delegated authentication is only handled via SCIM <code>v2</code>.</p></div>
 
 {% endtab %}

@@ -157,7 +157,7 @@ contributors and/or project members with the frequency of your progress notifica
 the use case as often as you like and be sure to keep asking for feedback as you make progress.
 
 <div class="alert alert-success">
-  <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
+:sunny: <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
 certain period of time get tagged as <i>Pending</i> and will be eventually closed automatically. Staleness 
 is only allowed to a certain degree, but worry not. Any stale closed pull request can always be reopened and progress resumed without data loss.
 </div>
@@ -169,7 +169,7 @@ the branch is still under care, you are more than welcome to move changes across
 much as needed to remove pain and improve.
 
 <div class="alert alert-success">
-  <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
+:sunny: <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
 maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
 </div>
 
@@ -217,7 +217,7 @@ done when contributors propose, discuss and show up with pull requests or when f
 for a change is made available. If you would like to see a change or feature in CAS, you're most welcome 
 to discuss and contribute or fund someone else's time and make it worth their while to do that for you.
 
-<div class="alert alert-info"><strong>The Hitchhiker's Guide to the CAS Galaxy</strong><p>A <i>problem</i> is 
+<div class="alert alert-info">:information_source: <strong>The Hitchhiker's Guide to the CAS Galaxy</strong><p>A <i>problem</i> is 
 only a problem, if and when you do something about the problem. Otherwise and by definition, there is no problem.</p></div>
 
 ## How often are changes released?
@@ -273,7 +273,7 @@ than *usual* to be merged, it's possible that the proposed changeset violates on
 - The patch violates the general design principles of the codebase or introduces inconsistent/contradictory concepts that are difficult to maintain.
 
 <div class="alert alert-success">
-  <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
+:sunny: <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
 as you prefer. The shared objective of a pull request is not to judge or point fingers but to 
 collaborate and make progress. Remain positive, optimistic with a healthy attitude towards comments and constructive feedback.
 </div>
@@ -333,7 +333,7 @@ commit anything to the `master` branch. The workflow more or less is the followi
 4. Go back to #2 until you are satisfied.
 
 <div class="alert alert-success">
-  <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
+:sunny: <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
 built locally from source. <a href="https://apereo.github.io/cas/developer/Build-Process.html">Follow this guide</a> to learn more.
 </div>
 
@@ -381,7 +381,7 @@ maintenance cycles. When you are preparing a pull request, please be sure to sel
 target branch for the patch to ensure your change can be included in the coming maintenance release as scheduled.
 
 <div class="alert alert-success">
-<strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
+:sunny: <strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
 previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported 
 forward to the master branch as well, via a separate pull request.
 </div>

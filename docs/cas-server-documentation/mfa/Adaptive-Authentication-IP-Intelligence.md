@@ -65,7 +65,7 @@ def run(Object[] args) {
 
 Please [see this link](https://getipintel.net/) for more info. A valid subscription is required for large query counts.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This is a free service, 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>This is a free service, 
 primarily useful for development, testing and demos. Production deployments 
 of this service require a subscription that can handle the expected query count and load.</p></div>
 

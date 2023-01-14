@@ -78,7 +78,7 @@ public DelegatedClientAuthenticationCredentialResolver myResolver() {
 }
 ```
 
-<div class="alert alert-info"><strong>Usage</strong><p>
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 The name of the bean can be of your own choosing. You are also allowed to create multiple bean definitions
 that handle different type of credentials with different resolution rules that may be 
 executed using a specific order.</p></div>
