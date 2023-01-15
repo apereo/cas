@@ -42,6 +42,7 @@ public class Workflows {
     public enum WorkflowRunEvent {
         PULL_REQUEST("pull_request"),
         PUSH("push"),
+        DYNAMIC("dynamic"),
         SCHEDULE("schedule");
 
         private final String name;
@@ -131,6 +132,17 @@ public class Workflows {
         public boolean isConcludedSuccessfully() {
             return Workflows.WorkflowRunStatus.COMPLETED.getName().equalsIgnoreCase(status)
                 && "success".equalsIgnoreCase(conclusion);
+        }
+
+        public boolean isRemovable() {
+            return Workflows.WorkflowRunEvent.PUSH.getName().equalsIgnoreCase(getEvent())
+                || Workflows.WorkflowRunEvent.DYNAMIC.getName().equalsIgnoreCase(getEvent())
+                || Workflows.WorkflowRunEvent.SCHEDULE.getName().equalsIgnoreCase(getEvent());
+        }
+
+        public boolean isSkipped() {
+            return WorkflowRunStatus.COMPLETED.getName().equalsIgnoreCase(status)
+                   && "skipped".equalsIgnoreCase(conclusion);
         }
     }
 }
