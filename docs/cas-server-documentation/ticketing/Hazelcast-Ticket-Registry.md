@@ -33,7 +33,7 @@ this auto-configuration mode are controlled by CAS properties.
 
 {% include_cached {{ version }}/hazelcast-configuration.md configKey="cas.ticket.registry.hazelcast" %}
 
-<div class="alert alert-warning"><strong>Session Monitoring</strong><p>Be aware that under 
+<div class="alert alert-warning">:warning: <strong>Session Monitoring</strong><p>Be aware that under 
 very heavy load and given a very large collection of tickets 
 over time, <a href="../monitoring/Configuring-Monitoring.html">session monitoring capabilities</a> of 
 CAS that report back ticket statistics based on the underlying Hazelcast ticket 

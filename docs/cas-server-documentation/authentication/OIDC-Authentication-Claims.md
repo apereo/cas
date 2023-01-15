@@ -10,8 +10,7 @@ category: Protocols
 OpenID connect claims are treated as normal CAS attributes that need to
 be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
 
-<div class="alert alert-warning">
-<strong>ID Token Claims</strong><p>
+<div class="alert alert-warning">:warning: <strong>ID Token Claims</strong><p>
 Per OpenID Connect specification, individual claims requested by OpenID scopes,
 such as <code>profile</code>, <code>email</code>, etc. are only put into the OpenID 
 Connect ID token when the response type is set to <code>id_token</code>. To assist with 
@@ -115,7 +114,7 @@ Note that in addition to standard system scopes, you may define your own custom 
 These such as `displayName` above, get bundled into a `custom` scope which 
 can be used and requested by services and clients.
 
-<div class="alert alert-info"><strong>Usage</strong><p>All user-defined custom scopes as well any custom claims
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>All user-defined custom scopes as well any custom claims
 that would be mapped to those scopes must always be advertised via OpenID Connect discovery document and specified
 in CAS settings for scopes and claims to be recognized as valid during claim processing.</p>
 </div>
@@ -172,7 +171,7 @@ the following example to release `userX` as a *claim*:
 }
 ```
 
-<div class="alert alert-info"><strong>Usage</strong><p>You should consider using a scope-free attribute release policy
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>You should consider using a scope-free attribute release policy
 only in very advanced and challenging use cases, typically to make a rather difficult client application integration work.</p>
 </div>
 

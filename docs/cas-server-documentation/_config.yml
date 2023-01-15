@@ -21,6 +21,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-include-cache
   - jekyll-tabs
+  - jemoji
 relative_links:
   enabled:     true
 kramdown:

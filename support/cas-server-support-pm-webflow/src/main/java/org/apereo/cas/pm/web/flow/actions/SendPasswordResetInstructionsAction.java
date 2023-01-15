@@ -126,7 +126,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val phone = passwordManagementService.findPhone(query);
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
-            return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
+            return getInvalidContactEvent(requestContext);
         }
 
         val service = WebUtils.getService(requestContext);
@@ -156,6 +156,17 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             LOGGER.warn("No username parameter is provided");
         }
         return builder.username(username).build();
+    }
+
+    /**
+     * Get the "invalid contact" event.
+     * It could be overriden to return success and hide the fact that the login does not exist.
+     *
+     * @param requestContext the request context
+     * @return the event
+     */
+    protected Event getInvalidContactEvent(final RequestContext requestContext) {
+        return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
     }
 
     protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {

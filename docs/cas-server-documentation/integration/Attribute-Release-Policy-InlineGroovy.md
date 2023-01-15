@@ -31,7 +31,7 @@ In the above snippet, the value of the `uid` attribute name is mapped to the res
 Inline scripts always begin with the syntax `groovy {...}` and are passed the current collection of resolved
 attributes as an `attributes` binding variable. The result of the script can be a single/collection of value(s).
 
-<div class="alert alert-info"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
+<div class="alert alert-info">:information_source: <strong>Usage Warning</strong><p>Activating this policy is not without cost,
 as CAS needs to evaluate the inline script, compile and run it for subsequent executions. While the compiled
 script is cached and should help with execution performance, as a general rule, you should avoid opting
 for and designing complicated scripts.</p></div>

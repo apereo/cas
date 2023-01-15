@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core" %}
 
-<div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request 
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>The client issuing the authentication request 
 can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the 
 authentication request using any protocol that the CAS server supports and is configured 
 to understand. This means that you may have an OAuth2 client using CAS in delegation 

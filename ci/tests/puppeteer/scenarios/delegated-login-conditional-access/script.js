@@ -24,7 +24,10 @@ const cas = require('../../cas.js');
     let response = await cas.loginWith(page, "casuser", "Mellon");
     console.log(`${response.status()} ${response.statusText()}`);
     await page.waitForTimeout(1000);
-    await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
+    await cas.screenshot(page);
+    await cas.assertInnerText(page, "#content h2", "Unauthorized Access");
+    await cas.assertTextContentStartsWith(page, "#content div p", "Either the authentication request was rejected/cancelled");
+    assert(response.status() === 401);
     await browser.close();
 })();
 

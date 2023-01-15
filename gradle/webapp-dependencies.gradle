@@ -45,7 +45,9 @@ dependencies {
     }
 
     implementation libraries.springcloudconfigclient
-    
+    implementation libraries.springcloudbootstrap
+    implementation libraries.springbootpropertymigrator
+
     if (!rootProject.publishFlag) {
         runtimeOnly libraries.springbootdevtools
     }

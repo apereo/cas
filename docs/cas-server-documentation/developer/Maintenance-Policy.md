@@ -16,7 +16,7 @@ In particular, the following questions are addressed:
 
 The project release schedule is [available here](https://github.com/apereo/cas/milestones).
 
-<div class="alert alert-info"><strong>Which version is more stable?</strong><p>CAS releases are strictly time-based releases; they 
+<div class="alert alert-info">:information_source: <strong>Which version is more stable?</strong><p>CAS releases are strictly time-based releases; they 
 are not scheduled or based on specific benchmarks, statistics or completion of features or bug fixes. To gain confidence in a 
 release, you should start early by experimenting with release candidates and/or follow-up snapshots.
 In terms of stabillity, all versions of the Apereo CAS software are loosely based on the <i>Schrödinger's Cat</i> theory: there are no guarantees 
@@ -33,7 +33,7 @@ of any kind, either express or implied. See the project license file for the spe
 
 “CAS Release” is any CAS feature release. (i.e. `4.1.x`, `4.2.x`, `5.0.x`, `5.1.x`, etc).
 
-<div class="alert alert-info"><strong>Uh...Maintenance?</strong><p>
+<div class="alert alert-info">:information_source: <strong>Uh...Maintenance?</strong><p>
 In this context, maintenance strictly means that the release line and the target destination branch in the CAS codebase remains open to
   accept patches and <strong>contributions from the community</strong> and that there will be follow-up binary releases forthcoming until the designated dates. 
 </p></div>
@@ -46,7 +46,7 @@ On a good day, the CAS project maintains three active branches/releases at the s
 
 "End-of-life" ("EOL") is a term used to describe that a given CAS release line (i.e. `6.1.x`, `6.2.x`, etc) is in the end of its practical life (from the project's point of view), and the project stops accepting, adding and/or releasing patches of any kind once it reaches that designated date. The EOL release is considered dead and it will not receive any attention whatsoever regardless of the issue impact or severity, unless absolutely justified by the [CAS PMC](Project-Commitee.html), subject to people's availability, project interest, resources and sufficient funding.
 
-<div class="alert alert-info"><strong>Documentation</strong><p>
+<div class="alert alert-info">:information_source: <strong>Documentation</strong><p>
 The documentation maintenance and hosting efforts will cease to exist for EOL versions after some time. If you do need access to the documentation
 for an EOL version, you could always find the original pages in the CAS codebase where you could take the pages and render and host
 them as you would like and take on the maintenance and hosting burden on your own.

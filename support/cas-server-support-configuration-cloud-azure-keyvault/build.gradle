@@ -1,5 +1,7 @@
 description = "Apereo CAS Configuration - Microsoft Azure KeyVault"
 dependencies {
     implementation libraries.azurekeyvault
+    implementation libraries.springcloudbootstrap
+
     implementation project(":core:cas-server-core-util-api")
 }

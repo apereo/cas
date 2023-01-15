@@ -16,7 +16,7 @@ of the webflow.
 
 {% include_cached casproperties.html properties="cas.webflow.auto-configuration." %}
 
-<div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
+<div class="alert alert-warning">:warning: <strong>Note</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
 change is rather minimal or decorative. Extensive modifications of the webflow, if not done carefully
 may severely complicate your deployment and future upgrades. If reasonable, consider contributing or

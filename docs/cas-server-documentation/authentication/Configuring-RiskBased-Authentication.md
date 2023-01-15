@@ -28,7 +28,7 @@ Without data, there is nothing to analyze and no risk to detect.
 
 Note that evaluation of attempts and mitigation of risks are all recorded in the audit log.
 
-<div class="alert alert-info"><strong>Adaptive Authentication</strong><p>
+<div class="alert alert-info">:information_source: <strong>Adaptive Authentication</strong><p>
 If you need to preemptively evaluate authentication attempts based on various characteristics of the request,
 you may be interested in <a href="../mfa/Configuring-Adaptive-Authentication.html">this guide</a> instead.</p></div>
 

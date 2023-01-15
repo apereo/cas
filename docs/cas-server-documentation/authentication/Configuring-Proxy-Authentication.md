@@ -11,7 +11,7 @@ category: Authentication
 Proxy authentication support for CAS v1+ protocols is enabled by default, thus it is entirely a matter of CAS
 client configuration to leverage proxy authentication features.
 
-<div class="alert alert-info"><strong>Service Configuration</strong><p>
+<div class="alert alert-info">:information_source: <strong>Service Configuration</strong><p>
 Note that each registered application in the registry must explicitly be configured
 to allow for proxy authentication. See <a href="../services/Service-Management.html">this guide</a>
 to learn about registering services in the registry.</p></div>
@@ -84,7 +84,7 @@ Note that the return of the proxy granting ticket id is only carried out by the 
 application issues a request to the `/p3/serviceValidate` endpoint (or `/p3/proxyValidate`). Other means of returning attributes to CAS, such as SAML1
 will **not** support the additional returning of the proxy granting ticket.
 
-<div class="alert alert-warning">If CAS is configured to return the proxy-granting ticket id directly in the validation response,
+<div class="alert alert-warning">:warning: <strong>Note</strong>If CAS is configured to return the proxy-granting ticket id directly in the validation response,
 the <code>pgtIou</code> parameter is omitted from the response and no callback to the application is performed.</div>
 
 ### Register Service

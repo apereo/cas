@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -12,13 +14,14 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
@@ -26,6 +29,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +133,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val mockResponse = new MockHttpServletResponse();
-        val redirect = oauthCasClient.getRedirectionAction(new JEEContext(mockRequest, mockResponse), oauthDistributedSessionStore);
+        val redirect = oauthCasClient.getRedirectionAction(new JEEContext(mockRequest, mockResponse),
+            oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
         assertTrue(redirect.isPresent());
 
         val callbackUrl = ((WithLocationAction) redirect.get()).getLocation();
@@ -254,7 +259,6 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -286,20 +290,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -318,7 +315,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -345,18 +342,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -375,7 +365,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
         val expiresIn = StringUtils.substringAfter(redirectUrl, "&expires_in=");
         assertEquals(getDefaultAccessTokenExpiration(), Long.parseLong(expiresIn));
@@ -404,18 +394,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setJwtAccessToken(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -461,20 +444,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -492,7 +468,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -515,20 +491,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -548,7 +517,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -570,20 +539,12 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
 
@@ -601,7 +562,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -623,20 +584,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
 
@@ -654,7 +608,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
     }
 
@@ -676,20 +630,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setBypassApprovalPrompt(false);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
-        val ticket = new MockTicketGrantingTicket("casuser");
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -718,12 +665,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setJwtAccessToken(true);
         servicesManager.save(service);
 
-        val profile = new CasProfile();
-        profile.setId(ID);
-        val attributes = new HashMap<String, Object>();
-        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
-        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
-        profile.addAttributes(attributes);
+        val profile = buildCasProfile();
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -731,7 +673,6 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-        sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
 
@@ -757,8 +698,26 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val principal = accessToken.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
         val principalAttributes = principal.getAttributes();
-        assertEquals(attributes.size(), principalAttributes.size());
+        assertEquals(profile.getAttributes().size(), principalAttributes.size());
         assertEquals(FIRST_NAME, principalAttributes.get(FIRST_NAME_ATTRIBUTE).get(0));
+    }
+
+    @SneakyThrows
+    protected CasProfile buildCasProfile() {
+        val profile = new CasProfile();
+        profile.setId(ID);
+        val attributes = new HashMap<String, Object>();
+        attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
+        attributes.put(Authentication.class.getName(), CoreAuthenticationTestUtils.getAuthentication());
+
+        val ticket = new MockTicketGrantingTicket("casuser");
+        oAuth20AuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
+        attributes.put(TicketGrantingTicket.class.getName(), ticket.getId());
+
+
+        profile.addAttributes(attributes);
+        return profile;
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {

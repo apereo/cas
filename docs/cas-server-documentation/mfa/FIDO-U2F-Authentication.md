@@ -38,7 +38,7 @@ you may want to extend the interval.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.u2f.cleaner" %}
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a 
+<div class="alert alert-warning">:warning: <strong>Cleaner Usage</strong><p>In a 
 clustered CAS deployment, it is best to keep the cleaner running on one designated 
 CAS node only and turn it off on all others via CAS settings. Keeping the 
 cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
