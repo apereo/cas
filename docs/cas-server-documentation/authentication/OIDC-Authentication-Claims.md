@@ -170,6 +170,11 @@ the following example to release `userX` as a *claim*:
   }
 }
 ```
+    
+A scope-free attribute release policy is activated when the service definition does not specify any scopes, or the only scope that 
+the service definition contains is the `openid` scope. A *scope-free* attribute release policy has the ability to process release claims
+regardless of the requested scopes, which may prove useful in scenarios where a relying party needs to receive claims and yet 
+does not correctly or sufficiently specify a scope in authorization requests.
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>You should consider using a scope-free attribute release policy
 only in very advanced and challenging use cases, typically to make a rather difficult client application integration work.</p>
