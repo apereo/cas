@@ -2,11 +2,13 @@ package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.profile.BasicUserProfile;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -43,9 +45,14 @@ public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
         ticketRegistry.addTicket(tgt);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
-        samlIdPDistributedSessionStore.set(
-            new JEEContext(request, response),
-            WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt);
+
+        val profile = new BasicUserProfile();
+        profile.addAttribute(TicketGrantingTicket.class.getName(), tgt.getId());
+
+        val context = new JEEContext(request, response);
+        val profileManager = new ProfileManager(context, samlIdPDistributedSessionStore);
+        profileManager.save(true, profile, false);
+        
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
         samlArtifactMap.put("artifact", "relying-party", "issuer", getAuthnRequestFor("example"));
         assertTrue(samlArtifactMap.contains("artifact"));

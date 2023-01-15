@@ -7,13 +7,16 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.client.authentication.AttributePrincipalImpl;
+import org.apereo.cas.client.validation.Assertion;
 import org.apereo.cas.client.validation.AssertionImpl;
+import org.apereo.cas.client.validation.TicketValidationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
@@ -103,6 +106,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
+import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -130,13 +134,13 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -411,6 +415,8 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client oauthCasClient(
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext,
             @Qualifier("oauthCasClientRedirectActionBuilder")
             final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder,
             @Qualifier("casCallbackUrlResolver")
@@ -428,17 +434,11 @@ public class CasOAuth20Configuration {
             val cfg = new CasConfiguration(server.getLoginUrl());
             val validator = new InternalTicketValidator(centralAuthenticationService,
                 webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
-            cfg.setDefaultTicketValidator((ticket, service) -> {
-                val result = validator.validate(ticket, service);
-                val attrPrincipal = new AttributePrincipalImpl(result.getPrincipal().getId(), (Map) result.getPrincipal().getAttributes());
-                val registeredService = (RegisteredService) result.getContext().get(RegisteredService.class.getName());
-                val assertion = (Assertion) result.getContext().get(Assertion.class.getName());
-                val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-                    assertion.primaryAuthentication(), assertion, new HashMap<>(0), registeredService);
-                return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes);
-            });
+            cfg.setDefaultTicketValidator(new CASOAuth20TicketValidator(validator, authenticationAttributeReleasePolicy));
+            cfg.setHostnameVerifier(casSslContext.getHostnameVerifier());
+            cfg.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
             val oauthCasClient = new CasClient(cfg);
-            oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore) ->
+            oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore, __) ->
                 oauthCasClientRedirectActionBuilder.build(oauthCasClient, webContext));
             oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
             oauthCasClient.setUrlResolver(casCallbackUrlResolver);
@@ -1563,6 +1563,29 @@ public class CasOAuth20Configuration {
                 plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER,
                     new OAuth20AuthorizationResponseAuditResourceResolver());
             };
+        }
+    }
+
+    @RequiredArgsConstructor
+    private static class CASOAuth20TicketValidator implements org.apereo.cas.client.validation.TicketValidator {
+        private final TicketValidator validator;
+        private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+
+        @Override
+        public Assertion validate(final String ticket, final String service) throws TicketValidationException {
+            val validationResult = validator.validate(ticket, service);
+            val assertion = (org.apereo.cas.validation.Assertion) validationResult.getContext().get(org.apereo.cas.validation.Assertion.class.getName());
+
+            val principalAttributes = new HashMap<String, Object>(validationResult.getPrincipal().getAttributes());
+            principalAttributes.putAll(validationResult.getContext());
+
+            val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), principalAttributes);
+            val registeredService = (RegisteredService) validationResult.getContext().get(RegisteredService.class.getName());
+
+            val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
+                assertion.primaryAuthentication(), assertion, new HashMap<>(0), registeredService);
+
+            return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes, validationResult.getContext());
         }
     }
 }

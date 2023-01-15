@@ -51,4 +51,5 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 
     testImplementation libraries.springboottomcat
+    testImplementation libraries.springcloudbootstrap
 }

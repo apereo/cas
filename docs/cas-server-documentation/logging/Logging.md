@@ -19,7 +19,7 @@ The cas-overlay comes with an external log42.xml in etc/cas/config and a propert
 By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code.
 For debugging and diagnostic purposes you may want to set these levels to `DEBUG` or `TRACE`.
 
-<div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
+<div class="alert alert-warning">:warning: <strong>Production</strong><p>You should always run everything under
 <code>WARN</code>. In production warnings and errors are things you care about. Everything else is just diagnostics. Only
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
