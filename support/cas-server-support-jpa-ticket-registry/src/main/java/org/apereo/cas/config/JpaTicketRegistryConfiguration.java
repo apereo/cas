@@ -34,6 +34,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
@@ -63,6 +64,7 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Primary
         public CloseableDataSource dataSourceTicket(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
