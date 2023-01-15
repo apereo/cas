@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -202,6 +203,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .registeredService(oidcService)
             .service(service)
             .principal(principal)
+            .attributeReleasePolicyPredicate(policy -> !(policy instanceof OidcRegisteredServiceAttributeReleasePolicy)
+                                                       || scopes.contains(((OidcRegisteredServiceAttributeReleasePolicy) policy).getScopeType()))
             .build();
         return oidcService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
     }
