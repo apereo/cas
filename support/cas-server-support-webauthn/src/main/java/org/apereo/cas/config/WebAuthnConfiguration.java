@@ -434,7 +434,7 @@ public class WebAuthnConfiguration {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
                     @Override
                     public List<String> getIgnoredEndpoints() {
-                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
+                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE);
                     }
 
                     @Override
