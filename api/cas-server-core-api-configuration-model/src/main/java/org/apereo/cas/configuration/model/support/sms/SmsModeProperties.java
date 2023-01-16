@@ -56,4 +56,9 @@ public class SmsModeProperties implements Serializable {
      * and the value in the map should be the header value.
      */
     private Map<String, String> headers = new HashMap<>();
+
+    /**
+     * URL of the proxy (if defined).
+     */
+    private String proxyUrl;
 }

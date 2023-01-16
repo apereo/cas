@@ -56,6 +56,7 @@ public class SmsModeSmsSender implements SmsSender {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(properties.getUrl())
+                .proxyUrl(properties.getProxyUrl())
                 .parameters(parameters)
                 .headers(headers)
                 .build();
