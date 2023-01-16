@@ -32,4 +32,5 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-consent-core", configuration: "tests")
 
     testImplementation libraries.springboottomcat
+    testImplementation libraries.springcloudbootstrap
 }

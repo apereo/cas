@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
+import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.client.SAML2Client;
@@ -57,7 +58,8 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                     .ifPresent(client -> {
                         try {
                             LOGGER.debug("Located client from relay-state: [{}]", client);
-                            val samlContext = client.getContextProvider().buildContext(client, context, this.sessionStore);
+                            val samlContext = client.getContextProvider().buildContext(client, context,
+                                sessionStore, ProfileManagerFactory.DEFAULT);
                             client.getLogoutProfileHandler().receive(samlContext);
                         } catch (final HttpAction action) {
                             LOGGER.debug("Adapting logout response via [{}]", action.toString());

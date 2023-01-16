@@ -90,10 +90,13 @@ spring.main.lazy-initialization=false
 - Pac4j
 - Puppeteer
 - Nimbus
+- Apache Tomcat
 - jQuery
 - Amazon SDK
 - Spring
 - Spring Boot
+- Spring Boot Admin
+- Spring Shell
 - Mockito
 - JUnit
 - Kryo

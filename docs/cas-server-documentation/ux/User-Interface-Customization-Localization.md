@@ -36,7 +36,7 @@ In order to "invoke" a specific language for the UI, the `/login` endpoint may b
 https://cas.server.org/login?locale=it
 ```
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Note that not all languages are 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Note that not all languages are 
 complete and accurate across CAS server releases as translations are entirely dependent upon community contributions.
 For an accurate and complete list of localized messages, always refer to the English language bundle.</p></div>
 

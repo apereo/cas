@@ -29,7 +29,7 @@ the result for each respected key. The deployer MUST attempt to copy the generat
 their CAS properties file, specially when running a multi-node CAS deployment. Failure to do so will prevent CAS
 to appropriate decrypt and encrypt the webflow state and will prevent successful single sign-on.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
 While the above settings are all optional, it is recommended that you provide your own 
 configuration and settings for encrypting and transcoding of the web session state.</p></div>
 
@@ -45,7 +45,7 @@ excludes=".jdbc,.hazelcast,.mongodb,.redis" %}
 
 Doing so will likely require you to also enable sticky sessions and/or session replication in a clustered deployment of CAS.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
 Generally speaking, you do not need to enable server-side sessions unless you have a 
 rather specialized deployment or are in need of features that store bits and pieces 
 of data into a sever-backed session object. It is recommended that you stick with 

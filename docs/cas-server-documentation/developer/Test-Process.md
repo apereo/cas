@@ -12,7 +12,7 @@ This page documents the steps that a CAS developer/contributor should take for t
 server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
-<div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
+<div class="alert alert-info">:information_source: <strong>Contributions</strong><p>Patches submitted to the CAS codebase 
 in form of pull requests must pass all automated unit or integration tests, and/or 
 provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
 the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
@@ -61,7 +61,7 @@ at reproducing scenarios related to an issue or possible defect, and can be very
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp.gradle` build script of web application you intend to run:
+- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp-dependencies.gradle` build script of web application you intend to run:
 
 ```gradle
 implementation project(":support:cas-server-support-modulename")

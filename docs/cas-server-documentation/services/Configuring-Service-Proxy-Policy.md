@@ -14,7 +14,7 @@ fact allowed to receive the PGT.
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
 This feature specifically applies to applications that understand and use the CAS protocol. Think <strong>VERY CAREFULLY</strong> before allowing an 
 application to exercise proxy authentication. Blindly authorizing an application to receive a proxy-granting 
 ticket may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those 

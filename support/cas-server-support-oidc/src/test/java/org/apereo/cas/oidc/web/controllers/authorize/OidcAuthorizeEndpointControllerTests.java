@@ -5,8 +5,8 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -120,7 +120,7 @@ public class OidcAuthorizeEndpointControllerTests {
             val context = new JEEContext(mockRequest, mockResponse);
             val ticket = new MockTicketGrantingTicket("casuser");
             oidcAuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-            sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+            profile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
             sessionStore.set(context, Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 

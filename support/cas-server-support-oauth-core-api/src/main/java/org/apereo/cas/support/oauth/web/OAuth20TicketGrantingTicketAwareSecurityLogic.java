@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,14 +35,12 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {
-
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, ((JEEContext) context).getNativeRequest());
-
         if (ticketGrantingTicket == null) {
             try {
-                ticketGrantingTicket = sessionStore
-                    .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                ticketGrantingTicket = manager.getProfile()
+                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
                     .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                     .orElse(null);
             } catch (final Exception e) {

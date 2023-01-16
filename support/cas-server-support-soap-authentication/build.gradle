@@ -33,6 +33,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
 
     testImplementation libraries.springboottomcat
+    testImplementation libraries.springcloudbootstrap
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

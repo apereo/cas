@@ -39,7 +39,7 @@ See [this guide](../installation/Configuring-Servlet-Container.html) for more in
 WAR overlays are [provided](../installation/WAR-Overlay-Installation.html) to allow for a straightforward and flexible 
 deployment solution. While it admittedly requires a high up-front cost in learning, it reaps numerous benefits in the long run. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>
+<div class="alert alert-info">:information_source: <strong>Do Less</strong><p>
 You <b>DO NOT</b> need to have Gradle installed prior to the installation. It is provided to you automatically.
 </p></div>
 

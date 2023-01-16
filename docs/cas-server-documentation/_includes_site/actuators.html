@@ -300,13 +300,13 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                     </p>
 
                                     {% if cfg.name == "status" %}
-                                    <div class="alert alert-warning"><strong>Obtaining Health Info</strong><p>Note
+                                    <div class="alert alert-warning">:warning: <strong>Obtaining Health Info</strong><p>Note
                                         that <code>/status</code> endpoint is kept mostly
                                         as a legacy endpoint. If you wish to obtain health status of each monitor
                                         in detail, we recommend the <code>/actuator/health</code> endpoint instead.</p></div>
                                     {% endif %}
 
-                                    <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
+                                    <div class="alert alert-info">:information_source: <strong>Exposed Endpoints</strong><p>
                                         Note that by default the only endpoints exposed over the web
                                         are <code>info</code>, <code>status</code>, <code>health</code> and <code>configurationMetadata</code>.
                                         Other endpoints need to be explicitly <strong>enabled and then
@@ -490,7 +490,7 @@ management.endpoints.web.path-mapping.health=healthcheck
                                             basic credentials, roles and attributes, etc. </li>
                                     </ul>
 
-                                    <div class="alert alert-info"><strong>Defaults</strong><p>
+                                    <div class="alert alert-info">:information_source: <strong>Defaults</strong><p>
                                         There is a special endpoint named <code>defaults</code> which serves as a shortcut that
                                         controls the security of all endpoints, if left undefined in CAS settings.
                                     </p></div>
