@@ -52,6 +52,7 @@ public record SmsModeSmsSender(SmsModeProperties properties) implements SmsSende
             val exec = HttpUtils.HttpExecutionRequest.builder()
                     .method(HttpMethod.POST)
                     .url(properties.getUrl())
+                    .proxyUrl(properties.getProxyUrl())
                     .headers(headers)
                     .entity(MAPPER.writeValueAsString(data))
                     .build();
