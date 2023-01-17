@@ -38,4 +38,9 @@ public class SmsModeProperties implements Serializable {
      */
     @RequiredProperty
     private String url = "https://rest.smsmode.com/sms/v1/messages";
+
+    /**
+     * URL of the proxy (if defined).
+     */
+    private String proxyUrl;
 }
