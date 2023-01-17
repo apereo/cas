@@ -49,7 +49,7 @@ can now be stored in relational databases.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `388` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `390` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Authentication Geolocation via Maxmind
@@ -83,6 +83,9 @@ spring.main.lazy-initialization=false
 - Small enhancements to distributed session management to ensure orphan `DISSESSION` cookies are not generated when locating session identifiers.
 - CAS [authentication events](../authentication/Configuring-Authentication-Events.html) can now be imported into the event repository via actuator endpoints.
 - OAuth and OpenID Connect request parameters are now decoded automatically to mainly support scenarios where i.e. `scope` is supplied as `openid+email`. 
+- [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to present a preview of the would-be-generated CAS overlay.
+- Evaluation of access strategies for OAuth and OpenID Connect services is now able to consider virtually-remapped attributes for authorization enforcement.
+- The incorrect generation of `TST` tickets used to track single sign-on sessions across multiple authentication flows is now corrected.
 
 ## Library Upgrades
 
