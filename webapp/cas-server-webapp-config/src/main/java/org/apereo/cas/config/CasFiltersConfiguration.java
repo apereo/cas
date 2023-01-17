@@ -186,6 +186,7 @@ public class CasFiltersConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "casCorsFilter")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<CorsFilter> casCorsFilter(
             final CasConfigurationProperties casProperties,
