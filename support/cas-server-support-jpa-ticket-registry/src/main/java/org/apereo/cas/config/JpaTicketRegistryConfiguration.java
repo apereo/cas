@@ -166,6 +166,7 @@ public class JpaTicketRegistryConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "jpaTicketRegistry")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
             final ConfigurableApplicationContext applicationContext,
