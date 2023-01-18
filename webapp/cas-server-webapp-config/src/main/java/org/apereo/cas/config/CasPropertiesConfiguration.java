@@ -33,9 +33,9 @@ public class CasPropertiesConfiguration {
         return () -> {
             val sysProps = System.getProperties();
             val properties = new Properties();
-            FunctionUtils.doIfNotNull(CasVersion.getVersion(), i -> properties.put("info.cas.version", i));
+            FunctionUtils.doIfNotNull(CasVersion.getVersion(), value -> properties.put("info.cas.version", value));
             properties.put("info.cas.date", CasVersion.getDateTime());
-            properties.put("info.cas.java.home", sysProps.get("java.home"));
+            FunctionUtils.doIfNotNull(sysProps.get("java.home"), value -> properties.put("info.cas.java.home", value));
             properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
             properties.put("info.cas.java.version", sysProps.get("java.version"));
             val src = new PropertiesPropertySource(CasVersion.class.getName(), properties);

@@ -13,8 +13,8 @@ configurations.all {
         if (!dependencyUpdates) {
             eachDependency { DependencyResolveDetails details ->
                 def requested = details.requested
-                if (requested.group == "org.bouncycastle" && requested.name.endsWith("-jdk15on")) {
-                    details.useTarget group: requested.group, name: requested.name.replaceAll("-jdk15on","-jdk18on"), version: "${bouncyCastleVersion}"
+                if (requested.group == "org.bouncycastle") {
+                    details.useVersion("${bouncyCastleVersion}")
                 }
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
@@ -172,4 +172,7 @@ configurations.all {
     exclude group: "com.sun.activation", module: "jakarta.activation"
     exclude(group: "commons-logging", module: "commons-logging")
     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+    exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
+    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
 }
