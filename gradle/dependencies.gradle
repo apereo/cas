@@ -182,6 +182,7 @@ ext.libraries = [
                 dependencies.create("org.cryptacular:cryptacular:$cryptacularVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk18on")
                 },
                 dependencies.create("org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -351,11 +352,12 @@ ext.libraries = [
         casclient                  : dependencies.create("org.apereo.cas.client:cas-client-core:$casClientVersion") {
             exclude(group: "javax.servlet", module: "servlet-api")
             exclude(group: "org.slf4j", module: "log4j-over-slf4j")
-            exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+            exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "org.glassfish.jaxb", module: "jaxb-core")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "org.apereo.cas.client", module: "cas-client-support-saml")
         },
         commons                    : [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
@@ -1898,6 +1900,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-support-saml")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-core")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
         pac4jsaml                  : [
