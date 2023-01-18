@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link SamlIdPLogoutProperties}.
@@ -57,4 +58,9 @@ public class SamlIdPLogoutProperties implements Serializable {
      * Whether SAML SLO is enabled and processed.
      */
     private boolean singleLogoutCallbacksDisabled;
+
+    /**
+     * The order in which the logout request binginds should be tried (if available at the SP level).
+     */
+    private List<String> logoutRequestBindings;
 }
