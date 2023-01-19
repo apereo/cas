@@ -16,14 +16,12 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.springframework.core.Ordered;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -57,16 +55,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
                                                       final SamlIdPProperties samlIdPProperties) {
         super(servicesManager, urlValidator);
         this.samlRegisteredServiceCachingMetadataResolver = resolver;
-        val bindings = samlIdPProperties.getLogout().getLogoutRequestBindings();
-        if (bindings != null) {
-            this.logoutRequestBindings = bindings;
-        } else {
-            this.logoutRequestBindings = Arrays.asList(
-                SAMLConstants.SAML2_POST_BINDING_URI,
-                SAMLConstants.SAML2_REDIRECT_BINDING_URI,
-                SAMLConstants.SAML2_SOAP11_BINDING_URI
-            );
-        }
+        this.logoutRequestBindings = samlIdPProperties.getLogout().getLogoutRequestBindings();
     }
 
     @Override
