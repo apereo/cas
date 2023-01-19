@@ -18,6 +18,9 @@ $metadata['__DYNAMIC:1__'] = [
     'privatekey' => 'server.pem',
     'certificate' => 'server.crt',
 
+    
+    // 'logouttype' => 'traditional',
+
     /*
      * Authentication source to use. Must be one that is configured in
      * 'config/authsources.php'.

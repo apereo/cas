@@ -27,7 +27,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -130,8 +129,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
-            JEEHttpActionAdapter.INSTANCE.adapt(e, webContext);
-            return isLogoutRequest(request) ? getFinalEvent() : success();
+            webContext.setRequestAttribute(HttpAction.class.getName(), e);
+            return isLogoutRequest(request)
+                ? getLogoutEvent(e)
+                : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;
@@ -159,6 +160,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         DelegationWebflowUtils.putDelegatedClientAuthenticationResolvedCredentials(context, candidateMatches);
         return new Event(this, CasWebflowConstants.TRANSITION_ID_SELECT);
+    }
+
+    private Event getLogoutEvent(final HttpAction e) {
+        return new Event(this, CasWebflowConstants.TRANSITION_ID_LOGOUT,
+            new LocalAttributeMap<>("action", e));
     }
 
     private Event getFinalEvent() {

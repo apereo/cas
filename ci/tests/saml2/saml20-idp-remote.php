@@ -5,6 +5,7 @@ $idp_encryptionCert = getenv('IDP_ENCRYPTION_CERTIFICATE') ?? '';
 
 $metadata[$idp_entityId] = [
     'entityid' => $idp_entityId,
+    // 'logouttype' => 'traditional',
     'contacts' => [],
     'metadata-set' => 'saml20-idp-remote',
     'SingleSignOnService' => [
