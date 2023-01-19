@@ -7,5 +7,6 @@ chmod +x "${PWD}/ci/tests/saml2/run-saml-server.sh"
 "${PWD}/ci/tests/saml2/run-saml-server.sh"
 
 echo -e "Running CAS Client"
+chmod +x "${PWD}/ci/tests/cas/run-cas-client.sh"
 "${PWD}/ci/tests/cas/run-cas-client.sh"
 
