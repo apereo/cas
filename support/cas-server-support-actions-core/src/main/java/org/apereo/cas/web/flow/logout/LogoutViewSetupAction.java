@@ -8,6 +8,10 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.val;
+import org.pac4j.core.exception.http.HttpAction;
+import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +28,8 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
 
     public LogoutViewSetupAction(final TicketRegistry ticketRegistry,
                                  final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                 final ArgumentExtractor argumentExtractor, final ServicesManager servicesManager,
+                                 final ArgumentExtractor argumentExtractor,
+                                 final ServicesManager servicesManager,
                                  final LogoutExecutionPlan logoutExecutionPlan,
                                  final CasConfigurationProperties casProperties) {
         super(ticketRegistry, ticketGrantingTicketCookieGenerator,
@@ -36,6 +41,12 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
                                       final RequestContext context) {
         WebUtils.putGeoLocationTrackingIntoFlowScope(context,
             casProperties.getEvents().getCore().isTrackGeolocation());
+        val httpAction = (HttpAction) request.getAttribute(HttpAction.class.getName());
+        if (httpAction != null) {
+            val webContext = new JEEContext(request, response);
+            JEEHttpActionAdapter.INSTANCE.adapt(httpAction, webContext);
+            context.getExternalContext().recordResponseComplete();
+        }
         return null;
     }
 }

@@ -253,6 +253,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_GENERATE = "generate";
 
     /**
+     * The transition state 'logout'.
+     */
+    String TRANSITION_ID_LOGOUT = "logout";
+
+    /**
      * Transition id 'delegatedAuthenticationRedirect' .
      */
     String TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT = "delegatedAuthenticationRedirect";
@@ -717,6 +722,12 @@ public interface CasWebflowConstants {
      * State id 'delegatedAuthenticationSelectCredential'.
      */
     String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION = "delegatedAuthenticationSelectCredential";
+
+    /**
+     * State id 'delegatedAuthenticationIdPLogout'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT = "delegatedAuthenticationIdPLogout";
+
     /**
      * State id 'delegatedAuthenticationFinalizeCredential'.
      */
@@ -1201,6 +1212,15 @@ public interface CasWebflowConstants {
      * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE = "delegatedAuthenticationClientCredentialSelectionFinalizeAction";
+    /**
+     * Action id 'delegatedAuthenticationIdentityProviderLogoutAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT = "delegatedAuthenticationIdentityProviderLogoutAction";
+
+    /**
+     * Action id 'delegatedAuthenticationIdentityProviderFinalizeLogoutAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT = "delegatedAuthenticationIdentityProviderFinalizeLogoutAction";
 
     /**
      * Action id 'delegatedAuthenticationClientCredentialSelectionAction'.

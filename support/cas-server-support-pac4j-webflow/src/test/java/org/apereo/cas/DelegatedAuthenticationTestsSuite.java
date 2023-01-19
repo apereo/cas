@@ -23,6 +23,8 @@ import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogout
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationIdentityProviderLogoutActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
@@ -64,6 +66,8 @@ import org.junit.platform.suite.api.Suite;
     DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests.class,
     DelegatedClientAuthenticationActionTests.class,
     DelegatedSaml2ClientMetadataMongoDbTests.class,
+    DelegatedAuthenticationIdentityProviderLogoutActionTests.class,
+    DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests.class,
     DelegatedClientIdentityProviderConfigurationProducerTests.class,
     DelegatedAuthenticationErrorViewResolverTests.class,
     DefaultDelegatedAuthenticationNavigationControllerTests.class,

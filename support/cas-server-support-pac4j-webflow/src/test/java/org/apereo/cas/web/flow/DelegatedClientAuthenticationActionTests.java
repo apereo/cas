@@ -65,7 +65,6 @@ import static org.mockito.Mockito.*;
 @Slf4j
 public class DelegatedClientAuthenticationActionTests {
 
-
     @TestConfiguration(proxyBeanMethods = false)
     public static class CredentialTestConfiguration {
         @Bean
@@ -223,7 +222,7 @@ public class DelegatedClientAuthenticationActionTests {
 
 
             val event = delegatedAuthenticationAction.execute(context);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, event.getId());
         }
 
         @Test
@@ -389,7 +388,7 @@ public class DelegatedClientAuthenticationActionTests {
             ExternalContextHolder.setExternalContext(context.getExternalContext());
 
             val event = delegatedAuthenticationAction.execute(context);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE, event.getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, event.getId());
         }
 
         @Test
