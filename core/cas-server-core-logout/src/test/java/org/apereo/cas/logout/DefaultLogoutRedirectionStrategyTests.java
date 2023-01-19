@@ -117,7 +117,7 @@ public class DefaultLogoutRedirectionStrategyTests {
     @Test
     public void verifyRedirectToServiceDisabledInConfig() {
         val props = new CasConfigurationProperties();
-        props.getLogout().setFollowServiceRedirects(true).setRedirectParameter(List.of("targetParam"));
+        props.getLogout().setFollowServiceRedirects(false).setRedirectParameter(List.of("targetParam"));
         val request = new MockHttpServletRequest();
         request.setRequestURI(CasProtocolConstants.ENDPOINT_LOGOUT);
         request.addParameter("targetParam", "https://github.com/apereo/cas");

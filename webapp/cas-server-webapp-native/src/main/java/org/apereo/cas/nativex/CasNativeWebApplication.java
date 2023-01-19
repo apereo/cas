@@ -42,7 +42,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @NoArgsConstructor
 @ImportRuntimeHints(CasNativeWebAppRuntimeHints.class)
 public class CasNativeWebApplication {
-    public static void main(String[] args) {
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(final String[] args) {
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner)
