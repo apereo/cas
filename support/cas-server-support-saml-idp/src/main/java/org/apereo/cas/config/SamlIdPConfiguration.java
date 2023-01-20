@@ -478,8 +478,11 @@ public class SamlIdPConfiguration {
             @Qualifier("defaultAuthnContextClassRefBuilder")
             final SamlProfileAuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) {
-            return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean, defaultAuthnContextClassRefBuilder, casProperties);
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("casSamlIdPMetadataResolver")
+            final MetadataResolver casSamlIdPMetadataResolver) {
+            return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean, defaultAuthnContextClassRefBuilder,
+                casProperties, casSamlIdPMetadataResolver);
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAttributeStatementBuilder")
