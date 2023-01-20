@@ -49,6 +49,7 @@ DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
 CLEAR="true"
+INITONLY="false"
 
 while (( "$#" )); do
   case "$1" in
@@ -153,6 +154,14 @@ while (( "$#" )); do
     DRYRUN="true"
     shift 1;
     ;;
+  --initonly|--io)
+    REBUILD="false"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DRYRUN="true"
+    INITONLY="true"
+    export HEADLESS="true"
+    shift 1;
+    ;;
   --noclear|--nc)
     CLEAR=""
     shift 1;
@@ -238,8 +247,12 @@ if [[ "${RERUN}" == "true" ]]; then
   REBUILD="false"
 fi
 
+if [[ "${INITONLY}" == "true" ]]; then
+  REBUILD="false"
+fi
+
 if [[ "${DRYRUN}" == "true" ]]; then
-  printyellow "Skipping execution of test scenario while in dry-run mode."
+  printyellow "Skipping execution of test scenario while in dry-run/initialize-only mode."
 fi
 
 #echo "Installing jq"
@@ -268,7 +281,7 @@ public_cert="${PUPPETEER_DIR}/overlay/server.crt"
 export CAS_KEYSTORE="${keystore}"
 export CAS_CERT="${public_cert}"
 
-if [[ "${RERUN}" != "true" ]]; then
+if [[ "${RERUN}" != "true" && "${INITONLY}" != "true" ]]; then
   dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
   subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
   printgreen "\nGenerating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
@@ -440,61 +453,65 @@ if [[ "${RERUN}" != "true" ]]; then
       fi
     done
 
-    runArgs=$(jq -j '.jvmArgs // empty' "${config}")
-    runArgs="${runArgs//\$\{PWD\}/${PWD}}"
-    runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
-    [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
+    if [[ "${INITONLY}" == "false" ]]; then
+      runArgs=$(jq -j '.jvmArgs // empty' "${config}")
+      runArgs="${runArgs//\$\{PWD\}/${PWD}}"
+      runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
+      [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
-    properties=$(jq -j '.properties // empty | join(" ")' "${config}")
+      properties=$(jq -j '.properties // empty | join(" ")' "${config}")
 
-    filter=".instance$c.properties // empty | join(\" \")"
-    echo "$filter" > $TMPDIR/filter.jq
-    properties="$properties $(cat $config | jq -j -f $TMPDIR/filter.jq)"
-    rm $TMPDIR/filter.jq
-    properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
-    properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
-    properties="${properties//\%\{random\}/${random}}"
-    properties="${properties//\$\{TMPDIR\}/${PORTABLE_TMPDIR}}"
+      filter=".instance$c.properties // empty | join(\" \")"
+      echo "$filter" > $TMPDIR/filter.jq
+      properties="$properties $(cat $config | jq -j -f $TMPDIR/filter.jq)"
+      rm $TMPDIR/filter.jq
+      properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
+      properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
+      properties="${properties//\%\{random\}/${random}}"
+      properties="${properties//\$\{TMPDIR\}/${PORTABLE_TMPDIR}}"
 
-    if [[ "$DEBUG" == "true" ]]; then
-      printgreen "Remote debugging is enabled on port $DEBUG_PORT"
-      runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
-    fi
-    runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
-    printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
+      if [[ "$DEBUG" == "true" ]]; then
+        printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+        runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
+      fi
+      runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
+      printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
-    springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
-    [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
+      springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
+      [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
-    printcyan "Launching CAS instance #${c} under port ${serverPort}"
-    java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-       -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
-       --spring.profiles.active=none --server.ssl.key-store="$keystore" \
-       ${properties} &
-    pid=$!
-    printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-    until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
-       echo -n '.'
-       sleep 1
-    done
-    processIds+=( $pid )
-    serverPort=$((serverPort + 1))
-    if [[ "$DEBUG" == "true" ]]; then
-      DEBUG_PORT=$((DEBUG_PORT + 1))
+      printcyan "Launching CAS instance #${c} under port ${serverPort}"
+      java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
+         -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
+         --spring.profiles.active=none --server.ssl.key-store="$keystore" \
+         ${properties} &
+      pid=$!
+      printcyan "Waiting for CAS instance #${c} under process id ${pid}"
+      until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
+         echo -n '.'
+         sleep 1
+      done
+      processIds+=( $pid )
+      serverPort=$((serverPort + 1))
+      if [[ "$DEBUG" == "true" ]]; then
+        DEBUG_PORT=$((DEBUG_PORT + 1))
+      fi
     fi
   done
 
   printgreen "\nReady!"
-  readyScript=$(jq -j '.readyScript // empty' < "${config}")
-  readyScript="${readyScript//\$\{PWD\}/${PWD}}"
-  readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
-  scripts=$(echo "$readyScript" | tr ',' '\n')
+  if [[ "${INITONLY}" == "false" ]]; then
+    readyScript=$(jq -j '.readyScript // empty' < "${config}")
+    readyScript="${readyScript//\$\{PWD\}/${PWD}}"
+    readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
+    scripts=$(echo "$readyScript" | tr ',' '\n')
 
-  for script in ${scripts}; do
-    printgreen "Running ready script: ${script}"
-    chmod +x "${script}"
-    eval "${script}"
-  done
+    for script in ${scripts}; do
+      printgreen "Running ready script: ${script}"
+      chmod +x "${script}"
+      eval "${script}"
+    done
+  fi
 fi
 
 RC=-1
@@ -530,6 +547,11 @@ if [[ "${DRYRUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  if [[ "${INITONLY}" == "true" ]]; then
+    printyellow "Test scenario is running in initialization-only mode."
+    printyellow "This allows for the bootstrapping and initialization of the test scenario without actually running the test suite"
+  fi
+
   if [[ "${CI}" != "true" ]]; then
     printgreen "Hit enter to clean up scenario ${scenario}\n"
     read -r

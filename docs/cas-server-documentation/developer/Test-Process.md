@@ -178,6 +178,7 @@ The following command-line options are supported for test execution:
 | `--hb`                                    | A combination of `--headless` and `--build`.                                             |
 | `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
+| `--io`, `initonly`                        | Initialize the execution of the test scenario, but do not run it.                        |
 
 For example, the `login-success` test scenario may be run using: 
 
