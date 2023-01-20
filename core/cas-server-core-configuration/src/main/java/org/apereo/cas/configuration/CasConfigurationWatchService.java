@@ -7,7 +7,6 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.PathWatcherService;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
