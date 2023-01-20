@@ -39,7 +39,7 @@ public class CasCoreEnvironmentConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
     public static class CasCoreEnvironmentManagerConfiguration {
-        @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
+        @ConditionalOnMissingBean(name = CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
         @Bean
         public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
             final ConfigurationPropertiesBindingPostProcessor binder) {
@@ -80,7 +80,7 @@ public class CasCoreEnvironmentConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME) final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
             @Qualifier("configurationPropertiesLoaderFactory") final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
             return new StandaloneConfigurationFilePropertiesSourceLocator(
                 configurationPropertiesEnvironmentManager, configurationPropertiesLoaderFactory);

@@ -26,7 +26,7 @@ import java.io.File;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasConfigurationWatchService implements Closeable, CasEventListener, InitializingBean {
+public class CasConfigurationWatchService implements Closeable, InitializingBean {
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
 
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
