@@ -151,7 +151,7 @@ JVM starts, when the log size reaches `10` megabytes, and when the current date 
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
-                    filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz">
     ...
     <Policies>
         <OnStartupTriggeringPolicy />
@@ -179,11 +179,11 @@ directory that match the `*/*.log` glob and are `7` days old or older.
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
-             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz">
     ...
-    <DefaultRolloverStrategy max="5">
+    <DefaultRolloverStrategy max="5" compressionLevel="9">
         <Delete basePath="${baseDir}" maxDepth="2">
-            <IfFileName glob="*/*.log" />
+            <IfFileName glob="*/*.log.gz" />
             <IfLastModified age="7d" />
         </Delete>
     </DefaultRolloverStrategy>
