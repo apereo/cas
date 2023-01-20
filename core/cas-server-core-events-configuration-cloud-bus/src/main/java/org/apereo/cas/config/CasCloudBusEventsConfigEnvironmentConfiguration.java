@@ -34,7 +34,8 @@ public class CasCloudBusEventsConfigEnvironmentConfiguration {
     @Lazy(false)
     public CasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager manager) {
+        @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
+        final CasConfigurationPropertiesEnvironmentManager manager) {
         return new DefaultCasCloudBusConfigurationEventListener(manager, applicationContext);
     }
 

@@ -79,8 +79,10 @@ public class CasCoreBootstrapStandaloneConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean
         public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
-            @Qualifier("configurationPropertiesLoaderFactory") final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory,
-            @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
+            @Qualifier("configurationPropertiesLoaderFactory")
+            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory,
+            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
+            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
             return new DefaultCasConfigurationPropertiesSourceLocator(
                 configurationPropertiesEnvironmentManager,
                 configurationPropertiesLoaderFactory);
