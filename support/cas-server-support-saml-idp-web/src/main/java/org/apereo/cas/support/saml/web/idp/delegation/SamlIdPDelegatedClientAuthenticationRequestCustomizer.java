@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.delegation;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     private final SessionStore sessionStore;
 
     private final OpenSamlConfigBean openSamlConfigBean;
+
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public void customize(final IndirectClient client, final WebContext webContext) {
@@ -95,10 +99,19 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         val requestedAuthnContext = authnRequest.getRequestedAuthnContext();
         if (requestedAuthnContext != null && requestedAuthnContext.getAuthnContextClassRefs() != null
             && !requestedAuthnContext.getAuthnContextClassRefs().isEmpty()) {
-            val refs = requestedAuthnContext.getAuthnContextClassRefs().stream()
+            val authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs()
+                .stream()
                 .map(XSURI::getURI)
-                .collect(Collectors.toList());
-            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
+                .toList();
+
+            val definedContexts = CollectionUtils.convertDirectedListToMap(
+                casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
+            LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
+            val mappedMethods = authnContextClassRefs.stream()
+                .map(ref -> definedContexts.getOrDefault(ref, ref))
+                .toList();
+            LOGGER.debug("Mapped authentication context classes are [{}]", mappedMethods);
+            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, mappedMethods);
             Optional.ofNullable(requestedAuthnContext.getComparison())
                 .ifPresent(comparison -> webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE, comparison.name()));
         }

@@ -286,7 +286,7 @@ public class SamlIdPMetadataConfiguration {
             @Qualifier("samlIdPMetadataGenerator")
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) throws Exception {
+            final OpenSamlConfigBean openSamlConfigBean) {
             val idp = casProperties.getAuthn().getSamlIdp();
             val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator, samlIdPMetadataGenerator, openSamlConfigBean, casProperties);
             resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
