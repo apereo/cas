@@ -33,14 +33,14 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * This is {@link DefaultSamlProfileAuthnContextClassRefBuilder}.
+ * This is {@link SamlProfileAuthnContextClassRefBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 
-public class DefaultSamlProfileAuthnContextClassRefBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnContext> {
+public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnContext> {
 
     @Serial
     private static final long serialVersionUID = 5783371664834470257L;
@@ -49,9 +49,9 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder extends AbstractSaml2
 
     private final CasConfigurationProperties casProperties;
 
-    public DefaultSamlProfileAuthnContextClassRefBuilder(final OpenSamlConfigBean configBean,
-                                                         final MetadataResolver samlIdPMetadataResolver,
-                                                         final CasConfigurationProperties casProperties) {
+    public SamlProfileAuthnContextClassRefBuilder(final OpenSamlConfigBean configBean,
+                                                  final MetadataResolver samlIdPMetadataResolver,
+                                                  final CasConfigurationProperties casProperties) {
         super(configBean);
         this.samlIdPMetadataResolver = samlIdPMetadataResolver;
         this.casProperties = casProperties;
@@ -67,6 +67,13 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder extends AbstractSaml2
         classRef.setURI(classRefValue);
         authnContext.setAuthnContextClassRef(classRef);
 
+        buildDefaultAuthenticatingAuthority(context, authnContext);
+
+        return authnContext;
+    }
+
+    protected void buildDefaultAuthenticatingAuthority(final SamlProfileBuilderContext context,
+                                                       final AuthnContext authnContext) throws Exception {
         val entityIdCriteriaSet = new CriteriaSet(
             new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
             new SamlIdPSamlRegisteredServiceCriterion(context.getRegisteredService()));
@@ -74,11 +81,9 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder extends AbstractSaml2
             context.getRegisteredService().getName());
         val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
         LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
-
         val authority = newSamlObject(AuthenticatingAuthority.class);
         authority.setURI(entityId);
-
-        return authnContext;
+        authnContext.getAuthenticatingAuthorities().add(authority);
     }
 
     private String buildAuthnContextClassRefValue(final SamlProfileBuilderContext context) {

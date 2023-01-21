@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultSamlProfileAuthnContextClassRefBuilderTests}.
+ * This is {@link SamlProfileAuthnContextClassRefBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("SAML2")
-public class DefaultSamlProfileAuthnContextClassRefBuilderTests {
+public class SamlProfileAuthnContextClassRefBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
