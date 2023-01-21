@@ -27,7 +27,7 @@ import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMap;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultSamlProfileAuthnContextClassRefBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.DefaultSamlIdPObjectSigner;
@@ -448,7 +448,7 @@ public class SamlIdPConfiguration {
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
             final CasConfigurationProperties casProperties) {
-            return new DefaultSamlProfileAuthnContextClassRefBuilder(openSamlConfigBean, casSamlIdPMetadataResolver, casProperties);
+            return new SamlProfileAuthnContextClassRefBuilder(openSamlConfigBean, casSamlIdPMetadataResolver, casProperties);
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAssertionBuilder")
