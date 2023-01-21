@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
@@ -70,8 +71,10 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         credentials.setTypedIdUsed(isTypedIdUsed);
         val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
         attributes.put(Pac4jConstants.CLIENT_NAME, CollectionUtils.wrap(profile.getClientName()));
+        if (profile instanceof BasicUserProfile bup) {
+            attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(bup.getAuthenticationAttributes()));
+        }
         val initialPrincipal = principalFactory.createPrincipal(id, attributes);
-
         val principal = finalizeAuthenticationPrincipal(initialPrincipal, client, credentials, service);
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
         return finalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);

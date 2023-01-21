@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.xml.schema.XSURI;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.pac4j.core.client.IndirectClient;
@@ -20,7 +21,9 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,8 +45,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     @Override
     public void customize(final IndirectClient client, final WebContext webContext) {
-        val result = SamlIdPUtils.retrieveSamlRequest(webContext,
-                sessionStore, openSamlConfigBean, AuthnRequest.class)
+        val result = SamlIdPUtils.retrieveSamlRequest(webContext, sessionStore, openSamlConfigBean, AuthnRequest.class)
             .map(Pair::getLeft)
             .map(AuthnRequest.class::cast);
 
@@ -105,15 +107,17 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
                 .toList();
 
             val definedContexts = CollectionUtils.convertDirectedListToMap(
-                casProperties.getAuthn().getSamlIdp().getCore().getDelegatedAuthenticationContextClassMappings());
+                casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
             LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
             val mappedMethods = authnContextClassRefs.stream()
                 .map(ref -> definedContexts.getOrDefault(ref, ref))
+                .map(ref -> new ArrayList<>(StringUtils.commaDelimitedListToSet(ref)))
+                .flatMap(List::stream)
                 .toList();
             LOGGER.debug("Mapped authentication context classes are [{}]", mappedMethods);
             webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, mappedMethods);
-            Optional.ofNullable(requestedAuthnContext.getComparison())
-                .ifPresent(comparison -> webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE, comparison.name()));
+            val comparison = Optional.ofNullable(requestedAuthnContext.getComparison()).orElse(AuthnContextComparisonTypeEnumeration.EXACT);
+            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE, comparison.name());
         }
     }
 

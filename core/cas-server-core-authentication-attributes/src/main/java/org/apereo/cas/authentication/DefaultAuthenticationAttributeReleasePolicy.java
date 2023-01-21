@@ -70,15 +70,19 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
             attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
         }
 
-        if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
-            val contextProvider = CollectionUtils.firstElement(model.get(this.authenticationContextAttribute));
-            contextProvider.ifPresent(provider -> {
-                if (isAttributeAllowedForRelease(authenticationContextAttribute)) {
-                    attrs.put(this.authenticationContextAttribute, CollectionUtils.wrap(provider));
-                }
-            });
+        if (StringUtils.isNotBlank(authenticationContextAttribute)) {
+            org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute)
+                .stream()
+                .filter(model::containsKey)
+                .forEach(attr -> {
+                    val contextProvider = CollectionUtils.firstElement(model.get(attr));
+                    contextProvider.ifPresent(provider -> {
+                        if (isAttributeAllowedForRelease(attr)) {
+                            attrs.put(attr, CollectionUtils.wrap(provider));
+                        }
+                    });
+                });
         }
-
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
         LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
         return attrs;

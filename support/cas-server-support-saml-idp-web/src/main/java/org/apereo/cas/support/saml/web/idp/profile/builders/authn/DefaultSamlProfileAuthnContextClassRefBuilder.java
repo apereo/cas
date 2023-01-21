@@ -18,6 +18,7 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
         val contextInAssertion = getAuthenticationContextByAssertion(context,
             requestedAuthnContext, authnContextClassRefs);
         val finalCtx = StringUtils.defaultIfBlank(contextInAssertion, defClass);
-        LOGGER.debug("Returning authN context [{}]", finalCtx);
+        LOGGER.debug("Returning authentication context [{}]", finalCtx);
         return finalCtx;
     }
 
@@ -102,37 +103,41 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
     protected String getAuthenticationContextByAssertion(final SamlProfileBuilderContext context,
                                                          final RequestedAuthnContext requestedAuthnContext,
                                                          final List<AuthnContextClassRef> authnContextClassRefs) {
-        LOGGER.debug("AuthN Context comparison is requested to use [{}]", requestedAuthnContext.getComparison());
+        LOGGER.debug("AuthN context comparison to use [{}]", requestedAuthnContext.getComparison());
         authnContextClassRefs.forEach(ref -> LOGGER.debug("Requested AuthN Context [{}]", ref.getURI()));
 
         val definedContexts = CollectionUtils.convertDirectedListToMap(
             casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings());
         LOGGER.debug("Defined authentication context mappings are [{}]", definedContexts);
 
-        val mappedMethod = authnContextClassRefs.stream()
+        return authnContextClassRefs.stream()
             .filter(ref -> StringUtils.isNotBlank(ref.getURI()))
             .filter(ref -> definedContexts.containsKey(ref.getURI()))
             .map(ref -> Pair.of(ref, definedContexts.get(ref.getURI())))
             .findFirst()
-            .orElse(null);
-
-        return getMappedAuthenticationContextClass(context, mappedMethod);
+            .map(mappedMethod -> getMappedAuthenticationContextClass(context, mappedMethod))
+            .orElse(StringUtils.EMPTY);
     }
 
     private String getMappedAuthenticationContextClass(final SamlProfileBuilderContext context,
                                                        final Pair<AuthnContextClassRef, String> mappedMethod) {
+
+        val requestedMappedValues = new ArrayList<>(org.springframework.util.StringUtils.commaDelimitedListToSet(mappedMethod.getValue()));
         val attributes = context.getAuthenticatedAssertion().get().getAttributes();
-        val contextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        LOGGER.debug("Checking for mapped authentication context method [{}] in attributes [{}] via [{}]",
-            mappedMethod, attributes, contextAttribute);
-        if (attributes.containsKey(contextAttribute) && mappedMethod != null) {
-            val authnContext = attributes.get(contextAttribute);
-            val satisfiedContext = CollectionUtils.firstElement(authnContext)
-                .map(Object::toString)
-                .orElse(null);
-            LOGGER.debug("Comparig satisfied authentication context [{}] against [{}]", satisfiedContext, mappedMethod.getValue());
-            if (StringUtils.equals(mappedMethod.getValue(), satisfiedContext)) {
-                return mappedMethod.getLeft().getURI();
+        val contextAttributes = org.springframework.util.StringUtils.commaDelimitedListToSet(
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute());
+        for (val contextAttribute : contextAttributes) {
+            LOGGER.debug("Checking for mapped authentication context method [{}] in attributes [{}] via [{}]",
+                requestedMappedValues, attributes, contextAttribute);
+            if (attributes.containsKey(contextAttribute)) {
+                val authnContext = attributes.get(contextAttribute);
+                val satisfiedContext = CollectionUtils.firstElement(authnContext)
+                    .map(Object::toString)
+                    .orElse(StringUtils.EMPTY);
+                LOGGER.debug("Comparing satisfied authentication context [{}] against [{}]", satisfiedContext, mappedMethod.getValue());
+                if (requestedMappedValues.contains(satisfiedContext)) {
+                    return mappedMethod.getLeft().getURI();
+                }
             }
         }
         return null;

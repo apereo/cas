@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.util.StringUtils;
 
 /**
  * This is {@link MultifactorAuthenticationProviderMetadataPopulator}.
@@ -36,8 +37,9 @@ public class MultifactorAuthenticationProviderMetadataPopulator extends BaseAuth
         val bypass = failureEval != null
                      && failureEval.evaluate(registeredService, provider.getObject()) == MultifactorAuthenticationProviderFailureModes.PHANTOM
                      && !provider.getObject().isAvailable(registeredService);
-        FunctionUtils.doIf(bypass, __ -> builder.mergeAttribute(authenticationContextAttribute,
-            provider.getObject().getId())).accept(provider);
+        FunctionUtils.doIf(bypass, __ ->
+            StringUtils.commaDelimitedListToSet(authenticationContextAttribute).forEach(attribute ->
+                builder.mergeAttribute(attribute, provider.getObject().getId()))).accept(provider);
     }
 
     @Override
