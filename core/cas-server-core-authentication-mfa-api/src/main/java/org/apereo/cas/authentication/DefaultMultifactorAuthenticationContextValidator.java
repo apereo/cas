@@ -42,53 +42,56 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
      * @param authentication   the authentication
      * @param requestedContext the requested context
      * @param service          the service
-     * @return true if the context can be successfully validated.
+     * @return validation result
      */
     @Override
     public MultifactorAuthenticationContextValidationResult validate(final Authentication authentication,
                                                                      final String requestedContext,
                                                                      final Optional<RegisteredService> service) {
+        val authnContextAttributes = org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute);
         val attributes = authentication.getAttributes();
-        val ctxAttr = attributes.get(this.authenticationContextAttribute);
-        val contexts = CollectionUtils.toCollection(ctxAttr);
-        LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        LOGGER.trace("Available multifactor providers are [{}]", providerMap.values());
-        val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
-        if (requestedProvider.isEmpty()) {
-            LOGGER.debug("Requested authentication provider cannot be recognized.");
-            return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
-        }
-        LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
-        if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
-            LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
-            return MultifactorAuthenticationContextValidationResult.builder()
-                .success(true).provider(requestedProvider).build();
-        }
-        if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attributes.containsKey(this.mfaTrustedAuthnAttributeName)) {
-            LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
-            return MultifactorAuthenticationContextValidationResult.builder()
-                .success(true).provider(requestedProvider).build();
-        }
-        val provider = requestedProvider.get();
-        val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
-        if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
-            val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
-            OrderComparator.sortIfNecessary(providers);
-            LOGGER.debug("Satisfied authentication context(s) are [{}]", satisfiedProviders);
-
-            val result = Arrays.stream(providers)
-                .filter(p -> p.equals(provider) || p.getOrder() >= provider.getOrder())
-                .findFirst();
-            if (result.isPresent()) {
-                LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.",
-                    result.get(), requestedProvider);
+        for (val authnContextAttribute : authnContextAttributes) {
+            val ctxAttr = attributes.get(authnContextAttribute);
+            val contexts = CollectionUtils.toCollection(ctxAttr);
+            LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
+            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            LOGGER.trace("Available multifactor providers are [{}]", providerMap.values());
+            val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
+            if (requestedProvider.isEmpty()) {
+                LOGGER.debug("Requested authentication provider cannot be recognized.");
+                return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
+            }
+            LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
+            if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
+                LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
                 return MultifactorAuthenticationContextValidationResult.builder()
                     .success(true).provider(requestedProvider).build();
             }
+            if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attributes.containsKey(this.mfaTrustedAuthnAttributeName)) {
+                LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
+                return MultifactorAuthenticationContextValidationResult.builder()
+                    .success(true).provider(requestedProvider).build();
+            }
+            val provider = requestedProvider.get();
+            val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
+            if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
+                val providers = satisfiedProviders.toArray(MultifactorAuthenticationProvider[]::new);
+                OrderComparator.sortIfNecessary(providers);
+                LOGGER.debug("Satisfied authentication context(s) are [{}]", satisfiedProviders);
+
+                val result = Arrays.stream(providers)
+                    .filter(p -> p.equals(provider) || p.getOrder() >= provider.getOrder())
+                    .findFirst();
+                if (result.isPresent()) {
+                    LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.",
+                        result.get(), requestedProvider);
+                    return MultifactorAuthenticationContextValidationResult.builder()
+                        .success(true).provider(requestedProvider).build();
+                }
+            }
         }
-        LOGGER.info("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
-        return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
+        LOGGER.info("No multifactor providers could be located to satisfy the requested context for [{}]", requestedContext);
+        return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
     }
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(

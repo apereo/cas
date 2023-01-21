@@ -542,7 +542,7 @@ exports.base64Decode = async (data) => {
 };
 
 exports.screenshot = async (page) => {
-    if (process.env.CI === "true") {
+    if (this.isCiEnvironment()) {
         let index = Date.now();
         let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
@@ -560,6 +560,9 @@ exports.screenshot = async (page) => {
         console.log("Capturing screenshots is disabled in non-CI environments");
     }
 };
+
+exports.isCiEnvironment = async() => process.env.CI === "true";
+exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});

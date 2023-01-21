@@ -293,7 +293,7 @@ public class OidcIdTokenGeneratorServiceTests {
             val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce"),
-                    mfa.getCore().getAuthenticationContextAttribute(), List.of("context-cass"),
+                    mfa.getCore().getAuthenticationContextAttribute(), List.of("context-class"),
                     AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, List.of("Handler1")));
 
             val tgt = new MockTicketGrantingTicket(authentication);
@@ -307,7 +307,7 @@ public class OidcIdTokenGeneratorServiceTests {
                 OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid"));
             assertNotNull(idToken);
         }
-
+        
         @Test
         public void verifyUnknownServiceType() {
             assertThrows(IllegalArgumentException.class, () -> {

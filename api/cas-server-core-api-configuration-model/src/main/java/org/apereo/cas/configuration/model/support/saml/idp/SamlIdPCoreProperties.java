@@ -58,15 +58,12 @@ public class SamlIdPCoreProperties implements Serializable {
      * A mapping of authentication context class refs.
      * This is where specific authentication context classes
      * are reference and mapped to providers that CAS may support
-     * mainly for MFA purposes.
+     * mainly for, i.e. MFA purposes.
      * <p>
      * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
-     */
-    private List<String> authenticationContextClassMappings = new ArrayList<>(0);
-
-    /**
-     * A mapping of authentication context class refs, when CAS is proxying/delegating
-     * authentication to an external SAML2 identity provider. The requested authentication context
+     * <p>
+     * In delegated authentication scenarios, this can also be a mapping of authentication context class refs,
+     * when CAS is proxying/delegating authentication to an external SAML2 identity provider. The requested authentication context
      * as submitted by the service provider is first received by CAS, and then gets mapped to
      * a context class that is passed onto the external identity provider. For example, you might have a scenario
      * where a SAML2 service provider would submit {@code https://refeds.org/profile/mfa} to CAS, and CAS would
@@ -75,7 +72,8 @@ public class SamlIdPCoreProperties implements Serializable {
      * <p>
      * Example might be {@code https://refeds.org/profile/mfa->http://schemas.microsoft.com/claims/multipleauthn}.
      */
-    private List<String> delegatedAuthenticationContextClassMappings = new ArrayList<>(0);
+    private List<String> authenticationContextClassMappings = new ArrayList<>(0);
+
 
     /**
      * A mapping of attribute names to their friendly names, defined globally.
