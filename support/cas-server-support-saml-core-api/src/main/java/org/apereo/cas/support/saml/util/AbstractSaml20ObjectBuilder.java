@@ -288,17 +288,31 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param sessionIndex    the session index
      * @return the authn statement
      */
-    public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant,
+    public AuthnStatement newAuthnStatement(final String contextClassRef,
+                                            final ZonedDateTime authnInstant,
                                             final String sessionIndex) {
-        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
-            contextClassRef, authnInstant, sessionIndex);
-        val stmt = newSamlObject(AuthnStatement.class);
         val ctx = newSamlObject(AuthnContext.class);
-
         val classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setURI(contextClassRef);
         ctx.setAuthnContextClassRef(classRef);
-        stmt.setAuthnContext(ctx);
+        return newAuthnStatement(ctx, authnInstant, sessionIndex);
+    }
+
+    /**
+     * New authn statement authn statement.
+     *
+     * @param context      the context
+     * @param authnInstant the authn instant
+     * @param sessionIndex the session index
+     * @return the authn statement
+     */
+    public AuthnStatement newAuthnStatement(final AuthnContext context,
+                                            final ZonedDateTime authnInstant,
+                                            final String sessionIndex) {
+        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
+            context, authnInstant, sessionIndex);
+        val stmt = newSamlObject(AuthnStatement.class);
+        stmt.setAuthnContext(context);
         stmt.setAuthnInstant(authnInstant.toInstant());
         stmt.setSessionIndex(sessionIndex);
         return stmt;

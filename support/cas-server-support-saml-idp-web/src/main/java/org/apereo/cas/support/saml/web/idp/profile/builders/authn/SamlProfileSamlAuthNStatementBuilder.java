@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -16,20 +15,15 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
 import java.io.Serial;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -44,20 +38,16 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     @Serial
     private static final long serialVersionUID = 8761566449790497226L;
 
-    private final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;
+    private final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder;
 
     private final CasConfigurationProperties casProperties;
 
-    private final MetadataResolver samlIdPMetadataResolver;
-
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
-                                                final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder,
-                                                final CasConfigurationProperties casProperties,
-                                                final MetadataResolver samlIdPMetadataResolver) {
+                                                final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder,
+                                                final CasConfigurationProperties casProperties) {
         super(configBean);
         this.authnContextClassRefBuilder = authnContextClassRefBuilder;
         this.casProperties = casProperties;
-        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
     }
 
     @Override
@@ -78,11 +68,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     protected AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
-        val authenticationMethod = authnContextClassRefBuilder.build(context);
+        
         val id = buildAuthnStatementSessionIdex(context);
         val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate());
-        var statement = newAuthnStatement(authenticationMethod, authnInstant, id);
-        statement = buildAuthnContextAuthority(context, statement);
+
+        val authnContextClass = authnContextClassRefBuilder.build(context);
+        val statement = newAuthnStatement(authnContextClass, authnInstant, id);
 
         if (!context.getRegisteredService().isSkipGeneratingSessionNotOnOrAfter()) {
             statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
@@ -92,22 +83,6 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         if (subjectLocality != null) {
             statement.setSubjectLocality(subjectLocality);
         }
-        return statement;
-    }
-
-    private AuthnStatement buildAuthnContextAuthority(final SamlProfileBuilderContext context,
-                                                      final AuthnStatement statement) throws Exception {
-        val entityIdCriteriaSet = new CriteriaSet(
-            new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
-            new SamlIdPSamlRegisteredServiceCriterion(context.getRegisteredService()));
-        LOGGER.trace("Resolving entity id from SAML2 IdP metadata for signature signing configuration is [{}]",
-            context.getRegisteredService().getName());
-        val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
-        LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
-
-        val authority = newSamlObject(AuthenticatingAuthority.class);
-        authority.setURI(entityId);
-        statement.getAuthnContext().getAuthenticatingAuthorities().add(authority);
         return statement;
     }
 
