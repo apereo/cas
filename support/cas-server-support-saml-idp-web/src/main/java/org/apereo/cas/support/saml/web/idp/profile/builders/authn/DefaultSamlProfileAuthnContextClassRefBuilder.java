@@ -1,26 +1,36 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
+import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link DefaultSamlProfileAuthnContextClassRefBuilder}.
@@ -29,13 +39,49 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfileAuthnContextClassRefBuilder {
+
+public class DefaultSamlProfileAuthnContextClassRefBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnContext> {
+
+    @Serial
+    private static final long serialVersionUID = 5783371664834470257L;
+
+    private final MetadataResolver samlIdPMetadataResolver;
 
     private final CasConfigurationProperties casProperties;
 
+    public DefaultSamlProfileAuthnContextClassRefBuilder(final OpenSamlConfigBean configBean,
+                                                         final MetadataResolver samlIdPMetadataResolver,
+                                                         final CasConfigurationProperties casProperties) {
+        super(configBean);
+        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
+        this.casProperties = casProperties;
+    }
+
     @Override
-    public String build(final SamlProfileBuilderContext context) throws Exception {
+    public AuthnContext build(final SamlProfileBuilderContext context) throws Exception {
+        val classRefValue = buildAuthnContextClassRefValue(context);
+
+        val authnContext = newSamlObject(AuthnContext.class);
+
+        val classRef = newSamlObject(AuthnContextClassRef.class);
+        classRef.setURI(classRefValue);
+        authnContext.setAuthnContextClassRef(classRef);
+
+        val entityIdCriteriaSet = new CriteriaSet(
+            new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+            new SamlIdPSamlRegisteredServiceCriterion(context.getRegisteredService()));
+        LOGGER.trace("Resolving entity id from SAML2 IdP metadata for signature signing configuration is [{}]",
+            context.getRegisteredService().getName());
+        val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
+        LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
+
+        val authority = newSamlObject(AuthenticatingAuthority.class);
+        authority.setURI(entityId);
+
+        return authnContext;
+    }
+
+    private String buildAuthnContextClassRefValue(final SamlProfileBuilderContext context) {
         val requiredClass = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(context.getRegisteredService().getRequiredAuthenticationContextClass());
         if (StringUtils.isNotBlank(requiredClass)) {
@@ -52,8 +98,7 @@ public class DefaultSamlProfileAuthnContextClassRefBuilder implements SamlProfil
                             val args = CollectionUtils.wrap("context", context, "logger", LOGGER);
                             script.setBinding(args);
                             return script.execute(args.values().toArray(), String.class, true);
-                        }, () -> null)
-                            .get();
+                        }, () -> null).get();
                     })
                     .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager"));
             }

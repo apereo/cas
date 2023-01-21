@@ -70,6 +70,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -202,6 +203,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
     protected ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
+
+    @Autowired
+    @Qualifier("defaultAuthnContextClassRefBuilder")
+    protected SamlProfileObjectBuilder<AuthnContext> defaultAuthnContextClassRefBuilder;
 
     protected static AuthenticatedAssertionContext getAssertion() {
         return getAssertion(Map.of());
