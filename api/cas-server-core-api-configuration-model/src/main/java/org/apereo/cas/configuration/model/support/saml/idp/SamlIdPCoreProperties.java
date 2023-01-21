@@ -65,6 +65,19 @@ public class SamlIdPCoreProperties implements Serializable {
     private List<String> authenticationContextClassMappings = new ArrayList<>(0);
 
     /**
+     * A mapping of authentication context class refs, when CAS is proxying/delegating
+     * authentication to an external SAML2 identity provider. The requested authentication context
+     * as submitted by the service provider is first received by CAS, and then gets mapped to
+     * a context class that is passed onto the external identity provider. For example, you might have a scenario
+     * where a SAML2 service provider would submit {@code https://refeds.org/profile/mfa} to CAS, and CAS would
+     * translate that to {@code http://schemas.microsoft.com/claims/multipleauthn} to ultimate route the
+     * authentication request to Azure. If no mapping is found, the original context is passed as is.
+     * <p>
+     * Example might be {@code https://refeds.org/profile/mfa->http://schemas.microsoft.com/claims/multipleauthn}.
+     */
+    private List<String> delegatedAuthenticationContextClassMappings = new ArrayList<>(0);
+
+    /**
      * A mapping of attribute names to their friendly names, defined globally.
      * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
      */

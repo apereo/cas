@@ -101,6 +101,7 @@ spring.main.lazy-initialization=false
 - Spring Boot Admin
 - Spring Shell
 - Mockito
+- Thymeleaf Layout Dialect
 - JUnit
 - Kryo
 - ErrorProne
