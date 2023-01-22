@@ -542,7 +542,7 @@ exports.base64Decode = async (data) => {
 };
 
 exports.screenshot = async (page) => {
-    if (this.isCiEnvironment()) {
+    if (await this.isCiEnvironment()) {
         let index = Date.now();
         let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
@@ -561,7 +561,8 @@ exports.screenshot = async (page) => {
     }
 };
 
-exports.isCiEnvironment = async() => process.env.CI === "true";
+exports.isCiEnvironment = async() => process.env.CI !== undefined && process.env.CI === "true";
+
 exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {

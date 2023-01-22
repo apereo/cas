@@ -48,19 +48,22 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
     public MultifactorAuthenticationContextValidationResult validate(final Authentication authentication,
                                                                      final String requestedContext,
                                                                      final Optional<RegisteredService> service) {
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        LOGGER.trace("Available multifactor providers are [{}]", providerMap.values());
+
+        LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, providerMap.keySet());
+        val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
+        if (requestedProvider.isEmpty()) {
+            LOGGER.debug("Requested authentication provider cannot be recognized.");
+            return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
+        }
+        
         val authnContextAttributes = org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute);
         val attributes = authentication.getAttributes();
         for (val authnContextAttribute : authnContextAttributes) {
             val ctxAttr = attributes.get(authnContextAttribute);
             val contexts = CollectionUtils.toCollection(ctxAttr);
-            LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
-            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-            LOGGER.trace("Available multifactor providers are [{}]", providerMap.values());
-            val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
-            if (requestedProvider.isEmpty()) {
-                LOGGER.debug("Requested authentication provider cannot be recognized.");
-                return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
-            }
+
             LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
             if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
@@ -91,7 +94,7 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
             }
         }
         LOGGER.info("No multifactor providers could be located to satisfy the requested context for [{}]", requestedContext);
-        return MultifactorAuthenticationContextValidationResult.builder().success(false).build();
+        return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
     }
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(

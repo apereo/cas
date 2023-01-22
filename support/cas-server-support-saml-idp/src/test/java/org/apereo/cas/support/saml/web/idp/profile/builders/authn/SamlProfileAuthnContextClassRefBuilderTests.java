@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -122,8 +120,6 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
     public class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
-        @Autowired
-        private CasConfigurationProperties casProperties;
 
         @Test
         public void verifyRefedsContext() throws Exception {
@@ -159,8 +155,6 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
         "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->mfa"
     })
     public class MappedToValueTests extends BaseSamlIdPConfigurationTests {
-        @Autowired
-        private CasConfigurationProperties casProperties;
 
         @Test
         public void verifyRefedsContextWithPrincipalAttribute() throws Exception {
