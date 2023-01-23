@@ -49,6 +49,9 @@ configurations.all {
                 if (requested.group == "org.springframework")  {
                     details.useVersion("${springVersion}")
                 }
+                if (requested.group == "io.github.classgraph")  {
+                    details.useVersion("${classgraphVersion}")
+                }
                 if (requested.group == "org.springframework.session")  {
                     if (requested.name == "spring-session-data-mongodb") {
                         details.useVersion("${springSessionMongoVersion}")
