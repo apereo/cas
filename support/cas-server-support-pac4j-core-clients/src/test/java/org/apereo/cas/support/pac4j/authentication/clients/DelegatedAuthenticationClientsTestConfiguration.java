@@ -75,7 +75,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val facebookClient = new FacebookClient() {
             @Override
-            public Optional<Credentials> retrieveCredentials(final CallContext callContext) {
+            public Optional<Credentials> getCredentials(final CallContext callContext) {
                 return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
