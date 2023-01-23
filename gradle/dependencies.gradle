@@ -3361,6 +3361,7 @@ ext.libraries = [
         ],
         webjars                    : [
                 dependencies.create("org.webjars:webjars-locator-core:$webjarLocatorVersion") {
+                    exclude(group: "io.github.classgraph", module: "classgraph")
                 },
                 dependencies.create("org.webjars:hal-explorer:$halVersion") {
                 },
