@@ -13,12 +13,9 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oidc.client.OidcClient;
@@ -97,9 +94,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val mockClientNoCredentials = mock(BaseClient.class);
         when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
-        val callContext = new CallContext(any(WebContext.class), any(SessionStore.class), any(ProfileManagerFactory.class));
-        when(mockClientNoCredentials.getCredentials(callContext))
-            .thenThrow(new OkAction(StringUtils.EMPTY));
+        when(mockClientNoCredentials.getCredentials(any())).thenThrow(new OkAction(StringUtils.EMPTY));
         when(mockClientNoCredentials.isInitialized()).thenReturn(true);
 
         val failingClient = mock(IndirectClient.class);
