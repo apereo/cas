@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
@@ -34,7 +34,7 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
     private final JwtBuilder accessTokenJwtBuilder;
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
+    public Optional<AuthenticationCredentials> validate(final CallContext callContext, final AuthenticationCredentials creds) {
         val credentials = (TokenCredentials) creds;
         val token = extractAccessTokenFrom(credentials.getToken().trim());
         val at = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
