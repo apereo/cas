@@ -5,6 +5,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,7 +36,9 @@ public abstract class BaseDelegatedClientAuthenticationCredentialResolver
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 val webContext = new JEEContext(request, response);
                 val client = configContext.getClients().findClient(credentials.getClientName()).orElseThrow();
-                return client.getUserProfile(credentials.getCredentials(), webContext, configContext.getSessionStore());
+
+                val callContext = new CallContext(webContext, configContext.getSessionStore());
+                return client.getUserProfile(callContext, credentials.getCredentials());
             });
     }
 }

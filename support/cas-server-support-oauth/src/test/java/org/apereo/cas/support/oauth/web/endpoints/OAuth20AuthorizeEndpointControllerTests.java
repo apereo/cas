@@ -28,6 +28,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.core.util.Pac4jConstants;
@@ -133,8 +134,9 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val mockResponse = new MockHttpServletResponse();
-        val redirect = oauthCasClient.getRedirectionAction(new JEEContext(mockRequest, mockResponse),
+        val callContext = new CallContext(new JEEContext(mockRequest, mockResponse),
             oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
+        val redirect = oauthCasClient.getRedirectionAction(callContext);
         assertTrue(redirect.isPresent());
 
         val callbackUrl = ((WithLocationAction) redirect.get()).getLocation();
@@ -157,8 +159,10 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.addParameter(CasProtocolConstants.PARAMETER_TICKET, st1.getId());
         mockRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, callbackUrl);
-        val result = oauthCasClient.getCredentials(new JEEContext(mockRequest, mockResponse),
-            oauthDistributedSessionStore, oauthSecConfig.getProfileManagerFactory());
+
+        val callContext1 = new CallContext(new JEEContext(mockRequest, mockResponse),
+            oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
+        val result = oauthCasClient.getCredentials(callContext1);
         assertTrue(result.isPresent());
         assertNotNull(result.get().getUserProfile());
     }

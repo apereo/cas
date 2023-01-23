@@ -438,8 +438,8 @@ public class CasOAuth20Configuration {
             cfg.setHostnameVerifier(casSslContext.getHostnameVerifier());
             cfg.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
             val oauthCasClient = new CasClient(cfg);
-            oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore, __) ->
-                oauthCasClientRedirectActionBuilder.build(oauthCasClient, webContext));
+            oauthCasClient.setRedirectionActionBuilder(callContext ->
+                oauthCasClientRedirectActionBuilder.build(oauthCasClient, callContext.webContext()));
             oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
             oauthCasClient.setUrlResolver(casCallbackUrlResolver);
             oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
@@ -756,11 +756,9 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
-            @Qualifier("oauthSecConfig")
-            final ObjectProvider<Config> oauthSecConfig,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder, oauthSecConfig);
+            return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder);
         }
 
         @ConditionalOnMissingBean(name = "oauthPrincipalFactory")
@@ -1489,8 +1487,6 @@ public class CasOAuth20Configuration {
         public Authenticator oauthUserAuthenticator(
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
@@ -1505,7 +1501,6 @@ public class CasOAuth20Configuration {
                 authenticationSystemSupport,
                 servicesManager,
                 webApplicationServiceFactory,
-                oauthDistributedSessionStore,
                 oauthRequestParameterResolver,
                 oauth20ClientSecretValidator,
                 authenticationAttributeReleasePolicy);
@@ -1569,6 +1564,7 @@ public class CasOAuth20Configuration {
     @RequiredArgsConstructor
     private static class CASOAuth20TicketValidator implements org.apereo.cas.client.validation.TicketValidator {
         private final TicketValidator validator;
+
         private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
         @Override

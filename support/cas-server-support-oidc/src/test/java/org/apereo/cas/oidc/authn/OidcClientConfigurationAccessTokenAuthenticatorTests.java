@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -34,7 +35,7 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
         when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -54,7 +55,7 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
         when(at.getScopes()).thenThrow(new IllegalArgumentException());
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         val userProfile = credentials.getUserProfile();
         assertNull(userProfile);
     }

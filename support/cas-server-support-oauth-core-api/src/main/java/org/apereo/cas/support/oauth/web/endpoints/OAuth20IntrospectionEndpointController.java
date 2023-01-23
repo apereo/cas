@@ -17,6 +17,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
@@ -104,8 +105,9 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
             val authExtractor = new BasicAuthExtractor();
 
             val context = new JEEContext(request, response);
-            val credentialsResult = authExtractor.extract(context, getConfigurationContext().getSessionStore(),
+            val callContext = new CallContext(context, getConfigurationContext().getSessionStore(),
                 getConfigurationContext().getOauthConfig().getProfileManagerFactory());
+            val credentialsResult = authExtractor.extract(callContext);
 
             if (credentialsResult.isEmpty()) {
                 LOGGER.warn("Unable to locate and extract credentials from the request");

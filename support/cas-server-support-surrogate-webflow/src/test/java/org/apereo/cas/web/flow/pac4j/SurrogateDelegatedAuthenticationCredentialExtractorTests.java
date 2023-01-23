@@ -68,12 +68,12 @@ public class SurrogateDelegatedAuthenticationCredentialExtractorTests {
             .username(uid).build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
         
-        when(client.getCredentials(any(), any(), any())).thenReturn(Optional.of(new TokenCredentials(uid)));
+        when(client.getCredentials(any())).thenReturn(Optional.of(new TokenCredentials(uid)));
         val cc = delegatedAuthenticationCredentialExtractor.extract(client, context);
         assertNotNull(cc);
         assertTrue(cc.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
         
-        when(client.getCredentials(any(), any(), any())).thenReturn(Optional.empty());
+        when(client.getCredentials(any())).thenReturn(Optional.empty());
         assertThrows(IllegalArgumentException.class, () -> delegatedAuthenticationCredentialExtractor.extract(client, context));
     }
 }

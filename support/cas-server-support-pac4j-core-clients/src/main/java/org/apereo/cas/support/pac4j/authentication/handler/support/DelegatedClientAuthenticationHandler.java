@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -83,7 +84,9 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {
                 val credentials = clientCredentials.getCredentials();
-                userProfileResult = client.getUserProfile(credentials, webContext, this.sessionStore);
+
+                val callContext = new CallContext(webContext, this.sessionStore);
+                userProfileResult = client.getUserProfile(callContext, credentials);
             }
             val userProfile = userProfileResult.orElseThrow(
                 () -> new PreventedException("Unable to fetch user profile from client " + client.getName()));

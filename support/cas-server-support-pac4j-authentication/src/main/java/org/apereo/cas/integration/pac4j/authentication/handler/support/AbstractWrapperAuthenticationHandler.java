@@ -13,6 +13,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
@@ -76,10 +77,11 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             }
             val webContext = getWebContext();
             LOGGER.trace("Validating credentials [{}] using authenticator [{}]", credentials, authenticator);
-            authenticator.validate(credentials, webContext, this.sessionStore);
+            val callContext = new CallContext(webContext, this.sessionStore);
+            authenticator.validate(callContext, credentials);
 
             LOGGER.trace("Creating user profile result for [{}]", credentials);
-            val profileResult = this.profileCreator.create(credentials, webContext, this.sessionStore);
+            val profileResult = this.profileCreator.create(callContext, credentials);
             if (profileResult.isEmpty()) {
                 throw new FailedLoginException("Unable to create common profile instance for credential " + credential);
             }
