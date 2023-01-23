@@ -663,8 +663,10 @@ public class SamlIdPConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(UrlValidator.BEAN_NAME)
-            final UrlValidator urlValidator) {
-            return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, urlValidator);
+            final UrlValidator urlValidator,
+            final CasConfigurationProperties casProperties) {
+            return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver,
+                                                                  urlValidator, casProperties.getAuthn().getSamlIdp());
         }
 
         @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilderConfigurer")
