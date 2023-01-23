@@ -16,8 +16,7 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
@@ -54,22 +53,21 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     }
 
     @Override
-    protected boolean canAuthenticate(final WebContext context) {
-        return context.getRequestParameter(OAuth20Constants.CODE_VERIFIER).isPresent();
+    protected boolean canAuthenticate(final CallContext context) {
+        return context.webContext().getRequestParameter(OAuth20Constants.CODE_VERIFIER).isPresent();
     }
 
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final WebContext context,
-                                       final SessionStore sessionStore) {
-        val clientSecret = getRequestParameterResolver().resolveClientIdAndClientSecret(context, sessionStore).getRight();
+                                       final CallContext callContext) {
+        val clientSecret = getRequestParameterResolver().resolveClientIdAndClientSecret(callContext).getRight();
         if (!getClientSecretValidator().validate(registeredService, clientSecret)) {
             throw new CredentialsException("Client Credentials provided is not valid for service: " + registeredService.getName());
         }
-        val codeVerifier = context.getRequestParameter(OAuth20Constants.CODE_VERIFIER)
+        val codeVerifier = callContext.webContext().getRequestParameter(OAuth20Constants.CODE_VERIFIER)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val code = context.getRequestParameter(OAuth20Constants.CODE)
+        val code = callContext.webContext().getRequestParameter(OAuth20Constants.CODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
 
         val token = getTicketRegistry().getTicket(code, OAuth20Code.class);

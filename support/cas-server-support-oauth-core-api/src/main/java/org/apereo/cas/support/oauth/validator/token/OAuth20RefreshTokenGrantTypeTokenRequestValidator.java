@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -32,9 +33,9 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+            .resolveClientIdAndClientSecret(callContext).getLeft();
         val refreshTokenResult = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REFRESH_TOKEN);
         if (refreshTokenResult.isEmpty() || clientId.isEmpty()) {

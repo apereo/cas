@@ -7,9 +7,9 @@ import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.client.Client;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -33,10 +33,10 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
-                                             final SessionStore sessionStore, final List<Client> clients) {
+    protected List<UserProfile> loadProfiles(final CallContext callContext, final ProfileManager manager, final List<Client> clients) {
+        val request = ((JEEContext) callContext.webContext()).getNativeRequest();
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            ticketGrantingTicketCookieGenerator, ticketRegistry, ((JEEContext) context).getNativeRequest());
+            ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         if (ticketGrantingTicket == null) {
             try {
                 ticketGrantingTicket = manager.getProfile()
@@ -53,6 +53,6 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
             return new ArrayList<>();
         }
 
-        return super.loadProfiles(manager, context, sessionStore, clients);
+        return super.loadProfiles(callContext, manager, clients);
     }
 }

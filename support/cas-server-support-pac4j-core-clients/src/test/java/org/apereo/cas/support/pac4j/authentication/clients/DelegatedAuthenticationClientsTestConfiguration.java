@@ -12,6 +12,7 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
@@ -77,14 +78,14 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val facebookClient = new FacebookClient() {
             @Override
-            public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore, final ProfileManagerFactory profileManagerFactory) {
+            public Optional<Credentials> retrieveCredentials(final CallContext callContext) {
                 return Optional.of(new OAuth20Credentials("fakeVerifier"));
             }
         };
-        facebookClient.setProfileCreator((credentials, context, store) -> {
+        facebookClient.setProfileCreator((callContext, store) -> {
             val profile = new CommonProfile();
             profile.setClientName(facebookClient.getName());
-            val id = context.getRequestAttribute(Credentials.class.getName()).orElse("casuser");
+            val id = callContext.webContext().getRequestAttribute(Credentials.class.getName()).orElse("casuser");
             profile.setId(id.toString());
             profile.addAttribute("uid", "casuser");
             profile.addAttribute("givenName", "ApereoCAS");
@@ -96,7 +97,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val mockClientNoCredentials = mock(BaseClient.class);
         when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
-        when(mockClientNoCredentials.getCredentials(any(WebContext.class), any(SessionStore.class), any(ProfileManagerFactory.class)))
+        val callContext = new CallContext(any(WebContext.class), any(SessionStore.class), any(ProfileManagerFactory.class));
+        when(mockClientNoCredentials.getCredentials(callContext))
             .thenThrow(new OkAction(StringUtils.EMPTY));
         when(mockClientNoCredentials.isInitialized()).thenReturn(true);
 

@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
@@ -36,7 +37,8 @@ public class OAuth20RevocationRequestValidator implements OAuth20TokenRequestVal
 
     @Override
     public boolean validate(final WebContext context) {
-        val clientId = requestParameterResolver.resolveClientIdAndClientSecret(context, sessionStore).getLeft();
+        val callContext = new CallContext(context, sessionStore);
+        val clientId = requestParameterResolver.resolveClientIdAndClientSecret(callContext).getLeft();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         if (registeredService == null) {
@@ -54,7 +56,8 @@ public class OAuth20RevocationRequestValidator implements OAuth20TokenRequestVal
             return false;
         }
 
-        val clientId = requestParameterResolver.resolveClientIdAndClientSecret(context, sessionStore).getLeft();
+        val callContext = new CallContext(context, sessionStore);
+        val clientId = requestParameterResolver.resolveClientIdAndClientSecret(callContext).getLeft();
         return StringUtils.isNotBlank(clientId);
     }
 }

@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.MalformedClaimException;
-import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -42,9 +42,10 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
     }
     @Override
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
-                                             final WebContext webContext, final OAuth20AccessToken accessToken) {
+                                             final CallContext callContext,
+                                             final OAuth20AccessToken accessToken) {
         try {
-            val profile = super.buildUserProfile(tokenCredentials, webContext, accessToken);
+            val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
             validateIdTokenIfAny(accessToken, profile);
             return profile;
         } catch (final Exception e) {

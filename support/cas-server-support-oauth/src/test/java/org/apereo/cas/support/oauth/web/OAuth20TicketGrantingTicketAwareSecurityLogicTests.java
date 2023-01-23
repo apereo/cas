@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
@@ -49,7 +50,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
         profile.addAttribute(TicketGrantingTicket.class.getName(), UUID.randomUUID().toString());
         profileManager.save(true, profile, false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-        assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
     }
 
     @Test
@@ -66,7 +67,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
         ticketRegistry.addTicket(tgt);
         profileManager.save(true, profile, false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-        assertFalse(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertFalse(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
     }
 
     @Test
@@ -78,6 +79,6 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends Abstract
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, new BasicUserProfile(), false);
         val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-        assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
     }
 }

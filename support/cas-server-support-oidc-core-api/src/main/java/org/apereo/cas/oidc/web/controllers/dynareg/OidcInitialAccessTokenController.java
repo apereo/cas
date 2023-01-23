@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.core.profile.CommonProfile;
@@ -100,8 +101,9 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             LOGGER.warn("Dynamic client registration mode is not configured as protected.");
             return getBadRequestResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
-        val results = accessTokenClient.getCredentials(webContext, getConfigurationContext().getSessionStore(),
+        val callContext = new CallContext(webContext, getConfigurationContext().getSessionStore(),
             getConfigurationContext().getOauthConfig().getProfileManagerFactory());
+        val results = accessTokenClient.getCredentials(callContext);
         return results.map(profile -> {
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
