@@ -13,6 +13,7 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
@@ -74,11 +75,19 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         oidcClient.init();
 
         val facebookClient = new FacebookClient() {
+            private final OAuth20Credentials fakeCredentials = new OAuth20Credentials("fakeVerifier");
+
             @Override
             public Optional<Credentials> getCredentials(final CallContext callContext) {
-                return Optional.of(new OAuth20Credentials("fakeVerifier"));
+                return Optional.of(fakeCredentials);
+            }
+
+            @Override
+            public Optional<AuthenticationCredentials> validateCredentials(final CallContext ctx, final AuthenticationCredentials credentials) {
+                return Optional.of(fakeCredentials);
             }
         };
+
         facebookClient.setProfileCreator((callContext, store) -> {
             val profile = new CommonProfile();
             profile.setClientName(facebookClient.getName());

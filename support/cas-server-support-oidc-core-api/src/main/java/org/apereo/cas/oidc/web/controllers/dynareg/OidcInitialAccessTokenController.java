@@ -105,9 +105,11 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         }
         val callContext = new CallContext(webContext, getConfigurationContext().getSessionStore(),
             getConfigurationContext().getOauthConfig().getProfileManagerFactory());
-        val results = accessTokenClient.getCredentials(callContext);
-        return results
+        return accessTokenClient.getCredentials(callContext)
             .map(AuthenticationCredentials.class::cast)
+            .map(credentials -> accessTokenClient.validateCredentials(callContext, credentials))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .map(credentials -> {
                 val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credentials.getUserProfile().getId());
                 val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
