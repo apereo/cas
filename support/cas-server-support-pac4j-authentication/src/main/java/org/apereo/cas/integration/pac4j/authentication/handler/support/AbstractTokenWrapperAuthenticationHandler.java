@@ -41,7 +41,7 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     }
 
     @Override
-    protected TokenCredentials convertToPac4jCredentials(final BasicIdentifiableCredential casCredential)
+    protected TokenCredentials convertToCredentials(final BasicIdentifiableCredential casCredential)
         throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
 

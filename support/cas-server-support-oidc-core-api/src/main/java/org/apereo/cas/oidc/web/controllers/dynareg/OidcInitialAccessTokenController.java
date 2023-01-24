@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.core.profile.CommonProfile;
@@ -37,6 +38,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -104,20 +106,22 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         val callContext = new CallContext(webContext, getConfigurationContext().getSessionStore(),
             getConfigurationContext().getOauthConfig().getProfileManagerFactory());
         val results = accessTokenClient.getCredentials(callContext);
-        return results.map(profile -> {
-            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(profile.getUserProfile().getId());
-            val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
-                .createService(casProperties.getServer().getPrefix());
+        return results
+            .map(AuthenticationCredentials.class::cast)
+            .map(credentials -> {
+                val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credentials.getUserProfile().getId());
+                val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
+                    .createService(casProperties.getServer().getPrefix());
 
-            val holder = AccessTokenRequestContext.builder()
-                .authentication(DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build())
-                .service(service)
-                .grantType(OAuth20GrantTypes.NONE)
-                .responseType(OAuth20ResponseTypes.NONE)
-                .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
-                    OidcConstants.CLIENT_REGISTRATION_SCOPE))
-                .build();
-            return generateInitialAccessToken(holder)
+                val holder = AccessTokenRequestContext.builder()
+                    .authentication(DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build())
+                    .service(service)
+                    .grantType(OAuth20GrantTypes.NONE)
+                    .responseType(OAuth20ResponseTypes.NONE)
+                    .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
+                        OidcConstants.CLIENT_REGISTRATION_SCOPE))
+                    .build();
+                return generateInitialAccessToken(holder)
                     .map(accessToken -> {
                         val accessTokenResult = OAuth20TokenGeneratedResult.builder()
                             .registeredService(holder.getRegisteredService())
@@ -134,13 +138,13 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
                             .casProperties(getConfigurationContext().getCasProperties())
                             .generatedToken(accessTokenResult)
                             .grantType(accessToken.getGrantType())
-                            .userProfile(profile.getUserProfile())
+                            .userProfile(credentials.getUserProfile())
                             .build();
 
                         return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
                     })
                     .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.BAD_REQUEST));
-        })
+            })
             .orElseGet(() -> getBadRequestResponseEntity(HttpStatus.UNAUTHORIZED));
     }
 
