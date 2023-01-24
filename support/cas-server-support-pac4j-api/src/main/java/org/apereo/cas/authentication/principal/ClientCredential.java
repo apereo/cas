@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 import org.pac4j.core.credentials.AnonymousCredentials;
-import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.profile.UserProfile;
 
 import java.io.Serial;
@@ -47,7 +47,7 @@ public class ClientCredential extends AbstractCredential {
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private final Credentials credentials;
+    private final AuthenticationCredentials credentials;
 
     /**
      * Name of the client that established the credential.
@@ -75,10 +75,7 @@ public class ClientCredential extends AbstractCredential {
     public String getId() {
         val up = getUserProfile();
         if (up != null) {
-            if (this.typedIdUsed) {
-                return up.getTypedId();
-            }
-            return up.getId();
+            return this.typedIdUsed ? up.getTypedId() : up.getId();
         }
         return NOT_YET_AUTHENTICATED + UUID.randomUUID();
     }

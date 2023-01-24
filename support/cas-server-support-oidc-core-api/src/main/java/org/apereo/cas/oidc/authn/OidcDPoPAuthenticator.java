@@ -21,7 +21,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -46,13 +46,13 @@ public class OidcDPoPAuthenticator implements Authenticator {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
+    public Optional<AuthenticationCredentials> validate(final CallContext callContext, final AuthenticationCredentials credentials) {
         val webContext = callContext.webContext();
         return webContext.getRequestHeader(OAuth20Constants.DPOP)
             .flatMap(Unchecked.function(proof -> validateAccessToken(credentials, webContext, proof)));
     }
 
-    protected Optional<Credentials> validateAccessToken(final Credentials credentials, final WebContext webContext,
+    protected Optional<AuthenticationCredentials> validateAccessToken(final AuthenticationCredentials credentials, final WebContext webContext,
                                                         final String dPopProof) throws Exception {
         val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElseThrow();
         val registeredService = (OidcRegisteredService)
@@ -81,7 +81,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
         return verifier.verify(dPopIssuer, signedProof);
     }
 
-    protected Optional<Credentials> buildUserProfile(final Credentials credentials, final String dPopProof,
+    protected Optional<AuthenticationCredentials> buildUserProfile(final AuthenticationCredentials credentials, final String dPopProof,
                                                      final String clientId, final JWKThumbprintConfirmation confirmation) throws Exception {
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val userProfile = new CommonProfile(true);
