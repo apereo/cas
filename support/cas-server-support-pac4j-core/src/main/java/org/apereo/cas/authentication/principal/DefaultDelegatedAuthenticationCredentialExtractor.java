@@ -46,6 +46,6 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
             .map(AuthenticationCredentials.class::cast)
             .orElseThrow(() -> new IllegalArgumentException("Unable to determine credentials from the context via client " + client.getName()));
         return client.validateCredentials(callContext, credentials)
-            .orElseThrow(() -> new IllegalArgumentException("Unable to validate credentials from the context via client " + client.getName()));
+            .orElseThrow(() -> new IllegalArgumentException("Unable to validate credentials via client " + client.getName()));
     }
 }

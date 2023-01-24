@@ -161,11 +161,13 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.addParameter(CasProtocolConstants.PARAMETER_TICKET, st1.getId());
         mockRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, callbackUrl);
 
-        val callContext1 = new CallContext(new JEEContext(mockRequest, mockResponse),
+        val clientCallContext = new CallContext(new JEEContext(mockRequest, mockResponse),
             oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
-        val result = oauthCasClient.getCredentials(callContext1);
+        val result = oauthCasClient.getCredentials(clientCallContext)
+            .map(credentials -> oauthCasClient.validateCredentials(clientCallContext, (AuthenticationCredentials) credentials))
+            .orElseThrow();
         assertTrue(result.isPresent());
-        assertNotNull(((AuthenticationCredentials) result.get()).getUserProfile());
+        assertNotNull(result.get().getUserProfile());
     }
 
     @Test
