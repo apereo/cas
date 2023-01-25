@@ -21,7 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.core.profile.CommonProfile;
@@ -106,7 +106,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         val callContext = new CallContext(webContext, getConfigurationContext().getSessionStore(),
             getConfigurationContext().getOauthConfig().getProfileManagerFactory());
         return accessTokenClient.getCredentials(callContext)
-            .map(AuthenticationCredentials.class::cast)
+            .map(Credentials.class::cast)
             .map(credentials -> accessTokenClient.validateCredentials(callContext, credentials))
             .filter(Optional::isPresent)
             .map(Optional::get)

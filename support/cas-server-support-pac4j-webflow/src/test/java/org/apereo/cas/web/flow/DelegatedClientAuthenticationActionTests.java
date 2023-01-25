@@ -218,8 +218,6 @@ public class DelegatedClientAuthenticationActionTests {
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             request.addParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-            request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "https://httpbin.org/post");
-
 
             val event = delegatedAuthenticationAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, event.getId());

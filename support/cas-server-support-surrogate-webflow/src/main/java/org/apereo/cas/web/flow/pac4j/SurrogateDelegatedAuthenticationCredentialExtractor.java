@@ -10,7 +10,7 @@ import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationR
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends Default
     }
 
     @Override
-    protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final AuthenticationCredentials credential) {
+    protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credential) {
         val cc = super.buildClientCredential(client, requestContext, credential);
         val passwordlessRequest = PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
         Optional.ofNullable(passwordlessRequest).ifPresent(request -> {
