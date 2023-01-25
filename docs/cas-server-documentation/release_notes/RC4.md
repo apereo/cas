@@ -108,4 +108,3 @@ spring.main.lazy-initialization=false
 - Checkstyle
 - JavaParser
 - Gradle
-- Groovy

@@ -23,16 +23,14 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.HttpAction;
-import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +72,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.ssoEvaluator = new DelegatedAuthenticationSingleSignOnEvaluator(context);
     }
 
-    protected static boolean isLogoutRequest(final HttpServletRequest request) {
-        return request.getParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER) != null;
+    protected boolean isLogoutRequest(final RequestContext requestContext, final String clientName) {
+        if (StringUtils.isNotBlank(clientName)) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new JEEContext(request, response);
+
+            val client = findDelegatedClientByName(requestContext, clientName, null);
+            val callContext = new CallContext(webContext, configContext.getSessionStore());
+            val credential = client.getCredentialsExtractor().extract(callContext);
+            return credential.isPresent() && !credential.get().isForAuthentication();
+        }
+        return false;
     }
 
     @Override
@@ -84,12 +92,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response);
 
+        val clientName = retrieveClientName(webContext);
         try {
-            val clientName = retrieveClientName(webContext);
             LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
-
             var service = (Service) null;
-            val isSingleSignOnSessionActive = !isLogoutRequest(request)
+            val isSingleSignOnSessionActive = !isLogoutRequest(context, clientName)
                                               && !DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
                                               && ssoEvaluator.singleSignOnSessionExists(context)
                                               && StringUtils.isNotBlank(clientName);
@@ -130,9 +137,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             webContext.setRequestAttribute(HttpAction.class.getName(), e);
-            return isLogoutRequest(request)
-                ? getLogoutEvent(e)
-                : success();
+            return isLogoutRequest(context, clientName) ? getLogoutEvent(e) : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;
@@ -251,18 +256,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP, new LocalAttributeMap<>("error", e));
     }
 
-    /**
-     * Restore authentication request in context service (return null for a logout call).
-     *
-     * @param requestContext the request context
-     * @param webContext     the web context
-     * @param clientName     the client name
-     * @return the service
-     */
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
                                                             final JEEContext webContext,
                                                             final String clientName) {
-        val logoutEndpoint = isLogoutRequest(webContext.getNativeRequest());
+        val logoutEndpoint = isLogoutRequest(requestContext, clientName);
         if (logoutEndpoint) {
             return null;
         }

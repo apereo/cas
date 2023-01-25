@@ -13,7 +13,6 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
@@ -83,7 +82,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
             }
 
             @Override
-            public Optional<AuthenticationCredentials> validateCredentials(final CallContext ctx, final AuthenticationCredentials credentials) {
+            public Optional<Credentials> internalValidateCredentials(final CallContext ctx, final Credentials credentials) {
                 return Optional.of(fakeCredentials);
             }
         };

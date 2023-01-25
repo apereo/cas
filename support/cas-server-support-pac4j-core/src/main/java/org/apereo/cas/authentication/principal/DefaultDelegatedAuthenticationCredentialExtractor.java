@@ -8,7 +8,7 @@ import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -32,18 +32,18 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
         return clientCredential;
     }
 
-    protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final AuthenticationCredentials credentials) {
+    protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credentials) {
         LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", client.getName());
         return new ClientCredential(credentials, client.getName());
     }
 
-    protected AuthenticationCredentials getCredentialsFromDelegatedClient(final RequestContext requestContext, final BaseClient client) {
+    protected Credentials getCredentialsFromDelegatedClient(final RequestContext requestContext, final BaseClient client) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new JEEContext(request, response);
         val callContext = new CallContext(webContext, this.sessionStore);
         val credentials = client.getCredentials(callContext)
-            .map(AuthenticationCredentials.class::cast)
+            .map(Credentials.class::cast)
             .orElseThrow(() -> new IllegalArgumentException("Unable to determine credentials from the context via client " + client.getName()));
         return client.validateCredentials(callContext, credentials)
             .orElseThrow(() -> new IllegalArgumentException("Unable to validate credentials via client " + client.getName()));

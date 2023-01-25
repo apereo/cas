@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
@@ -50,7 +50,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Override
-    public Optional<AuthenticationCredentials> validate(final CallContext callContext, final AuthenticationCredentials credentials) throws CredentialsException {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
         try {
             val upc = (UsernamePasswordCredentials) credentials;
             val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
