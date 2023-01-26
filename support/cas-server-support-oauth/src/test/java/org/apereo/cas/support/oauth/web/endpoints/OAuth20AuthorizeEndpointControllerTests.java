@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.core.util.Pac4jConstants;
