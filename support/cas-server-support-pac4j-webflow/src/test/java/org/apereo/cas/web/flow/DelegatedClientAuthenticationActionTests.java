@@ -374,7 +374,6 @@ public class DelegatedClientAuthenticationActionTests {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "MockClientNoCredentials");
-            request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "true");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());

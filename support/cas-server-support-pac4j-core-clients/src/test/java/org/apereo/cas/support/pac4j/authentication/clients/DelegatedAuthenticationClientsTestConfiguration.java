@@ -14,9 +14,13 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.credentials.SessionKeyCredentials;
+import org.pac4j.core.credentials.extractor.CredentialsExtractor;
 import org.pac4j.core.exception.http.OkAction;
+import org.pac4j.core.logout.LogoutType;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oauth.client.FacebookClient;
+import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
@@ -30,6 +34,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -73,8 +78,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         customizers.forEach(customizer -> customizer.customize(oidcClient));
         oidcClient.init();
 
-        val facebookClient = new FacebookClient() {
-            private final OAuth20Credentials fakeCredentials = new OAuth20Credentials("fakeVerifier");
+        val fakeCredentials = new OAuth20Credentials("fakeVerifier");
+        val facebookClient = new OAuth20Client() {
 
             @Override
             public Optional<Credentials> getCredentials(final CallContext callContext) {
@@ -86,7 +91,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
                 return Optional.of(fakeCredentials);
             }
         };
-
+        facebookClient.setCredentialsExtractor(callContext -> Optional.of(fakeCredentials));
+        facebookClient.getConfiguration().setWithState(false);
         facebookClient.setProfileCreator((callContext, store) -> {
             val profile = new CommonProfile();
             profile.setClientName(facebookClient.getName());
@@ -102,6 +108,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
         val mockClientNoCredentials = mock(BaseClient.class);
         when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
+        when(mockClientNoCredentials.getCredentialsExtractor())
+            .thenReturn(callContext -> Optional.of(new SessionKeyCredentials(LogoutType.BACK, UUID.randomUUID().toString())));
         when(mockClientNoCredentials.getCredentials(any())).thenThrow(new OkAction(StringUtils.EMPTY));
         when(mockClientNoCredentials.isInitialized()).thenReturn(true);
 
