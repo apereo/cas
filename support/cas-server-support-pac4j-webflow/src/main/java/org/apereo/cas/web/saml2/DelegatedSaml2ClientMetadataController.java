@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * This is {@link DelegatedSaml2ClientMetadataController}.
@@ -66,17 +65,14 @@ public class DelegatedSaml2ClientMetadataController {
     /**
      * Gets first idp metadata.
      *
-     * @param force the force
      * @return the first service provider metadata
      */
     @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata")
-    public ResponseEntity<String> getFirstIdentityProviderMetadata(
-        @RequestParam(value = "force", defaultValue = "false", required = false)
-        final boolean force) {
+    public ResponseEntity<String> getFirstIdentityProviderMetadata() {
         val saml2Client = builtClients.getClients().stream()
             .filter(client -> client instanceof SAML2Client)
             .map(SAML2Client.class::cast).findFirst();
-        return saml2Client.map(client -> getSaml2ClientIdentityProviderMetadataResponseEntity(client, force))
+        return saml2Client.map(this::getSaml2ClientIdentityProviderMetadataResponseEntity)
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
@@ -99,27 +95,23 @@ public class DelegatedSaml2ClientMetadataController {
      * Gets idp metadata by name.
      *
      * @param client the client
-     * @param force  the force
      * @return the service provider metadata by name
      */
     @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/idp/metadata")
     public ResponseEntity<String> getIdentityProviderMetadataByName(
         @PathVariable("client")
-        final String client,
-        @RequestParam(value = "force", defaultValue = "false", required = false)
-        final boolean force) {
+        final String client) {
         val saml2Client = builtClients.findClient(client);
-        return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity(SAML2Client.class.cast(value), force))
+        return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
-    private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client,
-                                                                                        final boolean force) {
+    private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
         val identityProviderMetadataResolver = saml2Client.getIdentityProviderMetadataResolver();
-        identityProviderMetadataResolver.resolve(force);
+        identityProviderMetadataResolver.resolve();
         val entity = identityProviderMetadataResolver.getEntityDescriptorElement();
         val metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString();
         return new ResponseEntity<>(metadata, headers, HttpStatus.OK);
