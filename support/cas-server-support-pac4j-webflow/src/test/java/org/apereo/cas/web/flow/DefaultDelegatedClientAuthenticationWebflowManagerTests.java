@@ -275,7 +275,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val saml2MessageContext = new SAML2MessageContext();
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        saml2MessageContext.setWebContext(context);
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 

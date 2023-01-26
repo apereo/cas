@@ -61,7 +61,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @Slf4j
 public class DelegatedClientAuthenticationActionTests {
 
@@ -373,7 +373,7 @@ public class DelegatedClientAuthenticationActionTests {
         public void verifyLogoutRequestWithOkAction() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-            request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "MockClientNoCredentials");
+            request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "LogoutClient");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
