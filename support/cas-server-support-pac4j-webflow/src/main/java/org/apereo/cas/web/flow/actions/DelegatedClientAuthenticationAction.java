@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
@@ -72,20 +73,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.ssoEvaluator = new DelegatedAuthenticationSingleSignOnEvaluator(context);
     }
 
-    protected boolean isLogoutRequest(final RequestContext requestContext, final String clientName) {
-        if (StringUtils.isNotBlank(clientName)) {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val webContext = new JEEContext(request, response);
-
-            val client = findDelegatedClientByName(requestContext, clientName, null);
-            val callContext = new CallContext(webContext, configContext.getSessionStore());
-            val credential = client.getCredentialsExtractor().extract(callContext);
-            return credential.isPresent() && !credential.get().isForAuthentication();
-        }
-        return false;
-    }
-
     @Override
     public Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -93,16 +80,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val webContext = new JEEContext(request, response);
 
         val clientName = retrieveClientName(webContext);
+        val clientCredential = extractClientCredential(context, clientName);
+        val isLogoutRequest = isLogoutRequest(clientCredential);
         try {
             LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
             var service = (Service) null;
-            val isSingleSignOnSessionActive = !isLogoutRequest(context, clientName)
+            val isSingleSignOnSessionActive = StringUtils.isNotBlank(clientName)
+                                              && !isLogoutRequest
                                               && !DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)
-                                              && ssoEvaluator.singleSignOnSessionExists(context)
-                                              && StringUtils.isNotBlank(clientName);
+                                              && ssoEvaluator.singleSignOnSessionExists(context);
             if (isSingleSignOnSessionActive) {
                 LOGGER.trace("Found an existing single sign-on session");
-                service = populateContextWithService(context, webContext, clientName);
+                service = populateContextWithService(context, clientName, clientCredential);
                 if (ssoEvaluator.singleSignOnSessionAuthorizedForService(context)) {
                     val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
                     LOGGER.debug("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
@@ -112,6 +101,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
                 val tgt = WebUtils.getTicketGrantingTicketId(context);
                 configContext.getTicketRegistry().deleteTicket(tgt);
+                val client = findDelegatedClientByName(clientName);
+                verifyClientIsAuthorizedForService(context, resolvedService, client);
             }
 
             if (failureEvaluator.evaluate(request, response.getStatus()).isPresent()) {
@@ -121,23 +112,27 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             if (DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(context)) {
                 val profile = DelegationWebflowUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class);
                 val up = profile.toUserProfile(clientName);
-                val clientCredential = new ClientCredential(clientName, up);
-                WebUtils.putCredential(context, clientCredential);
+                val clientCredentialSelected = new ClientCredential(clientName, up);
+                WebUtils.putCredential(context, clientCredentialSelected);
                 return super.doExecute(context);
             }
 
-            if (StringUtils.isNotBlank(clientName)) {
-                service = Optional.ofNullable(service).orElseGet(() -> populateContextWithService(context, webContext, clientName));
-                val client = findDelegatedClientByName(context, clientName, service);
+            if (clientCredential.isPresent()) {
+                service = Optional.ofNullable(service).orElseGet(() -> populateContextWithService(context, clientName, clientCredential));
+                val client = findDelegatedClientByName(clientName);
+                verifyClientIsAuthorizedForService(context, service, client);
                 DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
-                val clientCredentials = populateContextWithClientCredential(client, webContext, context);
-                return finalizeDelegatedClientAuthentication(context, clientCredentials);
+                if (isLogoutRequest(clientCredential)) {
+                    val callContext = new CallContext(webContext, configContext.getSessionStore());
+                    throw client.processLogout(callContext, clientCredential.get().getCredentials());
+                }
+                return finalizeDelegatedClientAuthentication(context, clientCredential.get());
             }
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             webContext.setRequestAttribute(HttpAction.class.getName(), e);
-            return isLogoutRequest(context, clientName) ? getLogoutEvent(e) : success();
+            return isLogoutRequest(clientCredential) ? getLogoutEvent(e) : success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;
@@ -146,6 +141,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow(e, context);
         }
         return getFinalEvent();
+    }
+
+    private static boolean isLogoutRequest(final Optional<ClientCredential> clientCredential) {
+        return clientCredential.isPresent() && !clientCredential.get().getCredentials().isForAuthentication();
+    }
+
+    protected Optional<ClientCredential> extractClientCredential(final RequestContext context, final String clientName) {
+        if (StringUtils.isNotBlank(clientName)) {
+            val client = findDelegatedClientByName(clientName);
+            val clientCredential = populateContextWithClientCredential(client, context);
+            DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
+            return clientCredential;
+        }
+        return Optional.empty();
     }
 
     protected Event finalizeDelegatedClientAuthentication(final RequestContext context,
@@ -176,12 +185,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return new Event(this, CasWebflowConstants.TRANSITION_ID_GENERATE);
     }
 
-    /**
-     * Retrieve the client name when calling back the CAS server after the delegated authentication.
-     *
-     * @param webContext the web context
-     * @return the client name
-     */
+
     protected String retrieveClientName(final WebContext webContext) {
         return configContext.getDelegatedClientNameExtractor().extract(webContext).orElse(StringUtils.EMPTY);
     }
@@ -205,16 +209,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return super.doPreExecute(context);
     }
 
-    /**
-     * Populate context with service service.
-     *
-     * @param context    the context
-     * @param webContext the web context
-     * @param clientName the client name
-     * @return the service
-     */
-    protected Service populateContextWithService(final RequestContext context, final JEEContext webContext, final String clientName) {
-        val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
+    protected Service populateContextWithService(final RequestContext context,
+                                                 final String givenClientName,
+                                                 final Optional<ClientCredential> clientCredential) {
+        val service = restoreAuthenticationRequestInContext(context, givenClientName, clientCredential);
         val resolvedService = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
         LOGGER.trace("Authentication is resolved by service request from [{}]", service);
         val registeredService = configContext.getServicesManager().findServiceBy(resolvedService);
@@ -224,20 +222,23 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return service;
     }
 
-    protected ClientCredential populateContextWithClientCredential(final BaseClient client, final JEEContext webContext,
-                                                                   final RequestContext requestContext) {
+    protected Optional<ClientCredential> populateContextWithClientCredential(final BaseClient client,
+                                                                             final RequestContext requestContext) {
         return configContext.getCredentialExtractor().extract(client, requestContext);
     }
 
-    protected BaseClient findDelegatedClientByName(final RequestContext requestContext,
-                                                   final String clientName,
-                                                   final Service service) {
+    protected BaseClient findDelegatedClientByName(final String clientName) {
         val clientResult = configContext.getClients().findClient(clientName);
         if (clientResult.isEmpty()) {
             LOGGER.warn("Delegated client [{}] can not be located", clientName);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val client = BaseClient.class.cast(clientResult.get());
+        client.init();
+        return client;
+    }
+
+    private void verifyClientIsAuthorizedForService(final RequestContext requestContext, final Service service, final BaseClient client) {
         LOGGER.debug("Delegated authentication client is [{}] with service [{}]", client, service);
         if (service != null) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -247,8 +248,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        client.init();
-        return client;
     }
 
     protected Event stopWebflow(final Exception e, final RequestContext requestContext) {
@@ -257,19 +256,23 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
-                                                            final JEEContext webContext,
-                                                            final String clientName) {
-        val logoutEndpoint = isLogoutRequest(requestContext, clientName);
-        if (logoutEndpoint) {
-            return null;
-        }
+                                                            final String givenClientName,
+                                                            final Optional<ClientCredential> clientCredential) {
         try {
-            val clientResult = configContext.getClients().findClient(clientName);
-            if (clientResult.isPresent()) {
-                return delegatedClientAuthenticationWebflowManager.retrieve(requestContext,
-                    webContext, BaseClient.class.cast(clientResult.get()));
+            if (isLogoutRequest(clientCredential)) {
+                LOGGER.trace("Credential is part of a logout request; authentication context will not be restored.");
+                return null;
             }
-            LOGGER.warn("Unable to locate client [{}] in registered clients", clientName);
+            return clientCredential
+                .map(credential -> configContext.getClients().findClient(givenClientName))
+                .map(Unchecked.function(clientResult -> {
+                    val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                    val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                    val webContext = new JEEContext(request, response);
+                    return delegatedClientAuthenticationWebflowManager.retrieve(requestContext,
+                        webContext, BaseClient.class.cast(clientResult.get()));
+                }))
+                .orElseThrow(() -> new IllegalArgumentException("Unable to find client " + clientCredential + " to restore authentication context"));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

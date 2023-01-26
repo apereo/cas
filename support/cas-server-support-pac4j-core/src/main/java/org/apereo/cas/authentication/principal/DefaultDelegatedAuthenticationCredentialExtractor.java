@@ -12,6 +12,8 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link DefaultDelegatedAuthenticationCredentialExtractor}.
  *
@@ -24,12 +26,14 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
     private final SessionStore sessionStore;
 
     @Override
-    public ClientCredential extract(final BaseClient client, final RequestContext requestContext) {
+    public Optional<ClientCredential> extract(final BaseClient client, final RequestContext requestContext) {
         LOGGER.debug("Fetching credentials from delegated client [{}]", client);
         val credentials = getCredentialsFromDelegatedClient(requestContext, client);
-        val clientCredential = buildClientCredential(client, requestContext, credentials);
-        WebUtils.putCredential(requestContext, clientCredential);
-        return clientCredential;
+        return credentials.map(cc -> {
+            val clientCredential = buildClientCredential(client, requestContext, cc);
+            WebUtils.putCredential(requestContext, clientCredential);
+            return clientCredential;
+        });
     }
 
     protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credentials) {
@@ -37,15 +41,14 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
         return new ClientCredential(credentials, client.getName());
     }
 
-    protected Credentials getCredentialsFromDelegatedClient(final RequestContext requestContext, final BaseClient client) {
+    protected Optional<Credentials> getCredentialsFromDelegatedClient(final RequestContext requestContext, final BaseClient client) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new JEEContext(request, response);
         val callContext = new CallContext(webContext, this.sessionStore);
-        val credentials = client.getCredentials(callContext)
-            .map(Credentials.class::cast)
-            .orElseThrow(() -> new IllegalArgumentException("Unable to determine credentials from the context via client " + client.getName()));
-        return client.validateCredentials(callContext, credentials)
-            .orElseThrow(() -> new IllegalArgumentException("Unable to validate credentials via client " + client.getName()));
+        return client.getCredentials(callContext)
+            .map(cc -> client.validateCredentials(callContext, cc))
+            .filter(Optional::isPresent)
+            .map(Optional::get);
     }
 }

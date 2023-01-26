@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedir
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -105,12 +104,15 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         facebookClient.setName(FacebookClient.class.getSimpleName());
         customizers.forEach(customizer -> customizer.customize(facebookClient));
 
-        val mockClientNoCredentials = mock(BaseClient.class);
-        when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
-        when(mockClientNoCredentials.getCredentialsExtractor())
-            .thenReturn(callContext -> Optional.of(new SessionKeyCredentials(LogoutType.BACK, UUID.randomUUID().toString())));
-        when(mockClientNoCredentials.getCredentials(any())).thenThrow(new OkAction(StringUtils.EMPTY));
-        when(mockClientNoCredentials.isInitialized()).thenReturn(true);
+        val logoutClient = mock(BaseClient.class);
+        when(logoutClient.getName()).thenReturn("LogoutClient");
+        val sessionKeyCredentials = new SessionKeyCredentials(LogoutType.BACK, UUID.randomUUID().toString());
+        when(logoutClient.getCredentialsExtractor())
+            .thenReturn(callContext -> Optional.of(sessionKeyCredentials));
+        when(logoutClient.validateCredentials(any(), any())).thenReturn(Optional.of(sessionKeyCredentials));
+        when(logoutClient.getCredentials(any())).thenReturn(Optional.of(sessionKeyCredentials));
+        when(logoutClient.isInitialized()).thenReturn(true);
+        when(logoutClient.processLogout(any(), any())).thenReturn(new OkAction("Hello!"));
 
         val failingClient = mock(IndirectClient.class);
         when(failingClient.getName()).thenReturn("FailingIndirectClient");
@@ -118,7 +120,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         customizers.forEach(customizer -> customizer.customize(failingClient));
 
         return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
-            facebookClient, oidcClient, mockClientNoCredentials, failingClient, saml2PostClient));
+            facebookClient, oidcClient, logoutClient, failingClient, saml2PostClient));
     }
 
     private static SAML2Configuration getSAML2Configuration() throws IOException {
