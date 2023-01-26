@@ -177,8 +177,13 @@ exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
             let ck = cookies[0];
             console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
         }
-        assert(cookies.length === 0);
-        console.log(`Cookie ${cookieName} cannot be found`);
+        const result = cookies.length === 0;
+        if (result) {
+            await this.logg(`Cookie ${cookieName} can be found`);
+        } else {
+            await this.logr(`Cookie ${cookieName} cannot be found`);
+        }
+        assert(result);
     }
 };
 

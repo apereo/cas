@@ -16,6 +16,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.core.logout.processor.LogoutProcessor;
 import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +63,8 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
-        assertEquals("https://google.com", samlClient.getLogoutValidator().getPostLogoutURL());
+        val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
+        assertEquals("https://google.com", logoutProcessor.getPostLogoutURL());
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
     }
 
@@ -75,14 +77,15 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
-        samlClient.getLogoutValidator().setPostLogoutURL("https://google.com");
+        val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
+        logoutProcessor.setPostLogoutURL("https://google.com");
         
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
         
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
-        assertEquals("https://google.com", samlClient.getLogoutValidator().getPostLogoutURL());
+        assertEquals("https://google.com", logoutProcessor.getPostLogoutURL());
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
     }
 

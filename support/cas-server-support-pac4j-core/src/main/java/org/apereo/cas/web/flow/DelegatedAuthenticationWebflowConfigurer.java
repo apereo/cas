@@ -171,7 +171,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createRedirectToProviderViewState(final Flow flow) {
-        var factory = createExternalRedirectViewFactory(
+        val factory = createExternalRedirectViewFactory(
             "requestScope." + DelegatedAuthenticationDynamicDiscoveryProviderLocator.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
         createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_REDIRECT_TO_AUTHN_PROVIDER, factory);
     }

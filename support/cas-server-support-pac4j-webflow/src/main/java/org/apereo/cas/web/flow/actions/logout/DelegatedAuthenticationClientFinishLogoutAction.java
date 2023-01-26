@@ -17,6 +17,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.credentials.SAML2Credentials;
+import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -76,7 +77,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                         .filter(r -> StringUtils.isNotBlank(logoutRedirect))
                         .ifPresent(__ -> {
                             LOGGER.debug("Located client from webflow state: [{}]", client);
-                            val validator = client.getLogoutValidator();
+                            val validator = (SAML2LogoutProcessor) client.getLogoutProcessor();
                             validator.setPostLogoutURL(logoutRedirect);
                             LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
                             WebUtils.putLogoutRedirectUrl(requestContext, null);

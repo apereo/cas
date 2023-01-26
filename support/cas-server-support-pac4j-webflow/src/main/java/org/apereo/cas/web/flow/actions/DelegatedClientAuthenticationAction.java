@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
@@ -263,16 +262,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.trace("Credential is part of a logout request; authentication context will not be restored.");
                 return null;
             }
-            return clientCredential
+            val clientResult = clientCredential
                 .map(credential -> configContext.getClients().findClient(givenClientName))
-                .map(Unchecked.function(clientResult -> {
-                    val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                    val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                    val webContext = new JEEContext(request, response);
-                    return delegatedClientAuthenticationWebflowManager.retrieve(requestContext,
-                        webContext, BaseClient.class.cast(clientResult.get()));
-                }))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(BaseClient.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to find client " + clientCredential + " to restore authentication context"));
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new JEEContext(request, response);
+            return delegatedClientAuthenticationWebflowManager.retrieve(requestContext, webContext, clientResult);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
