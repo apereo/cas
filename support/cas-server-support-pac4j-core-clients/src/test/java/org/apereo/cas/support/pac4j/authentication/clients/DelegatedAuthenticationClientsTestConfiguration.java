@@ -15,7 +15,6 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.SessionKeyCredentials;
-import org.pac4j.core.credentials.extractor.CredentialsExtractor;
 import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.logout.LogoutType;
 import org.pac4j.core.profile.CommonProfile;
