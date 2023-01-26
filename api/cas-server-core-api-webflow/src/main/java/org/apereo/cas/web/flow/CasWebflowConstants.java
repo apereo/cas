@@ -1154,6 +1154,11 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
 
+    /**
+     * The view state 'dynamicHtmlView'.
+     */
+    String VIEW_ID_DYNAMIC_HTML = "dynamicHtmlView";
+
     /*
      ****************************************
      * Decisions.

@@ -35,6 +35,7 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutAction extends
         val clientName = configContext.getDelegatedClientNameExtractor().extract(webContext).orElse(StringUtils.EMPTY);
         val client = configContext.getClients().findClient(clientName).orElseThrow();
         LOGGER.debug("Received logout request from [{}]", client.getName());
+
         val redirectUrl = configContext.getCasProperties().getLogout().getRedirectParameter()
             .stream()
             .map(webContext::getRequestParameter)
@@ -48,10 +49,10 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutAction extends
             LOGGER.debug("Redirect URL after logout is: [{}]", logoutUrl);
             WebUtils.putLogoutRedirectUrl(request, logoutUrl);
         });
-        LOGGER.debug("Dispatching request to [{}]", CasProtocolConstants.ENDPOINT_LOGOUT);
         request.getServletContext()
             .getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT)
             .forward(request, response);
-        return success();
+        requestContext.getExternalContext().recordResponseComplete();
+        return null;
     }
 }

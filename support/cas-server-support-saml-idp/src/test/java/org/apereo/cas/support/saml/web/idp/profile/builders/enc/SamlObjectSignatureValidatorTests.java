@@ -71,7 +71,6 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         samlContext = new MessageContext();
         saml2MessageContext = new SAML2MessageContext();
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 

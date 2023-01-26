@@ -7,11 +7,11 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.val;
 import org.pac4j.core.exception.http.HttpAction;
-import org.pac4j.jee.context.JEEContext;
-import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
+import org.pac4j.core.exception.http.WithContentAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,6 +25,14 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 5.3.0
  */
 public class LogoutViewSetupAction extends AbstractLogoutAction {
+
+    /**
+     * Flow scope attribute to indicate whether flow should
+     * continue on from logout and proceed after thr view is rendered.
+     * This typically might be the case in delegated authn flows
+     * where CAS needs to handle/post back a logout response to an idp. 
+     */
+    public static final String FLOW_SCOPE_ATTRIBUTE_PROCEED = "enableProceed";
 
     public LogoutViewSetupAction(final TicketRegistry ticketRegistry,
                                  final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -43,9 +51,10 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
             casProperties.getEvents().getCore().isTrackGeolocation());
         val httpAction = (HttpAction) request.getAttribute(HttpAction.class.getName());
         if (httpAction != null) {
-            val webContext = new JEEContext(request, response);
-            JEEHttpActionAdapter.INSTANCE.adapt(httpAction, webContext);
-            context.getExternalContext().recordResponseComplete();
+            context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
+            if (httpAction instanceof WithContentAction withContentAction) {
+                context.getFlowScope().put(DynamicHtmlView.class.getName(), withContentAction.getContent());
+            }
         }
         return null;
     }
