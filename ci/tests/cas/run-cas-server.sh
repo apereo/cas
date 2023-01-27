@@ -58,7 +58,7 @@ echo -e "Mapping CAS keystore in Docker container to ${CAS_KEYSTORE}"
 docker run --rm -d \
   --mount type=bind,source="${CAS_KEYSTORE}",target=/etc/cas/thekeystore \
   -e SPRING_APPLICATION_JSON="${properties}" \
-  -p 8444:8443 --name casserver apereo/cas:6.6.3
+  -p 8444:8443 --name casserver apereo/cas:6.6.4
 docker logs -f casserver &
 echo -e "Waiting for CAS..."
 until curl -k -L --output /dev/null --silent --fail https://localhost:8444/cas/login; do

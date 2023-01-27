@@ -260,7 +260,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
     }
 
-    private static Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
+    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
@@ -274,7 +274,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val webContext = new JEEContext(this.httpServletRequest, new MockHttpServletResponse());
         val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
         val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);

@@ -2,6 +2,7 @@ package org.apereo.cas.pac4j;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
+import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.DefaultBrowserSessionStorage;
 
 import lombok.Getter;
@@ -61,7 +62,9 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
     @Override
     public Optional<SessionStore> buildFromTrackableSession(final WebContext context,
                                                             final Object trackableSession) {
-        val encoded = trackableSession.toString().getBytes(StandardCharsets.UTF_8);
+        val encoded = trackableSession instanceof BrowserSessionStorage storage
+            ? storage.getPayload().getBytes(StandardCharsets.UTF_8)
+            : trackableSession.toString().getBytes(StandardCharsets.UTF_8);
         val attributes = (Map<String, Object>) SerializationUtils.decodeAndDeserializeObject(encoded, webflowCipherExecutor, LinkedHashMap.class);
         attributes.forEach((key, value) -> set(context, key, value));
         this.sessionAttributes.putAll(attributes);

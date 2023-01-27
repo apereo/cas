@@ -49,7 +49,7 @@ can now be stored in relational databases.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `391` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `392` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Authentication Geolocation via Maxmind
@@ -73,6 +73,14 @@ previous behavior:
 ```properties
 spring.main.lazy-initialization=false
 ```
+
+### Duo Security Universal Prompt
+
+Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) via 
+Universal Prompt is now adjusted to user the browser's local storage for tracking
+the state of CAS server and authentication contexts before redirecting to Duo Security. In this approach, CAS will no longer create
+a session-tracking ticket to store the existing authentication context and will only rely on the browser to store and/or restore the necessary
+authentication context for the entire flow.
 
 ## Other Stuff
 

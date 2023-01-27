@@ -5,18 +5,16 @@ import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationResult;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -25,6 +23,7 @@ import com.duosecurity.model.Token;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -67,6 +66,10 @@ import static org.mockito.Mockito.*;
 @Tag("DuoSecurity")
 public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
+    @Qualifier("duoUniversalPromptSessionStore")
+    private BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
+
+    @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
     private Action duoUniversalPromptValidateLoginAction;
 
@@ -104,7 +107,7 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, "bad-state");
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_RESTORE, result.getId());
     }
 
     @Test
@@ -112,6 +115,8 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
+        val webContext = new JEEContext(request, response);
+
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
@@ -127,22 +132,25 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         WebUtils.putAuthentication(authentication, context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
-        val builder = mock(AuthenticationResultBuilder.class);
-        when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
-        when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
-        val authnResult = mock(AuthenticationResult.class);
-        when(authnResult.getAuthentication()).thenReturn(authentication);
+        val authnResult = new DefaultAuthenticationResultBuilder()
+            .collect(RegisteredServiceTestUtils.getAuthentication());
 
-        when(builder.build(any(PrincipalElectionStrategy.class))).thenReturn(authnResult);
-        WebUtils.putAuthenticationResultBuilder(builder, context);
+        WebUtils.putAuthenticationResultBuilder(authnResult, context);
         val prepResult = duoUniversalPromptPrepareLoginAction.execute(context);
 
-        val ticket = (TransientSessionTicket) prepResult.getAttributes().get("result");
+        val storage = (BrowserSessionStorage) prepResult.getAttributes().get("result");
+        val attributes = duoUniversalPromptSessionStore.buildFromTrackableSession(webContext, storage)
+            .map(BrowserWebStorageSessionStore.class::cast)
+            .orElseThrow()
+            .getSessionAttributes();
+        
         val code = UUID.randomUUID().toString();
-
         request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
-        request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE, ticket.getId());
+        request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
+            attributes.get(DuoSecurityAuthenticationService.class.getSimpleName()).toString());
+        request.addParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, storage.getPayload());
+        
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
