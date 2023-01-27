@@ -3,14 +3,15 @@
 <body id="cas">
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-50">
-
         <form method="post" id="fm1">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" value="continue" />
             <input type="hidden" id="sessionStorage" name="sessionStorage"/>
             <input type="submit" style="display: none" />
         </form>
-        
-        <script>
-            let payload = readFromSessionStorage();
+
+        <script type="text/javascript">
+            const payload = readFromSessionStorage();
             document.getElementById("sessionStorage").value = payload;
             document.getElementById("fm1").submit();
         </script>
