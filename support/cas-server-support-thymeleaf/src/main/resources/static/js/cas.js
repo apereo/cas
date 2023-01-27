@@ -113,7 +113,7 @@ function readFromSessionStorage(key= "sessionStorageKey") {
     }
     let sessionStorage = window.sessionStorage.getItem(key);
     console.log(`Read ${sessionStorage} in session storage under key ${key}`);
-    window.localStorage.removeItem(jey);
+    window.localStorage.removeItem(key);
     return sessionStorage;
 }
 
