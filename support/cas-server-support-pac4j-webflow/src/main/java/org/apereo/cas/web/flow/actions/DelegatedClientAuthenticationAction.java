@@ -147,13 +147,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected Optional<ClientCredential> extractClientCredential(final RequestContext context, final String clientName) {
-        if (StringUtils.isNotBlank(clientName)) {
-            val client = findDelegatedClientByName(clientName);
-            val clientCredential = populateContextWithClientCredential(client, context);
-            DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
-            return clientCredential;
-        }
-        return Optional.empty();
+        return FunctionUtils.doIfNotBlank(clientName,
+            () -> {
+                val client = findDelegatedClientByName(clientName);
+                DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
+
+                val currentCredential = WebUtils.getCredential(context);
+                if (currentCredential instanceof ClientCredential clientCredential) {
+                    return Optional.of(clientCredential);
+                }
+                return populateContextWithClientCredential(client, context);
+            },
+            Optional::empty);
     }
 
     protected Event finalizeDelegatedClientAuthentication(final RequestContext context,

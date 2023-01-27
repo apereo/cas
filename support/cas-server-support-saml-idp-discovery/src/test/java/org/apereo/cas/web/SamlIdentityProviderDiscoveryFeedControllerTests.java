@@ -63,8 +63,7 @@ public class SamlIdentityProviderDiscoveryFeedControllerTests {
             val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
             service.setAccessStrategy(accessStrategy);
             servicesManager.save(service);
-            controller.redirect("https://cas.example.org/idp",
-                request, new MockHttpServletResponse());
+            controller.redirect("https://cas.example.org/idp", request, new MockHttpServletResponse());
         });
     }
 }

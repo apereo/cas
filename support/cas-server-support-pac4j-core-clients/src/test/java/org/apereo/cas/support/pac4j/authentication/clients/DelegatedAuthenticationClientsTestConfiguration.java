@@ -50,6 +50,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         val saml2Client = new SAML2Client(saml2Config);
         saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);
         saml2Client.setCallbackUrl("http://callback.example.org");
+        saml2Client.setName("SAML2Client");
         customizers.forEach(customizer -> customizer.customize(saml2Client));
         saml2Client.init();
 

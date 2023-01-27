@@ -77,6 +77,6 @@ public class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         assertTrue(credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
         
         when(client.getCredentials(any())).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> delegatedAuthenticationCredentialExtractor.extract(client, context));
+        assertTrue(delegatedAuthenticationCredentialExtractor.extract(client, context).isEmpty());
     }
 }

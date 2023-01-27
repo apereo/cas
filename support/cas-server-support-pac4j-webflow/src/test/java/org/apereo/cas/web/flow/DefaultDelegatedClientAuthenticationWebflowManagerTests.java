@@ -27,8 +27,10 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth10Configuration;
@@ -258,8 +260,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
     }
 
-    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath,
-                                                                       final String spEntityId) throws Exception {
+    private static Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
@@ -273,7 +274,9 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        val saml2MessageContext = new SAML2MessageContext();
+        val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
