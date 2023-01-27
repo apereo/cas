@@ -20,19 +20,19 @@
             </div>
         </div>
 
-
         <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
         <script th:inline="javascript">
             /*<![CDATA[*/
 
-            let sessionStorageKey = /*[[${sessionStorageKey}]]*/;
-            if (sessionStorageKey === undefined || sessionStorageKey === null || sessionStorageKey === "") {
-                sessionStorageKey = "sessionStorage";
+            let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
+            if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
+                sessionStorageContext = "sessionStorage";
             }
 
             let payload = /*[[${sessionStorage.payload}]]*/;
-            writeToSessionStorage(payload, sessionStorageKey);
+            writeToSessionStorage(payload, sessionStorageContext);
             let url = /*[[${sessionStorage.destinationUrl}]]*/;
+
             window.location.href = url;
             /*]]>*/
         </script>

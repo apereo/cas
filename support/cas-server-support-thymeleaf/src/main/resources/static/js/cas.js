@@ -96,7 +96,7 @@ function preventFormResubmission() {
     });
 }
 
-function writeToSessionStorage(value, key= "sessionStorage") {
+function writeToSessionStorage(value, key= "sessionStorageKey") {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for write-ops");
     } else {
@@ -106,14 +106,14 @@ function writeToSessionStorage(value, key= "sessionStorage") {
     }
 }
 
-function readFromSessionStorage() {
+function readFromSessionStorage(key= "sessionStorageKey") {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for read-ops");
         return null;
     }
-    let sessionStorage = window.sessionStorage.getItem("sessionStorage");
-    console.log(`Read ${sessionStorage} in session storage`);
-    window.localStorage.removeItem("sessionStorage");
+    let sessionStorage = window.sessionStorage.getItem(key);
+    console.log(`Read ${sessionStorage} in session storage under key ${key}`);
+    window.localStorage.removeItem(jey);
     return sessionStorage;
 }
 
