@@ -4,13 +4,17 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.web.DefaultBrowserSessionStorage;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.session.JEESessionStore;
 
 import jakarta.servlet.http.HttpSession;
+
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,8 +27,13 @@ import java.util.Optional;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
+@Accessors(chain = true)
+@Getter
+@Setter
 public class BrowserWebStorageSessionStore extends JEESessionStore {
     private final CipherExecutor webflowCipherExecutor;
+
+    private Map<String, Object> sessionAttributes = new LinkedHashMap<>();
 
     @Override
     public Optional<Object> getTrackableSession(final WebContext context) {
@@ -42,6 +51,8 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
                     }
                 }
             });
+        attributes.putAll(sessionAttributes);
+
         val encoded = SerializationUtils.serializeAndEncodeObject(this.webflowCipherExecutor, attributes);
         val trackableSession = new String(encoded, StandardCharsets.UTF_8);
         return Optional.of(DefaultBrowserSessionStorage.builder().payload(trackableSession).build());
@@ -53,6 +64,7 @@ public class BrowserWebStorageSessionStore extends JEESessionStore {
         val encoded = trackableSession.toString().getBytes(StandardCharsets.UTF_8);
         val attributes = (Map<String, Object>) SerializationUtils.decodeAndDeserializeObject(encoded, webflowCipherExecutor, LinkedHashMap.class);
         attributes.forEach((key, value) -> set(context, key, value));
+        this.sessionAttributes.putAll(attributes);
         return Optional.of(this);
     }
 }
