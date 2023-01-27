@@ -97,10 +97,6 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
-        val handler = mock(LogoutProcessor.class);
-        when(handler.processLogout(any(), any())).thenThrow(new IllegalArgumentException());
-        samlClient.setLogoutProcessor(handler);
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
     }

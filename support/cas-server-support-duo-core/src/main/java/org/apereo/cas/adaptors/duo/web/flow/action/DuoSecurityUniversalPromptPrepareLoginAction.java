@@ -22,9 +22,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.scope.FlowScope;
 
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -62,12 +62,11 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         properties.put(AuthenticationResultBuilder.class.getSimpleName(), WebUtils.getAuthenticationResultBuilder(requestContext));
         properties.put(AuthenticationResult.class.getSimpleName(), WebUtils.getAuthenticationResult(requestContext));
         properties.put(Credential.class.getSimpleName(), WebUtils.getMultifactorAuthenticationParentCredential(requestContext));
-        properties.put(Credential.class.getSimpleName(), WebUtils.getMultifactorAuthenticationParentCredential(requestContext));
         FunctionUtils.doIfNotNull(service, __ -> properties.put(Service.class.getSimpleName(), service));
         properties.put(DuoSecurityAuthenticationService.class.getSimpleName(), state);
 
         val flowScope = requestContext.getFlowScope().asMap();
-        properties.put(MutableAttributeMap.class.getSimpleName(), flowScope);
+        properties.put(FlowScope.class.getSimpleName(), flowScope);
 
         Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
             .ifPresent(registeredService -> properties.put(RegisteredService.class.getSimpleName(), registeredService));

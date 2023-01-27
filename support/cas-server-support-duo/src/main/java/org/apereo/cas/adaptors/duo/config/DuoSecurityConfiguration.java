@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -53,6 +54,15 @@ public class DuoSecurityConfiguration {
     @Configuration(value = "DuoSecurityCoreWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityCoreWebflowConfiguration {
+
+        @ConditionalOnMissingBean(name = "duoUniversalPromptSessionStore")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public BrowserWebStorageSessionStore duoUniversalPromptSessionStore(@Qualifier("webflowCipherExecutor")
+                                                                            final CipherExecutor webflowCipherExecutor) {
+            return new BrowserWebStorageSessionStore(webflowCipherExecutor);
+        }
+
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -119,7 +129,8 @@ public class DuoSecurityConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-            @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor,
+            @Qualifier("duoUniversalPromptSessionStore")
+            final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("duoProviderBean")
@@ -130,7 +141,7 @@ public class DuoSecurityConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
-                        duoAuthenticationWebflowEventResolver, webflowCipherExecutor,
+                        duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore,
                         duoProviderBean, authenticationSystemSupport))
                     .otherwiseProxy()
                     .get())
