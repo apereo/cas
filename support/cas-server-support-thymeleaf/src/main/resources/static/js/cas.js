@@ -70,7 +70,6 @@ function showGeoPosition(position) {
     $('[name="geolocation"]').val(loc);
 }
 
-
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(() => {
         let location = self.document.location;
@@ -97,26 +96,25 @@ function preventFormResubmission() {
     });
 }
 
-function writeToSessionStorage(value) {
-    if (typeof (Storage) !== "undefined") {
-        window.sessionStorage.removeItem("sessionStorage");
-        window.sessionStorage.setItem('sessionStorage', value);
-        console.log(`Stored ${value} in session storage`);
-    } else {
+function writeToSessionStorage(value, key= "sessionStorage") {
+    if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for write-ops");
+    } else {
+        window.sessionStorage.removeItem(key);
+        window.sessionStorage.setItem(key, value);
+        console.log(`Stored ${value} in session storage under key ${key}`);
     }
 }
 
 function readFromSessionStorage() {
-    if (typeof (Storage) !== "undefined") {
-        let sessionStorage = window.sessionStorage.getItem("sessionStorage");
-        console.log(`Read ${sessionStorage} in session storage`);
-        window.localStorage.removeItem("sessionStorage");
-        return sessionStorage;
-    } else {
+    if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for read-ops");
+        return null;
     }
-    return null;
+    let sessionStorage = window.sessionStorage.getItem("sessionStorage");
+    console.log(`Read ${sessionStorage} in session storage`);
+    window.localStorage.removeItem("sessionStorage");
+    return sessionStorage;
 }
 
 function resourceLoadedSuccessfully() {
@@ -135,12 +133,12 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"]').focus();
 
         $('.reveal-password').click(ev => {
-            if ($('.pwd').attr('type') !== 'text') {
-                $('.pwd').attr('type', 'text');
-                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
-            } else {
+            if ($('.pwd').attr('type') === 'text') {
                 $('.pwd').attr('type', 'password');
                 $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
+            } else {
+                $('.pwd').attr('type', 'text');
+                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
             }
             ev.preventDefault();
         });
