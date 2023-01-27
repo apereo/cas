@@ -340,7 +340,7 @@
                     <script th:inline="javascript">
                         /*<![CDATA[*/
                         function x509login() {
-                            var url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
+                            let url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
                             url += window.location.search;
                             window.location.assign(url)
                         }

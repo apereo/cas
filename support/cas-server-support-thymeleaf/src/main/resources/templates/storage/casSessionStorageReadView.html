@@ -10,10 +10,19 @@
             <input type="submit" style="display: none" />
         </form>
 
-        <script type="text/javascript">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            let sessionStorageKey = /*[[${sessionStorageKey}]]*/;
+            if (sessionStorageKey === undefined || sessionStorageKey === null || sessionStorageKey === "") {
+                sessionStorageKey = "sessionStorage";
+            }
+            
             const payload = readFromSessionStorage();
-            document.getElementById("sessionStorage").value = payload;
+            document.getElementById(sessionStorageKey).value = payload;
             document.getElementById("fm1").submit();
+
+            /*]]>*/
         </script>
     </div>
 </main>
