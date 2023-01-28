@@ -99,10 +99,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 }
                 val resolvedService = ssoEvaluator.resolveServiceFromRequestContext(context);
                 LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
-                val tgt = WebUtils.getTicketGrantingTicketId(context);
-                configContext.getTicketRegistry().deleteTicket(tgt);
-                val client = findDelegatedClientByName(clientName);
-                verifyClientIsAuthorizedForService(context, resolvedService, client);
+                removeTicketGrantingTicketIfAny(context, clientName, resolvedService);
+            } else {
+                removeTicketGrantingTicketIfAny(context, clientName, service);
             }
 
             if (failureEvaluator.evaluate(request, response.getStatus()).isPresent()) {
@@ -141,6 +140,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow(e, context);
         }
         return getFinalEvent();
+    }
+
+    private void removeTicketGrantingTicketIfAny(final RequestContext context, final String clientName, final Service resolvedService) throws Exception {
+        val tgt = WebUtils.getTicketGrantingTicketId(context);
+        if (tgt != null) {
+            configContext.getTicketRegistry().deleteTicket(tgt);
+            val client = findDelegatedClientByName(clientName);
+            verifyClientIsAuthorizedForService(context, resolvedService, client);
+        }
     }
 
     private static boolean isLogoutRequest(final Optional<ClientCredential> clientCredential) {

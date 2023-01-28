@@ -51,7 +51,7 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+        assertNull(action.execute(context));
         assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
     }
 }

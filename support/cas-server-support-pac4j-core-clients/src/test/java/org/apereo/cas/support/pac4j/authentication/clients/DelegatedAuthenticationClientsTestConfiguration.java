@@ -129,6 +129,8 @@ public class DelegatedAuthenticationClientsTestConfiguration {
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
         val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
+        saml2Config.setForceKeystoreGeneration(true);
+        saml2Config.setForceServiceProviderMetadataGeneration(true);
         saml2Config.setServiceProviderEntityId("cas:example:sp");
         saml2Config.setServiceProviderMetadataPath(spMetadataPath);
         saml2Config.setAuthnRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
