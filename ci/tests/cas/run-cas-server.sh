@@ -32,6 +32,15 @@ properties='{
         "use-single-line": true
       }
     },
+    "ticket": {
+      "registry": {
+        "cleaner": {
+          "schedule": {
+            "enabled": false
+          }
+        }
+      }
+    },
     "tgc": {
       "name": "TGCEXT"
     },
