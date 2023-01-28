@@ -10,8 +10,11 @@ import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogou
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.core.logout.processor.LogoutProcessor;
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
@@ -48,6 +52,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     private Clients builtClients;
 
     @Test
+    @Order(1)
     public void verifyOperationWithRedirect() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -69,6 +74,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
+    @Order(1)
     public void verifyOperationNoLogoutRedirectUrl() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -90,6 +96,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
+    @Order(1)
     public void verifyOperationWithRelay() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -102,6 +109,7 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
+    @Order(1000)
     public void verifyOperationFailsWithError() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

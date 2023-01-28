@@ -80,7 +80,8 @@ Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication
 Universal Prompt is now adjusted to user the browser's local storage for tracking
 the state of CAS server and authentication contexts before redirecting to Duo Security. In this approach, CAS will no longer create
 a session-tracking ticket to store the existing authentication context and will only rely on the browser to store and/or restore the necessary
-authentication context for the entire flow.
+authentication context for the entire flow. You might see additional screens before and after the multifactor authentication flow that 
+attempt to process the request from the browser's local storage with sufficient messaging to indicate request processing is in progress.
 
 ## Other Stuff
 
