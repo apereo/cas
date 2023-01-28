@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -42,13 +43,16 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
     }
 
     protected Optional<Credentials> getCredentialsFromDelegatedClient(final RequestContext requestContext, final BaseClient client) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response);
-        val callContext = new CallContext(webContext, this.sessionStore);
-        return client.getCredentials(callContext)
-            .map(cc -> client.validateCredentials(callContext, cc))
-            .filter(Optional::isPresent)
-            .map(Optional::get);
+        return FunctionUtils.doAndHandle(() -> {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new JEEContext(request, response);
+            val callContext = new CallContext(webContext, this.sessionStore);
+            return client.getCredentials(callContext)
+                .map(cc -> client.validateCredentials(callContext, cc))
+                .filter(Optional::isPresent)
+                .map(Optional::get);
+        }, e -> Optional.<Credentials>empty()).get();
+
     }
 }
