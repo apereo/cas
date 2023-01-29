@@ -96,6 +96,27 @@ function preventFormResubmission() {
     });
 }
 
+function writeToLocalStorage(value, key= "localStorageKey") {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for write-ops");
+    } else {
+        window.localStorage.removeItem(key);
+        window.localStorage.setItem(key, value);
+        console.log(`Stored ${value} in local storage under key ${key}`);
+    }
+}
+
+function readFromLocalStorage(key= "localStorageKey") {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for read-ops");
+        return null;
+    }
+    let payload = window.localStorage.getItem(key);
+    console.log(`Read ${payload} in local storage under key ${key}`);
+    window.localStorage.removeItem(key);
+    return payload;
+}
+
 function writeToSessionStorage(value, key= "sessionStorageKey") {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support session storage for write-ops");
@@ -111,10 +132,10 @@ function readFromSessionStorage(key= "sessionStorageKey") {
         console.log("Browser does not support session storage for read-ops");
         return null;
     }
-    let sessionStorage = window.sessionStorage.getItem(key);
-    console.log(`Read ${sessionStorage} in session storage under key ${key}`);
-    window.localStorage.removeItem(key);
-    return sessionStorage;
+    let payload = window.sessionStorage.getItem(key);
+    console.log(`Read ${payload} in session storage under key ${key}`);
+    window.sessionStorage.removeItem(key);
+    return payload;
 }
 
 function resourceLoadedSuccessfully() {

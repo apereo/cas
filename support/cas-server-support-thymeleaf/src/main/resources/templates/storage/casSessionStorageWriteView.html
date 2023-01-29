@@ -18,6 +18,12 @@
                     <span class="mdc-linear-progress__bar-inner"></span>
                 </div>
             </div>
+
+            <form method="post" id="fm1">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                <input type="hidden" name="_eventId" value="continue" />
+                <input type="submit" style="display: none" />
+            </form>
         </div>
 
         <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
@@ -33,7 +39,11 @@
             writeToSessionStorage(payload, sessionStorageContext);
             let url = /*[[${sessionStorage.destinationUrl}]]*/;
 
-            window.location.href = url;
+            if (url !== undefined && url !== "" && url !== null) {
+                window.location.href = url;
+            } else {
+                document.getElementById("fm1").submit();
+            }
             /*]]>*/
         </script>
 
