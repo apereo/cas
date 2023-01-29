@@ -157,7 +157,7 @@ public class FunctionUtils {
     public static <T> T doIfNotBlank(final CharSequence input,
                                      final CheckedSupplier<T> trueFunction,
                                      final CheckedSupplier<T> falseFunction) {
-        return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get(): falseFunction.get());
+        return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get() : falseFunction.get());
     }
 
     /**
@@ -501,5 +501,24 @@ public class FunctionUtils {
     public static <T> T doAndReturn(final boolean condition, final Supplier<T> trueTask,
                                     final Supplier<T> falseTask) {
         return condition ? trueTask.get() : falseTask.get();
+    }
+
+    /**
+     * Do and throw exception.
+     *
+     * @param <T>      the type parameter
+     * @param supplier the supplier
+     * @param handler  the handler
+     * @return the t
+     * @throws Exception the exception
+     */
+    public static <T> T doAndThrow(final CheckedSupplier<T> supplier,
+                                   final Function<Throwable, ? extends Exception> handler) throws Exception {
+        try {
+            return supplier.get();
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            throw handler.apply(e);
+        }
     }
 }

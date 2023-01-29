@@ -16,7 +16,6 @@ import javax.security.auth.login.FailedLoginException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,7 +78,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
         try {
             assertEquals(SCOTT, getAuthenticationHandler().authenticate(credential, mock(Service.class)).getPrincipal().getId());
-        } catch (final GeneralSecurityException e) {
+        } catch (final Exception e) {
             throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
         }
     }

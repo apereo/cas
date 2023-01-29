@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -74,7 +73,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         try {
             authenticationHandler.authenticate(credentials, mock(Service.class));
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");
-        } catch (final GeneralSecurityException e) {
+        } catch (final Exception e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }

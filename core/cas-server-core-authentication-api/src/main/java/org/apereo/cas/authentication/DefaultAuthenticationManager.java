@@ -184,7 +184,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final Credential credential,
                                                    final PrincipalResolver resolver,
                                                    final AuthenticationHandler handler,
-                                                   final Service service) throws GeneralSecurityException, PreventedException {
+                                                   final Service service) throws Exception {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
