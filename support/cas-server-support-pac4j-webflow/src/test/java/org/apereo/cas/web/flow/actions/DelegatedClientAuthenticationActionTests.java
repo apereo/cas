@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -20,11 +20,16 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
-import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
+import org.apereo.cas.web.flow.BaseDelegatedClientAuthenticationActionTests;
+import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -101,7 +106,7 @@ public class DelegatedClientAuthenticationActionTests {
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             request.addParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
             val event = delegatedAuthenticationAction.execute(context);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, event.getId());
+            Assertions.assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, event.getId());
         }
 
         @Test

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 public class DelegatedAuthenticationClientRetryActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY)

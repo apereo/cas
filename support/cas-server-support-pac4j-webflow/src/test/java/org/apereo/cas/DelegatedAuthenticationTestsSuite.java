@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurati
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolverTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSAMLConfigurationTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurerTests;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationActionTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessorTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducerTests;
@@ -25,6 +24,7 @@ import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionT
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedAuthenticationIdentityProviderLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Autowired

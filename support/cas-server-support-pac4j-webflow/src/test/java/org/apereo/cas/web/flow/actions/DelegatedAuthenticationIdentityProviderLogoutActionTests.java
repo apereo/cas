@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 public class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     @Autowired
