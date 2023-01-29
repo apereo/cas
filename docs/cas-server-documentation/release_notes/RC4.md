@@ -95,6 +95,7 @@ attempt to process the request from the browser's local storage with sufficient 
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to present a preview of the would-be-generated CAS overlay.
 - Evaluation of access strategies for OAuth and OpenID Connect services is now able to consider virtually-remapped attributes for authorization enforcement.
 - The incorrect generation of `TST` tickets used to track single sign-on sessions across multiple authentication flows is now corrected.
+- Generating SAML2 metadata certificates and keys is now updated to use the more secure `SHA512withRSA` and `4096` for the algorithm and key size. 
 
 ## Library Upgrades
 

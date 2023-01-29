@@ -313,10 +313,12 @@ public class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter(
             final CasConfigurationProperties casProperties) throws Exception {
+            val properties = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
             val url = new URL(casProperties.getServer().getPrefix());
-            val generator = new DefaultSamlIdPCertificateAndKeyWriter();
-            generator.setHostname(url.getHost());
+            val generator = new DefaultSamlIdPCertificateAndKeyWriter(url.getHost());
             generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
+            properties.setCertificateAlgorithm(properties.getCertificateAlgorithm());
+            properties.setKeySize(properties.getKeySize());
             return generator;
         }
 
