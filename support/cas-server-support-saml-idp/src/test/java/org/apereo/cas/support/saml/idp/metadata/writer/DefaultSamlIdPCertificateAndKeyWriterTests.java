@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfigurationTests {
     @Nested
     @Tag("SAMLMetadata")
+    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata",
@@ -47,6 +48,7 @@ public class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfi
 
     @Nested
     @Tag("SAMLMetadata")
+    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata",
