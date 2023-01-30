@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -20,11 +20,16 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
-import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
+import org.apereo.cas.web.flow.BaseDelegatedClientAuthenticationActionTests;
+import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -61,7 +66,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @Slf4j
 public class DelegatedClientAuthenticationActionTests {
 
@@ -101,7 +106,7 @@ public class DelegatedClientAuthenticationActionTests {
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             request.addParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
             val event = delegatedAuthenticationAction.execute(context);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, event.getId());
+            Assertions.assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, event.getId());
         }
 
         @Test
@@ -218,8 +223,6 @@ public class DelegatedClientAuthenticationActionTests {
             ExternalContextHolder.setExternalContext(context.getExternalContext());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             request.addParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-            request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "https://httpbin.org/post");
-
 
             val event = delegatedAuthenticationAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, event.getId());
@@ -375,8 +378,7 @@ public class DelegatedClientAuthenticationActionTests {
         public void verifyLogoutRequestWithOkAction() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-            request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "MockClientNoCredentials");
-            request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "true");
+            request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "LogoutClient");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC",
         "cas.authn.pac4j.core.discovery-selection.json.location=classpath:delegated-discovery.json"
     })
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 public class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)

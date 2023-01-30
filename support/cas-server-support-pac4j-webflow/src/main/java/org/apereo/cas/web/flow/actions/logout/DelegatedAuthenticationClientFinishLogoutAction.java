@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -13,10 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.credentials.SAML2Credentials;
+import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -55,20 +56,14 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                 clients.findClient(clientName)
                     .filter(client -> client instanceof SAML2Client)
                     .map(SAML2Client.class::cast)
-                    .ifPresent(client -> {
-                        try {
-                            LOGGER.debug("Located client from relay-state: [{}]", client);
-
-                            val callContext = new CallContext(context, sessionStore);
-                            val samlContext = client.getContextProvider().buildContext(callContext, client);
-                            client.getLogoutProfileHandler().receive(samlContext);
-                        } catch (final HttpAction action) {
-                            LOGGER.debug("Adapting logout response via [{}]", action.toString());
-                            JEEHttpActionAdapter.INSTANCE.adapt(action, context);
-                        } catch (final Exception e) {
-                            LoggingUtils.error(LOGGER, e);
-                        }
-                    });
+                    .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
+                        LOGGER.debug("Located client from relay-state: [{}]", client);
+                        val callContext = new CallContext(context, sessionStore);
+                        val samlContext = client.getContextProvider().buildContext(callContext, client);
+                        val logoutCredentials = new SAML2Credentials(samlContext);
+                        val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
+                        JEEHttpActionAdapter.INSTANCE.adapt(result, context);
+                    }));
             }
         } else {
             val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
@@ -82,7 +77,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                         .filter(r -> StringUtils.isNotBlank(logoutRedirect))
                         .ifPresent(__ -> {
                             LOGGER.debug("Located client from webflow state: [{}]", client);
-                            val validator = client.getLogoutValidator();
+                            val validator = (SAML2LogoutProcessor) client.getLogoutProcessor();
                             validator.setPostLogoutURL(logoutRedirect);
                             LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
                             WebUtils.putLogoutRedirectUrl(requestContext, null);

@@ -80,8 +80,7 @@ public class GenerateSamlIdPMetadataCommand {
 
         val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation),
             Caffeine.newBuilder().initialCapacity(1).maximumSize(1).build());
-        val writer = new DefaultSamlIdPCertificateAndKeyWriter();
-        writer.setHostname(entityId);
+        val writer = new DefaultSamlIdPCertificateAndKeyWriter(entityId);
         if (StringUtils.isNotBlank(subjectAltNames)) {
             writer.setUriSubjectAltNames(Arrays.asList(StringUtils.split(subjectAltNames, ",")));
         }

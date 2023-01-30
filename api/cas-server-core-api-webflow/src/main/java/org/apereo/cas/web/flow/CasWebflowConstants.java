@@ -155,6 +155,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'restore'.
+     */
+    String TRANSITION_ID_RESTORE = "restore";
+
+    /**
      * The transition state 'validate'.
      */
     String TRANSITION_ID_VALIDATE = "validate";
@@ -442,6 +447,16 @@ public interface CasWebflowConstants {
      * The state id 'sendTicketGrantingTicket'.
      */
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
+
+    /**
+     * The state id 'casSessionStorageWriteView'.
+     */
+    String STATE_ID_SESSION_STORAGE_WRITE = "casSessionStorageWriteView";
+
+    /**
+     * The state id 'casSessionStorageReadView'.
+     */
+    String STATE_ID_SESSION_STORAGE_READ = "casSessionStorageReadView";
 
     /**
      * The state id 'ticketGrantingTicketCheck'.
@@ -1153,6 +1168,11 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageReadView'.
      */
     String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
+
+    /**
+     * The view state 'dynamicHtmlView'.
+     */
+    String VIEW_ID_DYNAMIC_HTML = "dynamicHtmlView";
 
     /*
      ****************************************

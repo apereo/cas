@@ -32,7 +32,9 @@ import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
@@ -89,11 +91,11 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        saml2MessageContext = new SAML2MessageContext();
+        val ctx = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
         saml2MessageContext.setSaml2Configuration(saml2Configuration);
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        saml2MessageContext.setWebContext(new JEEContext(request, new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
         peer.setEntityId("https://cas.example.org/idp");

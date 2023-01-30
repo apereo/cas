@@ -29,7 +29,7 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
@@ -124,7 +124,7 @@ public class OidcJwtAuthenticator implements Authenticator {
     }
 
     @Override
-    public Optional<AuthenticationCredentials> validate(final CallContext callContext, final AuthenticationCredentials creds) {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
         val credentials = (UsernamePasswordCredentials) creds;
         val registeredService = verifyCredentials(credentials, callContext.webContext());
         if (registeredService == null) {

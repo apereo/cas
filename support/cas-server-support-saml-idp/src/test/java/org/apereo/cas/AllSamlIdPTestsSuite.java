@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListenerTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolverTests;
+import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriterTests;
 import org.apereo.cas.support.saml.services.AttributeQueryAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
@@ -146,6 +147,7 @@ import org.junit.platform.suite.api.Suite;
     SamlIdPLogoutResponseObjectBuilderTests.class,
     SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
+    DefaultSamlIdPCertificateAndKeyWriterTests.class,
     SamlIdPDelegatedAuthenticationConfigurationTests.class,
     SamlIdPAuthenticationContextTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,

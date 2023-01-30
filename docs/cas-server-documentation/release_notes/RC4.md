@@ -49,7 +49,7 @@ can now be stored in relational databases.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `391` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `392` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Authentication Geolocation via Maxmind
@@ -74,6 +74,15 @@ previous behavior:
 spring.main.lazy-initialization=false
 ```
 
+### Duo Security Universal Prompt
+
+Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) via 
+Universal Prompt is now adjusted to use the browser's local storage for tracking
+the state of CAS server and authentication contexts before redirecting to Duo Security. In this approach, CAS will no longer create
+a session-tracking ticket to store the existing authentication context and will only rely on the browser to store and/or restore the necessary
+authentication context for the entire flow. You might see additional screens before and after the multifactor authentication flow that 
+attempt to process the request from the browser's local storage with sufficient messaging to indicate request processing is in progress.
+
 ## Other Stuff
 
 - The session cookie (typically and by default named `DISSESSION`) used for distributed session management can now be signed and encrypted in 
@@ -86,6 +95,7 @@ spring.main.lazy-initialization=false
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to present a preview of the would-be-generated CAS overlay.
 - Evaluation of access strategies for OAuth and OpenID Connect services is now able to consider virtually-remapped attributes for authorization enforcement.
 - The incorrect generation of `TST` tickets used to track single sign-on sessions across multiple authentication flows is now corrected.
+- Generating SAML2 metadata certificates and keys is now updated to use the more secure `SHA512withRSA` and `4096` for the algorithm and key size. 
 
 ## Library Upgrades
 
@@ -100,6 +110,7 @@ spring.main.lazy-initialization=false
 - Spring Boot
 - Spring Boot Admin
 - Spring Shell
+- Spring Cloud
 - Mockito
 - Thymeleaf Layout Dialect
 - JUnit
@@ -108,4 +119,3 @@ spring.main.lazy-initialization=false
 - Checkstyle
 - JavaParser
 - Gradle
-- Groovy
