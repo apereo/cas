@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.core.util.Pac4jConstants;
@@ -164,7 +163,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val clientCallContext = new CallContext(new JEEContext(mockRequest, mockResponse),
             oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
         val result = oauthCasClient.getCredentials(clientCallContext)
-            .map(credentials -> oauthCasClient.validateCredentials(clientCallContext, (AuthenticationCredentials) credentials))
+            .map(credentials -> oauthCasClient.validateCredentials(clientCallContext, credentials))
             .orElseThrow();
         assertTrue(result.isPresent());
         assertNotNull(result.get().getUserProfile());

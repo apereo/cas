@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.config;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -12,6 +13,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -44,12 +46,14 @@ public class CasCoreEventsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public CasAuthenticationEventListener defaultCasEventListener(
+            @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier(MessageSanitizer.BEAN_NAME) final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository) throws Exception {
+            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository) {
             return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository, messageSanitizer))
+                .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository,
+                    messageSanitizer, geoLocationService.getIfAvailable()))
                 .otherwiseProxy()
                 .get();
         }

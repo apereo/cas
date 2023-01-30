@@ -2,6 +2,8 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
@@ -37,6 +39,7 @@ import java.util.LinkedHashSet;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasAuthenticationEventListenerTests}.
@@ -59,9 +62,11 @@ public class CasAuthenticationEventListenerTests {
     @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository casEventRepository;
 
+    private MockHttpServletRequest request;
+
     @BeforeEach
     public void initialize() {
-        val request = new MockHttpServletRequest();
+        request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
@@ -76,6 +81,21 @@ public class CasAuthenticationEventListenerTests {
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
+    }
+
+    @Test
+    public void verifyCasAuthenticationWithGeo() {
+        request.addHeader("geolocation", "34,45,1,12345");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        
+        val event = new CasAuthenticationTransactionFailureEvent(this,
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        applicationContext.publishEvent(event);
+        val savedEventOptional = casEventRepository.load().findFirst();
+        assertFalse(savedEventOptional.isEmpty());
+        val savedEvent = savedEventOptional.get();
+        assertEquals(CasAuthenticationTransactionFailureEvent.class.getSimpleName(), savedEvent.getEventId());
     }
 
     @Test
@@ -150,6 +170,13 @@ public class CasAuthenticationEventListenerTests {
                     return events.stream();
                 }
             };
+        }
+
+        @Bean
+        public GeoLocationService geoLocationService() {
+            val mock = mock(GeoLocationService.class);
+            when(mock.locate(anyString())).thenReturn(new GeoLocationResponse().setLatitude(156).setLongitude(34));
+            return mock;
         }
     }
 }

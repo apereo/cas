@@ -47,10 +47,11 @@ const assert = require('assert');
 
     console.log("Invoking SAML2 identity provider SLO...");
     await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(6000);
     url = await page.url();
     console.log(`Page url: ${url}`);
-
+    assert(url.startsWith("https://apereo.github.io"));
+    
     await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
     await cas.assertCookie(page, false);
 

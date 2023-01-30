@@ -16,7 +16,7 @@ import lombok.val;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
@@ -37,7 +37,7 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 @Setter
-public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends AuthenticationCredentials> extends AbstractPac4jAuthenticationHandler {
+public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials> extends AbstractPac4jAuthenticationHandler {
 
     /**
      * The pac4j profile creator used for authentication.

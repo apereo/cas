@@ -67,14 +67,6 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         return handleProfileRequest(response, request);
     }
 
-    /**
-     * Handle callback profile request post.
-     *
-     * @param response the response
-     * @param request  the request
-     * @return the model and view
-     * @throws Exception the exception
-     */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
                                                             final HttpServletRequest request) throws Exception {

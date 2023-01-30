@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -37,13 +39,12 @@ public class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
         val request = new MockHttpServletRequest();
         request.setAttribute(HttpAction.class.getName(), new OkAction("Test"));
         val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            request, response));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         val results = logoutViewSetupAction.execute(context);
         assertNull(results);
         assertFalse(WebUtils.isGeoLocationTrackingIntoFlowScope(context));
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("Test", response.getContentAsString());
-        assertTrue(context.getExternalContext().isResponseComplete());
+        assertTrue(context.getFlowScope().contains(DynamicHtmlView.class.getName()));
+        assertTrue(context.getFlowScope().contains(LogoutViewSetupAction.FLOW_SCOPE_ATTRIBUTE_PROCEED));
     }
 }

@@ -34,8 +34,8 @@
 
     "--cas.service-registry.core.init-from-json=true",
     
-    "--logging.level.org.apereo.cas=info",
-    "--logging.level.org.springframework.webflow=debug",
+    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.springframework.webflow=info",
     "--logging.level.org.springframework.webflow.mvc.servlet=warn",
 
     "--management.endpoints.web.exposure.include=*",

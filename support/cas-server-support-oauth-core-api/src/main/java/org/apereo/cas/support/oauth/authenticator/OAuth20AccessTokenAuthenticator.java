@@ -12,7 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
@@ -47,7 +47,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
     }
 
     @Override
-    public Optional<AuthenticationCredentials> validate(final CallContext callContext, final AuthenticationCredentials credentials) {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
         val tokenCredentials = (TokenCredentials) credentials;
         val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);

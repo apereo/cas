@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 public class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
     @Autowired
@@ -51,7 +51,7 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+        assertNull(action.execute(context));
         assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
     }
 }

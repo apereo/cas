@@ -72,11 +72,11 @@ public class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         when(client.getCredentials(any())).thenReturn(Optional.of(tokenCredentials));
         when(client.validateCredentials(any(), any())).thenReturn(Optional.of(tokenCredentials));
 
-        val credentials = delegatedAuthenticationCredentialExtractor.extract(client, context);
+        val credentials = delegatedAuthenticationCredentialExtractor.extract(client, context).get();
         assertNotNull(credentials);
         assertTrue(credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
         
         when(client.getCredentials(any())).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> delegatedAuthenticationCredentialExtractor.extract(client, context));
+        assertTrue(delegatedAuthenticationCredentialExtractor.extract(client, context).isEmpty());
     }
 }

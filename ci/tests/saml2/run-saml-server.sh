@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -z "${SP_SLO_SERVICE}" ]]; then
-  export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client&logoutendpoint=true"
+  export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client"
 else
   echo -e "Found existing SLO service at ${SP_SLO_SERVICE}"
 fi

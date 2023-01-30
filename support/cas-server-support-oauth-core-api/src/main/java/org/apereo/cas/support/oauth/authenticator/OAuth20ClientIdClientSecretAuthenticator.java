@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
-import org.pac4j.core.credentials.AuthenticationCredentials;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
@@ -58,7 +58,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final OAuth20ClientSecretValidator clientSecretValidator;
 
     @Override
-    public Optional<AuthenticationCredentials> validate(final CallContext callContext, final AuthenticationCredentials credentials) throws CredentialsException {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
         val upc = (UsernamePasswordCredentials) credentials;
         val id = upc.getUsername();

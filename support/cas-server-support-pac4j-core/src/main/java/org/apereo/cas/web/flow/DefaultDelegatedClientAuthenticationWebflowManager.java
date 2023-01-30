@@ -227,8 +227,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     }
 
     protected Optional<TransientSessionTicket> retrieveSessionTicketViaClientId(final WebContext webContext, final String clientId) {
-        if (StringUtils.isBlank(clientId)) {
-            LOGGER.error("Delegated client identifier is undefined in request URL [{}]", webContext.getFullRequestURL());
+        if (StringUtils.isBlank(clientId) || !clientId.startsWith(TransientSessionTicket.PREFIX)) {
+            LOGGER.info("Delegated client identifier [{}] is undefined in request URL [{}]", clientId, webContext.getFullRequestURL());
             return Optional.empty();
         }
 
