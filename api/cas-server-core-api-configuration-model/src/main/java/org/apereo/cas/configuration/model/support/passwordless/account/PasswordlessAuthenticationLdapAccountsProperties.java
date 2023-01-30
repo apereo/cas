@@ -42,4 +42,10 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
      * indicates the user's name.
      */
     private String nameAttribute = "cn";
+
+    /**
+     * Name of the LDAP attribute that
+     * is used to disable passwordless.
+     */
+    private String requestPasswordAttribute = "requestPassword";
 }

@@ -54,6 +54,9 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 if (entry.getAttribute(ldapProperties.getPhoneAttribute()) != null) {
                     acctBuilder.phone(entry.getAttribute(ldapProperties.getPhoneAttribute()).getStringValue());
                 }
+                if (entry.getAttribute(ldapProperties.getRequestPasswordAttribute()) != null) {
+                    acctBuilder.requestPassword(Boolean.parseBoolean(entry.getAttribute(ldapProperties.getRequestPasswordAttribute()).getStringValue()));
+                }
                 val attributes = new LinkedHashMap<String, List<String>>(entry.getAttributes().size());
                 entry.getAttributes().forEach(attr -> attributes.put(attr.getName(), new ArrayList<>(attr.getStringValues())));
                 val acct = acctBuilder.attributes(attributes).build();
