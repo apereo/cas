@@ -51,6 +51,7 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
             flowScope.put(BROWSER_AUTHENTICATOR, MA);
         }
         val pushEnabled = inwebo.isPushEnabled();
+        val pushAuto = inwebo.isPushAuto();
 
         try {
             val response = service.loginSearchQuery(login);
@@ -61,15 +62,13 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
                     LOGGER.error("User is blocked: [{}]", login);
                     return error();
                 }
-                val activationStatus = response.getActivationStatus();
+                var activationStatus = response.getActivationStatus();
 
-                val userNotRegistered = activationStatus == 0;
-                val pushAuthentication = activationStatus == 1;
-                val unexpectedStatus = activationStatus == 2 || activationStatus == 3;
-                val browserAuthentication = activationStatus == BROWSER_AUTHENTICATION_STATUS;
-                val pushAndBrowserAuthentication = activationStatus == PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
+                if (activationStatus == 1 && !pushAuto) {
+                    activationStatus = PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
+                }
 
-                if (userNotRegistered) {
+                if (activationStatus == 0) {
                     LOGGER.debug("User is not registered: [{}]", login);
                     if (isVirtualAuthenticator) {
                         return customEvent(VA);
@@ -78,16 +77,16 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
                         WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.usernotregistered");
                     }
 
-                } else if (pushAuthentication) {
+                } else if (activationStatus == 1) {
                     LOGGER.debug("User can only handle push notifications: [{}]", login);
                     if (pushEnabled) {
                         return customEvent(PUSH);
                     }
 
-                } else if (unexpectedStatus) {
+                } else if (activationStatus == 2 || activationStatus == 3) {
                     LOGGER.warn("Unexpected activationStatus: [{}]", activationStatus);
 
-                } else if (browserAuthentication) {
+                } else if (activationStatus == BROWSER_AUTHENTICATION_STATUS) {
                     LOGGER.debug("User can only handle browser authentication: [{}]", login);
                     if (isVirtualAuthenticator) {
                         return customEvent(VA);
@@ -95,7 +94,7 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
                         return customEvent(MA);
                     }
 
-                } else if (pushAndBrowserAuthentication) {
+                } else if (activationStatus == PUSH_AND_BROWSER_AUTHENTICATION_STATUS) {
                     LOGGER.debug("User has both authentication methods: [{}]", login);
                     if (pushEnabled) {
                         if (isVirtualAuthenticator || isMAccessWeb) {
