@@ -12,5 +12,18 @@
 
     "--cas.audit.slf4j.use-single-line=true",
     "--cas.authn.accept.name=STATIC"
-  ]
+  ],
+  "SPRING_APPLICATION_JSON": {
+    "cas": {
+      "authn": {
+        "attribute-repository": {
+          "stub": {
+            "attributes": {
+              "memberOf": "CN=Colleague Admins-OU=Computer Services Users"
+            }
+          }
+        }
+      }
+    }
+  }
 }

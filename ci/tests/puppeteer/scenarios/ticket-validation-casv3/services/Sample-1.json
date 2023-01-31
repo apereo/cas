@@ -7,5 +7,30 @@
     "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
     "usernameAttribute" : "mail",
     "canonicalizationMode" : "UPPER"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "memberOf" :
+              '''
+              groovy {
+                def value = attributes['memberOf']?.get(0) as String
+                println "memberOf attribute: $value"
+                if (value != null) {
+                  def matcher = (value =~ ~/(CN=)(.*?)(?<!\\)-.*/)
+                  if (matcher.find()) {
+                    def match = matcher.group(2)
+                    println "Found a match: $match"
+                    return match
+                  }
+                  println "No match found for memberOf. Returning $value"
+                  return value
+                }
+                println "No memberOf attribute is found"
+                return null
+              }
+              '''
+    }
   }
 }
