@@ -13,7 +13,7 @@ A status code of `2xx` is expected from the endpoint.
 
 {% tabs restsms }
 
-{% tab restsms Query Parameters }
+{% tab restsms Query Parameters %}
 
 The following request/query parameters are submitted to the endpoint URL:
 
@@ -28,7 +28,7 @@ The request body contains the actual message.
 
 {% endtab %}
 
-{% tab restsms Request Body }
+{% tab restsms Request Body %}
  
 In this option, the following parameters are included in the request body as a JSON document:
 
