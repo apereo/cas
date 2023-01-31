@@ -69,7 +69,7 @@ function jqueryReady() {
                     $(indicator).html(strength[4]);
                 }
             } else {
-                setProgress(0);
+                setProgress(0, settings.bar);
                 $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
                 $(indicator).html('');
             }
