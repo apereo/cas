@@ -122,6 +122,18 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
+    public void verifyPushAuto() {
+        inwebo.setPushAuto(false);
+        when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(1, USER_ID));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(SELECT, event.getId());
+        val flowScope = requestContext.getFlowScope();
+        assertFalse(flowScope.contains(MUST_ENROLL));
+        assertEquals(MA, flowScope.get(BROWSER_AUTHENTICATOR));
+    }
+
+    @Test
     public void verifyUnexpectedStatus2() {
         when(service.loginSearchQuery(LOGIN)).thenReturn(loginSearchOk(2, USER_ID));
 
