@@ -74,6 +74,12 @@ previous behavior:
 spring.main.lazy-initialization=false
 ```
 
+### CAS Initializr
+  
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) has received several new UI enhancements: 
+
+<img width="1719" alt="image" src="https://user-images.githubusercontent.com/1205228/215851405-2a8c03b2-545e-47d2-a35f-3a3bcb44e06b.png">
+
 ### Duo Security Universal Prompt
 
 Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) via 
