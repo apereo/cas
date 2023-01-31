@@ -11,7 +11,7 @@ category: Notifications
 Send text messages using a RESTful API. This is typically a `POST` that can be sent to an endpoint via the listed styles below.
 A status code of `2xx` is expected from the endpoint.
 
-{% tabs restsms }
+{% tabs restsms %}
 
 {% tab restsms Query Parameters %}
 
