@@ -53,7 +53,7 @@ public interface SamlIdPMetadataGenerator {
      * @param result the result
      * @return the applies to for
      */
-    static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+    default String getAppliesToFor(final Optional<SamlRegisteredService> result) {
         if (result.isPresent()) {
             val registeredService = result.get();
             return registeredService.getName() + '-' + registeredService.getId();
