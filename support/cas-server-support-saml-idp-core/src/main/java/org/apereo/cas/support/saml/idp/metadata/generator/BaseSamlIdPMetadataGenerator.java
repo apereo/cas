@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -34,7 +35,7 @@ import java.util.Optional;
 @Getter
 public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
 
-    private final SamlIdPMetadataGeneratorConfigurationContext configurationContext;
+    protected final SamlIdPMetadataGeneratorConfigurationContext configurationContext;
 
     @Override
     public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) throws Exception {
@@ -44,8 +45,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         if (!samlIdPMetadataLocator.exists(registeredService)) {
             val owner = getAppliesToFor(registeredService);
             LOGGER.trace("Metadata does not exist for [{}]", owner);
-
-            if (samlIdPMetadataLocator.shouldGenerateMetadataFor(registeredService)) {
+            if (shouldGenerateMetadata(registeredService)) {
                 LOGGER.trace("Creating metadata artifacts for [{}]...", owner);
 
                 LOGGER.info("Creating self-signed certificate for signing...");
@@ -64,12 +64,16 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 doc.setSigningKey(signing.getValue());
                 doc.setMetadata(metadata);
                 return finalizeMetadataDocument(doc, registeredService);
-            } else {
-                LOGGER.debug("Skipping metadata generation process for [{}]", owner);
             }
+            LOGGER.debug("Skipping metadata generation process for [{}]", owner);
         }
 
         return samlIdPMetadataLocator.fetch(registeredService);
+    }
+
+    protected boolean shouldGenerateMetadata(final Optional<SamlRegisteredService> registeredService) {
+        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
+        return samlIdPMetadataLocator.shouldGenerateMetadataFor(registeredService);
     }
 
     /**

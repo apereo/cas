@@ -48,7 +48,7 @@ public class AmazonS3SamlIdPMetadataGeneratorTests {
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     private SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Test
