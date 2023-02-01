@@ -189,7 +189,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired

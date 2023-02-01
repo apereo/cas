@@ -18,6 +18,11 @@ import java.util.Optional;
 @FunctionalInterface
 public interface SamlIdPMetadataGenerator {
     /**
+     * Bean implementation id.
+     */
+    String BEAN_NAME = "samlIdPMetadataGenerator";
+
+    /**
      * Starting block of a pem certificate.
      */
     String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";

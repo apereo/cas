@@ -108,7 +108,7 @@ public class SamlIdPMetadataConfiguration {
         public SamlIdPMetadataController samlIdPMetadataController(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
@@ -277,13 +277,13 @@ public class SamlIdPMetadataConfiguration {
 
         @Lazy
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
-        @DependsOn("samlIdPMetadataGenerator")
+        @DependsOn(SamlIdPMetadataGenerator.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MetadataResolver casSamlIdPMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
@@ -299,7 +299,7 @@ public class SamlIdPMetadataConfiguration {
     @Configuration(value = "SamlIdPMetadataGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPMetadataGenerationConfiguration {
-        @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
+        @ConditionalOnMissingBean(name = SamlIdPMetadataGenerator.BEAN_NAME)
         @Bean
         @Lazy(false)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -435,7 +435,7 @@ public class SamlIdPMetadataConfiguration {
         @Lazy(false)
         @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
         public SamlIdPCasEventListener samlIdPCasEventListener(
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
             return new DefaultSamlIdPCasEventListener(samlIdPMetadataGenerator);
         }
