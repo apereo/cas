@@ -301,6 +301,7 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataGenerationConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
         @Bean
+        @Lazy(false)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
             @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
