@@ -490,7 +490,7 @@ if [[ "${RERUN}" != "true" ]]; then
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
 
-      until curl -k -L --max-time 90 --connect-timeout 5 --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
+      until curl -k -L --fail https://localhost:${serverPort}/cas/login; do
           echo -n '.'
           sleep 1
           let retryCounter++
