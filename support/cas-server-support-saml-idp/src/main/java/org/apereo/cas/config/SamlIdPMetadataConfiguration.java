@@ -354,6 +354,7 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
         public SamlIdPCasEventListener samlIdPCasEventListener(
             @Qualifier("samlIdPMetadataGenerator")
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
