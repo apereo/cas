@@ -490,7 +490,7 @@ if [[ "${RERUN}" != "true" ]]; then
       sleep 60
       casLogin="https://localhost:${serverPort}/cas/login"
       printcyan "Checking CAS server's status @ ${casLogin}"
-      curl -k -L --output /dev/null --silent --fail
+      curl -k -L --output /dev/null --silent --fail $casLogin
       RC=$?
       if [[ $RC -ne 0 ]]; then
         printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
