@@ -2,7 +2,6 @@
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-20}
-PUPPETEER_RUN_CTR=${PUPPETEER_RUN_CTR:-60}
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -480,8 +479,7 @@ if [[ "${RERUN}" != "true" ]]; then
 
       springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
       [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
-
-      retryCounter=0
+      
       printcyan "Launching CAS instance #${c} under port ${serverPort}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
          -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
@@ -489,20 +487,19 @@ if [[ "${RERUN}" != "true" ]]; then
          ${properties} &
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-
-      until curl -k -L --fail https://localhost:${serverPort}/cas/login; do
-          echo -n '.'
-          sleep 1
-          let retryCounter++
-          if [[ $retryCounter -gt $PUPPETEER_RUN_CTR ]]; then
-            printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
-#            printred "Build thread dump"
-#            jstack $pid || true
-            printred "Killing process id $pid and exiting"
-            kill -9 "$pid"
-            exit 3
-          fi
-      done
+      sleep 60
+      casLogin="https://localhost:${serverPort}/cas/login"
+      printcyan "Checking CAS server's status @ ${casLogin}"
+      curl -k -L --output /dev/null --silent --fail
+      RC=$?
+      if [[ $RC -ne 0 ]]; then
+        printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
+        printred "Killing process id $pid and exiting"
+        kill -9 "$pid"
+        exit 3
+      fi
+      printcyan "CAS server ${casLogin} is up and running under process id ${pid}"
+      
       processIds+=( $pid )
       serverPort=$((serverPort + 1))
       if [[ "$DEBUG" == "true" ]]; then
