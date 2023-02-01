@@ -433,6 +433,7 @@ public class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
+        @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
         public SamlIdPCasEventListener samlIdPCasEventListener(
             @Qualifier("samlIdPMetadataGenerator")
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
