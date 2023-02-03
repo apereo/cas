@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.postgres;
+package org.apereo.cas.ticket.registry.oracle;
 
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
@@ -9,8 +9,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -21,23 +19,22 @@ import java.util.Map;
 
 
 /**
- * This is {@link PostgresJpaTicketEntity}.
+ * This is {@link OracleJpaTicketEntity}.
  *
  * @author Hal Deadman
  * @since 6.5.0
  */
 @SuperBuilder
 @NoArgsConstructor
-@AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
-@Entity(name = "PostgresJpaTicketEntity")
+@Entity(name = "OracleJpaTicketEntity")
 @Table(name = "CasTickets")
 @Setter
 @Accessors(chain = true)
-public class PostgresJpaTicketEntity extends BaseTicketEntity {
+public class OracleJpaTicketEntity extends BaseTicketEntity {
     @Serial
     private static final long serialVersionUID = 6546716187959834795L;
 
     @Type(JsonType.class)
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "varchar2(4000 char)")
     private Map<String, List<Object>> attributes;
 }

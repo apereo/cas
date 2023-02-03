@@ -19,7 +19,10 @@
         "attribute-repository": {
           "stub": {
             "attributes": {
-              "memberOf": "CN=Colleague Admins-OU=Computer Services Users"
+              "memberOf": "CN=Colleague Admins-OU=Computer Services Users",
+              "extensionAttribute1": "extension-attribute-1-value",
+              "extensionAttribute2": "extension-attribute-2-value",
+              "extensionAttribute3": "extension-attribute-3-value"
             }
           }
         }
