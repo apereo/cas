@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.collect.Streams;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -438,6 +439,7 @@ public class DynamoDbTicketRegistryFacilitator {
 
         private final String principal;
 
-        private final Map<String, List<Object>> attributes;
+        @Builder.Default
+        private final Map<String, List<Object>> attributes = new HashMap<>();
     }
 }
