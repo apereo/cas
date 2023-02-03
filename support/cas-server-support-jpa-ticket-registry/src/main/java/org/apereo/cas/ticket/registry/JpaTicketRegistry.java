@@ -76,7 +76,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {
         return FunctionUtils.doUnchecked(() -> {
             val encodeTicket = encodeTicket(ticket);
-            return getJpaTicketEntityFactory().fromTicket(encodeTicket)
+            return getJpaTicketEntityFactory()
+                .fromTicket(encodeTicket)
                 .setPrincipalId(digest(getPrincipalIdFrom(ticket)))
                 .setAttributes(collectAndDigestTicketAttributes(ticket));
         });
@@ -199,6 +200,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 val criteriaValues = entry.getValue()
                     .stream()
                     .map(queryValue -> {
+                        if (factory.isOracle()) {
+                            return String.format("JSON_EXISTS(t.attributes, '$?(@.\"%s\" == \"%s\")')",
+                                digest(entry.getKey()), digest(queryValue.toString()));
+                        }
                         if (factory.isPostgres()) {
                             return String.format("(t.attributes->'%s')\\:\\:jsonb \\?\\? '%s'", digest(entry.getKey()), digest(queryValue.toString()));
                         }
@@ -231,7 +236,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             }
         }
 
-        val sql = String.format("%s WHERE t.type='%s' AND %s;", selectClause,
+        val sql = String.format("%s WHERE t.type='%s' AND %s", selectClause,
             getTicketTypeName(TicketGrantingTicket.class), criterias);
         LOGGER.debug("Executing SQL query [{}]", sql);
 

@@ -61,9 +61,9 @@ function progressbar() {
 
     # output the bar
     echo -ne "\rProgress: [${done_sub_bar}${todo_sub_bar}] ${percent}%"
-#    if [ $total -eq $current ]; then
-#        echo -e "\nDONE"
-#    fi
+    if [ $total -eq $current ]; then
+        echo -e "\n"
+    fi
 }
 
 function sleepfor() {

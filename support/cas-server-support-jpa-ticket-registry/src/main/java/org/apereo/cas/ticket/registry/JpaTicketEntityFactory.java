@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
 import org.apereo.cas.ticket.registry.mssql.MsSqlServerJpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
+import org.apereo.cas.ticket.registry.oracle.OracleJpaTicketEntity;
 import org.apereo.cas.ticket.registry.postgres.PostgresJpaTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -113,6 +114,9 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
     }
 
     private Class<? extends BaseTicketEntity> getEntityClass() {
+        if (isOracle()) {
+            return OracleJpaTicketEntity.class;
+        }
         if (isMySql()) {
             return MySQLJpaTicketEntity.class;
         }
