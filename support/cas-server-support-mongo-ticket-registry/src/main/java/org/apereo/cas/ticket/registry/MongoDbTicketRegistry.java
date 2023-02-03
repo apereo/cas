@@ -9,9 +9,7 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +45,6 @@ import java.util.stream.Stream;
 @Slf4j
 @RequiredArgsConstructor
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
     private static final int PAGE_SIZE = 500;
 
     private final TicketCatalog ticketCatalog;
