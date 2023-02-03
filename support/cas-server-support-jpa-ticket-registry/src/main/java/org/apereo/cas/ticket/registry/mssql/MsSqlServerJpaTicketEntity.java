@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.mssql;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,6 +30,7 @@ import java.util.Map;
 @Entity(name = "MsSqlServerJpaTicketEntity")
 @Table(name = "CasTickets")
 @Setter
+@Getter
 @Accessors(chain = true)
 public class MsSqlServerJpaTicketEntity extends BaseTicketEntity {
     @Serial

@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.registry.generic;
 
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,9 +31,6 @@ import java.util.Map;
 @Getter
 @Setter
 public abstract class BaseTicketEntity implements Serializable {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
     @Serial
     private static final long serialVersionUID = 6534421912995436609L;
 

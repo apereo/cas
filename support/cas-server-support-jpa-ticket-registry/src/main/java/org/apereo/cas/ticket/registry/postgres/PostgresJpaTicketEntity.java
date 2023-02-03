@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.postgres;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -32,6 +33,7 @@ import java.util.Map;
 @Entity(name = "PostgresJpaTicketEntity")
 @Table(name = "CasTickets")
 @Setter
+@Getter
 @Accessors(chain = true)
 public class PostgresJpaTicketEntity extends BaseTicketEntity {
     @Serial
