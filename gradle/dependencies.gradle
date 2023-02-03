@@ -2440,7 +2440,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.springframework.data", module: "spring-data-redis")
                 },
-                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion")
+                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion"),
+                dependencies.create("com.redis:spring-lettucemod:$springLettuceModVersion"),
         ],
         springintegration          : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {

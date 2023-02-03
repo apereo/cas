@@ -151,11 +151,11 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
         val question = Optional.ofNullable(questionAttribute)
             .map(LdapAttribute::getStringValue)
-            .orElseGet(() -> StringUtils.EMPTY);
+            .orElse(StringUtils.EMPTY);
 
         val answer = Optional.ofNullable(answerAttribute)
             .map(LdapAttribute::getStringValue)
-            .orElseGet(() -> StringUtils.EMPTY);
+            .orElse(StringUtils.EMPTY);
 
         return Pair.of(question, answer);
     }

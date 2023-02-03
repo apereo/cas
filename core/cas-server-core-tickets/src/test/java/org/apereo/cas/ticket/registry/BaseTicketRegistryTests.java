@@ -166,6 +166,7 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyTicketsWithAuthnAttributes() throws Exception {
+        assumeTrue(isIterableRegistry());
         val authn = CoreAuthenticationTestUtils.getAuthentication(
             Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
                 "authn-context", List.of("mfa-example")));
