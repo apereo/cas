@@ -48,9 +48,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
-    /**
-     * The cipher executor for ticket objects.
-     */
     protected CipherExecutor cipherExecutor;
 
     /**
