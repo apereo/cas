@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.postgres;
+package org.apereo.cas.ticket.registry.mssql;
 
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
@@ -15,17 +15,18 @@ import java.io.Serial;
 
 
 /**
- * This is {@link PostgresJpaTicketEntity}.
+ * This is {@link MsSqlServerJpaTicketEntity}.
  *
  * @author Hal Deadman
  * @since 6.5.0
  */
 @SuperBuilder
 @NoArgsConstructor
-@AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
-@Entity(name = "PostgresJpaTicketEntity")
+@AttributeOverrides(@AttributeOverride(name = "attributes",
+    column = @Column(columnDefinition = "varchar(max) CHECK(ISJSON(attributes) = 1)")))
+@Entity(name = "MsSqlServerJpaTicketEntity")
 @Table(name = "CasTickets")
-public class PostgresJpaTicketEntity extends BaseTicketEntity {
+public class MsSqlServerJpaTicketEntity extends BaseTicketEntity {
     @Serial
     private static final long serialVersionUID = 6546716187959834795L;
 }

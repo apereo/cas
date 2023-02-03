@@ -54,7 +54,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
             return;
         }
         for (val variation : Variation.values()) {
-            for (val manipulation : Manipulation.values()) {
+            for (val manipulation : NameManipulations.values()) {
                 var result = name;
                 result = manipulation.apply(result);
                 result = variation.apply(result);
@@ -105,8 +105,11 @@ public class RelaxedPropertyNames implements Iterable<String> {
     /**
      * Name manipulations.
      */
-    enum Manipulation {
+    public enum NameManipulations {
 
+        /**
+         * Do nothing and return the value.
+         */
         NONE {
             @Override
             public String apply(final String value) {
@@ -115,6 +118,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert hyphens into underscores.
+         */
         HYPHEN_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
@@ -122,7 +128,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
 
         },
-
+        /**
+         * Convert underscores into periods.
+         */
         UNDERSCORE_TO_PERIOD {
             @Override
             public String apply(final String value) {
@@ -131,6 +139,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert periods into underscores.
+         */
         PERIOD_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
@@ -139,6 +150,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert camel case to underscore.
+         */
         CAMELCASE_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
@@ -160,6 +174,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert camelcase into hyphens.
+         */
         CAMELCASE_TO_HYPHEN {
             @Override
             public String apply(final String value) {
@@ -181,6 +198,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert separate words into camel case.
+         */
         SEPARATED_TO_CAMELCASE {
             @Override
             public String apply(final String value) {
@@ -188,10 +208,36 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
         },
 
+        /**
+         * Convert separate words into camel case.
+         */
         CASE_INSENSITIVE_SEPARATED_TO_CAMELCASE {
             @Override
             public String apply(final String value) {
                 return separatedToCamelCase(value, true);
+            }
+        },
+
+        /**
+         * Convert underscore into title case.
+         */
+        CAMELCASE_TO_UNDERSCORE_TITLE_CASE {
+            @Override
+            public String apply(final String value) {
+                if (value.isEmpty()) {
+                    return value;
+                }
+                var matcher = CAMEL_CASE_PATTERN.matcher(value);
+                if (!matcher.find()) {
+                    return value;
+                }
+                matcher = matcher.reset();
+                var result = new StringBuilder();
+                while (matcher.find()) {
+                    matcher.appendReplacement(result, matcher.group(1) + '_' + StringUtils.capitalize(matcher.group(2)));
+                }
+                matcher.appendTail(result);
+                return result.toString();
             }
         };
 
@@ -204,7 +250,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
             var builder = new StringBuilder();
             for (var field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
                 var fieldCased = caseInsensitive ? field.toLowerCase() : field;
-                builder.append(builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
+                builder.append(builder.isEmpty() ? field : StringUtils.capitalize(fieldCased));
             }
             var lastChar = value.charAt(value.length() - 1);
             for (var suffix : SUFFIXES) {
@@ -216,6 +262,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
             return builder.toString();
         }
 
+        /**
+         * Apply string.
+         *
+         * @param value the value
+         * @return the string
+         */
         public abstract String apply(String value);
     }
 

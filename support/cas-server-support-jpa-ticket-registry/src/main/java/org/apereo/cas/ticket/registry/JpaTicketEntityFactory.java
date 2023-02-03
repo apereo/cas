@@ -2,12 +2,14 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
+import org.apereo.cas.ticket.registry.mssql.MsSqlServerJpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
 import org.apereo.cas.ticket.registry.postgres.PostgresJpaTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
@@ -17,6 +19,8 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+
+import jakarta.persistence.Table;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -60,12 +64,12 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
      */
     public BaseTicketEntity fromTicket(final Ticket ticket) {
         val jsonBody = getTicketSerializationManager().serializeTicket(ticket);
-        val authentication = ticket instanceof AuthenticationAwareTicket
-            ? ((AuthenticationAwareTicket) ticket).getAuthentication()
+        val authentication = ticket instanceof AuthenticationAwareTicket authAware
+            ? authAware.getAuthentication()
             : null;
 
-        val parentTicket = ticket instanceof TicketGrantingTicketAwareTicket
-            ? ((TicketGrantingTicketAwareTicket) ticket).getTicketGrantingTicket()
+        val parentTicket = ticket instanceof TicketGrantingTicketAwareTicket tgtAware
+            ? tgtAware.getTicketGrantingTicket()
             : null;
 
         val entity = FunctionUtils.doUnchecked(() -> getEntityClass().getDeclaredConstructor().newInstance());
@@ -98,6 +102,16 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
         return ticket;
     }
 
+    /**
+     * Gets table name.
+     *
+     * @return the table name
+     */
+    public String getTableName() {
+        val tableName = getType().getAnnotation(Table.class).name();
+        return RelaxedPropertyNames.NameManipulations.CAMELCASE_TO_UNDERSCORE_TITLE_CASE.apply(tableName);
+    }
+
     private Class<? extends BaseTicketEntity> getEntityClass() {
         if (isMySql()) {
             return MySQLJpaTicketEntity.class;
@@ -105,7 +119,9 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
         if (isPostgres()) {
             return PostgresJpaTicketEntity.class;
         }
+        if (isMsSqlServer()) {
+            return MsSqlServerJpaTicketEntity.class;
+        }
         return JpaTicketEntity.class;
     }
-
 }

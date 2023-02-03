@@ -34,6 +34,9 @@ if [ $retVal == 0 ]; then
 
     echo "Creating yubikey database"
     docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE yubikey;'
+
+        echo "Creating tickets database"
+        docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE tickets;'
 else
     echo "SQL Server docker image failed to start."
     exit $retVal

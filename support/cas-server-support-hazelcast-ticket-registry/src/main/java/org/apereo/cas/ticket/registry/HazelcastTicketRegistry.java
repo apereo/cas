@@ -65,7 +65,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val holder = HazelcastTicketHolder.builder()
                 .id(encTicket.getId())
                 .type(metadata.getImplementationClass().getName())
-                .principal(encodeTicketId(getPrincipalIdFrom(ticket)))
+                .principal(digest(getPrincipalIdFrom(ticket)))
                 .timeToLive(ttl)
                 .ticket(encTicket)
                 .build();
@@ -78,7 +78,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
@@ -104,7 +104,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public long deleteSingleTicket(final String ticketIdToDelete) {
-        val encTicketId = encodeTicketId(ticketIdToDelete);
+        val encTicketId = digest(ticketIdToDelete);
         val metadata = this.ticketCatalog.find(ticketIdToDelete);
         val map = getTicketMapInstanceByMetadata(metadata);
         return map != null && map.remove(encTicketId) != null ? 1 : 0;
@@ -151,7 +151,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
             val sql = String.format("SELECT COUNT(*) FROM %s WHERE principal=?", md.getProperties().getStorageName());
             LOGGER.debug("Executing SQL query [{}]", sql);
-            val results = hazelcastInstance.getSql().execute(sql, encodeTicketId(principalId));
+            val results = hazelcastInstance.getSql().execute(sql, digest(principalId));
             return results.iterator().next().getObject(0);
         }
         return super.countSessionsFor(principalId);
@@ -163,7 +163,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
             val sql = String.format("SELECT * FROM %s WHERE principal=?", md.getProperties().getStorageName());
             LOGGER.debug("Executing SQL query [{}]", sql);
-            val results = hazelcastInstance.getSql().execute(sql, encodeTicketId(principalId));
+            val results = hazelcastInstance.getSql().execute(sql, digest(principalId));
             return StreamSupport.stream(results.spliterator(), false)
                 .map(row -> {
                     val ticket = (Ticket) row.getObject("ticket");
