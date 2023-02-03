@@ -56,7 +56,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         LOGGER.trace("Locating ticket [{}]", ticketId);
-        val encodedTicketId = encodeTicketId(ticketId);
+        val encodedTicketId = digest(ticketId);
         if (StringUtils.isBlank(encodedTicketId)) {
             LOGGER.debug("Ticket id [{}] could not be found", ticketId);
             return null;
@@ -115,7 +115,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = digest(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         val definition = this.ticketCatalog.find(ticketIdToDelete);
         val delete = QueryBuilder

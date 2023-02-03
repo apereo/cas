@@ -49,7 +49,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            val encTicketId = encodeTicketId(ticketId);
+            val encTicketId = digest(ticketId);
             val metadata = StringUtils.isNotBlank(ticketId) ? ticketCatalog.find(ticketId) : null;
             if (metadata == null || StringUtils.isBlank(encTicketId)) {
                 return null;
@@ -118,7 +118,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final String ticketIdToDelete) {
-        val encTicketId = encodeTicketId(ticketIdToDelete);
+        val encTicketId = digest(ticketIdToDelete);
         val metadata = ticketCatalog.find(ticketIdToDelete);
         val container = getTicketContainer(metadata);
         val result = container.deleteItem(encTicketId, new PartitionKey(metadata.getPrefix()), new CosmosItemRequestOptions());
@@ -164,7 +164,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             return CosmosDbTicketDocument.builder()
                 .id(encTicket.getId())
                 .type(metadata.getImplementationClass().getName())
-                .principal(encodeTicketId(getPrincipalIdFrom(ticket)))
+                .principal(digest(getPrincipalIdFrom(ticket)))
                 .timeToLive(ttl)
                 .ticket(encTicket)
                 .prefix(metadata.getPrefix())

@@ -29,7 +29,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        return this.dbTableService.getSessionsFor(encodeTicketId(principalId));
+        return this.dbTableService.getSessionsFor(digest(principalId));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         try {
             val toPut = toSave.map(Unchecked.function(ticket -> {
                 val encTicket = encodeTicket(ticket);
-                val principal = encodeTicketId(getPrincipalIdFrom(ticket));
+                val principal = digest(getPrincipalIdFrom(ticket));
                 return Triple.<Ticket, Ticket, String>of(ticket, encTicket, principal);
             }));
             dbTableService.put(toPut);
@@ -52,7 +52,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(),
                 ticket.getExpirationPolicy().getTimeToLive());
             val encTicket = encodeTicket(ticket);
-            val principal = encodeTicketId(getPrincipalIdFrom(ticket));
+            val principal = digest(getPrincipalIdFrom(ticket));
             this.dbTableService.put(ticket, encTicket, principal);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -61,7 +61,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
@@ -97,7 +97,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = digest(ticketIdToDelete);
         return dbTableService.delete(ticketIdToDelete, ticketId) ? 1 : 0;
     }
 

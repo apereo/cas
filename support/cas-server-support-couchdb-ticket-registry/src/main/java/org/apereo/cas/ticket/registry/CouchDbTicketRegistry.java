@@ -32,7 +32,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = digest(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketIdToDelete);
         var exception = (DbAccessException) null;
         var success = false;
@@ -74,7 +74,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         LOGGER.trace("Locating ticket id [{}]", ticketId);
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             LOGGER.trace("Ticket id [{}] could not be found", encTicketId);
             return null;

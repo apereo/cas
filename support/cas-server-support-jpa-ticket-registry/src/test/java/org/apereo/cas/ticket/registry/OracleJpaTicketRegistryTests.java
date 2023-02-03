@@ -21,5 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
-public class OracleJpaTicketRegistryTests extends JpaTicketRegistryTests {
+public class OracleJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }
