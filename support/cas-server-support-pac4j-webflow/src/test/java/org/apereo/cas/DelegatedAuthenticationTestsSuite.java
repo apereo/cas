@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActio
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectActionTests;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflowStateActionTests;
 import org.apereo.cas.web.flow.authz.DefaultDelegatedClientIdentityProviderAuthorizerTests;
+import org.apereo.cas.web.saml2.DelegatedAuthenticationSamlIdPResponseCustomizerTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataControllerTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataJdbcTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataMongoDbTests;
@@ -46,6 +47,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.3.0
  */
 @SelectClasses({
+    DelegatedAuthenticationSamlIdPResponseCustomizerTests.class,
     DelegatedClientIdentityProviderRedirectionStrategyTests.class,
     DelegatedClientAuthenticationRedirectActionTests.class,
     DelegatedAuthenticationGenerateClientsActionTests.class,

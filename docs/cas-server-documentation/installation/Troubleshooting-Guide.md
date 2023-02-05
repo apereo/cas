@@ -36,7 +36,7 @@ you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` log
 
 Yes. [Study this](#review-logs).
 
-## How do I tune/extend MongoDb, MySQL, Hazelcas, Docker, etc?
+## How do I tune/extend MongoDb, MySQL, Hazelcast, Docker, etc?
 
 If you have a question about tuning and configuration of external components utilized by CAS
 and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
