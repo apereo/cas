@@ -32,6 +32,7 @@ public class DelegatedAuthenticationSamlIdPResponseCustomizer implements SamlIdP
         if (attributes.containsKey(Pac4jConstants.CLIENT_NAME)) {
             val clientNames = CollectionUtils.toCollection(attributes.get(Pac4jConstants.CLIENT_NAME));
             clientNames.forEach(clientName -> builtClients.findClient(clientName.toString())
+                .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
                     assertion.getAuthnStatements().forEach(authnStatement -> {

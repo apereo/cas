@@ -9,10 +9,13 @@ async function cleanUp() {
 }
 
 (async () => {
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
+    console.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
+    
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
-        const browser = await puppeteer.launch(cas.browserOptions());
-        const page = await cas.newPage(browser);
-
         console.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
         await page.waitForTimeout(3000);
