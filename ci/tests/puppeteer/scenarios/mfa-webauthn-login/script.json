@@ -3,6 +3,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--logging.level.org.apereo.cas=debug",
     
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
