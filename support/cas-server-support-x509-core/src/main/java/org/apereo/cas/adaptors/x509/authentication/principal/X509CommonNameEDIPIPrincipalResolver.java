@@ -31,7 +31,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        val subjectDn = certificate.getSubjectDN().getName();
+        val subjectDn = certificate.getSubjectX500Principal().getName();
         LOGGER.debug("Creating principal based on subject DN [{}]", subjectDn);
         if (StringUtils.isBlank(subjectDn)) {
             return getAlternatePrincipal(certificate);

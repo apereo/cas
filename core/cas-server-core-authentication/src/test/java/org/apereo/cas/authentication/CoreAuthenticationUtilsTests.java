@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
@@ -8,6 +9,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -249,6 +251,7 @@ public class CoreAuthenticationUtilsTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
             principal, personDirectory);
         assertFalse(principalResolutionContext.isUseCurrentPrincipalId());
         assertTrue(principalResolutionContext.isResolveAttributes());
@@ -266,6 +269,7 @@ public class CoreAuthenticationUtilsTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
             principal, personDirectory);
         assertTrue(principalResolutionContext2.isUseCurrentPrincipalId());
         assertFalse(principalResolutionContext2.isResolveAttributes());
@@ -283,6 +287,7 @@ public class CoreAuthenticationUtilsTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
             principal, personDirectory);
         assertFalse(principalResolutionContext3.isUseCurrentPrincipalId());
         assertTrue(principalResolutionContext3.isResolveAttributes());
@@ -294,6 +299,7 @@ public class CoreAuthenticationUtilsTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             new StubPersonAttributeDao(Collections.<String, List<Object>>emptyMap()),
             CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD),
+            mock(ServicesManager.class), mock(AttributeDefinitionStore.class),
             personDirectory);
         assertTrue(principalResolutionContext4.isUseCurrentPrincipalId());
         assertFalse(principalResolutionContext4.isResolveAttributes());

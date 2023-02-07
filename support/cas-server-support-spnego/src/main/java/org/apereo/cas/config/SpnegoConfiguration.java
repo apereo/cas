@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -117,6 +118,10 @@ public class SpnegoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -127,7 +132,9 @@ public class SpnegoConfiguration {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
             casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory,
-            attributeRepository, attributeMerger, SpnegoPrincipalResolver.class, spnegoPrincipal, personDirectory);
+            attributeRepository, attributeMerger, SpnegoPrincipalResolver.class,
+            servicesManager, attributeDefinitionStore,
+            spnegoPrincipal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

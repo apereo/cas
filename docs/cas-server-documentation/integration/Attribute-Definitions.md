@@ -75,7 +75,7 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `patternFormat` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `encrypted` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
-- 
+
 {% tabs attrdefinitions %}
 
 {% tab attrdefinitions Basic %}

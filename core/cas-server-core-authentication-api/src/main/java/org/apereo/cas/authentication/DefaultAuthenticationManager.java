@@ -129,22 +129,15 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             .forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
     }
 
-    /**
-     * Resolve principal.
-     *
-     * @param handler    the handler name
-     * @param resolver   the resolver
-     * @param credential the credential
-     * @param principal  the current authenticated principal from a handler, if any.
-     * @return the principal
-     */
     protected Principal resolvePrincipal(final AuthenticationHandler handler, final PrincipalResolver resolver,
-                                         final Credential credential, final Principal principal) {
+                                         final Credential credential, final Principal principal,
+                                         final Service service) {
         if (resolver.supports(credential)) {
             try {
-                val p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
-                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
-                return p;
+                val resolved = resolver.resolve(credential, Optional.ofNullable(principal),
+                    Optional.ofNullable(handler), Optional.ofNullable(service));
+                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, resolved, credential);
+                return resolved;
             } catch (final Exception e) {
                 LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential);
                 LoggingUtils.error(LOGGER, e);
@@ -197,7 +190,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         var principal = result.getPrincipal();
 
         if (resolver != null) {
-            principal = resolvePrincipal(handler, resolver, credential, principal);
+            principal = resolvePrincipal(handler, resolver, credential, principal, service);
         }
 
         if (principal == null) {
