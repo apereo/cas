@@ -70,7 +70,7 @@ public class PrincipalAttributeRepositoryFetcher {
         query.put("username", principalId.trim());
 
         if (service != null) {
-            query.put(Service.class.getName(), service);
+            query.put("service", service.getId());
         }
 
         LOGGER.debug("Fetching person attributes for query [{}]", query);
