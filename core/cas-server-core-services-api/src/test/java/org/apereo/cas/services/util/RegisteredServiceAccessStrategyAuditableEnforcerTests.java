@@ -17,7 +17,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.HashMap;
@@ -36,12 +36,10 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
-    private static AuditableExecutionResult executeAccessStrategy(final CasConfigurationProperties properties, final AuditableContext context) {
-        return new RegisteredServiceAccessStrategyAuditableEnforcer(properties).execute(context);
-    }
-
     private static AuditableExecutionResult executeAccessStrategy(final AuditableContext context) {
-        return executeAccessStrategy(new CasConfigurationProperties(), context);
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        return new RegisteredServiceAccessStrategyAuditableEnforcer(appCtx).execute(context);
     }
 
     private static RegisteredService createRegisteredService(final boolean enabled) {
@@ -63,7 +61,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     private static TicketGrantingTicket createTicketGrantingTicket() {
-        val mock = Mockito.mock(TicketGrantingTicket.class);
+        val mock = mock(TicketGrantingTicket.class);
         val authentication = createAuthentication();
         when(mock.getAuthentication()).thenReturn(authentication);
         when(mock.isRoot()).thenReturn(true);
@@ -95,7 +93,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         val context = AuditableContext.builder().registeredService(service).build();
         val props = new CasConfigurationProperties();
         props.getAccessStrategy().getGroovy().setLocation(new ClassPathResource("GroovyAccessStrategy.groovy"));
-        val result = executeAccessStrategy(props, context);
+        val result = executeAccessStrategy(context);
         assertTrue(result.isExecutionFailure());
         assertTrue(result.getException().isPresent());
     }

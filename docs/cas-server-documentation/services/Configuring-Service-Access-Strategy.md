@@ -37,4 +37,5 @@ attribute release and filters.</p></div>
 | OpenFGA               | See [this guide](Service-Access-Strategy-OpenFGA.html).         |
 | Open Policy Agent     | See [this guide](Service-Access-Strategy-OpenPolicyAgent.html). |
 | Chaining              | See [this guide](Service-Access-Strategy-Chain.html).           |
+| Custom                | See [this guide](Service-Access-Strategy-Custom.html).          |
 

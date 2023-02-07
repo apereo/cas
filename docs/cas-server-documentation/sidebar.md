@@ -411,6 +411,7 @@ layout: null
         *   [HTTP](/cas/{{ version }}/services/Service-Access-Strategy-Http.html)
         *   [REST](/cas/{{ version }}/services/Service-Access-Strategy-REST.html)
         *   [Time](/cas/{{ version }}/services/Service-Access-Strategy-Time.html)
+        *   [Custom](/cas/{{ version }}/services/Service-Access-Strategy-Custom.html)
         *   [Unauthorized URL](/cas/{{ version }}/services/Service-Access-Strategy-URL.html)
     *   [Attribute Release](/cas/{{ version }}/integration/Attribute-Release-Policies.html)
     *   [Proxy Policy](/cas/{{ version }}/services/Configuring-Service-Proxy-Policy.html)

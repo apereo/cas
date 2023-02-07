@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
@@ -369,7 +370,11 @@ public class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlan casWebflowExecutionPlan(final ConfigurableApplicationContext applicationContext) {
-            val configurers = applicationContext.getBeansOfType(CasWebflowExecutionPlanConfigurer.class).values();
+            val configurers = applicationContext.getBeansOfType(CasWebflowExecutionPlanConfigurer.class)
+                .values()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .toList();
             val plan = new DefaultCasWebflowExecutionPlan();
             configurers.forEach(c -> c.configureWebflowExecutionPlan(plan));
             plan.execute();
