@@ -29,8 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
@@ -57,6 +59,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
     @SpringBootTest(classes = {
         CasPersonDirectoryTestConfiguration.class,
+        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class
     },
@@ -298,6 +301,14 @@ public class ReturnAllowedAttributeReleasePolicyTests {
             assertTrue(attributes.containsKey("principalId"));
             assertTrue(attributes.containsKey("cn"));
             assertTrue(attributes.containsKey("mail"));
+        }
+    }
+
+    @TestConfiguration
+    public static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
+        @Bean
+        public ServicesManager servicesManager() {
+            return mock(ServicesManager.class);
         }
     }
 }
