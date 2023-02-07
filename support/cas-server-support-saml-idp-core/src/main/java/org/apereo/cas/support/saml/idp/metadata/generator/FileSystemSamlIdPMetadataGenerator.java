@@ -62,10 +62,6 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @Override
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
         val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
-        val parentFile = metadataFile.getParentFile();
-        if (parentFile.exists()) {
-            LOGGER.debug("Ceating directory [{}]:[{}]", parentFile, parentFile.mkdir());
-        }
         LOGGER.debug("Writing SAML2 metadata to [{}]", metadataFile);
         
         val mdProps = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata();
@@ -132,6 +128,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
             LOGGER.info("Key file [{}] already exists, and will be deleted", key.getCanonicalPath());
             FileUtils.forceDelete(key);
         }
+        LOGGER.debug("Writing SAML2 key file to [{}]", key.getPath());
+        LOGGER.debug("Writing SAML2 certificate file to [{}]", certificate.getPath());
         try (val keyWriter = Files.newBufferedWriter(key.toPath(), StandardCharsets.UTF_8);
              val certWriter = Files.newBufferedWriter(certificate.toPath(), StandardCharsets.UTF_8)) {
             getConfigurationContext().getSamlIdPCertificateAndKeyWriter()
