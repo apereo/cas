@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -28,7 +29,7 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler) {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
         return this.principalFactory.createPrincipal(credential.getId());
     }
 

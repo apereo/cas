@@ -2,11 +2,13 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -60,15 +62,25 @@ public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     @Test
     public void verifyResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "P@ssw0rd"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("description"));
         assertTrue(p.getAttributes().containsKey("objectGUID"));
