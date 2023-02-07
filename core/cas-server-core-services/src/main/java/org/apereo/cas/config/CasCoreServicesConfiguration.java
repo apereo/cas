@@ -21,10 +21,12 @@ import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
@@ -43,6 +45,7 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -157,10 +160,26 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditableExecution registeredServiceAccessStrategyEnforcer(final CasConfigurationProperties casProperties) {
-            return new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties);
+        public AuditableExecution registeredServiceAccessStrategyEnforcer(final ConfigurableApplicationContext applicationContext) {
+            return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext);
         }
 
+        @ConditionalOnMissingBean(name = "groovyRegisteredServiceAccessStrategyEnforcer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RegisteredServiceAccessStrategyEnforcer groovyRegisteredServiceAccessStrategyEnforcer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(RegisteredServiceAccessStrategyEnforcer.class)
+                .when(BeanCondition.on("cas.access-strategy.groovy.location").exists()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val location = casProperties.getAccessStrategy().getGroovy().getLocation();
+                    return new GroovyRegisteredServiceAccessStrategyEnforcer(new WatchableGroovyScriptResource(location));
+                })
+                .otherwiseProxy()
+                .get();
+        }
     }
 
     @Configuration(value = "CasCoreServicesStrategyConfiguration", proxyBeanMethods = false)

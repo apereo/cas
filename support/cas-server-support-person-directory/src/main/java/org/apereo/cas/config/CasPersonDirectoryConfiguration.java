@@ -18,6 +18,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -79,6 +80,7 @@ public class CasPersonDirectoryConfiguration {
             val builders = applicationContext.getBeansOfType(AttributeDefinitionStoreConfigurer.class).values();
             builders
                 .stream()
+                .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .forEach(cfg -> cfg.configure(store));
             return store;

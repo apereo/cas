@@ -53,7 +53,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
     private OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
             new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties),
+            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext),
             oauthRequestParameterResolver);
     }
 

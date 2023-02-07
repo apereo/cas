@@ -1,5 +1,7 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -72,6 +74,7 @@ public class JacksonObjectMapperFactory {
         AnnotationAwareOrderComparator.sort(serializers);
         val injectedValues = (Map) serializers
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(JacksonObjectMapperCustomizer::getInjectableValues)
             .flatMap(entry -> entry.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
