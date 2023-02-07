@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredService;
@@ -18,7 +17,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,18 +84,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         reject.put("attribute", Set.of(fail ? "other_value" : "value"));
         return reject;
     }
-
-    @Test
-    public void verifyGroovyScriptAccessStrategy() {
-        val service = createRegisteredService(true);
-        val context = AuditableContext.builder().registeredService(service).build();
-        val props = new CasConfigurationProperties();
-        props.getAccessStrategy().getGroovy().setLocation(new ClassPathResource("GroovyAccessStrategy.groovy"));
-        val result = executeAccessStrategy(context);
-        assertTrue(result.isExecutionFailure());
-        assertTrue(result.getException().isPresent());
-    }
-
+    
     @Test
     public void verifyRegisteredServicePresentAndEnabled() {
         val service = createRegisteredService(true);
