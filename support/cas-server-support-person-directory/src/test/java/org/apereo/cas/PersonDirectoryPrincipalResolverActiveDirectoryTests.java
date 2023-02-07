@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].ldap-url=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_LDAP_URL,
     "cas.authn.attribute-repository.ldap[0].use-start-tls=true",
     "cas.authn.attribute-repository.ldap[0].base-dn=dc=cas,dc=example,dc=org",
-    "cas.authn.attribute-repository.ldap[0].search-filter=(sAMAccountName={user})",
+    "cas.authn.attribute-repository.ldap[0].search-filter=(sAMAccountName={username})",
     "cas.authn.attribute-repository.ldap[0].trust-store=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_TRUST_STORE,
     "cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
     "cas.authn.attribute-repository.ldap[0].trust-manager=ANY",
