@@ -26,6 +26,7 @@ import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocatorTes
 import org.apereo.cas.services.DefaultServicesManagerTests;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategyTests;
 import org.apereo.cas.services.GroovyAuthenticationHandlerResolverTests;
+import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyEnforcerTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategyTests;
@@ -117,6 +118,7 @@ import org.junit.platform.suite.api.Suite;
     RegisteredServiceReverseMappedRegexAttributeFilterTests.class,
     ReturnEncryptedAttributeReleasePolicyTests.class,
     UnauthorizedServiceExceptionTests.class,
+    GroovyRegisteredServiceAccessStrategyEnforcerTests.class,
     OpenPolicyAgentRegisteredServiceAccessStrategyTests.class,
     DefaultServicesManagerRegisteredServiceLocatorTests.class,
     RegisteredServiceChainingAttributeFilterTests.class,

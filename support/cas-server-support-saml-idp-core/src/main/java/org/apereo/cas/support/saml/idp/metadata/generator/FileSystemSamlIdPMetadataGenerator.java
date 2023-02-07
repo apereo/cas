@@ -62,7 +62,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @Override
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
         val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
-
+        LOGGER.debug("Writing SAML2 metadata to [{}]", metadataFile);
+        
         val mdProps = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata();
         if (mdProps.getFileSystem().isSignMetadata()) {
             val resolvedCert = getConfigurationContext().getSamlIdPMetadataLocator().resolveSigningCertificate(registeredService);
@@ -79,6 +80,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         } else {
             FileUtils.write(metadataFile, metadata, StandardCharsets.UTF_8);
         }
+        LOGGER.debug("Wrote SAML2 metadata to [{}]", metadataFile);
         return metadata;
     }
 
