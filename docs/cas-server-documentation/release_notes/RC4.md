@@ -9,8 +9,8 @@ category: Planning
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
 that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks,
-statistics or completion of features. To gain confidence in a particular
-release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+statistics or completion of features. To gain confidence in a particular release, it is strongly recommended that 
+you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
@@ -35,7 +35,7 @@ maintenance and release planning, especially when it comes to addressing critica
 ## System Requirements
 
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
-such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+such as Amazon Corretto, Zulu, eclipse Temurin, etc should work and are implicitly supported.
 
 ## New & Noteworthy
 
@@ -103,6 +103,7 @@ attempt to process the request from the browser's local storage with sufficient 
 - The incorrect generation of `TST` tickets used to track single sign-on sessions across multiple authentication flows is now corrected.
 - Generating SAML2 metadata certificates and keys is now updated to use the more secure `SHA512withRSA` and `4096` for the algorithm and key size. 
 - Internal modifications to the Ticket Registry APIs to allow a registry to query tickets by authentication/principal attributes.
+- CAS can now be extended to allow for [custom application access strategy](../services/Service-Access-Strategy-Custom.html) and authorization rules.
 - [Delegated authentication](../integration/Delegate-Authentication.html) gains support for front-channel logout requests when initiated by the external/proxy identity provider.
 
 ## Library Upgrades
@@ -129,3 +130,4 @@ attempt to process the request from the browser's local storage with sufficient 
 - Gradle
 - Lombok
 - Hypersistence
+- Jakarta WS
