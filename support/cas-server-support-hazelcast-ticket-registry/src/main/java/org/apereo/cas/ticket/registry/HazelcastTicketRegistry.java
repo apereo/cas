@@ -1,15 +1,17 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,13 +37,16 @@ import java.util.stream.StreamSupport;
  * @since 4.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements AutoCloseable, DisposableBean {
     private final HazelcastInstance hazelcastInstance;
+    private final HazelcastTicketRegistryProperties properties;
 
-    private final TicketCatalog ticketCatalog;
-
-    private final long pageSize;
+    public HazelcastTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
+                                   final TicketCatalog ticketCatalog, final HazelcastInstance hazelcastInstance, final HazelcastTicketRegistryProperties properties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.hazelcastInstance = hazelcastInstance;
+        this.properties = properties;
+    }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
@@ -131,9 +136,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .stream()
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
             .flatMap(tickets -> {
-                if (pageSize > 0) {
+                if (properties.getPageSize() > 0) {
                     return tickets.stream()
-                        .limit(pageSize)
+                        .limit(properties.getPageSize())
                         .map(HazelcastTicketHolder::getTicket).toList()
                         .stream();
                 }

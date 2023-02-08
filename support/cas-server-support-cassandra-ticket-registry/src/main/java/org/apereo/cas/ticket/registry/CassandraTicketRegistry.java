@@ -7,12 +7,12 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.Statement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,16 +33,22 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class CassandraTicketRegistry extends AbstractTicketRegistry implements DisposableBean, InitializingBean {
-
-    private final TicketCatalog ticketCatalog;
 
     private final CassandraSessionFactory cassandraSessionFactory;
 
     private final CassandraTicketRegistryProperties properties;
 
-    private final TicketSerializationManager ticketSerializationManager;
+    public CassandraTicketRegistry(final CipherExecutor cipherExecutor,
+                                   final TicketSerializationManager ticketSerializationManager,
+                                   final TicketCatalog ticketCatalog,
+                                   final CassandraSessionFactory cassandraSessionFactory,
+                                   final CassandraTicketRegistryProperties properties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.cassandraSessionFactory = cassandraSessionFactory;
+        this.properties = properties;
+    }
+
 
     private static int getTimeToLive(final Ticket ticket) {
         val timeToLive = ticket.getExpirationPolicy().getTimeToLive();

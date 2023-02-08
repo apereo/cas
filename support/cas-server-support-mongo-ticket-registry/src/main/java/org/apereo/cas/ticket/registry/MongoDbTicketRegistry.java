@@ -8,10 +8,10 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.mongodb.client.MongoCollection;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -43,15 +43,17 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final int PAGE_SIZE = 500;
 
-    private final TicketCatalog ticketCatalog;
-
     private final MongoOperations mongoTemplate;
 
-    private final TicketSerializationManager ticketSerializationManager;
+    public MongoDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog,
+                                 final MongoOperations mongoTemplate) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.mongoTemplate = mongoTemplate;
+    }
 
     /**
      * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
@@ -72,7 +74,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket.getId());
-            val holder = buildTicketAsDocument(ticket);
+            val document = buildTicketAsDocument(ticket);
             val metadata = ticketCatalog.find(ticket);
             if (metadata == null) {
                 LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
@@ -81,7 +83,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
-            mongoTemplate.insert(holder, collectionName);
+            mongoTemplate.insert(document, collectionName);
             LOGGER.debug("Added ticket [{}]", ticket.getId());
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]", ticket);
@@ -259,7 +261,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     protected MongoDbTicketDocument buildTicketAsDocument(final Ticket ticket) throws Exception {
         val encTicket = encodeTicket(ticket);
 
-        val json = serializeTicketForMongoDocument(encTicket);
+        val json = serializeTicket(encTicket);
         FunctionUtils.throwIf(StringUtils.isBlank(json),
             () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
         LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
@@ -292,10 +294,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         });
-    }
-
-    protected String serializeTicketForMongoDocument(final Ticket ticket) {
-        return ticketSerializationManager.serializeTicket(ticket);
     }
 
     protected Ticket deserializeTicketFromMongoDocument(final MongoDbTicketDocument document) {

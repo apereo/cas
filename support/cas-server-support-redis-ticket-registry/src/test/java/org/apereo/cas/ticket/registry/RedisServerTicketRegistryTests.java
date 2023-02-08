@@ -122,8 +122,8 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         assertNotNull(tgt);
 
         val cache = Caffeine.newBuilder().initialCapacity(100).<String, Ticket>build();
-        val secondRegistry = new RedisTicketRegistry(ticketRedisTemplate, cache, mock(RedisTicketRegistryMessagePublisher.class));
-        secondRegistry.setCipherExecutor(CipherExecutor.noOp());
+        val secondRegistry = new RedisTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
+            ticketRedisTemplate, cache, mock(RedisTicketRegistryMessagePublisher.class));
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);
         assertTrue(secondRegistry.getTickets().isEmpty());

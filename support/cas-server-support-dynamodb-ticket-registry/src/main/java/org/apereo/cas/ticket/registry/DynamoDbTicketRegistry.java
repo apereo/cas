@@ -2,10 +2,12 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -28,10 +30,17 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     private final DynamoDbTicketRegistryFacilitator dbTableService;
+
+    public DynamoDbTicketRegistry(final CipherExecutor cipherExecutor,
+                                  final TicketSerializationManager ticketSerializationManager,
+                                  final TicketCatalog ticketCatalog,
+                                  final DynamoDbTicketRegistryFacilitator dbTableService) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.dbTableService = dbTableService;
+    }
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {

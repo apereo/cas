@@ -8,10 +8,11 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,12 +41,8 @@ import java.util.stream.Stream;
  * @since 3.2.1
  */
 @Slf4j
-@RequiredArgsConstructor
 @Getter
 public class JpaTicketRegistry extends AbstractTicketRegistry {
-    private final LockModeType lockType;
-
-    private final TicketCatalog ticketCatalog;
 
     private final JpaBeanFactory jpaBeanFactory;
 
@@ -55,6 +52,17 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @PersistenceContext(unitName = "jpaTicketRegistryContext")
     private EntityManager entityManager;
+
+    public JpaTicketRegistry(final CipherExecutor cipherExecutor,
+                             final TicketSerializationManager ticketSerializationManager,
+                             final TicketCatalog ticketCatalog, final JpaBeanFactory jpaBeanFactory,
+                             final TransactionOperations transactionTemplate,
+                             final CasConfigurationProperties casProperties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.jpaBeanFactory = jpaBeanFactory;
+        this.transactionTemplate = transactionTemplate;
+        this.casProperties = casProperties;
+    }
 
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
@@ -93,7 +101,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     val sql = String.format("SELECT t FROM %s t WHERE t.id = :id", factory.getEntityName());
                     val query = entityManager.createQuery(sql, factory.getType());
                     query.setParameter("id", encTicketId);
-                    query.setLockMode(this.lockType);
+                    query.setLockMode(casProperties.getTicket().getRegistry().getJpa().getTicketLockType());
                     val ticket = query.getSingleResult();
                     val entity = getJpaTicketEntityFactory().toTicket(ticket);
                     val result = decodeTicket(entity);
@@ -126,7 +134,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             val factory = getJpaTicketEntityFactory();
             val sql = String.format("SELECT t FROM %s t", factory.getEntityName());
             val query = entityManager.createQuery(sql, factory.getType());
-            query.setLockMode(this.lockType);
+            query.setLockMode(casProperties.getTicket().getRegistry().getJpa().getTicketLockType());
 
             return query
                 .getResultStream()

@@ -7,15 +7,16 @@ import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.google.common.io.ByteSource;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +43,17 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @Slf4j
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
+    @Setter
     protected CipherExecutor cipherExecutor;
+
+    protected final TicketSerializationManager ticketSerializationManager;
+
+    protected final TicketCatalog ticketCatalog;
 
     /**
      * Gets principal id from ticket.
@@ -332,6 +337,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
+    }
+
+    protected String serializeTicket(final Ticket ticket) {
+        return ticketSerializationManager.serializeTicket(ticket);
     }
 
     private Ticket createEncodedTicket(final Ticket ticket) throws Exception {

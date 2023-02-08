@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"  />
-        <Logger name="org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests" level="info"  />
+        <Logger name="org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests" level="warn"  />
         <Logger name="org.springframework" level="off">
             <AppenderRef ref="console"/>
         </Logger>
