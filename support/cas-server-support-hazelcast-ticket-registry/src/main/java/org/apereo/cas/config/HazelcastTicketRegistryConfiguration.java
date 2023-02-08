@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -51,15 +52,17 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val r = new HazelcastTicketRegistry(casTicketRegistryHazelcastInstance, ticketCatalog, hz.getPageSize());
-        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
-        return r;
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast");
+        return new HazelcastTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+            casTicketRegistryHazelcastInstance, hz);
     }
 
     @Bean(destroyMethod = "shutdown")

@@ -7,14 +7,17 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CachedTicketExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.RedisCompositeKey;
+import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pub.DefaultRedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.sub.DefaultRedisTicketRegistryMessageListener;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -119,7 +122,7 @@ public class RedisTicketRegistryConfiguration {
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
             @Qualifier("ticketRedisTemplate")
-            final CasRedisTemplate<String, Ticket> ticketRedisTemplate) {
+            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate) {
             return new DefaultRedisTicketRegistryMessagePublisher(ticketRedisTemplate, redisTicketRegistryMessageIdentifier);
         }
 
@@ -144,7 +147,7 @@ public class RedisTicketRegistryConfiguration {
         @Bean(name = {"redisTemplate", "ticketRedisTemplate"})
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketRedisTemplate")
-        public CasRedisTemplate<String, Ticket> ticketRedisTemplate(
+        public CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("redisTicketConnectionFactory")
             final RedisConnectionFactory redisTicketConnectionFactory) {
@@ -166,6 +169,10 @@ public class RedisTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final TicketCatalog ticketCatalog,
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             @Qualifier("redisTicketRegistryCache")
             final Cache<String, Ticket> redisTicketRegistryCache,
             @Qualifier("redisTicketRegistryMessagePublisher")
@@ -173,16 +180,16 @@ public class RedisTicketRegistryConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("ticketRedisTemplate")
-            final CasRedisTemplate<String, Ticket> ticketRedisTemplate) {
+            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate) {
             return BeanSupplier.of(TicketRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
-                    val registry = new RedisTicketRegistry(ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher);
-                    registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
-                    return registry;
+                    val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
+                    return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+                        ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher);
                 })
-                .otherwise(DefaultTicketRegistry::new)
+                .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();
         }
     }

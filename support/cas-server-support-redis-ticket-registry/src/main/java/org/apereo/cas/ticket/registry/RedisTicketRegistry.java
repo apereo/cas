@@ -3,21 +3,26 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hjson.JsonValue;
+import org.hjson.Stringify;
 import org.springframework.data.redis.core.RedisCallback;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -30,14 +35,25 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class RedisTicketRegistry extends AbstractTicketRegistry {
 
-    private final CasRedisTemplate<String, Ticket> redisTemplate;
+    private final CasRedisTemplate<String, RedisTicketDocument> redisTemplate;
 
     private final Cache<String, Ticket> ticketCache;
 
     private final RedisTicketRegistryMessagePublisher messagePublisher;
+
+    public RedisTicketRegistry(final CipherExecutor cipherExecutor,
+                               final TicketSerializationManager ticketSerializationManager,
+                               final TicketCatalog ticketCatalog,
+                               final CasRedisTemplate<String, RedisTicketDocument> redisTemplate,
+                               final Cache<String, Ticket> ticketCache,
+                               final RedisTicketRegistryMessagePublisher messagePublisher) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.redisTemplate = redisTemplate;
+        this.ticketCache = ticketCache;
+        this.messagePublisher = messagePublisher;
+    }
 
     @Override
     public long deleteAll() {
@@ -80,11 +96,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 .principal(digest(userId))
                 .prefix(ticket.getPrefix())
                 .build();
-            val encodeTicket = encodeTicket(ticket);
+
             val timeout = RedisCompositeKey.getTimeout(ticket);
-            ticketCache.put(redisKey.getId(), ticket);
             val redisKeyPattern = redisKey.toKeyPattern();
-            redisTemplate.boundValueOps(redisKeyPattern).set(encodeTicket, timeout, TimeUnit.SECONDS);
+
+            val ticketDocument = buildTicketAsDocument(ticket);
+            redisTemplate.boundValueOps(redisKeyPattern).set(ticketDocument, timeout, TimeUnit.SECONDS);
+
+            ticketCache.put(redisKey.getId(), ticket);
             messagePublisher.add(ticket);
         });
     }
@@ -97,16 +116,23 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 .id(digest(ticketId))
                 .prefix(prefix)
                 .build();
-            val ticket = ticketCache.get(redisKey.getId(), __ -> {
-                val redisKeyPattern = redisKey.toKeyPattern();
-                return scanKeys(redisKeyPattern)
-                    .map(key -> redisTemplate.boundValueOps(key).get())
-                    .filter(Objects::nonNull)
-                    .map(this::decodeTicket)
-                    .filter(predicate)
-                    .findFirst()
-                    .orElse(null);
-            });
+
+            val ticket = Optional.ofNullable(ticketCache.getIfPresent(redisKey.getId()))
+                .map(this::decodeTicket)
+                .filter(predicate)
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    val redisKeyPattern = redisKey.toKeyPattern();
+                    return scanKeys(redisKeyPattern)
+                        .map(key -> redisTemplate.boundValueOps(key).get())
+                        .filter(Objects::nonNull)
+                        .map(this::deserializeAsTicket)
+                        .map(this::decodeTicket)
+                        .filter(predicate)
+                        .findFirst()
+                        .orElse(null);
+                });
             if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
                 ticketCache.put(redisKey.getId(), ticket);
                 return ticket;
@@ -130,6 +156,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return scanKeys()
             .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
+            .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
             .filter(Objects::nonNull)
             .peek(ticket -> ticketCache.put(ticket.getId(), ticket));
@@ -139,7 +166,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         return FunctionUtils.doAndHandle(() -> {
             LOGGER.debug("Updating ticket [{}]", ticket);
-            val encodeTicket = encodeTicket(ticket);
             val userId = getPrincipalIdFrom(ticket);
             val redisKey = RedisCompositeKey.builder()
                 .id(digest(ticket.getId()))
@@ -149,10 +175,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             val redisKeyPattern = redisKey.toKeyPattern();
             LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKeyPattern, ticket);
             val timeout = RedisCompositeKey.getTimeout(ticket);
-            redisTemplate.boundValueOps(redisKeyPattern).set(encodeTicket, timeout, TimeUnit.SECONDS);
+
+            val ticketDocument = buildTicketAsDocument(ticket);
+            redisTemplate.boundValueOps(redisKeyPattern).set(ticketDocument, timeout, TimeUnit.SECONDS);
             ticketCache.put(ticket.getId(), ticket);
             messagePublisher.update(ticket);
-            return encodeTicket;
+            return ticket;
         });
     }
 
@@ -166,6 +194,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return scanKeys(redisKey)
             .map(key -> redisTemplate.boundValueOps(key).get())
             .filter(Objects::nonNull)
+            .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
             .filter(Objects::nonNull);
     }
@@ -205,5 +234,29 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private Stream<String> scanKeys(final String key) {
         LOGGER.debug("Loading keys for pattern [{}]", key);
         return Objects.requireNonNull(redisTemplate.keys(key)).stream();
+    }
+
+    protected RedisTicketDocument buildTicketAsDocument(final Ticket ticket) {
+        return FunctionUtils.doUnchecked(() -> {
+            val encTicket = encodeTicket(ticket);
+            val json = serializeTicket(encTicket);
+            FunctionUtils.throwIf(StringUtils.isBlank(json),
+                () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
+            LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
+                JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+
+            val principal = getPrincipalIdFrom(ticket);
+            return RedisTicketDocument.builder()
+                .type(encTicket.getClass().getName())
+                .ticketId(encTicket.getId())
+                .json(json)
+                .principal(digest(principal))
+                .attributes(collectAndDigestTicketAttributes(ticket))
+                .build();
+        });
+    }
+
+    protected Ticket deserializeAsTicket(final RedisTicketDocument document) {
+        return ticketSerializationManager.deserializeTicket(document.getJson(), document.getType());
     }
 }
