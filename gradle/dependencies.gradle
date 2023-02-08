@@ -590,7 +590,7 @@ ext.libraries = [
                 }
         ],
         hibernate                  : [
-                dependencies.create("io.hypersistence:hypersistence-utils-hibernate-60:$hibernateTypesVersion") {
+                dependencies.create("io.hypersistence:hypersistence-utils-hibernate-60:$hypersistenceVersion") {
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                 },
                 dependencies.create("org.hibernate.orm:hibernate-graalvm:$hibernateVersion") {
@@ -894,7 +894,7 @@ ext.libraries = [
                 dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbApiVersion") {
+                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbRuntimeVersion") {
                     transitive = false
                 },
                 dependencies.create("jakarta.xml.soap:jakarta.xml.soap-api:$jakartaSoapApiVersion") {
