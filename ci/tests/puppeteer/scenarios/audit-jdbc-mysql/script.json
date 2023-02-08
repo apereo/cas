@@ -4,6 +4,7 @@
     "docker": "true"
   },
   "properties": [
+    "--spring.main.lazy-initialization=false=false",
     "--cas.jdbc.show-sql=false",
 
     "--logging.level.org.apereo.cas=info",
