@@ -233,6 +233,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
+        if (searchCommands.isEmpty()) {
+            return super.getSessionsWithAttributes(queryAttributes);
+        }
         return Stream.empty();
     }
 
