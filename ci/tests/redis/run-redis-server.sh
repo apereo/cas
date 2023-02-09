@@ -18,7 +18,3 @@ else
     echo "Redis + sentinel docker images failed to start."
     exit 1
 fi
-
-echo "Running RedisStack for full-text searching and indexing"
-docker stop redisstack || true && docker rm redisstack || true
-docker run --rm -d --name "redisstack" -p 10001:6379 -p 13333:8001 redis/redis-stack:latest

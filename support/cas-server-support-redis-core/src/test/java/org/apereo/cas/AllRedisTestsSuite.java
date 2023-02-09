@@ -13,7 +13,6 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0
  */
 @SelectClasses({
-    RedisObjectFactoryWithSearchTests.class,
     RedisObjectFactoryTests.class,
     RedisUtilsTests.class
 })

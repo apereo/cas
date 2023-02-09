@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
+import com.redis.lettucemod.search.Field;
 import io.lettuce.core.ReadFrom;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,14 @@ public class RedisObjectFactoryTests {
         props.setHost("localhost");
         props.setPort(6379);
         val command = RedisObjectFactory.newRedisSearchCommands(props);
-        assertTrue(command.isEmpty());
+        assertFalse(command.isEmpty());
+        val indexName = UUID.randomUUID().toString();
+        val result = command.get().ftCreate(indexName,
+            Field.text("name").build(),
+            Field.numeric("id").build());
+        assertEquals("OK", result);
+        val info = command.get().ftInfo(indexName);
+        assertNotNull(info);
     }
 
 
