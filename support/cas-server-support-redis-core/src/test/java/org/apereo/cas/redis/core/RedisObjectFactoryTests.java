@@ -31,7 +31,7 @@ public class RedisObjectFactoryTests {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
-        val command = RedisObjectFactory.newRedisSearchCommands(props);
+        val command = RedisObjectFactory.newRedisModulesCommands(props);
         assertFalse(command.isEmpty());
         val indexName = UUID.randomUUID().toString();
         val result = command.get().ftCreate(indexName,

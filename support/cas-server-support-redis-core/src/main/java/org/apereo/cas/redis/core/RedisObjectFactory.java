@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import com.redis.lettucemod.RedisModulesClient;
-import com.redis.lettucemod.api.sync.RediSearchCommands;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.RedisCommandExecutionException;
@@ -61,12 +61,14 @@ public class RedisObjectFactory {
      */
     public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
         val template = new DefaultCasRedisTemplate<K, V>();
-        val serializer = new StringRedisSerializer();
-        val jdk = new GenericJackson2JsonRedisSerializer();
-        template.setKeySerializer(serializer);
-        template.setValueSerializer(jdk);
-        template.setHashValueSerializer(jdk);
-        template.setHashKeySerializer(serializer);
+
+        val stringRedisSerializer = new StringRedisSerializer();
+        val jsonSerializer = new GenericJackson2JsonRedisSerializer();
+
+        template.setKeySerializer(stringRedisSerializer);
+        template.setValueSerializer(jsonSerializer);
+        template.setHashValueSerializer(jsonSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
         template.setConnectionFactory(connectionFactory);
         return template;
     }
@@ -115,7 +117,7 @@ public class RedisObjectFactory {
      * @param redis the redis
      * @return the redis search commands
      */
-    public static Optional<RediSearchCommands> newRedisSearchCommands(final BaseRedisProperties redis) {
+    public static Optional<RedisModulesCommands> newRedisModulesCommands(final BaseRedisProperties redis) {
         val uriBuilder = RedisURI.builder()
             .withHost(redis.getHost())
             .withPort(redis.getPort())
