@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -123,7 +124,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
 
         val cache = Caffeine.newBuilder().initialCapacity(100).<String, Ticket>build();
         val secondRegistry = new RedisTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
-            ticketRedisTemplate, cache, mock(RedisTicketRegistryMessagePublisher.class));
+            ticketRedisTemplate, cache, mock(RedisTicketRegistryMessagePublisher.class), Optional.empty());
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);
         assertTrue(secondRegistry.getTickets().isEmpty());

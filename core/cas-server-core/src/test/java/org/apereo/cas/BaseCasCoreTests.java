@@ -115,6 +115,7 @@ public abstract class BaseCasCoreTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,

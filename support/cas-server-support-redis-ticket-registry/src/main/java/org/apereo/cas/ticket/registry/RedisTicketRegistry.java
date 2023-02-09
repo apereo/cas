@@ -12,6 +12,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.redis.lettucemod.api.sync.RediSearchCommands;
+import com.redis.lettucemod.search.CreateOptions;
+import com.redis.lettucemod.search.Field;
+import io.lettuce.core.RedisCommandExecutionException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -21,6 +25,8 @@ import org.hjson.Stringify;
 import org.springframework.data.redis.core.RedisCallback;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -37,22 +43,30 @@ import java.util.stream.Stream;
 @Slf4j
 public class RedisTicketRegistry extends AbstractTicketRegistry {
 
+    private static final String SEARCH_INDEX_NAME = RedisTicketDocument.class.getSimpleName() + "Index";
+
     private final CasRedisTemplate<String, RedisTicketDocument> redisTemplate;
 
     private final Cache<String, Ticket> ticketCache;
 
     private final RedisTicketRegistryMessagePublisher messagePublisher;
 
+    private final Optional<RediSearchCommands> searchCommands;
+
     public RedisTicketRegistry(final CipherExecutor cipherExecutor,
                                final TicketSerializationManager ticketSerializationManager,
                                final TicketCatalog ticketCatalog,
                                final CasRedisTemplate<String, RedisTicketDocument> redisTemplate,
                                final Cache<String, Ticket> ticketCache,
-                               final RedisTicketRegistryMessagePublisher messagePublisher) {
+                               final RedisTicketRegistryMessagePublisher messagePublisher,
+                               final Optional<RediSearchCommands> searchCommands) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
         this.redisTemplate = redisTemplate;
         this.ticketCache = ticketCache;
         this.messagePublisher = messagePublisher;
+        this.searchCommands = searchCommands;
+
+        createIndexesIfNecessary();
     }
 
     @Override
@@ -217,6 +231,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return scanKeysAndCount(redisKey);
     }
 
+    @Override
+    public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
+        return Stream.empty();
+    }
+
     private long scanKeysAndCount(final String redisKey) {
         val keys = scanKeys(redisKey).collect(Collectors.toList());
         return keys.isEmpty() ? 0 : Objects.requireNonNull(redisTemplate.countExistingKeys(keys));
@@ -255,6 +274,27 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 .build();
         });
     }
+
+    private void createIndexesIfNecessary() {
+        searchCommands.ifPresent(command -> {
+            val options = CreateOptions.<String, RedisTicketDocument>builder()//
+                .prefix(String.format("%s:", RedisTicketDocument.class.getName())).build();
+            val indexId = Field.text(RedisTicketDocument.FIELD_NAME_ID).build();
+            val indexPrincipal = Field.text(RedisTicketDocument.FIELD_NAME_PRINCIPAL).build();
+            val indexType = Field.text(RedisTicketDocument.FIELD_NAME_TYPE).build();
+            val indexAttributes = Field.text(RedisTicketDocument.FIELD_NAME_ATTRIBUTES).build();
+            try {
+                command.ftCreate(
+                    SEARCH_INDEX_NAME, options,
+                    indexId, indexPrincipal, indexType, indexAttributes);
+            } catch (final RedisCommandExecutionException e) {
+                if (!"Index already exists".equalsIgnoreCase(e.getMessage())) {
+                    throw e;
+                }
+            }
+        });
+    }
+
 
     protected Ticket deserializeAsTicket(final RedisTicketDocument document) {
         return ticketSerializationManager.deserializeTicket(document.getJson(), document.getType());

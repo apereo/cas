@@ -91,6 +91,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCookieConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,

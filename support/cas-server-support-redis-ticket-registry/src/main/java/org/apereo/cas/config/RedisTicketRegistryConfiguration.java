@@ -186,8 +186,10 @@ public class RedisTicketRegistryConfiguration {
                 .supply(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
+
+                    val searchCommands = RedisObjectFactory.newRedisSearchCommands(redis);
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
-                        ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher);
+                        ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher, searchCommands);
                 })
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();

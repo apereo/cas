@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
@@ -135,6 +136,7 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreTicketsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreLogoutConfiguration.class,

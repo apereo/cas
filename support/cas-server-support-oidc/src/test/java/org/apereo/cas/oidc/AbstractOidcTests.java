@@ -528,6 +528,7 @@ public abstract class AbstractOidcTests {
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,
         CasCoreHttpConfiguration.class,
