@@ -85,7 +85,6 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreWebConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,

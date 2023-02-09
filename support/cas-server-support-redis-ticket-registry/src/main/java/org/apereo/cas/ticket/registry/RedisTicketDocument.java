@@ -1,11 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,6 +25,8 @@ import java.util.Map;
 @Setter
 @SuperBuilder
 @NoArgsConstructor(force = true)
+@Data
+@Accessors(chain = true)
 public class RedisTicketDocument implements Serializable {
 
     /**
@@ -40,22 +45,28 @@ public class RedisTicketDocument implements Serializable {
     public static final String FIELD_NAME_ID = "ticketId";
 
     /**
+     * Field name to hold ticket prefix.
+     */
+    public static final String FIELD_NAME_PREFIX = "prefix";
+
+    /**
      * Field name to hold the principal id.
      */
     public static final String FIELD_NAME_PRINCIPAL = "principal";
 
     /**
-     * Field name to hold the principal/authentication attributes.
+     * Field name to hold the principal/authentication attribute names.
      */
     public static final String FIELD_NAME_ATTRIBUTES = "attributes";
 
     @Serial
     private static final long serialVersionUID = -5043447728617071226L;
-
+    
     @JsonProperty
     private String json;
 
     @JsonProperty
+    @Id
     private String ticketId;
 
     @JsonProperty
@@ -65,5 +76,25 @@ public class RedisTicketDocument implements Serializable {
     private String principal;
 
     @JsonProperty
-    private Map<String, ?> attributes;
+    private String prefix;
+
+    @JsonProperty
+    private String attributes;
+
+    /**
+     * From document map to redis document.
+     *
+     * @param document the document
+     * @return the redis ticket document
+     */
+    public static RedisTicketDocument from(final Map<String, String> document) {
+        return RedisTicketDocument.builder()
+            .type(document.get(FIELD_NAME_TYPE))
+            .ticketId(document.get(FIELD_NAME_ID))
+            .json(document.get(FIELD_NAME_JSON))
+            .prefix(document.get(FIELD_NAME_PREFIX))
+            .principal(document.get(FIELD_NAME_PRINCIPAL))
+            .attributes(document.get(FIELD_NAME_ATTRIBUTES))
+            .build();
+    }
 }
