@@ -4,8 +4,12 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 
+import com.redis.lettucemod.RedisModulesClient;
+import com.redis.lettucemod.api.sync.RediSearchCommands;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
+import io.lettuce.core.RedisCommandExecutionException;
+import io.lettuce.core.RedisURI;
 import io.lettuce.core.SocketOptions;
 import io.lettuce.core.SslOptions;
 import io.lettuce.core.TimeoutOptions;
@@ -25,7 +29,7 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 
@@ -33,6 +37,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +62,7 @@ public class RedisObjectFactory {
     public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
         val template = new DefaultCasRedisTemplate<K, V>();
         val serializer = new StringRedisSerializer();
-        val jdk = new JdkSerializationRedisSerializer();
+        val jdk = new GenericJackson2JsonRedisSerializer();
         template.setKeySerializer(serializer);
         template.setValueSerializer(jdk);
         template.setHashValueSerializer(jdk);
@@ -103,6 +109,32 @@ public class RedisObjectFactory {
         return factory;
     }
 
+    /**
+     * New redis search commands.
+     *
+     * @param redis the redis
+     * @return the redis search commands
+     */
+    public static Optional<RediSearchCommands> newRedisSearchCommands(final BaseRedisProperties redis) {
+        val uriBuilder = RedisURI.builder()
+            .withHost(redis.getHost())
+            .withPort(redis.getPort())
+            .withDatabase(redis.getDatabase());
+        if (StringUtils.hasText(redis.getPassword())) {
+            uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
+        }
+        val result = RedisModulesClient.create(uriBuilder.build()).connect().sync();
+        try {
+            result.ftInfo(UUID.randomUUID().toString());
+        } catch (final RedisCommandExecutionException e) {
+            if (e.getMessage().contains("ERR unknown command")) {
+                LOGGER.trace(e.getMessage(), e);
+                return Optional.empty();
+            }
+        }
+        return Optional.of(result);
+    }
+
     private static RedisClusterConfiguration getClusterConfig(final BaseRedisProperties redis) {
         val redisConfiguration = new RedisClusterConfiguration();
         val cluster = redis.getCluster();
@@ -132,6 +164,7 @@ public class RedisObjectFactory {
             });
         if (StringUtils.hasText(cluster.getPassword())) {
             redisConfiguration.setPassword(cluster.getPassword());
+            redisConfiguration.setUsername(cluster.getUsername());
         }
         if (cluster.getMaxRedirects() > 0) {
             redisConfiguration.setMaxRedirects(cluster.getMaxRedirects());
@@ -231,6 +264,7 @@ public class RedisObjectFactory {
         val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
         standaloneConfig.setDatabase(redis.getDatabase());
         if (StringUtils.hasText(redis.getPassword())) {
+            standaloneConfig.setUsername(redis.getUsername());
             standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
         }
         return standaloneConfig;
@@ -243,6 +277,7 @@ public class RedisObjectFactory {
         LOGGER.debug("Sentinel nodes configured are [{}]", redis.getSentinel().getNode());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
         sentinelConfig.setDatabase(redis.getDatabase());
+        sentinelConfig.setUsername(redis.getUsername());
         if (StringUtils.hasText(redis.getPassword())) {
             sentinelConfig.setPassword(RedisPassword.of(redis.getPassword()));
         }

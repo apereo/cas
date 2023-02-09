@@ -207,6 +207,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketComponentSerializationConfiguration.class,
         CasCoreTicketsSerializationConfiguration.class,

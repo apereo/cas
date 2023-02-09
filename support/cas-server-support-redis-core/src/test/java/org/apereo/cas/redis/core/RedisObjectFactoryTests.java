@@ -26,6 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 public class RedisObjectFactoryTests {
     @Test
+    public void verifyRedisSearchCommandSupported() {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(6379);
+        val command = RedisObjectFactory.newRedisSearchCommands(props);
+        assertTrue(command.isEmpty());
+    }
+
+
+    @Test
     public void verifyConnection() {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
