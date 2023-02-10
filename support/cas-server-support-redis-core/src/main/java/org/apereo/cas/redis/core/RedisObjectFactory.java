@@ -30,6 +30,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 
@@ -63,7 +64,7 @@ public class RedisObjectFactory {
         val template = new DefaultCasRedisTemplate<K, V>();
 
         val stringRedisSerializer = new StringRedisSerializer();
-        val jsonSerializer = new GenericJackson2JsonRedisSerializer();
+        val jsonSerializer = new JdkSerializationRedisSerializer();
 
         template.setKeySerializer(stringRedisSerializer);
         template.setValueSerializer(jsonSerializer);
