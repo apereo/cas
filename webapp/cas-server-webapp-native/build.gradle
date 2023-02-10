@@ -1,0 +1,14 @@
+description = "Apereo CAS Native GraalVM Web Application"
+
+ext {
+    casNativeWebApplication = true
+}
+
+dependencies {
+    implementation project(":core:cas-server-core-util")
+    
+    implementation project(":webapp:cas-server-webapp-config")
+    implementation project(":webapp:cas-server-webapp-init")
+    implementation project(":webapp:cas-server-webapp-resources")
+    implementation project(":webapp:cas-server-webapp-init-tomcat")
+}

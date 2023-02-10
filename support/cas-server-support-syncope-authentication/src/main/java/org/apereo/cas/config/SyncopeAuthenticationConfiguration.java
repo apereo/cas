@@ -64,8 +64,7 @@ public class SyncopeAuthenticationConfiguration {
         val handlers = Splitter.on(",").splitToList(syncope.getDomain())
             .stream()
             .map(domain -> {
-                val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
-                    syncopePrincipalFactory, syncope.getUrl(), domain.trim());
+                val h = new SyncopeAuthenticationHandler(syncope, servicesManager, syncopePrincipalFactory, domain.trim());
                 h.setState(syncope.getState());
                 h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
                 h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);

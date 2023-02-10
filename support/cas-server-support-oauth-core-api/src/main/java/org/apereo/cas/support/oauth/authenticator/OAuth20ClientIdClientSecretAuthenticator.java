@@ -23,8 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -59,8 +58,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final OAuth20ClientSecretValidator clientSecretValidator;
 
     @Override
-    public Optional<Credentials> validate(final Credentials credentials, final WebContext webContext,
-                                          final SessionStore sessionStore) throws CredentialsException {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
         val upc = (UsernamePasswordCredentials) credentials;
         val id = upc.getUsername();
@@ -70,9 +68,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
 
-        if (!accessResult.isExecutionFailure() && canAuthenticate(webContext)) {
+        if (!accessResult.isExecutionFailure() && canAuthenticate(callContext)) {
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            validateCredentials(upc, registeredService, webContext, sessionStore);
+            validateCredentials(upc, registeredService, callContext);
 
             val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
             val principal = principalResolver.resolve(credential);
@@ -102,40 +100,16 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         return Optional.empty();
     }
 
-    /**
-     * Validate credentials.
-     *
-     * @param credentials       the credentials
-     * @param registeredService the registered service
-     * @param context           the context
-     * @param sessionStore      the session store
-     */
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final WebContext context,
-                                       final SessionStore sessionStore) {
+                                       final CallContext callContext) {
         if (!clientSecretValidator.validate(registeredService, credentials.getPassword())) {
             throw new CredentialsException("Invalid client credentials provided registered service: " + registeredService.getName());
         }
     }
 
-    /**
-     * Check if authentication can be performed for a given context.
-     * <p>
-     * ClientCredential authentication can be performed if {@code client_id} & {@code client_secret} are provided.
-     * Exception to this will be
-     * 1. When the grant type is {@code password}, in which case the authentication will be performed by {@code OAuth20UsernamePasswordAuthenticator}
-     * 2. When request contains OAuth {@code code} which was issued with a {@code code_challenge}, in which case the authentication will be
-     * performed by {{@code OAuth20ProofKeyCodeExchangeAuthenticator}
-     * 3. When the grant type is {@code refresh_token} and the request doesn't have any {@code client_secret}, in which case the authentication will be performed
-     * by {@code OAuth20RefreshTokenAuthenticator}
-     *
-     * @param context the context
-     * @return true if authenticator can validate credentials.
-     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.3"> PKCE Auth Code Request</a>
-     * @see <a href="https://tools.ietf.org/html/rfc7636#section-4.5"> PKCE Token request</a>
-     */
-    protected boolean canAuthenticate(final WebContext context) {
+    protected boolean canAuthenticate(final CallContext callContext) {
+        val context = callContext.webContext();
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
 
         if (grantType.isPresent() && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.PASSWORD)) {

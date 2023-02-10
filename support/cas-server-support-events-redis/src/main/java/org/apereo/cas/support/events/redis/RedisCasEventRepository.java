@@ -45,6 +45,12 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    public void removeAll() {
+        val keys = getKeys("*", "*", "*");
+        keys.forEach(template::delete);
+    }
+
+    @Override
     public Stream<? extends CasEvent> load() {
         val keys = getKeys("*", "*", "*");
         return keys

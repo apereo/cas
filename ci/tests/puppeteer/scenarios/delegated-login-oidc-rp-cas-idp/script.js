@@ -5,7 +5,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    
+
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
@@ -40,6 +40,6 @@ const cas = require('../../cas.js');
 
     console.log(page.url());
     assert(page.url().startsWith("https://oidcdebugger.com/debug"));
-    
+
     await browser.close();
 })();

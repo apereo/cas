@@ -87,10 +87,10 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
             val item = items.get(0);
             var value = StringUtils.EMPTY;
             if (item instanceof LocalizedName) {
-                value = ((LocalizedName) item).getValue();
+                value = ((XSString) item).getValue();
             }
             if (item instanceof LocalizedURI) {
-                value = ((LocalizedURI) item).getURI();
+                value = ((XSURI) item).getURI();
             }
             if (item instanceof XSString) {
                 value = ((XSString) item).getValue();

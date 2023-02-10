@@ -62,6 +62,20 @@ import java.util.zip.InflaterInputStream;
 public class SamlIdPUtils {
 
     /**
+     * Gets saml idp metadata owner.
+     *
+     * @param result the result
+     * @return the saml id p metadata owner
+     */
+    public static String getSamlIdPMetadataOwner(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
+    }
+
+    /**
      * Retrieve authn request authn request.
      *
      * @param context            the context

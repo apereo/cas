@@ -22,7 +22,7 @@ the [CAS service registry](../services/Service-Management.html) similar to the f
 }
 ```
 
-<div class="alert alert-info"><strong>Entity ID Patterns</strong><p>The <code>serviceId</code> field here should represent the entity id
+<div class="alert alert-info">:information_source: <strong>Entity ID Patterns</strong><p>The <code>serviceId</code> field here should represent the entity id
 of the SAML2 service provider in form of a proper regular expression, allowing you to authorize and register multiple SAML2 service providers 
 in your metadata file, if necessary. Remember to escape all the right characters when you build the expression pattern.</p></div>
 
@@ -85,7 +85,7 @@ The following fields are available for SAML services:
 | `encryptionWhiteListedAlgorithms`                 | Collection of allowed encryption algorithms, if any, to override the global defaults.                                                                                                                                                                                                                                                                                                    |
 | `whiteListBlackListPrecedence`                    | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `INCLUDE` or `EXCLUDE`. Default is `INCLUDE`.                                                                                                                                                                                                              |
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
+<div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
 you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
 deployment at that.</p></div>

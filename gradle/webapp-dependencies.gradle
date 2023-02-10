@@ -44,10 +44,15 @@ dependencies {
         }
     }
 
-    implementation libraries.springcloudconfigclient
-    
-    if (!rootProject.publishFlag) {
-        runtimeOnly libraries.springbootdevtools
+    if (!project.hasProperty("casNativeWebApplication") || !project.ext.casNativeWebApplication) {
+        implementation libraries.springcloudconfigclient
+        implementation libraries.springcloudbootstrap
+        implementation libraries.springbootpropertymigrator
+        if (!rootProject.publishFlag) {
+            runtimeOnly libraries.springbootdevtools
+        }
+    } else {
+        ansi.green("Building CAS native web application...")
     }
 }
 

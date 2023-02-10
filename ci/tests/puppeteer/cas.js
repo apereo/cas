@@ -177,8 +177,13 @@ exports.assertCookie = async (page, present = true, cookieName = "TGC") => {
             let ck = cookies[0];
             console.log(`Found cookie ${ck.name}:${ck.value}:${ck.path}:${ck.domain}:${ck.httpOnly}:${ck.secure}`)
         }
-        assert(cookies.length === 0);
-        console.log(`Cookie ${cookieName} cannot be found`);
+        const result = cookies.length === 0;
+        if (result) {
+            await this.logg(`Cookie ${cookieName} can be found`);
+        } else {
+            await this.logr(`Cookie ${cookieName} cannot be found`);
+        }
+        assert(result);
     }
 };
 
@@ -542,9 +547,9 @@ exports.base64Decode = async (data) => {
 };
 
 exports.screenshot = async (page) => {
-    if (process.env.CI === "true") {
-        let index = Math.floor(Math.random() * 90000);
-        let filePath = path.join(__dirname, `/screenshot${index}.png`);
+    if (await this.isCiEnvironment()) {
+        let index = Date.now();
+        let filePath = path.join(__dirname, `/screenshot-${index}.png`);
         try {
             let url = await page.url();
             console.log(`Page URL when capturing screenshot: ${url}`);
@@ -560,6 +565,10 @@ exports.screenshot = async (page) => {
         console.log("Capturing screenshots is disabled in non-CI environments");
     }
 };
+
+exports.isCiEnvironment = async() => process.env.CI !== undefined && process.env.CI === "true";
+
+exports.isNotCiEnvironment = async() => !this.isCiEnvironment();
 
 exports.assertTextContent = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});

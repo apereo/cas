@@ -26,6 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -108,6 +109,7 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mongoPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Cleanable mongoPasswordlessAuthenticationTokenRepositoryCleaner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PasswordlessTokenRepository.BEAN_NAME)

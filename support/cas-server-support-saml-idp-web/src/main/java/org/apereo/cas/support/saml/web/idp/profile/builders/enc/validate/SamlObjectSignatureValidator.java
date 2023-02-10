@@ -176,8 +176,8 @@ public class SamlObjectSignatureValidator {
         var foundValidCredential = false;
         val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
-            val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
-            try {
+            foundValidCredential = FunctionUtils.doAndHandle(() -> {
+                val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
                 val credential = it.next();
                 val resolver = new StaticCredentialResolver(credential);
                 val keyResolver = new StaticKeyInfoCredentialResolver(credential);
@@ -191,19 +191,18 @@ public class SamlObjectSignatureValidator {
                 LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peerEntityId);
                 handler.invoke(context);
                 LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
-
-                foundValidCredential = true;
-            } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
-            } finally {
                 handler.destroy();
-            }
+                return true;
+            }, e -> {
+                LOGGER.debug(e.getMessage(), e);
+                return false;
+            }).get();
         }
 
-        if (!foundValidCredential) {
+        FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            throw new SamlException("No valid signing credentials for validation could not be resolved");
-        }
+            return new SamlException("No valid signing credentials for validation could not be resolved");
+        });
     }
 
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
@@ -234,10 +233,10 @@ public class SamlObjectSignatureValidator {
             }
         }
 
-        if (!foundValidCredential) {
+        FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            throw new SamlException("No valid signing credentials for validation could not be resolved");
-        }
+            return new SamlException("No valid signing credentials for validation could not be resolved");
+        });
     }
 
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver,

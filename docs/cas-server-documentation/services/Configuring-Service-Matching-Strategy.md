@@ -14,7 +14,7 @@ that needs to be properly encoded and defined for matching operation to successf
 defined on a per-service basis to allow for alternative options or a full strategy implementation that may want to
 take external factors and variables into account.
 
-<div class="alert alert-info"><strong>Usage</strong><p>
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 Note that you cannot whitelist an <i>IP address</i> of an application. You can only whitelist the application URL. 
 The identifier of the application is almost always its URL; not its source or origin. 
 In scenarios where an application might present the same IP address and multiple URLs, each URL would then

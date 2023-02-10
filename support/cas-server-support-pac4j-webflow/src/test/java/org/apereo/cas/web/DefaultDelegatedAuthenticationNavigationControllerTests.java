@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,11 +53,11 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
         val response = new MockHttpServletResponse();
         var view = controller.redirectResponseToFlow("CASClient", request, response);
         assertTrue(view instanceof RedirectView);
-        assertTrue(new URIBuilder(((RedirectView) view).getUrl()).getQueryParams()
+        assertTrue(new URIBuilder(((AbstractUrlBasedView) view).getUrl()).getQueryParams()
             .stream().anyMatch(c -> c.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
         view = controller.postResponseToFlow("CASClient", request, response);
         assertTrue(view instanceof RedirectView);
-        assertTrue(new URIBuilder(((RedirectView) view).getUrl()).getQueryParams()
+        assertTrue(new URIBuilder(((AbstractUrlBasedView) view).getUrl()).getQueryParams()
             .stream().anyMatch(c -> c.getName().equals(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)));
     }
 

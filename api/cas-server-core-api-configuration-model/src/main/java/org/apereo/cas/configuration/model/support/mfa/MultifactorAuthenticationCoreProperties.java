@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -48,6 +49,7 @@ public class MultifactorAuthenticationCoreProperties implements Serializable {
      * event that the provider supports variations of non-browser based MFA.
      * The value is treated as a regular expression.
      */
+    @RegularExpressionCapable
     private String contentType = "application/cas";
 
     /**

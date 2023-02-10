@@ -11,10 +11,8 @@ import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,15 +50,6 @@ public class CasOAuth20WebflowConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new OAuth20RegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
-        }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET)
-        public Action oauth20SessionStoreTicketGrantingTicketAction(
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore) {
-            return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore);
         }
     }
 

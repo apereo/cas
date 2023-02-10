@@ -18,6 +18,8 @@ import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.collect.Sets;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -68,8 +70,15 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 @Slf4j
-public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolver, CasConfigurationProperties casProperties, SamlIdPMetadataLocator samlIdPMetadataLocator)
-    implements SamlIdPObjectSigner {
+@RequiredArgsConstructor
+@Getter
+public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
+    private final MetadataResolver samlIdPMetadataResolver;
+
+    private final CasConfigurationProperties casProperties;
+
+    private final SamlIdPMetadataLocator samlIdPMetadataLocator;
+    
     private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential,
                                                           final SamlRegisteredService samlRegisteredService) {
         val fingerprint = samlRegisteredService.getSigningCredentialFingerprint();
@@ -115,7 +124,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext outboundContext) throws Exception {
+    protected void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext outboundContext) throws Exception {
         LOGGER.trace("Attempting to sign the outbound SAML message...");
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
@@ -129,7 +138,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    void prepareSamlOutboundDestinationHandler(final MessageContext outboundContext) throws Exception {
+    protected void prepareSamlOutboundDestinationHandler(final MessageContext outboundContext) throws Exception {
         val handlerDest = new SAMLOutboundDestinationHandler();
         handlerDest.initialize();
         handlerDest.invoke(outboundContext);
@@ -141,7 +150,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    void prepareEndpointURLSchemeSecurityHandler(final MessageContext outboundContext) throws Exception {
+    protected void prepareEndpointURLSchemeSecurityHandler(final MessageContext outboundContext) throws Exception {
         val handlerEnd = new EndpointURLSchemeSecurityHandler();
         handlerEnd.initialize();
         handlerEnd.invoke(outboundContext);
@@ -154,7 +163,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @param outboundContext the outbound context
      * @param service         the service
      */
-    void prepareSecurityParametersContext(
+    protected void prepareSecurityParametersContext(
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
         final MessageContext outboundContext,
         final SamlRegisteredService service) {
@@ -175,7 +184,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @param authnRequest    the authn request
      * @throws SamlException the saml exception
      */
-    <T extends SAMLObject> void prepareOutboundContext(
+    protected <T extends SAMLObject> void prepareOutboundContext(
         final T samlObject,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
         final MessageContext outboundContext,
@@ -194,7 +203,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @param service    the service
      * @return the signature signing parameters
      */
-    SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
+    protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                final SamlRegisteredService service) {
         return FunctionUtils.doUnchecked(() -> {
             val criteria = new CriteriaSet();
@@ -236,7 +245,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @return the signature signing configuration
      * @throws Exception the exception
      */
-    SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Exception {
+    protected SignatureSigningConfiguration getSignatureSigningConfiguration(final SamlRegisteredService service) throws Exception {
         val config = configureSignatureSigningSecurityConfiguration(service);
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
@@ -293,7 +302,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
      * @return the signing private key
      * @throws Exception the exception
      */
-    PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Exception {
+    protected PrivateKey getSigningPrivateKey(final SamlRegisteredService registeredService) throws Exception {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
         val signingKey = samlIdPMetadataLocator.resolveSigningKey(Optional.of(registeredService));
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
@@ -309,7 +318,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
         return privateKeyFactoryBean.getObject();
     }
 
-    BasicSignatureSigningConfiguration configureSignatureSigningSecurityConfiguration(final SamlRegisteredService service) {
+    protected BasicSignatureSigningConfiguration configureSignatureSigningSecurityConfiguration(final SamlRegisteredService service) {
         val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
         LOGGER.trace("Default signature signing blocked algorithms: [{}]", config.getExcludedAlgorithms());
         LOGGER.trace("Default signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -366,7 +375,7 @@ public record DefaultSamlIdPObjectSigner(MetadataResolver samlIdPMetadataResolve
         return config;
     }
 
-    AbstractCredential getResolvedSigningCredential(final Credential credential,
+    protected AbstractCredential getResolvedSigningCredential(final Credential credential,
                                                     final PrivateKey privateKey,
                                                     final SamlRegisteredService service) {
         try {

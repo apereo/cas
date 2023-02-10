@@ -20,7 +20,7 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
      * @param service    the service id
      * @return the registered service
      */
-    RegisteredService locate(Collection<RegisteredService> candidates, Service service);
+    RegisteredService locate(Collection<? extends RegisteredService> candidates, Service service);
 
     /**
      * Can this locator find/locate the given registered service

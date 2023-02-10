@@ -68,7 +68,7 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
-        handler.setProfileCreator((credentials, webContext, sessionStore) -> {
+        handler.setProfileCreator((callContext, credentials) -> {
             val profile = credentials.getUserProfile();
             profile.addAttribute("givenName", List.of("cas-person"));
             return Optional.of(profile);
@@ -84,7 +84,7 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
-        handler.setProfileCreator((credentials, webContext, sessionStore) -> {
+        handler.setProfileCreator((callContext, credentials) -> {
             val profile = credentials.getUserProfile();
             profile.addAttribute("givenName", List.of("cas-person"));
             return Optional.of(profile);
@@ -109,7 +109,7 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
                 return super.determinePrincipalIdFrom(profile, mockClient);
             }
         };
-        handler.setProfileCreator((credentials, webContext, sessionStore) -> {
+        handler.setProfileCreator((callContext, credentials) -> {
             val profile = credentials.getUserProfile();
             profile.addAttribute("givenName", List.of("cas-person"));
             return Optional.of(profile);

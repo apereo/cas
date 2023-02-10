@@ -98,7 +98,7 @@ public class JpaBeans {
         bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
         bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
         bean.setIdleTimeout(Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
-        bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
+        bean.setLeakDetectionThreshold(Beans.newDuration(jpaProperties.getLeakThreshold()).toMillis());
         bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
         bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
         bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
@@ -113,6 +113,7 @@ public class JpaBeans {
         val dataSourceProperties = new Properties();
         dataSourceProperties.putAll(jpaProperties.getProperties());
         bean.setDataSourceProperties(dataSourceProperties);
+        
         return new DefaultCloseableDataSource(bean);
     }
 

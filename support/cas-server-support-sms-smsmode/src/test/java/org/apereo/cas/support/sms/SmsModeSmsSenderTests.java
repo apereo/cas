@@ -24,10 +24,10 @@ import static org.springframework.http.HttpStatus.*;
  * @since 6.5.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    SmsModeSmsConfiguration.class
+        RefreshAutoConfiguration.class,
+        SmsModeSmsConfiguration.class
 },
-    properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
+        properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
 @Tag("SMS")
 public class SmsModeSmsSenderTests {
     @Autowired
@@ -39,7 +39,7 @@ public class SmsModeSmsSenderTests {
         assertNotNull(smsSender);
         assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
         try (val webServer = new MockWebServer(8099,
-            new ByteArrayResource("0".getBytes(UTF_8), "Output"), OK)) {
+                new ByteArrayResource("0".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertTrue(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
         }

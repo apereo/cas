@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLJpaTicketRegistryTests extends JpaTicketRegistryTests {
+public class MySQLJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }

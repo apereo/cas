@@ -32,7 +32,10 @@
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
-    "--cas.authn.pac4j.cas[0].client-name=CasClient"
+    "--cas.authn.pac4j.cas[0].client-name=CasClient",
+
+    "--cas.authn.oauth.session-replication.cookie.name=OAUTHDISSESSION",
+    "--cas.authn.pac4j.core.session-replication.cookie.name=PAC4JDISSESSION"
   ],
   "initScript": "${PWD}/ci/tests/scim/run-scim-server.sh,${PWD}/ci/tests/cas/run-cas-server.sh"
 }

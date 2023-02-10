@@ -59,7 +59,7 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     }
 
     @Override
-    protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
+    protected UsernamePasswordCredentials convertToCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
         val username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (StringUtils.isBlank(username)) {

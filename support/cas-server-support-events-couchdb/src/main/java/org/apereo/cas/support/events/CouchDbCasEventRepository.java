@@ -40,6 +40,11 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository implem
     }
 
     @Override
+    public void removeAll() {
+        couchDb.getAll().forEach(couchDb::remove);
+    }
+
+    @Override
     public Stream<? extends CasEvent> load() {
         return couchDb.getAll().stream();
     }

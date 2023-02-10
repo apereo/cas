@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +42,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
-        assertEquals(REDIRECT_URI, ((RedirectView) view.getView()).getUrl());
+        assertEquals(REDIRECT_URI, ((AbstractUrlBasedView) view.getView()).getUrl());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
     }
 
     @Test
@@ -84,6 +84,6 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
-        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((RedirectView) view.getView()).getUrl());
+        assertEquals(Pac4jConstants.DEFAULT_URL_VALUE, ((AbstractUrlBasedView) view.getView()).getUrl());
     }
 }

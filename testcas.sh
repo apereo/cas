@@ -5,7 +5,7 @@ GREEN="\e[32m"
 CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
-clear
+#clear
 find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 
 dockerPlatform="unknown"
@@ -157,6 +157,7 @@ while (( "$#" )); do
                 ;;
             consent)
                 task+="testConsent "
+                task+="testConsent "
                 ;;
             duo|duosecurity)
                 task+="testDuoSecurity "
@@ -236,6 +237,15 @@ while (( "$#" )); do
                 ;;
             groovy|script)
                 task+="testGroovy "
+                ;;
+            groovyauthentication)
+                task+="testGroovyAuthentication "
+                ;;
+            groovymfa)
+                task+="testGroovyMfa "
+                ;;
+            groovyservices)
+                task+="testGroovyServices "
                 ;;
             hibernate)
                 task+="testHibernate "

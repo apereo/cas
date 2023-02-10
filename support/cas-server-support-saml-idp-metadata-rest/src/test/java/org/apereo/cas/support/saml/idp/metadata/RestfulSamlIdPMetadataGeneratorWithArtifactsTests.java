@@ -52,7 +52,7 @@ public class RestfulSamlIdPMetadataGeneratorWithArtifactsTests extends BaseRestf
     private static MockWebServer SERVER;
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired

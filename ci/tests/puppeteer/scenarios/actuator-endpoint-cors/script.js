@@ -14,6 +14,8 @@ const assert = require('assert');
         await page.waitForTimeout(2500);
 
         let data = JSON.parse(await cas.innerText(page, "#data"));
+        console.dir(data, {depth: null, colors: true});
+
         assert(data.cas.version !== null);
         assert(data.cas.java.vendor !== null);
         assert(data.cas.java.version !== null);

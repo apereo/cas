@@ -78,6 +78,8 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -103,6 +105,9 @@ public abstract class BaseTicketRegistryTests {
     private static final int TICKETS_IN_REGISTRY = 1;
 
     private static final String TICKET_SHOULD_BE_NULL_USE_ENCRYPTION = "Ticket should be null. useEncryption[";
+
+    private static final TicketGrantingTicketIdGenerator TICKET_GRANTING_TICKET_ID_GENERATOR =
+        new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
 
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
@@ -138,8 +143,7 @@ public abstract class BaseTicketRegistryTests {
 
     @BeforeEach
     public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
-        this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
-            .getNewTicketId(TicketGrantingTicket.PREFIX);
+        this.ticketGrantingTicketId = TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX);
         this.serviceTicketId = new ServiceTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(ServiceTicket.PREFIX);
         this.proxyGrantingTicketId = new ProxyGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -158,6 +162,27 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.deleteAll();
             setUpEncryption();
         }
+    }
+
+    @RepeatedTest(2)
+    public void verifyTicketsWithAuthnAttributes() throws Exception {
+        assumeTrue(isIterableRegistry());
+        val authn = CoreAuthenticationTestUtils.getAuthentication(
+            Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
+                "authn-context", List.of("mfa-example")));
+        val tgt1 = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            authn, NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(tgt1);
+
+        val tgt2 = new TicketGrantingTicketImpl(TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        ticketRegistry.addTicket(tgt2);
+
+        val queryAttributes = Map.<String, List<Object>>of("cn", List.of("cn2", "cn1000"),
+            "authn-context", List.of("mfa-example", "mfa-one"));
+        val tickets = ticketRegistry.getSessionsWithAttributes(queryAttributes).toList();
+        assertEquals(1, tickets.size());
+        assertTrue(tickets.contains(tgt1));
     }
 
     @RepeatedTest(2)
@@ -257,7 +282,7 @@ public abstract class BaseTicketRegistryTests {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
         for (var i = 0; i < 5; i++) {
-            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+            val tgtId = TICKET_GRANTING_TICKET_ID_GENERATOR
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(tgtId,
                 CoreAuthenticationTestUtils.getAuthentication(id),

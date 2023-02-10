@@ -12,7 +12,7 @@ Redis integration is enabled by including the following dependency in the WAR ov
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-redis-ticket-registry" %}
 
-This registry stores tickets in one or more [Redis](http://redis.io/) instances. CAS presents and uses Redis as a
+This registry stores tickets in one or more [Redis](https://redis.io/) instances. CAS presents and uses Redis as a
 key/value store that accepts `String` keys and CAS ticket objects as values. The key is started with `CAS_TICKET:`.
 
 The Redis ticket registry supports Redis Sentinel, which provides high availability for Redis. In 

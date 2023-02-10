@@ -84,7 +84,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
             val cache = getIgniteCacheFromMetadata(metadata);
@@ -95,7 +95,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
-        val ticketId = encodeTicketId(ticketIdToGet);
+        val ticketId = digest(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }

@@ -40,4 +40,11 @@ public class Pac4jSamlServiceProviderMetadataProperties implements Serializable 
      */
     @NestedConfigurationProperty
     private Pac4jSamlServiceProviderMetadataMongoDbProperties mongo = new Pac4jSamlServiceProviderMetadataMongoDbProperties();
+
+    /**
+     * Location of the SP metadata to use and generate
+     * using a relational database (i.e. MySQL) instance.
+     */
+    @NestedConfigurationProperty
+    private Pac4jSamlServiceProviderMetadataJdbcProperties jdbc = new Pac4jSamlServiceProviderMetadataJdbcProperties();
 }
