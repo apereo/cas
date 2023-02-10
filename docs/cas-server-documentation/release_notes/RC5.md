@@ -40,9 +40,15 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+  
+### Redis Ticket Registry
+            
 
 ## Other Stuff
-
+        
+- Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.
 
 ## Library Upgrades
 
+- Apache Kafka
+- Gradle

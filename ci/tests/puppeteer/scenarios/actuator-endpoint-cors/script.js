@@ -23,6 +23,8 @@ const assert = require('assert');
         await cas.goto(page, "http://localhost:8444?endpoint=health");
         await page.waitForTimeout(2500);
         data = JSON.parse(await cas.innerText(page, "#data"));
+        console.dir(data, {depth: null, colors: true});
+
         assert(data.status !== null);
         assert(data.components !== null);
 
