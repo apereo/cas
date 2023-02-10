@@ -15,8 +15,9 @@ const assert = require('assert');
             'Content-Type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
         }, 200);
-    console.log(body);
     let json = JSON.parse(body);
+    console.dir(json, {depth: null, colors: true});
+
     assert(json.status !== undefined);
     assert(json.components.memory.details.freeMemory !== undefined);
     assert(json.components.memory.details.totalMemory !== undefined);
