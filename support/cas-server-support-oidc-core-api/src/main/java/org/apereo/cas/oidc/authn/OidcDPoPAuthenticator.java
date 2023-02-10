@@ -19,8 +19,8 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
@@ -46,9 +46,8 @@ public class OidcDPoPAuthenticator implements Authenticator {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public Optional<Credentials> validate(final Credentials credentials,
-                                          final WebContext webContext,
-                                          final SessionStore sessionStore) {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
+        val webContext = callContext.webContext();
         return webContext.getRequestHeader(OAuth20Constants.DPOP)
             .flatMap(Unchecked.function(proof -> validateAccessToken(credentials, webContext, proof)));
     }

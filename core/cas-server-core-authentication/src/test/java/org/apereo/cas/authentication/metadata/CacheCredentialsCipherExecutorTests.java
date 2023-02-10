@@ -20,7 +20,6 @@ public class CacheCredentialsCipherExecutorTests {
     public void verifyAction() {
         val cipher = new CacheCredentialsCipherExecutor(null, null,
             CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 512, 256);
-
         val encoded = cipher.encode("ST-1234567890");
         assertEquals("ST-1234567890", cipher.decode(encoded));
         assertNotNull(cipher.getName());

@@ -30,7 +30,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.binding.message.DefaultMessageContext;
+import org.springframework.binding.message.StateManageableMessageContext;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -91,7 +91,7 @@ public abstract class BaseActionTests {
         requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(requestContext);
         setExternalContext(requestContext.getExternalContext());
-        ((DefaultMessageContext) requestContext.getMessageContext()).setMessageSource(new AbstractMessageSource() {
+        ((StateManageableMessageContext) requestContext.getMessageContext()).setMessageSource(new AbstractMessageSource() {
             @Override
             protected MessageFormat resolveCode(final String code, final Locale locale) {
                 return new MessageFormat(StringUtils.EMPTY);

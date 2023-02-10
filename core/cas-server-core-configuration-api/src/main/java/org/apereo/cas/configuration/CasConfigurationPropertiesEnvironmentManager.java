@@ -24,6 +24,11 @@ import java.util.Objects;
 public record CasConfigurationPropertiesEnvironmentManager(ConfigurationPropertiesBindingPostProcessor binder) {
 
     /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "configurationPropertiesEnvironmentManager";
+
+    /**
      * Property name passed to the environment that indicates the path to the standalone configuration file.
      */
     public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE = "cas.standalone.configuration-file";

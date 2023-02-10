@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.profile.ProfileManager;
@@ -77,7 +78,8 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             val targetUrl = service != null ? service.getId() : null;
             LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
 
-            val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
+            val callContext = new CallContext(context, sessionStore);
+            val actionResult = client.getLogoutAction(callContext, currentProfile, targetUrl);
             if (actionResult.isPresent()) {
                 val action = (HttpAction) actionResult.get();
                 val logoutAction = DelegatedAuthenticationClientLogoutRequest.builder().status(action.getCode())

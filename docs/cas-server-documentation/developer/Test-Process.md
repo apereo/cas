@@ -12,7 +12,7 @@ This page documents the steps that a CAS developer/contributor should take for t
 server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
-<div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
+<div class="alert alert-info">:information_source: <strong>Contributions</strong><p>Patches submitted to the CAS codebase 
 in form of pull requests must pass all automated unit or integration tests, and/or 
 provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
 the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
@@ -21,7 +21,7 @@ the contribution most likely will not be accepted into the codebase and ultimate
 
 The following types of test cases in the project are those that CAS developers/contributors need to review,
 
-<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are about to describe a problem, please try to put together a test case that concretely demonstrates
 the issue in an automated fashion in an environment that is fairly 
 isolated, <strong>WITHOUT</strong> manual instructions and guidance 
@@ -61,7 +61,7 @@ at reproducing scenarios related to an issue or possible defect, and can be very
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp.gradle` build script of web application you intend to run:
+- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp-dependencies.gradle` build script of web application you intend to run:
 
 ```gradle
 implementation project(":support:cas-server-support-modulename")
@@ -178,6 +178,7 @@ The following command-line options are supported for test execution:
 | `--hb`                                    | A combination of `--headless` and `--build`.                                             |
 | `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
+| `--io`, `initonly`                        | Initialize the execution of the test scenario, but do not run it.                        |
 
 For example, the `login-success` test scenario may be run using: 
 

@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -181,7 +182,7 @@ public class ConfigurationMetadataPropertyCreator {
                 } else if (exp instanceof BooleanLiteralExpr) {
                     prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
                 } else if (exp instanceof FieldAccessExpr) {
-                    prop.setDefaultValue(((FieldAccessExpr) exp).getNameAsString());
+                    prop.setDefaultValue(((NodeWithSimpleName<FieldAccessExpr>) exp).getNameAsString());
                 }
             }
         }

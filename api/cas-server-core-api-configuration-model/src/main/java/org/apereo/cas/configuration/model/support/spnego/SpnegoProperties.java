@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -86,11 +87,13 @@ public class SpnegoProperties implements Serializable {
     /**
      * A regex pattern that indicates whether the client host name is allowed for spnego.
      */
+    @RegularExpressionCapable
     private String hostNamePatternString = ".+";
 
     /**
      * A regex pattern that indicates whether the client IP is allowed for spnego.
      */
+    @RegularExpressionCapable
     private String ipsToCheckPattern = "127.+";
 
     /**

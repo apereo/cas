@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Groovy")
+@Tag("GroovyAuthentication")
 public class GroovyPrincipalFactoryTests {
     @Test
     public void verifyAction() {

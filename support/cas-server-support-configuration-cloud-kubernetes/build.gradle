@@ -1,7 +1,8 @@
 description = "Apereo CAS Configuration - Kubernetes"
 dependencies {
     implementation libraries.springcloudkubernetesconfig
-    
+    implementation libraries.springcloudbootstrap
+
     implementation project(":core:cas-server-core-configuration-api")
 
     testImplementation project(":core:cas-server-core-services-authentication")

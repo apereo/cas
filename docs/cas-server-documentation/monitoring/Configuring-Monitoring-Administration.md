@@ -17,7 +17,7 @@ Spring Boot Admin server over HTTP and reports back its status and health to the
 The Spring Boot Admin web application server is not part of the CAS server and
 is a standalone web application which can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 
-<div class="alert alert-warning"><strong>Secure Endpoints</strong><p>Note that the admin server's API 
+<div class="alert alert-warning">:warning: <strong>Secure Endpoints</strong><p>Note that the admin server's API 
 endpoints MUST be secured. It is also best to run both the Admin server and the registering CAS server 
 node under HTTPS, specially if credentials are used to authenticate into endpoints.</p></div>
 

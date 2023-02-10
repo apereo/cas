@@ -42,6 +42,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
@@ -223,6 +224,7 @@ public class RadiusConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
+    @Lazy(false)
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")

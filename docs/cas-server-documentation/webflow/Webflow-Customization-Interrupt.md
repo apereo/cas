@@ -69,7 +69,7 @@ primary authentication event and before the single sign-on event. This means an 
 identified by CAS and by extension is made available to the interrupt, and interrupt has the ability to
 decide whether a single sign-on session can be established for the user.
 
-<div class="alert alert-info"><strong>Can We SSO Into Links?</strong><p>
+<div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
 No. The collection of <code>links</code> are just links and are not tied in any way to the 
 CAS authentication sequence, meaning they do not activate a state, transition or view in 
 that sequence to trigger CAS into generating tickets, executing certain 
@@ -88,7 +88,7 @@ interrupt here loses the ability to decide whether a single sign-on session can 
 responses indicating this option will have no impact, since the query and interrupt responses 
 happen after the creation of the SSO session.
 
-<div class="alert alert-info"><strong>Can We SSO Into Links?</strong><p>
+<div class="alert alert-info">:information_source: <strong>Can We SSO Into Links?</strong><p>
 Yes. In this strategy, links to external applications presented by the interrupt response
 should be able to take advantage of the established single sign-on session.</p>
 </div>
@@ -132,7 +132,7 @@ The following policy settings are supported:
 
 ## Skipping Interrupts
 
-<div class="alert alert-warning"><strong>Usage</strong>
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
 <p><strong>This option is deprecated and is scheduled to be removed in the future</strong>. Consider
 assigning a dedicated interrupt policy to the application definition instead.</p>
 </div>

@@ -10,7 +10,7 @@ category: Registration
 
 Account (Profile) management in CAS allows an authenticated end-user to browse and/or update certain aspects of their account in a *mini portal* like environment. Typical operations allowed by this portal might include resetting the password or updating security questions, browsing login activity, registered devices for multifactor authentication, etc.
 
-<div class="alert alert-info"><strong>Remember</strong><p>
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
 If you are looking for ways to allow the end-user to sign up, register and create an account,
 you should be looking at the <a href="Account-Registration-Overview.html">Account Registration</a> feature instead.</p>
 </div>

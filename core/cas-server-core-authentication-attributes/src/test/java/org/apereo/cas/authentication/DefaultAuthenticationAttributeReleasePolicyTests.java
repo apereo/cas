@@ -33,6 +33,7 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
         when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
         assertTrue(policy.getAuthenticationAttributesForRelease(CoreAuthenticationTestUtils.getAuthentication(),
             mock(Assertion.class), Map.of(), service).isEmpty());
+        assertTrue(policy.getAuthenticationAttributesForRelease(CoreAuthenticationTestUtils.getAuthentication(), service).isEmpty());
     }
 
     @Test
@@ -42,6 +43,20 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
         attrPolicy.setAuthorizedToReleaseCredentialPassword(false);
+        when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            Map.of(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, List.of("Password")));
+        assertFalse(policy.getAuthenticationAttributesForRelease(authentication,
+            mock(Assertion.class), Map.of(), service).isEmpty());
+    }
+
+    @Test
+    public void verifyReleaseCredentialAllowed() {
+        val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
+        policy.getOnlyReleaseAttributes().add(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
+        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
+        attrPolicy.setAuthorizedToReleaseCredentialPassword(true);
         when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             Map.of(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, List.of("Password")));

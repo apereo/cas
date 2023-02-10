@@ -3,7 +3,10 @@ package org.apereo.cas.notifications.sms;
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -20,6 +23,9 @@ import java.util.HashMap;
  * @since 6.0.0
  */
 public record RestfulSmsSender(RestfulSmsProperties restProperties) implements SmsSender {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+
     @Override
     public boolean send(final String from, final String to, final String message) {
         HttpResponse response = null;
@@ -35,24 +41,26 @@ public record RestfulSmsSender(RestfulSmsProperties restProperties) implements S
 
             val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+
+            var exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase()))
                 .url(restProperties.getUrl())
-                .parameters(parameters)
-                .entity(message)
-                .headers(headers)
-                .build();
+                .headers(headers);
 
-            response = HttpUtils.execute(exec);
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getCode());
-                return status.is2xxSuccessful();
-            }
+            exec = switch (restProperties.getStyle()) {
+                case QUERY_PARAMETERS -> exec.parameters(parameters).entity(message);
+                case REQUEST_BODY -> {
+                    parameters.put("text", message);
+                    val body = FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(parameters));
+                    yield exec.entity(body);
+                }
+            };
+            response = HttpUtils.execute(exec.build());
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
         }
-        return false;
     }
 }

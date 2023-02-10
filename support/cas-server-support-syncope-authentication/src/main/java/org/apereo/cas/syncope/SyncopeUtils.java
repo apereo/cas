@@ -49,42 +49,54 @@ public class SyncopeUtils {
     /**
      * Convert user as a JSON node into a map of details.
      *
-     * @param user the user
+     * @param user              the user
+     * @param attributeMappings the attribute mappings
      * @return the map
      */
-    public static Map<String, List<Object>> convertFromUserEntity(final JsonNode user) {
+    public static Map<String, List<Object>> convertFromUserEntity(final JsonNode user,
+                                                                  final Map<String, String> attributeMappings) {
         val attributes = new HashMap<String, List<Object>>();
 
         if (user.has("securityQuestion") && !user.get("securityQuestion").isNull()) {
-            attributes.put("syncopeUserSecurityQuestion", CollectionUtils.wrapList(user.get("securityQuestion").asText()));
+            var name = attributeMappings.getOrDefault("securityQuestion", "syncopeUserSecurityQuestion");
+            attributes.put(name, CollectionUtils.wrapList(user.get("securityQuestion").asText()));
         }
 
-        attributes.put("syncopeUserKey", CollectionUtils.wrapList(user.get("key").asText()));
-        attributes.put("syncopeUserStatus", CollectionUtils.wrapList(user.get("status").asText()));
+        var name = attributeMappings.getOrDefault("key", "syncopeUserKey");
+        attributes.put(name, CollectionUtils.wrapList(user.get("key").asText()));
 
-        attributes.put("syncopeUserRealm", CollectionUtils.wrapList(user.get("realm").asText()));
+        name = attributeMappings.getOrDefault("status", "syncopeUserStatus");
+        attributes.put(name, CollectionUtils.wrapList(user.get("status").asText()));
 
-        attributes.put("syncopeUserCreator", CollectionUtils.wrapList(user.get("creator").asText()));
+        name = attributeMappings.getOrDefault("realm", "syncopeUserRealm");
+        attributes.put(name, CollectionUtils.wrapList(user.get("realm").asText()));
 
-        attributes.put("syncopeUserCreationDate", CollectionUtils.wrapList(user.get("creationDate").asText()));
+        name = attributeMappings.getOrDefault("creator", "syncopeUserCreator");
+        attributes.put(name, CollectionUtils.wrapList(user.get("creator").asText()));
+
+        name = attributeMappings.getOrDefault("creationDate", "syncopeUserCreationDate");
+        attributes.put(name, CollectionUtils.wrapList(user.get("creationDate").asText()));
 
         if (user.has("changePwdDate") && !user.get("changePwdDate").isNull()) {
-            attributes.put("syncopeUserChangePwdDate", CollectionUtils.wrapList(user.get("changePwdDate").asText()));
+            name = attributeMappings.getOrDefault("changePwdDate", "syncopeUserChangePwdDate");
+            attributes.put(name, CollectionUtils.wrapList(user.get("changePwdDate").asText()));
         }
 
         if (user.has("lastLoginDate") && !user.get("lastLoginDate").isNull()) {
-            attributes.put("syncopeUserLastLoginDate", CollectionUtils.wrapList(user.get("lastLoginDate").asText()));
+            name = attributeMappings.getOrDefault("lastLoginDate", "syncopeUserLastLoginDate");
+            attributes.put(name, CollectionUtils.wrapList(user.get("lastLoginDate").asText()));
         }
 
-        collectListableAttribute(attributes, user, "roles", "syncopeUserRoles");
-        collectListableAttribute(attributes, user, "dynRoles", "syncopeUserDynRoles");
-        collectListableAttribute(attributes, user, "dynRealms", "syncopeUserDynRealms");
+        collectListableAttribute(attributes, user, "roles", "syncopeUserRoles", attributeMappings);
+        collectListableAttribute(attributes, user, "dynRoles", "syncopeUserDynRoles", attributeMappings);
+        collectListableAttribute(attributes, user, "dynRealms", "syncopeUserDynRealms", attributeMappings);
 
         if (user.has("memberships")) {
             val memberships = new ArrayList<>();
-            user.get("memberships").forEach(m -> memberships.add(m.get("groupName").asText()));
+            user.get("memberships").forEach(member -> memberships.add(member.get("groupName").asText()));
             if (!memberships.isEmpty()) {
-                attributes.put("syncopeUserMemberships", memberships);
+                name = attributeMappings.getOrDefault("memberships", "syncopeUserMemberships");
+                attributes.put(name, memberships);
             }
         }
 
@@ -92,7 +104,8 @@ public class SyncopeUtils {
             val dynMemberships = new ArrayList<>();
             user.get("dynMemberships").forEach(m -> dynMemberships.add(m.get("groupName").asText()));
             if (!dynMemberships.isEmpty()) {
-                attributes.put("syncopeUserDynMemberships", dynMemberships);
+                name = attributeMappings.getOrDefault("dynMemberships", "syncopeUserDynMemberships");
+                attributes.put(name, dynMemberships);
             }
         }
 
@@ -101,37 +114,43 @@ public class SyncopeUtils {
             user.get("relationships").forEach(
                 r -> relationships.add(r.get("type").asText() + ';' + r.get("otherEndName").asText()));
             if (!relationships.isEmpty()) {
-                attributes.put("syncopeUserRelationships", relationships);
+                name = attributeMappings.getOrDefault("relationships", "syncopeUserRelationships");
+                attributes.put(name, relationships);
             }
         }
 
         if (user.has("plainAttrs")) {
-            user.get("plainAttrs").forEach(a -> attributes.put(
-                "syncopeUserAttr_" + a.get("schema").asText(),
-                MAPPER.convertValue(a.get("values"), ArrayList.class)));
+            val attrName = attributeMappings.getOrDefault("plainAttrs", "syncopeUserAttr_");
+            user.get("plainAttrs").forEach(attr -> attributes.put(
+                attrName + attr.get("schema").asText(),
+                MAPPER.convertValue(attr.get("values"), ArrayList.class)));
         }
         if (user.has("derAttrs")) {
+            val attrName = attributeMappings.getOrDefault("derAttrs", "syncopeUserAttr_");
             user.get("derAttrs").forEach(a -> attributes.put(
-                "syncopeUserAttr_" + a.get("schema").asText(),
+                attrName + a.get("schema").asText(),
                 MAPPER.convertValue(a.get("values"), ArrayList.class)));
         }
         if (user.has("virAttrs")) {
+            val attrName = attributeMappings.getOrDefault("virAttrs", "syncopeUserAttr_");
             user.get("virAttrs").forEach(a -> attributes.put(
-                "syncopeUserAttr_" + a.get("schema").asText(),
+                attrName + a.get("schema").asText(),
                 MAPPER.convertValue(a.get("values"), ArrayList.class)));
         }
 
         return attributes;
     }
 
-    private static void collectListableAttribute(final Map<String, List<Object>> attributes,
-                                                 final JsonNode user, final String syncopeAttribute,
-                                                 final String casAttribute) {
+    private void collectListableAttribute(final Map<String, List<Object>> attributes,
+                                          final JsonNode user, final String syncopeAttribute,
+                                          final String casAttribute,
+                                          final Map<String, String> attributeMappings) {
         val values = user.has(syncopeAttribute)
             ? MAPPER.convertValue(user.get(syncopeAttribute), ArrayList.class)
             : CollectionUtils.wrapList();
         if (!values.isEmpty()) {
-            attributes.put(casAttribute, values);
+            val name = attributeMappings.getOrDefault(syncopeAttribute, casAttribute);
+            attributes.put(name, values);
         }
     }
 
@@ -173,7 +192,7 @@ public class SyncopeUtils {
                         .map(JsonNode::iterator)
                         .orElse(Collections.emptyIterator());
                     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                        .map(SyncopeUtils::convertFromUserEntity)
+                        .map(node -> SyncopeUtils.convertFromUserEntity(node, properties.getAttributeMappings()))
                         .collect(Collectors.toList());
                 });
             }
@@ -236,7 +255,7 @@ public class SyncopeUtils {
     /**
      * Convert to user update entity map.
      *
-     * @param realm          the realm
+     * @param realm the realm
      * @return the map
      */
     public static Map<String, Object> convertToUserUpdateEntity(final Principal principal,

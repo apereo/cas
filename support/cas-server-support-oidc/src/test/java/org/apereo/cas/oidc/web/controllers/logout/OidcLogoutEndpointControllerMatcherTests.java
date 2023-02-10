@@ -52,17 +52,17 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
         val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
 
         var result = oidcLogoutEndpointController.handleRequestInternal("https://www.acme.com/end", "abcd1234", idToken, request, response);
-        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCodeValue());
+        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCode().value());
         var redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
         assertEquals("https://www.acme.com/end?state=abcd1234&client_id=clientid", redirectUrl);
 
         result = oidcLogoutEndpointController.handleRequestInternal("https://www.acme.com/done", "abcd1234", idToken, request, response);
-        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCodeValue());
+        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCode().value());
         redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
         assertEquals("https://www.acme.com/done?state=abcd1234&client_id=clientid", redirectUrl);
 
         result = oidcLogoutEndpointController.handleRequestInternal("https://www.acme.org/done", "abcd1234", idToken, request, response);
-        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCodeValue());
+        assertEquals(HttpStatus.PERMANENT_REDIRECT.value(), result.getStatusCode().value());
         redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
         assertEquals("https://oauth.example.org/logout?state=abcd1234&client_id=clientid", redirectUrl);
     }

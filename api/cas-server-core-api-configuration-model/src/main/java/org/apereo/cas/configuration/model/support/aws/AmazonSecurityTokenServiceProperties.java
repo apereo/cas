@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aws;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -37,6 +38,7 @@ public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesP
      * for the principal to authorize the user to
      * proceed with obtaining credentials.
      */
+    @RegularExpressionCapable
     private String principalAttributeValue;
 
     /**

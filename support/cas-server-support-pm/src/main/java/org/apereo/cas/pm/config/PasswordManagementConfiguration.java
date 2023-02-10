@@ -43,6 +43,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -191,9 +192,10 @@ public class PasswordManagementConfiguration {
         }
 
         @Bean
-        public InitializingBean afterPropertiesSet(final CasConfigurationProperties casProperties,
-                                                   @Qualifier(CommunicationsManager.BEAN_NAME)
-                                                   final CommunicationsManager communicationsManager) {
+        @Lazy(false)
+        public InitializingBean passwordManagementInitialization(final CasConfigurationProperties casProperties,
+                                                                 @Qualifier(CommunicationsManager.BEAN_NAME)
+                                                                 final CommunicationsManager communicationsManager) {
             return () -> {
                 val pm = casProperties.getAuthn().getPm();
                 if (pm.getCore().isEnabled()) {

@@ -21,7 +21,9 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
@@ -69,9 +71,10 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2Client.init();
 
         samlContext = new MessageContext();
-        saml2MessageContext = new SAML2MessageContext();
+
+        val ctx = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 
@@ -153,7 +156,6 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         val authnRequest = builder.build(saml2MessageContext);
 
         assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
-
     }
 
     @Test

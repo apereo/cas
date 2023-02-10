@@ -24,6 +24,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.Ordered;
 
@@ -121,7 +122,7 @@ public class SamlSPUtils {
 
             resolvers.forEach(r -> {
                 if (r instanceof AbstractBatchMetadataResolver) {
-                    val it = ((AbstractBatchMetadataResolver) r).iterator();
+                    val it = ((Iterable<EntityDescriptor>) r).iterator();
                     val descriptor =
                         StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
                             .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)

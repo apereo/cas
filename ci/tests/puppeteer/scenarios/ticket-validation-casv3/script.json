@@ -5,6 +5,28 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",
+
+    "--cas.audit.slf4j.use-single-line=true",
     "--cas.authn.accept.name=STATIC"
-  ]
+  ],
+  "SPRING_APPLICATION_JSON": {
+    "cas": {
+      "authn": {
+        "attribute-repository": {
+          "stub": {
+            "attributes": {
+              "memberOf": "CN=Colleague Admins-OU=Computer Services Users",
+              "extensionAttribute1": "extension-attribute-1-value",
+              "extensionAttribute2": "extension-attribute-2-value",
+              "extensionAttribute3": "extension-attribute-3-value"
+            }
+          }
+        }
+      }
+    }
+  }
 }

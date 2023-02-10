@@ -26,7 +26,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 {% include_cached casproperties.html 
 properties="cas.monitor.st,cas.monitor.tgt,cas.monitor.load,cas.monitor.memory" %}
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably 
+<div class="alert alert-warning">:warning: <strong>YMMV</strong><p>In order to accurately and reliably 
 report on ticket statistics, you are at the mercy of the underlying ticket registry to support 
 the behavior in a performant manner which means that the infrastructure and network capabilities 
 and latencies must be considered and carefully tuned. This might have become specially relevant 

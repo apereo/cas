@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This is {@link LogoutProperties}.
@@ -29,7 +31,7 @@ public class LogoutProperties implements Serializable {
      * is indicated and extracted by a parameter name of your choosing here. If none specified,
      * the default will be used as {@code service}.
      */
-    private String redirectParameter = "service";
+    private List<String> redirectParameter = Stream.of("service").toList();
 
     /**
      * Whether CAS should be allowed to redirect to an alternative location after logout.

@@ -140,6 +140,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -168,6 +169,7 @@ public class OidcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public ServiceRegistryListener oidcServiceRegistryListener(
             @Qualifier("oidcAttributeReleasePolicyFactory")
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
@@ -206,7 +208,8 @@ public class OidcConfiguration {
             final SecurityLogic oidcAuthorizationSecurityLogic,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic),
+            val authzConfig = oauthSecConfig.withSecurityLogic(oidcAuthorizationSecurityLogic);
+            return new SecurityInterceptor(authzConfig,
                 Authenticators.CAS_OAUTH_CLIENT,
                 DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
         }

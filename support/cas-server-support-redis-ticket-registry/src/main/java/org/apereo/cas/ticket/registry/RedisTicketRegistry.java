@@ -51,7 +51,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
-        val redisKey = RedisCompositeKey.builder().id(encodeTicketId(ticketId)).build();
+        val redisKey = RedisCompositeKey.builder().id(digest(ticketId)).build();
         val redisKeyPattern = redisKey.toKeyPattern();
         val count = scanKeys(redisKeyPattern)
             .mapToInt(id -> BooleanUtils.toBoolean(redisTemplate.delete(id)) ? 1 : 0)
@@ -76,8 +76,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Adding ticket [{}]", ticket);
             val userId = getPrincipalIdFrom(ticket);
             val redisKey = RedisCompositeKey.builder()
-                .id(encodeTicketId(ticket.getId()))
-                .principal(encodeTicketId(userId))
+                .id(digest(ticket.getId()))
+                .principal(digest(userId))
                 .prefix(ticket.getPrefix())
                 .build();
             val encodeTicket = encodeTicket(ticket);
@@ -94,7 +94,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return FunctionUtils.doAndHandle(() -> {
             val prefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
             val redisKey = RedisCompositeKey.builder()
-                .id(encodeTicketId(ticketId))
+                .id(digest(ticketId))
                 .prefix(prefix)
                 .build();
             val ticket = ticketCache.get(redisKey.getId(), __ -> {
@@ -142,8 +142,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             val encodeTicket = encodeTicket(ticket);
             val userId = getPrincipalIdFrom(ticket);
             val redisKey = RedisCompositeKey.builder()
-                .id(encodeTicketId(ticket.getId()))
-                .principal(encodeTicketId(userId))
+                .id(digest(ticket.getId()))
+                .principal(digest(userId))
                 .prefix(ticket.getPrefix())
                 .build();
             val redisKeyPattern = redisKey.toKeyPattern();
@@ -159,7 +159,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val redisKey = RedisCompositeKey.builder()
-            .principal(encodeTicketId(principalId))
+            .principal(digest(principalId))
             .prefix(TicketGrantingTicket.PREFIX)
             .build()
             .toKeyPattern();

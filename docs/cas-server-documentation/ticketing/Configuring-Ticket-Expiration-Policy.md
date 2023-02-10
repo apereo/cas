@@ -11,7 +11,7 @@ category: Ticketing
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting
 tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`), proxy tickets (`PT`), etc.
 
-<div class="alert alert-info"><strong>There Is More</strong><p>There are many other types of 
+<div class="alert alert-info">:information_source: <strong>There Is More</strong><p>There are many other types of 
 artifacts in CAS that take the base form of a ticket abstraction. Each protocol or feature may 
 introduce a new ticket type that carries its own expiration policy and you will need to 
 consult the documentation for that feature or behavior to realize how expiration 
@@ -41,7 +41,7 @@ Ticket expiration policies are activated in the following conditions:
 - Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
 - If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
+<div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
 properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all 
 fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to 
 poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
@@ -108,7 +108,7 @@ attempts to consume CAS server resources by requesting high volumes of service t
 
 The never expires policy allows tickets to exist indefinitely. 
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall
 security policy and should be enabled only after a thorough review by a qualified security team. There are also implications to
 server resource usage for the ticket registries backed by filesystem storage. Since disk storage for tickets can never be reclaimed
 for those registries with this policy in effect, use of this policy with those ticket registry implementations

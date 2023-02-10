@@ -39,7 +39,6 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
-import javax.xml.namespace.QName;
 import java.io.Serial;
 import java.time.Clock;
 import java.time.Instant;
@@ -57,7 +56,7 @@ import java.util.Map;
  * @since 4.1
  */
 @Slf4j
-public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
+public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder implements Saml20ObjectBuilder {
     @Serial
     private static final long serialVersionUID = -4325127376598205277L;
 
@@ -288,17 +287,31 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param sessionIndex    the session index
      * @return the authn statement
      */
-    public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant,
+    public AuthnStatement newAuthnStatement(final String contextClassRef,
+                                            final ZonedDateTime authnInstant,
                                             final String sessionIndex) {
-        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
-            contextClassRef, authnInstant, sessionIndex);
-        val stmt = newSamlObject(AuthnStatement.class);
         val ctx = newSamlObject(AuthnContext.class);
-
         val classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setURI(contextClassRef);
         ctx.setAuthnContextClassRef(classRef);
-        stmt.setAuthnContext(ctx);
+        return newAuthnStatement(ctx, authnInstant, sessionIndex);
+    }
+
+    /**
+     * New authn statement authn statement.
+     *
+     * @param context      the context
+     * @param authnInstant the authn instant
+     * @param sessionIndex the session index
+     * @return the authn statement
+     */
+    public AuthnStatement newAuthnStatement(final AuthnContext context,
+                                            final ZonedDateTime authnInstant,
+                                            final String sessionIndex) {
+        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
+            context, authnInstant, sessionIndex);
+        val stmt = newSamlObject(AuthnStatement.class);
+        stmt.setAuthnContext(context);
         stmt.setAuthnInstant(authnInstant.toInstant());
         stmt.setSessionIndex(sessionIndex);
         return stmt;
@@ -436,26 +449,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return inflateAuthnRequest(decodedBytes);
     }
 
-    /**
-     * New saml object.
-     *
-     * @param <T>        the type parameter
-     * @param objectType the name id class
-     * @return the t
-     */
-    protected <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+    @Override
+    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         val qName = getSamlObjectQName(objectType);
         return SamlUtils.newSamlObject(objectType, qName);
-    }
-
-    /**
-     * Gets saml object q name.
-     *
-     * @param objectType the object type
-     * @return the saml object q name
-     */
-    protected QName getSamlObjectQName(final Class objectType) {
-        return SamlUtils.getSamlObjectQName(objectType);
     }
 
 

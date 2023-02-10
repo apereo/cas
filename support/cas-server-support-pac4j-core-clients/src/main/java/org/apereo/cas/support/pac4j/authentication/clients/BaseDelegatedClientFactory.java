@@ -12,6 +12,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -471,8 +472,12 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                             && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
                             && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
             .map(saml -> {
-                val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), saml.getMetadata().getIdentityProviderMetadataPath());
+                val keystorePath = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getKeystorePath());
+                val identityProviderMetadataPath = SpringExpressionLanguageValueResolver.getInstance()
+                    .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
+                
+                val cfg = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
+                    saml.getPrivateKeyPassword(), identityProviderMetadataPath);
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
@@ -490,7 +495,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
 
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
-                cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
+                val serviceProviderEntityId = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getServiceProviderEntityId());
+                cfg.setServiceProviderEntityId(serviceProviderEntityId);
 
                 FunctionUtils.doIfNotNull(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(), location -> {
                     val resource = ResourceUtils.getRawResourceFrom(location);

@@ -82,7 +82,7 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void verifyOk() throws Exception {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
         val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
@@ -92,7 +92,7 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void verifyMissingClient() {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
 
         val cc = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
         assertThrows(PreventedException.class, () -> handler.authenticate(cc, mock(Service.class)));
@@ -104,7 +104,7 @@ public class DelegatedClientAuthenticationHandlerTests {
 
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+        fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
         val result = handler.authenticate(clientCredential, mock(Service.class));
         val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
@@ -113,7 +113,7 @@ public class DelegatedClientAuthenticationHandlerTests {
     @Test
     public void verifyNoProfile() {
         assertThrows(PreventedException.class, () -> {
-            fbClient.setProfileCreator((credentials, webContext, sessionStore) -> Optional.empty());
+            fbClient.setProfileCreator((callContext, sessionStore) -> Optional.empty());
             handler.authenticate(clientCredential, mock(Service.class));
         });
     }

@@ -109,7 +109,7 @@ tasks.register('sourcesJar', Jar) {
 }
 
 tasks.register('resourcesJar', Jar) {
-    classifier "resources"
+    archiveClassifier.set("resources")
     from project.file("src/main/resources")
 }
 

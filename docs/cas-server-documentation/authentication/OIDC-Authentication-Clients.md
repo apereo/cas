@@ -28,7 +28,7 @@ Note that OpenID connect clients as service definitions are an
 extension of [OAuth services](OAuth-Authentication-Clients.html) in CAS. All settings 
 that apply to an OAuth service definition should equally apply here as well. 
 
-<div class="alert alert-info"><strong>Redirect URIs</strong><p>Client application redirect URIs are specified
+<div class="alert alert-info">:information_source: <strong>Redirect URIs</strong><p>Client application redirect URIs are specified
 using the <code>serviceId</code> field which supports regular expression patterns. If you need to support multiple URIs, you can
 try to <i>OR</i> them together or you may be able to construct the pattern that supports and matches all URIs with minor changes.</p></div>
 
@@ -60,7 +60,7 @@ The following fields are specifically available for OpenID connect services:
 | `subjectType`                       | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.                                                                                                    |
 | `sectorIdentifierUri`               | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.                                         |
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to 
+<div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to 
 only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to 
 configure them yet again based on their default. While 
@@ -71,7 +71,7 @@ deployment at that.</p></div>
 Service definitions are typically managed and registered 
 with CAS by the [service management](../services/Service-Management.html) facility.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>CAS today does not strictly 
 enforce the collection of authorized supported response/grant types for backward compatibility reasons if left blank. This means that if left 
 undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior 
 is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for 

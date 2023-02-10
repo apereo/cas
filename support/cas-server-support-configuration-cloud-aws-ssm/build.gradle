@@ -1,6 +1,7 @@
 description = "Apereo CAS Configuration - AWS Parameter Store"
 dependencies {
     implementation libraries.awsssm
+    implementation libraries.springcloudbootstrap
 
     implementation project(":support:cas-server-support-aws")
     implementation project(":core:cas-server-core-configuration-api")

@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a security assertion obtained from a successfully validated ticket.
@@ -22,6 +23,17 @@ public interface Assertion extends Serializable {
      * @return Non-null primary authentication event.
      */
     Authentication primaryAuthentication();
+
+    /**
+     * Original authentication tied to this assertion
+     * prior to any transformations. This is the authentication
+     * attempt on top of which this assertion was built and is
+     * used for tracking purposes particularly when the assertion
+     * is built manually where necessary.
+     *
+     * @return the authentication
+     */
+    Authentication originalAuthentication();
 
     /**
      * Gets a list of all authentications that have occurred during a CAS SSO session.
@@ -54,4 +66,11 @@ public interface Assertion extends Serializable {
      * @return the registered service
      */
     RegisteredService registeredService();
+
+    /**
+     * Context map.
+     *
+     * @return the map
+     */
+    Map<String, Serializable> context();
 }

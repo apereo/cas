@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
@@ -23,7 +24,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,9 +48,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
-    /**
-     * The cipher executor for ticket objects.
-     */
     protected CipherExecutor cipherExecutor;
 
     /**
@@ -60,6 +61,28 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
             .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
             : StringUtils.EMPTY;
+    }
+
+    protected Map collectAndDigestTicketAttributes(final Ticket ticket) {
+        val currentAttributes = getCombinedTicketAttributes(ticket);
+        if (isCipherExecutorEnabled()) {
+            val encodedAttributes = new HashMap<String, Object>(currentAttributes.size());
+            currentAttributes.forEach((key, value) -> encodedAttributes.put(digest(key), digest(value)));
+            return encodedAttributes;
+        }
+        return currentAttributes;
+    }
+
+    private static Map<String, List<Object>> getCombinedTicketAttributes(final Ticket ticket) {
+        if (ticket instanceof AuthenticationAwareTicket authnTicket) {
+            val authentication = authnTicket.getAuthentication();
+            if (authentication != null) {
+                val attributes = new HashMap<>(authentication.getAttributes());
+                val principal = authentication.getPrincipal();
+                return CoreAuthenticationUtils.mergeAttributes(attributes, principal.getAttributes());
+            }
+        }
+        return new HashMap<>();
     }
 
     @Override
@@ -222,32 +245,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return count.intValue();
     }
 
-    /**
-     * Encode ticket id into a SHA-512.
-     *
-     * @param ticketId the ticket id
-     * @return the ticket
-     */
-    protected String encodeTicketId(final String ticketId) {
+    protected List<String> digest(final Collection<Object> identifiers) {
+        return identifiers
+            .stream()
+            .map(Object::toString)
+            .map(this::digest)
+            .collect(Collectors.toList());
+    }
+
+    protected String digest(final String identifier) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
-            return ticketId;
+            return identifier;
         }
-        if (StringUtils.isBlank(ticketId)) {
-            return ticketId;
+        if (StringUtils.isBlank(identifier)) {
+            return identifier;
         }
-        val encodedId = DigestUtils.sha512(ticketId);
-        LOGGER.debug("Encoded original ticket id [{}] to [{}]", ticketId, encodedId);
+        val encodedId = DigestUtils.sha512(identifier);
+        LOGGER.debug("Digested original ticket id [{}] to [{}]", identifier, encodedId);
         return encodedId;
     }
 
-    /**
-     * Encode ticket.
-     *
-     * @param ticket the ticket
-     * @return the ticket
-     * @throws Exception the exception
-     */
     protected Ticket encodeTicket(final Ticket ticket) throws Exception {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
@@ -262,12 +280,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return encodedTicket;
     }
 
-    /**
-     * Decode ticket.
-     *
-     * @param ticketToProcess the result
-     * @return the ticket
-     */
     protected Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
             LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled. ", ticketToProcess.getId());
@@ -325,7 +337,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
-        val encodedTicketId = encodeTicketId(ticket.getId());
+        val encodedTicketId = digest(ticket.getId());
         return new DefaultEncodedTicket(encodedTicketId,
             ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
     }

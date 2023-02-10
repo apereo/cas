@@ -272,6 +272,7 @@
                                     defaultValue=config.defaultValue
                                     description=config.description
                                     duration=config.duration
+                                    regexPattern=config.regexPattern
                                     expressionLanguage=config.expressionLanguage
                                     deprecationLevel=config.deprecationLevel
                                     deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
@@ -374,6 +375,7 @@
                                         defaultValue=config.defaultValue
                                         description=config.description
                                         duration=config.duration
+                                        regexPattern=config.regexPattern
                                         expressionLanguage=config.expressionLanguage
                                         deprecationLevel=config.deprecationLevel
                                         deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
@@ -412,8 +414,8 @@
         The configuration settings listed below are tagged as <u><i>Optional</i></u> in the CAS configuration metadata. This
         flag indicates that the presence of the setting
         is not immediately necessary in the end-user CAS configuration, because a default value is assigned or
-        the activation of the feature is not conditionally controlled by the setting value. You should only include this field in your
-        configuration if you need to modify the default value.
+        the activation of the feature is not conditionally controlled by the setting value. In other words, you should only include this field in your
+        configuration <strong>if you need to modify the default value</strong> or <strong>if you need to turn on the feature</strong> controlled by the setting.
     </sub>
     <br><p />
 
@@ -495,6 +497,7 @@
                                 defaultValue=config.defaultValue
                                 description=config.description
                                 duration=config.duration
+                                regexPattern=config.regexPattern
                                 expressionLanguage=config.expressionLanguage
                                 deprecationLevel=config.deprecationLevel
                                 deprecationReplacement=config.deprecationReplacement %}{% endcapture %}
@@ -596,6 +599,7 @@
                                         defaultValue=config.defaultValue
                                         description=config.description
                                         duration=config.duration
+                                        regexPattern=config.regexPattern
                                         expressionLanguage=config.expressionLanguage
                                         deprecationLevel=config.deprecationLevel
                                         deprecationReplacement=config.deprecationReplacement %}{% endcapture %}

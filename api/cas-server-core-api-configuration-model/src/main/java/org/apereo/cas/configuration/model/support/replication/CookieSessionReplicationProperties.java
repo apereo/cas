@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.replication;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -42,7 +43,7 @@ public class CookieSessionReplicationProperties extends PinnableCookieProperties
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public CookieSessionReplicationProperties() {
-        setName("DISSESSION");
+        setName("DISSESSION" + RandomUtils.randomNumeric(4));
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

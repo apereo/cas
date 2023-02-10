@@ -11,7 +11,7 @@ docker run --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 90
   -v "$PWD"/ci/tests/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml \
   -v "$PWD"/ci/tests/cassandra/cqlshrc:/root/.cassandra/cqlshrc \
   -v "$PWD"/ci/tests/cassandra/security:/security \
-  cassandra:4.0.7
+  cassandra:4.1.0
   
 #docker logs -f cassandra &
 

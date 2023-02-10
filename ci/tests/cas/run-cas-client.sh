@@ -44,7 +44,7 @@ fi
 
 if [[ ! -f ${TMPDIR}/bootiful-cas-client.jar ]] ; then
   echo "Downloading Bootiful CAS client..."
-  curl -L https://github.com/apereo/bootiful-cas-client/releases/download/v1.4.0/bootiful-cas-client.jar -o ${TMPDIR}/bootiful-cas-client.jar
+  curl -L https://github.com/apereo/bootiful-cas-client/releases/download/v1.4.0/bootiful-cas-client.jar -o "${TMPDIR}"/bootiful-cas-client.jar
 fi
 
 cat > ${TMPDIR}/sslConfig.properties <<- EOM
@@ -57,6 +57,7 @@ java -jar ${TMPDIR}/bootiful-cas-client.jar \
   --management.endpoint.shutdown.enabled=true \
   --endpoints.shutdown.enabled=true \
   --server.ssl.key-store="${KEYSTORE}" \
+  --cas.single-logout.enabled=true \
   --cas.ssl-config-file=${TMPDIR}/sslConfig.properties &
 pid=$!
 echo "CAS client application process id $pid"

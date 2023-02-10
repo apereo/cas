@@ -23,7 +23,7 @@ To review the old archives of the application security working group, [please se
 - Project members or the original reporter **SHOULD** verify and confirm that the produced patch does indeed fix the issue.
 - A patch release is made available to the wider public.
 
-<div class="alert alert-warning"><strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
+<div class="alert alert-warning">:warning: <strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
 
 ### Dependency Upgrades
 
@@ -84,7 +84,7 @@ Once the release is made available, the following procedure may be observed:
     - Recommended guidelines for upgrades and applications of the patch.
 - At the end of a four-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
-<div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="/cas/developer/Project-Commitee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
+<div class="alert alert-info">:information_source: <strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="/cas/developer/Project-Commitee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
 
 ### Trusted Contacts
 

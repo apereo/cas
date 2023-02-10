@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -86,5 +87,6 @@ public class HttpHeadersRequestProperties implements Serializable {
     /**
      * Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.
      */
+    @RegularExpressionCapable
     private String cacheControlStaticResources = "css|js|png|txt|jpg|ico|jpeg|bmp|gif";
 }
