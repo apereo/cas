@@ -168,8 +168,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> stream() {
         return scanKeys()
-            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+            .map(redisKey -> {
+                val adapter = buildRedisKeyValueAdapter(redisKey);
+                return adapter.get(redisKey, RedisTicketDocument.class.getName(), RedisTicketDocument.class);
+            })
             .filter(Objects::nonNull)
+            .map(RedisTicketDocument.class::cast)
             .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
             .filter(Objects::nonNull)
@@ -184,8 +188,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .prefix(TicketGrantingTicket.PREFIX)
             .build()
             .toKeyPattern();
+        
         return scanKeys(redisKey)
-            .map(key -> redisTemplate.boundValueOps(key).get())
+            .map(key -> {
+                val adapter = buildRedisKeyValueAdapter(key);
+                return adapter.get(key, RedisTicketDocument.class.getName(), RedisTicketDocument.class);
+            })
             .filter(Objects::nonNull)
             .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
@@ -292,6 +300,15 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         val redisKeyPattern = redisKey.toKeyPattern();
 
         val ticketDocument = buildTicketAsDocument(ticket);
+        val adapter = buildRedisKeyValueAdapter(redisKeyPattern);
+        adapter.put(ticketDocument.getTicketId(), ticketDocument, redisKeyPattern);
+        
+        redisTemplate.expire(redisKeyPattern, timeout, TimeUnit.SECONDS);
+        ticketCache.put(redisKey.getId(), ticket);
+        return redisKey;
+    }
+
+    private RedisKeyValueAdapter buildRedisKeyValueAdapter(final String redisKeyPattern) {
         val adapter = new RedisKeyValueAdapter(redisTemplate) {
             @Override
             public byte[] createKey(final String keyspace, final String id) {
@@ -299,10 +316,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             }
         };
         adapter.afterPropertiesSet();
-        adapter.put(ticketDocument.getTicketId(), ticketDocument, redisKeyPattern);
-        redisTemplate.expire(redisKeyPattern, timeout, TimeUnit.SECONDS);
-        ticketCache.put(redisKey.getId(), ticket);
-        return redisKey;
+        return adapter;
     }
 
     private void createIndexesIfNecessary() {
