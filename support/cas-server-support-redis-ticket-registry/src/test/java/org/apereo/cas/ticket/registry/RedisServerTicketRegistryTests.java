@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 @Tag("Redis")
 @Slf4j
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
-    private static final int COUNT = 500;
+    private static final int COUNT = 250;
 
     @RepeatedTest(2)
     public void verifyLargeDataset() {

@@ -170,7 +170,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         return scanKeys()
             .map(redisKey -> {
                 val adapter = buildRedisKeyValueAdapter(redisKey);
-                return adapter.get(redisKey, RedisTicketDocument.class.getName(), RedisTicketDocument.class);
+                val document = adapter.get(redisKey, RedisTicketDocument.class.getName(), RedisTicketDocument.class);
+                if (document == null) {
+                    redisTemplate.delete(redisKey);
+                    return null;
+                }
+                return document;
             })
             .filter(Objects::nonNull)
             .map(RedisTicketDocument.class::cast)
@@ -229,7 +234,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                         : StringUtils.replace(queryValue.toString(), "-", "\\-");
                     criteria.add(String.format("(%s" + (isCipherExecutorEnabled() ? " " : "_") + "*%s)", digest(key), escapedValue));
                 }));
-                val results = command.ftSearch(SEARCH_INDEX_NAME, String.join("|", criteria));
+                val query = String.format("(%s) @%s:%s", String.join("|", criteria),
+                    RedisTicketDocument.FIELD_NAME_PREFIX, TicketGrantingTicket.PREFIX);
+                LOGGER.debug("Executing search query [{}]", query);
+                val results = command.ftSearch(SEARCH_INDEX_NAME, query);
                 return results
                     .stream()
                     .map(document -> {
