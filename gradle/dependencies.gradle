@@ -1399,6 +1399,18 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        fluentd : [
+                dependencies.create("org.fluentd:fluent-logger:$fluentdVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("io.github.technologize:fluentd-log4j-appender:$fluentdLog4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         log4j                      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
