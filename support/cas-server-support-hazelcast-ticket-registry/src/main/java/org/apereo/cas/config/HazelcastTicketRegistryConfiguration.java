@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
+import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -14,6 +15,7 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import com.hazelcast.config.AttributeConfig;
 import com.hazelcast.config.IndexConfig;
 import com.hazelcast.config.IndexType;
 import com.hazelcast.config.MapConfig;
@@ -87,6 +89,11 @@ public class HazelcastTicketRegistryConfiguration {
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
+
+                    val attributeConfig = new AttributeConfig();
+                    attributeConfig.setName("attributes");
+                    attributeConfig.setExtractorClassName(MapAttributeValueExtractor.class.getName());
+                    mapConfig.addAttributeConfig(attributeConfig);
                 }
                 return cfg;
             })

@@ -112,7 +112,7 @@ public class RedisObjectFactory {
     }
 
     /**
-     * New redis search commands.
+     * New redis modules commands.
      *
      * @param redis the redis
      * @return the redis search commands
