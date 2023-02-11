@@ -28,6 +28,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -48,6 +49,8 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
+
+import java.util.Optional;
 
 /**
  * This is {@link RedisTicketRegistryConfiguration}.
@@ -187,7 +190,7 @@ public class RedisTicketRegistryConfiguration {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
 
-                    val searchCommands = RedisObjectFactory.newRedisModulesCommands(redis);
+                    val searchCommands = redis.isEnableRedisSearch() ? RedisObjectFactory.newRedisModulesCommands(redis) : Optional.<RedisModulesCommands>empty();
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher, searchCommands);
                 })
