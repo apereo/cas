@@ -52,6 +52,7 @@ improve the performance of ticket registry queries that attempt to look up ticke
 ## Other Stuff
         
 - Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.
+- Basic support for routing logs to [Fluentd](../logging/Logging-Fluentd.html) is now available.
 
 ## Library Upgrades
 

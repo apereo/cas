@@ -551,6 +551,7 @@ layout: null
 * [Logs & Audits](#logs_audits)
     *   [Logging](#loggingoverview)
         *   [Overview](/cas/{{ version }}/logging/Logging.html)
+        *   [Fluentd](/cas/{{ version }}/logging/Logging-Fluentd.html)
         *   [Cloudwatch](/cas/{{ version }}/logging/Logging-Cloudwatch.html)
         *   [SQS](/cas/{{ version }}/logging/Logging-SQS.html)
         *   [Loggly](/cas/{{ version }}/logging/Logging-Loggly.html)
