@@ -58,3 +58,5 @@ improve the performance of ticket registry queries that attempt to look up ticke
 
 - Apache Kafka
 - Gradle
+- MongoDb
+- Caffeine
