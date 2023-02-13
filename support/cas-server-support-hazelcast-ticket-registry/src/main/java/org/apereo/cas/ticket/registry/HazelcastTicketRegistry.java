@@ -190,7 +190,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             LOGGER.debug("Executing SQL query [{}]", query);
             val results = ticketMapInstance.values(Predicates.sql(query));
             return StreamSupport.stream(results.spliterator(), false)
-                .map(row -> decodeTicket(row.getTicket()));
+                .map(row -> decodeTicket(row.getTicket()))
+                .filter(ticket -> !ticket.isExpired());
         }
         return super.getSessionsWithAttributes(queryAttributes);
     }
@@ -206,7 +207,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 .map(row -> {
                     val ticket = (Ticket) row.getObject("ticket");
                     return decodeTicket(ticket);
-                });
+                })
+                .filter(ticket -> !ticket.isExpired());
         }
         return super.getSessionsFor(principalId);
     }
@@ -240,7 +242,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     private IMap<String, HazelcastTicketHolder> getTicketMapInstance(
         @NonNull
         final String mapName) {
-        return FunctionUtils.doUnchecked(() -> {
+        return FunctionUtils.doAndHandle(() -> {
             val inst = hazelcastInstance.<String, HazelcastTicketHolder>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;

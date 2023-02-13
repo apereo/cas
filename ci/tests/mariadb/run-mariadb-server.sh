@@ -10,8 +10,8 @@ docker run --rm -p 3306:3306 --rm --name mariadb \
 docker ps | grep "mariadb"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "MariaDb docker image is running."
+    echo "MariaDb docker container is running."
 else
-    echo "MariaDb docker image failed to start."
+    echo "MariaDb docker container failed to start."
     exit $retVal
 fi
