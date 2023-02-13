@@ -145,6 +145,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .map(map -> mongoTemplate.findAll(MongoDbTicketDocument.class, map))
             .flatMap(List::stream)
             .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+            .filter(ticket -> !ticket.isExpired())
             .collect(Collectors.toSet());
     }
 
@@ -177,7 +178,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
-            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override
@@ -202,7 +204,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                     : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, PAGE_SIZE));
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
-            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override
@@ -230,7 +233,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 val query = new Query(finalCriteria);
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
-            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override

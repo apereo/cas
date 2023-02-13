@@ -171,7 +171,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .streamQuery(query)
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
-            .map(this::decodeTicket);
+            .map(this::decodeTicket)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override
@@ -196,7 +197,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .streamQuery(query)
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
-            .map(this::decodeTicket);
+            .map(this::decodeTicket)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override
@@ -254,7 +256,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .streamQuery(query)
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
-            .map(this::decodeTicket);
+            .map(this::decodeTicket)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     protected String getTicketTypeName(final Class<? extends Ticket> clazz) {

@@ -182,6 +182,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
             .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired())
             .peek(ticket -> ticketCache.put(ticket.getId(), ticket));
     }
 
@@ -202,7 +203,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .filter(Objects::nonNull)
             .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
-            .filter(Objects::nonNull);
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     @Override
@@ -245,7 +247,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                         val redisDoc = RedisTicketDocument.from(searchDoc);
                         val ticket = deserializeAsTicket(redisDoc);
                         return decodeTicket(ticket);
-                    });
+                    })
+                    .filter(ticket -> !((Ticket) ticket).isExpired());
             })
             .orElseGet(() -> super.getSessionsWithAttributes(queryAttributes));
     }
