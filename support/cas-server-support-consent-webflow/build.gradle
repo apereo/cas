@@ -1,4 +1,11 @@
 description = "Apereo CAS Consent Webflow"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Attribute Consent",
+            aliases: ["consent"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     

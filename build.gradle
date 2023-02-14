@@ -561,7 +561,7 @@ tasks.register('publishProjectModules') {
     doLast {
         def apiKey = System.getenv().get("RESTDB_CAS_API_KEY") as String
 
-        println "Deleting records for ${rootProject.version}"
+        println "Deleting records for CAS ${rootProject.version}"
         def url = new URL("https://apereocas-42e7.restdb.io/rest/casmodules/*?q=" + URLEncoder.encode("{\"version\": \"${rootProject.version}\"}"))
         def httpCon = (HttpURLConnection) url.openConnection()
         httpCon.setRequestProperty("Content-Type", "application/json")
@@ -584,7 +584,7 @@ tasks.register('publishProjectModules') {
             }
         }
 
-        println "Uploading records for ${rootProject.version}"
+        println "Uploading records for CAS ${rootProject.version}"
         def postUrl = new URL('https://apereocas-42e7.restdb.io/rest/casmodules')
         def connection = postUrl.openConnection() as HttpURLConnection
         connection.setRequestProperty("Content-Type", "application/json")

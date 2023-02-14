@@ -1,4 +1,12 @@
 description = "Apereo CAS Internet2 Grouper Integration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Internet2 Grouper",
+            aliases: ["grouper"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")

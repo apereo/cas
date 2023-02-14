@@ -1,4 +1,11 @@
 description = "Apereo CAS Consent REST Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Attribute Consent"
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")

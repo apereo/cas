@@ -1,6 +1,10 @@
 description = "Apereo CAS Consent LDAP Support"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Attribute Consent"
+    ]
 }
 dependencies {
     implementation libraries.ldaptive
