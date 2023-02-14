@@ -1,4 +1,12 @@
-description = "Apereo CAS WS-Security IdP"
+description = "Apereo CAS WS-Security Identity Provider"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WSFED Protocol",
+            title: "WS Federation Identity Provider"
+    ]
+}
+
 dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard

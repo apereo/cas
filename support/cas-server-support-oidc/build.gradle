@@ -1,4 +1,13 @@
 description = "Apereo CAS Server OpenID Connect Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "OpenID Connect Protocol",
+            title: "OpenID Connect Identity Provider",
+            aliases: ["oidc"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
