@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +41,6 @@ public class IgniteTicketDocument implements Serializable {
     @QuerySqlField(index = true)
     private String prefix;
 
-    @Builder.Default
     @QuerySqlField(index = true)
     private String attributes;
 }

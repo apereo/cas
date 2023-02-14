@@ -556,6 +556,51 @@ tasks.register('verifyRequiredJavaVersion') {
     }
 }
 
+tasks.register('publishProjectModules') {
+    enabled(System.getenv().containsKey("RESTDB_CAS_API_KEY"))
+    doLast {
+        def apiKey = System.getenv().get("RESTDB_CAS_API_KEY") as String
+
+        println "Deleting records for ${rootProject.version}"
+        def url = new URL("https://apereocas-42e7.restdb.io/rest/casmodules/*?q=" + URLEncoder.encode("{\"version\": \"${rootProject.version}\"}"))
+        def httpCon = (HttpURLConnection) url.openConnection()
+        httpCon.setRequestProperty("Content-Type", "application/json")
+        httpCon.setRequestProperty("x-apikey", apiKey)
+        httpCon.setRequestMethod("DELETE");
+        httpCon.connect()
+        println httpCon.getResponseCode()
+
+        def results = []
+        subprojects.each {
+            def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
+            if (publishMetadata) {
+                results += [
+                    name: it.name,
+                    version: it.version,
+                    group: it.group,
+                    description: it.description,
+                    details: it.ext.projectMetadata
+                ]
+            }
+        }
+
+        println "Uploading records for ${rootProject.version}"
+        def postUrl = new URL('https://apereocas-42e7.restdb.io/rest/casmodules')
+        def connection = postUrl.openConnection() as HttpURLConnection
+        connection.setRequestProperty("Content-Type", "application/json")
+        connection.setRequestProperty("x-apikey", apiKey)
+        connection.requestMethod = 'POST'
+        def json = groovy.json.JsonOutput.toJson(results)
+        connection.doOutput = true
+        connection.with {
+            outputStream.withWriter { outputStreamWriter ->
+                outputStreamWriter << json
+            }
+        }
+        println connection.responseCode
+    }
+}
+
 boolean projectShouldBePublished(Project project) {
     def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
             && !project.getPath().contains("cas-server-documentation")
