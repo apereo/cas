@@ -1,4 +1,11 @@
 description = "Apereo CAS Passwordless Authentication JPA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Passwordless Authentication",
+            title: "Passwordless Authentication via JDBC"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")

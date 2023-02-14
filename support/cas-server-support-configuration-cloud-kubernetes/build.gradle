@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - Kubernetes"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via Kubernetes"
+    ]
+}
 dependencies {
     implementation libraries.springcloudkubernetesconfig
     implementation libraries.springcloudbootstrap

@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - MongoDb"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via MongoDb"
+    ]
+}
 dependencies {
     implementation libraries.mongo
     implementation libraries.springcloudbootstrap

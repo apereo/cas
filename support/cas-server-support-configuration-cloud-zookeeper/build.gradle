@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - Apache Zookeeper"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via Apache ZooKeeper"
+    ]
+}
 dependencies {
     implementation libraries.springcloudzookeeper
     implementation libraries.zookeeper

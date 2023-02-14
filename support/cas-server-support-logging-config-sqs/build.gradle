@@ -1,4 +1,11 @@
 description = "Apereo CAS Core Logging AWS SQS"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "AWS SQS"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
 

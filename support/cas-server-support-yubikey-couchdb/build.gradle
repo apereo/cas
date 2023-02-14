@@ -1,4 +1,11 @@
 description = "Apereo CAS YubiKey CouchDb Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via Apache CouchDb"
+    ]
+}
 dependencies {
     implementation libraries.ektorp
     implementation libraries.yubicoapi
