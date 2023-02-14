@@ -1,4 +1,11 @@
 description = "Apereo CAS Metrics Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS Metrics"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-authentication-api")
