@@ -5,6 +5,9 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketDefinitionProperties;
+import org.apereo.cas.ticket.registry.IgniteTicketDocument;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
@@ -15,6 +18,8 @@ import lombok.val;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
+import org.apache.ignite.cache.QueryEntity;
+import org.apache.ignite.cache.QueryIndex;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.DataRegionConfiguration;
 import org.apache.ignite.configuration.DataStorageConfiguration;
@@ -32,7 +37,12 @@ import org.springframework.util.StringUtils;
 
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
+
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -49,43 +59,62 @@ public class IgniteTicketRegistryConfiguration {
 
     private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite, final TicketCatalog ticketCatalog) {
         val definitions = ticketCatalog.findAll();
-        return definitions.stream().map(t -> {
-            val ticketsCache = new CacheConfiguration();
-            ticketsCache.setName(t.getProperties().getStorageName());
-            ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
-            ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
-            val writeSync = CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
-            ticketsCache.setWriteSynchronizationMode(writeSync);
-            val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
-            ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
-            return ticketsCache;
-        }).collect(Collectors.toSet());
+        return definitions
+            .stream()
+            .map(t -> {
+                val ticketsCache = new CacheConfiguration();
+                ticketsCache.setName(t.getProperties().getStorageName());
+                ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
+                ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
+                val writeSync = CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
+                ticketsCache.setWriteSynchronizationMode(writeSync);
+                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
+                ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
+                ticketsCache.setIndexedTypes(String.class, IgniteTicketDocument.class);
+                
+                val queryEntity = new QueryEntity(String.class, IgniteTicketDocument.class)
+                    .setTableName(t.getProperties().getStorageName())
+                    .setKeyFields(Set.of("id", "type", "principal", "prefix", "attributes"))
+                    .addQueryField("id", String.class.getName(), null)
+                    .addQueryField("type", String.class.getName(), null)
+                    .addQueryField("principal", String.class.getName(), null)
+                    .addQueryField("attributes", Map.class.getName(), null)
+                    .addQueryField("prefix", String.class.getName(), null);
+                queryEntity.setIndexes(Arrays.asList(new QueryIndex("id"), new QueryIndex("type", false),
+                    new QueryIndex("principal", false), new QueryIndex("prefix", false),
+                    new QueryIndex("attributes", false)));
+                ticketsCache.setQueryEntities(List.of(queryEntity));
+
+                return ticketsCache;
+            })
+            .collect(Collectors.toSet());
     }
 
     protected static SslContextFactory buildSecureTransportForIgniteConfiguration(final CasConfigurationProperties casProperties) {
         val properties = casProperties.getTicket().getRegistry().getIgnite();
-        val nullKey = "NULL";
+
         if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
             && StringUtils.hasText(properties.getTrustStoreFilePath()) && StringUtils.hasText(properties.getTrustStorePassword())) {
+
             val sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
-            if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
-                sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
-            } else {
+            if (StringUtils.hasText(properties.getTrustStoreFilePath()) && StringUtils.hasText(properties.getTrustStorePassword())) {
                 sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
                 sslContextFactory.setTrustStorePassword(properties.getTrustStorePassword().toCharArray());
+            } else {
+                sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
+            if (StringUtils.hasText(properties.getKeyAlgorithm())) {
                 sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
             }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getProtocol())) {
+            if (StringUtils.hasText(properties.getProtocol())) {
                 sslContextFactory.setProtocol(properties.getProtocol());
             }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getTrustStoreType())) {
+            if (StringUtils.hasText(properties.getTrustStoreType())) {
                 sslContextFactory.setTrustStoreType(properties.getTrustStoreType());
             }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyStoreType())) {
+            if (StringUtils.hasText(properties.getKeyStoreType())) {
                 sslContextFactory.setKeyStoreType(properties.getKeyStoreType());
             }
             return sslContextFactory;
@@ -97,7 +126,8 @@ public class IgniteTicketRegistryConfiguration {
     @Bean
     public IgniteConfiguration igniteConfiguration(
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties) {
+        final TicketCatalog ticketCatalog,
+        final CasConfigurationProperties casProperties) {
         val ignite = casProperties.getTicket().getRegistry().getIgnite();
         val config = new IgniteConfiguration();
         val spi = new TcpDiscoverySpi();
@@ -132,6 +162,13 @@ public class IgniteTicketRegistryConfiguration {
         dataStorageConfiguration.setDefaultDataRegionConfiguration(dataRegionConfiguration);
         dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
         config.setDataStorageConfiguration(dataStorageConfiguration);
+
+        val sqlSchemas = ticketCatalog.findAll()
+            .stream()
+            .map(TicketDefinition::getProperties)
+            .map(TicketDefinitionProperties::getStorageName)
+            .toArray(String[]::new);
+        config.getSqlConfiguration().setSqlSchemas(sqlSchemas);
         return config;
     }
 
