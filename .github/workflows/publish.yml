@@ -148,6 +148,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Publish SNAPSHOTs
+      - name: Publish 
         if: ${{ env.RESTDB_CAS_API_KEY != null }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel publishProjectModules -x test -x javadoc -x check

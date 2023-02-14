@@ -1,6 +1,9 @@
 description = "Apereo CAS Consent Support via DynamoDb"
 ext {
-    maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Attribute Consent"
+    ]
 }
 dependencies {
     implementation project(":core:cas-server-core-util-api")
