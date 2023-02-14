@@ -2,6 +2,7 @@ description = "Apereo CAS Consent REST Support"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via REST",
             category: "Attribute Consent"
     ]
 }

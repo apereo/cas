@@ -2,6 +2,7 @@ description = "Apereo CAS Consent Support via CouchDbDb"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via Apache CouchDb",
             category: "Attribute Consent"
     ]
 }

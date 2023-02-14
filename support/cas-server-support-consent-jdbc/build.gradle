@@ -2,6 +2,7 @@ description = "Apereo CAS Consent JDBC Support"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via JDBC",
             category: "Attribute Consent"
     ]
 }
