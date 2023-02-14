@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import com.google.common.collect.Streams;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,29 @@ public class DynamoDbTicketRegistryFacilitator {
         return null;
     }
 
+    /**
+     * Scan and paginate.
+     *
+     * @return the stream
+     */
+    public Stream<Ticket> stream() {
+        val metadata = ticketCatalog.findAll();
+        val resultStreams = metadata
+            .stream()
+            .map(defn -> {
+                val keys = List.<DynamoDbQueryBuilder>of(
+                    DynamoDbQueryBuilder.builder()
+                        .key(ColumnNames.PREFIX.getColumnName())
+                        .attributeValue(List.of(AttributeValue.builder().s(defn.getPrefix()).build()))
+                        .operator(ComparisonOperator.EQ)
+                        .build());
+                return DynamoDbTableUtils.scanPaginator(amazonDynamoDBClient, defn.getProperties().getStorageName(),
+                    keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
+            })
+            .collect(Collectors.toList());
+        return Streams.concat(resultStreams.toArray(new Stream[]{}));
+    }
+    
     /**
      * Delete.
      *

@@ -77,4 +77,9 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         val ticketId = encodeTicketId(ticketIdToDelete);
         return dbTableService.delete(ticketIdToDelete, ticketId) ? 1 : 0;
     }
+
+    @Override
+    public Stream<? extends Ticket> stream() {
+        return dbTableService.stream().map(this::decodeTicket);
+    }
 }
