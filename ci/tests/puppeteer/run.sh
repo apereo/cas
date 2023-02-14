@@ -522,7 +522,10 @@ if [[ "${RERUN}" != "true" ]]; then
          ${properties} &
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-      sleepfor 30
+
+      timeout=$(jq -j '.timeout // 30' "${config}")
+      sleepfor $timeout
+      
       casLogin="https://localhost:${serverPort}/cas/login"
       printcyan "Checking CAS server's status @ ${casLogin}"
       curl -k -L --output /dev/null --silent --fail $casLogin

@@ -43,11 +43,29 @@ The following items are new improvements and enhancements presented in this rele
   
 ### Redis Ticket Registry
     
-The implementation of the Redis ticket registry as internally changes its data structure to allow for proper indexing of
+The implementation of the Redis ticket registry has internally changed its data structure to allow for proper indexing of
 ticket documents and their fields to assist with full-text searching. The registry implementation is now able to recognize the
 presence of [RediSearch](https://redis.io/docs/stack/search/) module and create appropriate indexes to allow for subsequent search queries.
 While ReidSearch is not a requirement and the deployment should be able to proceed without it, its presence should greatly 
 improve the performance of ticket registry queries that attempt to look up tickets by attributes.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `393` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
+### Cassandra Ticket Registry
+
+The implementation of the [Cassandra ticket registry](../ticketing/Cassandra-Ticket-Registry.html) 
+has internally changes its data structure to allow for proper indexing of
+ticket documents and their fields to assist with full-text searching. 
+
+### Apache Ignite Ticket Registry
+
+The implementation of the [Apache Ignite ticket registry](../ticketing/Cassandra-Ticket-Registry.html)
+has internally changes its data structure to allow for proper indexing of
+ticket documents and their fields to assist with full-text searching.
 
 ## Other Stuff
         
