@@ -1,4 +1,11 @@
 description = "Apereo CAS Trusted MFA Browser/Device Redis Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication Trusted Devices",
+            title: "Multifactor Authentication Trusted Devices via Redis"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")

@@ -1,4 +1,11 @@
 description = "Apereo CAS Events Consumer JPA"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Events",
+            title: "Authentication Events via JDBC"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-events-api")
