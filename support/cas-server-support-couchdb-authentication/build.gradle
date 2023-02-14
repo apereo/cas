@@ -1,4 +1,11 @@
 description = "Apereo CAS CouchDb Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Apache CouchDb Authentication"
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-couchdb-core")
