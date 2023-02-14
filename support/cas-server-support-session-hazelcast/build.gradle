@@ -1,4 +1,11 @@
 description = "Apereo CAS Web Application Hazelcast Session Management"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "HTTP Session Management",
+            title: "HTTP Session Management via Hazelcast"
+    ]
+}
 
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
