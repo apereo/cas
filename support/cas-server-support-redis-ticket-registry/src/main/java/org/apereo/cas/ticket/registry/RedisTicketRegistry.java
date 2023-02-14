@@ -182,8 +182,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .map(this::deserializeAsTicket)
             .map(this::decodeTicket)
             .filter(Objects::nonNull)
-            .filter(ticket -> !ticket.isExpired())
-            .peek(ticket -> ticketCache.put(ticket.getId(), ticket));
+            .peek(ticket -> {
+                if (!ticket.isExpired()) {
+                    ticketCache.put(ticket.getId(), ticket);
+                }
+            });
     }
 
 
@@ -194,7 +197,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .prefix(TicketGrantingTicket.PREFIX)
             .build()
             .toKeyPattern();
-        
+
         return scanKeys(redisKey)
             .map(key -> {
                 val adapter = buildRedisKeyValueAdapter(key);
@@ -313,7 +316,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         val ticketDocument = buildTicketAsDocument(ticket);
         val adapter = buildRedisKeyValueAdapter(redisKeyPattern);
         adapter.put(ticketDocument.getTicketId(), ticketDocument, redisKeyPattern);
-        
+
         redisTemplate.expire(redisKeyPattern, timeout, TimeUnit.SECONDS);
         ticketCache.put(redisKey.getId(), ticket);
         return redisKey;

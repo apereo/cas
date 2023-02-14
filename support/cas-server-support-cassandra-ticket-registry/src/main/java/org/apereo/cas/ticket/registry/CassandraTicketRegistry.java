@@ -170,8 +170,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .map(holder -> {
                 val result = deserialize(holder);
                 return decodeTicket(result);
-            })
-            .filter(ticket -> !ticket.isExpired());
+            });
     }
 
     @Override
