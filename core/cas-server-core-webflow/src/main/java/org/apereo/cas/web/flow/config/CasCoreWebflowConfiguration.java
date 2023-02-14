@@ -83,8 +83,8 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -382,7 +382,11 @@ public class CasCoreWebflowConfiguration {
             catalog.registerException(MultifactorAuthenticationRequiredException.class);
             catalog.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
 
-            val configurers = new ArrayList<>(applicationContext.getBeansOfType(CasWebflowExceptionConfigurer.class).values());
+            val configurers = applicationContext.getBeansOfType(CasWebflowExceptionConfigurer.class)
+                .values()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(configurers);
             configurers.forEach(cfg -> cfg.configure(catalog));
 

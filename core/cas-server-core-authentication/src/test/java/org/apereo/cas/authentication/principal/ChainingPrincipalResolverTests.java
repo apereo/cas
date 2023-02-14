@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
@@ -53,7 +54,9 @@ public class ChainingPrincipalResolverTests {
         resolver.setChain(Arrays.asList(resolver1, resolver2));
 
         return resolver.resolve(credential,
-            Optional.of(p1), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(p1),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
@@ -80,18 +83,19 @@ public class ChainingPrincipalResolverTests {
 
         val resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
-        when(resolver1.resolve(eq(credential), any(Optional.class), any(Optional.class))).thenReturn(principalOut);
+        when(resolver1.resolve(eq(credential), any(Optional.class), any(Optional.class), any(Optional.class))).thenReturn(principalOut);
 
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
-        when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class)))
+        when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class), any(Optional.class)))
             .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", List.of("final@example.com"))));
 
         val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         resolver.setChain(Arrays.asList(resolver1, resolver2));
         val principal = resolver.resolve(credential,
             Optional.of(principalOut),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertEquals("output", principal.getId());
         assertNotNull(resolver.getAttributeRepository());
         val mail = CollectionUtils.firstElement(principal.getAttributes().get("mail"));
@@ -109,11 +113,11 @@ public class ChainingPrincipalResolverTests {
 
         val resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
-        when(resolver1.resolve(eq(credential), any(Optional.class), any(Optional.class))).thenReturn(p1);
+        when(resolver1.resolve(eq(credential), any(Optional.class), any(Optional.class), any(Optional.class))).thenReturn(p1);
 
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
-        when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class))).thenReturn(p2);
+        when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class), any(Optional.class))).thenReturn(p2);
 
         var finalResult = mergeAndResolve(p1, credential, resolver1, resolver2, PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         assertTrue(finalResult.getAttributes().containsValue(List.of("smith")));

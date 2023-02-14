@@ -5,6 +5,8 @@
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
   },
   "properties": [
+    "--spring.main.lazy-initialization=false",
+
     "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",

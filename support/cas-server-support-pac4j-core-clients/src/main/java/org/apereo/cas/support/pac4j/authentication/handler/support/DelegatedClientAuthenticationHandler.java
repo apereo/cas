@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthentica
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +27,9 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Pac4j authentication handler which gets the credentials and then the user profile
@@ -108,7 +109,11 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
     @Override
     protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
                                                         final ClientCredential credential, final Service service) {
-        val processors = new ArrayList<>(applicationContext.getBeansOfType(DelegatedAuthenticationPreProcessor.class).values());
+        val processors = applicationContext.getBeansOfType(DelegatedAuthenticationPreProcessor.class)
+            .values()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
         AnnotationAwareOrderComparator.sortIfNecessary(processors);
         var processingPrincipal = initialPrincipal;
         for (val processor : processors) {

@@ -5,8 +5,9 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,16 +47,21 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ToString(callSuper = true)
-@RequiredArgsConstructor
 public class IgniteTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-
-    private final TicketCatalog ticketCatalog;
 
     private final IgniteConfiguration igniteConfiguration;
 
     private final IgniteProperties properties;
 
     private Ignite ignite;
+
+    public IgniteTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
+                                final TicketCatalog ticketCatalog, final IgniteConfiguration igniteConfiguration,
+                                final IgniteProperties properties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.igniteConfiguration = igniteConfiguration;
+        this.properties = properties;
+    }
 
     @Override
     public void addTicketInternal(final Ticket ticket) throws Exception {
@@ -84,7 +90,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
             val cache = getIgniteCacheFromMetadata(metadata);
@@ -95,7 +101,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
-        val ticketId = encodeTicketId(ticketIdToGet);
+        val ticketId = digest(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }

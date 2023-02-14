@@ -16,9 +16,11 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -87,7 +89,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
         val policy = new DefaultRegisteredServiceAccessStrategy();
         when(svc.getAccessStrategy()).thenReturn(policy);
-        val ticketRegistry = new DefaultTicketRegistry();
+        val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
 
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
         val ssoRequest = SingleSignOnParticipationRequest.builder()
@@ -125,7 +127,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy().setAllowedProviders(List.of("Client2")));
         svc.setAccessStrategy(policy);
 
-        val ticketRegistry = new DefaultTicketRegistry();
+        val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("serviceid1"));
@@ -163,7 +165,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
                 .setAllowedProviders(List.of("CAS")));
         svc.setAccessStrategy(policy);
 
-        val ticketRegistry = new DefaultTicketRegistry();
+        val ticketRegistry = buildTicketRegistryInstance();
         val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("serviceid1"));
@@ -180,5 +182,9 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
             .build();
         assertTrue(strategy.supports(ssoRequest));
         assertFalse(strategy.isParticipating(ssoRequest));
+    }
+
+    private static DefaultTicketRegistry buildTicketRegistryInstance() {
+        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
     }
 }

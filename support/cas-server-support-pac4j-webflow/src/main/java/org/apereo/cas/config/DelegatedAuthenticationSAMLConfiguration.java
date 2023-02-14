@@ -9,12 +9,15 @@ import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.saml2.DelegatedAuthenticationSamlIdPResponseCustomizer;
 
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.metadata.jdbc.SAML2JdbcMetadataGenerator;
 import org.pac4j.saml.metadata.mongo.SAML2MongoMetadataGenerator;
@@ -43,6 +46,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DelegatedAuthenticationSAMLConfiguration {
+
+    @ConditionalOnClass(SamlIdPResponseCustomizer.class)
+    @Configuration(value = "DelegatedAuthenticationSAML2IdPConfiguration", proxyBeanMethods = false)
+    public static class DelegatedAuthenticationSAML2IdPConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "delegatedSaml2IdPResponseCustomizer")
+        public SamlIdPResponseCustomizer delegatedSaml2IdPResponseCustomizer(
+            @Qualifier("builtClients")
+            final Clients builtClients) {
+            return new DelegatedAuthenticationSamlIdPResponseCustomizer(builtClients);
+        }
+    }
 
     @ConditionalOnClass(HazelcastInstance.class)
     @Configuration(value = "DelegatedAuthenticationSAMLHazelcastConfiguration", proxyBeanMethods = false)

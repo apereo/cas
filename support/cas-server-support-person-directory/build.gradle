@@ -11,11 +11,14 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
 
     implementation libraries.ldaptive
-    
+
     testImplementation project(":support:cas-server-support-jdbc-drivers")
 
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":support:cas-server-support-jpa-util")
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

@@ -40,9 +40,26 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+  
+### Redis Ticket Registry
+    
+The implementation of the Redis ticket registry as internally changes its data structure to allow for proper indexing of
+ticket documents and their fields to assist with full-text searching. The registry implementation is now able to recognize the
+presence of [RediSearch](https://redis.io/docs/stack/search/) module and create appropriate indexes to allow for subsequent search queries.
+While ReidSearch is not a requirement and the deployment should be able to proceed without it, its presence should greatly 
+improve the performance of ticket registry queries that attempt to look up tickets by attributes.
 
 ## Other Stuff
-
+        
+- Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.
+- Basic support for routing logs to [Fluentd](../logging/Logging-Fluentd.html) is now available.
 
 ## Library Upgrades
 
+- Apache Kafka
+- Gradle
+- MongoDb
+- Caffeine
+- FontAwesome
+- Micrometer
+- Spring Boot

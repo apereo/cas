@@ -2,7 +2,6 @@
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-20}
-PUPPETEER_RUN_CTR=${PUPPETEER_RUN_CTR:-60}
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -39,6 +38,41 @@ function printyellow() {
 }
 function printred() {
   printf "${RED}$1${ENDCOLOR}\n"
+}
+
+function progressbar() {
+    current="$1"
+    total="$2"
+
+    bar_size=60
+    bar_char_done="#"
+    bar_char_todo="-"
+    bar_percentage_scale=2
+    
+    # calculate the progress in percentage
+    percent=$(bc <<< "scale=$bar_percentage_scale; 100 * $current / $total" )
+    # The number of done and todo characters
+    done=$(bc <<< "scale=0; $bar_size * $percent / 100" )
+    todo=$(bc <<< "scale=0; $bar_size - $done" )
+
+    # build the done and todo sub-bars
+    done_sub_bar=$(printf "%${done}s" | tr " " "${bar_char_done}")
+    todo_sub_bar=$(printf "%${todo}s" | tr " " "${bar_char_todo}")
+
+    # output the bar
+    echo -ne "\rProgress: [${done_sub_bar}${todo_sub_bar}] ${percent}%"
+    if [ $total -eq $current ]; then
+        echo -e "\n"
+    fi
+}
+
+function sleepfor() {
+  tasks_in_total="$1"
+  for current_task in $(seq "$tasks_in_total")
+  do
+    sleep 1
+    progressbar "$current_task" "$tasks_in_total"
+  done
 }
 
 casVersion=($(cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2))
@@ -347,7 +381,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     printcyan "Launching build in background to make observing slow builds easier..."
     $buildcmd > build.log 2>&1 &
     pid=$!
-    sleep 25
+    sleepfor 25
     printgreen "Current Java processes found for PID ${pid}"
     ps -ef | grep $pid | grep java
     if [[ $? -ne 0 ]]; then
@@ -371,7 +405,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
           exit 3
        fi
        echo -n '.'
-       sleep 30
+       sleepfor 30
     done
     wait $pid
     if [ $? -ne 0 ]; then
@@ -480,8 +514,7 @@ if [[ "${RERUN}" != "true" ]]; then
 
       springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
       [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
-
-      retryCounter=0
+      
       printcyan "Launching CAS instance #${c} under port ${serverPort}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
          -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
@@ -489,20 +522,19 @@ if [[ "${RERUN}" != "true" ]]; then
          ${properties} &
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-
-      until curl -k -L --max-time 90 --connect-timeout 5 --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
-          echo -n '.'
-          sleep 1
-          let retryCounter++
-          if [[ $retryCounter -gt $PUPPETEER_RUN_CTR ]]; then
-            printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
-#            printred "Build thread dump"
-#            jstack $pid || true
-            printred "Killing process id $pid and exiting"
-            kill -9 "$pid"
-            exit 3
-          fi
-      done
+      sleepfor 30
+      casLogin="https://localhost:${serverPort}/cas/login"
+      printcyan "Checking CAS server's status @ ${casLogin}"
+      curl -k -L --output /dev/null --silent --fail $casLogin
+      RC=$?
+      if [[ $RC -ne 0 ]]; then
+        printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
+        printred "Killing process id $pid and exiting"
+        kill -9 "$pid"
+        exit 3
+      fi
+      printcyan "CAS server ${casLogin} is up and running under process id ${pid}"
+      
       processIds+=( $pid )
       serverPort=$((serverPort + 1))
       if [[ "$DEBUG" == "true" ]]; then

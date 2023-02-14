@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
@@ -15,6 +16,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link MultifactorAuthenticationAccountProfileWebflowConfigurer}.
@@ -35,7 +37,11 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
     protected void doInitialize() {
         val flow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         if (flow != null) {
-            val providerActions = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationDeviceProviderAction.class).values());
+            val providerActions = applicationContext.getBeansOfType(MultifactorAuthenticationDeviceProviderAction.class)
+                .values()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .collect(Collectors.toCollection(ArrayList::new));
             AnnotationAwareOrderComparator.sort(providerActions);
             val accountView = getState(flow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
             accountView.getRenderActionList().addAll(providerActions.toArray(new Action[]{}));

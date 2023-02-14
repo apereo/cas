@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -25,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -44,7 +46,8 @@ public class TicketGrantingTicketImplTests {
     private static ServiceTicketSessionTrackingPolicy getTrackingPolicy(final boolean trackMostRecent) {
         val props = new CasConfigurationProperties();
         props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(trackMostRecent);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
+        return new DefaultServiceTicketSessionTrackingPolicy(props,
+            new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
     }
 
     @BeforeEach

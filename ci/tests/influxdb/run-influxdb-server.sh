@@ -16,8 +16,8 @@ docker exec influxdb-server influx bucket create \
 docker ps | grep "influxdb-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "InfluxDb docker image is running."
+    echo "InfluxDb docker container is running."
 else
-    echo "InfluxDb docker image failed to start."
+    echo "InfluxDb docker container failed to start."
     exit $retVal
 fi
