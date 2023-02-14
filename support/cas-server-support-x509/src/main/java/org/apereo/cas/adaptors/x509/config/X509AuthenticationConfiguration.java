@@ -26,6 +26,7 @@ import org.apereo.cas.adaptors.x509.util.X509AuthenticationUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -72,7 +73,9 @@ public class X509AuthenticationConfiguration {
         final CasConfigurationProperties casProperties,
         final IPersonAttributeDao attributeRepository,
         final X509AttributeExtractor x509AttributeExtractor,
-        final PrincipalFactory x509PrincipalFactory) {
+        final PrincipalFactory x509PrincipalFactory,
+        final ServicesManager servicesManager,
+        final AttributeDefinitionStore attributeDefinitionStore) {
         val x509 = casProperties.getAuthn().getX509();
         val serialNoProperties = x509.getSerialNo();
         val personDirectory = casProperties.getPersonDirectory();
@@ -81,7 +84,9 @@ public class X509AuthenticationConfiguration {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory,
             attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SerialNumberPrincipalResolver.class, principal, personDirectory);
+            X509SerialNumberPrincipalResolver.class,
+            servicesManager, attributeDefinitionStore,
+            principal, personDirectory);
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
@@ -265,6 +270,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectPrincipalResolver")
     public PrincipalResolver x509SubjectPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -276,8 +285,8 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory, attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()), X509SubjectPrincipalResolver.class, principal,
-            personDirectory);
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectPrincipalResolver.class, servicesManager, attributeDefinitionStore, principal, personDirectory);
         resolver.setPrincipalDescriptor(x509.getPrincipalDescriptor());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;
@@ -287,6 +296,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectDNPrincipalResolver")
     public PrincipalResolver x509SubjectDNPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -299,8 +312,9 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val principal = x509.getPrincipal();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory, attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()), X509SubjectDNPrincipalResolver.class, principal,
-            personDirectory);
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectDNPrincipalResolver.class, servicesManager, attributeDefinitionStore,
+            principal, personDirectory);
         resolver.setSubjectDnFormat(X509AuthenticationUtils.getSubjectDnFormat(subjectDn.getFormat()));
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         return resolver;
@@ -310,6 +324,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameUPNPrincipalResolver")
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -322,7 +340,8 @@ public class X509AuthenticationConfiguration {
         val subjectAltNameProperties = x509.getSubjectAltName();
         val principal = x509.getPrincipal();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory, attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()), X509SubjectAlternativeNameUPNPrincipalResolver.class,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectAlternativeNameUPNPrincipalResolver.class, servicesManager, attributeDefinitionStore,
             principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(subjectAltNameProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
@@ -333,6 +352,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameRFC822EmailPrincipalResolver")
     public PrincipalResolver x509SubjectAlternativeNameRFC822EmailPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -346,7 +369,7 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class,
+            X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class, servicesManager, attributeDefinitionStore,
             principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(rfc822EmailProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
@@ -357,6 +380,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SerialNumberPrincipalResolver")
     public PrincipalResolver x509SerialNumberPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -364,7 +391,8 @@ public class X509AuthenticationConfiguration {
         final X509AttributeExtractor x509AttributeExtractor,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         final IPersonAttributeDao attributeRepository) {
-        return getX509SerialNumberPrincipalResolver(casProperties, attributeRepository, x509AttributeExtractor, x509PrincipalFactory);
+        return getX509SerialNumberPrincipalResolver(casProperties, attributeRepository,
+            x509AttributeExtractor, x509PrincipalFactory, servicesManager, attributeDefinitionStore);
     }
 
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
@@ -378,6 +406,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SerialNumberAndIssuerDNPrincipalResolver")
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -390,7 +422,8 @@ public class X509AuthenticationConfiguration {
         val principal = x509.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory, attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()), X509SerialNumberAndIssuerDNPrincipalResolver.class,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SerialNumberAndIssuerDNPrincipalResolver.class, servicesManager, attributeDefinitionStore,
             principal, personDirectory);
         resolver.setSerialNumberPrefix(serialNoDnProperties.getSerialNumberPrefix());
         resolver.setValueDelimiter(serialNoDnProperties.getValueDelimiter());
@@ -402,6 +435,10 @@ public class X509AuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509CommonNameEDIPIPrincipalResolver")
     public PrincipalResolver x509CommonNameEDIPIPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("x509PrincipalFactory")
         final PrincipalFactory x509PrincipalFactory,
@@ -415,7 +452,7 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory, attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            X509CommonNameEDIPIPrincipalResolver.class, principal,
+            X509CommonNameEDIPIPrincipalResolver.class, servicesManager, attributeDefinitionStore, principal,
             personDirectory);
         resolver.setAlternatePrincipalAttribute(cnEdipiProperties.getAlternatePrincipalAttribute());
         resolver.setX509AttributeExtractor(x509AttributeExtractor);

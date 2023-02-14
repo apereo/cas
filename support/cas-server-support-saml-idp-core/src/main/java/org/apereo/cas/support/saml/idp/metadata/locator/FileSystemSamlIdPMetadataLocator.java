@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -83,7 +82,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
             doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
             doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
             doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
+            doc.setAppliesTo(getAppliesToFor(registeredService));
             return doc;
         });
     }
@@ -97,7 +96,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
      */
     protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
         if (result.isPresent()) {
-            val serviceDirectory = new File(this.metadataLocation, SamlIdPMetadataGenerator.getAppliesToFor(result));
+            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
             LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);
             if (serviceDirectory.exists()) {
                 val artifact = new File(serviceDirectory, artifactName);

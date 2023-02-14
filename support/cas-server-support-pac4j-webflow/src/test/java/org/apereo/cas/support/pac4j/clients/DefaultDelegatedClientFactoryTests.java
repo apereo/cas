@@ -241,7 +241,7 @@ public class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
@@ -265,7 +265,7 @@ public class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
@@ -286,7 +286,7 @@ public class DefaultDelegatedClientFactoryTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
             "cas.authn.pac4j.saml[0].saml2AttributeConverter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests.CustomAttributeConverterForTest",
-            "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+            "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
             "cas.authn.pac4j.saml[0].keystore-password=1234567890",
             "cas.authn.pac4j.saml[0].private-key-password=1234567890",
             "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
@@ -326,7 +326,7 @@ public class DefaultDelegatedClientFactoryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore.jks",
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
         "cas.authn.pac4j.saml[0].callback-url-type=NONE",
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",

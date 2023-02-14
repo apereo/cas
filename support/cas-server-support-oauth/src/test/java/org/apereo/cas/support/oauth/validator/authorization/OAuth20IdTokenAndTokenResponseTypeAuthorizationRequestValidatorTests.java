@@ -45,7 +45,7 @@ public class OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTest
         when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
         when(serviceManager.getAllServicesOfType(any())).thenReturn((Collection) CollectionUtils.toCollection(service));
         val v = new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties), oauthRequestParameterResolver);
+            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext), oauthRequestParameterResolver);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

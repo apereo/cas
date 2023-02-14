@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Import(JpaTicketRegistryTests.SharedTestConfiguration.class)
+@Import(BaseJpaTicketRegistryTests.SharedTestConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.jdbc.show-sql=false",
@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Getter
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
-public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
+public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;
 
     @Autowired

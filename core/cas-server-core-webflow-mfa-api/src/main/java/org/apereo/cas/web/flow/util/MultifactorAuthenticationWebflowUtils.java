@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.util;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import lombok.experimental.UtilityClass;
@@ -28,6 +29,7 @@ public class MultifactorAuthenticationWebflowUtils {
         return applicationContext.getBeansOfType(CasMultifactorWebflowCustomizer.class)
             .values()
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .collect(Collectors.toList());
     }

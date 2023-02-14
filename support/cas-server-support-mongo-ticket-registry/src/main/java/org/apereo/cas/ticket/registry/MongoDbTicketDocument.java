@@ -11,9 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
- * This is {@link TicketHolder}.
+ * This is {@link MongoDbTicketDocument}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -24,7 +25,7 @@ import java.util.Date;
 @Setter
 @SuperBuilder
 @NoArgsConstructor(force = true)
-public class TicketHolder implements Serializable {
+public class MongoDbTicketDocument implements Serializable {
 
     /**
      * Field name to hold ticket json data.
@@ -51,6 +52,11 @@ public class TicketHolder implements Serializable {
      */
     public static final String FIELD_NAME_PRINCIPAL = "principal";
 
+    /**
+     * Field name to hold the principal/authentication attributes.
+     */
+    public static final String FIELD_NAME_ATTRIBUTES = "attributes";
+
     @Serial
     private static final long serialVersionUID = -4843440028617071224L;
 
@@ -65,6 +71,9 @@ public class TicketHolder implements Serializable {
 
     @JsonProperty
     private String principal;
+
+    @JsonProperty
+    private Map<String, ?> attributes;
 
     private Date expireAt;
 }

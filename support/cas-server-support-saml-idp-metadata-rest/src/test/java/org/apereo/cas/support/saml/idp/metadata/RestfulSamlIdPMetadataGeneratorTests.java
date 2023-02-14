@@ -45,7 +45,7 @@ public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadat
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Test

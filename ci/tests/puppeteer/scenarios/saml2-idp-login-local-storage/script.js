@@ -1,10 +1,15 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const cas = require('../../cas.js');
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
+    const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
+    console.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
+    
     try {
         await cas.goto(page, "https://localhost:8443/cas/login");
         await page.waitForTimeout(1000);
@@ -24,7 +29,7 @@ const cas = require('../../cas.js');
         await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
         await cas.assertVisibility(page, "#table_with_attributes");
         let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
-        console.log(authData);
+        console.dir(authData, {depth: null, colors: true});
 
     } finally {
         await cas.screenshot(page);

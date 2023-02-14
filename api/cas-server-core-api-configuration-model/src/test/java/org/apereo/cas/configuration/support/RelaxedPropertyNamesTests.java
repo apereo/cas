@@ -31,14 +31,14 @@ public class RelaxedPropertyNamesTests {
 
     @Test
     public void verifyTransforms() {
-        Arrays.stream(RelaxedPropertyNames.Manipulation.values())
+        Arrays.stream(RelaxedPropertyNames.NameManipulations.values())
             .forEach(mani -> assertEquals(StringUtils.EMPTY, mani.apply(StringUtils.EMPTY)));
 
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.CAMELCASE_TO_UNDERSCORE.apply("casProperties"));
-        assertEquals("cas-properties", RelaxedPropertyNames.Manipulation.CAMELCASE_TO_HYPHEN.apply("casProperties"));
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.PERIOD_TO_UNDERSCORE.apply("cas.properties"));
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.NONE.apply("cas_properties"));
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.HYPHEN_TO_UNDERSCORE.apply("cas-properties"));
-        assertEquals("cas.properties", RelaxedPropertyNames.Manipulation.UNDERSCORE_TO_PERIOD.apply("cas_properties"));
+        assertEquals("cas_properties", RelaxedPropertyNames.NameManipulations.CAMELCASE_TO_UNDERSCORE.apply("casProperties"));
+        assertEquals("cas-properties", RelaxedPropertyNames.NameManipulations.CAMELCASE_TO_HYPHEN.apply("casProperties"));
+        assertEquals("cas_properties", RelaxedPropertyNames.NameManipulations.PERIOD_TO_UNDERSCORE.apply("cas.properties"));
+        assertEquals("cas_properties", RelaxedPropertyNames.NameManipulations.NONE.apply("cas_properties"));
+        assertEquals("cas_properties", RelaxedPropertyNames.NameManipulations.HYPHEN_TO_UNDERSCORE.apply("cas-properties"));
+        assertEquals("cas.properties", RelaxedPropertyNames.NameManipulations.UNDERSCORE_TO_PERIOD.apply("cas_properties"));
     }
 }

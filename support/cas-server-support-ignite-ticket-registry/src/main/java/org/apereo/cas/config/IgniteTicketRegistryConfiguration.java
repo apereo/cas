@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -138,13 +139,17 @@ public class IgniteTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
+        final TicketCatalog ticketCatalog,
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
+        final CasConfigurationProperties casProperties,
         @Qualifier("igniteConfiguration")
         final IgniteConfiguration igniteConfiguration) {
         val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
-        val r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
-        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
-        r.initialize();
-        return r;
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite");
+        val registry = new IgniteTicketRegistry(cipher, ticketSerializationManager,
+            ticketCatalog, igniteConfiguration, igniteProperties);
+        registry.initialize();
+        return registry;
     }
 }
