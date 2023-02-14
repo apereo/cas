@@ -1,4 +1,11 @@
 description = "Apereo CAS AWS S3 Service Registry Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: "AWS S3 Service Registry"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
 

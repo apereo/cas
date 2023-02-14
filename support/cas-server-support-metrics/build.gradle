@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Monitoring",
-            title: "Apereo CAS Metrics"
+            title: "Apereo CAS Metrics",
+            aliases: ["metrics"]
     ]
 }
 dependencies {
