@@ -574,12 +574,16 @@ tasks.register('publishProjectModules') {
         subprojects.each {
             def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
             if (publishMetadata) {
+                def metadata = it.ext.projectMetadata
+                if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
+                    throw new GradleException("Missing required project metadata for ${it.name}")
+                }
                 results += [
                     name: it.name,
                     version: it.version,
                     group: it.group,
                     description: it.description,
-                    details: it.ext.projectMetadata
+                    details: metadata
                 ]
             }
         }

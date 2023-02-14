@@ -2,6 +2,7 @@ description = "Apereo CAS Consent Webflow"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent",
             category: "Attribute Consent",
             aliases: ["consent"]
     ]

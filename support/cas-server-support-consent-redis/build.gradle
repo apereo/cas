@@ -3,6 +3,7 @@ ext {
     maxParallelForksForTests = 1
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via Redis",
             category: "Attribute Consent"
     ]
 }

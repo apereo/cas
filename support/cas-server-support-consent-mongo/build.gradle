@@ -2,6 +2,7 @@ description = "Apereo CAS Consent Support via MongoDb"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via MongoDbDb",
             category: "Attribute Consent"
     ]
 }

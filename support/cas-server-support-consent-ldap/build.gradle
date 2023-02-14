@@ -3,6 +3,7 @@ ext {
     maxParallelForksForTests = 1
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via LDAP & Active Directory",
             category: "Attribute Consent"
     ]
 }

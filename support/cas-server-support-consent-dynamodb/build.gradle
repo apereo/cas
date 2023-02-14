@@ -2,6 +2,7 @@ description = "Apereo CAS Consent Support via DynamoDb"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Attribute Consent via DynamoDb",
             category: "Attribute Consent"
     ]
 }

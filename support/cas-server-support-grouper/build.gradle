@@ -2,6 +2,7 @@ description = "Apereo CAS Internet2 Grouper Integration"
 ext {
     publishMetadata = true
     projectMetadata = [
+            title: "Internet2 Grouper",
             category: "Internet2 Grouper",
             aliases: ["grouper"]
     ]
