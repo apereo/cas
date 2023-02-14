@@ -182,10 +182,10 @@ public interface TicketRegistry {
     }
 
     /**
-     * Gets tickets with authenication attributes.
+     * Gets tickets with authentication attributes.
      *
      * @param queryAttributes the query attributes
-     * @return the tickets with authenication attributes
+     * @return the tickets with authentication attributes
      */
     default Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         return getTickets(ticket -> {
