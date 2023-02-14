@@ -45,7 +45,7 @@ The following items are new improvements and enhancements presented in this rele
     
 The implementation of the Redis ticket registry as internally changes its data structure to allow for proper indexing of
 ticket documents and their fields to assist with full-text searching. The registry implementation is now able to recognize the
-presence of [ReidSearch](https://redis.io/docs/stack/search/) module and create appropriate indexes to allow for subsequent search queries.
+presence of [RediSearch](https://redis.io/docs/stack/search/) module and create appropriate indexes to allow for subsequent search queries.
 While ReidSearch is not a requirement and the deployment should be able to proceed without it, its presence should greatly 
 improve the performance of ticket registry queries that attempt to look up tickets by attributes.
 
@@ -60,3 +60,6 @@ improve the performance of ticket registry queries that attempt to look up ticke
 - Gradle
 - MongoDb
 - Caffeine
+- FontAwesome
+- Micrometer
+- Spring Boot

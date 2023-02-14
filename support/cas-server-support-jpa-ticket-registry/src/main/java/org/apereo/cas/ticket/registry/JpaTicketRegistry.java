@@ -171,8 +171,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .streamQuery(query)
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
-            .map(this::decodeTicket)
-            .filter(ticket -> !ticket.isExpired());
+            .map(this::decodeTicket);
     }
 
     @Override

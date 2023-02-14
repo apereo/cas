@@ -178,8 +178,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
-            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
-            .filter(ticket -> !ticket.isExpired());
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
     }
 
     @Override
