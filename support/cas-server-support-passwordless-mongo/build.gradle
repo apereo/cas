@@ -1,4 +1,11 @@
 description = "Apereo CAS Passwordless Authentication MongoDb Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Passwordless Authentication",
+            title: "Passwordless Authentication via MongoDb"
+    ]
+}
 dependencies {
     implementation libraries.mongo
 

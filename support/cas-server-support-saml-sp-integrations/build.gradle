@@ -1,5 +1,11 @@
 description = "Apereo CAS SAML SP Integrations"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 Service Provider Integrations"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")

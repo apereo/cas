@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - REST Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via REST"
+    ]
+}
 dependencies {
     implementation libraries.springcloudbootstrap
 

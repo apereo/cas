@@ -1,4 +1,11 @@
 description = "Apereo CAS Spring Boot Admin Client"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "Spring BootAdmin Client"
+    ]
+}
 dependencies {
     implementation libraries.springbootadminclient
     implementation project(":core:cas-server-core-webflow")

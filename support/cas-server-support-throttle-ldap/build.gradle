@@ -1,4 +1,11 @@
 description = "Apereo CAS LDAP Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via LDAP & Active Directory"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     

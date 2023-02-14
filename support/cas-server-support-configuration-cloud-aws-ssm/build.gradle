@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - AWS Parameter Store"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via AWS SSM"
+    ]
+}
 dependencies {
     implementation libraries.awsssm
     implementation libraries.springcloudbootstrap
