@@ -431,6 +431,11 @@ public class WebAuthnConfiguration {
                 final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
                     @Override
+                    public List<String> getIgnoredEndpoints() {
+                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
+                    }
+
+                    @Override
                     @CanIgnoreReturnValue
                     public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                         Unchecked.consumer(sec -> http.csrf(customizer -> {
