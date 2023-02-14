@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "allowedProviders")
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)

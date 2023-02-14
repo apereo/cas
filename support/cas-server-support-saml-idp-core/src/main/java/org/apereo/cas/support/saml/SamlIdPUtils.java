@@ -195,7 +195,7 @@ public class SamlIdPUtils {
                     ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
                     : null;
 
-                if (StringUtils.isNotBlank(acsUrl) && locations.contains(acsUrl)) {
+                if (StringUtils.isNotBlank(acsUrl) && locations.stream().anyMatch(acsUrl::equalsIgnoreCase)) {
                     return buildAssertionConsumerService(binding, acsUrl, acsIndex);
                 }
 
