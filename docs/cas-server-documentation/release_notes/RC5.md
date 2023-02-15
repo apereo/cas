@@ -55,7 +55,7 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 and scenarios. At the moment, total number of jobs stands at approximately `393` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
-### Cassandra Ticket Registry
+### Apache Cassandra Ticket Registry
 
 The implementation of the [Cassandra ticket registry](../ticketing/Cassandra-Ticket-Registry.html) 
 has internally changes its data structure to allow for proper indexing of
