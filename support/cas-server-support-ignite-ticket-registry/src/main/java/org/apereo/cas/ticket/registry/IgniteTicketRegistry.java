@@ -8,9 +8,7 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -58,9 +56,6 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @ToString(callSuper = true)
 public class IgniteTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
     private final IgniteConfiguration igniteConfiguration;
 
     private final IgniteProperties properties;
