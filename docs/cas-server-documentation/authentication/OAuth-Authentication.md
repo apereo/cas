@@ -11,7 +11,7 @@ category: Authentication
 Allow CAS to act as an OAuth authentication provider. Please [review the specification](https://oauth.net/2/) to learn more.
 
 <div class="alert alert-info">:information_source: <strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable
-OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
+OAuth identity provider server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
 ## Actuator Endpoints

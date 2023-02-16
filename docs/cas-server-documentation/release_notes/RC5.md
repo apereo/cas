@@ -63,7 +63,7 @@ ticket documents and their fields to assist with full-text searching.
 
 ### OpenId Connect Claim Mappings
 
-Remapping OpenId Connect claims at the service level is now able to reprocess and rebuild
+[Remapping OpenId Connect claims](../authentication/OIDC-Authentication-Claims.html) at the service level is now able to reprocess and rebuild
 claim definitions using inline Groovy scripts. This in particular might be useful when there are custom
 user-defined scopes that contain non-standard claims that need to be rebuilt off of existing attributes
 for a specific service.

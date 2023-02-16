@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +36,7 @@ public class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTes
 
         val payload = JwtBuilder.JwtRequest.builder()
             .registeredService(Optional.of(registeredService))
+            .serviceAudience(Set.of(UUID.randomUUID().toString()))
             .issuer("https://cas.example.org")
             .jwtId(UUID.randomUUID().toString())
             .subject("casuser")
