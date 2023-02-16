@@ -190,7 +190,11 @@ policies allow one to release standard claims, remap attributes to standard clai
 It is also possible to define and use *free-form* attribute release policies outside 
 the confines of a *scope* to freely build and release claims/attributes.  
 
-For example, the following service definition will decide on relevant attribute release policies based on the semantics
+{% tabs oidcclaimrelease %}
+
+{% tab oidcclaimrelease Standard %}
+
+The following service definition will decide on relevant attribute release policies based on the semantics
 of the scopes `profile` and `email`. There is no need to design or list individual claims as CAS will auto-configure
 the relevant attribute release policies:
 
@@ -208,7 +212,11 @@ the relevant attribute release policies:
 }
 ```
 
-A *scope-free* attribute release policy may just as equally apply, allowing one in 
+{% endtab %}
+
+{% tab oidcclaimrelease Scope Free %}
+
+A *scope-free* attribute release policy may just as equally apply, allowing one in
 the following example to release `userX` as a *claim*:
 
 ```json
@@ -228,19 +236,23 @@ the following example to release `userX` as a *claim*:
   }
 }
 ```
-    
-A scope-free attribute release policy is activated when the service definition does not specify any scopes, or the only scope that 
+
+A scope-free attribute release policy is activated when the service definition does not specify any scopes, or the only scope that
 the service definition contains is the `openid` scope. A *scope-free* attribute release policy has the ability to process release claims
-regardless of the requested scopes, which may prove useful in scenarios where a relying party needs to receive claims and yet 
+regardless of the requested scopes, which may prove useful in scenarios where a relying party needs to receive claims and yet
 does not correctly or sufficiently specify a scope in authorization requests.
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>You should consider using a scope-free attribute release policy
 only in very advanced and challenging use cases, typically to make a rather difficult client application integration work.</p>
 </div>
 
-It is also possible to mix *free-form* release policies with those that operate 
+{% endtab %}
+
+{% tab oidcclaimrelease Mixed %}
+
+It is also possible to mix *free-form* release policies with those that operate
 based on a scope by chaining such policies together. For example, the below policy
-allows the release of `user-x` as a claim, as well as all claims assigned 
+allows the release of `user-x` as a claim, as well as all claims assigned
 and internally defined for the standard `email` scope.
 
 ```json
@@ -278,6 +290,10 @@ and internally defined for the standard `email` scope.
   }
 }
 ```
+
+{% endtab %}
+
+{% endtabs %}
 
 To learn more about attribute release policies and the chain of 
 command, please [see this guide](../integration/Attribute-Release-Policies.html).
