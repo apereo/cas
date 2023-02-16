@@ -21,6 +21,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -77,7 +78,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
             val jwtBuilder = new JwtBuilder(cipher, servicesManager, casProperties);
             val jwtRequest = JwtBuilder.JwtRequest
                 .builder()
-                .serviceAudience(builder.getHost())
+                .serviceAudience(Set.of(builder.getHost()))
                 .subject(principal.getId())
                 .jwtId(UUID.randomUUID().toString())
                 .issuer(casProperties.getServer().getName())
