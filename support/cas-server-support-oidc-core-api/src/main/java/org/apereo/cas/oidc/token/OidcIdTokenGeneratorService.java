@@ -112,9 +112,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
         claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-        val audience = registeredService.getAudiences().isEmpty()
+        val audience = registeredService.getAudience().isEmpty()
             ? List.of(accessToken.getClientId())
-            : new ArrayList<>(registeredService.getAudiences());
+            : new ArrayList<>(registeredService.getAudience());
         claims.setAudience(audience);
         LOGGER.debug("Calculated ID token aud claim to be [{}]", audience);
 

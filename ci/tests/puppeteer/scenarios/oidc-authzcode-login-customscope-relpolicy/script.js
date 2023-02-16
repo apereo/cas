@@ -37,9 +37,13 @@ const assert = require('assert');
     assert(decoded.client_id !== null);
     assert(decoded["preferred_username"] !== null);
     assert(decoded["name"] !== null);
+
     assert(decoded["entitlements"].includes('ent-A'));
     assert(decoded["entitlements"].includes('ent-B'));
 
+    assert(decoded["aud"].includes('cas'));
+    assert(decoded["aud"].includes(decoded.client_id));
+    assert(decoded["aud"].includes('apereo'));
 
     await browser.close();
 })();

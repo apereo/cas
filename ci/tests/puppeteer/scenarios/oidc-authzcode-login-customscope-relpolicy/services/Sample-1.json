@@ -12,6 +12,7 @@
   "scopes" : [ "java.util.HashSet", [ "openid", "profile", "MyCustomScope" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "audience": [ "java.util.HashSet", [ "client", "cas", "apereo" ] ],
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "policies": [

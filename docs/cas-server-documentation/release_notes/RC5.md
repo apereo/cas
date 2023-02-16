@@ -61,6 +61,13 @@ The implementation of the [Cassandra ticket registry](../ticketing/Cassandra-Tic
 has internally changes its data structure to allow for proper indexing of
 ticket documents and their fields to assist with full-text searching. 
 
+### OpenId Connect Claim Mappings
+
+Remapping OpenId Connect claims at the service level is now able to reprocess and rebuild
+claim definitions using inline Groovy scripts. This in particular might be useful when there are custom
+user-defined scopes that contain non-standard claims that need to be rebuilt off of existing attributes
+for a specific service.
+
 ### Apache Ignite Ticket Registry
 
 The implementation of the [Apache Ignite ticket registry](../ticketing/Cassandra-Ticket-Registry.html)
@@ -71,6 +78,7 @@ ticket documents and their fields to assist with full-text searching.
         
 - Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.
 - Basic support for routing logs to [Fluentd](../logging/Logging-Fluentd.html) is now available.
+- The `aud` claim for OpenId Connect ID tokens or JWT access tokens can now be [controlled for each application](../authentication/OAuth-Authentication-Clients.html).
 
 ## Library Upgrades
 
@@ -81,3 +89,7 @@ ticket documents and their fields to assist with full-text searching.
 - FontAwesome
 - Micrometer
 - Spring Boot
+- Spring
+- Hazelcast
+- WebAuthN
+- Nimbus JOSE
