@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -19,6 +20,7 @@ import lombok.val;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link OidcServiceRegistryListener}.
@@ -46,15 +48,11 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         val matchingPolicies = new ArrayList<RegisteredServiceAttributeReleasePolicy>();
 
         if (policy instanceof RegisteredServiceChainingAttributeReleasePolicy chainedPolicy) {
-            matchingPolicies.addAll(chainedPolicy.getPolicies()
-                .stream()
-                .filter(p -> p instanceof OidcRegisteredServiceAttributeReleasePolicy)
-                .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
-                .filter(p -> p.getScopeType().equalsIgnoreCase(givenScope)).toList());
+            val policiesToAdd = buildMatchingPolicies(givenScope, chainedPolicy.getPolicies());
+            matchingPolicies.addAll(policiesToAdd);
         } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy oidcPolicy) {
-            if (oidcPolicy.getScopeType().equalsIgnoreCase(givenScope)) {
-                matchingPolicies.add(oidcPolicy);
-            }
+            val policiesToAdd = buildMatchingPolicies(givenScope, List.of(oidcPolicy));
+            matchingPolicies.addAll(policiesToAdd);
         }
 
         if (matchingPolicies.isEmpty()) {
@@ -64,6 +62,18 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         } else {
             chain.addPolicies(matchingPolicies);
         }
+    }
+
+    private static List<OidcRegisteredServiceAttributeReleasePolicy> buildMatchingPolicies(
+        final String givenScope,
+        final List<RegisteredServiceAttributeReleasePolicy> policies) {
+        return policies
+            .stream()
+            .filter(policy -> policy instanceof OidcRegisteredServiceAttributeReleasePolicy)
+            .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
+            .filter(policy -> policy.getScopeType().equalsIgnoreCase(givenScope)
+                         || (policy instanceof OidcCustomScopeAttributeReleasePolicy customPolicy && customPolicy.getScopeName().equals(givenScope)))
+            .toList();
     }
 
     @Override
@@ -99,7 +109,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                              + "Checking [{}] against user-defined scopes provided as [{}]", givenScope, givenScope, userScopes);
                 userScopes
                     .stream()
-                    .filter(t -> t.getScopeName().equals(givenScope.trim()))
+                    .filter(scope -> scope.getScopeName().equals(givenScope.trim()))
                     .findFirst()
                     .ifPresentOrElse(
                         userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService),

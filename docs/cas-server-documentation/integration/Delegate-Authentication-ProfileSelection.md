@@ -57,12 +57,12 @@ def run(Object[] args) {
 
 The following parameters are passed to the script:
 
-| Parameter             | Description
-|---------------------------------------------------------------------------------------------------------
-| `requestContext`      | `RequestContext` that represents the Spring Webflow execution context and runtime.
-| `clientCredentials`   | Represents CAS credential and payload received by CAS from the identity provider.
-| `userProfile`         | Points to the *resolved* user profile from the identity provider in exchange for the credential.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                                      |
+|---------------------|--------------------------------------------------------------------------------------------------|
+| `requestContext`    | `RequestContext` that represents the Spring Webflow execution context and runtime.               |
+| `clientCredentials` | Represents CAS credential and payload received by CAS from the identity provider.                |
+| `userProfile`       | Points to the *resolved* user profile from the identity provider in exchange for the credential. |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                      |
 
 {% endtab %}
 

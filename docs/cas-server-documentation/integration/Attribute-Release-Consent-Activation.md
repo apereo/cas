@@ -86,14 +86,14 @@ def run(Object[] args) {
 
 The following parameters are passed to the script:
 
-| Parameter             | Description
-|-----------------------------------------------------------------------------------------------------------------
-| `consentEngine`       | A reference to the `ConsentEngine` object.
-| `casProperties`       | A reference to the CAS configuration properties loaded from property sources.
-| `service`             | The `Service` object representing the requesting application.
-| `registeredService`   | The `RegisteredService` object representing the service definition in the registry.
-| `authentication`      | The `Authentication` object representing the active authentication transaction.
-| `request`             | The object representing the HTTP servlet request.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                         |
+|---------------------|-------------------------------------------------------------------------------------|
+| `consentEngine`     | A reference to the `ConsentEngine` object.                                          |
+| `casProperties`     | A reference to the CAS configuration properties loaded from property sources.       |
+| `service`           | The `Service` object representing the requesting application.                       |
+| `registeredService` | The `RegisteredService` object representing the service definition in the registry. |
+| `authentication`    | The `Authentication` object representing the active authentication transaction.     |
+| `request`           | The object representing the HTTP servlet request.                                   |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.         |
 
 The script is expected to return either `true` or `false` to determine whether or not consent is required.

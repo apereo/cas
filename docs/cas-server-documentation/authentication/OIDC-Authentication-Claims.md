@@ -69,8 +69,19 @@ without having an impact on the attribute resolution configuration and all other
 If mapping is not defined, by default CAS attributes are expected to match claim names.
 
 Claim mapping rules that are defined in CAS settings are global and apply to all applications and requests. Once a claim is mapped
-to an attribute (i.e. `preferred_username` to `uid`), this mapping rule will take over all claim processing rules and conditions. It is
-surely possible to specify claim mapping rules on a per application basis as well to override what is defined globally: 
+to an attribute (i.e. `preferred_username` to `uid`), this mapping rule will take over all claim processing rules and conditions.
+     
+### Mapping Claims Per Service
+
+Claim mapping rules may also be defined for each application using the rules described below:
+
+{% tabs oidcclaimmapping %}
+
+{% tab oidcclaimmapping Standard Scopes %}
+
+The configuration below will allow CAS to map the value of the `uid` attribute to the `preferred_username` claim that is constructed in response to
+an authentication request from application `Sample`. The claim mapping rule here is exclusive to this application only, and does not affect
+any other application or global mapping rule, if any.
 
 ```json
 {
@@ -90,10 +101,57 @@ surely possible to specify claim mapping rules on a per application basis as wel
   }
 }
 ```
-   
-The above configuration will allow CAS to map the value of the `uid` attribute to the `preferred_username` claim that is constructed in response to 
-an authentication request from application `Sample`. The claim mapping rule here is exclusive to this application only, and does not affect
-any other application or global mapping rule, if any.
+
+{% endtab %}
+
+{% tab oidcclaimmapping User-Defined Scopes %}
+
+The configuration below will allow CAS to map the value of the `entitlements` claim to the outcome of the inline Groovy script,
+when processing the rules for the `MyCustomScope` scope. 
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://...",
+  "name": "Sample",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "MyCustomScope" ] ],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy",
+          "order": 1,
+          "scopeName": "MyCustomScope",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "entitlements" ] ],
+          "claimMappings" : {
+            "@class" : "java.util.TreeMap",
+            "entitlements" : "groovy { return ['A', 'B'] }"
+          }
+        }
+      ]
+    ]
+  }
+}
+```
+  
+The inline script receives the following parameters for its execution:
+
+| Policy       | Description                                                                                            |
+|--------------|--------------------------------------------------------------------------------------------------------|
+| `context`    | Attribute release execution context that carries references to the principal, registered service, etc. |
+| `attributes` | `Map` of attributes that are currently resolved.                                                       |
+| `logger`     | The object responsible for issuing log messages such as `logger.info(...)`.                            |
+      
+Note that the outcome of the script execution must be a list of a values.
+
+{% endtab %}
+
+{% endtabs %}
 
 ## User-Defined Scopes
 
