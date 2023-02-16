@@ -103,9 +103,9 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
         val builder = JwtBuilder.JwtRequest.builder();
         val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
 
-        val serviceAudiences = registeredService.getAudiences().isEmpty()
+        val serviceAudiences = registeredService.getAudience().isEmpty()
             ? Set.of(accessToken.getClientId())
-            : registeredService.getAudiences();
+            : registeredService.getAudience();
         return builder
             .serviceAudience(serviceAudiences)
             .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
