@@ -33,8 +33,10 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -109,9 +111,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setJwtId(jwtId);
 
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
-
         claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-        claims.setAudience(accessToken.getClientId());
+        val audience = registeredService.getAudiences().isEmpty()
+            ? List.of(accessToken.getClientId())
+            : new ArrayList<>(registeredService.getAudiences());
+        claims.setAudience(audience);
+        LOGGER.debug("Calculated ID token aud claim to be [{}]", audience);
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);

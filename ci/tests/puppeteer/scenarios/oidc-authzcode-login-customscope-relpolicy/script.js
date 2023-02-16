@@ -33,35 +33,13 @@ const assert = require('assert');
     assert(payload.scope != null);
 
     let decoded = await cas.decodeJwt(payload.id_token);
-    // assert(decoded.sub !== null);
-    // assert(decoded.client_id !== null);
-    // assert(decoded["preferred_username"] !== null);
-    //
-    // assert(decoded["identity-name"] === undefined);
-    // assert(decoded["common-name"] === undefined);
-    // assert(decoded["lastname"] === undefined);
-    //
-    // assert(decoded["cn"] !== null);
-    // assert(decoded["family_name"] !== null);
-    // assert(decoded["name"] !== null);
+    assert(decoded.sub !== null);
+    assert(decoded.client_id !== null);
+    assert(decoded["preferred_username"] !== null);
+    assert(decoded["name"] !== null);
+    assert(decoded["entitlements"].includes('ent-A'));
+    assert(decoded["entitlements"].includes('ent-B'));
 
-
-    let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token }`;
-    console.log(`Calling user profile ${profileUrl}`);
-
-    await cas.doPost(profileUrl, "", {
-        'Content-Type': "application/json"
-    }, res => {
-        // assert(decoded["common-name"] === undefined);
-        // assert(decoded["lastname"] === undefined);
-        //
-        // assert(res.data["cn"] != null);
-        // assert(res.data["name"] != null);
-        // assert(res.data["family_name"] != null);
-        // assert(res.data.sub != null)
-    }, error => {
-        throw `Operation failed: ${error}`;
-    });
 
     await browser.close();
 })();
