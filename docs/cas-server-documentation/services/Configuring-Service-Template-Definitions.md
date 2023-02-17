@@ -19,8 +19,8 @@ A few important considerations:
 - Concrete service definitions always have the ability to override the template definition and enforce their own policy and settings to allow for exceptions.
   Their version of the configuration and policy will always override the base template. The merging process is not exactly fine-tuned to pick out individual 
   differences in configuration blocks.
-- Concrete service definitions may link up with a template definition using their **name** and **type**. This design choice allows the CAS deployer to define 
-  multiple service definition blueprints and templates for the same type of CAS applications with different names.
+- Concrete service definitions may link up with a template definition using their **template name** and **type**. This design choice allows the CAS deployer to 
+  define multiple service definition blueprints and templates for the same type of CAS applications with different names.
 - Service definitions are not required to build and spin off of a blueprint and can remain and function in a standalone manner.
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
@@ -43,7 +43,7 @@ Consider the following base template service definition for a yet-to-be-register
 ```json
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "name": "Library",
+  "templateName": "AllLibraryApplications",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "email", "username" ] ],
@@ -72,13 +72,14 @@ Consider the following base template service definition for a yet-to-be-register
   }
 ```
    
-A concrete service definition may link up with a template by using the same `name` and type:
+A concrete service definition may link up with a template by using the same `templateName` and type:
 
 ```json
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^https://library.org/app/.+",
   "name": "Library",
+  "templateName": "AllLibraryApplications",
   "id": 1,
   "description": "My application",
   "usernameAttributeProvider" : {
@@ -94,6 +95,7 @@ The final result, when processed and loaded internally by CAS would be the follo
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
   "name": "Library",
+  "templateName": "AllLibraryApplications",
   "serviceId": "^https://library.org/app/.+",
   "id": 1,
   "description": "My application",
