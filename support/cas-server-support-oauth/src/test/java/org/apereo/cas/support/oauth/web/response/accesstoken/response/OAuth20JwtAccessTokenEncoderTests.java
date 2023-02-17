@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web.response.accesstoken;
+package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -6,9 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -19,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,6 +138,9 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
 
         val encodedAccessToken = encoder.encode(accessToken.getId());
         assertNotNull(encodedAccessToken);
+
+        val jwtRequestBuilder = encoder.getJwtRequestBuilder(Optional.of(registeredService), accessToken);
+        assertEquals(accessToken.getClientId(), jwtRequestBuilder.getServiceAudience());
 
         val decoded = encoder.decode(encodedAccessToken);
         assertNotNull(decoded);

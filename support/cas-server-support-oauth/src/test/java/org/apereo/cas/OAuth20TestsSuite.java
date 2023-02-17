@@ -53,7 +53,6 @@ import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirect
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultAccessTokenResponseGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGeneratorTests;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20JwtAccessTokenEncoderTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResultTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractorTests;
@@ -61,6 +60,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPass
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutorTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoderTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20AuthorizationModelAndViewBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilderTests;
