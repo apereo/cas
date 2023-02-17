@@ -45,6 +45,7 @@ public class DefaultRegisteredServicesTemplatesManagerTests {
         val registeredService = new CasRegisteredService();
         registeredService.setId(1000);
         registeredService.setName("Unknown");
+        registeredService.setTemplateName("Unknown");
         registeredService.setServiceId("https://app.example.org");
 
         val properties = new CasConfigurationProperties();
@@ -76,6 +77,7 @@ public class DefaultRegisteredServicesTemplatesManagerTests {
     public void verifyOperation() throws Exception {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
+        registeredService.setTemplateName("ExampleTemplate");
         registeredService.setId(1000);
         registeredService.setDescription("CAS service definition for example application");
         registeredService.setServiceId("https://app.example.org");

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 
+import java.util.Comparator;
+
 /**
  * This is {@link DefaultRegisteredServicesTemplatesManager}.
  *
@@ -41,8 +43,9 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
             val templateDefinition = files.stream()
                 .filter(registeredServiceSerializer::supports)
                 .map(registeredServiceSerializer::from)
+                .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
                 .filter(templateService -> templateService.getClass().equals(registeredService.getClass())
-                                           && templateService.getName().equalsIgnoreCase(registeredService.getName()))
+                                           && templateService.getTemplateName().equalsIgnoreCase(registeredService.getTemplateName()))
                 .findFirst();
             if (templateDefinition.isEmpty()) {
                 LOGGER.trace("Registerered service [{}] is not linked to a registered service template definition in [{}]. "

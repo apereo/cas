@@ -2,6 +2,7 @@
   "@class": "org.apereo.cas.services.CasRegisteredService",
   "name": "CAS",
   "description": "This definition comes from the parent template definition",
+  "templateName": "ExampleTemplate",
   "properties" : {
     "@class" : "java.util.HashMap",
     "one": {

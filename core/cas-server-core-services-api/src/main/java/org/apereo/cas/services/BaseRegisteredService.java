@@ -58,6 +58,8 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private String privacyUrl;
 
+    private String templateName;
+
     @Id
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
