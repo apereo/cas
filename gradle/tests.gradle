@@ -191,12 +191,6 @@ tasks.withType(Test).configureEach {
     }
     systemProperty("spring.main.banner-mode", "off")
     systemProperty("CI", ci)
-    systemProperties([
-            'junit.jupiter.execution.parallel.enabled': 'true',
-            'junit.jupiter.execution.parallel.mode.default': 'concurrent',
-            'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
-            'junit.jupiter.execution.parallel.config.strategy': 'dynamic'
-    ])
 
     failFast = true
 
