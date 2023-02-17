@@ -26,6 +26,11 @@ A few important considerations:
 Template service definitions work for and apply to all types of registered service definitions known to CAS and
 are not restricted to a specific type or protocol.</p></div>
 
+The directory location of template service definitions needs to be taught to CAS via settings. This directory is
+expected to hold `.json` service definition files that structurally are no different than any given registered service in CAS.
+The directory is searched for template definitions recursively, and you may come up with your own directory structure to group
+definitions by type, application, etc. There is no hard requirement for naming template definition files.
+
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.service-registry.templates" %}
