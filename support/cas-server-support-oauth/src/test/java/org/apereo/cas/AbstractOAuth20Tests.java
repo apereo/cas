@@ -48,6 +48,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -230,6 +231,10 @@ public abstract class AbstractOAuth20Tests {
     public static final int DELTA = 2;
 
     public static final int TIMEOUT = 7200;
+
+    @Autowired
+    @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+    protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
     @Autowired
     @Qualifier("oauthSecConfig")

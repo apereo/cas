@@ -67,6 +67,12 @@ ticket documents and their fields to assist with full-text searching.
 claim definitions using inline Groovy scripts. This in particular might be useful when there are custom
 user-defined scopes that contain non-standard claims that need to be rebuilt off of existing attributes
 for a specific service.
+            
+### Template Service Definitions
+
+A registered service template definition is the foundation and initial building block to construct a service definition
+and may act as a pattern of all future service definition to reduce duplication and assist with maintenance and sharing.
+To learn more, please [see this](../services/Configuring-Service-Template-Definitions.html).
 
 ### Apache Ignite Ticket Registry
 

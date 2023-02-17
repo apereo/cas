@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyResolverTests}.
@@ -89,6 +90,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
             .applicationContext(appCtx)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))

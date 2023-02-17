@@ -11,6 +11,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author battags
@@ -40,6 +41,7 @@ public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesMa
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .environments(CollectionUtils.wrapSet("prod1", "qa1"))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))

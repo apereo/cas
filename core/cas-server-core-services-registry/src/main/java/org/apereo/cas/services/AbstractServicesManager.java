@@ -296,6 +296,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(this::supports)
             .filter(this::validateAndFilterServiceByEnvironment)
             .peek(this::loadInternal)
+            .map(this::applyTemplate)
             .collect(Collectors.toMap(r -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
                     r.getServiceId(), r.getName(), r.getId());
@@ -352,6 +353,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * @param service the service
      */
     protected void loadInternal(final RegisteredService service) {
+    }
+
+    protected RegisteredService applyTemplate(final RegisteredService service) {
+        return this.configurationContext.getRegisteredServicesTemplatesManager().apply(service);
     }
 
     /**
