@@ -250,15 +250,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         LOGGER.debug("Executing SQL query [{}]", sql);
 
         val query = entityManager.createNativeQuery(sql, factory.getType());
-//        val results = (List<BaseTicketEntity>) query.getResultList();
-//        return results
-//            .stream()
-//            .map(BaseTicketEntity.class::cast)
-//            .map(factory::toTicket)
-//            .map(this::decodeTicket)
-//            .filter(ticket -> !ticket.isExpired());
-
-        return query.getResultStream().map(BaseTicketEntity.class::cast).map(r -> factory.toTicket((BaseTicketEntity) r));
+        val results = (List<BaseTicketEntity>) query.getResultList();
+        return results
+            .stream()
+            .map(BaseTicketEntity.class::cast)
+            .map(factory::toTicket)
+            .map(this::decodeTicket)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     protected String getTicketTypeName(final Class<? extends Ticket> clazz) {
