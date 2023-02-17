@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -296,7 +297,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(this::supports)
             .filter(this::validateAndFilterServiceByEnvironment)
             .peek(this::loadInternal)
+            .filter(Objects::nonNull)
             .map(this::applyTemplate)
+            .filter(Objects::nonNull)
             .collect(Collectors.toMap(r -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
                     r.getServiceId(), r.getName(), r.getId());

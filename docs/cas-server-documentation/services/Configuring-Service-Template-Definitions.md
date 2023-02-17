@@ -17,7 +17,8 @@ that might stem from that blueprint.
 A few important considerations:
 
 - Concrete service definitions always have the ability to override the template definition and enforce their own policy and settings to allow for exceptions.
-  Their version of the configuration and policy will always override the base template and is not exactly fine-tuned to pick out idividual differences.
+  Their version of the configuration and policy will always override the base template. The merging process is not exactly fine-tuned to pick out individual 
+  differences in configuration blocks.
 - Concrete service definitions may link up with a template definition using their **name** and **type**. This design choice allows the CAS deployer to define 
   multiple service definition blueprints and templates for the same type of CAS applications with different names.
 - Service definitions are not required to build and spin off of a blueprint and can remain and function in a standalone manner.
