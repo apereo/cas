@@ -28,6 +28,9 @@ public class ServiceRegistryTemplatesProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -168826011744304210L;
 
+    /**
+     * The directory location that holds the template service definitions.
+     */
     @NestedConfigurationProperty
     private SpringResourceProperties directory = new SpringResourceProperties()
         .setLocation(new ClassPathResource("registeredServiceTemplates"));

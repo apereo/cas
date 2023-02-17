@@ -8,6 +8,9 @@ package org.apereo.cas.services;
  */
 @FunctionalInterface
 public interface RegisteredServicesTemplatesManager {
+    /**
+     * Bean implementation name.
+     */
     String BEAN_NAME = "registeredServicesTemplatesManager";
 
     /**
