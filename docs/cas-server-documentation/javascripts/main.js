@@ -552,8 +552,9 @@ window.addEventListener('load', () => {
             let tabContentElement = document.getElementById(tabContentId);
             removeActiveClasses(tabContentElement);
 
-            let elements = tabContentElement.querySelectorAll('li:not(.property-name):not(.property-tab)');
-            elements[position].classList.add('active');
+            // let elements = tabContentElement.querySelectorAll('li:not(.property-name):not(.property-tab)');
+            tabContentElement.children[position].classList.add('active');
+            // elements[position].classList.add('active');
             liTab.classList.add('active');
             
             let tabs = $('#' + tabContentId + " ul.nav.nav-tabs li a").not("[href^='#notes']");

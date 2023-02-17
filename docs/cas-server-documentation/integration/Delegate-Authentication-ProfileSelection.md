@@ -35,7 +35,7 @@ specific attributes from LDAP for each profile and the ability to specify the at
 Profile selection rules can be supplied to CAS using an external Groovy script, whose outline should match the following:
 
 ```groovy
-import org.apereo.cas.authentication.principal.*
+import org.apereo.cas.authentication.principal.*   
 import org.apereo.cas.web.*
 import org.pac4j.core.profile.*
 import org.springframework.webflow.execution.*
