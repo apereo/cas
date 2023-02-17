@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Integrations",
-            title: "Spring BootAdmin Client"
+            title: "Spring BootAdmin Client",
+            aliases: ["bootadmin"]
     ]
 }
 dependencies {

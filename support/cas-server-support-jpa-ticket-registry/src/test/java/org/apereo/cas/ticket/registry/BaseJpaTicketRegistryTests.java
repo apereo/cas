@@ -84,7 +84,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @AfterEach
-    public void cleanup() throws Exception {
+    public void cleanup() {
         assertNotNull(dataSourceTicket);
         newTicketRegistry.deleteAll();
     }
