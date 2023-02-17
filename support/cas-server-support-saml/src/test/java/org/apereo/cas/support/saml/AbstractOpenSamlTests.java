@@ -28,6 +28,7 @@ import org.apereo.cas.config.authentication.support.SamlRestConfiguration;
 import org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -75,6 +76,10 @@ public abstract class AbstractOpenSamlTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+    protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)

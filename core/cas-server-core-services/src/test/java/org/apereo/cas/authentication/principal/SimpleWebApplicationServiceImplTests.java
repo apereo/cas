@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -41,6 +42,7 @@ public class SimpleWebApplicationServiceImplTests {
 
     private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
         val context = ServicesManagerConfigurationContext.builder()
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .serviceRegistry(mock(ServiceRegistry.class))
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))

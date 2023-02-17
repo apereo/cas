@@ -417,6 +417,7 @@ layout: null
     *   [Proxy Policy](/cas/{{ version }}/services/Configuring-Service-Proxy-Policy.html)
     *   [Principal Id](/cas/{{ version }}/integration/Attribute-Release-PrincipalId.html)
     *   [Supported Protocols](/cas/{{ version }}/services/Configuring-Service-Supported-Protocols.html)
+    *   [Templates & Blueprints](/cas/{{ version }}/services/Configuring-Service-Template-Definitions.html)
     *   [Custom Properties](/cas/{{ version }}/services/Configuring-Service-Custom-Properties.html)
     *   [Response Type](/cas/{{ version }}/services/Configuring-Service-Response-Type.html)
     *   [Single Sign-on Policy](/cas/{{ version }}/services/Configuring-Service-SSO-Policy.html)

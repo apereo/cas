@@ -100,7 +100,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
         return StringUtils.EMPTY;
     }
 
-
     /**
      * Gets the relative evaluation order of this service when determining
      * matches.
