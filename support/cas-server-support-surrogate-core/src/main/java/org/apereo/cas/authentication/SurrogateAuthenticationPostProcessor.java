@@ -63,7 +63,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             }
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next for [{}]...", primaryPrincipal, surrogateUsername);
             if (transaction.getService() != null) {
-                val svc = this.servicesManager.findServiceBy(transaction.getService());
+                val svc = servicesManager.findServiceBy(transaction.getService());
 
                 val serviceAccessAudit = AuditableContext.builder()
                     .service(transaction.getService())
@@ -71,7 +71,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                     .registeredService(svc)
                     .build();
 
-                val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
+                val accessResult = registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
                 accessResult.throwExceptionIfNeeded();
             }
 
@@ -85,7 +85,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                     .properties(CollectionUtils.wrap("targetUserId", surrogateUsername, "eligible", Boolean.TRUE))
                     .build();
 
-                this.surrogateEligibilityAuditableExecution.execute(surrogateEligibleAudit);
+                surrogateEligibilityAuditableExecution.execute(surrogateEligibleAudit);
                 return;
             }
             LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", primaryPrincipal, surrogateUsername);
@@ -100,7 +100,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 .authentication(authentication)
                 .build();
 
-            this.surrogateEligibilityAuditableExecution.execute(surrogateIneligibleAudit);
+            surrogateEligibilityAuditableExecution.execute(surrogateIneligibleAudit);
             throw new AuthenticationException(map);
         }
     }
