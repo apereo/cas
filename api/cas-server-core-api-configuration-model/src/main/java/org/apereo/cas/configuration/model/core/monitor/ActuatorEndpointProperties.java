@@ -42,7 +42,7 @@ public class ActuatorEndpointProperties implements Serializable {
     private List<String> requiredAuthorities = new ArrayList<>(0);
 
     /**
-     * Required ip addresses.
+     * Required IP addresses. CIDR ranges are accepted.
      */
     @RegularExpressionCapable
     private List<String> requiredIpAddresses = new ArrayList<>(0);

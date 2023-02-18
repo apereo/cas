@@ -23,7 +23,7 @@ A few important considerations:
   define multiple service definition blueprints and templates for the same type of CAS applications with different names.
 - Service definitions are not required to build and spin off of a blueprint and can remain and function in a standalone manner.
 - The relationship and inheritance hierarchy between a template definition and concrete definitions is fixed at one level or degree and is not recursive. 
-  This might be improved and worked out in future CAS releases.
+  However, composition is favored over inheritance and you may assign multiple template definition names to a concrete service in a comma-separated fashion.
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 Template service definitions work for and apply to all types of registered service definitions known to CAS and
@@ -73,6 +73,8 @@ Consider the following base template service definition for a yet-to-be-register
     }
   }
 ```
+  
+The following variations are possible: 
 
 {% tabs svctmpls %}
 
@@ -186,6 +188,35 @@ The final result, when processed and loaded internally by CAS would be the follo
     }
   }
 ```
+
+{% endtab %}
+
+{% tab svctmpls Multiple Templates %}
+
+A concrete service definition may also specify multiple template names:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://library.org/app/.+",
+  "name": "Library",
+  "templateName": "AllLibraryApplications,UnknownTemplate,AllGenericApplications",
+  "id": 1,
+  "description": "My application",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "givenName",
+  }
+}
+```
+
+Template definitions will be applied in the same order as they are defined. Assuming both `AllLibraryApplications` and `AllGenericApplications`
+template definition files exist and have been loaded by CAS, the merge process will execute the following sequence:
+
+- Merge the concrete service definition `Library` with the template `AllLibraryApplications` and store the result `R`.
+- Skip the process for the `Unknown` template, since it does not exist.
+- Merge `R` with the template `AllLibraryApplications` and store the result `R`.
+- Return `R` back to CAS.
 
 {% endtab %}
 

@@ -9,8 +9,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link DefaultRegisteredServicesTemplatesManager}.
@@ -23,42 +29,57 @@ import java.util.Comparator;
 @RequiredArgsConstructor
 public class DefaultRegisteredServicesTemplatesManager implements RegisteredServicesTemplatesManager {
 
-    private final ServiceRegistryProperties properties;
+    private final Collection<File> templateDefinitionFiles;
 
     private final StringSerializer<RegisteredService> registeredServiceSerializer;
 
+    public DefaultRegisteredServicesTemplatesManager(final ServiceRegistryProperties properties,
+                                                     final StringSerializer<RegisteredService> registeredServiceSerializer) {
+        this.registeredServiceSerializer = registeredServiceSerializer;
+
+        val location = properties.getTemplates().getDirectory().getLocation();
+        LOGGER.debug("Attrmpting to locate service template definitions from [{}]", location);
+        templateDefinitionFiles = FunctionUtils.doUnchecked(() -> ResourceUtils.doesResourceExist(location)
+            ? FileUtils.listFiles(location.getFile(), new String[]{"json"}, true)
+            : new ArrayList<>());
+        LOGGER.trace("Found [{}] template registered service definition(s)", templateDefinitionFiles.size());
+    }
+
     @Override
     public RegisteredService apply(final RegisteredService registeredService) {
-        val location = properties.getTemplates().getDirectory().getLocation();
-        if (!ResourceUtils.doesResourceExist(location)) {
-            LOGGER.trace("Registerered service template directory [{}] does not exist", location);
+        if (templateDefinitionFiles.isEmpty() || StringUtils.isBlank(registeredService.getTemplateName())) {
+            LOGGER.trace("Registerered service template directory contains no template definitions, "
+                         + "or registered service [{}] does specify template name(s)", registeredService.getName());
             return registeredService;
         }
 
-        return FunctionUtils.doAndHandle(() -> {
-            val resource = ResourceUtils.prepareClasspathResourceIfNeeded(location);
-            val files = FileUtils.listFiles(resource.getFile(), new String[]{"json"}, true);
-            LOGGER.trace("Found [{}] template registered service definition(s)", files.size());
-
-            val templateDefinition = files.stream()
-                .filter(registeredServiceSerializer::supports)
-                .map(registeredServiceSerializer::from)
-                .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
-                .filter(templateService -> templateService.getClass().equals(registeredService.getClass())
-                                           && templateService.getTemplateName().equalsIgnoreCase(registeredService.getTemplateName()))
-                .findFirst();
+        RegisteredService mergeResult = null;
+        val templateNames = org.springframework.util.StringUtils.commaDelimitedListToStringArray(registeredService.getTemplateName().trim());
+        for (val templateName : templateNames) {
+            val templateDefinition = locateTemplateServiceDefinition(registeredService, templateName);
             if (templateDefinition.isEmpty()) {
-                LOGGER.trace("Registerered service [{}] is not linked to a registered service template definition in [{}]. "
-                             + "Service definition will be returned as is, without any template processing.",
-                    registeredService.getName(), location);
-                return registeredService;
+                LOGGER.warn("Registered service template definition [{}] cannot be found and is not applicable to [{}]",
+                    templateName, registeredService.getName());
+            } else {
+                val templateService = templateDefinition.get();
+                LOGGER.trace("Applying template service definition [{}] to service [{}]", templateService, registeredService.getName());
+                mergeResult = registeredServiceSerializer.merge(templateService, Objects.requireNonNullElse(mergeResult, registeredService));
+                LOGGER.debug("Resulting service definition after merging with template [{}] is:\n[{}]",
+                    templateService.getTemplateName(), mergeResult);
             }
+        }
+        return Objects.requireNonNullElse(mergeResult, registeredService);
+    }
 
-            val templateService = templateDefinition.get();
-            LOGGER.trace("Applying template service definition [{}] to service [{}]", templateService, registeredService.getName());
-            val result = registeredServiceSerializer.merge(templateService, registeredService);
-            LOGGER.debug("Resulting service definition after merging with template [{}] is:\n[{}]", templateService.getName(), result);
-            return result;
-        }, e -> registeredService).get();
+    private Optional<RegisteredService> locateTemplateServiceDefinition(final RegisteredService registeredService,
+                                                                        final String templateName) {
+        return templateDefinitionFiles
+            .stream()
+            .filter(registeredServiceSerializer::supports)
+            .map(registeredServiceSerializer::from)
+            .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
+            .filter(templateService -> templateService.getClass().equals(registeredService.getClass())
+                                       && templateService.getTemplateName().equalsIgnoreCase(templateName))
+            .findFirst();
     }
 }

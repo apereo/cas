@@ -96,4 +96,23 @@ public class DefaultRegisteredServicesTemplatesManagerTests {
         assertEquals(List.of("email", "username"), releasePolicy.getAllowedAttributes());
         assertEquals(Set.of("email", "username"), releasePolicy.getConsentPolicy().getIncludeOnlyAttributes());
     }
+
+    @Test
+    public void verifyTemplateInheritance() throws Exception {
+        val registeredService = new CasRegisteredService();
+        registeredService.setName("CAS");
+        registeredService.setTemplateName("Unknown,UsernameProviderTemplate,AttributeReleaseTemplate");
+        registeredService.setId(1000);
+
+        val manager = getTemplatesManagerInstanceFrom(casProperties);
+        val result = manager.apply(registeredService);
+
+        assertEquals(result.getName(), registeredService.getName());
+        assertEquals(result.getId(), registeredService.getId());
+        val uidProvider = (PrincipalAttributeRegisteredServiceUsernameProvider) result.getUsernameAttributeProvider();
+        assertEquals("email", uidProvider.getUsernameAttribute());
+
+        val releasePolicy = (ReturnAllowedAttributeReleasePolicy) result.getAttributeReleasePolicy();
+        assertEquals(List.of("email", "username"), releasePolicy.getAllowedAttributes());
+    }
 }
