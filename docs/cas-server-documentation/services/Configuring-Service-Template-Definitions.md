@@ -12,7 +12,7 @@ A registered service template definition is the foundation and initial building 
 Acting as a blueprint, a template definition will specify a framework for what a given registered service definition might look like.
 For example, a service template definition might want to specify a collection common settings and application policies for a given
 service type, such as attribute release and consent policies, to remove the need for those policies to be specified yet again in future service definitions 
-that might stem from that blueprint.
+that might stem from that blueprint. Concrete service definitions will automatically *inherit* from future improvements/changes to the template.
 
 A few important considerations:
 
@@ -22,6 +22,8 @@ A few important considerations:
 - Concrete service definitions may link up with a template definition using their **template name** and **type**. This design choice allows the CAS deployer to 
   define multiple service definition blueprints and templates for the same type of CAS applications with different names.
 - Service definitions are not required to build and spin off of a blueprint and can remain and function in a standalone manner.
+- The relationship and inheritance hierarchy between a template definition and concrete definitions is fixed at one level or degree and is not recursive. 
+  This might be improved and worked out in future CAS releases.
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 Template service definitions work for and apply to all types of registered service definitions known to CAS and
@@ -36,7 +38,7 @@ definitions by type, application, etc. There is no hard requirement for naming t
 
 {% include_cached casproperties.html properties="cas.service-registry.templates" %}
  
-## Example
+## Examples
 
 Consider the following base template service definition for a yet-to-be-registered CAS application:
 
@@ -71,8 +73,12 @@ Consider the following base template service definition for a yet-to-be-register
     }
   }
 ```
-   
-A concrete service definition may link up with a template by using the same `templateName` and type:
+
+{% tabs svctmpls %}
+
+{% tab svctmpls With Overrides %}
+
+A concrete service definition may link up with a template:
 
 ```json
 {
@@ -125,6 +131,65 @@ The final result, when processed and loaded internally by CAS would be the follo
     }
   }
 ```
+
+{% endtab %}
+
+{% tab svctmpls Without Overrides %}
+
+A concrete service definition may link up with a template:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://library.org/app/.+",
+  "name": "Library",
+  "templateName": "AllLibraryApplications",
+  "id": 1,
+  "description": "My application"
+}
+```
+
+The final result, when processed and loaded internally by CAS would be the following definition:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "name": "Library",
+  "templateName": "AllLibraryApplications",
+  "serviceId": "^https://library.org/app/.+",
+  "id": 1,
+  "description": "My application",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "username" ] ],
+    "consentPolicy": {
+      "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["email", "username"]],
+      "status": "TRUE"
+    }    
+  },
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "email",
+    "canonicalizationMode" : "LOWER"
+  },
+  "properties" : {
+      "@class" : "java.util.HashMap",
+      "prop1": {
+        "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+        "values" : [ "java.util.HashSet", [ "false" ] ]
+      },
+      "prop2" : {
+        "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+        "values" : [ "java.util.HashSet", [ "hello-world" ] ]
+      }
+    }
+  }
+```
+
+{% endtab %}
+
+{% endtabs %}
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 The resulting service definition after the merge operation is always internal to CAS, and is not something you can 

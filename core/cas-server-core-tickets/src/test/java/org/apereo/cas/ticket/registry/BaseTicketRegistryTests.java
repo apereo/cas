@@ -175,6 +175,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyTicketsWithAuthnAttributes() throws Exception {
         assumeTrue(isIterableRegistry());
         val authn = CoreAuthenticationTestUtils.getAuthentication(
@@ -276,6 +277,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyCountSessionsPerUser() throws Exception {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
@@ -397,6 +399,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyDeleteNonExistingTicket() throws Exception {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),

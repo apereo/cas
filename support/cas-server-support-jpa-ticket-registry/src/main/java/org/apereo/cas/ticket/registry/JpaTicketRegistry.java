@@ -248,11 +248,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("%s WHERE t.type='%s' AND %s", selectClause,
             getTicketTypeName(TicketGrantingTicket.class), criterias);
         LOGGER.debug("Executing SQL query [{}]", sql);
-
+        entityManager.flush();
         val query = entityManager.createNativeQuery(sql, factory.getType());
-        val results = (List<BaseTicketEntity>) query.getResultList();
-        return results
-            .stream()
+        return jpaBeanFactory.streamQuery(query)
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
             .map(this::decodeTicket)

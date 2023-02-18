@@ -33,8 +33,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
@@ -64,7 +62,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Getter
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
-@Execution(ExecutionMode.SAME_THREAD)
 public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;
 
