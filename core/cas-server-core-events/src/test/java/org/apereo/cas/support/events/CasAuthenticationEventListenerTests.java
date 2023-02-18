@@ -53,8 +53,9 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Events")
 public class CasAuthenticationEventListenerTests {
-    public static final String REMOTE_ADDR_IP = "123.456.789.000";
-    public static final String LOCAL_ADDR_IP = "123.456.789.000";
+    private
+    static final String REMOTE_ADDR_IP = "123.456.789.010";
+    private static final String LOCAL_ADDR_IP = "123.456.789.000";
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -138,19 +139,20 @@ public class CasAuthenticationEventListenerTests {
         assertEquals("verify repo has 1 event",1,casEventRepository.load().collect(Collectors.toList()).size());
     }
 
+    @Test
+    public void verifyCasTicketGrantingTicketDestroyedHasClientInfo() {
+        clearEventRepository();
+        val event = new CasTicketGrantingTicketDestroyedEvent(this,
+                new MockTicketGrantingTicket("casuser"));
+        applicationContext.publishEvent(event);
+        val result = casEventRepository.load().collect(Collectors.toList()).get(0).getClientIpAddress();
+        assertEquals(REMOTE_ADDR_IP ,result);
+    }
+
     private void clearEventRepository(){
         SimpleCasEventRepository eventRepository = (SimpleCasEventRepository)  casEventRepository;
         eventRepository.clearEvents();
     }
-   /* @Test
-    public void verifyCasTicketGrantingTicketDestroyedHasClientInfo() {
-        val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"));
-        applicationContext.publishEvent(event);
-
-        assertFalse(casEventRepository.load().filt().isEmpty());
-    }*/
-
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
     public static class EventTestConfiguration {
         @Bean
