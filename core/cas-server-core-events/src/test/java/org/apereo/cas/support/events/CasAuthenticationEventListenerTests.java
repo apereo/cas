@@ -32,8 +32,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.FailedLoginException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,6 +60,10 @@ public class CasAuthenticationEventListenerTests {
     private
     static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";
+    public static final int INT = 50;
+    public static final int NUM_TO_USE_IP1 = INT;
+    public static final int THREAD_POOL_SIZE = 50;
+    public static final int NUM_OF_REQUESTS = 500;
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -147,6 +155,38 @@ public class CasAuthenticationEventListenerTests {
         applicationContext.publishEvent(event);
         val result = casEventRepository.load().collect(Collectors.toList()).get(0).getClientIpAddress();
         assertEquals(REMOTE_ADDR_IP ,result);
+    }
+
+    @Test
+    public void verifyCasTicketGrantingTicketDestroyedHasClientInfoWithMultipleThreads() throws Exception{
+        clearEventRepository();
+        val threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        val futureList = new ArrayList<Future<Integer>>();
+        var expectedNumOfIp1 = 0;
+        for(var x = 0; x < NUM_OF_REQUESTS; x++){
+            if(shouldUseIp1(x)){
+                expectedNumOfIp1++;
+            }
+            futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x),applicationContext)));
+        }
+        var maxThread = -1;
+        for(var future: futureList){
+           var currentThread= future.get();
+           if(currentThread > maxThread){
+               maxThread = currentThread;
+           }
+        }
+        val eventSize = casEventRepository.load().collect(Collectors.toList()).size();
+        val numOfIp1s = casEventRepository.load().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress()))
+                .collect(Collectors.toList()).size();
+        assertEquals("size of events should be " + maxThread+1,maxThread+1 ,eventSize);
+        assertEquals("number of IP1s should be " + expectedNumOfIp1,expectedNumOfIp1,numOfIp1s);
+
+
+    }
+
+    private static boolean shouldUseIp1(int x) {
+        return x % NUM_TO_USE_IP1 == 0;
     }
 
     private void clearEventRepository(){
