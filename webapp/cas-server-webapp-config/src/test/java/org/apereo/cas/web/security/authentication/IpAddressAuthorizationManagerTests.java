@@ -34,32 +34,38 @@ public class IpAddressAuthorizationManagerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperationBadPattern() throws Exception {
-        val results = getAuthorizationDecision(List.of(".***"));
+    public void verifyOperationBadPattern() {
+        val results = getAuthorizationDecision(List.of(".***"), "127.0.0.1");
         assertFalse(results.isGranted());
     }
 
     @Test
-    public void verifyOperationFails() throws Exception {
-        val results = getAuthorizationDecision(List.of("192.+"));
+    public void verifyOperationFails() {
+        val results = getAuthorizationDecision(List.of("192.+"), "127.0.0.1");
         assertFalse(results.isGranted());
     }
 
     @Test
-    public void verifyOperationPassesPattern() throws Exception {
-        val results = getAuthorizationDecision(List.of("127.+"));
+    public void verifyOperationPassesPattern() {
+        val results = getAuthorizationDecision(List.of("127.+"), "127.0.0.1");
         assertTrue(results.isGranted());
     }
 
     @Test
-    public void verifyOperationPasses() throws Exception {
-        val results = getAuthorizationDecision(List.of("127.0.0.1"));
+    public void verifyOperationPasses() {
+        val results = getAuthorizationDecision(List.of("127.0.0.1"), "127.0.0.1");
         assertTrue(results.isGranted());
     }
 
-    private AuthorizationDecision getAuthorizationDecision(final List<String> addresses) {
+    @Test
+    public void verifyOperationCIDR() {
+        val results = getAuthorizationDecision(List.of("192.168.0.0/24"), "192.168.0.1");
+        assertTrue(results.isGranted());
+    }
+
+    private AuthorizationDecision getAuthorizationDecision(final List<String> addresses, final String remoteAddr) {
         val request = new MockHttpServletRequest();
-        request.setRemoteAddr("127.0.0.1");
+        request.setRemoteAddr(remoteAddr);
         val manager = new IpAddressAuthorizationManager(casProperties,
             new ActuatorEndpointProperties().setRequiredIpAddresses(addresses));
         return manager.check(() -> new TestingAuthenticationToken("cas", "cas"), new RequestAuthorizationContext(request));
