@@ -18,6 +18,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import static org.junit.Assert.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +53,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Events")
 public class CasAuthenticationEventListenerTests {
+    public static final String REMOTE_ADDR_IP = "123.456.789.000";
+    public static final String LOCAL_ADDR_IP = "123.456.789.000";
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -61,8 +65,8 @@ public class CasAuthenticationEventListenerTests {
     @BeforeEach
     public void initialize() {
         val request = new MockHttpServletRequest();
-        request.setRemoteAddr("123.456.789.000");
-        request.setLocalAddr("123.456.789.000");
+        request.setRemoteAddr(REMOTE_ADDR_IP);
+        request.setLocalAddr(LOCAL_ADDR_IP);
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
@@ -125,25 +129,33 @@ public class CasAuthenticationEventListenerTests {
         applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
+    @Test
+    public void verifyEventRepositoryHasOneEventOnly() {
+        clearEventRepository();
+        val event = new CasTicketGrantingTicketDestroyedEvent(this,
+                new MockTicketGrantingTicket("casuser"));
+        applicationContext.publishEvent(event);
+        assertEquals("verify repo has 1 event",1,casEventRepository.load().collect(Collectors.toList()).size());
+    }
+
+    private void clearEventRepository(){
+        SimpleCasEventRepository eventRepository = (SimpleCasEventRepository)  casEventRepository;
+        eventRepository.clearEvents();
+    }
+   /* @Test
+    public void verifyCasTicketGrantingTicketDestroyedHasClientInfo() {
+        val event = new CasTicketGrantingTicketDestroyedEvent(this,
+                new MockTicketGrantingTicket("casuser"));
+        applicationContext.publishEvent(event);
+
+        assertFalse(casEventRepository.load().filt().isEmpty());
+    }*/
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
     public static class EventTestConfiguration {
         @Bean
         public CasEventRepository casEventRepository() {
-            return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {
-                private final Collection<CasEvent> events = new LinkedHashSet<>();
-
-                @Override
-                public CasEvent saveInternal(final CasEvent event) {
-                    events.add(event);
-                    return event;
-                }
-
-                @Override
-                public Stream<CasEvent> load() {
-                    return events.stream();
-                }
-            };
+            return new SimpleCasEventRepository(CasEventRepositoryFilter.noOp());
         }
     }
 }
