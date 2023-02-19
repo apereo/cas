@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Service Registries",
-            title: "Git Service Registry"
+            title: "Git Service Registry",
+            aliases: ["gitsvc"]
     ]
 }
 dependencies {
