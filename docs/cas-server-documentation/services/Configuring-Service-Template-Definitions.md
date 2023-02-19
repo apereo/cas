@@ -226,7 +226,7 @@ carrying the results of previous merge attempts and will also ignore unknown tem
 
 {% tab svctmpls Groovy Templates %}
 
-Service template definitions can be designed Groovy templates, able to generate text and other constructs dynamically.
+Service template definitions can be as designed Groovy templates, able to generate text and other constructs dynamically.
 The template framework in Groovy uses JSP style `<% %>` script and `<%= %>` expression syntax or 
 `GString` style expressions. The variable `out` is bound to the writer that the template is being written to.
        
