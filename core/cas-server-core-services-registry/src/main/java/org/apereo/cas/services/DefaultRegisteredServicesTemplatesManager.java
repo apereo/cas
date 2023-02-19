@@ -5,18 +5,23 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import groovy.text.GStringTemplateEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultRegisteredServicesTemplatesManager}.
@@ -24,7 +29,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultRegisteredServicesTemplatesManager implements RegisteredServicesTemplatesManager {
@@ -73,10 +77,24 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
 
     private Optional<RegisteredService> locateTemplateServiceDefinition(final RegisteredService registeredService,
                                                                         final String templateName) {
+        val engine = new GStringTemplateEngine();
         return templateDefinitionFiles
             .stream()
             .filter(registeredServiceSerializer::supports)
-            .map(registeredServiceSerializer::from)
+            .filter(file -> FilenameUtils.getBaseName(file.getAbsolutePath()).equalsIgnoreCase(templateName))
+            .map(file -> FunctionUtils.doUnchecked(() -> {
+                val templateParams = registeredService.getProperties()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> {
+                        val listOfValues = new ArrayList<>(entry.getValue().getValues());
+                        val values = listOfValues.size() == 1 ? listOfValues.get(0) : listOfValues;
+                        return Pair.of(entry.getKey(), values);
+                    })
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                val template = engine.createTemplate(file).make(templateParams);
+                return registeredServiceSerializer.from(template.toString());
+            }))
             .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
             .filter(templateService -> templateService.getClass().equals(registeredService.getClass())
                                        && templateService.getTemplateName().equalsIgnoreCase(templateName))

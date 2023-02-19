@@ -98,11 +98,36 @@ public class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    public void verifyTemplateInheritance() throws Exception {
+    public void verifyTemplateInheritance() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("Unknown,UsernameProviderTemplate,AttributeReleaseTemplate");
         registeredService.setId(1000);
+
+        val manager = getTemplatesManagerInstanceFrom(casProperties);
+        val result = manager.apply(registeredService);
+
+        assertEquals(result.getName(), registeredService.getName());
+        assertEquals(result.getId(), registeredService.getId());
+        val uidProvider = (PrincipalAttributeRegisteredServiceUsernameProvider) result.getUsernameAttributeProvider();
+        assertEquals("email", uidProvider.getUsernameAttribute());
+
+        val releasePolicy = (ReturnAllowedAttributeReleasePolicy) result.getAttributeReleasePolicy();
+        assertEquals(List.of("email", "username"), releasePolicy.getAllowedAttributes());
+    }
+
+    @Test
+    public void verifyGroovyTemplates() {
+        val registeredService = new CasRegisteredService();
+        registeredService.setName("CAS");
+        registeredService.setTemplateName("GroovyTemplate");
+        registeredService.setId(1000);
+        registeredService.getProperties().put("GivenDescription",
+            new DefaultRegisteredServiceProperty("This is my description"));
+        registeredService.getProperties().put("GivenUsernameAttribute",
+            new DefaultRegisteredServiceProperty("email"));
+        registeredService.getProperties().put("AllowedAttributes",
+            new DefaultRegisteredServiceProperty("email", "username"));
 
         val manager = getTemplatesManagerInstanceFrom(casProperties);
         val result = manager.apply(registeredService);

@@ -32,7 +32,14 @@ are not restricted to a specific type or protocol.</p></div>
 The directory location of template service definitions needs to be taught to CAS via settings. This directory is
 expected to hold `.json` service definition files that structurally are no different than any given registered service in CAS.
 The directory is searched for template definitions recursively, and you may come up with your own directory structure to group
-definitions by type, application, etc. There is no hard requirement for naming template definition files.
+definitions by type, application, etc.
+
+Remember that a service template definition filename **MUST** match the template name itself. The formula for naming template definition files
+should be: 
+
+```bash
+templateFileName = templateName + ".json"
+```
 
 ## Configuration
 
@@ -40,7 +47,8 @@ definitions by type, application, etc. There is no hard requirement for naming t
  
 ## Examples
 
-Consider the following base template service definition for a yet-to-be-registered CAS application:
+Consider the following base template service definition, stored in a `AllLibraryApplications.json` file, 
+for a yet-to-be-registered CAS application:
 
 ```json
 {
@@ -211,13 +219,85 @@ A concrete service definition may also specify multiple template names:
 ```
 
 Template definitions will be applied in the same order as they are defined. Assuming both `AllLibraryApplications` and `AllGenericApplications`
-template definition files exist and have been loaded by CAS, the merge process will execute the following sequence:
+template definition files exist and have been loaded by CAS, the merge process will go through each assigned template sequentially, 
+carrying the results of previous merge attempts and will also ignore unknown templates that cannot be found and resolved.
 
-- Merge the concrete service definition `Library` with the template `AllLibraryApplications` and store the result `R`.
-- Skip the process for the `Unknown` template, since it does not exist.
-- Merge `R` with the template `AllLibraryApplications` and store the result `R`.
-- Return `R` back to CAS.
+{% endtab %}
 
+{% tab svctmpls Groovy Templates %}
+
+Service template definitions can be designed Groovy templates, able to generate text and other constructs dynamically.
+The template framework in Groovy uses JSP style `<% %>` script and `<%= %>` expression syntax or 
+`GString` style expressions. The variable `out` is bound to the writer that the template is being written to.
+       
+For example consider the following `GroovyTemplate` template definition:
+
+```groovy
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "name": "CAS",
+  "description": "${GivenDescription}",
+  "templateName": "GroovyTemplate",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "${GivenUsernameAttribute}"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", ${ AllowedAttributes.collect(it -> "\"$it\"") } ]
+  }
+}
+```
+
+The `description`, `usernameAttribute` and `allowedAttributes` fields will be dynamically constructed 
+at the time of building a concrete service definition. The values for each of these fields is expected to be found from
+variables `GivenDescription`, `GivenUsernameAttribute`, and `AllowedAttributes` that are to be supplied by the concrete service definition in the 
+form of [service properties](Configuring-Service-Custom-Properties.html):
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://library.org/app/.+",
+  "name": "Library",
+  "templateName": "GroovyTemplate",
+  "id": 1000,
+  "properties": {
+    "@class": "java.util.HashMap",
+    "GivenDescription": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [  "java.util.LinkedHashSet", [ "This is my description"  ] ]
+    },
+    "AllowedAttributes": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.LinkedHashSet",  [ "email", "username" ] ]
+    },
+    "GivenUsernameAttribute": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.LinkedHashSet",  [ "email" ] ]
+    }
+  }
+}
+```
+       
+After the merge process is completed, the final result would be similar to the following definition:
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "name": "CAS",
+  "templateName": "GroovyTemplate",
+  "id": 1000,
+  "description": "This is my description",
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute": "email"
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [ "java.util.ArrayList", [ "email",  "username" ] ]
+  }
+}
+```
 {% endtab %}
 
 {% endtabs %}
