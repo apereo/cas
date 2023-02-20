@@ -24,7 +24,7 @@ public class SimpleCasEventRepository extends AbstractCasEventRepository {
         return events.values().stream();
     }
 
-    public void clearEvents(){
+    public void removeAll(){
         events.clear();
     }
 
