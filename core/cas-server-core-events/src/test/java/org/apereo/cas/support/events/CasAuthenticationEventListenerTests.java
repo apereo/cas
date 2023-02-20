@@ -57,8 +57,7 @@ public class CasAuthenticationEventListenerTests {
     private
     static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";
-    public static final int INT = 50;
-    public static final int NUM_TO_USE_IP1 = INT;
+    public static final int NUM_TO_USE_IP1 = 50;
     public static final int THREAD_POOL_SIZE = 50;
     public static final int NUM_OF_REQUESTS = 500;
     @Autowired
