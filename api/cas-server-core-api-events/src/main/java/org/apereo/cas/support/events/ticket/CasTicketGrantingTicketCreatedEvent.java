@@ -1,8 +1,11 @@
 package org.apereo.cas.support.events.ticket;
 
+import lombok.Getter;
+import org.apereo.cas.support.events.dao.ClientInfoDTO;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import java.io.Serial;
 
@@ -16,11 +19,13 @@ import java.io.Serial;
  * @since 4.2
  */
 @ToString(callSuper = true)
+@Getter
 public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGrantingTicketEvent {
 
     @Serial
     private static final long serialVersionUID = -1862937393590213844L;
 
+    private final ClientInfoDTO clientInfoDTO;
     /**
      * Instantiates a new CAS sso session established event.
      *
@@ -29,5 +34,6 @@ public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGranti
      */
     public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket) {
         super(source, ticketGrantingTicket);
+        clientInfoDTO = new ClientInfoDTO(ClientInfoHolder.getClientInfo());
     }
 }

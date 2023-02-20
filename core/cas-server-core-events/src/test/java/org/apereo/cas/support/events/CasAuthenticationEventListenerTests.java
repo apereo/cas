@@ -199,15 +199,16 @@ public class CasAuthenticationEventListenerTests {
 
     private void clearEventRepository(){
         SimpleCasEventRepository eventRepository = (SimpleCasEventRepository)  casEventRepository;
-        eventRepository.clearEvents();
+        eventRepository.removeAll();
     }
 
     private static void sleep() {
         try {
             //let async event process, so wait a bit
-            Thread.sleep(10);
+            Thread.sleep(20L);
         }catch (Exception e){
-            System.out.println("e");
+           //thread interupted..
+            throw new RuntimeException("Thread interrupted");
         }
     }
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
