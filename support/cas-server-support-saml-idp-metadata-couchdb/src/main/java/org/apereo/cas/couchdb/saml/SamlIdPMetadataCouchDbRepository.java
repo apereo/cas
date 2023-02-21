@@ -25,9 +25,11 @@ public interface SamlIdPMetadataCouchDbRepository extends GenericRepository<Couc
      * Gets for service.
      *
      * @param registeredService the registered service
+     * @param owner             the owner
      * @return the for service
      */
-    CouchDbSamlIdPMetadataDocument getForService(Optional<SamlRegisteredService> registeredService);
+    CouchDbSamlIdPMetadataDocument getForService(Optional<SamlRegisteredService> registeredService,
+                                                 String owner);
 
     /**
      * Initialize.

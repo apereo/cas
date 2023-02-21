@@ -12,6 +12,7 @@ import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
@@ -36,6 +38,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Nonnull;
+
 import java.util.List;
 
 /**
@@ -52,6 +55,7 @@ import java.util.List;
 public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
     @Bean
+    @Lazy(false)
     public InitializingBean securityContextHolderInitialization() {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_THREADLOCAL);
     }
@@ -65,8 +69,7 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
             return new WebMvcConfigurer() {
                 @Override
                 public void addViewControllers(
-                    @Nonnull
-                    final ViewControllerRegistry registry) {
+                    @Nonnull final ViewControllerRegistry registry) {
                     registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                         .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
                     registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -83,10 +86,11 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
         public WebSecurityCustomizer casWebSecurityCustomizer(
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                pathMappedEndpoints, configurersList);
+                webEndpointProperties, pathMappedEndpoints, configurersList);
             return adapter::configureWebSecurity;
         }
 
@@ -96,10 +100,11 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
+            final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties) throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties, securityProperties,
-                pathMappedEndpoints, configurersList);
+                webEndpointProperties, pathMappedEndpoints, configurersList);
             return adapter.configureHttpSecurity(http).build();
         }
     }

@@ -1,4 +1,11 @@
 description = "Apereo CAS Service Registry Streaming Support with Kafka"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registry Synchronization",
+            title: "Service Registry Synchronization via Apache Kafka"
+    ]
+}
 dependencies {
     implementation libraries.springkafka
 

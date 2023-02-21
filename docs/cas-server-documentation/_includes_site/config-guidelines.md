@@ -1,3 +1,5 @@
+<!-- fragment:keep -->
+
 <p/>
 
 #### Configuration Metadata
@@ -25,7 +27,7 @@ forms are accepted by CAS, there are certain components (in CAS and other framew
 this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
 that might be presented to the system via an external library or framework such as Spring Boot, etc.
 
-<div class="alert alert-info"><p>
+<div class="alert alert-info">:information_source: <strong>Note</strong> <p>
 When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
 The only possible exception to this rule is when naming actuator endpoints; The name of the
 actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 

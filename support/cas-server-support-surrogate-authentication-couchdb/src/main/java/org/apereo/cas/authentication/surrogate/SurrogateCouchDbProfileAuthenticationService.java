@@ -12,7 +12,6 @@ import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -67,12 +66,12 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
         val user = couchDb.findByUsername(username);
         if (user == null) {
             LOGGER.debug("User [{}] not found for surrogacy.", username);
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>();
         }
         val users = user.getAttribute(surrogatePrincipalsAttribute);
         if (users == null) {
             LOGGER.debug("User [{}] has no surrogate principals entry.", user.getUsername());
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>();
         }
         return CollectionUtils.toCollection(users, ArrayList.class);
     }

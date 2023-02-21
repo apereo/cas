@@ -25,8 +25,9 @@ import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -67,10 +68,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
         val result = resolveMultifactorAuthenticationProvider(Optional.empty(), registeredService, principal);
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            if (id.isEmpty()) {
-                return Optional.empty();
-            }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
+            return id.flatMap(o -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(o.toString(), applicationContext));
         }
 
         return Optional.empty();

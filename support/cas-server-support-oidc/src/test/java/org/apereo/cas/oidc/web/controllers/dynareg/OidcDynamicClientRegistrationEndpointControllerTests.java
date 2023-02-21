@@ -8,7 +8,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
     public void verifyBadInput() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
-        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCodeValue());
+        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCode().value());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
 
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
-        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal(registrationReq, request, response).getStatusCodeValue());
+        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
         try (val webServer = new MockWebServer(7711,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), org.springframework.http.HttpStatus.OK)) {
             webServer.start();
-            assertEquals(HttpStatus.SC_CREATED, controller.handleRequestInternal(registrationReq, request, response).getStatusCodeValue());
+            assertEquals(HttpStatus.SC_CREATED, controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
         }
     }
 
@@ -141,8 +141,8 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
         try (val webServer = new MockWebServer(7711,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), org.springframework.http.HttpStatus.OK)) {
             webServer.start();
-            assertEquals(HttpStatus.SC_CREATED, controller.handleRequestInternal(registrationReq, request, response)
-                .getStatusCodeValue());
+            assertEquals(HttpStatus.SC_CREATED,
+                controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
         }
     }
 }

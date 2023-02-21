@@ -19,7 +19,7 @@ Support is enabled by adding the following module into the overlay:
 
 {% include_cached casproperties.html properties="cas.service-registry.git" %}
 
-<div class="alert alert-warning"><strong>No Interference!</strong><p>
+<div class="alert alert-warning">:warning: <strong>No Interference!</strong><p>
 Be careful to not manually modify the state of the git repository directory that is cloned on the local server. By doing so, you risk 
 interfering with CAS' own service management processes and ultimately may end up corrupting the state of the git repository.
 </p></div>

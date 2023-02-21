@@ -15,6 +15,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This is {@link EmailProperties}.
@@ -32,12 +33,15 @@ public class EmailProperties implements Serializable {
     private static final long serialVersionUID = 7367120636536230761L;
 
     /**
-     * Principal attribute name that indicates the destination email address
-     * for this message. The attribute must already be resolved and available
-     * to the CAS principal.
+     * Principal attribute names that indicates the destination email address
+     * for this message. The attributes must already be resolved and available
+     * to the CAS principal. When multiple attributes are specified, each attribute
+     * is then examined against the available CAS principal to locate the email address
+     * value, which may result in multiple emails being sent.
      */
     @RequiredProperty
-    private String attributeName = "mail";
+    @ExpressionLanguageCapable
+    private List<String> attributeName = Stream.of("mail", "email").toList();
 
     /**
      * Email message body.

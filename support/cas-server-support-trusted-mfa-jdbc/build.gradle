@@ -1,4 +1,11 @@
 description = "Apereo CAS Trusted MFA Browser/Device JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication Trusted Devices",
+            title: "Multifactor Authentication Trusted Devices via JDBC"
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-trusted-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")

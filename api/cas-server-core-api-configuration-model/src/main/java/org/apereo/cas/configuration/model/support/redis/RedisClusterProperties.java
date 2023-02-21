@@ -35,6 +35,12 @@ public class RedisClusterProperties implements Serializable {
     private List<RedisClusterNodeProperties> nodes = new ArrayList<>(0);
 
     /**
+     * The cluster connection's username.
+     */
+    @RequiredProperty
+    private String username;
+
+    /**
      * The cluster connection's password.
      */
     @RequiredProperty

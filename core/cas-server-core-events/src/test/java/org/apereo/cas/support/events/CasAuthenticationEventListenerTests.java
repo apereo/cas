@@ -2,12 +2,16 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
+import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.CollectionUtils;
@@ -33,12 +37,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasAuthenticationEventListenerTests}.
@@ -67,11 +73,11 @@ public class CasAuthenticationEventListenerTests {
     @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository casEventRepository;
 
-
+    private MockHttpServletRequest request;
 
     @BeforeEach
     public void initialize() {
-        val request = new MockHttpServletRequest();
+        request = new MockHttpServletRequest();
         request.setRemoteAddr(REMOTE_ADDR_IP);
         request.setLocalAddr(LOCAL_ADDR_IP);
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
@@ -90,11 +96,29 @@ public class CasAuthenticationEventListenerTests {
     }
 
     @Test
+    public void verifyCasAuthenticationWithGeo() {
+        request.addHeader("geolocation", "34,45,1,12345");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        val event = new CasAuthenticationTransactionFailureEvent(this,
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        applicationContext.publishEvent(event);
+        sleep();
+        val savedEventOptional = casEventRepository.load().findFirst();
+        assertFalse(savedEventOptional.isEmpty());
+        val savedEvent = savedEventOptional.get();
+        assertEquals(CasAuthenticationTransactionFailureEvent.class.getSimpleName(), savedEvent.getEventId());
+    }
+
+    @Test
     public void verifyCasAuthenticationTransactionFailureEvent() {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
+        sleep();
+        sleep();
         sleep();
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
@@ -188,20 +212,17 @@ public class CasAuthenticationEventListenerTests {
         val numOfIp1s = (int) casEventRepository.load().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
         assertEquals(maxThread+1 ,eventSize);
         assertEquals(expectedNumOfIp1,numOfIp1s);
-
-
     }
 
-    private static boolean shouldUseIp1(int x) {
+    private  boolean shouldUseIp1(int x) {
         return x % NUM_TO_USE_IP1 == 0;
     }
 
     private void clearEventRepository(){
-        SimpleCasEventRepository eventRepository = (SimpleCasEventRepository)  casEventRepository;
-        eventRepository.removeAll();
+        casEventRepository.removeAll();
     }
 
-    private static void sleep() {
+    private void sleep() {
         try {
             //let async event process, so wait a bit
             Thread.sleep(20L);
@@ -215,14 +236,38 @@ public class CasAuthenticationEventListenerTests {
     public static class EventTestConfiguration implements AsyncConfigurer {
         @Bean
         public CasEventRepository casEventRepository() {
-            return new SimpleCasEventRepository(CasEventRepositoryFilter.noOp());
-        }
+            return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {
+                private final Collection<CasEvent> events = new ArrayList<>();
 
+                @Override
+                public CasEvent saveInternal(final CasEvent event) {
+                    events.add(event);
+                    return event;
+                }
+
+                @Override
+                public void removeAll() {
+                    events.clear();
+                }
+
+                @Override
+                public Stream<CasEvent> load() {
+                    return events.stream();
+                }
+            };
+        }
         @Override
         public Executor getAsyncExecutor() {
             ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
             threadPoolTaskExecutor.initialize();
             return threadPoolTaskExecutor;
+        }
+
+        @Bean
+        public GeoLocationService geoLocationService() {
+            val mock = mock(GeoLocationService.class);
+            when(mock.locate(anyString())).thenReturn(new GeoLocationResponse().setLatitude(156).setLongitude(34));
+            return mock;
         }
     }
 }

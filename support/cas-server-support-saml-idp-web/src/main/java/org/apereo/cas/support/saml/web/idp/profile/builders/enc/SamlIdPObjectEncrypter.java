@@ -17,8 +17,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -259,16 +259,18 @@ public class SamlIdPObjectEncrypter {
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
         final BasicEncryptionConfiguration encryptionConfiguration) {
-        try {
+
+        return FunctionUtils.doAndHandle(() -> {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
-            if (params != null) {
-                return new DataEncryptionParameters(params);
-            }
-            LOGGER.debug("No data encryption parameters could be determined");
-            return null;
-        } catch (final Exception e) {
+            return Optional.of(params)
+                .map(param -> new DataEncryptionParameters(params))
+                .orElseGet(() -> {
+                    LOGGER.debug("No data encryption parameters could be determined");
+                    return null;
+                });
+        }, e -> {
             throw new SamlException(e.getMessage(), e);
-        }
+        }).get();
     }
 
     /**
@@ -285,16 +287,18 @@ public class SamlIdPObjectEncrypter {
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
         final BasicEncryptionConfiguration encryptionConfiguration) {
-        try {
+
+        return FunctionUtils.doAndHandle(() -> {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
-            if (params != null) {
-                return new KeyEncryptionParameters(params, adaptor.getEntityId());
-            }
-            LOGGER.debug("No key encryption parameters could be determined");
-            return null;
-        } catch (final Exception e) {
+            return Optional.of(params)
+                .map(param -> new KeyEncryptionParameters(params, adaptor.getEntityId()))
+                .orElseGet(() -> {
+                    LOGGER.debug("No key encryption parameters could be determined");
+                    return null;
+                });
+        }, e -> {
             throw new IllegalArgumentException(e);
-        }
+        }).get();
     }
 
     /**
@@ -506,7 +510,6 @@ public class SamlIdPObjectEncrypter {
 
         return credential;
     }
-
 
     /**
      * Configure decryption security configuration basic decryption configuration.

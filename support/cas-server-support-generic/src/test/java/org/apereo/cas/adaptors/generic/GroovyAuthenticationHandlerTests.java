@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Groovy")
+@Tag("GroovyAuthentication")
 public class GroovyAuthenticationHandlerTests {
     @Test
     public void verifyOperation() {

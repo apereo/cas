@@ -23,6 +23,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -52,6 +53,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.Nonnull;
+
+import java.util.List;
 
 /**
  * This is {@link QRAuthenticationConfiguration}.
@@ -188,6 +191,20 @@ public class QRAuthenticationConfiguration {
     @Configuration(value = "QRAuthenticationMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationMvcConfiguration {
+        private static final String ENDPOINT_QR_WEBSOCKET = "/qr-websocket";
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "qrAuthenticationEndpointConfigurer")
+        public ProtocolEndpointWebSecurityConfigurer<Void> qrAuthenticationEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of("/qr-websocket");
+                }
+            };
+        }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebSocketMessageBrokerConfigurer qrAuthenticationWebSocketMessageBrokerConfigurer(
@@ -197,7 +214,7 @@ public class QRAuthenticationConfiguration {
                 public void registerStompEndpoints(
                     @Nonnull
                     final StompEndpointRegistry registry) {
-                    registry.addEndpoint("/qr-websocket")
+                    registry.addEndpoint(ENDPOINT_QR_WEBSOCKET)
                         .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
                         .addInterceptors(new HttpSessionHandshakeInterceptor())
                         .withSockJS();

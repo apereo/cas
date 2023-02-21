@@ -44,12 +44,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
     private String usernameAttribute;
 
-    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute,
-                                                               final String canonicalizationMode) {
-        super(canonicalizationMode, false, null);
-        this.usernameAttribute = usernameAttribute;
-    }
-
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         var principalId = principal.getId();

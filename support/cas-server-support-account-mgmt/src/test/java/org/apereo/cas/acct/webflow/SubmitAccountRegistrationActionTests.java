@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasAccountManagementWebflowConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 25000)
 @Import({
     CasCoreTicketsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasAccountManagementWebflowConfiguration.class

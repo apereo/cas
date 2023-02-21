@@ -28,6 +28,16 @@ public class ConfigurationPropertiesLoaderFactory {
     private final Environment environment;
 
     /**
+     * Gets application profiles.
+     *
+     * @param environment the environment
+     * @return the application profiles
+     */
+    public static List<String> getApplicationProfiles(final Environment environment) {
+        return Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList());
+    }
+
+    /**
      * Gets loader based on the given resource.
      *
      * @param resource the resource
@@ -49,15 +59,5 @@ public class ConfigurationPropertiesLoaderFactory {
             return new YamlConfigurationPropertiesLoader(this.configurationCipherExecutor, name, resource);
         }
         throw new IllegalArgumentException("Unable to determine configuration loader for " + resource);
-    }
-
-    /**
-     * Gets application profiles.
-     *
-     * @param environment the environment
-     * @return the application profiles
-     */
-    public static List<String> getApplicationProfiles(final Environment environment) {
-        return Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList());
     }
 }

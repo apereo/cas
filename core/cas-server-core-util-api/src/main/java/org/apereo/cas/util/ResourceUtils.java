@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -30,8 +31,7 @@ import java.nio.file.Files;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
-import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
-import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.*;
 
 /**
  * Utility class to assist with resource operations.
@@ -46,6 +46,11 @@ public class ResourceUtils {
      * Empty resource.
      */
     public static final Resource EMPTY_RESOURCE = new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY);
+
+    /**
+     * Null unknown resource.
+     */
+    public static final Resource NULL_RESOURCE = new DescriptiveResource("Unknown Resource");
 
     private static final String HTTP_URL_PREFIX = "http";
 
@@ -93,6 +98,7 @@ public class ResourceUtils {
      * <p>
      * On Windows, reading one byte from a directory does not return length greater than zero so an explicit directory
      * check is needed.
+     *
      * @param res the res
      * @return true/false
      */

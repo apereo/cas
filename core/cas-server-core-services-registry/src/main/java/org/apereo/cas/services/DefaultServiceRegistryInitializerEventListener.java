@@ -19,13 +19,13 @@ public class DefaultServiceRegistryInitializerEventListener implements ServiceRe
     private final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer;
 
     @Override
-    public void handleRefreshEvent(final EnvironmentChangeEvent event) {
+    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
     }
 
     @Override
-    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
+    public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
     }

@@ -6,8 +6,7 @@ package org.apereo.cas.authentication;
  * @author Travis Schmidt
  * @since 6.0
  */
-@FunctionalInterface
-public interface MultifactorAuthenticationCredential extends Credential {
+public interface MultifactorAuthenticationCredential extends MutableCredential {
 
     /**
      * Returns the unique id of the provider that created the credential.

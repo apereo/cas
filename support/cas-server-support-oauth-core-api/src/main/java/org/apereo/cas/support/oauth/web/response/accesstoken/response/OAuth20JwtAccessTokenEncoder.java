@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link OAuth20JwtAccessTokenEncoder}.
@@ -75,16 +76,16 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     @Override
     public String encode(final String value, final Object[] parameters) {
-        val oAuthRegisteredService = (OAuthRegisteredService) this.registeredService;
-        if (shouldEncodeAsJwt(oAuthRegisteredService, accessToken)) {
-            val request = getJwtRequestBuilder(Optional.ofNullable(oAuthRegisteredService), accessToken);
+        if (this.registeredService instanceof OAuthRegisteredService oAuthRegisteredService
+            && shouldEncodeAsJwt(oAuthRegisteredService, accessToken)) {
+            val request = getJwtRequestBuilder(oAuthRegisteredService, accessToken);
             return accessTokenJwtBuilder.build(request);
         }
         return accessToken.getId();
     }
 
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(
-        final Optional<RegisteredService> registeredService,
+        final OAuthRegisteredService registeredService,
         final OAuth20AccessToken accessToken) {
         val authentication = accessToken.getAuthentication();
         val attributes = new HashMap<>(authentication.getAttributes());
@@ -101,14 +102,18 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
         val builder = JwtBuilder.JwtRequest.builder();
         val dt = authentication.getAuthenticationDate().plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
+
+        val serviceAudiences = registeredService.getAudience().isEmpty()
+            ? Set.of(accessToken.getClientId())
+            : registeredService.getAudience();
         return builder
-            .serviceAudience(service.getId())
+            .serviceAudience(serviceAudiences)
             .issueDate(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
             .jwtId(accessToken.getId())
             .subject(authentication.getPrincipal().getId())
             .validUntilDate(DateTimeUtils.dateOf(dt))
             .attributes(attributes)
-            .registeredService(registeredService)
+            .registeredService(Optional.of(registeredService))
             .issuer(StringUtils.defaultIfBlank(this.issuer, casProperties.getServer().getPrefix()))
             .build();
     }

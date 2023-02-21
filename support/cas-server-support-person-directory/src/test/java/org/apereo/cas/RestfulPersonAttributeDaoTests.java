@@ -5,7 +5,6 @@ import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -64,7 +63,7 @@ public class RestfulPersonAttributeDaoTests {
     @Test
     public void verifyGetPerson() {
         assertNotNull(attributeRepository);
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());
@@ -75,7 +74,7 @@ public class RestfulPersonAttributeDaoTests {
 
     @Test
     public void verifyGetPeople() {
-        val person = attributeRepository.getPeople(Map.of("cn", "casuser"), IPersonAttributeDaoFilter.alwaysChoose())
+        val person = attributeRepository.getPeople(Map.of("cn", "casuser"))
             .iterator().next();
         assertNotNull(person);
         assertNotNull(person.getAttributes());

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -78,10 +79,16 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             val codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getConfigurationContext().getServicesManager(), id);
 
+            val originalPrincipal = token.getTicketGrantingTicket().getAuthentication().getPrincipal();
+            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
+                token.getAuthentication().getPrincipal().getAttributes());
+            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
+                .createPrincipal(token.getAuthentication().getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(token.getService())
-                .authentication(token.getAuthentication())
                 .registeredService(codeRegisteredService)
+                .authentication(token.getAuthentication())
+                .principal(accessStrategyPrincipal)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

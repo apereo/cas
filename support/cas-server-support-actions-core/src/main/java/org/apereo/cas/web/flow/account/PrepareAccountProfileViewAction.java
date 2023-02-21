@@ -1,7 +1,8 @@
 package org.apereo.cas.web.flow.account;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.authentication.DetailedCredentialMetaData;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -96,6 +97,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
                 () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, ticket.getAuthentication().getPrincipal().getId(), authzAttributes),
                 throwable -> false).get())
+            .sorted()
             .collect(Collectors.toList());
         WebUtils.putAuthorizedServices(requestContext, authorizedServices);
     }
@@ -154,10 +156,9 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
             this.principal = ticket.getAuthentication().getPrincipal().getId();
             this.userAgent = ticket.getAuthentication().getCredentials()
                 .stream()
-                .filter(cred -> cred instanceof DetailedCredentialMetaData)
-                .map(DetailedCredentialMetaData.class::cast)
-                .filter(cred -> cred.getProperties().containsKey(DetailedCredentialMetaData.PROPERTY_USER_AGENT))
-                .map(cred -> cred.getProperties().get(DetailedCredentialMetaData.PROPERTY_USER_AGENT).toString())
+                .map(Credential::getCredentialMetadata)
+                .filter(cred -> cred.getProperties().containsKey(CredentialMetadata.PROPERTY_USER_AGENT))
+                .map(cred -> cred.getProperties().get(CredentialMetadata.PROPERTY_USER_AGENT).toString())
                 .findFirst()
                 .orElse(StringUtils.EMPTY);
             this.clientIpAddress = CollectionUtils.firstElement(ticket.getAuthentication()

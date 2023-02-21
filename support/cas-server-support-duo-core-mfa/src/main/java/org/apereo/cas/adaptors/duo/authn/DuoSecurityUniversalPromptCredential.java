@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
+import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import lombok.EqualsAndHashCode;
@@ -24,7 +25,7 @@ import java.io.Serial;
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "token", callSuper = true)
-public class DuoSecurityUniversalPromptCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
+public class DuoSecurityUniversalPromptCredential extends AbstractCredential implements MultifactorAuthenticationCredential, MutableCredential {
     @Serial
     private static final long serialVersionUID = -7571699733132111037L;
 
@@ -38,4 +39,5 @@ public class DuoSecurityUniversalPromptCredential extends AbstractCredential imp
     public String getId() {
         return this.token;
     }
+    
 }

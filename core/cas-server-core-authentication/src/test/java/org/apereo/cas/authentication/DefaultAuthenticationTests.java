@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
 
@@ -25,22 +23,14 @@ public class DefaultAuthenticationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultAuthentication.json");
 
-    private ObjectMapper mapper;
-
-    @BeforeEach
-    public void initialize() {
-        mapper = Jackson2ObjectMapperBuilder.json()
-            .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .build();
-        mapper.findAndRegisterModules();
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .build().toObjectMapper();
 
     @Test
     public void verifySerializeADefaultAuthenticationToJson() throws Exception {
         val authn = CoreAuthenticationTestUtils.getAuthentication();
-        mapper.writeValue(JSON_FILE, authn);
-        val authn2 = mapper.readValue(JSON_FILE, Authentication.class);
+        MAPPER.writeValue(JSON_FILE, authn);
+        val authn2 = MAPPER.readValue(JSON_FILE, Authentication.class);
         assertEquals(authn, authn2);
         assertTrue(authn.isEqualTo(authn2));
     }

@@ -100,4 +100,13 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isProviderRequired);
     }
+
+    @JsonIgnore
+    @Override
+    public boolean isExclusiveToProvider(final String name) {
+        if (operator == LogicalOperatorTypes.OR) {
+            return strategies.stream().anyMatch(strategy -> strategy.isExclusiveToProvider(name));
+        }
+        return strategies.stream().allMatch(strategy -> strategy.isExclusiveToProvider(name));
+    }
 }

@@ -43,10 +43,10 @@ public class CasAppender extends AbstractAppender {
     /**
      * Instantiates a new CAS appender.
      *
-     * @param name                the name
-     * @param config              the config
-     * @param appenderRef         the appender ref
-     * @param filter              a filter (e.g. ExceptionOnlyFilter)
+     * @param name        the name
+     * @param config      the config
+     * @param appenderRef the appender ref
+     * @param filter      a filter (e.g. ExceptionOnlyFilter)
      */
     public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef, final Filter filter) {
         super(name, filter, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
@@ -57,10 +57,10 @@ public class CasAppender extends AbstractAppender {
     /**
      * Create appender cas appender.
      *
-     * @param name                the name
-     * @param appenderRef         the appender ref
-     * @param filter              the optional Filter
-     * @param config              the config
+     * @param name        the name
+     * @param appenderRef the appender ref
+     * @param filter      the optional Filter
+     * @param config      the config
      * @return the cas appender
      */
     @PluginFactory

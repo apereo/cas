@@ -118,7 +118,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         ticketGrantingTicketCookieGenerator.removeAll(request, response);
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         Optional.ofNullable(ticketGrantingTicketId)
-            .ifPresent(Unchecked.consumer(id -> ticketRegistrySupport.ticketRegistry().deleteTicket(id)));
+            .ifPresent(Unchecked.consumer(id -> ticketRegistrySupport.getTicketRegistry().deleteTicket(id)));
     }
 
     /**
@@ -211,6 +211,8 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
                 .collect(Collectors.toList());
             WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
         }
+        context.getFlowScope().put("httpRequestSecure", request.isSecure());
+        context.getFlowScope().put("httpRequestMethod", request.getMethod());
     }
 
     /**

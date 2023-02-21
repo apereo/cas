@@ -6,14 +6,14 @@
 echo "Running CouchDb docker image..."
 docker stop couchdb-server || true && docker rm couchdb-server || true
 docker run --rm  -d -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password \
-  -p 5984:5984 -p 9100:9100 -p 3469:4369 --name="couchdb-server" apache/couchdb:3.2.2
+  -p 5984:5984 -p 9100:9100 -p 3469:4369 --name="couchdb-server" apache/couchdb:3.3.0
 
 docker ps | grep "couchdb-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "CouchDb docker image is running."
+    echo "CouchDb docker container is running."
 else
-    echo "CouchDb docker image failed to start."
+    echo "CouchDb docker container failed to start."
     exit $retVal
 fi
 

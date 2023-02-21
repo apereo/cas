@@ -49,10 +49,8 @@ public class CasLoggingConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
             final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator) {
+            @Qualifier(TicketRegistrySupport.BEAN_NAME) final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator) {
             val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport, ticketGrantingTicketCookieGenerator);
             val initParams = new HashMap<String, String>();
             val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();

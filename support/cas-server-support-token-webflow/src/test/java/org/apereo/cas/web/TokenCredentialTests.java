@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.authentication.TokenCredential;
 
@@ -21,7 +21,7 @@ public class TokenCredentialTests {
     @Test
     public void verifyTokenFromParameter() {
         val credential = new TokenCredential("tokenid", RegisteredServiceTestUtils.getService());
-        val metadata = new BasicCredentialMetaData(credential);
+        val metadata = new BasicCredentialMetadata(credential);
         assertNotNull(metadata.getCredentialClass());
     }
 }

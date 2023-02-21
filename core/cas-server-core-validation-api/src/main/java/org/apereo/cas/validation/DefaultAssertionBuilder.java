@@ -8,8 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link DefaultAssertionBuilder}.
@@ -21,13 +23,18 @@ import java.util.List;
 @SuperBuilder
 public class DefaultAssertionBuilder {
     private final Authentication primaryAuthentication;
+    private final Authentication originalAuthentication;
 
     @Builder.Default
     private final List<Authentication> authentications = new ArrayList<>(0);
+
     private final WebApplicationService service;
+
     private final boolean newLogin;
 
     private final RegisteredService registeredService;
+
+    private final Map<String, Serializable> context;
 
     /**
      * Build assertion.
@@ -35,7 +42,7 @@ public class DefaultAssertionBuilder {
      * @return the assertion
      */
     public Assertion assemble() {
-        return new ImmutableAssertion(this.primaryAuthentication, this.authentications,
-            this.newLogin, this.service, this.registeredService);
+        return new ImmutableAssertion(this.primaryAuthentication, this.originalAuthentication,
+            this.authentications, this.newLogin, this.service, this.registeredService, this.context);
     }
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 public class CasAuthenticationPolicyFailureEvent extends CasAuthenticationTransactionFailureEvent {
     @Serial
     private static final long serialVersionUID = 2208076621158767073L;
+
     private final Authentication authentication;
 
     private final ClientInfoDTO clientInfoDTO;

@@ -71,6 +71,13 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
+    public Set<String> getKeys() {
+        synchronized (cache) {
+            return this.cache.asMap().keySet();
+        }
+    }
+
+    @Override
     public void close() {
         synchronized (cache) {
             cache.invalidateAll();
@@ -119,12 +126,5 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
             }
         }
         return script;
-    }
-
-    @Override
-    public Set<String> getKeys() {
-        synchronized (cache) {
-            return this.cache.asMap().keySet();
-        }
     }
 }

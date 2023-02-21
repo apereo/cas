@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -72,6 +74,7 @@ public class CasCoreLogoutConfigurationTests {
     @Autowired
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
+
     @Autowired
     @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private LogoutManager logoutManager;
@@ -89,7 +92,7 @@ public class CasCoreLogoutConfigurationTests {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);
-        
+
         val tgt = new MockTicketGrantingTicket("casuser");
         val st = tgt.grantServiceTicket(service, serviceTicketSessionTrackingPolicy);
         tgt.getDescendantTickets().add(st.getId());
@@ -98,7 +101,7 @@ public class CasCoreLogoutConfigurationTests {
                 .ticketGrantingTicket(tgt)
                 .httpServletResponse(Optional.of(new MockHttpServletResponse()))
                 .httpServletRequest(Optional.of(new MockHttpServletRequest()))
-            .build());
+                .build());
         assertFalse(results.isEmpty());
         assertFalse(casProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }

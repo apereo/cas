@@ -13,7 +13,7 @@ import org.jdom2.Namespace;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 /**
@@ -78,7 +78,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     private static String readRequestBodyIfAny(final HttpServletRequest request) {
         try (val reader = request.getReader()) {
-            return reader.lines().collect(Collectors.joining());
+            return reader.lines().collect(Collectors.joining(" "));
         } catch (final Exception e) {
             LOGGER.trace("Could not obtain the saml request body from the http request", e);
         }

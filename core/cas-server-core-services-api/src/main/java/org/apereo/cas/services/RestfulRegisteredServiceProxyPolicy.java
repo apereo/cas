@@ -18,7 +18,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -76,7 +76,7 @@ public class RestfulRegisteredServiceProxyPolicy implements RegisteredServicePro
                 .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
-            return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+            return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {

@@ -1,12 +1,12 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
@@ -64,9 +65,8 @@ public class GroovyResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyChangePassword() {
-        assertTrue(passwordChangeService.change(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password"),
-            new PasswordChangeRequest("casuser", "password", "password")));
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray());
+        assertTrue(passwordChangeService.change(request));
     }
 
     @Test

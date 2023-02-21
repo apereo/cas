@@ -12,8 +12,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.codec.Base64Support;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.codec.Base64Support;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
@@ -60,6 +60,20 @@ import java.util.zip.InflaterInputStream;
 @Slf4j
 @UtilityClass
 public class SamlIdPUtils {
+
+    /**
+     * Gets saml idp metadata owner.
+     *
+     * @param result the result
+     * @return the saml id p metadata owner
+     */
+    public static String getSamlIdPMetadataOwner(final Optional<SamlRegisteredService> result) {
+        if (result.isPresent()) {
+            val registeredService = result.get();
+            return registeredService.getName() + '-' + registeredService.getId();
+        }
+        return "CAS";
+    }
 
     /**
      * Retrieve authn request authn request.
@@ -195,7 +209,7 @@ public class SamlIdPUtils {
                     ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
                     : null;
 
-                if (StringUtils.isNotBlank(acsUrl) && locations.contains(acsUrl)) {
+                if (StringUtils.isNotBlank(acsUrl) && locations.stream().anyMatch(acsUrl::equalsIgnoreCase)) {
                     return buildAssertionConsumerService(binding, acsUrl, acsIndex);
                 }
 
@@ -241,7 +255,7 @@ public class SamlIdPUtils {
         val resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
             .map(SamlRegisteredService.class::cast)
-            .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
+            .map(service -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, entityID))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(SamlRegisteredServiceServiceProviderMetadataFacade::metadataResolver)

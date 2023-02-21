@@ -3,8 +3,8 @@ package org.apereo.cas.services;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
 
 /**

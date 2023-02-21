@@ -39,7 +39,7 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     /**
      * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
      */
-    private String principalAttributeId;
+    private String principalIdAttribute;
 
     /**
      * Whether initialization of delegated identity providers should be done

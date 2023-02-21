@@ -1,4 +1,11 @@
 description = "Apereo CAS Core Logging Splunk Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "Splunk"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
 

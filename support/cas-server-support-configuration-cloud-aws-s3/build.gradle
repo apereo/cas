@@ -1,6 +1,14 @@
 description = "Apereo CAS Configuration - AWS S3 Objects"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via AWS S3"
+    ]
+}
 dependencies {
     implementation libraries.awss3
+    implementation libraries.springcloudbootstrap
 
     implementation project(":support:cas-server-support-aws")
     implementation project(":core:cas-server-core-configuration-api")

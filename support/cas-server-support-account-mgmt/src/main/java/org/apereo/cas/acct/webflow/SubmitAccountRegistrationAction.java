@@ -24,13 +24,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -125,7 +126,9 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .build()
                 .get();
             val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
-                .to(List.of(registrationRequest.getEmail())).body(text).build();
+                .locale(locale.orElseGet(Locale::getDefault))
+                .to(List.of(registrationRequest.getEmail()))
+                .body(text).build();
             return communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().success(false).build();

@@ -1,4 +1,12 @@
 description = "Apereo CAS Trusted Authentication Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Trusted Authentication",
+            aliases: ["trusted"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-web")

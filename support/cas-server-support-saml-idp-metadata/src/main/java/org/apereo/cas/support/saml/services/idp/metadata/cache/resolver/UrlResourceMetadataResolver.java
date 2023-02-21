@@ -23,7 +23,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.IOUtils;
@@ -34,8 +34,9 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -132,7 +133,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             }
 
             response = fetchMetadata(service, metadataLocation, criteriaSet, backupFile);
-            val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+            val status = HttpStatus.valueOf(response.getCode());
             if (shouldHttpResponseStatusBeProcessed(status)) {
                 val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
                 configureAndInitializeSingleMetadataResolver(metadataProvider, service);
@@ -192,7 +193,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response,
                                                                        final File backupFile) throws Exception {
-        val entity = response.getEntity();
+        val entity = ((HttpEntityContainer) response).getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
         val path = backupFile.toPath();
         LOGGER.trace("Writing metadata to file at [{}]", path);

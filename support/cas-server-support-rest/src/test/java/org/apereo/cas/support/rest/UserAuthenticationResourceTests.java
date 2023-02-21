@@ -35,8 +35,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.MultiValueMap;
 
+import jakarta.servlet.http.HttpServletRequest;
 import javax.security.auth.login.FailedLoginException;
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -110,8 +111,8 @@ public class UserAuthenticationResourceTests {
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider("mfa-unknown")));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("username", "casuser")
-            .param("password", "Mellon"))
+                .param("username", "casuser")
+                .param("password", "Mellon"))
             .andExpect(status().is4xxClientError());
     }
 
@@ -127,8 +128,8 @@ public class UserAuthenticationResourceTests {
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("username", "casuser")
-            .param("password", "Mellon"))
+                .param("username", "casuser")
+                .param("password", "Mellon"))
             .andExpect(status().isOk());
     }
 
@@ -143,23 +144,23 @@ public class UserAuthenticationResourceTests {
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
         when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any())).thenReturn(Optional.empty());
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("username", "casuser")
-            .param("password", "Mellon"))
+                .param("username", "casuser")
+                .param("password", "Mellon"))
             .andExpect(status().isOk());
     }
 
     @Test
     public void verifyStatusAuthnFails() throws Exception {
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("username", "casuser")
-            .param("password", "Mellon"))
+                .param("username", "casuser")
+                .param("password", "Mellon"))
             .andExpect(status().isInternalServerError());
     }
 
     @Test
     public void verifyBadRequest() throws Exception {
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("unknown-param", "casuser"))
+                .param("unknown-param", "casuser"))
             .andExpect(status().is4xxClientError());
     }
 
@@ -168,8 +169,8 @@ public class UserAuthenticationResourceTests {
         val ex = new AuthenticationException(CollectionUtils.wrap("error", new FailedLoginException()));
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenThrow(ex);
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
-            .param("username", "casuser")
-            .param("password", "Mellon"))
+                .param("username", "casuser")
+                .param("password", "Mellon"))
             .andExpect(status().isUnauthorized());
     }
 }

@@ -53,6 +53,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -71,6 +72,7 @@ import java.time.Instant;
 @Accessors(chain = true)
 @JsonFilter("CasConfigurationProperties")
 @RequiresModule(name = "cas-server-core-api", automated = true)
+@Validated
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.
@@ -364,7 +366,7 @@ public class CasConfigurationProperties implements Serializable {
     public Serializable withHolder() {
         return new Holder(this);
     }
-    
+
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     private record Holder(CasConfigurationProperties cas) implements Serializable {
         @Serial

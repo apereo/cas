@@ -1,6 +1,15 @@
 apply plugin: "war"
 
-project.ext["mainClassName"] = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
+ext {
+    mainClassName = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
+    publishMetadata = true
+    projectMetadata = [
+            title: "Spring BootAdmin Server",
+            facets: ["web"],
+            category: "Web Application"
+    ]
+}
+
 apply from: rootProject.file("gradle/springboot.gradle")
 description = "Apereo CAS Spring Boot Admin Server"
 

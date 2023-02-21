@@ -3,11 +3,13 @@ package org.apereo.cas;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -47,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].bind-credential=P@ssw0rd",
     "cas.authn.attribute-repository.ldap[0].attributes.sn=surname"
 })
-@Tag("Ldap")
+@Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 11389)
 public class PersonDirectoryPrincipalResolverOpenLdapTests {
     @Autowired
@@ -56,6 +58,14 @@ public class PersonDirectoryPrincipalResolverOpenLdapTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
 
     @Test
     public void verifyResolverWithTags() throws Exception {
@@ -72,10 +82,12 @@ public class PersonDirectoryPrincipalResolverOpenLdapTests {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential(uid, "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(uid)),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("homePostalAddress;lang-jp"));
         assertTrue(p.getAttributes().containsKey("homePostalAddress;lang-fr"));

@@ -42,6 +42,7 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     public static class DnsRProvider implements Serializable {
         @Serial
         private static final long serialVersionUID = -1863901001243353934L;
+
         /**
          * Enable provider.
          */

@@ -17,7 +17,7 @@ you can review the registration record inside the CAS service registry to adjust
 **NOTE:** In the event that special attributes and/or name ids are required for the integration, you are required
 to ensure all such [attributes are properly resolved](Attribute-Resolution.html) and are available to the CAS principal.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>SAML2 service provider integrations listed here attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
 
 Support is enabled by including the following module in the WAR Overlay:
 
@@ -202,7 +202,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 
 </div>
 
-<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong>
+<div class="alert alert-info">:information_source: <strong>Configure Once, Run Everywhere</strong>
 <p>If you have developed a recipe for integrating
 with a SAML service provider, consider contributing that recipe to the project so its configuration
 can be automated once and for all to use. Let the change become a feature of the project, 
@@ -212,7 +212,7 @@ rather than something you alone have to maintain.</p></div>
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>SAML2 service provider integrations listed 
 here attempt to automate CAS configuration based on known and documented integration 
 guidelines and recipes provided by the service provider owned by the vendor. These 
 recipes can change and break CAS over time.</p></div>

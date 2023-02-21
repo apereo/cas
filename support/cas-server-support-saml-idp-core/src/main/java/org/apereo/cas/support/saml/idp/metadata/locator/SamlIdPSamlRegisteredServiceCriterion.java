@@ -2,7 +2,8 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
-import net.shibboleth.utilities.java.support.resolver.Criterion;
+import net.shibboleth.shared.resolver.Criterion;
+
 
 /**
  * This is {@link SamlIdPSamlRegisteredServiceCriterion}.

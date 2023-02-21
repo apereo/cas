@@ -4,7 +4,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link TicketGrantingTicketResourceEntityResponseFactory}.

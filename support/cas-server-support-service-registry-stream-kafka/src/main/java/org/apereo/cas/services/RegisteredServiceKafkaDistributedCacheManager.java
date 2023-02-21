@@ -69,9 +69,9 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     @SuppressWarnings("FutureReturnValueIgnored")
     private void sendObject(final RegisteredService key, final DistributedCacheObject<RegisteredService> item) {
         val itemKey = buildKey(key);
-        val future = kafkaTemplate.usingCompletableFuture().send(topic, itemKey, item);
+        val future = kafkaTemplate.send(topic, itemKey, item);
         future.whenComplete((result, ex) -> {
-            LOGGER.info("Published [{}]", result);
+            LOGGER.trace("Published [{}]", result);
             LoggingUtils.error(LOGGER, ex);
         });
     }

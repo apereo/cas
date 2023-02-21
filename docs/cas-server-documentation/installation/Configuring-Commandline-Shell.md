@@ -22,7 +22,7 @@ java -jar /path/to/cas-server-support-shell-$casVersion.jar
 The interface that is next presented will guide you through with available parameters and methods of querying.
 You will learn how to launch into the interactive shell and query the CAS engine dynamically.
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>Make sure you have the proper JCE bundle installed in your 
+<div class="alert alert-info">:information_source: <strong>JCE Requirement</strong><p>Make sure you have the proper JCE bundle installed in your 
 Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. 
 Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 

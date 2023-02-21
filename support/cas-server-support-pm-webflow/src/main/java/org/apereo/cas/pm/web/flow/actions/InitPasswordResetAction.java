@@ -29,7 +29,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
         val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
 
         if (StringUtils.isBlank(token)) {
-            LOGGER.error("Password reset token is missing");
+            LOGGER.debug("Password reset token is missing");
             return error();
         }
 
@@ -39,9 +39,9 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
             return error();
         }
 
-        val c = new UsernamePasswordCredential();
-        c.setUsername(username);
-        WebUtils.putCredential(requestContext, c);
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(username);
+        WebUtils.putCredential(requestContext, credential);
         return success();
     }
 }

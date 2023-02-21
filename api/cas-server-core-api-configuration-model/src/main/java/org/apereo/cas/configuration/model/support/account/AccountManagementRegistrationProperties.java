@@ -35,13 +35,16 @@ public class AccountManagementRegistrationProperties implements Serializable {
      * Email settings for notifications.
      */
     @NestedConfigurationProperty
-    private EmailProperties mail = new EmailProperties();
+    private EmailProperties mail = new EmailProperties()
+        .setSubject("Account Registration")
+        .setText("Activate your account registration via this link: ${url}");
 
     /**
      * SMS settings for notifications.
      */
     @NestedConfigurationProperty
-    private SmsProperties sms = new SmsProperties();
+    private SmsProperties sms = new SmsProperties()
+        .setText("Activate your account registration via this link: ${url}");
 
     /**
      * The webflow configuration.
@@ -66,11 +69,4 @@ public class AccountManagementRegistrationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AccountManagementRegistrationProvisioningProperties provisioning = new AccountManagementRegistrationProvisioningProperties();
-
-    public AccountManagementRegistrationProperties() {
-        mail.setAttributeName("mail");
-        mail.setText("Activate your account registration via this link: ${url}");
-        sms.setText("Activate your account registration via this link: ${url}");
-        mail.setSubject("Account Registration");
-    }
 }

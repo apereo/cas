@@ -9,6 +9,7 @@ import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -18,6 +19,7 @@ import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
@@ -49,6 +51,17 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class SamlIdentityProviderDiscoveryConfiguration {
 
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "identityProviderDiscoveryEndpointConfigurer")
+    public ProtocolEndpointWebSecurityConfigurer<Void> identityProviderDiscoveryEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));
+            }
+        };
+    }
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
@@ -118,10 +131,12 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
         builtClients.findAllClients()
             .stream()
-            .filter(c -> c instanceof SAML2Client).map(SAML2Client.class::cast)
+            .filter(c -> c instanceof SAML2Client)
+            .map(SAML2Client.class::cast)
             .forEach(c -> {
                 c.init();
                 val entity = new SamlIdentityProviderEntity();
+                c.getIdentityProviderMetadataResolver().resolve();
                 entity.setEntityID(c.getIdentityProviderResolvedEntityId());
                 parsers.add(new SamlIdentityProviderEntityParser(entity));
             });

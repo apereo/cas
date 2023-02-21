@@ -1,4 +1,13 @@
 description = "Apereo CAS Pac4j Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Delegated Authentication",
+            title: "Delegated (Proxy) Authentication",
+            aliases: ["delegation", "pac4j"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
@@ -36,9 +45,16 @@ dependencies {
     implementation libraries.dropwizard
 
     compileOnly libraries.hazelcast
+    compileOnly libraries.mongo
 
     testImplementation libraries.hazelcast
     testImplementation libraries.casclient
+    testImplementation libraries.mongo
+
+    compileOnly project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-ldap-core")
+    compileOnly project(":support:cas-server-support-mongo-core")
+    compileOnly project(":support:cas-server-support-saml-idp-web")
 
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
@@ -53,11 +69,15 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-authentication-mfa")
 
+    testImplementation project(":support:cas-server-support-jpa-util")
+    testImplementation project(":support:cas-server-support-mongo-core")
     testImplementation project(":support:cas-server-support-hazelcast-core")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(":support:cas-server-support-saml-idp-web")
 
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
@@ -69,4 +89,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
 }

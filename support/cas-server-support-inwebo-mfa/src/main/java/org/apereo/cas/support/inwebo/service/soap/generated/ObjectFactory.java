@@ -1,7 +1,7 @@
 // CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * The generated SOAP class.
@@ -14,7 +14,6 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: soap
-     *
      */
     public ObjectFactory() {
     }
@@ -48,7 +47,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoginQuery }
-     *
      */
     public LoginQuery createLoginQuery() {
         return new LoginQuery();
@@ -56,7 +54,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoginQueryResponse }
-     *
      */
     public LoginQueryResponse createLoginQueryResponse() {
         return new LoginQueryResponse();
@@ -64,7 +61,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoginQueryResult }
-     *
      */
     public LoginQueryResult createLoginQueryResult() {
         return new LoginQueryResult();

@@ -17,6 +17,7 @@ import org.opensaml.soap.soap11.Header;
 
 import java.io.Serial;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The {@link SamlProfileSamlSoap11ResponseBuilder} is responsible for
@@ -37,7 +38,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     }
 
     @Override
-    protected Envelope buildResponse(final Assertion assertion,
+    protected Envelope buildResponse(final Optional<Assertion> assertion,
                                      final SamlProfileBuilderContext context) throws Exception {
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", context.getBinding());
         val acs = context.getAdaptor().getAssertionConsumerService(context.getBinding());
@@ -73,7 +74,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         val ctx = context.getMessageContext().getSubcontext(SOAP11Context.class, true);
         Objects.requireNonNull(ctx).setEnvelope(envelope);
         val encoder = new HTTPSOAP11Encoder();
-        encoder.setHttpServletResponse(context.getHttpResponse());
+        encoder.setHttpServletResponseSupplier(context::getHttpResponse);
         encoder.setMessageContext(context.getMessageContext());
         encoder.initialize();
         encoder.encode();

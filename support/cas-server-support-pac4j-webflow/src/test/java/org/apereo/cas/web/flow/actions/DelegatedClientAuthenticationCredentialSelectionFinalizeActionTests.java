@@ -2,9 +2,10 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 public class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests {
 
@@ -44,6 +45,7 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
@@ -56,9 +58,9 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests
             .linkedId("casuser")
             .build();
         request.addParameter("key", profile.getKey());
-        WebUtils.putDelegatedClientAuthenticationResolvedCredentials(context, List.of(profile));
+        DelegationWebflowUtils.putDelegatedClientAuthenticationResolvedCredentials(context, List.of(profile));
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-        assertNotNull(WebUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class));
+        assertNotNull(DelegationWebflowUtils.getDelegatedClientAuthenticationCandidateProfile(context, DelegatedAuthenticationCandidateProfile.class));
     }
 }

@@ -24,11 +24,12 @@ public abstract class AbstractCasEventRepositoryTests {
 
     @Test
     public void verifyLoadOps() throws Exception {
+        val eventRepository = getEventRepository();
+        eventRepository.removeAll();
+        
         val dto1 = getCasEvent("example1");
 
-        val eventRepository = getEventRepository();
         eventRepository.save(dto1);
-
         val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
         val loaded = eventRepository.load(dt);
         assertTrue(loaded.findAny().isPresent());
@@ -45,6 +46,8 @@ public abstract class AbstractCasEventRepositoryTests {
 
     @Test
     public void verifySave() throws Exception {
+        getEventRepository().removeAll();
+        
         val dto1 = getCasEvent("casuser");
         getEventRepository().save(dto1);
 

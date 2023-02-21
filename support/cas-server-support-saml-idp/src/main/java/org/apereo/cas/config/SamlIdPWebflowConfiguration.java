@@ -26,7 +26,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
-import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -43,6 +42,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -90,14 +90,6 @@ public class SamlIdPWebflowConfiguration {
     @Configuration(value = "SamlIdPWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPWebflowActionsConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET)
-        public Action samlIdPSessionStoreTicketGrantingTicketAction(
-            @Qualifier("samlIdPDistributedSessionStore")
-            final SessionStore samlIdPDistributedSessionStore) {
-            return new SessionStoreTicketGrantingTicketAction(samlIdPDistributedSessionStore);
-        }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
         @Bean
@@ -172,6 +164,7 @@ public class SamlIdPWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAuthenticationContextWebflowEventResolver")
+        @Lazy(false)
         public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
             @Qualifier("samlIdPMultifactorAuthenticationTrigger")
             final MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger,
@@ -179,7 +172,8 @@ public class SamlIdPWebflowConfiguration {
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext, samlIdPMultifactorAuthenticationTrigger);
+            val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
+                samlIdPMultifactorAuthenticationTrigger);
             Objects.requireNonNull(initialAuthenticationAttemptWebflowEventResolver).addDelegate(r);
             return r;
         }

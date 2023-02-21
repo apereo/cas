@@ -50,7 +50,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();
@@ -72,10 +72,8 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
         }
 
         val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects((Map) user.getAttributes());
-        val principal = this.passwordlessPrincipalFactory.createPrincipal(user.getId(), attributes);
-        val auth = DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(principal)
-            .build();
+        val principal = passwordlessPrincipalFactory.createPrincipal(user.getUsername(), attributes);
+        val auth = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val service = WebUtils.getService(requestContext);
 
         val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);

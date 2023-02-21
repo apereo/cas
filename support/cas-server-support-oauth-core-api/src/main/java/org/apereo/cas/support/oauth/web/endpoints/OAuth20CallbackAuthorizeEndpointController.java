@@ -7,18 +7,18 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.JEEFrameworkParameters;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * OAuth callback authorize controller based on the pac4j callback controller.
@@ -42,6 +42,8 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
+
         val callback = new OAuth20CallbackLogic();
         val context = new JEEContext(request, response);
         String defaultUrl = null;
@@ -55,9 +57,9 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
                 defaultUrl = redirectUri.get();
             }
         }
-        callback.perform(context, getConfigurationContext().getSessionStore(),
-            getConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
-                defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
+        callback.perform(getConfigurationContext().getOauthConfig(),
+            defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT,
+            new JEEFrameworkParameters(request, response));
         val url = callback.getRedirectUrl();
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         LOGGER.trace("OAuth callback URL is [{}]", url);
@@ -69,10 +71,9 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
         private String redirectUrl;
 
         @Override
-        protected HttpAction redirectToOriginallyRequestedUrl(final WebContext context,
-                                                              final SessionStore sessionStore,
+        protected HttpAction redirectToOriginallyRequestedUrl(final CallContext callContext,
                                                               final String defaultUrl) {
-            val result = getSavedRequestHandler().restore(context, sessionStore, defaultUrl);
+            val result = getSavedRequestHandler().restore(callContext, defaultUrl);
             if (result instanceof WithLocationAction) {
                 redirectUrl = WithLocationAction.class.cast(result).getLocation();
             }

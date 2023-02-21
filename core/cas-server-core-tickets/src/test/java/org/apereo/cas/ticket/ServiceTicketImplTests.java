@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -42,6 +44,13 @@ public class ServiceTicketImplTests {
     private final DefaultUniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
 
     private ObjectMapper mapper;
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props,
+            new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
+    }
 
     @BeforeEach
     public void initialize() {
@@ -114,12 +123,6 @@ public class ServiceTicketImplTests {
             false, getTrackingPolicy());
         t.markTicketExpired();
         assertFalse(s.isExpired());
-    }
-
-    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 
     @Test

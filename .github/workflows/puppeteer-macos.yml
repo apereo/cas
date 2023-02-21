@@ -5,8 +5,11 @@ name: Puppeteer MacOS
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
+  GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
   DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
@@ -22,7 +25,7 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 17
-  NODE_CURRENT: '18'
+  NODE_CURRENT: '19'
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
   JDK_JAVA_OPTIONS: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
 

@@ -45,16 +45,6 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
         return randomizer.getAlgorithm();
     }
 
-    /**
-     * Converts byte[] to String by simple cast. Subclasses should override.
-     *
-     * @param random raw bytes
-     * @return a converted String
-     */
-    protected String convertBytesToString(final byte[] random) {
-        return new String(random, StandardCharsets.UTF_8);
-    }
-
     @Override
     public String getNewString(final int size) {
         val random = getNewStringAsBytes(size);
@@ -71,5 +61,15 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
         val random = new byte[size];
         this.randomizer.nextBytes(random);
         return random;
+    }
+
+    /**
+     * Converts byte[] to String by simple cast. Subclasses should override.
+     *
+     * @param random raw bytes
+     * @return a converted String
+     */
+    protected String convertBytesToString(final byte[] random) {
+        return new String(random, StandardCharsets.UTF_8);
     }
 }

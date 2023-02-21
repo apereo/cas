@@ -84,6 +84,9 @@ public class FunctionUtilsTests {
             throw new IllegalArgumentException();
         }, Suppliers.ofInstance(Boolean.FALSE));
         assertFalse(supplier.get());
+        assertDoesNotThrow(() -> FunctionUtils.doIfNotNull(null, __ -> {
+            throw new IllegalArgumentException();
+        }));
     }
 
     @Test

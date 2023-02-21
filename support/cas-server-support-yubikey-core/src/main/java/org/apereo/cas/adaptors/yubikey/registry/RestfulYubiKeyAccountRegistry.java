@@ -15,7 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -75,7 +76,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .entity(MAPPER.writeValueAsString(account))
                 .build();
             response = HttpUtils.execute(exec);
-            return response != null && HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -150,9 +151,9 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val content = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     return MAPPER.readValue(content, YubiKeyAccount.class);
                 }
             }
@@ -176,9 +177,9 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val content = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     return MAPPER.readValue(content, new TypeReference<List<YubiKeyAccount>>() {
                     });
                 }

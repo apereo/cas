@@ -66,5 +66,5 @@ public class OpenFGARegisteredServiceAccessStrategyTests {
             assertTrue(strategy.doPrincipalAttributesAllowServiceAccess(request));
         }
     }
-    
+
 }

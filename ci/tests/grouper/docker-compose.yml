@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
   grouper:
-    image: "i2incommon/grouper:2.6.16"
+    image: "i2incommon/grouper:2.6.19.1"
     restart: always
     ports:
       - '443:443'

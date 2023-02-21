@@ -20,7 +20,9 @@ import java.util.Map;
 @Getter
 public class DefaultAuditTrailRecordResolutionPlan implements AuditTrailRecordResolutionPlan {
     private final Map<String, AuditResourceResolver> auditResourceResolvers = new LinkedHashMap<>();
+
     private final Map<String, AuditActionResolver> auditActionResolvers = new LinkedHashMap<>();
+
     private final Map<String, PrincipalResolver> auditPrincipalResolvers = new LinkedHashMap<>();
 
     @Override

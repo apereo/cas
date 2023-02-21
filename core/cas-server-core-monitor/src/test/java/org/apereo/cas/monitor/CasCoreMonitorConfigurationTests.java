@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -39,8 +40,9 @@ import static org.junit.jupiter.api.Assertions.*;
     MetricsEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
-    
+
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreMonitorConfiguration.class,

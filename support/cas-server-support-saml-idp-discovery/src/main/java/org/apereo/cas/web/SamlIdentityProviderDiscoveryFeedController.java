@@ -16,8 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,8 +32,13 @@ import java.util.HashMap;
 @RestController("identityProviderDiscoveryFeedController")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(path = "/idp/discovery")
+@RequestMapping(path = SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
 public class SamlIdentityProviderDiscoveryFeedController {
+    /**
+     * Base endpoint url.
+     */
+    public static final String BASE_ENDPOINT_IDP_DISCOVERY = "/idp/discovery";
+
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdentityProviderDiscoveryFeedService samlIdentityProviderDiscoveryFeedService;

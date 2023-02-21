@@ -36,12 +36,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     private final ServicesManager servicesManager;
 
     /**
-     * Indicates whether this handler is able to support the credentials passed to
-     * operate on it and validate. Default is true.
-     */
-    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
-
-    /**
      * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
      * {@link AuthenticationManager}, and particular implementations
      * may require uniqueness. Uniqueness is a best
@@ -55,6 +49,12 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * order numbers be unique on a best-effort basis.
      */
     private final int order;
+
+    /**
+     * Indicates whether this handler is able to support the credentials passed to
+     * operate on it and validate. Default is true.
+     */
+    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     /**
      * Define the scope and state of this authentication handler

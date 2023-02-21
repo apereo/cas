@@ -14,7 +14,6 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ad.UnicodePwdAttribute;
-import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collections;
 
@@ -25,7 +24,7 @@ import java.util.Collections;
  * @since 6.1.0
  */
 @Slf4j
-public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
+public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final LdapConnectionFactory searchFactory;
 
     private final LdapPasswordSynchronizationProperties ldapProperties;
@@ -61,7 +60,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
                 val dn = response.getEntry().getDn();
                 LOGGER.debug("Updating account password for [{}]", dn);
 
-                val operation = new ModifyOperation(searchFactory.connectionFactory());
+                val operation = new ModifyOperation(searchFactory.getConnectionFactory());
                 val mod = new AttributeModification(AttributeModification.Type.REPLACE, getLdapPasswordAttribute(credential));
                 val updateResponse = operation.execute(new ModifyRequest(dn, mod));
                 LOGGER.trace("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());

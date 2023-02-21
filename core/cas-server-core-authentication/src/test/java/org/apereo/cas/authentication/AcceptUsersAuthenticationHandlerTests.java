@@ -13,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +31,17 @@ public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
 
     private static final String RUTGERS = "rutgers";
+
+    private static AuthenticationHandler getAuthenticationHandler() {
+        val users = new HashMap<String, String>();
+        users.put(SCOTT, RUTGERS);
+        users.put("dima", "javarules");
+        users.put("bill", "thisisAwesoME");
+        users.put("brian", "t�st");
+
+        return new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, users);
+    }
 
     @Test
     public void verifySupportsSpecialCharacters() throws Exception {
@@ -67,7 +78,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
         try {
             assertEquals(SCOTT, getAuthenticationHandler().authenticate(credential, mock(Service.class)).getPrincipal().getId());
-        } catch (final GeneralSecurityException e) {
+        } catch (final Exception e) {
             throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
         }
     }
@@ -126,7 +137,6 @@ public class AcceptUsersAuthenticationHandlerTests {
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("another"), mock(Service.class)));
     }
 
-
     @Test
     public void verifyUserTransforms() {
         val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
@@ -163,17 +173,5 @@ public class AcceptUsersAuthenticationHandlerTests {
             null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
         handler.setCredentialSelectionPredicate(null);
         assertTrue(handler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("another")));
-    }
-
-
-    private static AuthenticationHandler getAuthenticationHandler() {
-        val users = new HashMap<String, String>();
-        users.put(SCOTT, RUTGERS);
-        users.put("dima", "javarules");
-        users.put("bill", "thisisAwesoME");
-        users.put("brian", "t�st");
-
-        return new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
-            null, PrincipalFactoryUtils.newPrincipalFactory(), null, users);
     }
 }

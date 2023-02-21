@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc",
+  "dependencies": "oidc,jpa-ticket-registry",
   "properties": [
     "--cas.audit.engine.enabled=false",
     
@@ -17,8 +17,26 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
-  ]
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.ticket.registry.core.enable-locking=true",
+
+    "--spring.datasource.url=jdbc:postgresql://localhost:5432/tickets",
+    "--spring.datasource.username=postgres",
+    "--spring.datasource.password=password",
+    "--spring.datasource.driver-class-name=org.postgresql.Driver",
+
+    "--spring.integration.jdbc.initialize-schema=always",
+    "--spring.sql.init.platform=postgresql",
+
+    "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
+    "--cas.ticket.registry.jpa.ddl-auto=create-drop",
+    "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    "--cas.ticket.registry.jpa.user=postgres",
+    "--cas.ticket.registry.jpa.password=password",
+    "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets"
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh"
 }
 
 

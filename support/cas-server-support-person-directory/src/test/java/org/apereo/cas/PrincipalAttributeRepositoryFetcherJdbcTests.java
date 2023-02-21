@@ -39,6 +39,8 @@ public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttrib
     @Test
     public void verifyOperationWithUsernamePasswordCredentialType() {
         val context = PrincipalResolutionContext.builder()
+            .attributeDefinitionStore(attributeDefinitionStore)
+            .servicesManager(servicesManager)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -47,7 +49,8 @@ public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttrib
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("PersonName"));
     }
@@ -55,6 +58,8 @@ public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttrib
     @Test
     public void verifyOperationWithoutUsernamePasswordCredentialType() {
         val context = PrincipalResolutionContext.builder()
+            .servicesManager(servicesManager)
+            .attributeDefinitionStore(attributeDefinitionStore)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED))
             .attributeRepository(attributeRepository)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -64,7 +69,8 @@ public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttrib
         val resolver = new PersonDirectoryPrincipalResolver(context);
         val credential = CoreAuthenticationTestUtils.getHttpBasedServiceCredentials();
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNull(p);
     }
 

@@ -28,6 +28,11 @@ initSysctl:
 prometheusExporter:
   enabled: false
 
+image:
+  repository: sonarqube
+  tag: 9.7.1-community
+  pullPolicy: IfNotPresent
+  
 plugins:
   install:
     - https://github.com/vaulttec/sonar-auth-oidc/releases/download/v2.1.1/sonar-auth-oidc-plugin-2.1.1.jar

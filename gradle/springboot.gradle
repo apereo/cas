@@ -11,11 +11,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
          * Application’s static resources are loaded from their source location.
          */
         bootRun {
-            resources {
-                srcDirs new File("//etc/cas/templates/"),
-                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                        new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
-                        new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
+            if (project.hasProperty("casWebApplication") && project.ext.casWebApplication) {
+                resources {
+                    srcDirs new File("//etc/cas/templates/"),
+                            new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                            new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
+                            new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
+                }
             }
         }
     }
@@ -32,7 +34,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     }
 
     if (plugins.hasPlugin("war")) {
-        
+
         tasks.named('javadoc') {
             enabled false
         }
@@ -48,7 +50,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 if (rootProject.generateTimestamps) {
                     attributes("Implementation-Date": java.time.ZonedDateTime.now())
                 }
-                
+
                 attributes(
                         "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                         "Implementation-Version": project.version)
@@ -91,7 +93,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
     tasks.named('bootRun') {
         mainClass.set(project.ext.mainClassName)
-        
+
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             dependsOn pathingJar
             doFirst {
@@ -101,7 +103,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
         sourceResources sourceSets.bootRun
         systemProperties = System.properties
-        
+
         def list = []
         list.add("-Djava.net.preferIPv4Stack=true ")
         list.add("-Djava.net.preferIPv4Addresses=true")
@@ -158,7 +160,7 @@ int findAvailableTcpPort(List<Integer> portRange) {
             serverSocket.close()
             return port
         } catch (Exception e) {
-             logger.debug "Port ${port} is not available: ${e.message}"
+            logger.debug "Port ${port} is not available: ${e.message}"
         }
     }
     return -1

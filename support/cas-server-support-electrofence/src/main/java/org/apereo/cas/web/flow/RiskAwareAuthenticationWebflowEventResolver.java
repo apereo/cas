@@ -18,7 +18,7 @@ import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
@@ -76,7 +76,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         val threshold = getConfigurationContext()
-            .getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
+            .getCasProperties().getAuthn().getAdaptive().getRisk().getCore().getThreshold();
         if (score.isRiskGreaterThan(threshold)) {
             applicationContext
                 .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));

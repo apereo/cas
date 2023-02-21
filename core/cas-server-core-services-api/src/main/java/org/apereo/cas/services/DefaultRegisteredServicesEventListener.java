@@ -42,7 +42,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         servicesManager.load();
     }
-    
+
     @Override
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
         val registeredService = event.getRegisteredService();
@@ -69,8 +69,10 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                 .stream()
                 .filter(contact -> StringUtils.isNotBlank(contact.getEmail()))
                 .forEach(contact -> {
-                    val emailRequest = EmailMessageRequest.builder().emailProperties(mail)
-                        .to(List.of(contact.getEmail())).body(body).build();
+                    val emailRequest = EmailMessageRequest.builder()
+                        .emailProperties(mail)
+                        .to(List.of(contact.getEmail()))
+                        .body(body).build();
                     communicationsManager.email(emailRequest);
                 });
         }

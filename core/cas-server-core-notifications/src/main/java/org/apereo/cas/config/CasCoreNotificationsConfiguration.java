@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.DefaultCommunicationsManager;
+import org.apereo.cas.notifications.mail.DefaultEmailSender;
+import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.notifications.push.DefaultNotificationSender;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
@@ -49,16 +51,19 @@ public class CasCoreNotificationsConfiguration {
     @ConditionalOnMissingBean(name = CommunicationsManager.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CommunicationsManager communicationsManager(
-        @Qualifier("messageSource")
-        final HierarchicalMessageSource messageSource,
-        @Qualifier("mailSender")
-        final ObjectProvider<JavaMailSender> mailSender,
-        @Qualifier(SmsSender.BEAN_NAME)
-        final SmsSender smsSender,
-        @Qualifier("notificationSender")
-        final NotificationSender notificationSender) {
-        return new DefaultCommunicationsManager(smsSender, mailSender.getIfAvailable(),
-            notificationSender, messageSource);
+        @Qualifier(SmsSender.BEAN_NAME) final SmsSender smsSender,
+        @Qualifier(EmailSender.BEAN_NAME) final EmailSender emailSender,
+        @Qualifier("notificationSender") final NotificationSender notificationSender) {
+        return new DefaultCommunicationsManager(smsSender, emailSender, notificationSender);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = EmailSender.BEAN_NAME)
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public EmailSender emailSender(
+        @Qualifier("messageSource") final HierarchicalMessageSource messageSource,
+        @Qualifier("mailSender") final ObjectProvider<JavaMailSender> mailSender) {
+        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource);
     }
 
     @Bean

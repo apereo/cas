@@ -11,6 +11,7 @@ import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -56,7 +57,7 @@ public class OidcDPoPAuthenticatorTests extends AbstractOidcTests {
         request.addHeader(OAuth20Constants.DPOP, proof.serialize());
         val client = (HeaderClient) oidcDPoPClientProvider.createClient();
         val credentials = new TokenCredentials(OAuth20Constants.DPOP);
-        client.getAuthenticator().validate(credentials, ctx, JEESessionStore.INSTANCE);
+        client.getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         val profile = credentials.getUserProfile();
         assertNotNull(profile);
         assertNotNull(profile.getAttribute(OAuth20Constants.DPOP));

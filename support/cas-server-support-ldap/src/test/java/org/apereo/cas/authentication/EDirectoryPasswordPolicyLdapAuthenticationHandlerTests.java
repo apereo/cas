@@ -23,6 +23,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].password-policy.warning-attribute-value=attr-value"
 })
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class EDirectoryPasswordPolicyLdapAuthenticationHandlerTests extends DirectLdapAuthenticationHandlerTests {
 }

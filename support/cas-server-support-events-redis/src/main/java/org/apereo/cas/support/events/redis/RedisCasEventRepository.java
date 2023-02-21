@@ -45,6 +45,12 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
+    public void removeAll() {
+        val keys = getKeys("*", "*", "*");
+        keys.forEach(template::delete);
+    }
+
+    @Override
     public Stream<? extends CasEvent> load() {
         val keys = getKeys("*", "*", "*");
         return keys
@@ -126,6 +132,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     private Stream<String> getKeys(final String type, final String principal, final String timestamp) {
         val key = getKey(type, principal, timestamp);
         LOGGER.trace("Fetching records based on key [{}]", key);
-        return template.keys(key, this.scanCount);
+        return template.scan(key, this.scanCount);
     }
 }

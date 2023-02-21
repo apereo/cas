@@ -29,6 +29,7 @@ import java.util.Map;
 public class AmazonCognitoAuthenticationProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -4748558614314096213L;
+
     /**
      * The name of the authentication handler.
      */

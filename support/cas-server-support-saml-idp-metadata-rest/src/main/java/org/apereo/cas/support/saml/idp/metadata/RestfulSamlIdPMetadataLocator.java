@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.RestSamlMetadataProperties;
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -16,7 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -51,8 +51,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, String>();
-            registeredService.ifPresent(service -> parameters.put("appliesTo",
-                SamlIdPMetadataGenerator.getAppliesToFor(registeredService)));
+            registeredService.ifPresent(service -> parameters.put("appliesTo", getAppliesToFor(registeredService)));
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -62,9 +61,9 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 if (status.is2xxSuccessful()) {
-                    val entity = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val entity = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     val document = MAPPER.readValue(JsonValue.readHjson(entity).toString(), SamlIdPMetadataDocument.class);
                     if (document != null && document.isValid()) {
                         return document;

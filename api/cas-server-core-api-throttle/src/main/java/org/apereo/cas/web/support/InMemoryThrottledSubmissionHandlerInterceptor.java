@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link InMemoryThrottledSubmissionHandlerInterceptor}.

@@ -12,7 +12,7 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:18080/sy
     printf '.'
     sleep 1
 done
-echo -e "\nSyncope Docker image is running."
+echo -e "\nSyncope docker container is running."
 clear
 
 echo "Creating sample user: syncopecas..."

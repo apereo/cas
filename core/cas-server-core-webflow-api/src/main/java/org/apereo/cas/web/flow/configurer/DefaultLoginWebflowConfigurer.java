@@ -37,6 +37,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.Map;
 
 /**
@@ -303,28 +304,28 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createHandleAuthenticationFailureAction(final Flow flow) {
-        val handler = createActionState(flow, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
+        val authnFailure = createActionState(flow, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
             CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER);
-        createTransitionForState(handler, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED);
-        createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED);
-        createTransitionForState(handler, AccountExpiredException.class.getSimpleName(), CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);
-        createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED);
-        createTransitionForState(handler, AccountPasswordMustChangeException.class.getSimpleName(), CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
-        createTransitionForState(handler, CredentialExpiredException.class.getSimpleName(), CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);
-        createTransitionForState(handler, InvalidLoginLocationException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INVALID_WORKSTATION);
-        createTransitionForState(handler, InvalidLoginTimeException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INVALID_AUTHENTICATION_HOURS);
-        createTransitionForState(handler, FailedLoginException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(handler, AccountNotFoundException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(handler, UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(handler, PrincipalException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(handler, UnsatisfiedAuthenticationPolicyException.class.getSimpleName(),
-            CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        createTransitionForState(handler, UnauthorizedAuthenticationException.class.getSimpleName(),
-            CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED);
-        createTransitionForState(handler, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
-        createStateDefaultTransition(handler, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        handler.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
+
+        createTransitionForState(authnFailure, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.STATE_ID_ACCOUNT_DISABLED);
+        createTransitionForState(authnFailure, AccountLockedException.class.getSimpleName(), CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED);
+        createTransitionForState(authnFailure, AccountExpiredException.class.getSimpleName(), CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);
+        createTransitionForState(authnFailure, AccountLockedException.class.getSimpleName(), CasWebflowConstants.STATE_ID_ACCOUNT_LOCKED);
+        createTransitionForState(authnFailure, AccountPasswordMustChangeException.class.getSimpleName(), CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
+        createTransitionForState(authnFailure, CredentialExpiredException.class.getSimpleName(), CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD);
+        createTransitionForState(authnFailure, InvalidLoginLocationException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INVALID_WORKSTATION);
+        createTransitionForState(authnFailure, InvalidLoginTimeException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INVALID_AUTHENTICATION_HOURS);
+        createTransitionForState(authnFailure, FailedLoginException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, AccountNotFoundException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, UnauthorizedServiceForPrincipalException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, PrincipalException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, UnsatisfiedAuthenticationPolicyException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        createTransitionForState(authnFailure, UnauthorizedAuthenticationException.class.getSimpleName(), CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED);
+        createTransitionForState(authnFailure, CasWebflowConstants.TRANSITION_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        createTransitionForState(authnFailure, CasWebflowConstants.TRANSITION_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT_VIEW);
+
+        createStateDefaultTransition(authnFailure, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        authnFailure.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
     }
 
     /**

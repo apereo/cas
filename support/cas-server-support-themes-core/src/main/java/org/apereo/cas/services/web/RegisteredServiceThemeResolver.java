@@ -19,8 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
@@ -28,9 +29,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -108,8 +109,8 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                     .method(HttpMethod.GET)
                     .build();
                 response = HttpUtils.execute(exec);
-                if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                if (response != null && response.getCode() == HttpStatus.SC_OK) {
+                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
@@ -149,7 +150,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             .stream()
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
             .anyMatch(ResourceUtils::doesResourceExist)) {
-            LOGGER.trace("Found custom extrnal theme [{}] for service [{}]", theme, registeredService.getName());
+            LOGGER.trace("Found custom external theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;
         }
 

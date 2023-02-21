@@ -11,7 +11,7 @@ category: Authentication
 External identity providers available to CAS are presented to the user and available for discovery and selection
 using the following strategies.
 
-<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are interested in supporting discovery of SAML2 identity providers using a discovery service,
 you may want to take a look at <a href="Delegate-Authentication-SAML.html">this guide</a>.
 </p></div>

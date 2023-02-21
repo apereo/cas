@@ -13,12 +13,12 @@
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.enabled=false",
     
-    "--cas.audit.jdbc.leak-threshold=10000",
+    "--cas.audit.jdbc.leak-threshold=PT10S",
     "--cas.audit.jdbc.user=postgres",
     "--cas.audit.jdbc.password=password",
     "--cas.audit.jdbc.driver-class=org.postgresql.Driver",
     "--cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
-    "--cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+    "--cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
 
     "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
 

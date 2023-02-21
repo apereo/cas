@@ -11,6 +11,7 @@ import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AbstractConsentAction}.
@@ -123,7 +125,10 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
      * @param context    the context
      */
     protected void prepareConsentableAttributes(final Map<String, List<Object>> attributes, final RequestContext context) {
-        val builders = new ArrayList<>(applicationContext.getBeansOfType(ConsentableAttributeBuilder.class).values());
+        val builders = applicationContext.getBeansOfType(ConsentableAttributeBuilder.class).values()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
 
         val consentableAttributes = new ArrayList<CasConsentableAttribute>();
@@ -133,7 +138,7 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
                 .name(key)
                 .values(value)
                 .build();
-            
+
             for (val builder : builders) {
                 LOGGER.trace("Preparing to build consentable attribute [{}] via [{}]", attr, builder.getName());
                 attr = builder.build(attr);

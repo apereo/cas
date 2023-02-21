@@ -45,15 +45,8 @@ public class DistributedJEESessionStore implements SessionStore {
     
     @Override
     public Optional<String> getSessionId(final WebContext webContext, final boolean create) {
+        LOGGER.trace("Fetching session id...");
         var sessionId = fetchSessionIdFromContext(webContext);
-        if (StringUtils.isBlank(sessionId) && create) {
-            sessionId = UUID.randomUUID().toString();
-            LOGGER.trace("Generated session id: [{}]", sessionId);
-            
-            val context = JEEContext.class.cast(webContext);
-            cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
-            context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
-        }
         return Optional.ofNullable(sessionId);
     }
 
@@ -70,7 +63,15 @@ public class DistributedJEESessionStore implements SessionStore {
     @Override
     public void set(final WebContext context, final String key, final Object value) {
         LOGGER.trace("Setting key: [{}]", key);
-        val sessionId = getSessionId(context, true).get();
+        val sessionId = getSessionId(context, true)
+            .orElseGet(() -> {
+                val newSessionId = UUID.randomUUID().toString();
+                LOGGER.trace("Generated session id: [{}]", newSessionId);
+                val webContext = JEEContext.class.cast(context);
+                cookieGenerator.addCookie(webContext.getNativeRequest(), webContext.getNativeResponse(), newSessionId);
+                context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, newSessionId);
+                return newSessionId;
+            });
 
         val properties = new HashMap<String, Serializable>();
         if (value instanceof Serializable) {
@@ -78,7 +79,6 @@ public class DistributedJEESessionStore implements SessionStore {
         } else if (value != null) {
             LOGGER.warn("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
         }
-
         val ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
@@ -99,7 +99,6 @@ public class DistributedJEESessionStore implements SessionStore {
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
             FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(ticketId));
-
             val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());
             LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
@@ -125,16 +124,12 @@ public class DistributedJEESessionStore implements SessionStore {
     public boolean renewSession(final WebContext context) {
         return false;
     }
-
-    /**
-     * Fetch session id from context.
-     *
-     * @param webContext the web context
-     * @return the string
-     */
+    
     protected String fetchSessionIdFromContext(final WebContext webContext) {
+        LOGGER.trace("Fetched session id from context");
         var sessionId = (String) webContext.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
         if (StringUtils.isBlank(sessionId)) {
+            LOGGER.trace("Session id not found as a request attribute; checking session cookie [{}]", cookieGenerator.getCookieName());
             val context = JEEContext.class.cast(webContext);
             sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
         }

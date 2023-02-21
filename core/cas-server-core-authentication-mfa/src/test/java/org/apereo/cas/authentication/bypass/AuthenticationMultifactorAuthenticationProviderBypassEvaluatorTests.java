@@ -36,7 +36,7 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
-        
+
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();

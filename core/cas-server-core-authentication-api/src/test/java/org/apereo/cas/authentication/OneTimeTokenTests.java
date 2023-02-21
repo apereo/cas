@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * This is {@link OneTimeTokenTests}.
  * Sleeping for one millisecond because Winodws tests fail sometimes, presumably because time is the same.
+ *
  * @author Misagh Moayyed
  * @since 6.3.0
  */

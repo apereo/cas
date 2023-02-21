@@ -6,10 +6,10 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20AuthorizationModelAndViewBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.util.Map;
 import java.util.Optional;
@@ -20,11 +20,20 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiredArgsConstructor
+
 public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20AuthorizationModelAndViewBuilder {
     private final OidcIssuerService issuerService;
 
     private final CasConfigurationProperties casProperties;
+
+    public OidcAuthorizationModelAndViewBuilder(final OAuth20ResponseModeFactory responseModeFactory,
+                                                final OidcIssuerService issuerService,
+                                                final CasConfigurationProperties casProperties) {
+        super(responseModeFactory);
+        this.issuerService = issuerService;
+        this.casProperties = casProperties;
+    }
+
 
     @Override
     protected String prepareRedirectUrl(final OAuthRegisteredService registeredService,

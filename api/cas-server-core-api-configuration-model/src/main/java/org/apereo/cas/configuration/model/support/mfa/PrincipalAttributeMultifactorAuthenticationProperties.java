@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -51,6 +52,7 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * Needless to say, the attributes need to have been resolved for the principal prior to this step.
      * Matching and comparison operations are case insensitive.
      */
+    @RegularExpressionCapable
     private String globalPrincipalAttributeNameTriggers;
 
     /**
@@ -58,6 +60,7 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * if the account is qualified for multifactor authentication.
      * Matching and comparison operations are case insensitive.
      */
+    @RegularExpressionCapable
     private String globalPrincipalAttributeValueRegex;
 
     /**

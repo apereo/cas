@@ -9,10 +9,11 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -212,7 +213,7 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((NameIDFormat) child).getURI()).toList());
+                .map(child -> ((XSURI) child).getURI()).toList());
         }
         return nameIdFormats;
     }

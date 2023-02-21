@@ -23,6 +23,44 @@ import java.util.Map;
 @Slf4j
 public class CasFeatureEnabledCondition extends SpringBootCondition {
 
+    private static ConditionOutcome evaluateFeatureCondition(final ConditionContext context,
+                                                             final Map<String, Object> attributes) {
+        val feature = (CasFeatureModule.FeatureCatalog[]) attributes.get("feature");
+        val module = (String) attributes.get("module");
+        val enabledByDefault = (boolean) attributes.get("enabledByDefault");
+        return getConditionOutcome(context, feature, module, enabledByDefault);
+    }
+
+    private static ConditionOutcome getConditionOutcome(
+        final ConditionContext context,
+        final CasFeatureModule.FeatureCatalog[] features,
+        final String module,
+        final boolean enabledByDefault) {
+
+        for (val feature : features) {
+            val property = feature.toProperty(module);
+            LOGGER.trace("Checking for feature module capability via [{}]", property);
+
+            if (!context.getEnvironment().containsProperty(property) && !enabledByDefault) {
+                val message = "CAS feature " + property + " is disabled by default and must be explicitly enabled.";
+                LOGGER.trace(message);
+                return ConditionOutcome.noMatch(message);
+            }
+
+            val propertyValue = context.getEnvironment().getProperty(property);
+            if (StringUtils.equalsIgnoreCase(propertyValue, "false")) {
+                val message = "CAS feature " + property + " is set to false.";
+                LOGGER.trace(message);
+                return ConditionOutcome.noMatch(message);
+            }
+            val message = "CAS feature " + property + " is set to true.";
+            LOGGER.trace(message);
+            feature.register(module);
+        }
+        
+        return ConditionOutcome.match("Requested features " + Arrays.toString(features) + " are enabled");
+    }
+
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
                                             final AnnotatedTypeMetadata metadata) {
@@ -32,7 +70,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
                 ConditionalOnFeaturesEnabled.class.getName()).get("value");
             val builder = new StringBuilder();
             val match = Arrays.stream(conditions).allMatch(annotation -> {
-                val feature = (CasFeatureModule.FeatureCatalog) annotation.get("feature");
+                val feature = (CasFeatureModule.FeatureCatalog[]) annotation.get("feature");
                 val module = annotation.getString("module");
                 val enabledByDefault = annotation.getBoolean("enabledByDefault");
                 val conditionOutcome = getConditionOutcome(context, feature, module, enabledByDefault);
@@ -42,38 +80,5 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
             return match ? ConditionOutcome.match(builder.toString()) : ConditionOutcome.noMatch(builder.toString());
         }
         return evaluateFeatureCondition(context, attributes);
-    }
-
-    private static ConditionOutcome evaluateFeatureCondition(final ConditionContext context,
-                                                             final Map<String, Object> attributes) {
-        val feature = (CasFeatureModule.FeatureCatalog) attributes.get("feature");
-        val module = (String) attributes.get("module");
-        val enabledByDefault = (boolean) attributes.get("enabledByDefault");
-        return getConditionOutcome(context, feature, module, enabledByDefault);
-    }
-
-    private static ConditionOutcome getConditionOutcome(final ConditionContext context,
-                                                        final CasFeatureModule.FeatureCatalog feature,
-                                                        final String module,
-                                                        final boolean enabledByDefault) {
-        val property = feature.toProperty(module);
-        LOGGER.trace("Checking for feature module capability via [{}]", property);
-
-        if (!context.getEnvironment().containsProperty(property) && !enabledByDefault) {
-            val message = "CAS feature " + property + " is disabled by default and must be explicitly enabled.";
-            LOGGER.trace(message);
-            return ConditionOutcome.noMatch(message);
-        }
-
-        val propertyValue = context.getEnvironment().getProperty(property);
-        if (StringUtils.equalsIgnoreCase(propertyValue, "false")) {
-            val message = "CAS feature " + property + " is set to false.";
-            LOGGER.trace(message);
-            return ConditionOutcome.noMatch(message);
-        }
-        val message = "CAS feature " + property + " is set to true.";
-        LOGGER.trace(message);
-        feature.register(module);
-        return ConditionOutcome.match(message);
     }
 }

@@ -11,12 +11,13 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.function.Function;
 
@@ -63,6 +64,7 @@ public class CasSamlServiceProvidersConfiguration {
     }
 
     @Bean
+    @Lazy(false)
     public InitializingBean coreSamlServiceProvidersInitializingBean(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

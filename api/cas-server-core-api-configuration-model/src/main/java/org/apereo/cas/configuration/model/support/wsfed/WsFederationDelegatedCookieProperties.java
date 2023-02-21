@@ -35,7 +35,7 @@ public class WsFederationDelegatedCookieProperties extends PinnableCookiePropert
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public WsFederationDelegatedCookieProperties() {
-        super.setName("WSFEDDELSESSION");
+        setName("WSFEDDELSESSION");
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

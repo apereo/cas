@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCredentialExtractor;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -22,7 +24,7 @@ import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.pac4j.authentication.DelegatedClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.clients.DefaultDelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
@@ -33,11 +35,16 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -110,13 +117,39 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanCoreConfiguration {
 
+        @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieCipherExecutor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val replication = casProperties.getAuthn().getPac4j().getCore().getSessionReplication();
+            return FunctionUtils.doIf(replication.isReplicateSessions(),
+                () -> {
+                    val cookie = replication.getCookie();
+                    val crypto = cookie.getCrypto();
+                    var enabled = crypto.isEnabled();
+                    if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                        && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+                        LOGGER.warn("Encryption/Signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
+                                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", cookie.getName());
+                        enabled = true;
+                    }
+                    return enabled
+                        ? CipherExecutorUtils.newStringCipherExecutor(crypto, DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor.class)
+                        : CipherExecutor.noOp();
+                },
+                CipherExecutor::noOp).get();
+        }
+
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
+            @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
+            final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
-            return CookieUtils.buildCookieRetrievingGenerator(cookie);
+            return CookieUtils.buildCookieRetrievingGenerator(cookie,
+                new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor, cookie));
         }
 
         @ConditionalOnMissingBean(name = "clientPrincipalFactory")
@@ -135,7 +168,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
-            return new ClientAuthenticationMetaDataPopulator();
+            return new DelegatedClientAuthenticationMetaDataPopulator();
         }
     }
 
@@ -146,6 +179,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
         public AuthenticationHandler clientAuthenticationHandler(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("clientPrincipalFactory")
             final PrincipalFactory clientPrincipalFactory,
@@ -158,12 +192,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             val pac4j = casProperties.getAuthn().getPac4j().getCore();
-            val h = new DelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(),
+            val handler = new DelegatedClientAuthenticationHandler(pac4j, 
                 servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
-                delegatedClientDistributedSessionStore);
-            h.setTypedIdUsed(pac4j.isTypedIdUsed());
-            h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
-            return h;
+                delegatedClientDistributedSessionStore, applicationContext);
+            handler.setTypedIdUsed(pac4j.isTypedIdUsed());
+            handler.setPrincipalAttributeId(pac4j.getPrincipalIdAttribute());
+            return handler;
         }
 
     }
@@ -268,6 +302,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanClientConfiguration {
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "delegatedAuthenticationCredentialExtractor")
+        public DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor(
+            @Qualifier("delegatedClientDistributedSessionStore")
+            final SessionStore delegatedClientDistributedSessionStore) {
+            return new DefaultDelegatedAuthenticationCredentialExtractor(delegatedClientDistributedSessionStore);
+        }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean

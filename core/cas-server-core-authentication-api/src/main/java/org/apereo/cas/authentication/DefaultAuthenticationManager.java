@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -130,22 +129,15 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             .forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
     }
 
-    /**
-     * Resolve principal.
-     *
-     * @param handler    the handler name
-     * @param resolver   the resolver
-     * @param credential the credential
-     * @param principal  the current authenticated principal from a handler, if any.
-     * @return the principal
-     */
     protected Principal resolvePrincipal(final AuthenticationHandler handler, final PrincipalResolver resolver,
-                                         final Credential credential, final Principal principal) {
+                                         final Credential credential, final Principal principal,
+                                         final Service service) {
         if (resolver.supports(credential)) {
             try {
-                val p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
-                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
-                return p;
+                val resolved = resolver.resolve(credential, Optional.ofNullable(principal),
+                    Optional.ofNullable(handler), Optional.ofNullable(service));
+                LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, resolved, credential);
+                return resolved;
             } catch (final Exception e) {
                 LOGGER.error("[{}] failed to resolve principal from [{}]", resolver, credential);
                 LoggingUtils.error(LOGGER, e);
@@ -170,8 +162,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
                 .stream()
-                .anyMatch(processor::supports))
-            .collect(Collectors.toList());
+                .anyMatch(processor::supports)).toList();
 
         var processed = true;
         val it = supported.iterator();
@@ -186,7 +177,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final Credential credential,
                                                    final PrincipalResolver resolver,
                                                    final AuthenticationHandler handler,
-                                                   final Service service) throws GeneralSecurityException, PreventedException {
+                                                   final Service service) throws Exception {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
@@ -199,7 +190,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         var principal = result.getPrincipal();
 
         if (resolver != null) {
-            principal = resolvePrincipal(handler, resolver, credential, principal);
+            principal = resolvePrincipal(handler, resolver, credential, principal, service);
         }
 
         if (principal == null) {
@@ -271,7 +262,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         }
 
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
-        credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
+        credentials.forEach(builder::addCredential);
 
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);

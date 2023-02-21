@@ -66,11 +66,6 @@ public class SamlMetadataUIProperties implements Serializable {
      * Scheduler settings to indicate how often is metadata reloaded.
      */
     @NestedConfigurationProperty
-    private SchedulingProperties schedule = new SchedulingProperties();
-
-    public SamlMetadataUIProperties() {
-        schedule.setEnabled(true);
-        schedule.setStartDelay("PT30S");
-        schedule.setRepeatInterval("PT2M");
-    }
+    private SchedulingProperties schedule = new SchedulingProperties()
+        .setEnabled(true).setStartDelay("PT30S").setRepeatInterval("PT2M");
 }

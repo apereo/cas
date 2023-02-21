@@ -1,4 +1,13 @@
 description = "Apereo CAS Server OpenID Connect Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "OpenID Connect Protocol",
+            title: "OpenID Connect Identity Provider",
+            aliases: ["oidc"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
@@ -6,9 +15,7 @@ dependencies {
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")
-
-    compileOnly project(":support:cas-server-support-jpa-util")
-    compileOnly project(":support:cas-server-support-jpa-hibernate")
+    
     compileOnly project(":support:cas-server-support-mongo-core")
 
     implementation project(":support:cas-server-support-oauth-webflow")

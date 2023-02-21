@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.MediaType;
 
 import java.io.Serial;
@@ -83,7 +84,8 @@ public class HttpMessage implements Serializable {
         try {
             return EncodingUtils.urlEncode(message);
         } catch (final Exception e) {
-            LOGGER.warn("Unable to encode URL " + message, e);
+            val msg = String.format("Unable to encode URL %s", message);
+            LOGGER.warn(msg, e);
         }
         return message;
     }

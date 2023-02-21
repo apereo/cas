@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategySupportsDefault() {

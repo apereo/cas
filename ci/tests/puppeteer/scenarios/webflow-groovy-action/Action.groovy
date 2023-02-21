@@ -7,7 +7,7 @@ import org.springframework.webflow.action.*
 import org.apereo.cas.authentication.*
 import org.apereo.cas.authentication.principal.*
 
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
 
 def run(Object[] args) {
     def requestContext = args[0]

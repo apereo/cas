@@ -14,9 +14,8 @@ Accounts and password may be determined and handled using a customized Groovy sc
 import org.apereo.cas.pm.*
 
 def change(Object[] args) {
-    def credential = args[0]
-    def passwordChangeBean = args[1]
-    def logger = args[2]
+    def passwordChangeBean = args[0] as PasswordChangeRequest
+    def logger = args[1]
     return true
 }
 

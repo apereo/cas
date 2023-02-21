@@ -30,7 +30,9 @@ import java.util.function.Function;
 @Slf4j
 public class SpringExpressionLanguageValueResolver implements Function {
     private static final int HOUR_23 = 23;
+
     private static final int MINUTE_59 = 59;
+
     private static final int SECOND_59 = 59;
 
     private static final ParserContext PARSER_CONTEXT = new TemplateParserContext("${", "}");
@@ -42,7 +44,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private static SpringExpressionLanguageValueResolver INSTANCE;
 
     private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
-    
+
     protected SpringExpressionLanguageValueResolver() {
         val properties = System.getProperties();
         evaluationContext.setVariable("systemProperties", properties);
@@ -53,40 +55,9 @@ public class SpringExpressionLanguageValueResolver implements Function {
         evaluationContext.setVariable("environmentVariables", environment);
         evaluationContext.setVariable("envVars", environment);
         evaluationContext.setVariable("env", environment);
-        
+
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
-    }
-
-    private void initializeDynamicVariables() {
-        evaluationContext.setVariable("randomNumber2", RandomUtils.randomNumeric(2));
-        evaluationContext.setVariable("randomNumber4", RandomUtils.randomNumeric(4));
-        evaluationContext.setVariable("randomNumber6", RandomUtils.randomNumeric(6));
-        evaluationContext.setVariable("randomNumber8", RandomUtils.randomNumeric(8));
-
-        evaluationContext.setVariable("randomString4", RandomUtils.randomAlphabetic(4));
-        evaluationContext.setVariable("randomString6", RandomUtils.randomAlphabetic(6));
-        evaluationContext.setVariable("randomString8", RandomUtils.randomAlphabetic(8));
-
-        evaluationContext.setVariable("uuid", UUID.randomUUID().toString());
-
-        evaluationContext.setVariable("localDateTime", LocalDateTime.now(ZoneId.systemDefault()).toString());
-        evaluationContext.setVariable("localDateTimeUtc", LocalDateTime.now(Clock.systemUTC()).toString());
-
-        val localStartWorkDay = LocalDate.now(ZoneId.systemDefault()).atStartOfDay().plusHours(8);
-        evaluationContext.setVariable("localStartWorkDay", localStartWorkDay.toString());
-        evaluationContext.setVariable("localEndWorkDay", localStartWorkDay.plusHours(9).toString());
-
-        val localStartDay = LocalDate.now(ZoneId.systemDefault()).atStartOfDay();
-        evaluationContext.setVariable("localStartDay", localStartDay.toString());
-        evaluationContext.setVariable("localEndDay",
-            localStartDay.plusHours(HOUR_23).plusMinutes(MINUTE_59).plusSeconds(SECOND_59).toString());
-
-        evaluationContext.setVariable("localDate", LocalDate.now(ZoneId.systemDefault()).toString());
-        evaluationContext.setVariable("localDateUtc", LocalDate.now(Clock.systemUTC()).toString());
-
-        evaluationContext.setVariable("zonedDateTime", ZonedDateTime.now(ZoneId.systemDefault()).toString());
-        evaluationContext.setVariable("zonedDateTimeUtc", ZonedDateTime.now(Clock.systemUTC()).toString());
     }
 
     /**
@@ -122,5 +93,36 @@ public class SpringExpressionLanguageValueResolver implements Function {
     @Override
     public Object apply(final Object o) {
         return resolve(o.toString());
+    }
+
+    private void initializeDynamicVariables() {
+        evaluationContext.setVariable("randomNumber2", RandomUtils.randomNumeric(2));
+        evaluationContext.setVariable("randomNumber4", RandomUtils.randomNumeric(4));
+        evaluationContext.setVariable("randomNumber6", RandomUtils.randomNumeric(6));
+        evaluationContext.setVariable("randomNumber8", RandomUtils.randomNumeric(8));
+
+        evaluationContext.setVariable("randomString4", RandomUtils.randomAlphabetic(4));
+        evaluationContext.setVariable("randomString6", RandomUtils.randomAlphabetic(6));
+        evaluationContext.setVariable("randomString8", RandomUtils.randomAlphabetic(8));
+
+        evaluationContext.setVariable("uuid", UUID.randomUUID().toString());
+
+        evaluationContext.setVariable("localDateTime", LocalDateTime.now(ZoneId.systemDefault()).toString());
+        evaluationContext.setVariable("localDateTimeUtc", LocalDateTime.now(Clock.systemUTC()).toString());
+
+        val localStartWorkDay = LocalDate.now(ZoneId.systemDefault()).atStartOfDay().plusHours(8);
+        evaluationContext.setVariable("localStartWorkDay", localStartWorkDay.toString());
+        evaluationContext.setVariable("localEndWorkDay", localStartWorkDay.plusHours(9).toString());
+
+        val localStartDay = LocalDate.now(ZoneId.systemDefault()).atStartOfDay();
+        evaluationContext.setVariable("localStartDay", localStartDay.toString());
+        evaluationContext.setVariable("localEndDay",
+            localStartDay.plusHours(HOUR_23).plusMinutes(MINUTE_59).plusSeconds(SECOND_59).toString());
+
+        evaluationContext.setVariable("localDate", LocalDate.now(ZoneId.systemDefault()).toString());
+        evaluationContext.setVariable("localDateUtc", LocalDate.now(Clock.systemUTC()).toString());
+
+        evaluationContext.setVariable("zonedDateTime", ZonedDateTime.now(ZoneId.systemDefault()).toString());
+        evaluationContext.setVariable("zonedDateTimeUtc", ZonedDateTime.now(Clock.systemUTC()).toString());
     }
 }

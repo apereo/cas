@@ -1,20 +1,22 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.google.common.io.ByteSource;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -38,34 +43,58 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @Slf4j
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
-    /**
-     * The cipher executor for ticket objects.
-     */
+    @Setter
     protected CipherExecutor cipherExecutor;
+
+    protected final TicketSerializationManager ticketSerializationManager;
+
+    protected final TicketCatalog ticketCatalog;
+
+    /**
+     * Gets principal id from ticket.
+     *
+     * @param ticket the ticket
+     * @return the principal id from
+     */
+    protected static String getPrincipalIdFrom(final Ticket ticket) {
+        return ticket instanceof AuthenticationAwareTicket
+            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
+            .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
+            : StringUtils.EMPTY;
+    }
+
+    protected Map collectAndDigestTicketAttributes(final Ticket ticket) {
+        val currentAttributes = getCombinedTicketAttributes(ticket);
+        if (isCipherExecutorEnabled()) {
+            val encodedAttributes = new HashMap<String, Object>(currentAttributes.size());
+            currentAttributes.forEach((key, value) -> encodedAttributes.put(digest(key), digest(value)));
+            return encodedAttributes;
+        }
+        return currentAttributes;
+    }
+
+    private static Map<String, List<Object>> getCombinedTicketAttributes(final Ticket ticket) {
+        if (ticket instanceof AuthenticationAwareTicket authnTicket) {
+            val authentication = authnTicket.getAuthentication();
+            if (authentication != null) {
+                val attributes = new HashMap<>(authentication.getAttributes());
+                val principal = authentication.getPrincipal();
+                return CoreAuthenticationUtils.mergeAttributes(attributes, principal.getAttributes());
+            }
+        }
+        return new HashMap<>();
+    }
 
     @Override
     public void addTicket(final Ticket ticket) throws Exception {
         if (ticket != null && !ticket.isExpired()) {
             addTicketInternal(ticket);
         }
-    }
-
-    @Override
-    public Ticket getTicket(final String ticketId) {
-        return getTicket(ticketId, ticket -> {
-            if (ticket == null || ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
-                deleteSingleTicket(ticketId);
-                return false;
-            }
-            return true;
-        });
     }
 
     @Override
@@ -83,37 +112,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public long sessionCount() {
-        try (val tgtStream = stream().filter(TicketGrantingTicket.class::isInstance)) {
-            return tgtStream.count();
-        } catch (final Exception t) {
-            LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
-                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
-            return Long.MIN_VALUE;
-        }
-    }
-
-    @Override
-    public long countSessionsFor(final String principalId) {
-        val ticketPredicate = (Predicate<Ticket>) t -> {
-            if (t instanceof TicketGrantingTicket) {
-                val ticket = TicketGrantingTicket.class.cast(t);
-                return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
+    public Ticket getTicket(final String ticketId) {
+        return getTicket(ticketId, ticket -> {
+            if (ticket == null || ticket.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
+                deleteSingleTicket(ticketId);
+                return false;
             }
-            return false;
-        };
-        return getTickets(ticketPredicate).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        try (val stStream = stream().filter(ServiceTicket.class::isInstance)) {
-            return stStream.count();
-        } catch (final Exception t) {
-            LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
-                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
-            return Long.MIN_VALUE;
-        }
+            return true;
+        });
     }
 
     @Override
@@ -144,8 +151,41 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
         count.getAndAdd(deleteSingleTicket(ticket.getId()));
-        val finalCount = count.intValue();
-        return finalCount;
+        return count.intValue();
+    }
+
+    @Override
+    public long sessionCount() {
+        try (val tgtStream = stream().filter(TicketGrantingTicket.class::isInstance)) {
+            return tgtStream.count();
+        } catch (final Exception t) {
+            LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
+                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        }
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        try (val stStream = stream().filter(ServiceTicket.class::isInstance)) {
+            return stStream.count();
+        } catch (final Exception t) {
+            LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
+                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        }
+    }
+
+    @Override
+    public long countSessionsFor(final String principalId) {
+        val ticketPredicate = (Predicate<Ticket>) t -> {
+            if (t instanceof TicketGrantingTicket) {
+                val ticket = TicketGrantingTicket.class.cast(t);
+                return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
+            }
+            return false;
+        };
+        return getTickets(ticketPredicate).count();
     }
 
     /**
@@ -210,32 +250,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return count.intValue();
     }
 
-    /**
-     * Encode ticket id into a SHA-512.
-     *
-     * @param ticketId the ticket id
-     * @return the ticket
-     */
-    protected String encodeTicketId(final String ticketId) {
+    protected List<String> digest(final Collection<Object> identifiers) {
+        return identifiers
+            .stream()
+            .map(Object::toString)
+            .map(this::digest)
+            .collect(Collectors.toList());
+    }
+
+    protected String digest(final String identifier) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
-            return ticketId;
+            return identifier;
         }
-        if (StringUtils.isBlank(ticketId)) {
-            return ticketId;
+        if (StringUtils.isBlank(identifier)) {
+            return identifier;
         }
-        val encodedId = DigestUtils.sha512(ticketId);
-        LOGGER.debug("Encoded original ticket id [{}] to [{}]", ticketId, encodedId);
+        val encodedId = DigestUtils.sha512(identifier);
+        LOGGER.debug("Digested original ticket id [{}] to [{}]", identifier, encodedId);
         return encodedId;
     }
 
-    /**
-     * Encode ticket.
-     *
-     * @param ticket the ticket
-     * @return the ticket
-     * @throws Exception the exception
-     */
     protected Ticket encodeTicket(final Ticket ticket) throws Exception {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
@@ -250,12 +285,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return encodedTicket;
     }
 
-    /**
-     * Decode ticket.
-     *
-     * @param ticketToProcess the result
-     * @return the ticket
-     */
     protected Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
             LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled. ", ticketToProcess.getId());
@@ -306,27 +335,18 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return items.map(this::decodeTicket);
     }
 
-    /**
-     * Gets principal id from ticket.
-     *
-     * @param ticket the ticket
-     * @return the principal id from
-     */
-    protected static String getPrincipalIdFrom(final Ticket ticket) {
-        return ticket instanceof AuthenticationAwareTicket
-            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
-            .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
-            : StringUtils.EMPTY;
-    }
-
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
+    }
+
+    protected String serializeTicket(final Ticket ticket) {
+        return ticketSerializationManager.serializeTicket(ticket);
     }
 
     private Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
-        val encodedTicketId = encodeTicketId(ticket.getId());
+        val encodedTicketId = digest(ticket.getId());
         return new DefaultEncodedTicket(encodedTicketId,
             ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
     }

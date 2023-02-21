@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -77,7 +76,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         val match = getExpirationPolicyFor(ticketState);
         if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
-                + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
+                        + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.isExpired(ticketState);
         }
         val policy = match.get();
@@ -96,7 +95,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         val match = getExpirationPolicyFor((AuthenticationAwareTicket) ticketState);
         if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
-                + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
+                        + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.getTimeToLive(ticketState);
         }
         val policy = match.get();

@@ -13,7 +13,7 @@ all of its other clients) to obtain settings from a variety of sources, such as 
 beauty of this solution is that to the CAS web application server, it matters not where settings come from and it has no knowledge of the underlying property
 sources. It talks to the configuration server to locate settings and move on.
 
-<div class="alert alert-info"><strong>Configuration Security</strong><p>This is a very good strategy to ensure configuration settings
+<div class="alert alert-info">:information_source: <strong>Configuration Security</strong><p>This is a very good strategy to ensure configuration settings
 are not scattered around various deployment environments leading to a more secure deployment. The configuration server need not be
 exposed to the outside world, and it can safely and secure be hidden behind firewalls, etc allowing access to only authorized clients
 such as the CAS server web application.</p></div>
@@ -66,7 +66,7 @@ server:
 curl -u casuser:Mellon https://config.server.url:8888/casconfigserver/actuator/env
 ```
 
-<div class="alert alert-info"><strong>Actuator Endpoints</strong><p>
+<div class="alert alert-info">:information_source: <strong>Actuator Endpoints</strong><p>
 Remember that actuator endpoints typically are prefixed with <code>/actuator</code>.
 </p></div>
 

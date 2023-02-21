@@ -7,6 +7,8 @@ import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.ticket.CosmosDbTicketRegistry;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,9 @@ public class CosmosDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cosmosDbTicketRegistry")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         @Qualifier("cosmosDbTicketRegistryObjectFactory")
@@ -61,6 +66,9 @@ public class CosmosDbTicketRegistryConfiguration {
                     defn.getProperties().getStorageTimeout(), CosmosDbTicketRegistry.PARTITION_KEY_PREFIX);
             })
             .toList();
-        return new CosmosDbTicketRegistry(containers, ticketCatalog);
+
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
+            casProperties.getTicket().getRegistry().getCosmosDb().getCrypto(), "cosmos-db");
+        return new CosmosDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, containers);
     }
 }

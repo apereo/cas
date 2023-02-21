@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
+import com.redis.lettucemod.search.Field;
 import io.lettuce.core.ReadFrom;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,23 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
 public class RedisObjectFactoryTests {
+    @Test
+    public void verifyRedisSearchCommandSupported() {
+        val props = new BaseRedisProperties();
+        props.setHost("localhost");
+        props.setPort(6379);
+        val command = RedisObjectFactory.newRedisModulesCommands(props);
+        assertFalse(command.isEmpty());
+        val indexName = UUID.randomUUID().toString();
+        val result = command.get().ftCreate(indexName,
+            Field.text("name").build(),
+            Field.numeric("id").build());
+        assertEquals("OK", result);
+        val info = command.get().ftInfo(indexName);
+        assertNotNull(info);
+    }
+
+
     @Test
     public void verifyConnection() {
         val props = new BaseRedisProperties();
@@ -48,7 +66,7 @@ public class RedisObjectFactoryTests {
             .setHost("localhost"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6380)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())
@@ -56,7 +74,7 @@ public class RedisObjectFactoryTests {
             .setReplicaOf("redis_server_master"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6381)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())
@@ -80,7 +98,7 @@ public class RedisObjectFactoryTests {
             .setHost("localhost"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6380)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())
@@ -88,7 +106,7 @@ public class RedisObjectFactoryTests {
             .setReplicaOf("redis_server_master"));
 
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
-            .setType("slave")
+            .setType("REPLICA")
             .setPort(6381)
             .setHost("localhost")
             .setId(UUID.randomUUID().toString())

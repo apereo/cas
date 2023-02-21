@@ -22,12 +22,16 @@ will allow the user to next reset their password and login again. You may also s
 By default, after a user has successfully changed their password they will be redirected to the login screen
 to enter their new password and log in. CAS can also be configured to automatically log the user in after
 a successful change. This behavior can be altered via CAS settings. 
+   
+CAS login requests also accept a special `doChangePassword` query parameter that allows one to forcefully launch into the
+password reset flow. Specifying this parameter with a value of `true` can be particularly useful in the presence
+of existing single sign-on sessions when the user who already has logged in wants to change their password.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
 
-<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
+<div class="alert alert-info">:information_source: <strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to teach you that it exists.</p></div>
 
 ## Account Management
@@ -39,7 +43,7 @@ CAS may also allow individual end-users to update certain aspects of their accou
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include_cached casproperties.html properties="cas.authn.pm.core,cas.authn.pm.webflow" %}
+{% include_cached casproperties.html properties="cas.authn.pm" includes=".core,.webflow" %}
 
 ### Password Reset
 

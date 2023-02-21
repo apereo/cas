@@ -29,7 +29,7 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTe
     public void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        
+
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();

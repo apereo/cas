@@ -1,5 +1,12 @@
 description = "Apereo CAS Swagger API Support"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "REST Protocol",
+            title: "Swagger UI",
+            aliases: ["swagger"]
+    ]
+}
 dependencies {
     api libraries.swagger
     implementation libraries.springdoc

@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -50,14 +51,12 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public TicketRegistryCleaner ticketRegistryCleaner(
         final CasConfigurationProperties casProperties,
-        @Qualifier(LockRepository.BEAN_NAME)
-        final LockRepository lockRepository,
-        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-        final LogoutManager logoutManager,
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry) {
+        @Qualifier(LockRepository.BEAN_NAME) final LockRepository lockRepository,
+        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final LogoutManager logoutManager,
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
@@ -73,10 +72,10 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMatchingHostname(name = "cas.ticket.registry.cleaner.schedule.enabled-on-host")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public Cleanable ticketRegistryCleanerScheduler(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("ticketRegistryCleaner")
-        final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
+        @Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
         return BeanSupplier.of(Cleanable.class)
             .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
                 .evenIfMissing().given(applicationContext.getEnvironment()))

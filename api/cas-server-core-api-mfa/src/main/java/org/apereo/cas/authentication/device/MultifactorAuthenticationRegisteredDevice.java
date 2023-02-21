@@ -59,8 +59,6 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
     private final String model;
 
     private final String lastUsedDateTime;
-    @Builder.Default
-    private Map<String, Object> details = new LinkedHashMap<>();
 
     /**
      * The actual device record produced by the provider
@@ -69,4 +67,7 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
     private final String payload;
 
     private final String source;
+
+    @Builder.Default
+    private Map<String, Object> details = new LinkedHashMap<>();
 }

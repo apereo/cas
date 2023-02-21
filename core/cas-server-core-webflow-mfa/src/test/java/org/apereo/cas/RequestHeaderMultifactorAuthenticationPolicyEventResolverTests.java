@@ -48,7 +48,7 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolverTests exte
 
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
-        
+
         WebUtils.putRegisteredService(context, service);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());

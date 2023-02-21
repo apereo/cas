@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
@@ -63,6 +64,7 @@ public class RestPasswordManagementServiceTests {
         RestTemplateAutoConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
@@ -83,8 +85,8 @@ public class RestPasswordManagementServiceTests {
 
         @Test
         public void verifyEmailFound() {
-            assertFalse(passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                new PasswordChangeRequest("casuser", "123456", "123456")));
+            val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
+            assertFalse(passwordChangeService.change(request));
             assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser").build()));
             assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build()));
@@ -250,6 +252,7 @@ public class RestPasswordManagementServiceTests {
         @Test
         public void verifyPasswordChanged() {
             val data = "true";
+            val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
             try (val webServer = new MockWebServer(9309,
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE)) {
@@ -262,16 +265,14 @@ public class RestPasswordManagementServiceTests {
                 rest.setEndpointUrlEmail("http://localhost:9309");
                 val passwordService = getRestPasswordManagementService(props);
 
-                val result = passwordService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                    new PasswordChangeRequest("casuser", "123456", "123456"));
+                val result = passwordService.change(request);
                 assertTrue(result);
                 webServer.stop();
             }
 
             try (val webServer = new MockWebServer(9090, HttpStatus.NO_CONTENT)) {
                 webServer.start();
-                val result = passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                    new PasswordChangeRequest("casuser", "123456", "123456"));
+                val result = passwordChangeService.change(request);
                 assertFalse(result);
                 webServer.stop();
             }

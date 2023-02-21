@@ -20,7 +20,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -44,68 +45,6 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
     private final String providerId;
 
     private final String id = this.getClass().getSimpleName();
-
-    @Override
-    public void forgetBypass(final Authentication authentication) {
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
-    }
-
-    @Override
-    public boolean isMultifactorAuthenticationBypassed(final Authentication authentication, final String requestedContext) {
-        val attributes = authentication.getAttributes();
-        if (attributes.containsKey(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)) {
-
-            val result = CollectionUtils.firstElement(attributes.get(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
-            val providerRes = CollectionUtils.firstElement(attributes.get(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER));
-
-            if (result.isPresent()) {
-                val bypass = (Boolean) result.get();
-                if (bypass && providerRes.isPresent()) {
-                    val provider = providerRes.get().toString();
-                    return StringUtils.equalsIgnoreCase(requestedContext, provider);
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void rememberBypass(final Authentication authentication,
-                               final MultifactorAuthenticationProvider provider) {
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
-    }
-
-    @Override
-    public Optional<MultifactorAuthenticationProviderBypassEvaluator> belongsToMultifactorAuthenticationProvider(final String providerId) {
-        if (getProviderId().equalsIgnoreCase(providerId)) {
-            return Optional.of(this);
-        }
-        return Optional.empty();
-    }
-
-    @Audit(action = AuditableActions.MULTIFACTOR_AUTHENTICATION_BYPASS,
-        actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER)
-    @Override
-    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider, final HttpServletRequest request) {
-        return shouldMultifactorAuthenticationProviderExecuteInternal(authentication, registeredService, provider, request);
-    }
-
-    /**
-     * Should multifactor authentication provider execute internal.
-     *
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param provider          the provider
-     * @param request           the request
-     * @return true/false
-     */
-    protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
-                                                                                      RegisteredService registeredService,
-                                                                                      MultifactorAuthenticationProvider provider,
-                                                                                      HttpServletRequest request);
 
     /**
      * Evaluate attribute rules for bypass.
@@ -162,6 +101,68 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         LOGGER.debug("Found [{}] attributes relevant for multifactor authentication bypass", names.size());
         return names;
     }
+
+    @Audit(action = AuditableActions.MULTIFACTOR_AUTHENTICATION_BYPASS,
+        actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER)
+    @Override
+    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
+                                                                  final MultifactorAuthenticationProvider provider, final HttpServletRequest request) {
+        return shouldMultifactorAuthenticationProviderExecuteInternal(authentication, registeredService, provider, request);
+    }
+
+    @Override
+    public boolean isMultifactorAuthenticationBypassed(final Authentication authentication, final String requestedContext) {
+        val attributes = authentication.getAttributes();
+        if (attributes.containsKey(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)) {
+
+            val result = CollectionUtils.firstElement(attributes.get(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
+            val providerRes = CollectionUtils.firstElement(attributes.get(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER));
+
+            if (result.isPresent()) {
+                val bypass = (Boolean) result.get();
+                if (bypass && providerRes.isPresent()) {
+                    val provider = providerRes.get().toString();
+                    return StringUtils.equalsIgnoreCase(requestedContext, provider);
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void forgetBypass(final Authentication authentication) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
+    }
+
+    @Override
+    public void rememberBypass(final Authentication authentication,
+                               final MultifactorAuthenticationProvider provider) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
+    }
+
+    @Override
+    public Optional<MultifactorAuthenticationProviderBypassEvaluator> belongsToMultifactorAuthenticationProvider(final String providerId) {
+        if (getProviderId().equalsIgnoreCase(providerId)) {
+            return Optional.of(this);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Should multifactor authentication provider execute internal.
+     *
+     * @param authentication    the authentication
+     * @param registeredService the registered service
+     * @param provider          the provider
+     * @param request           the request
+     * @return true/false
+     */
+    protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
+                                                                                      RegisteredService registeredService,
+                                                                                      MultifactorAuthenticationProvider provider,
+                                                                                      HttpServletRequest request);
 
     /**
      * Resolve principal.

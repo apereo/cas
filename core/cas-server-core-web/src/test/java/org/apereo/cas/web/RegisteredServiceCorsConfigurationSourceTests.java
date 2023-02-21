@@ -81,7 +81,7 @@ public class RegisteredServiceCorsConfigurationSourceTests {
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_ORIGINS.getPropertyName(),
             new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_ORIGIN_PATTERNS.getPropertyName(),
-                new DefaultRegisteredServiceProperty(Set.of("12345")));
+            new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_METHODS.getPropertyName(),
             new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_EXPOSED_HEADERS.getPropertyName(),

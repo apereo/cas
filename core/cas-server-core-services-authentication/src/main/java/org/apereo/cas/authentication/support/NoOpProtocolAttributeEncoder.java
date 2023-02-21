@@ -21,7 +21,7 @@ public class NoOpProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
-        final RegisteredService registeredService, final WebApplicationService webApplicationService) {
+                                                final RegisteredService registeredService, final WebApplicationService webApplicationService) {
         LOGGER.warn("Attributes are not encoded via [{}]. Total of [{}] attributes will be returned for service [{}]",
             this.getClass().getSimpleName(), attributes.size(), registeredService);
         return new HashMap<>(attributes);

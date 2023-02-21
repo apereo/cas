@@ -15,7 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
 import java.util.Collections;
 

@@ -60,8 +60,7 @@ public class CasCoreTicketsSerializationConfiguration {
         @ConditionalOnMissingBean(name = TicketSerializationManager.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketSerializationManager ticketSerializationManager(
-            @Qualifier("ticketSerializationExecutionPlan")
-            final TicketSerializationExecutionPlan ticketSerializationExecutionPlan) {
+            @Qualifier("ticketSerializationExecutionPlan") final TicketSerializationExecutionPlan ticketSerializationExecutionPlan) {
             return new DefaultTicketStringSerializationManager(ticketSerializationExecutionPlan);
         }
     }
