@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This is {@link CouchbaseAcceptableUsagePolicyRepositoryTests}.
  *
  * @author Misagh Moayyed
+ * @deprecated since 7.0.0
  * @since 6.3.0
  */
 @Import({
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Couchbase")
 @EnabledIfListeningOnPort(port = 8091)
 @Getter
+@Deprecated(since = "7.0.0")
 public class CouchbaseAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)

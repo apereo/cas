@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     private final IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 

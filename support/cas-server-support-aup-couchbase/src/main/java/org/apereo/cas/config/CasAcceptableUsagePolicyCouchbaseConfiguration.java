@@ -28,6 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "couchbase")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CasAcceptableUsagePolicyCouchbaseConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

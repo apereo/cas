@@ -21,6 +21,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @JsonFilter("CouchbaseAcceptableUsagePolicyProperties")
+@Deprecated(since = "7.0.0")
 public class CouchbaseAcceptableUsagePolicyProperties extends BaseCouchbaseProperties {
     @Serial
     private static final long serialVersionUID = 2323894615409106853L;

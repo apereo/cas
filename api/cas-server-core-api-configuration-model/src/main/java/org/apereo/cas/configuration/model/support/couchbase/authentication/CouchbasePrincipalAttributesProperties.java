@@ -20,6 +20,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class CouchbasePrincipalAttributesProperties extends BaseCouchbaseProperties {
     @Serial
     private static final long serialVersionUID = -6573755681498251678L;

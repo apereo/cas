@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
+@Deprecated(since = "7.0.0")
 public class DefaultCouchbaseClientFactory implements CouchbaseClientFactory {
     private final BaseCouchbaseProperties properties;
 

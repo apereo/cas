@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * @since 5.2.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private final CouchbaseAuthenticationProperties couchbaseProperties;
 

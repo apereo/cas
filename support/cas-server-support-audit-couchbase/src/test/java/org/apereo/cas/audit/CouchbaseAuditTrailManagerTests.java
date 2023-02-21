@@ -21,6 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * This is {@link CouchbaseAuditTrailManagerTests}.
  *
  * @author Misagh Moayyed
+ * @deprecated since 7
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
@@ -39,6 +40,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("Couchbase")
 @Getter
 @EnabledIfListeningOnPort(port = 8091)
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuditTrailManagerTests extends BaseAuditConfigurationTests {
     @Autowired
     @Qualifier("couchbaseAuditTrailManager")

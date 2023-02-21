@@ -64,6 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DependencyInjectionTestExecutionListener.class,
     CouchbaseServiceRegistryTests.DisposingTestExecutionListener.class
 })
+@Deprecated(since = "7.0.0")
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
