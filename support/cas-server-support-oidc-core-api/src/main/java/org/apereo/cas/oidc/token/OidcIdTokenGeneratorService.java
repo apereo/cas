@@ -67,32 +67,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) throws Exception {
-        val timeout = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive();
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
             "Registered service instance is not an OIDC service");
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
-        val claims = buildJwtClaims(accessToken, timeout, oidcRegisteredService, responseType, grantType);
+        val claims = buildJwtClaims(accessToken, oidcRegisteredService, responseType, grantType);
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
 
-    /**
-     * Produce claims as jwt.
-     * As per OpenID Connect Core section 5.4, 'The Claims requested by the profile,
-     * email, address, and phone scope values are returned from the UserInfo Endpoint',
-     * except for response_type=id_token, where they are returned in the id_token
-     * (as there is no access token issued that could be used to access the userinfo endpoint).
-     *
-     * @param accessToken       the access token
-     * @param timeoutInSeconds  the timeoutInSeconds
-     * @param registeredService the service
-     * @param responseType      the response type
-     * @param grantType         the grant type
-     * @return the jwt claims
-     */
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
-                                       final long timeoutInSeconds,
                                        final OidcRegisteredService registeredService,
                                        final OAuth20ResponseTypes responseType,
                                        final OAuth20GrantTypes grantType) {
@@ -118,10 +102,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         claims.setAudience(audience);
         LOGGER.debug("Calculated ID token aud claim to be [{}]", audience);
 
-        val expirationDate = NumericDate.now();
-        expirationDate.addSeconds(timeoutInSeconds);
-        claims.setExpirationTime(expirationDate);
-        LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
+        buildExpirationClaim(claims, registeredService);
+
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
         claims.setSubject(principal.getId());
@@ -162,6 +144,14 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
 
         return claims;
+    }
+
+    private void buildExpirationClaim(final JwtClaims claims, final OidcRegisteredService registeredService) {
+        val expirationDate = NumericDate.now();
+        val timeoutInSeconds = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive();
+        expirationDate.addSeconds(timeoutInSeconds);
+        claims.setExpirationTime(expirationDate);
+        LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
     }
 
     protected void buildAuthenticationContextClassRef(final JwtClaims claims,
