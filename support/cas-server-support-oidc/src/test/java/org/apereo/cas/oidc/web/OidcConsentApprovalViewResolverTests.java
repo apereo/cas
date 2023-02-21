@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -115,7 +116,10 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.markAsDynamicallyRegistered();
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
+        assertTrue(mv.getModel().containsKey("dynamic"));
+        assertTrue(mv.getModel().containsKey("dynamicTime"));
     }
 }
