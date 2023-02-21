@@ -27,7 +27,8 @@ A few important considerations:
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 Template service definitions work for and apply to all types of registered service definitions known to CAS and
-are not restricted to a specific type or protocol.</p></div>
+are not restricted to a specific type or protocol. The resulting service definition after the merge operation is always 
+internal to CAS, and is not something you can manage and/or maintain separately.</p></div>
 
 The directory location of template service definitions needs to be taught to CAS via settings. This directory is
 expected to hold `.json` service definition files that structurally are no different than any given registered service in CAS.
@@ -301,7 +302,3 @@ After the merge process is completed, the final result would be similar to the f
 {% endtab %}
 
 {% endtabs %}
-
-<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
-The resulting service definition after the merge operation is always internal to CAS, and is not something you can 
-manage and/or maintain separately.</p></div>
