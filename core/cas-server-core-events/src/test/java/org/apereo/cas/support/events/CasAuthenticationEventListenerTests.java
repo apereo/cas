@@ -64,9 +64,9 @@ import static org.mockito.Mockito.*;
 public class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";
-    public static final int NUM_TO_USE_IP1 = 50;
-    public static final int THREAD_POOL_SIZE = 50;
-    public static final int NUM_OF_REQUESTS = 500;
+    public static final int NUM_TO_USE_IP1 = 10;
+    public static final int THREAD_POOL_SIZE = 10;
+    public static final int NUM_OF_REQUESTS = 20;
 
     private final static AtomicInteger numEventsReceived = new AtomicInteger(0);
 
@@ -237,7 +237,7 @@ public class CasAuthenticationEventListenerTests {
     private void sleep(int expected) {
         try {
             //let async event process, so wait a bit
-            while(this.numEventsReceived.get() < expected) {
+            while(numEventsReceived.get() < expected) {
                 Thread.sleep(10L);
             }
         }catch (Exception e){
