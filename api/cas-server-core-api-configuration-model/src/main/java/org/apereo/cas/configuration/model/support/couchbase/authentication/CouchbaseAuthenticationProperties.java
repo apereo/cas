@@ -18,6 +18,7 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Getter
 @Setter

@@ -21,8 +21,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * This is {@link CouchbaseAuditTrailManagerTests}.
  *
  * @author Misagh Moayyed
- * @deprecated since 7
  * @since 6.0.0
+ * @deprecated since 7
  */
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,

@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Import;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 7.0.0
  */
 @Deprecated(since = "7.0.0")
 public abstract class AbstractCouchbaseTests {

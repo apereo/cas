@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * This is {@link CouchbaseAcceptableUsagePolicyRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @deprecated since 7.0.0
  * @since 6.3.0
+ * @deprecated since 7.0.0
  */
 @Import({
     CasAcceptableUsagePolicyCouchbaseConfiguration.class,

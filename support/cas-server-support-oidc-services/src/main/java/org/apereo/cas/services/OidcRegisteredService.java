@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 
 /**
  * This is {@link OidcRegisteredService}.

@@ -14,6 +14,7 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @RequiresModule(name = "cas-server-support-couchbase-service-registry")
 @Getter

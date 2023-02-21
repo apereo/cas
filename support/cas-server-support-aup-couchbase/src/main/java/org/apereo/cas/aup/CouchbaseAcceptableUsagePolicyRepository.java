@@ -19,8 +19,8 @@ import java.util.Map;
  * This is {@link CouchbaseAcceptableUsagePolicyRepository}.
  *
  * @author Misagh Moayyed
- * @deprecated since 7.0.0
  * @since 6.3.0
+ * @deprecated since 7.0.0
  */
 @Slf4j
 @Deprecated(since = "7.0.0")
