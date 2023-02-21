@@ -236,7 +236,7 @@ if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
-    ./gradlew :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
+    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
     if [ $? -eq 1 ]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1

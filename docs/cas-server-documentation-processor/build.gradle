@@ -1,9 +1,10 @@
 description = "Apereo CAS Documentation Generator"
 
-project.ext["mainClassName"] = "org.apereo.cas.documentation.CasDocumentationApplication"
-project.ext["forceBootifulArtifact"] = true
-project.ext["archiveFileName"] = "casdocsgen.jar"
-
+ext {
+    mainClassName = "org.apereo.cas.documentation.CasDocumentationApplication"
+    forceBootifulArtifact = true
+    archiveFileName = "casdocsgen.jar"
+}
 apply from: rootProject.file("gradle/springboot.gradle")
 
 javadoc {
@@ -33,19 +34,23 @@ dependencies {
 }
 
 tasks.register('jsonDependencies') {
-    doFirst {
-        def results = configurations.runtimeClasspath.resolvedConfiguration.firstLevelModuleDependencies
-            .findAll {dep -> !dep.module.id.group.startsWith("org.apereo.cas")}
-            .sort(dep -> dep.module.id.group + "/" + dep.module.id.name)
+    mustRunAfter(build)
+    
+    def rcp = configurations.runtimeClasspath.resolvedConfiguration
+    def results = rcp.firstLevelModuleDependencies
+            .findAll { dependency ->
+                {
+                    !dependency.module.id.group.startsWith("org.apereo.cas")
+                }
+            }
+            .sort(dependency -> dependency.module.id.group + "/" + dependency.module.id.name)
             .stream()
-            .map(dep -> [group: dep.module.id.group, name: dep.module.id.name, version: dep.module.id.version])
+            .map(dependency -> [group: dependency.module.id.group, name: dependency.module.id.name, version: dependency.module.id.version])
             .toList()
-
+    def jsonFile = new File("${buildDir}/dependencies.json")
+    doLast {
         def output = new groovy.json.JsonBuilder(results).toPrettyString();
-        def file = new File("${buildDir}/dependencies.json")
-        file.delete()
-        file << output
+        jsonFile.delete()
+        jsonFile << output
     }
 }
-
-tasks["build"].finalizedBy("jsonDependencies")
