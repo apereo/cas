@@ -40,7 +40,7 @@ public class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTe
         servicesManager.save(service);
 
         assertFalse(ticketExpirationPoliciesEndpoint.getExpirationPolicyBuilders().isEmpty());
-        assertNotNull(ticketExpirationPoliciesEndpoint.getServicesManager());
+        assertNotNull(ticketExpirationPoliciesEndpoint.getServicesManagerProvider().getObject());
         assertNotNull(ticketExpirationPoliciesEndpoint.getWebApplicationServiceFactory());
         var results = ticketExpirationPoliciesEndpoint.handle(service.getServiceId());
         assertFalse(results.isEmpty());

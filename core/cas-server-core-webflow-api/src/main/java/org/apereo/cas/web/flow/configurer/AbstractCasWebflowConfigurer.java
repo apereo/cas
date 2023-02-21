@@ -547,13 +547,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
-        val binder = new BinderConfiguration();
-        properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
-        return binder;
-    }
-
-    @Override
     public BinderConfiguration createStateBinderConfiguration(final Map<String, Map<String, String>> properties) {
         val binder = new BinderConfiguration();
         properties.forEach((key, value) -> {
@@ -562,6 +555,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             val binding = new BinderConfiguration.Binding(key, converter, required);
             binder.addBinding(binding);
         });
+        return binder;
+    }
+
+    @Override
+    public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
+        val binder = new BinderConfiguration();
+        properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
         return binder;
     }
 

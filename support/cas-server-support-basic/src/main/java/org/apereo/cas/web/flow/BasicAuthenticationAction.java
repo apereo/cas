@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
@@ -39,7 +40,8 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val extractor = new BasicAuthExtractor();
             val webContext = new JEEContext(request, response);
-            val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
+            val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+            val credentialsResult = extractor.extract(callContext);
             if (credentialsResult.isPresent()) {
                 val credentials = (UsernamePasswordCredentials) credentialsResult.get();
                 LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);

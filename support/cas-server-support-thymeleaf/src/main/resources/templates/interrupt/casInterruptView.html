@@ -11,15 +11,15 @@
     <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
         /*<![CDATA[*/
 
-        var autoRedirect = /*[[${interrupt.autoRedirect}]]*/;
-        var emptyLinks = /*[[${#maps.isEmpty(interrupt.links)}]]*/;
+        let autoRedirect = /*[[${interrupt.autoRedirect}]]*/;
+        let emptyLinks = /*[[${#maps.isEmpty(interrupt.links)}]]*/;
 
         if (autoRedirect && !emptyLinks) {
 
-            var link = /*[[${interrupt.links.values().iterator().next()}]]*/;
-            var redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/;
+            let link = /*[[${interrupt.links.values().toArray()[0]}]]*/;
+            let redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/;
 
-            setTimeout(function () {
+            setTimeout(() => {
                 window.location = link;
             }, redirectTimeout <= 0 ? 0 : redirectTimeout * 1000);
 
@@ -36,7 +36,7 @@
             not yet established a single sign-on session for <strong>{0}</strong>.</p>
 
         <div th:if="${interrupt.message}">
-            <div class="alert alert-info">
+            <div class="alert alert-info">:information_source:
                 <p id="interruptMessage" th:utext="${interrupt.message}">interrupt.message</p>
                 <div id="interruptLinks" th:if="${interrupt.links}">
                     <form method="post" id="formlinks">

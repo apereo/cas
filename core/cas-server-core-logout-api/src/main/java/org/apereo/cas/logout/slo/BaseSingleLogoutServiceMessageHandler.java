@@ -81,9 +81,9 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         val registeredService = (WebBasedRegisteredService) this.servicesManager.findServiceBy(selectedService);
 
         return registeredService != null
-            && registeredService.getAccessStrategy().isServiceAccessAllowed()
-            && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE
-            && supportsInternal(singleLogoutService, registeredService, context);
+               && registeredService.getAccessStrategy().isServiceAccessAllowed()
+               && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE
+               && supportsInternal(singleLogoutService, registeredService, context);
     }
 
     @Override

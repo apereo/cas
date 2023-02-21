@@ -15,6 +15,24 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAccessStrategyActivationCriteria extends Serializable, Ordered {
     /**
+     * Never activate criteria.
+     *
+     * @return the registered service access strategy activation criteria
+     */
+    static RegisteredServiceAccessStrategyActivationCriteria never() {
+        return request -> false;
+    }
+
+    /**
+     * Always activate criteria.
+     *
+     * @return the registered service access strategy activation criteria
+     */
+    static RegisteredServiceAccessStrategyActivationCriteria always() {
+        return request -> true;
+    }
+
+    /**
      * Should activate policy based on this request?
      *
      * @param request the request
@@ -34,23 +52,5 @@ public interface RegisteredServiceAccessStrategyActivationCriteria extends Seria
     @Override
     default int getOrder() {
         return 0;
-    }
-
-    /**
-     * Never activate criteria.
-     *
-     * @return the registered service access strategy activation criteria
-     */
-    static RegisteredServiceAccessStrategyActivationCriteria never() {
-        return request -> false;
-    }
-
-    /**
-     * Always activate criteria.
-     *
-     * @return the registered service access strategy activation criteria
-     */
-    static RegisteredServiceAccessStrategyActivationCriteria always() {
-        return request -> true;
     }
 }

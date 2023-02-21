@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
  */
 public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implements CasRedisTemplate<K, V> {
     @Override
-    public Stream<String> keys(final String pattern, final long count) {
+    public Stream<String> scan(final String pattern, final long count) {
         var scanOptions = ScanOptions.scanOptions().match(pattern);
         if (count > 0) {
             scanOptions = scanOptions.count(count);

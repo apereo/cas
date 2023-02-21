@@ -1,4 +1,11 @@
 description = "Apereo CAS Redis Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via Redis"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
 

@@ -20,6 +20,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,12 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return CONTEXT;
     }
 
+    @Override
+    public void setApplicationContext(
+        @Nonnull final ApplicationContext context) {
+        CONTEXT = context;
+    }
+
     /**
      * Process bean injections.
      *
@@ -50,13 +57,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
             bpp.setBeanFactory(ac.getAutowireCapableBeanFactory());
             bpp.processInjection(bean);
         }
-    }
-
-    @Override
-    public void setApplicationContext(
-        @Nonnull
-        final ApplicationContext context) {
-        CONTEXT = context;
     }
 
     /**

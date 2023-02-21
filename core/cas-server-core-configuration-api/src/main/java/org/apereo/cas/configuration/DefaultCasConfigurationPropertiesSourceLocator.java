@@ -46,6 +46,19 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
+    /**
+     * Returns a property source composed of system properties and environment variables.
+     * <p>
+     * System properties take precedence over environment variables (similarly to spring boot behaviour).
+     */
+    private static PropertySource<?> loadEnvironmentAndSystemProperties() {
+        val environmentAndSystemProperties = new CompositePropertySource("environmentAndSystemProperties");
+        environmentAndSystemProperties.addPropertySource(
+            new PropertiesPropertySource(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
+        environmentAndSystemProperties.addPropertySource(
+            new SystemEnvironmentPropertySource(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
+        return environmentAndSystemProperties;
+    }
 
     /**
      * Adding items to composite property source which contains
@@ -79,7 +92,6 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
         return Optional.of(compositePropertySource);
     }
-
 
     /**
      * Make a list of files that will be processed in order where the last one processed wins.
@@ -173,20 +185,6 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         }));
 
         return composite;
-    }
-
-    /**
-     * Returns a property source composed of system properties and environment variables.
-     * <p>
-     * System properties take precedence over environment variables (similarly to spring boot behaviour).
-     */
-    private static PropertySource<?> loadEnvironmentAndSystemProperties() {
-        val environmentAndSystemProperties = new CompositePropertySource("environmentAndSystemProperties");
-        environmentAndSystemProperties.addPropertySource(
-            new PropertiesPropertySource(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
-        environmentAndSystemProperties.addPropertySource(
-            new SystemEnvironmentPropertySource(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
-        return environmentAndSystemProperties;
     }
 
     private PropertySource<?> loadEmbeddedProperties(final ResourceLoader resourceLoader,

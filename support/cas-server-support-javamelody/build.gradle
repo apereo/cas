@@ -1,4 +1,11 @@
 description = "Apereo CAS JavaMelody Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS JavaMelody Monitoring"
+    ]
+}
 dependencies {
     implementation libraries.javamelody
 }

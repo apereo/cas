@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Builder;
@@ -49,7 +50,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler) {
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
 
         LOGGER.trace("Attempting to resolve a principal via [{}]", getName());
         var principalId = extractPrincipalId(credential, currentPrincipal);
@@ -62,7 +63,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (context.isResolveAttributes()) {
-            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>(0));
+            val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>(0), service);
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!context.isReturnNullIfNoAttributes()) {
@@ -162,8 +163,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
             if (result.isEmpty()) {
                 LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
-                        + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
-                        + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
+                            + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
+                            + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
                     context.getPrincipalAttributeNames(), principalIdAttributes.keySet(), principalId);
                 builder.success(false);
             } else {
@@ -177,29 +178,23 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return builder.principalId(principalId).attributes(convertedAttributes).build();
     }
 
-    /**
-     * Retrieve person attributes as a map.
-     *
-     * @param principalId      the principal id
-     * @param credential       the credential whose id we have extracted.
-     * @param currentPrincipal the current principal
-     * @param queryAttributes  the query attributes
-     * @return the map
-     */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential,
                                                                  final Optional<Principal> currentPrincipal,
-                                                                 final Map<String, List<Object>> queryAttributes) {
+                                                                 final Map<String, List<Object>> queryAttributes,
+                                                                 final Optional<Service> givenService) {
 
-        queryAttributes.computeIfAbsent("credentialId", k1 -> CollectionUtils.wrapList(credential.getId()));
-        queryAttributes.computeIfAbsent("credentialClass", k -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
-        return PrincipalAttributeRepositoryFetcher.builder()
+        queryAttributes.computeIfAbsent("credentialId", __ -> CollectionUtils.wrapList(credential.getId()));
+        queryAttributes.computeIfAbsent("credentialClass", __ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
+
+        val attributeFetcher = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(context.getAttributeRepository())
             .principalId(principalId)
             .activeAttributeRepositoryIdentifiers(context.getActiveAttributeRepositoryIdentifiers())
             .currentPrincipal(currentPrincipal.orElse(null))
             .queryAttributes(queryAttributes)
-            .build()
-            .retrieve();
+            .service(givenService.orElse(null))
+            .build();
+        return attributeFetcher.retrieve();
     }
 
     /**
@@ -221,12 +216,12 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 return principal.getId();
             } else {
                 LOGGER.debug("CAS will NOT be using the identifier from the resolved principal [{}] as it's not "
-                    + "configured to use the currently-resolved principal id and will fall back onto using the identifier "
-                    + "for the credential, that is [{}], for principal resolution", principal, id);
+                             + "configured to use the currently-resolved principal id and will fall back onto using the identifier "
+                             + "for the credential, that is [{}], for principal resolution", principal, id);
             }
         } else {
             LOGGER.debug("No principal is currently resolved and available. Falling back onto using the identifier "
-                + " for the credential, that is [{}], for principal resolution", id);
+                         + " for the credential, that is [{}], for principal resolution", id);
         }
         LOGGER.debug("Extracted principal id [{}]", id);
         return StringUtils.isNotBlank(id) ? id.trim() : null;

@@ -5,10 +5,12 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CouchDbTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -20,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -58,17 +61,21 @@ public class CouchDbTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
+                                         @Qualifier(TicketCatalog.BEAN_NAME)
+                                         final TicketCatalog ticketCatalog,
+                                         @Qualifier(TicketSerializationManager.BEAN_NAME)
+                                         final TicketSerializationManager ticketSerializationManager,
                                          @Qualifier("ticketRegistryCouchDbRepository")
                                          final TicketRepository ticketRegistryCouchDbRepository) {
         val couchDb = casProperties.getTicket().getRegistry().getCouchDb();
-        val c = new CouchDbTicketRegistry(ticketRegistryCouchDbRepository, couchDb.getRetries());
-        c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couch-db"));
-        return c;
+        val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(couchDb.getCrypto(), "couch-db");
+        return new CouchDbTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, ticketRegistryCouchDbRepository, couchDb.getRetries());
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchDbTicketRegistryCleaner")
+    @Lazy(false)
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.session.MapSession;
-import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
+import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
 import org.springframework.session.hazelcast.HazelcastSessionSerializer;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
@@ -75,11 +75,11 @@ public class HazelcastSessionConfiguration {
             hazelcastSessionProperties.getMapName(), duration.toSeconds());
         if (mapConfig instanceof MapConfig finalConfig) {
             val attributeConfig = new AttributeConfig();
-            attributeConfig.setName(Hazelcast4IndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
+            attributeConfig.setName(HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
             attributeConfig.setExtractorClassName(HazelcastSessionPrincipalNameExtractor.class.getName());
             finalConfig.addAttributeConfig(attributeConfig);
             val indexConfig = new IndexConfig();
-            indexConfig.addAttribute(Hazelcast4IndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
+            indexConfig.addAttribute(HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
             finalConfig.addIndexConfig(indexConfig);
         }
         HazelcastConfigurationFactory.setConfigMap(mapConfig, hazelcastInstance.getConfig());

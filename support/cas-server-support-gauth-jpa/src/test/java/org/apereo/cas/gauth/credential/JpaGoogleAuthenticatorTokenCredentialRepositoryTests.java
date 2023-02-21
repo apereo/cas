@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
-@Tag("JDBC")
+@Tag("JDBCMFA")
 public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired(required = false)
     @Qualifier("googleAuthenticatorAccountRegistry")

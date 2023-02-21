@@ -14,7 +14,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
@@ -54,7 +54,7 @@ public class CasCoreAuthenticationComponentSerializationConfiguration {
     public ComponentSerializationPlanConfigurer casCoreAuthenticationComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(SimpleWebApplicationServiceImpl.class);
-            plan.registerSerializableClass(BasicCredentialMetaData.class);
+            plan.registerSerializableClass(BasicCredentialMetadata.class);
             plan.registerSerializableClass(BasicIdentifiableCredential.class);
             plan.registerSerializableClass(DefaultAuthenticationHandlerExecutionResult.class);
             plan.registerSerializableClass(DefaultAuthentication.class);

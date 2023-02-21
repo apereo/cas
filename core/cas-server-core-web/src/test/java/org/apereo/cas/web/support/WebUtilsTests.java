@@ -69,11 +69,7 @@ public class WebUtilsTests {
         request.setQueryString("param=value");
         assertNotNull(WebUtils.getHttpRequestFullUrl(request));
         assertFalse(WebUtils.isGraphicalUserAuthenticationEnabled(context));
-        assertTrue(WebUtils.getDelegatedAuthenticationProviderConfigurations(context).isEmpty());
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));
-
-        WebUtils.putDelegatedClientAuthenticationResolvedCredentials(context, List.of("C1"));
-        assertNotNull(WebUtils.getDelegatedClientAuthenticationResolvedCredentials(context, String.class));
 
         assertDoesNotThrow(() -> {
             WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);

@@ -22,7 +22,7 @@ public abstract class AbstractCasEvent extends ApplicationEvent {
 
     @Serial
     private static final long serialVersionUID = 8059647975948452375L;
-    
+
     protected AbstractCasEvent(final Object source) {
         super(source);
     }

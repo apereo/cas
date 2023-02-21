@@ -2,6 +2,11 @@ description = "Apereo CAS Ignite Integration"
 
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Apache Ignite Ticket Registry"
+    ]
 }
 
 dependencies {
@@ -31,6 +36,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

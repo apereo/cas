@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
-@Tag("JDBC")
+@Tag("JDBCMFA")
 @Getter
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",

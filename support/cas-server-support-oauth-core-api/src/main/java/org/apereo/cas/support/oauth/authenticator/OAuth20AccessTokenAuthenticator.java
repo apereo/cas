@@ -11,8 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -20,6 +19,7 @@ import org.pac4j.core.profile.CommonProfile;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -47,7 +47,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
     }
 
     @Override
-    public void validate(final Credentials credentials, final WebContext webContext, final SessionStore sessionStore) {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
         val tokenCredentials = (TokenCredentials) credentials;
         val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
@@ -55,31 +55,25 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
         val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
-            return;
+            return Optional.empty();
         }
 
         if (!requiredScopes.isEmpty() && !accessToken.getScopes().containsAll(requiredScopes)) {
             LOGGER.error("Unable to authenticate access token without required scopes [{}]", requiredScopes);
-            return;
+            return Optional.empty();
         }
 
-        val profile = buildUserProfile(tokenCredentials, webContext, accessToken);
+        val profile = buildUserProfile(tokenCredentials, callContext, accessToken);
         if (profile != null) {
             LOGGER.trace("Final user profile based on access token [{}] is [{}]", accessToken, profile);
             tokenCredentials.setUserProfile(profile);
+            return Optional.of(tokenCredentials);
         }
+        return Optional.empty();
     }
 
-    /**
-     * Build user profile common profile.
-     *
-     * @param tokenCredentials the token credentials
-     * @param webContext       the web context
-     * @param accessToken      the access token
-     * @return the common profile
-     */
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
-                                             final WebContext webContext,
+                                             final CallContext callContext,
                                              final OAuth20AccessToken accessToken) {
         val userProfile = new CommonProfile(true);
         val authentication = accessToken.getAuthentication();

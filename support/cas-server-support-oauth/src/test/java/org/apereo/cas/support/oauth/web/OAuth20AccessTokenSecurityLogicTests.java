@@ -16,7 +16,10 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.JEEContextFactory;
+import org.pac4j.jee.context.JEEFrameworkParameters;
 import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.jee.context.session.JEESessionStoreFactory;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -48,21 +51,28 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         val mockClient = mock(DirectClient.class);
         when(mockClient.getName()).thenReturn("MockIndirectClient");
         when(mockClient.isInitialized()).thenReturn(true);
-        when(mockClient.getCredentials(any(), any()))
-            .thenReturn(Optional.of(new UsernamePasswordCredentials("casuser", "Mellon")));
+        val testCredential = new UsernamePasswordCredentials("casuser", "Mellon");
+        when(mockClient.getCredentials(any())).thenReturn(Optional.of(testCredential));
+        when(mockClient.validateCredentials(any(), any())).thenReturn(Optional.of(testCredential));
         val profile = new CommonProfile();
         profile.setId(UUID.randomUUID().toString());
-        when(mockClient.getUserProfile(any(), any(), any())).thenReturn(Optional.of(profile));
+        when(mockClient.getUserProfile(any(), any())).thenReturn(Optional.of(profile));
 
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, JEESessionStore.INSTANCE);
         profileManager.save(true, profile, false);
 
-        val result = (UserProfile) logic.perform(context, JEESessionStore.INSTANCE,
-            new Config(mockClient),
-            (webContext, sessionStore, collection, objects) -> collection.iterator().next(),
-            JEEHttpActionAdapter.INSTANCE, "MockIndirectClient",
-            DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
+        val config = new Config(mockClient);
+        config.setSessionStoreFactory(JEESessionStoreFactory.INSTANCE);
+        config.setHttpActionAdapter(JEEHttpActionAdapter.INSTANCE);
+        config.setWebContextFactory(JEEContextFactory.INSTANCE);
+        config.setProfileManagerFactory((webContext, sessionStore) -> profileManager);
+        
+        val result = (UserProfile) logic.perform(config,
+            (webContext, sessionStore, collection) -> collection.iterator().next(),
+            "MockIndirectClient",
+            DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS,
+            new JEEFrameworkParameters(request, response));
         assertNotNull(result);
         assertEquals(1, profileManager.getProfiles().size());
     }

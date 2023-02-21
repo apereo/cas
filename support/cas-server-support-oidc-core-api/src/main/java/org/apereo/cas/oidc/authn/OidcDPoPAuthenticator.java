@@ -9,7 +9,6 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.SignedJWT;
@@ -19,13 +18,15 @@ import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPTokenRequestVerifier;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -45,14 +46,14 @@ public class OidcDPoPAuthenticator implements Authenticator {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext webContext,
-                         final SessionStore sessionStore) {
-        webContext.getRequestHeader(OAuth20Constants.DPOP)
-            .ifPresent(proof -> FunctionUtils.doAndHandle(u -> validateAccessToken(credentials, webContext, proof)));
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials credentials) {
+        val webContext = callContext.webContext();
+        return webContext.getRequestHeader(OAuth20Constants.DPOP)
+            .flatMap(Unchecked.function(proof -> validateAccessToken(credentials, webContext, proof)));
     }
 
-    protected void validateAccessToken(final Credentials credentials, final WebContext webContext,
-                                       final String dPopProof) throws Exception {
+    protected Optional<Credentials> validateAccessToken(final Credentials credentials, final WebContext webContext,
+                                                        final String dPopProof) throws Exception {
         val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElseThrow();
         val registeredService = (OidcRegisteredService)
             OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
@@ -62,7 +63,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
         val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
         val confirmation = verifyProofOfPossession(webContext, dPopProof, clientId);
-        buildUserProfile(credentials, dPopProof, clientId, confirmation);
+        return buildUserProfile(credentials, dPopProof, clientId, confirmation);
     }
 
     protected JWKThumbprintConfirmation verifyProofOfPossession(final WebContext webContext,
@@ -80,8 +81,8 @@ public class OidcDPoPAuthenticator implements Authenticator {
         return verifier.verify(dPopIssuer, signedProof);
     }
 
-    protected void buildUserProfile(final Credentials credentials, final String dPopProof,
-                                    final String clientId, final JWKThumbprintConfirmation confirmation) throws Exception {
+    protected Optional<Credentials> buildUserProfile(final Credentials credentials, final String dPopProof,
+                                                     final String clientId, final JWKThumbprintConfirmation confirmation) throws Exception {
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val userProfile = new CommonProfile(true);
         userProfile.setId(clientId);
@@ -89,6 +90,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
         userProfile.addAttribute(OAuth20Constants.DPOP, dPopProof);
         userProfile.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, confirmation.getValue().toString());
         credentials.setUserProfile(userProfile);
+        return Optional.of(credentials);
     }
 
     protected SignedJWT getSignedProofOfPosessionJwt(final String dPopProof) throws Exception {

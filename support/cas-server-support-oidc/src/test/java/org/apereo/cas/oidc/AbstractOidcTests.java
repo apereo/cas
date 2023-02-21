@@ -73,6 +73,7 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -90,6 +91,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -158,9 +160,11 @@ public abstract class AbstractOidcTests {
     protected static final String TGT_ID = "TGT-0";
 
     @Autowired
+    @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+    protected OAuth20ResponseModeFactory oauthResponseModeFactory;
+    @Autowired
     @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
     protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
-
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
@@ -212,6 +216,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAccessTokenJwtCipherExecutor")
     protected CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor;
+
+    @Autowired
+    @Qualifier("oidcResponseModeJwtCipherExecutor")
+    protected CipherExecutor<Serializable, String> oidcResponseModeJwtCipherExecutor;
 
     @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
@@ -406,6 +414,7 @@ public abstract class AbstractOidcTests {
         request.setServerName("sso.example.org");
         request.setServerPort(443);
         request.setRequestURI("/cas/oidc/" + endpoint);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         return request;
     }
 

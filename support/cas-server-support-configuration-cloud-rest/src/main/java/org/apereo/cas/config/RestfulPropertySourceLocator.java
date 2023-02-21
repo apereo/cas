@@ -10,7 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -75,8 +76,8 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getEntity() != null) {
-                val results = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && ((HttpEntityContainer) response).getEntity() != null) {
+                val results = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
                 val payload = MAPPER.readValue(results, Map.class);
                 props.putAll(payload);

@@ -25,8 +25,11 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 @RequiredArgsConstructor
 public class WebflowExecutorFactory {
     private final WebflowProperties webflowProperties;
+
     private final FlowDefinitionRegistry flowDefinitionRegistry;
+
     private final CipherExecutor webflowCipherExecutor;
+
     private final FlowExecutionListener[] executionListeners;
 
     /**

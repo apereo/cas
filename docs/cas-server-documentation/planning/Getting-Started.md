@@ -24,7 +24,7 @@ how changes are managed and released, what the project expects from you and what
 ## Ask for Help
 
 A CAS deployment is often seen as mission critical. Its deployment success, health status and general upkeep is vital to an organization's
-daily routine and business. Futhermore, as an identity provider that operates in the domain of access management, it plays an important
+daily routine and business. Furthermore, as an identity provider that operates in the domain of access management, it plays an important
 and sensitive role in the overall security architecture of one's deployment. Therefor, you may need *extra expert* help
 from specialists and experts that know the software in and out and can help you with gotchas, deployment best practices and practical upgrade guidelines.
 Free support only works up to a certain degree, and generally is best for personal use and/or hobbyists.
@@ -38,7 +38,7 @@ Once you have a few ideas, please discuss and share those with the [CAS communit
 to learn about common trends, practices and patterns
 that may already have solved the same issues you face today. 
 
-<div class="alert alert-warning"><strong>KISS</strong><p>In general, avoid designing and/or adopting
+<div class="alert alert-warning">:warning: <strong>KISS</strong><p>In general, avoid designing and/or adopting
 use cases and workflows that heavily alter the CAS internal components, induce a heavy burden on your management
 and maintenance of the configuration or re-invent the CAS software and its supported protocols. All options 
 add to maintenance cost and headache.</p></div>

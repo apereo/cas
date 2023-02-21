@@ -8,7 +8,7 @@ import lombok.val;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;

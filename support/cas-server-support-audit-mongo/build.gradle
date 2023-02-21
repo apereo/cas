@@ -1,4 +1,11 @@
 description = "Apereo CAS MongoDb Audit Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Audits",
+            title: "Audits via MongoDb"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-audit")

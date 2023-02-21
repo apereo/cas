@@ -38,6 +38,14 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
         AnnotationAwareOrderComparator.sortIfNecessary(serviceManagers);
     }
 
+    @Override
+    public void save(final Stream<RegisteredService> toSave) {
+        serviceManagers.forEach(mgr -> {
+            val filtered = toSave.filter(mgr::supports);
+            mgr.save(filtered);
+        });
+    }
+
     @Audit(action = AuditableActions.SAVE_SERVICE,
         actionResolverName = AuditActionResolvers.SAVE_SERVICE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_SERVICE_RESOURCE_RESOLVER)
@@ -64,14 +72,6 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
             val registeredService = supplier.get();
             return findServicesManager(registeredService).isPresent() ? registeredService : null;
         }, andThenConsume, countExclusive));
-    }
-
-    @Override
-    public void save(final Stream<RegisteredService> toSave) {
-        serviceManagers.forEach(mgr -> {
-            val filtered = toSave.filter(mgr::supports);
-            mgr.save(filtered);
-        });
     }
 
     @Override
@@ -159,9 +159,9 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public <T extends RegisteredService> Collection<T> getAllServicesOfType(final Class<T> clazz) {
         return serviceManagers.stream()
-                .filter(s -> s.supports(clazz))
-                .flatMap(s -> s.getAllServicesOfType(clazz).stream())
-                .collect(Collectors.toList());
+            .filter(s -> s.supports(clazz))
+            .flatMap(s -> s.getAllServicesOfType(clazz).stream())
+            .collect(Collectors.toList());
     }
 
     @Override

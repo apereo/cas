@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.account;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -61,6 +62,7 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
      * Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
     /**
@@ -68,7 +70,7 @@ public class AccountManagementRegistrationCoreProperties implements Serializable
      * questions and how many, to complete the registration process.
      */
     private int securityQuestionsCount = 2;
-    
+
     /**
      * Crypto settings on how to generate registration requests.
      */

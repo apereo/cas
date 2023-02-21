@@ -74,7 +74,7 @@ public class CasEmbeddedApacheSslHostConfigProperties implements Serializable {
      * algorithm when creating an SSLContext instance
      */
     private String sslProtocol = "TLS";
-    
+
     /**
      * OpenSSL only.
      * Configures if insecure renegotiation is allowed. The default is false.
@@ -119,7 +119,7 @@ public class CasEmbeddedApacheSslHostConfigProperties implements Serializable {
      * If not specified, the default value of all will be used.
      */
     private String protocols = "all";
-    
+
     /**
      * List of certificates managed by the ssl host config.
      */

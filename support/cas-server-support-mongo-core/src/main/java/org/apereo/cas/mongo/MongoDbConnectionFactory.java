@@ -24,14 +24,13 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
-import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
@@ -110,7 +109,6 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.BsonTimestampToDateConverter());
         converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
         converters.add(new BaseConverters.StringToZonedDateTimeConverter());
-        converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
 
         this.customConversions = new MongoCustomConversions(converters);
@@ -288,6 +286,18 @@ public class MongoDbConnectionFactory {
         return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
+    /**
+     * Build mongo template.
+     *
+     * @param mongoClient the mongo client
+     * @param mongo       the mongo
+     * @return the cas mongo operations
+     */
+    public CasMongoOperations buildMongoTemplate(final MongoClient mongoClient, final BaseMongoDbProperties mongo) {
+        val mongoDbFactory = mongoDbFactory(mongoClient, mongo);
+        return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
+    }
+
     protected Collection<String> getMappingBasePackages() {
         return CollectionUtils.wrap(getClass().getPackage().getName());
     }
@@ -295,14 +305,14 @@ public class MongoDbConnectionFactory {
     private MongoMappingContext mongoMappingContext() {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
-        mappingContext.setSimpleTypeHolder(this.customConversions.getSimpleTypeHolder());
+        mappingContext.setSimpleTypeHolder(customConversions.getSimpleTypeHolder());
         mappingContext.setFieldNamingStrategy(MongoDbConnectionFactory.fieldNamingStrategy());
         return mappingContext;
     }
 
     private MappingMongoConverter mappingMongoConverter(final MongoDatabaseFactory mongoDbFactory) {
         val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-        val converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
+        val converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
         converter.setCustomConversions(customConversions);
         converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();

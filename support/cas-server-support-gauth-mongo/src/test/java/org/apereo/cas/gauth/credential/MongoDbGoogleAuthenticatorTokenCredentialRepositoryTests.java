@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {

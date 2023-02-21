@@ -6,6 +6,8 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,17 +22,19 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-public record DefaultTicketRegistrySupport(TicketRegistry ticketRegistry) implements TicketRegistrySupport {
+@RequiredArgsConstructor
+@Getter
+public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
+
+    private final TicketRegistry ticketRegistry;
 
     @Override
-    public Ticket getTicket(final String ticketId) {
-        if (StringUtils.isBlank(ticketId)) {
+    public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) {
+        if (StringUtils.isBlank(ticketGrantingTicketId)) {
             return null;
         }
-        return FunctionUtils.doAndHandle(() -> {
-            val state = ticketRegistry.getTicket(ticketId, Ticket.class);
-            return state == null || state.isExpired() ? null : state;
-        });
+        val tgt = getTicketGrantingTicket(ticketGrantingTicketId);
+        return Optional.ofNullable(tgt).map(TicketGrantingTicket::getAuthentication).orElse(null);
     }
 
     @Override
@@ -43,12 +47,14 @@ public record DefaultTicketRegistrySupport(TicketRegistry ticketRegistry) implem
     }
 
     @Override
-    public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) {
-        if (StringUtils.isBlank(ticketGrantingTicketId)) {
+    public Ticket getTicket(final String ticketId) {
+        if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        val tgt = getTicketGrantingTicket(ticketGrantingTicketId);
-        return Optional.ofNullable(tgt).map(TicketGrantingTicket::getAuthentication).orElse(null);
+        return FunctionUtils.doAndHandle(() -> {
+            val state = ticketRegistry.getTicket(ticketId, Ticket.class);
+            return state == null || state.isExpired() ? null : state;
+        });
     }
 
     @Override

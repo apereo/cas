@@ -10,8 +10,8 @@ docker run --rm -p 3306:3306 --name mysql-server --rm \
 docker ps | grep "mysql-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "MySQL docker image is running."
+    echo "MySQL docker container is running."
 else
-    echo "MySQL docker image failed to start."
+    echo "MySQL docker container failed to start."
     exit $retVal
 fi

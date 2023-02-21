@@ -30,7 +30,7 @@ public class FullRegexRegisteredServiceMatchingStrategy implements RegisteredSer
 
     @JsonIgnore
     @Transient
-    @javax.persistence.Transient
+    @jakarta.persistence.Transient
     private transient Pattern servicePattern;
 
     @Override

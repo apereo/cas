@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.metadata;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -18,6 +19,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -160,6 +162,13 @@ public class ConfigurationMetadataGenerator {
                                 propertyHint.setValue(toJson(List.of(ExpressionLanguageCapable.class.getName())));
                                 hint.getValues().add(propertyHint);
                             }
+
+                            if (f != null && f.isAnnotationPresent(RegularExpressionCapable.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setDescription(RegularExpressionCapable.class.getName());
+                                propertyHint.setValue(toJson(List.of(RegularExpressionCapable.class.getName())));
+                                hint.getValues().add(propertyHint);
+                            }
                         }));
 
                         if (!hint.getValues().isEmpty()) {
@@ -210,6 +219,144 @@ public class ConfigurationMetadataGenerator {
                 }
             } catch (final Exception e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+
+    protected void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
+                                             final Set<ConfigurationMetadataProperty> groups) {
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
+
+        properties.forEach(property -> {
+            val matcher = MAP_TYPE_STRING_KEY_OBJECT_PATTERN.matcher(property.getType());
+            if (matcher.matches()) {
+                val valueType = matcher.group(1);
+
+                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, valueType);
+                val typeFile = new File(typePath);
+
+                if (typeFile.exists()) {
+                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    property.setName(property.getName().concat(".[key]"));
+                    property.setId(property.getName());
+                    parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
+                        valueType, false);
+                } else {
+                    throw new RuntimeException(typePath + " does not exist");
+                }
+            }
+        });
+        properties.addAll(collectedProps);
+        groups.addAll(collectedGroups);
+    }
+
+    protected void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
+                                               final Set<ConfigurationMetadataProperty> groups) {
+        val propertiesToProcess = properties.stream()
+            .filter(e -> {
+                val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
+                return matcher.matches();
+            })
+            .collect(Collectors.toSet());
+
+        for (val prop : propertiesToProcess) {
+
+            val matcher = NESTED_CLASS_PATTERN.matcher(prop.getType());
+            if (!matcher.matches()) {
+                throw new RuntimeException("Unable to find a match for " + prop.getType());
+            }
+
+            val parent = matcher.group(1);
+            val innerType = matcher.group(2);
+            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parent);
+
+            try {
+                TypeDeclaration<?> primaryType = null;
+                if (typePath.contains("$")) {
+                    val innerClass = StringUtils.substringBetween(typePath, "$", ".");
+                    typePath = StringUtils.remove(typePath, '$' + innerClass);
+                    val cu = StaticJavaParser.parse(new File(typePath));
+                    for (val type : cu.getTypes()) {
+                        for (val member : type.getMembers()) {
+                            if (member.isClassOrInterfaceDeclaration()) {
+                                val name = member.asClassOrInterfaceDeclaration().getNameAsString();
+                                if (name.equals(innerClass)) {
+                                    primaryType = member.asClassOrInterfaceDeclaration();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    val cu = StaticJavaParser.parse(new File(typePath));
+                    primaryType = cu.getPrimaryType().get();
+                }
+
+                Objects.requireNonNull(primaryType).getMembers()
+                    .stream()
+                    .peek(member -> {
+                        if (member.isFieldDeclaration()) {
+                            var fieldDecl = member.asFieldDeclaration();
+                            var variable = fieldDecl.getVariable(0);
+
+                            if (variable.getInitializer().isPresent()) {
+                                var beginIndex = prop.getName().lastIndexOf('.');
+                                var propShortName = beginIndex != -1 ? prop.getName().substring(beginIndex + 1) : prop.getName();
+                                var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
+                                if (names.contains(propShortName)) {
+                                    variable.getInitializer().ifPresent(exp -> {
+                                        var value = (Object) null;
+                                        if (exp instanceof LiteralStringValueExpr) {
+                                            value = ((LiteralStringValueExpr) exp).getValue();
+                                        } else if (exp instanceof BooleanLiteralExpr) {
+                                            value = ((BooleanLiteralExpr) exp).getValue();
+                                        } else if (exp instanceof FieldAccessExpr) {
+                                            value = ((NodeWithSimpleName<FieldAccessExpr>) exp).getNameAsString();
+                                        }
+                                        prop.setDefaultValue(value);
+                                    });
+                                }
+                            }
+                        }
+                    })
+                    .filter(member -> {
+                        if (member.isEnumDeclaration()) {
+                            val enumMem = member.asEnumDeclaration();
+                            return enumMem.getNameAsString().equals(innerType);
+                        }
+                        if (member.isClassOrInterfaceDeclaration()) {
+                            val typeName = member.asClassOrInterfaceDeclaration();
+                            return typeName.getNameAsString().equals(innerType);
+                        }
+                        return false;
+                    })
+                    .forEach(member -> {
+                        if (member.isEnumDeclaration()) {
+                            val enumMem = member.asEnumDeclaration();
+                            val builder = ConfigurationMetadataPropertyCreator.collectJavadocsEnumFields(prop, enumMem);
+                            prop.setDescription(builder.toString());
+                        }
+                        if (member.isClassOrInterfaceDeclaration()) {
+                            val typeName = member.asClassOrInterfaceDeclaration();
+                            typeName.getFields()
+                                .stream()
+                                .filter(field -> !field.isStatic())
+                                .forEach(field -> {
+                                    val resultProps = new HashSet<ConfigurationMetadataProperty>();
+                                    val resultGroups = new HashSet<ConfigurationMetadataProperty>();
+
+                                    val creator = new ConfigurationMetadataPropertyCreator(
+                                        false, resultProps, resultGroups, parent);
+                                    creator.createConfigurationProperty(field, prop.getName());
+
+                                    groups.addAll(resultGroups);
+                                    properties.addAll(resultProps);
+                                });
+                        }
+                    });
+            } catch (final Exception ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -303,143 +450,5 @@ public class ConfigurationMetadataGenerator {
 
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
-    }
-
-    protected void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
-                                             final Set<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
-
-        properties.forEach(property -> {
-            val matcher = MAP_TYPE_STRING_KEY_OBJECT_PATTERN.matcher(property.getType());
-            if (matcher.matches()) {
-                val valueType = matcher.group(1);
-
-                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, valueType);
-                val typeFile = new File(typePath);
-
-                if (typeFile.exists()) {
-                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
-                    property.setName(property.getName().concat(".[key]"));
-                    property.setId(property.getName());
-                    parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
-                        valueType, false);
-                } else {
-                    throw new RuntimeException(typePath + " does not exist");
-                }
-            }
-        });
-        properties.addAll(collectedProps);
-        groups.addAll(collectedGroups);
-    }
-
-    protected void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
-                                               final Set<ConfigurationMetadataProperty> groups) {
-        val propertiesToProcess = properties.stream()
-            .filter(e -> {
-                val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
-                return matcher.matches();
-            })
-            .collect(Collectors.toSet());
-
-        for (val prop : propertiesToProcess) {
-
-            val matcher = NESTED_CLASS_PATTERN.matcher(prop.getType());
-            if (!matcher.matches()) {
-                throw new RuntimeException("Unable to find a match for " + prop.getType());
-            }
-
-            val parent = matcher.group(1);
-            val innerType = matcher.group(2);
-            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parent);
-
-            try {
-                TypeDeclaration<?> primaryType = null;
-                if (typePath.contains("$")) {
-                    val innerClass = StringUtils.substringBetween(typePath, "$", ".");
-                    typePath = StringUtils.remove(typePath, '$' + innerClass);
-                    val cu = StaticJavaParser.parse(new File(typePath));
-                    for (val type : cu.getTypes()) {
-                        for (val member : type.getMembers()) {
-                            if (member.isClassOrInterfaceDeclaration()) {
-                                val name = member.asClassOrInterfaceDeclaration().getNameAsString();
-                                if (name.equals(innerClass)) {
-                                    primaryType = member.asClassOrInterfaceDeclaration();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    val cu = StaticJavaParser.parse(new File(typePath));
-                    primaryType = cu.getPrimaryType().get();
-                }
-
-                Objects.requireNonNull(primaryType).getMembers()
-                    .stream()
-                    .peek(member -> {
-                        if (member.isFieldDeclaration()) {
-                            var fieldDecl = member.asFieldDeclaration();
-                            var variable = fieldDecl.getVariable(0);
-
-                            if (variable.getInitializer().isPresent()) {
-                                var beginIndex = prop.getName().lastIndexOf('.');
-                                var propShortName = beginIndex != -1 ? prop.getName().substring(beginIndex + 1) : prop.getName();
-                                var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
-                                if (names.contains(propShortName)) {
-                                    variable.getInitializer().ifPresent(exp -> {
-                                        var value = (Object) null;
-                                        if (exp instanceof LiteralStringValueExpr) {
-                                            value = ((LiteralStringValueExpr) exp).getValue();
-                                        } else if (exp instanceof BooleanLiteralExpr) {
-                                            value = ((BooleanLiteralExpr) exp).getValue();
-                                        } else if (exp instanceof FieldAccessExpr) {
-                                            value = ((FieldAccessExpr) exp).getNameAsString();
-                                        }
-                                        prop.setDefaultValue(value);
-                                    });
-                                }
-                            }
-                        }
-                    })
-                    .filter(member -> {
-                        if (member.isEnumDeclaration()) {
-                            val enumMem = member.asEnumDeclaration();
-                            return enumMem.getNameAsString().equals(innerType);
-                        }
-                        if (member.isClassOrInterfaceDeclaration()) {
-                            val typeName = member.asClassOrInterfaceDeclaration();
-                            return typeName.getNameAsString().equals(innerType);
-                        }
-                        return false;
-                    })
-                    .forEach(member -> {
-                        if (member.isEnumDeclaration()) {
-                            val enumMem = member.asEnumDeclaration();
-                            val builder = ConfigurationMetadataPropertyCreator.collectJavadocsEnumFields(prop, enumMem);
-                            prop.setDescription(builder.toString());
-                        }
-                        if (member.isClassOrInterfaceDeclaration()) {
-                            val typeName = member.asClassOrInterfaceDeclaration();
-                            typeName.getFields()
-                                .stream()
-                                .filter(field -> !field.isStatic())
-                                .forEach(field -> {
-                                    val resultProps = new HashSet<ConfigurationMetadataProperty>();
-                                    val resultGroups = new HashSet<ConfigurationMetadataProperty>();
-
-                                    val creator = new ConfigurationMetadataPropertyCreator(
-                                        false, resultProps, resultGroups, parent);
-                                    creator.createConfigurationProperty(field, prop.getName());
-
-                                    groups.addAll(resultGroups);
-                                    properties.addAll(resultProps);
-                                });
-                        }
-                    });
-            } catch (final Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        }
     }
 }

@@ -80,7 +80,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
-        commonProfile.setPermissions(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
+        commonProfile.setRoles(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
         manager.save(true, commonProfile, false);
 
         response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());

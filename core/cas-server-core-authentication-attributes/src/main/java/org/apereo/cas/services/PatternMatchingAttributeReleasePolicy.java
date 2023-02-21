@@ -47,8 +47,7 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
 
     @JsonCreator
     public PatternMatchingAttributeReleasePolicy(
-        @JsonProperty("allowedAttributes")
-        final Map<String, Rule> attributes) {
+        @JsonProperty("allowedAttributes") final Map<String, Rule> attributes) {
         this.allowedAttributes = attributes;
     }
 

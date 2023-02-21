@@ -12,6 +12,14 @@ if (!dependencyUpdates) {
 }
 
 description = "Apereo CAS RADIUS Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "RADIUS Authentication"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api")

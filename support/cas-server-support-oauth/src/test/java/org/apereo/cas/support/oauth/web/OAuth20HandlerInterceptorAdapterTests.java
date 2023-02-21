@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +44,7 @@ public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests 
 
         request.setRequestURI('/' + OAuth20Constants.AUTHORIZE_URL);
         request.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
 

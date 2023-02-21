@@ -1,4 +1,11 @@
 description = "Apereo CAS Consent JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Attribute Consent via JDBC",
+            category: "Attribute Consent"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -28,6 +35,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-notifications")
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

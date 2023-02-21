@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -19,8 +20,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -79,8 +80,8 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      * @return true/false
      */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = requestParameterResolver.getObject()
-            .resolveClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore.getObject()).getLeft();
+        val callContext = new CallContext(new JEEContext(request, response), sessionStore.getObject());
+        val clientId = requestParameterResolver.getObject().resolveClientIdAndClientSecret(callContext).getLeft();
         if (clientId.isEmpty()) {
             return true;
         }

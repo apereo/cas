@@ -1,11 +1,12 @@
 package org.apereo.cas.support.saml;
 
-import net.shibboleth.utilities.java.support.xml.ParserPool;
+import net.shibboleth.shared.xml.ParserPool;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Load the OpenSAML config context.
@@ -54,6 +55,13 @@ public interface OpenSamlConfigBean {
      * @return the xml object provider registry
      */
     XMLObjectProviderRegistry getXmlObjectProviderRegistry();
+
+    /**
+     * Gets application context.
+     *
+     * @return the application context
+     */
+    ConfigurableApplicationContext getApplicationContext();
 
     /**
      * Log object.

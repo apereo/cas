@@ -85,14 +85,14 @@ def run(Object[] args) {
 
 The following parameters are passed to the script:
 
-| Parameter             | Description
-|---------------------------------------------------------------------------------------------------------
-| `requestContext`        | Reference to the Spring Webflow request context, as `RequestContext`.
-| `service`               | Reference to the application authentication request as `Service`, if any.
-| `registeredService`     | Reference to registered service definition, if any.
-| `providers`              | Reference to the set of identity provider configuration identified as `DelegatedClientIdentityProviderConfiguration`.
-| `applicationContext`    | Reference to the application context as `ApplicationContext`.
-| `logger`                | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter            | Description                                                                                                           |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `requestContext`     | Reference to the Spring Webflow request context, as `RequestContext`.                                                 |
+| `service`            | Reference to the application authentication request as `Service`, if any.                                             |
+| `registeredService`  | Reference to registered service definition, if any.                                                                   |
+| `providers`          | Reference to the set of identity provider configuration identified as `DelegatedClientIdentityProviderConfiguration`. |
+| `applicationContext` | Reference to the application context as `ApplicationContext`.                                                         |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.                                           |
 
 ## Identity Provider Selection Per Service
 
@@ -115,7 +115,7 @@ whose path specified directly in the service definition as part of the authentic
 }
 ```
 
-<div class="alert alert-info mt-3"><strong>Usage</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>
 If you wish, you may also use a <i>Groovy Inline</i> syntax using the <code>groovy {...}</code> construct.</p></div>
 
 The collection of parameters and the script body are identical to the *Identity Provider Groovy Selection* option above.

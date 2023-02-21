@@ -5,7 +5,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
-import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import net.shibboleth.shared.xml.impl.BasicParserPool;
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -90,6 +90,7 @@ public class CoreSamlConfigurationTests {
         CasCoreUtilConfiguration.class,
         CoreSamlConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreNotificationsConfiguration.class,

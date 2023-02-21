@@ -23,11 +23,24 @@ public class ConfigurationMetadataUnitParser {
     private final String sourcePath;
 
     /**
+     * Gets compilation unit.
+     *
+     * @param typePath the type path
+     * @return the compilation unit
+     */
+    @SneakyThrows
+    public static CompilationUnit getCompilationUnit(final String typePath) {
+        try (val is = Files.newInputStream(Paths.get(typePath))) {
+            return StaticJavaParser.parse(is);
+        }
+    }
+
+    /**
      * Parse compilation unit.
      *
      * @param collectedProps        the collected props
      * @param collectedGroups       the collected groups
-     * @param property                     the p
+     * @param property              the p
      * @param typePath              the type path
      * @param typeName              the type name
      * @param indexNameWithBrackets the index name with brackets
@@ -60,19 +73,6 @@ public class ConfigurationMetadataUnitParser {
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Gets compilation unit.
-     *
-     * @param typePath the type path
-     * @return the compilation unit
-     */
-    @SneakyThrows
-    public static CompilationUnit getCompilationUnit(final String typePath) {
-        try (val is = Files.newInputStream(Paths.get(typePath))) {
-            return StaticJavaParser.parse(is);
         }
     }
 }

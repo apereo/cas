@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@TestPropertySource(properties = "cas.sso.allow-missing-service-parameter=false")
+@TestPropertySource(properties = "cas.sso.services.allow-missing-service-parameter=false")
 @Tag("WebflowActions")
 public class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     @Autowired

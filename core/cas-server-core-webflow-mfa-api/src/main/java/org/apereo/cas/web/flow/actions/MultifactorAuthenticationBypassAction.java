@@ -63,10 +63,10 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
      * @return true/false
      */
     protected boolean isMultifactorAuthenticationBypass(final RequestContext requestContext,
-                                                      final RegisteredService service,
-                                                      final MultifactorAuthenticationProvider provider) {
+                                                        final RegisteredService service,
+                                                        final MultifactorAuthenticationProvider provider) {
         val failureEval = provider.getFailureModeEvaluator();
         return requestContext.getCurrentTransition().getId().equals(CasWebflowConstants.TRANSITION_ID_BYPASS)
-            || (failureEval != null && failureEval.evaluate(service, provider).isAllowedToBypass() && !provider.isAvailable(service));
+               || (failureEval != null && failureEval.evaluate(service, provider).isAllowedToBypass() && !provider.isAvailable(service));
     }
 }

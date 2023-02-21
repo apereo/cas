@@ -2,7 +2,6 @@ package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
@@ -34,11 +33,8 @@ public class NoOpPasswordManagementServiceTests {
     public void verifyChange() {
         val properties = new PasswordManagementProperties();
         val service = new NoOpPasswordManagementService(CipherExecutor.noOpOfSerializableToString(), "CAS", properties);
-        assertFalse(service.changeInternal(
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"),
-            new PasswordChangeRequest()));
+        assertFalse(service.changeInternal(new PasswordChangeRequest()));
     }
-
 
     @Test
     public void verifyTokenParsing() {

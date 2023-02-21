@@ -20,6 +20,28 @@ public interface AuthenticationAttributeReleasePolicy {
     String BEAN_NAME = "authenticationAttributeReleasePolicy";
 
     /**
+     * NoOp authentication attribute release policy.
+     *
+     * @return the authentication attribute release policy
+     */
+    static AuthenticationAttributeReleasePolicy none() {
+        return new AuthenticationAttributeReleasePolicy() {
+            @Override
+            public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                                   final Assertion assertion, final Map<String, Object> model,
+                                                                                   final RegisteredService service) {
+                return new HashMap<>(0);
+            }
+
+            @Override
+            public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                                   final RegisteredService service) {
+                return new HashMap<>(0);
+            }
+        };
+    }
+
+    /**
      * This method will return the Authentication attributes that should be released.
      *
      * @param authentication The authentication object we are processing.
@@ -41,26 +63,4 @@ public interface AuthenticationAttributeReleasePolicy {
      * @return the authentication attributes for release
      */
     Map<String, List<Object>> getAuthenticationAttributesForRelease(Authentication authentication, RegisteredService service);
-
-    /**
-     * NoOp authentication attribute release policy.
-     *
-     * @return the authentication attribute release policy
-     */
-    static AuthenticationAttributeReleasePolicy none() {
-        return new AuthenticationAttributeReleasePolicy() {
-            @Override
-            public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
-                                                                                   final Assertion assertion, final Map<String, Object> model,
-                                                                                   final RegisteredService service) {
-                return new HashMap<>(0);
-            }
-
-            @Override
-            public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
-                                                                                   final RegisteredService service) {
-                return new HashMap<>(0);
-            }
-        };
-    }
 }

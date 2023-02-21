@@ -1,4 +1,11 @@
 description = "Apereo CAS Apache Syncope Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Apache Syncope Authentication"
+    ]
+}
 dependencies {
     implementation libraries.apachecxfsearch
 

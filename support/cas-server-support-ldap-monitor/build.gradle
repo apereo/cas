@@ -1,4 +1,11 @@
 description = "Apereo CAS LDAP Monitor Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS LDAP & Active Directory Monitoring"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
     

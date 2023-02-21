@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link JwtTokenTicketBuilder}.
@@ -48,7 +49,7 @@ public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationP
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
             .registeredService(Optional.ofNullable(registeredService))
-            .serviceAudience(webApplicationService.getId())
+            .serviceAudience(Set.of(webApplicationService.getId()))
             .issueDate(new Date())
             .jwtId(serviceTicketId)
             .subject(assertion.getPrincipal().getId())
@@ -73,7 +74,7 @@ public record JwtTokenTicketBuilder(TicketValidator ticketValidator, ExpirationP
 
         val builder = JwtBuilder.JwtRequest.builder();
         val request = builder
-            .serviceAudience(casProperties.getServer().getPrefix())
+            .serviceAudience(Set.of(casProperties.getServer().getPrefix()))
             .registeredService(Optional.empty())
             .issueDate(DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()))
             .jwtId(ticketGrantingTicket.getId())

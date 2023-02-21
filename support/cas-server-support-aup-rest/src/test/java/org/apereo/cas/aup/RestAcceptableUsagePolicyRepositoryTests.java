@@ -25,6 +25,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,6 +46,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
     public void verify() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.setPreferredLocales(List.of(Locale.GERMAN));
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
@@ -70,6 +73,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
     public void verifyFails() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.setPreferredLocales(List.of(Locale.GERMAN));
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);

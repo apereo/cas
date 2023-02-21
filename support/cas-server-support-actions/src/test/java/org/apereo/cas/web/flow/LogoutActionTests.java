@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

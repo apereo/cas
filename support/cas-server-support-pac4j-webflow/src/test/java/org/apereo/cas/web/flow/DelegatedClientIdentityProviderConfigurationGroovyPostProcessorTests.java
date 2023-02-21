@@ -5,7 +5,7 @@ import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;

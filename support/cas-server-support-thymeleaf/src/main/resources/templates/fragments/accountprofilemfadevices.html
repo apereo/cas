@@ -13,39 +13,41 @@
 <body>
 <span th:fragment="mfadevices">
         <script type="text/javascript">
-            (material => {
+            ((material, bootstrap) => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#mfaDevicesTable').DataTable();
-                    let mfaDeviceDialog = material.dialog.MDCDialog.attachTo(document.getElementById('mfaDevice-dialog'));
-
+                    let dialogId = 'mfaDevice-dialog';
+                    let dialog = material ?
+                        material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
+                        new bootstrap.Modal(document.getElementById(dialogId), {});
                     document.getElementsByName("viewMfaDeviceDetails").forEach(btn => {
                         btn.addEventListener('click', event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#mfaDeviceDetails").text(json);
                             hljs.highlightAll();
-                            mfaDeviceDialog.open();
+                            dialog[material ? 'open' : 'show']();
                             event.preventDefault();
                         }, false);
                     });
                 });
-            })(mdc);
+            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
 
-       <div class="mdc-dialog" id="mfaDevice-dialog" role="alertdialog"
+       <div class="mdc-dialog modal" id="mfaDevice-dialog" role="alertdialog"
             aria-modal="true" aria-labelledby="mfa-dialog-title" aria-describedby="mfa-dialog-content">
-            <div class="mdc-dialog__container w-100">
-                <div class="mdc-dialog__surface mw-100">
-                    <h1 class="mdc-dialog__title mt-lg-2" id="mfa-dialog-title">
+            <div class="mdc-dialog__container w-100 modal-dialog">
+                <div class="mdc-dialog__surface mw-100 modal-content">
+                    <h1 class="mdc-dialog__title mt-lg-2 modal-header" id="mfa-dialog-title">
                         Entry Details
                     </h1>
-                    <div class="mdc-dialog__content" id="mfa-dialog-content">
+                    <div class="mdc-dialog__content modal-body" id="mfa-dialog-content">
                         <p>Here are the details for this record entry.</p>
                         <pre><code id="mfaDeviceDetails" class="border-rounded language-json">Text</code></pre>
                     </div>
-                    <footer class="mdc-dialog__actions">
+                    <footer class="mdc-dialog__actions modal-footer">
                         <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
-                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default data-bs-dismiss="modal">
                             <span class="mdc-button__label">Close</span>
                         </button>
                     </footer>
@@ -85,10 +87,10 @@
                     <td class="mdc-data-table__cell" th:title="${entry.model}" th:utext="*{entry.model}?: 'N/A'">Value</td>
                     <td class="mdc-data-table__cell" th:title="${entry.number}" th:utext="*{entry.number}?: 'N/A'">Value</td>
                     <td class="mdc-data-table__cell">
-                        <a name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}">
-                            <i class="mdi mdi-account-details fas fa-add"></i>
+                        <button type="button" name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}" class="btn btn-link">
+                            <i class="mdi mdi-account-details fas fa-eye"></i>
                             <span style="display: none" th:utext="${entry.payload}"/>
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 </tbody>

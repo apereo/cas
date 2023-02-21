@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Ldap")
+@Tag("LdapAttributes")
 public class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 
@@ -34,8 +35,7 @@ import java.util.Map;
 public class CasPersonDirectoryTestConfiguration {
     @Bean
     public List<IPersonAttributeDao> attributeRepositories(
-        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository) {
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final IPersonAttributeDao attributeRepository) {
         return CollectionUtils.wrap(attributeRepository);
     }
 
@@ -63,6 +63,10 @@ public class CasPersonDirectoryTestConfiguration {
 
     @Bean
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         final IPersonAttributeDao attributeRepository) {
@@ -71,6 +75,7 @@ public class CasPersonDirectoryTestConfiguration {
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
                 attributeRepository,
                 CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                servicesManager, attributeDefinitionStore,
                 personDirectory);
             plan.registerPrincipalResolver(resolver);
         };

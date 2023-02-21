@@ -5,14 +5,16 @@ import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
@@ -38,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 public class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
@@ -52,6 +54,7 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     public void verifyOperationWithProfile() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -64,7 +67,7 @@ public class DelegatedAuthenticationClientLogoutActionTests {
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertNotNull(WebUtils.getDelegatedAuthenticationLogoutRequest(context, DelegatedAuthenticationClientLogoutRequest.class));
+        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(context, DelegatedAuthenticationClientLogoutRequest.class));
         val tgt = new MockTicketGrantingTicket("casuser");
 
         logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
@@ -79,6 +82,7 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     public void verifyOperationWithNoProfile() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         val result = delegatedAuthenticationClientLogoutAction.execute(context);

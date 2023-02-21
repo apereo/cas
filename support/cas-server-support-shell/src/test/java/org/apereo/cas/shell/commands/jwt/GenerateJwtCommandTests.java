@@ -19,20 +19,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GenerateJwtCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "generate-jwt --subject casuser"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser"));
     }
 
     @Test
     public void verifyBadSize() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "generate-jwt --subject casuser --signingSecretSize -1 "));
-        assertDoesNotThrow(() -> shell.evaluate(() -> "generate-jwt --subject casuser --encryptionSecretSize -1 "));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser --signingSecretSize -1 "));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser --encryptionSecretSize -1 "));
     }
 
     @Test
     public void verifyBadAlg() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "generate-jwt --subject casuser --encryptionAlgorithm dir --encryptionMethod A128KW "));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-jwt --subject casuser --encryptionAlgorithm dir --encryptionMethod A128KW "));
         assertDoesNotThrow(
-            () -> shell.evaluate(() -> "generate-jwt --subject casuser --encryptionAlgorithm A128KW --encryptionMethod A128CBC_HS256"));
+            () -> runShellCommand(() -> () -> "generate-jwt --subject casuser --encryptionAlgorithm A128KW --encryptionMethod A128CBC_HS256"));
 
     }
 

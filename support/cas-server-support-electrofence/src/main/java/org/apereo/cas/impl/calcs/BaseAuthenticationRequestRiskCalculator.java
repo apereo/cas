@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZoneOffset;
@@ -89,7 +89,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
 
         val date = ZonedDateTime.now(ZoneOffset.UTC)
-            .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
+            .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getCore().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }
 

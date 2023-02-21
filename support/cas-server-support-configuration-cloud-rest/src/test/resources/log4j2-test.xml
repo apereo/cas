@@ -6,7 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error">
+        <Logger name="org.apereo" level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apache" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

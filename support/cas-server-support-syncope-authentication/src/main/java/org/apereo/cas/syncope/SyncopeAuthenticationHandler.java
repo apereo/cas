@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -17,9 +18,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 
 import javax.security.auth.login.FailedLoginException;
@@ -38,17 +40,16 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final String syncopeUrl;
+    private final SyncopeAuthenticationProperties properties;
 
     private final String syncopeDomain;
 
-    public SyncopeAuthenticationHandler(final String name,
+    public SyncopeAuthenticationHandler(final SyncopeAuthenticationProperties properties,
                                         final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
-                                        final String syncopeUrl,
                                         final String syncopeDomain) {
-        super(name, servicesManager, principalFactory, null);
-        this.syncopeUrl = syncopeUrl;
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        this.properties = properties;
         this.syncopeDomain = syncopeDomain;
     }
 
@@ -66,7 +67,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
                 throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
             }
-            val principal = this.principalFactory.createPrincipal(user.get("username").asText(), SyncopeUtils.convertFromUserEntity(user));
+            val principal = principalFactory.createPrincipal(user.get("username").asText(),
+                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
@@ -75,18 +77,18 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+            val syncopeRestUrl = StringUtils.appendIfMissing(properties.getUrl(), "/rest/users/self");
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(credential.getUsername())
                 .basicAuthPassword(credential.toPassword())
-                .headers(CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain))
+                .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                val result = EntityUtils.toString(response.getEntity());
+            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+            if (response.getCode() == HttpStatus.SC_OK) {
+                val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
                 LOGGER.debug("Received user object as [{}]", result);
                 return Optional.of(MAPPER.readTree(result));
             }

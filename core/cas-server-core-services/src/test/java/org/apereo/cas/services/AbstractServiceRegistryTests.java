@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -107,7 +109,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @BeforeEach
     public void setUp() {
-        this.serviceRegistry = getNewServiceRegistry();
+        serviceRegistry = getNewServiceRegistry();
         clearServiceRegistry();
         initializeServiceRegistry();
     }
@@ -138,39 +140,39 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifySaveAndLoad(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        this.serviceRegistry.deleteAll();
+        serviceRegistry.deleteAll();
         for (var i = 0; i < getLoadSize(); i++) {
             val svc = buildRegisteredServiceInstance(i, registeredServiceClass);
-            this.serviceRegistry.save(svc);
+            serviceRegistry.save(svc);
 
-            val svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
+            val svc2 = serviceRegistry.findServiceByExactServiceName(svc.getName());
             assertNotNull(svc2, registeredServiceClass::getName);
 
-            val svc3 = this.serviceRegistry.findServiceById(svc2.getId());
+            val svc3 = serviceRegistry.findServiceById(svc2.getId());
             assertEquals(svc2, svc3);
 
-            this.serviceRegistry.delete(svc2);
+            serviceRegistry.delete(svc2);
         }
-        val results = this.serviceRegistry.load();
+        val results = serviceRegistry.load();
         assertTrue(results.isEmpty());
-        assertEquals(0, this.serviceRegistry.getServicesStream().count());
-        assertEquals(0, this.serviceRegistry.size());
+        assertEquals(0, serviceRegistry.getServicesStream().count());
+        assertEquals(0, serviceRegistry.size());
     }
 
     @Test
     public void verifyNonExistingService() {
-        assertNull(this.serviceRegistry.findServiceById(9999991));
+        assertNull(serviceRegistry.findServiceById(9999991));
     }
 
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifySavingServices(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        this.serviceRegistry.save(buildRegisteredServiceInstance(100, registeredServiceClass));
-        val services = this.serviceRegistry.load();
+        serviceRegistry.save(buildRegisteredServiceInstance(100, registeredServiceClass));
+        val services = serviceRegistry.load();
         assertEquals(1, services.size(), registeredServiceClass::getName);
         assertEquals(1, serviceRegistry.size(), registeredServiceClass::getName);
-        this.serviceRegistry.save(buildRegisteredServiceInstance(101, registeredServiceClass));
-        val services2 = this.serviceRegistry.load();
+        serviceRegistry.save(buildRegisteredServiceInstance(101, registeredServiceClass));
+        val services2 = serviceRegistry.load();
         assertEquals(2, services2.size(), registeredServiceClass::getName);
         assertEquals(2, serviceRegistry.size(), registeredServiceClass::getName);
     }
@@ -178,10 +180,10 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyUpdatingServices(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        this.serviceRegistry.save(buildRegisteredServiceInstance(200, registeredServiceClass));
-        val services = this.serviceRegistry.load();
+        serviceRegistry.save(buildRegisteredServiceInstance(200, registeredServiceClass));
+        val services = serviceRegistry.load();
         assertFalse(services.isEmpty());
-        val rs = (BaseRegisteredService) this.serviceRegistry.findServiceById(services.stream()
+        val rs = (BaseRegisteredService) serviceRegistry.findServiceById(services.stream()
             .findFirst().orElse(null).getId());
         assertNotNull(rs, registeredServiceClass::getName);
         rs.setEvaluationOrder(9999);
@@ -196,16 +198,16 @@ public abstract class AbstractServiceRegistryTests {
             ((CasRegisteredService) rs).setProxyPolicy(policy);
         }
         rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
-        assertNotNull(this.serviceRegistry.save(rs), registeredServiceClass::getName);
+        assertNotNull(serviceRegistry.save(rs), registeredServiceClass::getName);
 
-        val rs3 = (WebBasedRegisteredService) this.serviceRegistry.findServiceById(rs.getId());
+        val rs3 = (WebBasedRegisteredService) serviceRegistry.findServiceById(rs.getId());
         assertEquals(rs3.getDescription(), rs.getDescription());
         assertEquals(rs3.getEvaluationOrder(), rs.getEvaluationOrder());
         assertEquals(rs3.getUsernameAttributeProvider(), rs.getUsernameAttributeProvider());
         assertEquals(rs3.getServiceId(), rs.getServiceId());
         assertEquals(rs3.getTheme(), rs.getTheme());
 
-        val rs4 = this.serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
+        val rs4 = serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
         assertTrue(rs4.stream().map(rs5 -> rs5.getName().equals(rs.getName())).findFirst().isPresent());
     }
 
@@ -214,36 +216,35 @@ public abstract class AbstractServiceRegistryTests {
     public void verifyDeletingSingleService(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val rs = buildRegisteredServiceInstance(300, registeredServiceClass);
         val rs2 = buildRegisteredServiceInstance(301, registeredServiceClass);
-        this.serviceRegistry.save(rs2);
-        this.serviceRegistry.save(rs);
-        this.serviceRegistry.load();
-        this.serviceRegistry.delete(rs2);
+        serviceRegistry.save(rs2);
+        serviceRegistry.save(rs);
+        serviceRegistry.load();
+        serviceRegistry.delete(rs2);
 
-        assertFalse(this.serviceRegistry.load().isEmpty());
+        assertFalse(serviceRegistry.load().isEmpty());
 
-        val rsNew = this.serviceRegistry.findServiceByExactServiceName(rs.getName());
+        val rsNew = serviceRegistry.findServiceByExactServiceName(rs.getName());
         assertNotNull(rsNew);
     }
 
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyDeletingServices(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        this.serviceRegistry.save(buildRegisteredServiceInstance(400, registeredServiceClass));
-        this.serviceRegistry.save(buildRegisteredServiceInstance(401, registeredServiceClass));
-        val services = this.serviceRegistry.load();
-        services.forEach(registeredService -> this.serviceRegistry.delete(registeredService));
-        assertEquals(0, this.serviceRegistry.load().size());
+        serviceRegistry.save(buildRegisteredServiceInstance(400, registeredServiceClass));
+        serviceRegistry.save(buildRegisteredServiceInstance(401, registeredServiceClass));
+        val services = serviceRegistry.load();
+        services.forEach(registeredService -> serviceRegistry.delete(registeredService));
+        assertEquals(0, serviceRegistry.load().size());
     }
 
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyExpiredServiceDeleted(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(1)));
-        val r2 = this.serviceRegistry.save(r);
-        this.serviceRegistry.load();
-        val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
-        assertNotNull(svc);
+        val service = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(1)));
+        val savedService = serviceRegistry.save(service);
+        serviceRegistry.load();
+        await().untilAsserted(() -> assertNotNull(serviceRegistry.findServiceByExactServiceName(savedService.getName())));
     }
 
     @ParameterizedTest
@@ -259,11 +260,11 @@ public abstract class AbstractServiceRegistryTests {
         r2.setEvaluationOrder(1);
         serviceRegistry.save(r2);
 
-        val svc = this.serviceRegistry.findServiceBy("serviceid");
+        val svc = serviceRegistry.findServiceBy("serviceid");
         assertNotNull(svc);
         assertEquals(r2, svc);
 
-        assertNull(this.serviceRegistry.findServiceBy("this-service-id-does-not-exist"));
+        assertNull(serviceRegistry.findServiceBy("this-service-id-does-not-exist"));
     }
 
     @ParameterizedTest
@@ -272,10 +273,10 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         val expirationDate = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(1);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
-        val r2 = this.serviceRegistry.save(r);
-        val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
+        val r2 = serviceRegistry.save(r);
+        val svc = serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc, () -> "1: " + registeredServiceClass.getName());
-        val svc2 = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
+        val svc2 = serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc2, () -> "2: " + registeredServiceClass.getName());
     }
 
@@ -284,11 +285,11 @@ public abstract class AbstractServiceRegistryTests {
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes(
         final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
-        assertNotNull(this.serviceRegistry.findServiceByExactServiceId(r.getServiceId()));
-        assertNotNull(this.serviceRegistry.findServiceByExactServiceName(r.getName()));
+        assertNotNull(serviceRegistry.findServiceByExactServiceId(r.getServiceId()));
+        assertNotNull(serviceRegistry.findServiceByExactServiceName(r.getName()));
     }
 
     @ParameterizedTest
@@ -299,8 +300,8 @@ public abstract class AbstractServiceRegistryTests {
         val providers = CollectionUtils.wrapList("one", "two");
         strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(providers, true, false, null));
         r.setAccessStrategy(strategy);
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -318,8 +319,8 @@ public abstract class AbstractServiceRegistryTests {
         policy.setPrincipalAttributeNameTrigger("memberOf");
         policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
         r.setMultifactorAuthenticationPolicy(policy);
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -328,8 +329,8 @@ public abstract class AbstractServiceRegistryTests {
     public void execSaveMethodWithDefaultUsernameAttribute(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -341,8 +342,8 @@ public abstract class AbstractServiceRegistryTests {
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
             CollectionUtils.wrapSet("test")));
         r.setAttributeReleasePolicy(policy);
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -350,9 +351,13 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void ensureSaveMethodWithDefaultPrincipalAttribute(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn", "UPPER"));
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+
+        val provider = new PrincipalAttributeRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        provider.setUsernameAttribute("cn");
+        r.setUsernameAttributeProvider(provider);
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -363,9 +368,9 @@ public abstract class AbstractServiceRegistryTests {
         r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
-        val r2 = this.serviceRegistry.save(r);
-        this.serviceRegistry.load();
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        serviceRegistry.load();
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         val anon = (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         val ss = (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
         assertEquals("helloworld", ss.getSalt());
@@ -377,8 +382,8 @@ public abstract class AbstractServiceRegistryTests {
     public void verifyServiceExpirationPolicy(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now(ZoneId.systemDefault()).toString()));
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
         assertNotNull(r3.getExpirationPolicy());
         assertEquals(r2.getExpirationPolicy(), r3.getExpirationPolicy());
@@ -389,8 +394,8 @@ public abstract class AbstractServiceRegistryTests {
     public void verifySaveAttributeReleasePolicy(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
@@ -400,12 +405,12 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifySaveMethodWithExistingServiceNoAttribute(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        this.serviceRegistry.save(r);
+        serviceRegistry.save(r);
         r.setTheme("mytheme");
 
-        this.serviceRegistry.save(r);
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        serviceRegistry.save(r);
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -422,8 +427,8 @@ public abstract class AbstractServiceRegistryTests {
         policy.setAllowedAttributes(CollectionUtils.wrap(map));
         r.setAttributeReleasePolicy(policy);
 
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
@@ -438,8 +443,8 @@ public abstract class AbstractServiceRegistryTests {
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
         r.setAttributeReleasePolicy(policy);
 
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
@@ -464,8 +469,8 @@ public abstract class AbstractServiceRegistryTests {
         r.setAttributeReleasePolicy(policy);
         r.getAttributeReleasePolicy().setAttributeFilter(new RegisteredServiceRegexAttributeFilter("\\w+"));
 
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
@@ -476,7 +481,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifyServiceType(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        val r2 = this.serviceRegistry.save(r);
+        val r2 = serviceRegistry.save(r);
         assertSame(r2.getClass(), registeredServiceClass);
     }
 
@@ -486,14 +491,14 @@ public abstract class AbstractServiceRegistryTests {
         val list = new ArrayList<RegisteredService>(5);
         IntStream.range(1, 5).forEach(i -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-            list.add(this.serviceRegistry.save(r));
+            list.add(serviceRegistry.save(r));
         });
 
         list.forEach(Unchecked.consumer(r2 -> {
             Thread.sleep(500);
-            this.serviceRegistry.delete(r2);
+            serviceRegistry.delete(r2);
             Thread.sleep(2000);
-            assertNull(this.serviceRegistry.findServiceById(r2.getId()));
+            assertNull(serviceRegistry.findServiceById(r2.getId()));
         }));
     }
 
@@ -509,8 +514,8 @@ public abstract class AbstractServiceRegistryTests {
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
 
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -524,8 +529,8 @@ public abstract class AbstractServiceRegistryTests {
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
         r.setAccessStrategy(authz);
 
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -539,8 +544,8 @@ public abstract class AbstractServiceRegistryTests {
         authz.setAcceptableResponseCodes("200,405,403");
         r.setAccessStrategy(authz);
 
-        val r2 = this.serviceRegistry.save(r);
-        val r3 = this.serviceRegistry.findServiceById(r2.getId());
+        val r2 = serviceRegistry.save(r);
+        val r3 = serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -551,9 +556,9 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setPublicKey(publicKey);
 
-        this.serviceRegistry.save(r);
-        this.serviceRegistry.load();
-        assertNotNull(this.serviceRegistry.findServiceByExactServiceName(r.getName()));
+        serviceRegistry.save(r);
+        serviceRegistry.load();
+        assertNotNull(serviceRegistry.findServiceByExactServiceName(r.getName()));
     }
 
     @ParameterizedTest
@@ -568,8 +573,8 @@ public abstract class AbstractServiceRegistryTests {
         p.setAttributeFilter(filter);
 
         r.setAttributeReleasePolicy(p);
-        this.serviceRegistry.save(r);
-        this.serviceRegistry.load();
+        serviceRegistry.save(r);
+        serviceRegistry.load();
     }
 
     @ParameterizedTest
@@ -582,9 +587,9 @@ public abstract class AbstractServiceRegistryTests {
         contact.setName("Contact");
         contact.setPhone("123-456-7890");
         r.setContacts(CollectionUtils.wrap(contact));
-        this.serviceRegistry.save(r);
-        this.serviceRegistry.load();
-        this.serviceRegistry.delete(r);
+        serviceRegistry.save(r);
+        serviceRegistry.load();
+        serviceRegistry.delete(r);
     }
 
     @ParameterizedTest
@@ -609,15 +614,15 @@ public abstract class AbstractServiceRegistryTests {
 
         r.setProperties(properties);
 
-        this.serviceRegistry.save(r);
-        this.serviceRegistry.load();
-        assertNotNull(this.serviceRegistry.findServiceByExactServiceName(r.getName()));
+        serviceRegistry.save(r);
+        serviceRegistry.load();
+        assertNotNull(serviceRegistry.findServiceByExactServiceName(r.getName()));
         assertEquals(2, r.getProperties().size());
         assertNotNull(r.getProperties().get("field1"));
 
         val prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
-        this.serviceRegistry.delete(r);
+        serviceRegistry.delete(r);
     }
 
     /**

@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 
@@ -36,8 +37,9 @@ public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreEnvironmentManagerConfiguration {
-        @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
+        @ConditionalOnMissingBean(name = CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
         @Bean
         public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
             final ConfigurationPropertiesBindingPostProcessor binder) {
@@ -47,6 +49,7 @@ public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreEnvironmentFactoryConfiguration {
         @ConfigurationPropertiesBinding
         @Bean
@@ -64,8 +67,7 @@ public class CasCoreEnvironmentConfiguration {
         @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
         @Bean
         public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
-            @Qualifier("casConfigurationCipherExecutor")
-            final CipherExecutor<String, String> casConfigurationCipherExecutor,
+            @Qualifier("casConfigurationCipherExecutor") final CipherExecutor<String, String> casConfigurationCipherExecutor,
             final Environment environment) {
             return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor, environment);
         }
@@ -73,14 +75,13 @@ public class CasCoreEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class CasCoreEnvironmentLocatorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier("configurationPropertiesEnvironmentManager")
-            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
-            @Qualifier("configurationPropertiesLoaderFactory")
-            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
+            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME) final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+            @Qualifier("configurationPropertiesLoaderFactory") final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
             return new StandaloneConfigurationFilePropertiesSourceLocator(
                 configurationPropertiesEnvironmentManager, configurationPropertiesLoaderFactory);
         }

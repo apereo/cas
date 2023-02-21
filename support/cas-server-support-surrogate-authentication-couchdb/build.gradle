@@ -1,4 +1,11 @@
 description = "Apereo CAS Surrogate Authentication CouchDb Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation via Apache CouchDb"
+    ]
+}
 dependencies {
 
     implementation libraries.ektorp
@@ -6,6 +13,7 @@ dependencies {
     implementation project(":support:cas-server-support-couchdb-core")
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-surrogate-core")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")

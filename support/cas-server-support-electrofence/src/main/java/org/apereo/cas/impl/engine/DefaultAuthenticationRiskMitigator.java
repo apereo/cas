@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apereo.inspektr.audit.annotation.Audit;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link DefaultAuthenticationRiskMitigator}.

@@ -1,4 +1,11 @@
 description = "Apereo CAS Sentry Monitoring and Tracking Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS Sentry Monitoring"
+    ]
+}
 dependencies {
     implementation libraries.sentry
 }

@@ -35,9 +35,20 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
 
     private final RegisteredServiceCipherExecutor cipherExecutor;
 
+    private static void removeAttributeAndCacheForEncoding(final Map<String, Object> attributes,
+                                                           final Map<String, String> cachedAttributesToEncode,
+                                                           final String attributeName) {
+        val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
+        val collection = (Collection<?>) attributes.remove(attributeName);
+        if (collection != null && collection.size() == 1) {
+            cachedAttributesToEncode.put(attributeName, collection.iterator().next().toString());
+            LOGGER.debug(messageFormat, attributeName);
+        }
+    }
+
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
-        final RegisteredService registeredService, final WebApplicationService webApplicationService) {
+                                                final RegisteredService registeredService, final WebApplicationService webApplicationService) {
         LOGGER.trace("Starting to encode attributes for release to service [{}]", registeredService);
         val newEncodedAttributes = new HashMap<>(attributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
@@ -83,16 +94,5 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         removeAttributeAndCacheForEncoding(attributes, cachedAttributesToEncode, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         removeAttributeAndCacheForEncoding(attributes, cachedAttributesToEncode, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
         return cachedAttributesToEncode;
-    }
-
-    private static void removeAttributeAndCacheForEncoding(final Map<String, Object> attributes,
-                                                           final Map<String, String> cachedAttributesToEncode,
-                                                           final String attributeName) {
-        val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
-        val collection = (Collection<?>) attributes.remove(attributeName);
-        if (collection != null && collection.size() == 1) {
-            cachedAttributesToEncode.put(attributeName, collection.iterator().next().toString());
-            LOGGER.debug(messageFormat, attributeName);
-        }
     }
 }

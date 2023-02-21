@@ -27,7 +27,9 @@ public class PasswordPolicyContext {
     private AuthenticationAccountStateHandler accountStateHandler;
 
     private boolean alwaysDisplayPasswordExpirationWarning;
+
     private int passwordWarningNumberOfDays = 30;
+
     private int loginFailures = 5;
 
     public PasswordPolicyContext(final int passwordWarningNumberOfDays) {

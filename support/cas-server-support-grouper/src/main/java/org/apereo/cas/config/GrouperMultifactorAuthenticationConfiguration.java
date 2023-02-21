@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -72,6 +73,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "grouperMultifactorAuthenticationWebflowEventResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")

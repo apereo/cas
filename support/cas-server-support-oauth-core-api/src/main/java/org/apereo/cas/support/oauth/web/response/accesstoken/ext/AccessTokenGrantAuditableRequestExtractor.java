@@ -12,8 +12,8 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.jee.context.JEEContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Collection;
 
@@ -46,6 +46,7 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
             .authentication(result.getAuthentication())
             .service(result.getService())
             .registeredService(result.getRegisteredService())
-            .executionResult(result).build();
+            .executionResult(result)
+            .build();
     }
 }

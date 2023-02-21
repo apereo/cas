@@ -103,12 +103,9 @@ public class ClientFlowExecutionRepositoryTests {
 
         @Bean
         public FlowExecutor flowExecutor(
-            @Qualifier("transcoder")
-            final Transcoder transcoder,
-            @Qualifier("flowExecutionFactory")
-            final FlowExecutionFactory flowExecutionFactory,
-            @Qualifier("flowRegistry")
-            final FlowDefinitionRegistry flowRegistry) {
+            @Qualifier("transcoder") final Transcoder transcoder,
+            @Qualifier("flowExecutionFactory") final FlowExecutionFactory flowExecutionFactory,
+            @Qualifier("flowRegistry") final FlowDefinitionRegistry flowRegistry) {
             val impl = new FlowExecutionImplFactory();
             val repo = getFlowExecutionRepository(transcoder, flowRegistry, impl);
             impl.setExecutionKeyFactory(repo);
@@ -117,8 +114,7 @@ public class ClientFlowExecutionRepositoryTests {
 
         @Bean
         public FlowDefinitionRegistry flowRegistry(
-            @Qualifier("flowBuilder")
-            final FlowBuilderServices flowBuilder) {
+            @Qualifier("flowBuilder") final FlowBuilderServices flowBuilder) {
             val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilder);
             builder.setBasePath("classpath:");
             builder.addFlowLocationPattern("/test/*-flow.xml");
@@ -135,10 +131,8 @@ public class ClientFlowExecutionRepositoryTests {
 
         @Bean
         public FlowExecutionFactory flowExecutionFactory(
-            @Qualifier("transcoder")
-            final Transcoder transcoder,
-            @Qualifier("flowRegistry")
-            final FlowDefinitionRegistry flowRegistry) {
+            @Qualifier("transcoder") final Transcoder transcoder,
+            @Qualifier("flowRegistry") final FlowDefinitionRegistry flowRegistry) {
             val impl = new FlowExecutionImplFactory();
             val repo = getFlowExecutionRepository(transcoder, flowRegistry, impl);
             impl.setExecutionKeyFactory(repo);

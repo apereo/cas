@@ -29,7 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class OAuth20Utils {
     public static ModelAndView writeError(final HttpServletResponse response,
                                           final String error, final String description) {
         val model = getErrorResponseBody(error, description);
-        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
+        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;
@@ -196,32 +196,6 @@ public class OAuth20Utils {
         return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
     }
 
-    /**
-     * Is response mode type form post?
-     *
-     * @param registeredService the registered service
-     * @param responseType      the response type
-     * @return true/false
-     */
-    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
-                                                     final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FORM_POST
-               || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
-    }
-
-    /**
-     * Is response mode type fragment?.
-     *
-     * @param registeredService the registered service
-     * @param responseType      the response type
-     * @return true/false
-     */
-    public static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
-                                                     final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FRAGMENT
-               || (registeredService != null && StringUtils.equalsIgnoreCase(
-            OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseType()));
-    }
 
     /**
      * Check the grant type against an expected grant type.

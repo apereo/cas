@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -47,7 +48,7 @@ public class AdaptiveAuthenticationPolicyProperties implements Serializable {
      * be rejected from participating in authentication transactions.
      */
     private String rejectIpAddresses;
-    
+
     /**
      * A map of ({@code mfaProviderId -> adaptiveRegexPattern}) that tells
      * CAS when to trigger an MFA authentication transaction.
@@ -60,6 +61,7 @@ public class AdaptiveAuthenticationPolicyProperties implements Serializable {
      * MFA provider represented by the map's key.
      * </p>
      */
+    @RegularExpressionCapable
     private Map<String, String> requireMultifactor = new HashMap<>(0);
 
     /**

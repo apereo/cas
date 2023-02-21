@@ -109,7 +109,7 @@ tasks.register('sourcesJar', Jar) {
 }
 
 tasks.register('resourcesJar', Jar) {
-    classifier "resources"
+    archiveClassifier.set("resources")
     from project.file("src/main/resources")
 }
 
@@ -144,21 +144,6 @@ tasks.register('downloadDependencies') {
                 config.files
             } catch (e) {
                 project.logger.info e.message
-            }
-        }
-    }
-}
-
-tasks.register('outputDependenciesWithoutLicense') {
-    description = "Output dependencies without approved license"
-    doLast {
-        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
-        if (results.exists()) {
-            def slurper = new groovy.json.JsonSlurper()
-            def dependencies = slurper.parseText(results.text)
-            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
-                ansi.red results.text
-                throw new GradleException("Dependencies found without allowed licenses")
             }
         }
     }

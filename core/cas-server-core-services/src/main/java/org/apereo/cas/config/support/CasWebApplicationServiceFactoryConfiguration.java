@@ -50,8 +50,7 @@ public class CasWebApplicationServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceFactoryConfigurer casWebApplicationServiceFactoryConfigurer(
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
             return () -> CollectionUtils.wrap(webApplicationServiceFactory);
         }
 

@@ -28,6 +28,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -347,7 +349,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(registeredService)
             .adaptor(adaptor)
             .binding(binding)

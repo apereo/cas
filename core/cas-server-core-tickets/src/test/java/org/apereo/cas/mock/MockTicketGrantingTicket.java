@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
@@ -92,13 +91,12 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
                                     final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
         this(new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes))
-            .addCredential(new BasicCredentialMetaData(credential))
+            .addCredential(credential)
             .setAttributes(authnAttributes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
-                    new BasicCredentialMetaData(credential)))
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), credential))
             .build());
     }
 
@@ -134,11 +132,6 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     }
 
     @Override
-    public Collection<String> getDescendantTickets() {
-        return this.descendantTickets;
-    }
-
-    @Override
     public void removeAllServices() {
     }
 
@@ -156,6 +149,11 @@ public class MockTicketGrantingTicket implements AuthenticatedServicesAwareTicke
     @Override
     public List<Authentication> getChainedAuthentications() {
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public Collection<String> getDescendantTickets() {
+        return this.descendantTickets;
     }
 
     @Override

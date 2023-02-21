@@ -21,6 +21,13 @@ public class MemoryMonitorHealthIndicator extends AbstractHealthIndicator {
      */
     private final long freeMemoryWarnThreshold;
 
+    private static void buildHealthCheckStatus(final Health.Builder builder,
+                                               final long freeMemory, final long totalMemory) {
+        builder
+            .withDetail("freeMemory", freeMemory)
+            .withDetail("totalMemory", totalMemory);
+    }
+
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         val runtime = Runtime.getRuntime();
@@ -32,12 +39,5 @@ public class MemoryMonitorHealthIndicator extends AbstractHealthIndicator {
         } else {
             buildHealthCheckStatus(builder.up(), free, total);
         }
-    }
-
-    private static void buildHealthCheckStatus(final Health.Builder builder,
-                                               final long freeMemory, final long totalMemory) {
-        builder
-            .withDetail("freeMemory", freeMemory)
-            .withDetail("totalMemory", totalMemory);
     }
 }

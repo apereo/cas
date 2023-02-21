@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.google.common.collect.Iterables;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.NotImplementedException;

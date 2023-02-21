@@ -21,8 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Setter
 @RequiredArgsConstructor
 public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebflowExceptionHandler<AbstractTicketException> {
-    private int order = Integer.MAX_VALUE - 1;
-
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
@@ -32,6 +30,8 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
      * String appended to exception class name to create a message bundle key for that particular error.
      */
     private final String messageBundlePrefix;
+
+    private int order = Integer.MAX_VALUE - 1;
 
     @Override
     public Event handle(final AbstractTicketException exception, final RequestContext requestContext) {
@@ -57,7 +57,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
     protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
         val match = this.errors.getRegisteredExceptions().stream()
-            .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
+            .filter(ex -> ex.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
 
         val msg = new MessageBuilder()

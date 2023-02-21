@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off"  />
+        <Logger name="org.apereo" level="error"  />
         <Logger name="org.springframework" level="off">
             <AppenderRef ref="console"/>
         </Logger>

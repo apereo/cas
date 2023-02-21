@@ -26,10 +26,8 @@ public class PasswordExpiringWarningMessageDescriptor extends DefaultMessageDesc
 
     @JsonCreator
     public PasswordExpiringWarningMessageDescriptor(
-        @JsonProperty("message")
-        final String message,
-        @JsonProperty("days")
-        final long days) {
+        @JsonProperty("message") final String message,
+        @JsonProperty("days") final long days) {
         super(CODE, message, new Serializable[]{days});
     }
 

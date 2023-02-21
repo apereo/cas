@@ -1,4 +1,5 @@
 #!/bin/bash
+
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -28,6 +29,8 @@ function validateProjectDocumentation() {
 
 clear
 
+GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8"
+
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 
@@ -49,6 +52,29 @@ dependencyVersions=true
 
 while (("$#")); do
   case "$1" in
+  --reset)
+    printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
+    ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
+    printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
+    exit 0
+    ;;
+  --local)
+    propFilter=$2
+    shift 2
+    printgreen "Generating documentation for property filter ${propFilter}\n"
+    serve=true
+    
+    audit=false
+    proofRead=false
+    actuators=false
+    thirdParty=false
+    serviceProps=false
+    publishDocs=false
+    buildDocs=true
+    buildFeatures=false
+    shellCommands=false
+    dependencyVersions=false
+    ;;
   --branch)
     branchVersion=$2
     shift 2
@@ -81,15 +107,15 @@ while (("$#")); do
     propFilter=$2
     shift 2
     ;;
-  --actuators)
+  --actuators|--act)
     actuators=$2
     shift 2
     ;;
-  --thirdParty|--thirdparty)
+  --thirdParty|--thirdparty|--tp)
     thirdParty=$2
     shift 2
     ;;
-  --serviceProperties)
+  --serviceProperties|--sp)
     serviceProps=$2
     shift 2
     ;;
@@ -105,7 +131,7 @@ while (("$#")); do
     dependencyVersions=$2
     shift 2
     ;;
-  --features)
+  --features|--feat|--ft)
     buildFeatures=$2
     shift 2
     ;;
@@ -125,20 +151,21 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" 
 fi
 
 echo "-------------------------------------------------------"
-printgreen "Branch: \t${branchVersion}"
-printgreen "Build: \t\t${buildDocs}"
-printgreen "Serve: \t\t${serve}"
-printgreen "Generate Data: \t${generateData}"
-printgreen "Validate: \t${proofRead}"
-printgreen "Publish: \t${publishDocs}"
-printgreen "Filter: \t${propFilter}"
-printgreen "Actuators: \t${actuators}"
-printgreen "Third Party: \t${thirdParty}"
+printgreen "Branch: \t\t${branchVersion}"
+printgreen "Build: \t\t\t${buildDocs}"
+printgreen "Serve: \t\t\t${serve}"
+printgreen "Generate Data: \t\t${generateData}"
+printgreen "Validate: \t\t${proofRead}"
+printgreen "Publish: \t\t${publishDocs}"
+printgreen "Filter: \t\t${propFilter}"
+printgreen "Actuators: \t\t${actuators}"
+printgreen "Third Party: \t\t${thirdParty}"
 printgreen "Dependency Versions: \t${dependencyVersions}"
-printgreen "Features: \t${buildFeatures}"
-printgreen "Shell: \t${shellCommands}"
-printgreen "Audit: \t${audit}"
-printgreen "Ruby Version: \t$(ruby -v)"
+printgreen "Service Properties: \t${serviceProps}"
+printgreen "Features: \t\t${buildFeatures}"
+printgreen "Shell: \t\t\t${shellCommands}"
+printgreen "Audit: \t\t\t${audit}"
+printgreen "Ruby Version: \t\t$(ruby -v)"
 echo "-------------------------------------------------------"
 
 cloneRepository=false
@@ -179,6 +206,7 @@ if [[ $cloneRepository == "true" ]]; then
   mkdir -p "$PWD/gh-pages/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes"
+  mkdir -p "$PWD/gh-pages/javascripts"
   mkdir -p "$PWD/gh-pages/_layouts"
   mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
@@ -189,6 +217,8 @@ if [[ $cloneRepository == "true" ]]; then
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
   mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"  
+  mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"  
+  mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"  
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"
@@ -206,7 +236,7 @@ if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
-    ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8
+    ./gradlew :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
     if [ $? -eq 1 ]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1

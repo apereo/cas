@@ -79,6 +79,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
             policies
                 .stream()
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .filter(context.getAttributeReleasePolicyPredicate())
                 .forEach(policy -> {
                     LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]",
                         policy.getName(), context.getPrincipal().getId());

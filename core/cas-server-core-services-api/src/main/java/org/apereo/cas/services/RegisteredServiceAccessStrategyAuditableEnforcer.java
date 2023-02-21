@@ -6,16 +6,21 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -26,16 +31,11 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
-    private final WatchableGroovyScriptResource accessStrategyScriptResource;
-
-    public RegisteredServiceAccessStrategyAuditableEnforcer(final CasConfigurationProperties casProperties) {
-        val location = casProperties.getAccessStrategy().getGroovy().getLocation();
-        this.accessStrategyScriptResource = location != null
-            ? new WatchableGroovyScriptResource(location)
-            : null;
-    }
-
+    
+    private final ConfigurableApplicationContext applicationContext;
+    
     private static Optional<AuditableExecutionResult> byServiceTicketAndAuthnResultAndRegisteredService(final AuditableContext context) {
         val providedRegisteredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent()
@@ -44,9 +44,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 val serviceTicket = context.getServiceTicket().orElseThrow();
                 val authResult = context.getAuthenticationResult().orElseThrow().getAuthentication();
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(),
-                    providedRegisteredService.get(), authResult.getPrincipal().getId(),
-                    (Map) CollectionUtils.merge(authResult.getAttributes(), authResult.getPrincipal().getAttributes()));
+                ensurePrincipalAccessIsAllowedForService(providedRegisteredService.get(), serviceTicket.getService(), authResult);
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -70,15 +68,21 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .build();
             try {
                 val authResult = ticketGrantingTicket.get().getRoot().getAuthentication();
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, authResult.getPrincipal().getId(),
-                    (Map) CollectionUtils.merge(authResult.getAttributes(), authResult.getPrincipal().getAttributes()));
+                ensurePrincipalAccessIsAllowedForService(registeredService, service, authResult);
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return Optional.of(result);
         }
         return Optional.empty();
+    }
+
+    protected static void ensurePrincipalAccessIsAllowedForService(final RegisteredService registeredService,
+                                                                   final Service service,
+                                                                   final Authentication authentication) {
+        val attributes = CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes());
+        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+            registeredService, authentication.getPrincipal().getId(), (Map) attributes);
     }
 
     private static Optional<AuditableExecutionResult> byRegisteredService(final AuditableContext context) {
@@ -167,10 +171,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .authentication(authentication)
                 .build();
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, authentication.getPrincipal().getId(),
-                    (Map) CollectionUtils.merge(authentication.getAttributes(),
-                        authentication.getPrincipal().getAttributes()));
+                ensurePrincipalAccessIsAllowedForService(registeredService, service, authentication);
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -184,7 +185,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         actionResolverName = AuditActionResolvers.SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER)
     public AuditableExecutionResult execute(final AuditableContext context) {
-        return byExternalGroovyScript(context)
+        return byExternalAccessStrategyEnforcers(context)
             .or(() -> byServiceTicketAndAuthnResultAndRegisteredService(context))
             .or(() -> byServiceAndRegisteredServiceAndTicketGrantingTicket(context))
             .or(() -> byServiceAndRegisteredServiceAndPrincipal(context))
@@ -198,23 +199,21 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     .authentication(context.getAuthentication().orElse(null))
                     .build();
                 result.setException(new UnauthorizedServiceException(
-                    UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized"));
+                    UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service Unauthorized"));
                 return result;
             });
     }
 
-    /**
-     * By external groovy script optional.
-     *
-     * @param context the context
-     * @return the optional
-     */
-    protected Optional<AuditableExecutionResult> byExternalGroovyScript(final AuditableContext context) {
-        return Optional.ofNullable(accessStrategyScriptResource)
-            .map(res -> {
-                val args = new Object[]{context, LOGGER};
-                return Optional.ofNullable(res.execute(args, AuditableExecutionResult.class, true));
-            })
-            .orElseGet(Optional::empty);
+    protected Optional<AuditableExecutionResult> byExternalAccessStrategyEnforcers(final AuditableContext context) {
+        val enforcers = applicationContext.getBeansOfType(RegisteredServiceAccessStrategyEnforcer.class).values();
+        return enforcers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .map(enforcer -> enforcer.execute(context))
+            .filter(Objects::nonNull)
+            .filter(AuditableExecutionResult::isExecutionFailure)
+            .findFirst();
     }
+
 }

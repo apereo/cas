@@ -13,14 +13,6 @@ import java.util.Map;
 public interface PrincipalAttributesMapper {
 
     /**
-     * Map principal attributes.
-     *
-     * @param request the request
-     * @return the map
-     */
-    Map<String, List<Object>> map(AttributeMappingRequest request);
-
-    /**
      * Default principal attributes mapper.
      *
      * @return the principal attributes mapper
@@ -28,4 +20,12 @@ public interface PrincipalAttributesMapper {
     static PrincipalAttributesMapper defaultMapper() {
         return new DefaultPrincipalAttributesMapper();
     }
+
+    /**
+     * Map principal attributes.
+     *
+     * @param request the request
+     * @return the map
+     */
+    Map<String, List<Object>> map(AttributeMappingRequest request);
 }

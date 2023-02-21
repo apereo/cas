@@ -27,8 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -124,15 +124,12 @@ public class OidcJwtAuthenticator implements Authenticator {
     }
 
     @Override
-    public void validate(final Credentials creds,
-                         final WebContext webContext,
-                         final SessionStore sessionStore) {
-
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
         val credentials = (UsernamePasswordCredentials) creds;
-        val registeredService = verifyCredentials(credentials, webContext);
+        val registeredService = verifyCredentials(credentials, callContext.webContext());
         if (registeredService == null) {
             LOGGER.warn("Unable to verify credentials");
-            return;
+            return Optional.empty();
         }
 
         val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
@@ -150,6 +147,7 @@ public class OidcJwtAuthenticator implements Authenticator {
                         .build();
                     determineUserProfile(credentials, consumer);
                 }))));
+        return Optional.of(credentials);
     }
 
 

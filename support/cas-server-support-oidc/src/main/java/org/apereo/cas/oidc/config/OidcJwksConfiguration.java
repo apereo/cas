@@ -33,6 +33,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -69,6 +70,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable oidcJsonWebKeystoreRotationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
@@ -83,6 +85,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRevocationScheduler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable oidcJsonWebKeystoreRevocationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
@@ -142,6 +145,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeyStoreListener")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public OidcJsonWebKeyStoreListener oidcJsonWebKeyStoreListener(
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
@@ -181,7 +185,6 @@ public class OidcJwksConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @SuppressWarnings("unchecked")
         @ConditionalOnMissingBean(name = "restOidcJsonWebKeystoreGeneratorService")
         public Supplier<OidcJsonWebKeystoreGeneratorService> restOidcJsonWebKeystoreGeneratorService(
             final CasConfigurationProperties casProperties,

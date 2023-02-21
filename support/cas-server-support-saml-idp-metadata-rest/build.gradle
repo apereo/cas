@@ -1,4 +1,11 @@
 description = "Apereo CAS SAML Identity Provider Metadata Resolution Via REST"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Metadata Management",
+            title: "SAML2 Metadata Management via REST"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")

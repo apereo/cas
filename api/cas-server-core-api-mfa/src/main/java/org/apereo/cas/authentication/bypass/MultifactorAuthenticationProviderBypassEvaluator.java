@@ -6,7 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Serializable;
 import java.util.Optional;
 

@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 /**
  * This is {@link SerialNoDnPrincipalResolverProperties}.
+ *
  * @since 6.0.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")

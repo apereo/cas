@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.exceptions;
 import lombok.NoArgsConstructor;
 
 import javax.security.auth.login.AccountException;
+
 import java.io.Serial;
 
 /**

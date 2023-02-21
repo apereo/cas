@@ -90,6 +90,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
             : null;
     }
 
+
     @Override
     public void close() {
         if (watcherService != null) {
@@ -97,6 +98,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
             this.watcherService.close();
         }
     }
+
 
     private void compileScriptResource(final Resource script) {
         this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);

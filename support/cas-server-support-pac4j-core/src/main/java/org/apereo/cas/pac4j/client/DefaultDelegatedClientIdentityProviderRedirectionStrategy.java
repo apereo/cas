@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -60,8 +61,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
             if (service != null) {
                 val registeredService = servicesManager.findServiceBy(service);
                 val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-                if (delegatedPolicy.isExclusive() && delegatedPolicy.getAllowedProviders().size() == 1
-                    && provider.getName().equalsIgnoreCase(delegatedPolicy.getAllowedProviders().iterator().next())) {
+                if (delegatedPolicy.isExclusiveToProvider(provider.getName())) {
                     LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
                     provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
                     return Optional.of(provider);
@@ -86,7 +86,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
                 }
             }
 
-            if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+            if (DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(context) == null
                 && provider.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
                 LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
                 return Optional.of(provider);

@@ -11,6 +11,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
@@ -57,9 +58,9 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         profileManager.save(true, new BasicUserProfile(), false);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
             ticketRegistry, oauthRequestParameterResolver);
-        assertFalse(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertFalse(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
         request.setQueryString("prompt=login");
-        assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
     }
 
     @Test
@@ -80,7 +81,7 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         profileManager.save(true, profile, false);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
             ticketRegistry, oauthRequestParameterResolver);
-        assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
     }
 
     @Test
@@ -93,6 +94,6 @@ public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcT
         profileManager.save(true, new BasicUserProfile(), false);
         val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
             ticketRegistry, oauthRequestParameterResolver);
-        assertTrue(logic.loadProfiles(profileManager, context, JEESessionStore.INSTANCE, List.of()).isEmpty());
+        assertTrue(logic.loadProfiles(new CallContext(context, JEESessionStore.INSTANCE), profileManager, List.of()).isEmpty());
     }
 }

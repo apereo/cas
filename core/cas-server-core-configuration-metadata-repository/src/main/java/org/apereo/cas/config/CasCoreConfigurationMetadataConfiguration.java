@@ -28,8 +28,7 @@ public class CasCoreConfigurationMetadataConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasConfigurationMetadataServerEndpoint configurationMetadataServerEndpoint(
-        @Qualifier("casConfigurationMetadataRepository")
-        final CasConfigurationMetadataRepository casConfigurationMetadataRepository,
+        @Qualifier("casConfigurationMetadataRepository") final CasConfigurationMetadataRepository casConfigurationMetadataRepository,
         final CasConfigurationProperties casProperties) {
         return new CasConfigurationMetadataServerEndpoint(casProperties, casConfigurationMetadataRepository);
     }

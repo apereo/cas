@@ -58,11 +58,6 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
     }
 
     @Override
-    public String getPrefix() {
-        return PREFIX;
-    }
-
-    @Override
     public void put(final String name, final Serializable value) {
         this.properties.put(name, value);
     }
@@ -91,6 +86,11 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
             return clazz.cast(this.properties.getOrDefault(name, defaultValue));
         }
         return defaultValue;
+    }
+
+    @Override
+    public String getPrefix() {
+        return PREFIX;
     }
 }
 

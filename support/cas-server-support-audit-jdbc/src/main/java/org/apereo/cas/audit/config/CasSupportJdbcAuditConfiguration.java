@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -41,7 +43,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
@@ -175,12 +177,9 @@ public class CasSupportJdbcAuditConfiguration {
                     t.setAsynchronous(jdbc.isAsynchronous());
                     t.setColumnLength(jdbc.getColumnLength());
                     t.setTableName(getAuditTableNameFrom(jdbc));
-                    if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
-                        t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
-                    }
-                    if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
-                        t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
-                    }
+
+                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), __ -> t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate()));
+                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), __ -> t.setDateFormatterPattern(jdbc.getDateFormatterPattern()));
                     return t;
                 })
                 .otherwiseProxy()
@@ -213,6 +212,7 @@ public class CasSupportJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Cleanable inspektrAuditTrailCleaner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("jdbcAuditTrailManager")

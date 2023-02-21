@@ -19,6 +19,7 @@ import org.springframework.core.io.Resource;
 @Getter
 public class GroovyAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final WatchableGroovyScriptResource watchableScript;
+
     private int order;
 
     public GroovyAuthenticationPostProcessor(final Resource groovyResource) {

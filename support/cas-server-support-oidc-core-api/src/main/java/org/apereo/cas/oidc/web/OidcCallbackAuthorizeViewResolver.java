@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -61,7 +62,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
 
             val responseType = oauthRequestParameterResolver.resolveResponseModeType(context);
-            val redirect = FunctionUtils.doIf(OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType),
+            val redirect = FunctionUtils.doIf(OAuth20ResponseModeFactory.isResponseModeTypeFormPost(registeredService, responseType),
                     originalRedirectUrl::get,
                     () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
                 .get();

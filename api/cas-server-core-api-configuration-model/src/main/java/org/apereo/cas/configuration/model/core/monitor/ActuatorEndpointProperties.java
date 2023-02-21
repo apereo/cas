@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 public class ActuatorEndpointProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2463521198550485506L;
+
     /**
      * Required user roles.
      */
@@ -40,8 +42,9 @@ public class ActuatorEndpointProperties implements Serializable {
     private List<String> requiredAuthorities = new ArrayList<>(0);
 
     /**
-     * Required ip addresses.
+     * Required IP addresses. CIDR ranges are accepted.
      */
+    @RegularExpressionCapable
     private List<String> requiredIpAddresses = new ArrayList<>(0);
 
     /**

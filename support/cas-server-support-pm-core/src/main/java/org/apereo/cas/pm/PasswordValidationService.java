@@ -1,7 +1,5 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-
 /**
  * This is {@link PasswordValidationService}.
  *
@@ -13,9 +11,8 @@ public interface PasswordValidationService {
     /**
      * Validate password.
      *
-     * @param c    the c
-     * @param bean the bean
+     * @param bean       the bean
      * @return true/false
      */
-    boolean isValid(UsernamePasswordCredential c, PasswordChangeRequest bean);
+    boolean isValid(PasswordChangeRequest bean);
 }

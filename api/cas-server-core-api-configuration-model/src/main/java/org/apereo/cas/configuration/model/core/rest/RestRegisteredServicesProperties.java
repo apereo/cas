@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.rest;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -40,5 +41,6 @@ public class RestRegisteredServicesProperties implements Serializable {
      * The attribute value may also be constructed as a regex pattern.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String attributeValue;
 }

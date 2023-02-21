@@ -32,4 +32,11 @@ public class Pac4jDelegatedAuthenticationProfileSelectionProperties implements S
      */
     @NestedConfigurationProperty
     private SpringResourceProperties groovy = new SpringResourceProperties();
+
+    /**
+     * Connect to an LDAP to locate candidate profiles for delegated authn.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationLdapProfileSelectionProperties ldap =
+        new Pac4jDelegatedAuthenticationLdapProfileSelectionProperties();
 }

@@ -19,6 +19,7 @@ public class DefaultRegisteredServiceDomainExtractor implements RegisteredServic
      * the Service and also passed as the service parameter to the login endpoint.
      */
     private final Pattern domainExtractor = RegexUtils.createPattern("^\\^?https?\\??://(.*?)(?:[(]?[:/]|$)");
+
     private final Pattern domainPattern = RegexUtils.createPattern("^[a-z0-9-.]*$");
 
     @Override

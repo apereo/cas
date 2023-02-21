@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -64,4 +66,7 @@ public class PrincipalResolutionContext {
     private final Set<String> activeAttributeRepositoryIdentifiers = new HashSet<>();
 
     private final IAttributeMerger attributeMerger;
+
+    private final ServicesManager servicesManager;
+    private final AttributeDefinitionStore attributeDefinitionStore;
 }

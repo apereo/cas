@@ -34,7 +34,7 @@ public class SyncopePrincipalProvisioningProperties extends BaseSyncopeSearchPro
      */
     @RequiredProperty
     private String realm = "/";
-    
+
     /**
      * Whether or not provisioning should be enabled with Syncope.
      */

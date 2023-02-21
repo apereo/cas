@@ -1,6 +1,11 @@
 description = "Apereo CAS Azure Cosmos DB Ticket Registry"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "CosmosDb Service Registry"
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api-services")
@@ -27,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

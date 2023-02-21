@@ -4,7 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -159,11 +160,12 @@ public class CoreAuthenticationTestUtils {
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes, final ZonedDateTime authnDate) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credential = new UsernamePasswordCredential("casuser", UUID.randomUUID().toString());
+        credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
         return new DefaultAuthenticationBuilder(principal)
-            .addCredential(meta)
+            .addCredential(credential)
             .setAuthenticationDate(authnDate)
-            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, meta))
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential))
             .setAttributes(attributes)
             .build();
     }
@@ -233,11 +235,11 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal) {
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credential = new UsernamePasswordCredential();
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new DefaultAuthenticationBuilder(principal)
-            .addCredential(meta)
-            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+            .addCredential(credential)
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential));
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal,
@@ -245,8 +247,8 @@ public class CoreAuthenticationTestUtils {
                                                                  final Map<String, List<Object>> attributes) {
         val builder = new DefaultAuthenticationBuilder(principal).setAttributes(attributes);
         handlers.forEach((credential, handler) -> {
-            builder.addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, new BasicCredentialMetaData(credential)));
-            builder.addCredential(new BasicCredentialMetaData(credential));
+            builder.addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential));
+            builder.addCredential(credential);
         });
         return builder;
     }

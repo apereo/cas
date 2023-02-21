@@ -1,4 +1,11 @@
 description = "Apereo CAS WebAuthN LDAP Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WebAuthN & FIDO2 Multifactor Authentication",
+            title: "WebAuthN Support via LDAP & Active Directory"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
     implementation libraries.webauthn

@@ -4,12 +4,14 @@ import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.impl.plans.RiskyAuthenticationException;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -22,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -39,9 +42,17 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @AutoConfiguration
 public class ElectronicFenceWebflowConfiguration {
 
+    @ConditionalOnMissingBean(name = "riskAwareCasWebflowExceptionConfigurer")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasWebflowExceptionConfigurer riskAwareCasWebflowExceptionConfigurer() {
+        return catalog -> catalog.registerException(RiskyAuthenticationException.class);
+    }
+    
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
@@ -51,10 +62,10 @@ public class ElectronicFenceWebflowConfiguration {
         final AuthenticationRiskEvaluator authenticationRiskEvaluator,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        val r = new RiskAwareAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
+        val resolver = new RiskAwareAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
             authenticationRiskEvaluator, authenticationRiskMitigator);
-        initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
-        return r;
+        initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver, 0);
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowConfigurer")

@@ -508,7 +508,7 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Empty String constants"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
+            <property name="format" value="(?&lt;!&quot;)(?&lt;!\\)&quot;{2}(?!&quot;)"/>
             <property name="message" value="Consider using StringUtils.EMPTY instead"/>
         </module>
 
@@ -645,7 +645,7 @@
             <property name="severity" value="error"/>
             <property name="customImportOrderRules"
                       value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
-            <property name="specialImportsRegExp" value="^javax\."/>
+            <property name="specialImportsRegExp" value="(javax|jakarta)\."/>
             <property name="standardPackageRegExp" value="^java\."/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
@@ -769,11 +769,11 @@
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.RandomUtils for random-number generation"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.util.RandomUtils for random-number generation"/>
         <property name="severity" value="error"/>
         <property name="format"
                   value="RandomStringUtils\.(randomAlphanumeric|randomNumeric|randomAlphabetic|randomAscii|nextLong|nextInt|nextDouble|nextFloat)"/>
-        <property name="message" value="Use org.apereo.cas.RandomUtils for random-number generation instead."/>
+        <property name="message" value="Use org.apereo.cas.util.RandomUtils for random-number generation instead."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>

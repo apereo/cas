@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.ProfileManager;
@@ -44,7 +45,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
 
-        oauthAccessTokenAuthenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -66,7 +67,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val at = getAccessToken("helloworld", "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        oauthAccessTokenAuthenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 
@@ -78,7 +79,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val at = getAccessToken(token, "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        oidcDynamicRegistrationAuthenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        oidcDynamicRegistrationAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNull(credentials.getUserProfile());
     }
 }

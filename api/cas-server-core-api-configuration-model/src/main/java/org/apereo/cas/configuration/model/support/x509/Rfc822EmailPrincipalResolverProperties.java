@@ -10,6 +10,7 @@ import java.io.Serial;
 
 /**
  * This is {@link Rfc822EmailPrincipalResolverProperties}.
+ *
  * @since 6.1.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")

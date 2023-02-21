@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Groovy")
+@Tag("GroovyMfa")
 public class GroovyIPAddressIntelligenceServiceTests {
     @Test
     public void verifyOperation() {

@@ -30,7 +30,7 @@ public class PartialRegexRegisteredServiceMatchingStrategy implements Registered
 
     @JsonIgnore
     @Transient
-    @javax.persistence.Transient
+    @jakarta.persistence.Transient
     private transient Pattern servicePattern;
 
     @Override

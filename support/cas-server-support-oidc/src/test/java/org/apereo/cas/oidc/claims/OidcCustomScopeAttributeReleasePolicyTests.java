@@ -7,6 +7,7 @@ import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -15,6 +16,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,6 +55,24 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
         assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
         assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions(releasePolicyContext2)));
         assertEquals(List.of("admin", "user"), releaseAttrs.get("groups"));
+    }
+
+    @Test
+    public void verifyGroovyMappingInline() {
+        ApplicationContextProvider.holdApplicationContext(oidcConfigurationContext.getApplicationContext());
+        val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
+        policy.setClaimMappings(Map.of("groups", "groovy { return attributes['groups'] }"));
+        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("groups", List.of("admin", "user")));
+        val oidcRegisteredService = getOidcRegisteredService();
+        oidcRegisteredService.setAttributeReleasePolicy(policy);
+        
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(oidcRegisteredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attrs = policy.getAttributes(releasePolicyContext);
+        assertEquals(List.of("admin", "user"), attrs.get("groups"));
     }
 
     @Test

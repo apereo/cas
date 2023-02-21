@@ -20,6 +20,7 @@ const cas = require('../../cas.js');
         await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
         await cas.assertTextContentStartsWith(page, "#interruptMessage", "We interrupted your login");
         await cas.submitForm(page, "#fm1");
+        await page.waitForTimeout(1000);
         await cas.assertTicketParameter(page);
         await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.assertCookie(page);

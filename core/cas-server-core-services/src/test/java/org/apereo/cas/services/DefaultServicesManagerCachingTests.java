@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultServicesManagerCachingTests}.
@@ -38,6 +39,7 @@ public class DefaultServicesManagerCachingTests {
 
         val context = ServicesManagerConfigurationContext.builder()
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext, List.of(service1), List.of()))
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .servicesCache((Cache) cache)

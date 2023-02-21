@@ -59,7 +59,7 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
     public void beforeEach() {
         this.context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.EMPTY_MAP);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap());
         WebUtils.putRegisteredService(context, registeredService);
 
         request = new MockHttpServletRequest();

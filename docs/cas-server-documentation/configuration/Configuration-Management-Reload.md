@@ -22,7 +22,7 @@ a request to CAS to refresh its current state. All CAS internal components that 
 by the external change are quietly reloaded
 and the setting takes immediate effect, completely removing the need for container restarts or CAS re-deployments.
 
-<div class="alert alert-info"><strong>Do Not Discriminate!</strong><p>Most if not all CAS settings are eligible candidates
+<div class="alert alert-info">:information_source: <strong>Do Not Discriminate!</strong><p>Most if not all CAS settings are eligible candidates
 for reloads. CAS should be smart enough to reload the appropriate configuration, regardless of setting/module that
 ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
 relevant settings may be completely and utterly reloadable. If you find an instance where this statement does not hold, please speak up.</p></div>

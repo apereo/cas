@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -16,7 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.NonNull;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,25 +38,15 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service)
-        throws GeneralSecurityException, PreventedException {
+        throws Exception {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
         return postAuthenticate(credential, doAuthentication(credential, service));
     }
 
-    /**
-     * Performs the details of authentication and returns an authentication handler result on success.
-     *
-     * @param credential Credential to authenticate.
-     * @param service    the service
-     * @return Authentication handler result on success.
-     * @throws GeneralSecurityException On authentication failure that is thrown out to the caller of
-     *                                  {@link org.apereo.cas.authentication.AuthenticationHandler#authenticate(Credential, Service)}.
-     * @throws PreventedException       On the indeterminate case when authentication is prevented.
-     */
     protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential, Service service)
-        throws GeneralSecurityException, PreventedException;
+        throws Exception;
 
     /**
      * Helper method to construct a handler result
@@ -74,7 +62,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal,
                                                                        final @NonNull List<MessageDescriptor> warnings) {
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+        return new DefaultAuthenticationHandlerExecutionResult(this, credential, principal, warnings);
     }
 
     /**
@@ -89,7 +77,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      */
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal) {
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
+        return new DefaultAuthenticationHandlerExecutionResult(this, credential,
             principal, new ArrayList<>(0));
     }
 }

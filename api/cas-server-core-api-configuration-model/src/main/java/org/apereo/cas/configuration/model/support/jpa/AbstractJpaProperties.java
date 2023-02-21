@@ -135,7 +135,8 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Controls the amount of time that a connection can be out of the pool before a message
      * is logged indicating a possible connection leak.
      */
-    private long leakThreshold = 6_000L;
+    @DurationCapable
+    private String leakThreshold = "PT6S";
 
     /**
      * Allow hibernate to generate query statistics.
@@ -151,7 +152,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Used to specify number of rows to be fetched in a select query.
      */
     private int fetchSize = 100;
-    
+
     /**
      * Set the pool initialization failure timeout.
      * <ul>
@@ -204,7 +205,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
      */
     private String physicalNamingStrategyClassName = "org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy";
-    
+
     /**
      * Defines the isolation level for transactions.
      *

@@ -14,8 +14,7 @@ This document describes how SAML2 service providers registered with CAS can cont
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,health" 
-healthIndicators="samlRegisteredServiceMetadataHealthIndicator" %}
+{% include_cached actuators.html endpoints="health" healthIndicators="samlRegisteredServiceMetadataHealthIndicator" %}
 
 ## Metadata Aggregates
 
@@ -50,7 +49,16 @@ The expiration policy of the service metadata is controlled using the following 
 1. `CacheDuration` setting found inside the SAML2 service provider metadata, if any.
 2. Metadata expiration policy and duration defined for the SAML2 registered service defined with CAS.
 3. Global metadata expiration policy controlled via CAS settings.
-   
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache" %}
+
+<div class="alert alert-info">:information_source: <strong>Metadata Cache</strong><p>
+Note that the state of the cache belongs to the CAS server node's own memory and will not distributed in case you have multiple CAS server nodes in a cluster. 
+In an HA clustered environment, you would need to bypass load balancers, etc to reach the actual CAS server node(s) before the cache can be accessed.
+Otherwise, you run the risk of manipulating and interacting with the metadata cache managed by one CAS server where metadata caches changes would be 
+unseen by other CAS servers, until and unless their own cached entries are either forcefully removed or expire.
+</p></div>
+
 ## Metadata Storage
 
 SAML2 service providers that are registered with CAS can be configured to present their metadata using the following options.
@@ -80,6 +88,15 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 
 CAS may attempt to reuse the metadata from a previously-downloaded backup file on disk if the metadata file is still seen as valid. 
 This capability will require the forceful fetching of the metadata over HTTP to be disabled.
+
+<div class="alert alert-info">:information_source: <strong>Usage</strong>
+<p>
+SAML2 metadata should generally be signed for integrity and authenticity, especially if it’s provided and shared with 
+participants using a URL. Participants and consumers are strongly encouraged to verify the XML signature on the metadata 
+file before use; failure to do so will seriously compromise the security of the SAML deployment. A trusted metadata process <strong>MUST</strong> 
+verify the XML signature of the metadata. It is not sufficient to request the metadata via a TLS-protected HTTP connection.
+</p>
+</div>
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
 
@@ -160,6 +177,23 @@ The service providers are registered with the CAS service registry as such:
 }
 ```
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location 
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>The metadata location 
 in the registration record above needs to be specified as <code>json://</code> to signal 
 to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
+
+### Advanced
+
+Service provider metadata can also be managed using any one of the following strategies.
+
+| Storage                 | Description                                                        |
+|-------------------------|--------------------------------------------------------------------|
+| Metadata Query Protocol | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).      |
+| HTTP/HTTPS              | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).     |
+| REST                    | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).     |
+| Git                     | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).      |
+| MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  |
+| Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).    |
+| JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
+| CouchDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html).  |
+| Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
+| Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |

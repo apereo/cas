@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -13,10 +12,10 @@ import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.util.Optional;
 
 /**
@@ -69,7 +68,7 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
         }
         val query = getEntityManager().createQuery(sql, SamlIdPMetadataDocument.class);
         if (registeredService.isPresent()) {
-            query.setParameter("appliesTo", SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
+            query.setParameter("appliesTo", getAppliesToFor(registeredService));
         }
         return query.setMaxResults(1);
     }

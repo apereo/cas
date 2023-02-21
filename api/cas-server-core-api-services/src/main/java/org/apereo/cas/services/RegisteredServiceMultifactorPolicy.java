@@ -56,6 +56,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     /**
      * Whether multifactor authentication should forcefully trigger,
      * even if the existing authentication context can be satisfied without MFA.
+     *
      * @return true/false
      */
     boolean isForceExecution();
@@ -63,6 +64,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     /**
      * Whether multifactor authentication should bypass trusted device registration,
      * and check for device records and/or skip prompt for registration.
+     *
      * @return true/false
      */
     boolean isBypassTrustedDeviceEnabled();
@@ -85,6 +87,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     /**
      * Indicates whether bypass should be enabled and activated
      * if the defined bypass principal attribute is not found.
+     *
      * @return true/false
      */
     boolean isBypassIfMissingPrincipalAttribute();

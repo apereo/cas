@@ -66,7 +66,7 @@ The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying 
 
 {% tab passwordhistory Custom %}
 
-If you wish to create your own password hisory service, you will need to
+If you wish to create your own password history service, you will need to
 design a component and register it with CAS as such:
 
 ```java

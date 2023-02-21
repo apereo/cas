@@ -20,4 +20,5 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Jetty)
 @AutoConfiguration(before = ServletWebServerFactoryAutoConfiguration.class)
-public class CasEmbeddedContainerJettyConfiguration {}
+public class CasEmbeddedContainerJettyConfiguration {
+}

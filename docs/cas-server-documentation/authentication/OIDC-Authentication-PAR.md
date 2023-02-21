@@ -13,8 +13,17 @@ PAR fosters security by providing clients a simple means for a confidential and 
 
 PAR allows CAS to authenticate the client before any user interaction happens. The increased confidence in the identity of the client during the authorization process allows the authorization server to refuse illegitimate requests much earlier in the process, which can prevent attempts to spoof clients or otherwise tamper with or misuse an authorization request.
 
-<div class="alert alert-warning"><strong>Workers Ahead</strong><p>This feature is a work-in-progress and will receive additional
-updates in future releases. Please check back later.</p></div>
+A typical exchange would allow the client to *push* the authorization request via `POST` to the `oidcPushAuthorize` endpoint. The result of this request 
+typically would produce a `request_uri` as such:
+
+```json
+{
+  "expires_in": 30,
+  "request_uri": "OPAR-1-..."
+}
+```
+
+The `request_uri` parameter could then be submitted back to CAS' authorization endpoint to restore and resume the request.
 
 ## Configuration
 

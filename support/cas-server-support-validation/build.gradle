@@ -43,8 +43,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-validation", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     
-    testCompileOnly "javax.servlet:jstl:$javaxJstlVersion"
-
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
 }
