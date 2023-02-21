@@ -105,3 +105,4 @@ ticket documents and their fields to assist with full-text searching.
 - SCIM
 - PostgreSQL
 - Amazon SDK
+- Inspektr
