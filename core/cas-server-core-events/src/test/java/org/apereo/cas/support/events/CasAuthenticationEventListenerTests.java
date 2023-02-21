@@ -37,9 +37,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -116,6 +118,8 @@ public class CasAuthenticationEventListenerTests {
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
+        sleep();
+        sleep();
         sleep();
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
@@ -209,8 +213,6 @@ public class CasAuthenticationEventListenerTests {
         val numOfIp1s = (int) casEventRepository.load().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
         assertEquals(maxThread+1 ,eventSize);
         assertEquals(expectedNumOfIp1,numOfIp1s);
-
-
     }
 
     private  boolean shouldUseIp1(int x) {
@@ -218,8 +220,7 @@ public class CasAuthenticationEventListenerTests {
     }
 
     private void clearEventRepository(){
-        SimpleCasEventRepository eventRepository = (SimpleCasEventRepository)  casEventRepository;
-        eventRepository.removeAll();
+        casEventRepository.removeAll();
     }
 
     private void sleep() {
@@ -255,6 +256,7 @@ public class CasAuthenticationEventListenerTests {
                     return events.stream();
                 }
             };
+        }
         @Override
         public Executor getAsyncExecutor() {
             ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
