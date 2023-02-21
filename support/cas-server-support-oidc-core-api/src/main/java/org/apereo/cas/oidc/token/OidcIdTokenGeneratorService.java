@@ -146,7 +146,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return claims;
     }
 
-    private void buildExpirationClaim(final JwtClaims claims, final OidcRegisteredService registeredService) {
+    protected void buildExpirationClaim(final JwtClaims claims, final OidcRegisteredService registeredService) {
         val expirationDate = NumericDate.now();
         val timeoutInSeconds = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive();
         expirationDate.addSeconds(timeoutInSeconds);

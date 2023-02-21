@@ -87,6 +87,8 @@ ticket documents and their fields to assist with full-text searching.
 - The `jwksCacheDuration` is able to support the duration syntax for OpenID Connect services, removing the need to specify a time unit separately.
 - The `aud` claim for OpenID Connect ID tokens or JWT access tokens can now be [controlled for each application](../authentication/OAuth-Authentication-Clients.html).
 - CAS features supporting Couchbase are now deprecated and scheduled to be removed in the future.
+- Adjustments to the CAS Gradle build that allow the build process to turn on the Gradle configuration cache. The configuration cache is a feature that 
+  significantly improves build performance by caching the result of the configuration phase and reusing this for subsequent builds.
 
 ## Library Upgrades
 
