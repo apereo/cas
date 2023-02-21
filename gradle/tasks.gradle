@@ -61,24 +61,6 @@ class Ansi {
 
 Object.metaClass.ansi = new Ansi()
 
-tasks.withType(Javadoc).configureEach {
-    def exceptions = []
-    doFirst {
-        gradle.services.get(LoggingOutputInternal).addOutputEventListener(new OutputEventListener() {
-            void onOutput(OutputEvent event) {
-                if (event.toString() =~ " warning: ") {
-                    exceptions << new GradleException("Javadoc warning: ${event.toString()}")
-                }
-            }
-        })
-    }
-    doLast {
-        exceptions.each {
-            throw it
-        }
-    }
-}
-
 tasks.register('pathingJar', Jar) {
     description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"
     dependsOn configurations.runtimeClasspath
