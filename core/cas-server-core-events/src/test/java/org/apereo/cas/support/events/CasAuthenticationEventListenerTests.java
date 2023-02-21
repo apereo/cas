@@ -38,6 +38,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -250,7 +251,7 @@ public class CasAuthenticationEventListenerTests {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {
-                private final Collection<CasEvent> events = new ArrayList<>();
+                private final Collection<CasEvent> events = new LinkedHashSet<>();
 
                 @Override
                 public CasEvent saveInternal(final CasEvent event) {
