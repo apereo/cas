@@ -73,11 +73,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private long clientSecretExpiration;
     
-    @JsonIgnore
-    @Deprecated(since = "6.2.0")
-    @Transient
-    private transient boolean implicit;
-
     private ZonedDateTime dynamicRegistrationDateTime;
 
 
