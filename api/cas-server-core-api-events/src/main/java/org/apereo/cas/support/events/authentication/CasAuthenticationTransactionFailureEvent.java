@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
-import org.apereo.cas.support.events.dao.ClientInfoDTO;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import java.io.Serial;
@@ -27,14 +27,14 @@ public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
 
     private final Collection<Credential> credential;
 
-    private final ClientInfoDTO clientInfoDTO;
+    private final ClientInfo clientInfo;
 
     public CasAuthenticationTransactionFailureEvent(final Object source, final Map<String, Throwable> failures,
                                                     final Collection<Credential> credential) {
         super(source);
         this.failures = failures;
         this.credential = credential;
-        this.clientInfoDTO = new ClientInfoDTO(ClientInfoHolder.getClientInfo());
+        this.clientInfo = ClientInfoHolder.getClientInfo();
     }
 
     public Credential getCredential() {

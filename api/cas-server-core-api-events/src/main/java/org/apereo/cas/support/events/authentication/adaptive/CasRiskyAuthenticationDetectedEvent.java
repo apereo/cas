@@ -6,9 +6,8 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.apereo.cas.support.events.dao.ClientInfoDTO;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
+import org.apereo.inspektr.common.web.ClientInfo;
 import java.io.Serial;
 
 /**
@@ -30,7 +29,7 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
 
     private final Object score;
 
-    private final ClientInfoDTO clientInfoDTO;
+    private final ClientInfo clientInfo;
 
     public CasRiskyAuthenticationDetectedEvent(final Object source, final Authentication authentication,
                                                final RegisteredService service,
@@ -39,6 +38,6 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
         this.authentication = authentication;
         this.service = service;
         this.score = riskScore;
-        this.clientInfoDTO = new ClientInfoDTO(ClientInfoHolder.getClientInfo());
+        this.clientInfo = ClientInfoHolder.getClientInfo();
     }
 }
