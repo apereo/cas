@@ -33,6 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j

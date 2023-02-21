@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OidcServiceJsonWebKeystoreCacheExpirationPolicy}.

@@ -4,7 +4,6 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
-import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;

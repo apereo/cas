@@ -31,6 +31,7 @@ import java.util.Optional;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "couchbase")

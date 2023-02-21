@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
  * This is {@link CouchbaseAuditTrailManager}.
  *
  * @author Misagh Moayyed
- * @deprecated Since 7.0.0
  * @since 6.0.0
+ * @deprecated Since 7.0.0
  */
 @Setter
 @RequiredArgsConstructor
