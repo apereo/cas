@@ -6,7 +6,9 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -28,6 +30,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -73,6 +78,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
             val registeredService = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
                 .translate(registrationRequest, Optional.empty());
+            registeredService.markAsDynamicallyRegistered();
+            
             val savedService = (OidcRegisteredService) getConfigurationContext().getServicesManager().save(registeredService);
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(savedService,
                 getConfigurationContext().getCasProperties().getServer().getPrefix());
@@ -86,7 +93,6 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 .build()
                 .encode(accessToken.getId());
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
-            registeredService.setDynamicallyRegistered(true);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
