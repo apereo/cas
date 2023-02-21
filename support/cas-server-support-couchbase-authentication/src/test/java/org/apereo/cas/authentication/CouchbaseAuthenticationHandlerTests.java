@@ -39,6 +39,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.couchbase.bucket=pplbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -19,9 +19,11 @@ import java.util.Map;
  * This is {@link CouchbaseAcceptableUsagePolicyRepository}.
  *
  * @author Misagh Moayyed
+ * @deprecated since 7.0.0
  * @since 6.3.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbaseAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     @Serial
     private static final long serialVersionUID = -1276731330180695089L;

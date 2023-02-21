@@ -86,6 +86,7 @@ ticket documents and their fields to assist with full-text searching.
 - Basic support for routing logs to [Fluentd](../logging/Logging-Fluentd.html) is now available.
 - The `jwksCacheDuration` is able to support the duration syntax for OpenID Connect services, removing the need to specify a time unit separately.
 - The `aud` claim for OpenID Connect ID tokens or JWT access tokens can now be [controlled for each application](../authentication/OAuth-Authentication-Clients.html).
+- CAS features supporting Couchbase are now deprecated and scheduled to be removed in the future.
 
 ## Library Upgrades
 

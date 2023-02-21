@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Deprecated(since = "7.0.0")
 public interface CouchbaseClientFactory {
 
     /**

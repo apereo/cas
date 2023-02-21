@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-couchbase-core")
+@Deprecated(since = "7.0.0")
 public abstract class BaseCouchbaseProperties implements Serializable {
 
     @Serial

@@ -33,6 +33,7 @@ import java.util.stream.StreamSupport;
  * @since 4.2.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
     private final CouchbaseClientFactory couchbase;
 

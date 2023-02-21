@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.couchbase.bucket=testbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Deprecated(since = "7.0.0")
 public class CouchbaseClientFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;

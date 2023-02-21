@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.couchbase.bucket=testbucket",
         "cas.authn.attribute-repository.couchbase.username-attribute=username"
     })
+@Deprecated(since = "7.0.0")
 public class CouchbaseConfigurationTests {
     @Autowired
     @Qualifier("couchbaseAttributeRepositoryPlanConfigurer")

@@ -24,10 +24,12 @@ import java.util.stream.Collectors;
  * This is {@link CouchbaseAuditTrailManager}.
  *
  * @author Misagh Moayyed
+ * @deprecated Since 7.0.0
  * @since 6.0.0
  */
 @Setter
 @RequiredArgsConstructor
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
     private final CouchbaseClientFactory couchbase;
 

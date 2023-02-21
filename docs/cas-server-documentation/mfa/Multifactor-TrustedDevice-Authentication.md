@@ -79,12 +79,12 @@ This is most useful if you have a very small deployment with a small user base o
 
 Device registrations can also be managed using any one of the following strategies.
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------------------
-| JSON     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).  
-| JDBC     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).  
-| CouchDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html).  
-| MongoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  
-| DynamoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html).  
-| Redis     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).  
-| REST     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).  
+| Storage  | Description                                                                       |
+|----------|-----------------------------------------------------------------------------------|
+| JSON     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).     |
+| JDBC     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).     |
+| CouchDb  | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html).  |
+| MongoDb  | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  |
+| DynamoDb | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html). |
+| Redis    | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).    |
+| REST     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).     |

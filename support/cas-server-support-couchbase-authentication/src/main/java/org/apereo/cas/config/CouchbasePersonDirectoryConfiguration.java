@@ -31,6 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "couchbase")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchbasePersonDirectoryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.couchbase.username-attribute");
 
