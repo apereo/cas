@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketEntityFactory;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
@@ -34,6 +35,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
@@ -43,7 +45,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.
@@ -63,6 +65,7 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Primary
         public CloseableDataSource dataSourceTicket(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
@@ -166,6 +169,8 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaTicketRegistryTransactionTemplate")
@@ -178,10 +183,9 @@ public class JpaTicketRegistryConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val jpa = casProperties.getTicket().getRegistry().getJpa();
-                    val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog,
+                    val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa");
+                    return new JpaTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         jpaBeanFactory, jpaTicketRegistryTransactionTemplate, casProperties);
-                    bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
-                    return bean;
                 })
                 .otherwiseProxy()
                 .get();
@@ -197,12 +201,21 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
+            @Qualifier("ticketTransactionManager")
+            final PlatformTransactionManager ticketTransactionManager,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
             final CloseableDataSource dataSourceTicket) {
             return BeanSupplier.of(org.springframework.integration.jdbc.lock.LockRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket))
+                .supply(() -> {
+                    val repo = new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket);
+                    repo.setApplicationContext(applicationContext);
+                    repo.setTransactionManager(ticketTransactionManager);
+                    repo.afterPropertiesSet();
+                    repo.afterSingletonsInstantiated();
+                    return repo;
+                })
                 .otherwiseProxy()
                 .get();
         }

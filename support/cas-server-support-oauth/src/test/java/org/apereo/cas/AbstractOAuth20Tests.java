@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -28,6 +27,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -48,8 +48,10 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -99,9 +101,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.client.Client;
+import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
@@ -129,7 +132,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
@@ -154,11 +157,16 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
     properties = {
+        "spring.main.allow-bean-definition-overriding=true",
+        
         "cas.audit.engine.audit-format=JSON",
         "cas.audit.slf4j.use-single-line=true",
+
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-        "spring.main.allow-bean-definition-overriding=true"
+
+        "cas.authn.oauth.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
+        "cas.authn.oauth.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
@@ -225,9 +233,16 @@ public abstract class AbstractOAuth20Tests {
     public static final int TIMEOUT = 7200;
 
     @Autowired
+    @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+    protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
+
+    @Autowired
+    @Qualifier("oauthSecConfig")
+    protected Config oauthSecConfig;
+
+    @Autowired
     @Qualifier("oauthCasClient")
     protected Client oauthCasClient;
-
     @Autowired
     @Qualifier("oauthCasClientRedirectActionBuilder")
     protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
@@ -239,6 +254,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthHandlerInterceptorAdapter")
     protected HandlerInterceptor oauthHandlerInterceptorAdapter;
+
+    @Autowired
+    @Qualifier("servicesManagerConfigurationContext")
+    protected ServicesManagerConfigurationContext servicesManagerConfigurationContext;
 
     @Autowired
     @Qualifier("accessTokenController")
@@ -405,8 +424,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected static Authentication getAuthentication(final Principal principal) {
-        val metadata = new BasicCredentialMetaData(
-            new BasicIdentifiableCredential(principal.getId()));
+        val metadata = new BasicIdentifiableCredential(principal.getId());
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
             metadata, principal, new ArrayList<>());
 
@@ -769,6 +787,7 @@ public abstract class AbstractOAuth20Tests {
         CasThrottlingConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketComponentSerializationConfiguration.class,
         CasCoreUtilSerializationConfiguration.class,
         CasPersonDirectoryConfiguration.class,

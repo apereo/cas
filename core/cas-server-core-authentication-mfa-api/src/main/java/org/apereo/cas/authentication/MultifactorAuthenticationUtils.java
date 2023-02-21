@@ -124,7 +124,10 @@ public class MultifactorAuthenticationUtils {
                     LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}]", value, id);
                 }
             });
-            return events;
+            return events
+                .stream()
+                .filter(CollectionUtils.distinctByKey(Event::getId))
+                .collect(Collectors.toSet());
         }
         LOGGER.debug("Attribute value [{}] is not a multi-valued attribute", attributeValue);
         return null;

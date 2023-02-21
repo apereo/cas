@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
         "cas.authn.attribute-repository.ldap[0].attributes.mail=mail"
     })
-@Tag("Ldap")
+@Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 10389)
 public class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
     private static final String CN = RandomUtils.randomAlphabetic(6);

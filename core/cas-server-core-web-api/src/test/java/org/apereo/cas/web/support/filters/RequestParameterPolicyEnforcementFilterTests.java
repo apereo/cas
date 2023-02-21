@@ -9,8 +9,9 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -555,7 +556,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val response = new MockHttpServletResponse();
         val chain = new MockFilterChain();
         filter.doFilter(request, response, chain);
-        
+
         request.setRequestURI("https://www.example.org?hello=world#fragment");
         request.addParameters(requestParameterMap);
         assertThrows(RuntimeException.class, () -> filter.doFilter(request, response, chain));

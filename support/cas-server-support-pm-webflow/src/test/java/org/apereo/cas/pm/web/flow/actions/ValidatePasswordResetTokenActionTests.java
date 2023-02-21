@@ -1,9 +1,11 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +32,7 @@ import static org.mockito.Mockito.*;
 @Tag("Mail")
 public class ValidatePasswordResetTokenActionTests extends BasePasswordManagementActionTests {
     @Test
-    public void verifyInvalidTicket() throws Exception {
+    public void verifyInvalidTickeeditpt() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -63,5 +65,18 @@ public class ValidatePasswordResetTokenActionTests extends BasePasswordManagemen
         request.addParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticketId);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN, validatePasswordResetTokenAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyDoChangeWithValidSession() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+        WebUtils.putTicketGrantingTicket(context, tgt);
+        request.addParameter(PasswordManagementService.PARAMETER_DO_CHANGE_PASSWORD, "true");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, validatePasswordResetTokenAction.execute(context).getId());
     }
 }

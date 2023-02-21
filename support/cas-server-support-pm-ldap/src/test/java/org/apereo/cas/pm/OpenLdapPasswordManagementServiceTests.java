@@ -64,10 +64,11 @@ public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordMana
     public void verifyPasswordChangedFails() {
         val credential = new UsernamePasswordCredential("caspm", "123456");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("Mellon");
-        bean.setPassword("Mellon");
+        bean.setConfirmedPassword("Mellon".toCharArray());
+        bean.setPassword("Mellon".toCharArray());
         bean.setUsername(credential.getUsername());
-        assertTrue(passwordChangeService.change(credential, bean));
+        bean.setCurrentPassword("123456".toCharArray());
+        assertTrue(passwordChangeService.change(bean));
     }
 
     @Test

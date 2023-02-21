@@ -11,6 +11,7 @@ import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
@@ -19,7 +20,7 @@ import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -82,6 +83,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(appCtx))
             .applicationContext(appCtx)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
@@ -135,7 +137,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         configureService(policy);
 
-        WebUtils.putDelegatedAuthenticationProviderPrimary(context, null);
+        DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(context, null);
         val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(DelegationAutoRedirectTypes.SERVER, results.get().getAutoRedirectType());
@@ -150,7 +152,9 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         configureService(policy);
 
-        when(this.casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
+        DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
+        
+        when(casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
         val results = strategy.select(context, null, Set.of(provider));
         assertFalse(results.isEmpty());
         assertSame(DelegationAutoRedirectTypes.SERVER, results.get().getAutoRedirectType());

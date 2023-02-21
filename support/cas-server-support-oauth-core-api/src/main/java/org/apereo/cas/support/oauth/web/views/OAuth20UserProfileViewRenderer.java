@@ -5,7 +5,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**

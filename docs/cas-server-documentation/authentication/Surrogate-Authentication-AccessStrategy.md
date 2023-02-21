@@ -32,8 +32,6 @@ A sample service definition follows:
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
     "surrogateEnabled" : true,
-    "enabled": true,
-    "ssoEnabled": true,
     "surrogateRequiredAttributes" : {
       "@class" : "java.util.HashMap",
       "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
@@ -68,7 +66,7 @@ syntax. The Groovy script itself may be designed as:
 ```groovy
 import java.util.*
 
-def Object run(final Object... args) {
+def run(final Object... args) {
     def principal = args[0]
     def principalAttributes = args[1]
     def logger = args[2]

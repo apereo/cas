@@ -45,6 +45,11 @@ public class DefaultGitRepository implements GitRepository {
     private final boolean rebase;
 
     @Override
+    public String getRepositoryRemote(final String name) {
+        return gitInstance.getRepository().getRemoteName(name);
+    }
+
+    @Override
     public File getRepositoryDirectory() {
         return gitInstance.getRepository().getDirectory().getParentFile();
     }

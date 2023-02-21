@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
@@ -78,7 +79,6 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                 .forEach(msft -> {
                     val dao = new MicrosoftGraphPersonAttributeDao();
                     FunctionUtils.doIfNotNull(msft.getId(), dao::setId);
-                    FunctionUtils.doIfNotNull(msft.getDomain(), dao::setDomain);
                     FunctionUtils.doIfNotNull(msft.getApiBaseUrl(), dao::setApiBaseUrl);
                     FunctionUtils.doIfNotNull(msft.getGrantType(), dao::setGrantType);
                     FunctionUtils.doIfNotNull(msft.getLoginBaseUrl(), dao::setLoginBaseUrl);
@@ -86,9 +86,13 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                     FunctionUtils.doIfNotNull(msft.getAttributes(), dao::setProperties);
                     FunctionUtils.doIfNotNull(msft.getResource(), dao::setResource);
                     FunctionUtils.doIfNotNull(msft.getScope(), dao::setScope);
-                    FunctionUtils.doIfNotNull(msft.getTenant(), dao::setTenant);
-                    dao.setClientSecret(msft.getClientSecret());
-                    dao.setClientId(msft.getClientId());
+                    
+                    val resolver = SpringExpressionLanguageValueResolver.getInstance();
+                    dao.setTenant(resolver.resolve(msft.getTenant()));
+                    dao.setDomain(resolver.resolve(msft.getDomain()));
+                    dao.setClientSecret(resolver.resolve(msft.getClientSecret()));
+                    dao.setClientId(resolver.resolve(msft.getClientId()));
+                    
                     dao.setOrder(msft.getOrder());
                     list.add(dao);
                 });
@@ -113,9 +117,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
             @Qualifier("microsoftAzureActiveDirectoryPrincipalFactory")
             final PrincipalFactory factory) {
             val azure = casProperties.getAuthn().getAzureActiveDirectory();
-            val handler = new AzureActiveDirectoryAuthenticationHandler(azure.getName(),
-                servicesManager, factory, azure.getOrder(), azure.getClientId(), azure.getLoginUrl(),
-                azure.getResource());
+            val handler = new AzureActiveDirectoryAuthenticationHandler(servicesManager, factory, azure);
             handler.setState(azure.getState());
             handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
             handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));

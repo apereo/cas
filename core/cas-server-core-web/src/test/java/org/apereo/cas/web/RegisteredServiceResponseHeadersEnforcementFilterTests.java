@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
@@ -13,6 +12,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.spring.DirectObjectProvider;
@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceResponseHeadersEnforcementFilterTests}.
@@ -46,6 +47,42 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 public class RegisteredServiceResponseHeadersEnforcementFilterTests {
+
+    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
+        return getFilterForProperty(Pair.of(p, "true"));
+    }
+
+    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
+            .build();
+
+        val servicesManager = new DefaultServicesManager(context);
+        val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService("service-0");
+        val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
+        for (val p : properties) {
+            val prop1 = new DefaultRegisteredServiceProperty();
+            prop1.addValue(p.getValue());
+            props1.put(p.getKey().getPropertyName(), prop1);
+        }
+        service.setProperties(props1);
+        servicesManager.save(service);
+
+        return new RegisteredServiceResponseHeadersEnforcementFilter(new DirectObjectProvider<>(servicesManager),
+            new DirectObjectProvider<>(argumentExtractor),
+            new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(appCtx)));
+    }
 
     @Test
     public void verifyCacheControl() throws Exception {
@@ -212,40 +249,5 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
         filter.doFilter(request, response, new MockFilterChain());
         assertNull(response.getHeader("X-XSS-Protection"));
-    }
-
-    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
-        return getFilterForProperty(Pair.of(p, "true"));
-    }
-
-    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final Pair<RegisteredServiceProperties, String>... properties) {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
-            .applicationContext(appCtx)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-
-        val servicesManager = new DefaultServicesManager(context);
-        val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
-
-        val service = RegisteredServiceTestUtils.getRegisteredService("service-0");
-        val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
-        for (val p : properties) {
-            val prop1 = new DefaultRegisteredServiceProperty();
-            prop1.addValue(p.getValue());
-            props1.put(p.getKey().getPropertyName(), prop1);
-        }
-        service.setProperties(props1);
-        servicesManager.save(service);
-
-        return new RegisteredServiceResponseHeadersEnforcementFilter(new DirectObjectProvider<>(servicesManager),
-            new DirectObjectProvider<>(argumentExtractor),
-            new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
-            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties())));
     }
 }

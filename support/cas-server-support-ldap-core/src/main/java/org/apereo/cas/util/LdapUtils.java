@@ -637,9 +637,8 @@ public class LdapUtils {
             val bc = new BindConnectionInitializer();
             val sc = getSaslConfigFrom(properties);
 
-            if (StringUtils.isNotBlank(properties.getSaslAuthorizationId())) {
-                sc.setAuthorizationId(properties.getSaslAuthorizationId());
-            }
+
+            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), __ -> sc.setAuthorizationId(properties.getSaslAuthorizationId()));
             sc.setMutualAuthentication(properties.getSaslMutualAuth());
             if (StringUtils.isNotBlank(properties.getSaslQualityOfProtection())) {
                 sc.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
@@ -1077,9 +1076,8 @@ public class LdapUtils {
             val additional = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(props.getAdditionalAttributes());
             multiMapAttributes.putAll(additional);
         }
-        if (StringUtils.isNotBlank(props.getPrincipalDnAttributeName())) {
-            handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName());
-        }
+
+        FunctionUtils.doIfNotBlank(props.getPrincipalDnAttributeName(), __ -> handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName()));
         handler.setAllowMultiplePrincipalAttributeValues(props.isAllowMultiplePrincipalAttributeValues());
         handler.setAllowMissingPrincipalAttributeValue(props.isAllowMissingPrincipalAttributeValue());
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));

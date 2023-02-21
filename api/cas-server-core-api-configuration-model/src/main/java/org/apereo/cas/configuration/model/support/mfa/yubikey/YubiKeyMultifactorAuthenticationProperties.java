@@ -14,7 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -61,7 +62,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      * or register new devices/accounts automatically.
      */
     private boolean multipleDeviceRegistrationEnabled;
-    
+
     /**
      * Keep device registration records inside a static JSON resource.
      */

@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link UserAuthenticationResourceEntityResponseFactory}.

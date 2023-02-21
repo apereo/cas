@@ -10,7 +10,8 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.authn.token.crypto.encryption.key=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/public.key",
-    "--cas.authn.token.crypto.signing.key=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/private.key",
+    "--cas.authn.token.crypto.signing-enabled=false",
+    "--cas.authn.token.crypto.encryption-enabled=true",
     "--cas.authn.token.crypto.strategy-type=SIGN_AND_ENCRYPT"
   ]
 }

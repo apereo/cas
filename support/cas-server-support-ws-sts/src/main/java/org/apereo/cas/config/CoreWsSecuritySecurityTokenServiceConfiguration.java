@@ -23,11 +23,13 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxws.context.WebServiceContextImpl;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -78,7 +80,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import jakarta.xml.ws.WebServiceContext;
 import javax.net.ssl.HostnameVerifier;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,14 +123,10 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher(
-            @Qualifier("securityTokenServiceCredentialCipherExecutor")
-            final CipherExecutor securityTokenServiceCredentialCipherExecutor,
-            @Qualifier("securityTokenServiceClientBuilder")
-            final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
-            @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
-            final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
+            @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
+            @Qualifier("wsFederationAuthenticationServiceSelectionStrategy") final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultSecurityTokenServiceTokenFetcher(servicesManager, wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor,
                 securityTokenServiceClientBuilder);
         }
@@ -136,18 +136,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         public IssueOperation transportIssueDelegate(
             final CasConfigurationProperties casProperties,
             final List<TokenProvider> transportTokenProviders,
-            @Qualifier("transportService")
-            final StaticService transportService,
-            @Qualifier("transportSTSProperties")
-            final STSPropertiesMBean transportSTSProperties,
-            @Qualifier("wsfedClaimsManager")
-            final ClaimsManager wsfedClaimsManager,
+            @Qualifier("transportService") final StaticService transportService,
+            @Qualifier("transportSTSProperties") final STSPropertiesMBean transportSTSProperties,
+            @Qualifier("wsfedClaimsManager") final ClaimsManager wsfedClaimsManager,
             final List<TokenValidator> transportTokenValidators,
-            @Qualifier("loggerListener")
-            final EventMapper loggerListener,
+            @Qualifier("loggerListener") final EventMapper loggerListener,
             final List<TokenDelegationHandler> delegationHandlers,
-            @Qualifier("securityTokenServiceTokenStore")
-            final TokenStore securityTokenServiceTokenStore) {
+            @Qualifier("securityTokenServiceTokenStore") final TokenStore securityTokenServiceTokenStore) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val op = new TokenIssueOperation();
             op.setTokenProviders(transportTokenProviders);
@@ -175,8 +170,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "transportJwtTokenProvider")
         @Bean
         public JWTTokenProvider transportJwtTokenProvider(
-            @Qualifier("securityTokenServiceRealms")
-            final Map<String, RealmProperties> securityTokenServiceRealms) {
+            @Qualifier("securityTokenServiceRealms") final Map<String, RealmProperties> securityTokenServiceRealms) {
             val provider = new JWTTokenProvider();
             provider.setRealmMap(securityTokenServiceRealms);
             provider.setSignToken(true);
@@ -186,31 +180,30 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "transportSamlTokenProvider")
         @Bean
         public SAMLTokenProvider transportSamlTokenProvider(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("securityTokenServiceRealms")
-                                                            final Map<String, RealmProperties> securityTokenServiceRealms) {
+                                                            @Qualifier("securityTokenServiceRealms") final Map<String, RealmProperties> securityTokenServiceRealms) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-            val s = new DefaultSubjectProvider();
-            if (StringUtils.isNotBlank(wsfed.getSubjectNameQualifier())) {
-                s.setSubjectNameQualifier(wsfed.getSubjectNameQualifier());
-            }
+            val subProvider = new DefaultSubjectProvider();
+
+            FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(),
+                __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
-                case "email" -> s.setSubjectNameIDFormat(NameIDType.EMAIL);
-                case "entity" -> s.setSubjectNameIDFormat(NameIDType.ENTITY);
-                case "transient" -> s.setSubjectNameIDFormat(NameIDType.TRANSIENT);
-                case "persistent" -> s.setSubjectNameIDFormat(NameIDType.PERSISTENT);
-                default -> s.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
+                case "email" -> subProvider.setSubjectNameIDFormat(NameIDType.EMAIL);
+                case "entity" -> subProvider.setSubjectNameIDFormat(NameIDType.ENTITY);
+                case "transient" -> subProvider.setSubjectNameIDFormat(NameIDType.TRANSIENT);
+                case "persistent" -> subProvider.setSubjectNameIDFormat(NameIDType.PERSISTENT);
+                default -> subProvider.setSubjectNameIDFormat(NameIDType.UNSPECIFIED);
             }
-            val c = new DefaultConditionsProvider();
-            c.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
-            c.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
-            c.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
-            c.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
-            c.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
+            val condProvider = new DefaultConditionsProvider();
+            condProvider.setAcceptClientLifetime(wsfed.isConditionsAcceptClientLifetime());
+            condProvider.setFailLifetimeExceedance(wsfed.isConditionsFailLifetimeExceedance());
+            condProvider.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
+            condProvider.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
+            condProvider.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
             val provider = new SamlTokenProvider();
             provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
             provider.setRealmMap(securityTokenServiceRealms);
-            provider.setConditionsProvider(c);
-            provider.setSubjectProvider(s);
+            provider.setConditionsProvider(condProvider);
+            provider.setSubjectProvider(subProvider);
             provider.setSignToken(wsfed.isSignTokens());
             return provider;
         }
@@ -223,10 +216,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @Bean
         public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder(
             final CasConfigurationProperties casProperties,
-            @Qualifier("hostnameVerifier")
-            final HostnameVerifier hostnameVerifier,
-            @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext) {
+            @Qualifier("hostnameVerifier") final HostnameVerifier hostnameVerifier,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
             return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
                 casProperties.getServer().getPrefix(), hostnameVerifier, casSslContext);
         }
@@ -261,8 +252,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenServiceRealms")
         public Map<String, RealmProperties> securityTokenServiceRealms(
             final CasConfigurationProperties casProperties,
-            @Qualifier("casRealm")
-            final RealmProperties casRealm) {
+            @Qualifier("casRealm") final RealmProperties casRealm) {
             val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
             val realms = new HashMap<String, RealmProperties>();
             realms.put(idp.getRealmName(), casRealm);
@@ -301,13 +291,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Configuration(value = "CoreWsSecuritySecurityTokenServiceTransportConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecuritySecurityTokenServiceTransportConfiguration {
+        @Bean
+        public WebServiceContext transportSTSWebServiceContext() throws Exception {
+            return new WebServiceContextImpl();
+        }
+
         @ConditionalOnMissingBean(name = "transportSTSProviderBean")
         @Bean
         public SecurityTokenServiceProvider transportSTSProviderBean(
-            @Qualifier("transportIssueDelegate")
-            final IssueOperation transportIssueDelegate,
-            @Qualifier("transportValidateDelegate")
-            final ValidateOperation transportValidateDelegate) throws Exception {
+            @Qualifier("transportIssueDelegate") final IssueOperation transportIssueDelegate,
+            @Qualifier("transportValidateDelegate") final ValidateOperation transportValidateDelegate) throws Exception {
             val provider = new SecurityTokenServiceProvider();
             provider.setIssueOperation(transportIssueDelegate);
             provider.setValidateOperation(transportValidateDelegate);
@@ -324,10 +317,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @Bean
         public ValidateOperation transportValidateDelegate(
             final List<TokenValidator> transportTokenValidators,
-            @Qualifier("transportSTSProperties")
-            final STSPropertiesMBean transportSTSProperties,
-            @Qualifier("loggerListener")
-            final EventMapper loggerListener) {
+            @Qualifier("transportSTSProperties") final STSPropertiesMBean transportSTSProperties,
+            @Qualifier("loggerListener") final EventMapper loggerListener) {
             val op = new TokenValidateOperation();
             op.setTokenValidators(transportTokenValidators);
             op.setStsProperties(transportSTSProperties);
@@ -347,8 +338,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "transportUsernameTokenValidator")
         @Bean
         public Validator transportUsernameTokenValidator(
-            @Qualifier("securityTokenServiceCredentialCipherExecutor")
-            final CipherExecutor securityTokenServiceCredentialCipherExecutor) {
+            @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor) {
             return new CipheredCredentialsValidator(securityTokenServiceCredentialCipherExecutor);
         }
 
@@ -364,8 +354,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @Bean
         public STSPropertiesMBean transportSTSProperties(
             final CasConfigurationProperties casProperties,
-            @Qualifier("securityTokenServiceRealms")
-            final Map<String, RealmProperties> securityTokenServiceRealms) {
+            @Qualifier("securityTokenServiceRealms") final Map<String, RealmProperties> securityTokenServiceRealms) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
             val s = new StaticSTSProperties();
@@ -459,20 +448,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "wsfedClaimsHandlers")
         @Bean
         public List<ClaimsHandler> wsfedClaimsHandlers(
-            @Qualifier("wrappingSecurityTokenServiceClaimsHandler")
-            final ClaimsHandler wrappingSecurityTokenServiceClaimsHandler,
-            @Qualifier("nonWSFederationClaimsClaimsHandler")
-            final ClaimsHandler nonWSFederationClaimsClaimsHandler,
-            @Qualifier("customNamespaceWSFederationClaimsClaimsHandler")
-            final ClaimsHandler customNamespaceWSFederationClaimsClaimsHandler) {
+            @Qualifier("wrappingSecurityTokenServiceClaimsHandler") final ClaimsHandler wrappingSecurityTokenServiceClaimsHandler,
+            @Qualifier("nonWSFederationClaimsClaimsHandler") final ClaimsHandler nonWSFederationClaimsClaimsHandler,
+            @Qualifier("customNamespaceWSFederationClaimsClaimsHandler") final ClaimsHandler customNamespaceWSFederationClaimsClaimsHandler) {
             return CollectionUtils.wrapList(wrappingSecurityTokenServiceClaimsHandler, nonWSFederationClaimsClaimsHandler, customNamespaceWSFederationClaimsClaimsHandler);
         }
 
         @ConditionalOnMissingBean(name = "wsfedClaimsManager")
         @Bean
         public ClaimsManager wsfedClaimsManager(
-            @Qualifier("wsfedClaimsHandlers")
-            final List<ClaimsHandler> wsfedClaimsHandlers) {
+            @Qualifier("wsfedClaimsHandlers") final List<ClaimsHandler> wsfedClaimsHandlers) {
             val claimsManager = new ClaimsManager();
             claimsManager.setClaimHandlers(wsfedClaimsHandlers);
             return claimsManager;

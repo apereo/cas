@@ -1,4 +1,11 @@
-description = "Apereo CAS U2F FIDO Jpa Support"
+description = "Apereo CAS U2F FIDO JPA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "U2F Multifactor Authentication",
+            title: "U2F Support via JDBC"
+    ]
+}
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver

@@ -35,7 +35,7 @@ suitable as a direct contribution to the CAS project itself so you can just take
 
 To learn how to introduce new actions and state into a Spring Webflow, please [see this guide](https://github.com/apereo/spring-webflow/).
 
-<div class="alert alert-info"><strong>Speak Up</strong><p>If you find something that is broken where the 
+<div class="alert alert-info">:information_source: <strong>Speak Up</strong><p>If you find something that is broken where the 
 webflow auto-configuration strategy fails to deliver as advertised, discuss that with the project community 
 and submit a patch that corrects the bug or adds the desired behavior as a modest enhancement. 
 Avoid one-off changes and make the change where the change belongs.</p></div>
@@ -121,13 +121,9 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
 }
 ```
 
-Configuration classes need to be registered with CAS inside a `src/main/resources/META-INF/spring.factories` file:
+Configuration classes need to be registered with CAS via the strategy [outlined here](../configuration/Configuration-Management-Extensions.html).
 
-```properties
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.example.something.SomethingConfiguration
-```
-
-<div class="alert alert-info"><strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
+<div class="alert alert-info">:information_source: <strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
 piece of Java code that is put into the CAS Overlay may require additional CAS modules and dependencies on the classpath. You will need
 to study the CAS codebase and find the correct modules that contain the components you need, such 
 as <code>CasWebflowConfigurer</code> and others.</p></div>
@@ -140,7 +136,7 @@ You may configure CAS to alter and auto-configure the webflow via a Groovy scrip
 access to CAS APIs that allow you alter the webflow. However, configuration and scaffolding of the overlay and required dependencies is
 easier as all is provided by CAS at runtime.
 
-<div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided 
+<div class="alert alert-warning">:warning: <strong>Stop Coding</strong><p>Remember that APIs provided 
 here, specifically executed as part of the Groovy script are considered implementations 
 internal to CAS mostly. They may be added or removed with little hesitation which means 
 changes may break your deployment and upgrades at runtime. Remember that unlike Java 
@@ -150,7 +146,7 @@ with good reason and make sure you have thought changes through before stepping 
 
 #### Configuration
 
-{% include_cached casproperties.html properties="cas.webflow.autoconfigure,cas.webflow.groovy" %}
+{% include_cached casproperties.html properties="cas.webflow" includes=".autoconfigure,.groovy" %}
 
 #### Webflow Auto Configuration
 
@@ -211,13 +207,13 @@ The parameters passed are as follows:
 
 Webflow operations are typically handled via `Action` components that are implemented and registered with the CAS runtime as `Bean` definitions. While these 
 definitions could be conditionally substituted with an alternative implementation, you also have the option to carry out the action operation via Groovy 
-scripts. In this scenario, you take over the responsibility of action implemention yourself, relieving CAS from providing you with an implementation.
+scripts. In this scenario, you take over the responsibility of action implementation yourself, relieving CAS from providing you with an implementation.
 
 {% include_cached casproperties.html properties="cas.webflow.groovy.actions" %}
 
-<div class="alert alert-info"><strong>Note</strong>
+<div class="alert alert-info">:information_source: <strong>Note</strong>
 <p>You will need to dig up the name of the original action <code>Bean</code> first before you can provide a Groovy substitute. This will require a careful
-analysis of CAS codebase. Furthermore, please note that not all Spring Webflow actions may be subtituted with a Groovy equivalent. Groovy support
+analysis of CAS codebase. Furthermore, please note that not all Spring Webflow actions may be substituted with a Groovy equivalent. Groovy support
 in this area is a continuous development effort and will gradually improve throughout various CAS releases. Cross-check with the codebase to be sure.
 </p></div>
 

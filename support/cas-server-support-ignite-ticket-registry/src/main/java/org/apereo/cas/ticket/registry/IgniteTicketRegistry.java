@@ -5,8 +5,10 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,19 +17,26 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.cache.query.ScanQuery;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
+
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * <p>
@@ -46,31 +55,55 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ToString(callSuper = true)
-@RequiredArgsConstructor
 public class IgniteTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-
-    private final TicketCatalog ticketCatalog;
-
     private final IgniteConfiguration igniteConfiguration;
 
     private final IgniteProperties properties;
 
     private Ignite ignite;
 
+    public IgniteTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
+                                final TicketCatalog ticketCatalog, final IgniteConfiguration igniteConfiguration,
+                                final IgniteProperties properties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.igniteConfiguration = igniteConfiguration;
+        this.properties = properties;
+    }
+
     @Override
     public void addTicketInternal(final Ticket ticket) throws Exception {
         val encodedTicket = encodeTicket(ticket);
-        val metadata = this.ticketCatalog.find(ticket);
+        val metadata = ticketCatalog.find(ticket);
         val cache = getIgniteCacheFromMetadata(metadata);
         val policy = new IgniteInternalTicketExpiryPolicy(ticket.getExpirationPolicy());
         LOGGER.debug("Adding ticket [{}] to the cache [{}] with policy [{}]", ticket.getId(), cache.getName(), policy);
         val entries = cache.withExpiryPolicy(policy);
-        entries.put(encodedTicket.getId(), encodedTicket);
+
+        val attributeMap = (Map<String, List>) collectAndDigestTicketAttributes(ticket);
+        val attributesEncoded = attributeMap
+            .entrySet()
+            .stream()
+            .map(entry -> {
+                val entryValues = (List) entry.getValue();
+                val valueList = entryValues.stream().map(Object::toString).collect(Collectors.joining(","));
+                return String.format("[%s:{%s}]", entry.getKey(), valueList);
+            })
+            .collect(Collectors.joining(","));
+
+        val document = IgniteTicketDocument.builder()
+            .id(encodedTicket.getId())
+            .type(metadata.getImplementationClass().getName())
+            .principal(digest(getPrincipalIdFrom(ticket)))
+            .ticket(encodedTicket)
+            .prefix(metadata.getPrefix())
+            .attributes(attributesEncoded)
+            .build();
+        entries.put(encodedTicket.getId(), document);
     }
 
     @Override
     public long deleteAll() {
-        return this.ticketCatalog.findAll()
+        return ticketCatalog.findAll()
             .stream()
             .map(this::getIgniteCacheFromMetadata)
             .filter(Objects::nonNull)
@@ -84,8 +117,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = encodeTicketId(ticketId);
-        val metadata = this.ticketCatalog.find(ticketId);
+        val encTicketId = digest(ticketId);
+        val metadata = ticketCatalog.find(ticketId);
         if (metadata != null) {
             val cache = getIgniteCacheFromMetadata(metadata);
             return cache.remove(encTicketId) ? 1 : 0;
@@ -95,7 +128,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
-        val ticketId = encodeTicketId(ticketIdToGet);
+        val ticketId = digest(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
@@ -113,23 +146,97 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             LOGGER.debug("No ticket by id [{}] is found in the ignite ticket registry", ticketId);
             return null;
         }
-        val result = decodeTicket(ticket);
+        val result = decodeTicket(ticket.getTicket());
         return predicate.test(result) ? result : null;
     }
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return this.ticketCatalog.findAll()
-            .stream()
-            .map(this::getIgniteCacheFromMetadata)
-            .map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity())
-            .map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());
+        return stream().collect(Collectors.toSet());
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
+    }
+
+    @Override
+    public Stream<? extends Ticket> stream() {
+        return ticketCatalog.findAll()
+            .stream()
+            .map(this::getIgniteCacheFromMetadata)
+            .flatMap(cache -> {
+                val it = cache.query(new ScanQuery<>()).spliterator();
+                return StreamSupport.stream(it, false);
+            })
+            .map(Cache.Entry::getValue)
+            .map(IgniteTicketDocument.class::cast)
+            .map(object -> decodeTicket(object.getTicket()))
+            .filter(Objects::nonNull);
+    }
+
+    @Override
+    public long sessionCount() {
+        val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
+        val cacheInstance = getIgniteCacheFromMetadata(metadata);
+
+        val queryEntity = (QueryEntity) cacheInstance.getConfiguration(CacheConfiguration.class)
+            .getQueryEntities()
+            .stream()
+            .findFirst()
+            .orElseThrow();
+        val query = new SqlFieldsQuery("SELECT COUNT(id) FROM " + queryEntity.getTableName());
+        return (Long) cacheInstance.query(query).getAll().get(0).get(0);
+    }
+
+    @Override
+    public Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
+        val cacheInstance = getIgniteCacheFromMetadata(metadata);
+
+        val queryEntity = (QueryEntity) cacheInstance.getConfiguration(CacheConfiguration.class)
+            .getQueryEntities()
+            .stream()
+            .findFirst()
+            .orElseThrow();
+        val query = new SqlFieldsQuery("SELECT _val FROM " + queryEntity.getTableName() + " WHERE principal=?;")
+            .setArgs(digest(principalId));
+        return StreamSupport.stream(cacheInstance.query(query).spliterator(), false)
+            .filter(entries -> !entries.isEmpty())
+            .map(entries -> (IgniteTicketDocument) entries.get(0))
+            .map(object -> decodeTicket(object.getTicket()))
+            .filter(Objects::nonNull);
+    }
+
+    @Override
+    public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
+        val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();
+        val cacheInstance = getIgniteCacheFromMetadata(metadata);
+
+        val queryEntity = (QueryEntity) cacheInstance.getConfiguration(CacheConfiguration.class)
+            .getQueryEntities()
+            .stream()
+            .findFirst()
+            .orElseThrow();
+
+        val sql = new StringBuilder(String.format("SELECT _val FROM %s WHERE prefix='%s' AND (", queryEntity.getTableName(), metadata.getPrefix()));
+        queryAttributes.forEach((key, values) ->
+            values.forEach(queryValue ->
+                sql.append("attributes LIKE '%[")
+                    .append(digest(key))
+                    .append(":{%")
+                    .append(digest(queryValue.toString()))
+                    .append("%}]%' OR ")
+            ));
+        sql.append("1=2);");
+        LOGGER.debug("Executing SQL query [{}]", sql);
+        val query = new SqlFieldsQuery(sql.toString());
+        return StreamSupport.stream(cacheInstance.query(query).spliterator(), false)
+            .filter(entries -> !entries.isEmpty())
+            .map(entries -> (IgniteTicketDocument) entries.get(0))
+            .map(object -> decodeTicket(object.getTicket()))
+            .filter(Objects::nonNull);
     }
 
     /**
@@ -178,14 +285,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         }
     }
 
-    private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
+    private IgniteCache<String, IgniteTicketDocument> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
         val mapName = metadata.getProperties().getStorageName();
         LOGGER.trace("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
         return getIgniteCacheInstanceByName(mapName);
     }
 
-    private IgniteCache<String, Ticket> getIgniteCacheInstanceByName(final String name) {
+    private IgniteCache<String, IgniteTicketDocument> getIgniteCacheInstanceByName(final String name) {
         LOGGER.trace("Attempting to get/create cache [{}]", name);
-        return this.ignite.getOrCreateCache(name);
+        return ignite.getOrCreateCache(name);
     }
 }

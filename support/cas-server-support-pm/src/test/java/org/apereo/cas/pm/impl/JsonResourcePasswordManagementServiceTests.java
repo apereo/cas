@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -61,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -126,46 +128,42 @@ public class JsonResourcePasswordManagementServiceTests {
         assertTrue(passwordChangeService.getSecurityQuestions(
             PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build()).isEmpty());
     }
-
     @Test
     public void verifyUserPasswordChange() {
-        val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("newPassword");
-        bean.setPassword("newPassword");
-        val res = passwordChangeService.change(c, bean);
+        bean.setUsername("casuser");
+        bean.setConfirmedPassword("newPassword".toCharArray());
+        bean.setPassword("newPassword".toCharArray());
+        val res = passwordChangeService.change(bean);
         assertTrue(res);
     }
-
     @Test
     public void verifyUserPasswordChangeFail() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("newPassword");
-        var res = passwordChangeService.change(c, bean);
+        bean.setConfirmedPassword("newPassword".toCharArray());
+        var res = passwordChangeService.change(bean);
         assertFalse(res);
-        bean.setConfirmedPassword("newPassword");
-        bean.setPassword("unknown");
-        res = passwordChangeService.change(c, bean);
+        bean.setConfirmedPassword("newPassword".toCharArray());
+        bean.setPassword("unknown".toCharArray());
+        res = passwordChangeService.change(bean);
         assertFalse(res);
 
         bean.setPassword(bean.getConfirmedPassword());
         c.setUsername(UUID.randomUUID().toString());
-        res = passwordChangeService.change(c, bean);
+        res = passwordChangeService.change(bean);
         assertFalse(res);
     }
-
     @Test
     public void verifyPasswordValidationService() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setUsername(c.getUsername());
-        bean.setConfirmedPassword("Test1@1234");
-        bean.setPassword("Test1@1234");
-        val isValid = passwordValidationService.isValid(c, bean);
+        bean.setConfirmedPassword("Test1@1234".toCharArray());
+        bean.setPassword("Test1@1234".toCharArray());
+        val isValid = passwordValidationService.isValid(bean);
         assertTrue(isValid);
     }
-
     @Test
     public void verifySecurityQuestions() {
         val query = PasswordManagementQuery.builder().username("casuser").build();

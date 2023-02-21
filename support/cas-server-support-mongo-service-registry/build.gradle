@@ -1,4 +1,11 @@
 description = "Apereo CAS Mongo Integration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: "MongoDb Service Registry"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
     

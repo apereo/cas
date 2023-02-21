@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligence
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
@@ -25,6 +26,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
@@ -304,30 +306,36 @@ public class CoreAuthenticationUtils {
     /**
      * New person directory principal resolver.
      *
-     * @param principalFactory    the principal factory
-     * @param attributeRepository the attribute repository
-     * @param attributeMerger     the attribute merger
-     * @param personDirectory     the person directory
+     * @param principalFactory         the principal factory
+     * @param attributeRepository      the attribute repository
+     * @param attributeMerger          the attribute merger
+     * @param servicesManager          the services manager
+     * @param attributeDefinitionStore the attribute definition store
+     * @param personDirectory          the person directory
      * @return the principal resolver
      */
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
+        final ServicesManager servicesManager,
+        final AttributeDefinitionStore attributeDefinitionStore,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
         return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
-            attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory);
+            attributeMerger, PersonDirectoryPrincipalResolver.class, servicesManager, attributeDefinitionStore, personDirectory);
     }
 
     /**
      * New person directory principal resolver.
      *
-     * @param <T>                 the type parameter
-     * @param principalFactory    the principal factory
-     * @param attributeRepository the attribute repository
-     * @param attributeMerger     the attribute merger
-     * @param resolverClass       the resolver class
-     * @param personDirectory     the person directory
+     * @param <T>                      the type parameter
+     * @param principalFactory         the principal factory
+     * @param attributeRepository      the attribute repository
+     * @param attributeMerger          the attribute merger
+     * @param resolverClass            the resolver class
+     * @param servicesManager          the services manager
+     * @param attributeDefinitionStore the attribute definition store
+     * @param personDirectory          the person directory
      * @return the resolver
      */
     public static <T extends PrincipalResolver> T newPersonDirectoryPrincipalResolver(
@@ -335,9 +343,25 @@ public class CoreAuthenticationUtils {
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
         final Class<T> resolverClass,
+        final ServicesManager servicesManager,
+        final AttributeDefinitionStore attributeDefinitionStore,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
-        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger, personDirectory);
+        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger,
+            servicesManager, attributeDefinitionStore, personDirectory);
+        return newPersonDirectoryPrincipalResolver(resolverClass, context);
+    }
+
+    /**
+     * New person directory principal resolver t.
+     *
+     * @param <T>           the type parameter
+     * @param resolverClass the resolver class
+     * @param context       the context
+     * @return the t
+     */
+    public static <T extends PrincipalResolver> T newPersonDirectoryPrincipalResolver(final Class<T> resolverClass,
+                                                                                      final PrincipalResolutionContext context) {
         return Unchecked.supplier(() -> {
             val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
             return ctor.newInstance(context);
@@ -357,6 +381,8 @@ public class CoreAuthenticationUtils {
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
+        final ServicesManager servicesManager,
+        final AttributeDefinitionStore attributeDefinitionStore,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         val transformers = Arrays.stream(personDirectory)
@@ -365,6 +391,8 @@ public class CoreAuthenticationUtils {
         val transformer = new ChainingPrincipalNameTransformer(transformers);
 
         return PrincipalResolutionContext.builder()
+            .servicesManager(servicesManager)
+            .attributeDefinitionStore(attributeDefinitionStore)
             .attributeRepository(attributeRepository)
             .attributeMerger(attributeMerger)
             .principalFactory(principalFactory)
@@ -385,7 +413,7 @@ public class CoreAuthenticationUtils {
                 .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
                 .filter(p -> !p.isEmpty())
                 .findFirst()
-                .orElse(Collections.EMPTY_SET))
+                .orElse(Collections.<String>emptySet()))
             .build();
     }
 

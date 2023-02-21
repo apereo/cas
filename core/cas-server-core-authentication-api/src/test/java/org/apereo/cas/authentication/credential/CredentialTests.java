@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.credential;
 
+import org.apereo.cas.authentication.CredentialMetadata;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,27 +24,43 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 public class CredentialTests {
 
+    private static AbstractCredential getCredential() {
+        return new AbstractCredential() {
+            @Serial
+            private static final long serialVersionUID = -1746359565306558329L;
+
+            @Override
+            public String getId() {
+                return UUID.randomUUID().toString();
+            }
+
+            @Override
+            public CredentialMetadata getCredentialMetadata() {
+                return new BasicCredentialMetadata(this);
+            }
+        };
+    }
+
     @Test
     public void verifyCred() {
-        val c1 = getCredential();
-        assertNotNull(c1.getCredentialClass());
-        assertTrue(c1.isValid());
+        val credential = getCredential();
+        assertNotNull(credential.getCredentialMetadata().getCredentialClass());
+        assertTrue(credential.isValid());
     }
 
     @Test
     public void verifyEquals() {
-        val c1 = getCredential();
-        val c2 = getCredential();
-        assertNotNull(c1.getCredentialClass());
-        assertTrue(c1.isValid());
-        assertTrue(Math.abs(c1.hashCode()) > 0);
-        assertNotEquals(c2, c1);
-        assertEquals(c1, c1);
+        val credential = getCredential();
+        val credential2 = getCredential();
+        assertNotNull(credential.getCredentialMetadata().getCredentialClass());
+        assertTrue(credential.isValid());
+        assertNotEquals(credential2, credential);
+        assertEquals(credential, credential);
     }
 
     @Test
     public void verifyValid() {
-        val c = new AbstractCredential() {
+        val credential = new AbstractCredential() {
             @Serial
             private static final long serialVersionUID = -1746359565306558329L;
 
@@ -52,19 +71,7 @@ public class CredentialTests {
         };
         val context = mock(ValidationContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        assertDoesNotThrow(() -> c.validate(context));
-    }
-
-    private static AbstractCredential getCredential() {
-        return new AbstractCredential() {
-            @Serial
-            private static final long serialVersionUID = -1746359565306558329L;
-
-            @Override
-            public String getId() {
-                return UUID.randomUUID().toString();
-            }
-        };
+        assertDoesNotThrow(() -> credential.validate(context));
     }
 
 }

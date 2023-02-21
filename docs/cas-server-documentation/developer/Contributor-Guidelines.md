@@ -5,26 +5,37 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
-We want to start by saying thank you for using CAS. This project is a labor of love, and we appreciate the work done by all
-who catch bugs, make performance improvements and help with documentation. Every contribution is meaningful, so thank you
-for participating. That being said, here are a few guidelines that we ask you to follow so we can successfully address your patch.
+We want to start by saying thank you for using CAS and for all the work done by all
+who catch bugs, build enhancements, identify performance improvements and help with documentation. Every contribution is meaningful, so thank you
+for participating. Here are a few guidelines that we ask you to follow so we can successfully address your contribution.
 
 The goal of this guide is to, very simply put, help you learn how to catch fish.
 
 Shed all of your fears of making a mistake as part of your contributions to the project. Practice makes perfect and
 we are all here to help you as much as we can so you can ultimately become an independent contributor to the project. It's OK
-to make mistakes and it does take some time, effort and energy to improve the state of proposals and contributions. So do not be discouraged, keep at it
-and if you find anything that is unclear along the way, do not hesitate to ask questions.
+to make mistakes and it does take some time, effort and energy to improve the state of proposals and 
+contributions. So do not be discouraged, keep at it and if you find anything that is unclear along the way, do not hesitate to ask questions.
 
 The overarching theme of this guide starts with the following questions:
 
 1. What is the Apereo CAS project policy on accepting contributions?
 2. How may one, seriously and in a step-wise fashion, get started with contributions?
+  
+## What do you mean by contribution? 
+ 
+In the context of the Apereo CAS project, a *contribution* generally means the giving or supplying 
+of bug fixes, modest feature enhancements, documentation improvements, test cases, etc back to the project typically in the form of a pull request or patch. 
+All such items and donations play a significant part in improving the state of the project and the software for all involved. Such contributions
+are concrete, actionable and measurable and signal back to the larger community that you, the contributor, are actively involved, engaged and concerned
+with the overal health status and future direction of the project. Of course, for non-technical folks, contributions do not always equal writing some 
+kind of code. That is only one of many possible options. We hope that you consider that as a good starting place and when all else fails,
+consider [supporting the project](https://apereo.github.io/cas/Support.html).
 
 ## What do I work on?
 
-A certain number of projects in open source try to advertise work items and tasks 
-which they think might be [good candidates for contributions](https://github.com/spring-projects/spring-boot/issues?q=is%3Aopen+is%3Aissue+label%3A%22status%3A+ideal-for-contribution%22). This is generally and often *not* the Apereo CAS project policy. The policy is much simpler than that.
+A certain number of projects in open source try to advertise, label and tag work items, issues and tasks 
+which they think might be good candidates for contributions. This is generally and 
+often *not* the Apereo CAS project policy.The policy is much simpler than that.
 
 It goes something like this:
 
@@ -39,7 +50,8 @@ In other words,
 
 Of course, if you are a newcomer to the project and have just begun to understand the ins and outs of 
 the [CAS project codebase](https://apereo.github.io/2017/06/12/cas-codebase-overview/), there may certainly 
-be areas in which you might find more comfort to slowly get your feet wet. You're welcome to [ask for suggestions](https://apereo.github.io/cas/Mailing-Lists.html). For the most part, the work item you wish to work on should be something you find interesting and enjoyable with some degree of practicality.
+be areas in which you might find more comfort to slowly get your feet wet. You're welcome to [ask for suggestions](https://apereo.github.io/cas/Mailing-Lists.html). 
+For the most part, the work item you wish to work on should be something you find interesting and enjoyable with some degree of practicality.
 
 Remember that you are deploying open source software, which means you have automatically become 
 a project/community member and a potential maintainer, whether you realize it or not. Staying in *consume-only* mode generally leads to poor results.
@@ -123,7 +135,7 @@ you for longer prosperity. Be not afraid; the worst that could happen is someone
 
 ## How do I know who's working on what?
 
-- Follow the *WIP Pattern* and submit [early pull requests](https://ben.straub.cc/2015/04/02/wip-pull-request/). This is the recommended strategy from Github:
+- Follow the *WIP Pattern* and submit an early pull requests in Draft status. This is the recommended strategy from Github:
 
 > Pull Requests are a great way to start a conversation of a feature, so start one as soon as possible- 
 > even before you are finished with the code. Your team can comment on the feature as it evolves, 
@@ -145,7 +157,7 @@ contributors and/or project members with the frequency of your progress notifica
 the use case as often as you like and be sure to keep asking for feedback as you make progress.
 
 <div class="alert alert-success">
-  <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
+:sunny: <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
 certain period of time get tagged as <i>Pending</i> and will be eventually closed automatically. Staleness 
 is only allowed to a certain degree, but worry not. Any stale closed pull request can always be reopened and progress resumed without data loss.
 </div>
@@ -157,7 +169,7 @@ the branch is still under care, you are more than welcome to move changes across
 much as needed to remove pain and improve.
 
 <div class="alert alert-success">
-  <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
+:sunny: <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
 maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
 </div>
 
@@ -180,6 +192,17 @@ By simply delivering the change and having it get merged into the codebase relev
 roadmap for the project. Work items get completed based on the community's availability, interest, time and money. The 
 roadmap is the item **you** intend to work on, build and ultimately deliver to the project as a pull request.
 
+## Is there a wishlist for future CAS versions?
+
+You're welcome and encouraged to get in touch with the CAS community on the appropriate forums and chatrooms to 
+share your use case and ideas with others and brainstorm about variations and possibilities. Healthy and productive discussions
+often help clear the path to better and more objective solutions. That said, if you are specifically looking for an idea repository where you would
+log an idea or feature request for someone else to come along and spend time, money and energy to review and 
+provide a solution or enhancement for you, that place does not exist with the CAS project. As was noted earlier, 
+if you would like to see a enhancement in CAS, you are to either study, learn and do the work yourself and contribute that back 
+to the CAS project after having had the proper discussions with the wider developer community, or you can provide funding for 
+the work or contract with someone so they can do the work on your behalf. There are no other viable, sustainable options.
+
 ## Are there plans to...?
 
 No. There are no plans.
@@ -194,8 +217,8 @@ done when contributors propose, discuss and show up with pull requests or when f
 for a change is made available. If you would like to see a change or feature in CAS, you're most welcome 
 to discuss and contribute or fund someone else's time and make it worth their while to do that for you.
 
-<div class="alert alert-info"><strong>The Hitchhiker's Guide to the CAS Galaxy</strong><p>A <i>problem</i> is 
-only a problem, if  and when something is done about the problem. Otherwise and by definition, there is no problem.</p></div>
+<div class="alert alert-info">:information_source: <strong>The Hitchhiker's Guide to the CAS Galaxy</strong><p>A <i>problem</i> is 
+only a problem, if and when you do something about the problem. Otherwise and by definition, there is no problem.</p></div>
 
 ## How often are changes released?
 
@@ -250,7 +273,7 @@ than *usual* to be merged, it's possible that the proposed changeset violates on
 - The patch violates the general design principles of the codebase or introduces inconsistent/contradictory concepts that are difficult to maintain.
 
 <div class="alert alert-success">
-  <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
+:sunny: <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
 as you prefer. The shared objective of a pull request is not to judge or point fingers but to 
 collaborate and make progress. Remain positive, optimistic with a healthy attitude towards comments and constructive feedback.
 </div>
@@ -310,7 +333,7 @@ commit anything to the `master` branch. The workflow more or less is the followi
 4. Go back to #2 until you are satisfied.
 
 <div class="alert alert-success">
-  <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
+:sunny: <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
 built locally from source. <a href="https://apereo.github.io/cas/developer/Build-Process.html">Follow this guide</a> to learn more.
 </div>
 
@@ -358,7 +381,7 @@ maintenance cycles. When you are preparing a pull request, please be sure to sel
 target branch for the patch to ensure your change can be included in the coming maintenance release as scheduled.
 
 <div class="alert alert-success">
-<strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
+:sunny: <strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
 previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported 
 forward to the master branch as well, via a separate pull request.
 </div>

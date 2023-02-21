@@ -25,12 +25,14 @@ public interface CasMultifactorWebflowConfigurer {
 
     /**
      * Determine the order of the configurer.
+     *
      * @return order
      */
     int getOrder();
 
     /**
      * Collection of flow definition registries that are tied to this mfa flow.
+     *
      * @return list of flow definition registries
      */
     List<FlowDefinitionRegistry> getMultifactorAuthenticationFlowDefinitionRegistries();

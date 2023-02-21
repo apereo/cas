@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
@@ -43,9 +44,11 @@ public class DelegatedClientAuthenticationConfigurationContext {
     /**
      * Default implementation bean id.
      */
-    public static final String DEFAULT_BEAN_NAME = "delegatedClientAuthenticationConfigurationContext";
+    public static final String BEAN_NAME = "delegatedClientAuthenticationConfigurationContext";
 
     private final Clients clients;
+
+    private final DelegatedAuthenticationCredentialExtractor credentialExtractor;
 
     private final ServicesManager servicesManager;
 

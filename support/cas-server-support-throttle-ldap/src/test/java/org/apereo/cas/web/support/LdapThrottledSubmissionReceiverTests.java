@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.throttle.ldap.bind-credential=P@ssw0rd",
         "cas.authn.throttle.ldap.account-locked-attribute=postalCode"
     })
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 11389)
 public class LdapThrottledSubmissionReceiverTests {
     private static final int LDAP_PORT = 11389;

@@ -387,7 +387,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnClass(DuoSecurityAuthenticationService.class)
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
-        public CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer(
+        public CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer(
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(CasMultifactorWebflowCustomizer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))

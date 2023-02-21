@@ -3,7 +3,9 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -37,16 +39,23 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private final ObjectProvider<LogoutManager> logoutManager;
 
-    public CachingTicketRegistry(final ObjectProvider<LogoutManager> logoutManager) {
-        this(CipherExecutor.noOp(), logoutManager);
+    public CachingTicketRegistry(
+        final TicketSerializationManager ticketSerializationManager,
+        final TicketCatalog ticketCatalog,
+        final ObjectProvider<LogoutManager> logoutManager) {
+        this(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, logoutManager);
     }
 
-    public CachingTicketRegistry(final CipherExecutor cipherExecutor, final ObjectProvider<LogoutManager> logoutManager) {
-        super(cipherExecutor);
+    public CachingTicketRegistry(final CipherExecutor cipherExecutor,
+                                 final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog,
+                                 final ObjectProvider<LogoutManager> logoutManager) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
         this.storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
-            .expireAfter(new CachedTicketExpirationPolicy()).removalListener(new CachedTicketRemovalListener())
+            .expireAfter(new CachedTicketExpirationPolicy())
+            .removalListener(new CachedTicketRemovalListener())
             .build();
         this.mapInstance = this.storage.asMap();
         this.logoutManager = logoutManager;

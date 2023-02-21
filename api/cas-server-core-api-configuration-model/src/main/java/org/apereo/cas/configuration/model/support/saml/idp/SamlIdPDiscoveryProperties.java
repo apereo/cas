@@ -29,6 +29,7 @@ public class SamlIdPDiscoveryProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 3547093517788229284L;
+
     /**
      * Locate discovery feed json file.
      */

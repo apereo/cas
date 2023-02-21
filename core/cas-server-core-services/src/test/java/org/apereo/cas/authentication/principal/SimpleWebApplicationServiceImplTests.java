@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -39,6 +40,18 @@ public class SimpleWebApplicationServiceImplTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
+        val context = ServicesManagerConfigurationContext.builder()
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
+            .serviceRegistry(mock(ServiceRegistry.class))
+            .applicationContext(applicationContext)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
+            .build();
+        return new DefaultServicesManager(context);
+    }
+
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
         val request = new MockHttpServletRequest();
@@ -57,7 +70,7 @@ public class SimpleWebApplicationServiceImplTests {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
-        
+
         val response = new WebApplicationServiceResponseBuilder(getServicesManager(applicationContext), SimpleUrlValidator.getInstance())
             .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -127,16 +140,5 @@ public class SimpleWebApplicationServiceImplTests {
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
         assertEquals("http://foo.com/?param=test", response.url());
-    }
-
-    private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(mock(ServiceRegistry.class))
-            .applicationContext(applicationContext)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-        return new DefaultServicesManager(context);
     }
 }

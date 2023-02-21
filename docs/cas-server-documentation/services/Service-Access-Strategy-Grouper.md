@@ -73,7 +73,7 @@ to override the defaults:
 ```
 
 
-You may also consider externalizing the Grouper client condfiguration file
+You may also consider externalizing the Grouper client configuration file
 by modifying `/src/main/resources/grouper.client.properties` to contain the following:
 
 ```properties

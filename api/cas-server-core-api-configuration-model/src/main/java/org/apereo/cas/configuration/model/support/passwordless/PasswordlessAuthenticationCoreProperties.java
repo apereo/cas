@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-passwordless")
+@RequiresModule(name = "cas-server-support-passwordless-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -26,6 +26,11 @@ import java.io.Serializable;
 public class PasswordlessAuthenticationCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 6726382874579042117L;
+
+    /**
+     * Flag to indicate if paswordless authentication is enabled.
+     */
+    private boolean enabled = true;
 
     /**
      * Allow passwordless authentication to skip its own flow

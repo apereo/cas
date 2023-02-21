@@ -38,7 +38,7 @@ you may want to extend the interval.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.u2f.cleaner" %}
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a 
+<div class="alert alert-warning">:warning: <strong>Cleaner Usage</strong><p>In a 
 clustered CAS deployment, it is best to keep the cleaner running on one designated 
 CAS node only and turn it off on all others via CAS settings. Keeping the 
 cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
@@ -49,40 +49,18 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="u2fDevices" %}
 
-### Default
+### Storage
+ 
+The following options are available to store registration records:
 
-By default, a repository implementation is included that collects 
-user device registrations and saves them into memory.
-This option should only be used for demo and testing purposes.
-
-### JSON
-      
-Please [see this guide](FIDO-U2F-Authentication-JSON.html) for more info.
-
-### Groovy
-
-Please [see this guide](FIDO-U2F-Authentication-Groovy.html) for more info.
-
-### JPA
-
-Please [see this guide](FIDO-U2F-Authentication-JPA.html) for more info.
-
-### MongoDb
-
-Please [see this guide](FIDO-U2F-Authentication-MongoDb.html) for more info.
-
-### DynamoDb
-
-Please [see this guide](FIDO-U2F-Authentication-DynamoDb.html) for more info.
-
-### Redis
-
-Please [see this guide](FIDO-U2F-Authentication-Redis.html) for more info.
-
-### CouchDb
-
-Please [see this guide](FIDO-U2F-Authentication-CouchDb.html) for more info.
-
-### REST
-
-Please [see this guide](FIDO-U2F-Authentication-Rest.html) for more info.
+| Parameter | Description                                                     |
+|-----------|-----------------------------------------------------------------|
+| Default   | Collects user device registrations and saves them into memory.  |
+| JSON      | Please [see this guide](FIDO-U2F-Authentication-JSON.html).     |
+| Groovy    | Please [see this guide](FIDO-U2F-Authentication-Groovy.html).   |
+| JPA       | Please [see this guide](FIDO-U2F-Authentication-JPA.html).      |
+| MongoDb   | Please [see this guide](FIDO-U2F-Authentication-MongoDb.html).  |
+| DynamoDb  | Please [see this guide](FIDO-U2F-Authentication-DynamoDb.html). |
+| Redis     | Please [see this guide](FIDO-U2F-Authentication-Redis.html).    |
+| CouchDb   | Please [see this guide](FIDO-U2F-Authentication-CouchDb.html).  |
+| REST      | Please [see this guide](FIDO-U2F-Authentication-Rest.html).     |

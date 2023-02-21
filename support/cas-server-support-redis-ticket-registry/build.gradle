@@ -1,6 +1,11 @@
 description = "Apereo CAS Redis Ticket Registry"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Redis Ticket Registry"
+    ]
 }
 dependencies {
     implementation libraries.redis
@@ -31,5 +36,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-notifications")
+
     testImplementation project(":support:cas-server-support-person-directory")
 }

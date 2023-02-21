@@ -4,6 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-cookie")
 
     implementation libraries.pac4jcore
+    implementation libraries.springsecurityweb
     
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-web-api")
@@ -25,6 +26,7 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
 
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-tickets")

@@ -12,11 +12,11 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 /**
@@ -63,7 +63,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                     val registeredService = getWsFederationRegisteredService(service);
                     LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
                         fedRequest, fedRequest.wreply(), registeredService);
-                    val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter();
+                    val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter().get(0);
                     return getConfigContext().getCasProperties()
                         .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
                 },

@@ -7,8 +7,11 @@ import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Objects;
 
 /**
  * This is {@link LogoutWebApplicationServiceFactory}.
@@ -24,9 +27,15 @@ public class LogoutWebApplicationServiceFactory extends WebApplicationServiceFac
     @Override
     protected String getRequestedService(final HttpServletRequest request) {
         if (request.getRequestURI().endsWith(CasProtocolConstants.ENDPOINT_LOGOUT)) {
-            val paramName = logoutProperties.getRedirectParameter();
-            LOGGER.trace("Using request parameter name [{}] to detect destination service, if any", paramName);
-            val service = request.getParameter(paramName);
+            val service = logoutProperties.getRedirectParameter()
+                .stream()
+                .map(paramName -> {
+                    LOGGER.trace("Using request parameter name [{}] to detect destination service, if any", paramName);
+                    return request.getParameter(paramName);
+                })
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(StringUtils.EMPTY);
             LOGGER.trace("Located target service [{}] for redirection after logout", service);
             return service;
         }

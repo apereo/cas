@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -92,8 +91,9 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
         val authenticator = profile.getClass().getCanonicalName();
-        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
-        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>(0));
+        val credential = new BasicIdentifiableCredential(profile.getId());
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator,
+            credential, newPrincipal, new ArrayList<>(0));
 
         val scopes = requestParameterResolver.resolveRequestedScopes(context);
         scopes.retainAll(registeredService.getScopes());
@@ -115,13 +115,12 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         }
 
         builder
-            .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
             .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
             .addAttribute(OAuth20Constants.SCOPE, scopes)
             .addAttribute(OAuth20Constants.STATE, state)
             .addAttribute(OAuth20Constants.NONCE, nonce)
             .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
-            .addCredential(metadata)
+            .addCredential(credential)
             .setPrincipal(newPrincipal)
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addSuccess(profile.getClass().getCanonicalName(), handlerResult);

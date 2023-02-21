@@ -39,7 +39,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
         mgr.record(ctx);
         assertTrue(mock.getAuditRecords().isEmpty());
     }
-    
+
     @Test
     public void verifyOperationForAllActions() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",

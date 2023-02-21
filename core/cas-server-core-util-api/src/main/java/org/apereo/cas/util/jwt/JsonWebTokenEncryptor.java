@@ -1,5 +1,6 @@
 package org.apereo.cas.util.jwt;
 
+import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Builder;
@@ -64,12 +65,18 @@ public class JsonWebTokenEncryptor {
             jwe.enableDefaultCompression();
             jwe.setAlgorithmHeaderValue(this.algorithm);
             jwe.setEncryptionMethodHeaderParameter(this.encryptionMethod);
-            jwe.setKey(this.key);
+
             jwe.setAlgorithmConstraints(getAlgorithmConstraints());
             jwe.setContentEncryptionAlgorithmConstraints(getContentEncryptionAlgorithmConstraints());
             jwe.setContentTypeHeaderValue("JWT");
             jwe.setHeader("typ", "JWT");
-            FunctionUtils.doIfNotNull(this.keyId, jwe::setKeyIdHeaderValue);
+            if (this.key instanceof IdentifiableKey idk) {
+                jwe.setKeyIdHeaderValue(idk.getId());
+                jwe.setKey(idk.getKey());
+            } else {
+                FunctionUtils.doIfNotNull(this.keyId, jwe::setKeyIdHeaderValue);
+                jwe.setKey(this.key);
+            }
             headers.forEach((k, v) -> jwe.setHeader(k, v.toString()));
             LOGGER.trace("Encrypting via [{}]", encryptionMethod);
             return jwe.getCompactSerialization();

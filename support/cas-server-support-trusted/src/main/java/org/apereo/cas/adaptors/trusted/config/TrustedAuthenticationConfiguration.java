@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.trusted.config;
 
 import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
+import org.apereo.cas.adaptors.trusted.authentication.principal.DefaultRemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
-import org.apereo.cas.adaptors.trusted.authentication.principal.ShibbolethServiceProviderRequestPrincipalAttributesExtractor;
 import org.apereo.cas.adaptors.trusted.web.flow.ChainingPrincipalFromRequestNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestExtractorAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInteractiveCredentialsAction;
@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -90,6 +91,10 @@ public class TrustedAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
         public PrincipalResolver trustedPrincipalResolver(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy,
             final CasConfigurationProperties casProperties,
@@ -99,11 +104,11 @@ public class TrustedAuthenticationConfiguration {
             final IPersonAttributeDao attributeRepository) {
             val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
             val personDirectory = casProperties.getPersonDirectory();
-            val trusted = casProperties.getAuthn().getTrusted();
+            val trusted = casProperties.getAuthn().getTrusted().getPersonDirectory();
             val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,
                 attributeRepository,
                 CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-                PrincipalBearingPrincipalResolver.class,
+                PrincipalBearingPrincipalResolver.class, servicesManager, attributeDefinitionStore,
                 trusted,
                 personDirectory);
             resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(),
@@ -119,8 +124,9 @@ public class TrustedAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor() {
-            return new ShibbolethServiceProviderRequestPrincipalAttributesExtractor();
+        public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor(final CasConfigurationProperties casProperties) {
+            val patterns = CollectionUtils.convertDirectedListToMap(casProperties.getAuthn().getTrusted().getAttributeHeaderPatterns());
+            return new DefaultRemoteRequestPrincipalAttributesExtractor(patterns);
         }
     }
 

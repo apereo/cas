@@ -14,8 +14,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 import javax.annotation.Nonnull;
+
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -52,15 +54,16 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     }
 
     @Override
-    public void save(final CasEvent event) throws Exception {
+    public CasEvent save(final CasEvent event) throws Exception {
         if (getEventRepositoryFilter().shouldSaveEvent(event)) {
-            saveInternal(event);
-
-            if (applicationEventPublisher != null) {
+            val result = saveInternal(event);
+            Optional.ofNullable(applicationEventPublisher).ifPresent(publisher -> {
                 val auditEvent = new AuditEvent(event.getPrincipalId(), event.getType(), (Map) event.getProperties());
-                applicationEventPublisher.publishEvent(new AuditApplicationEvent(auditEvent));
-            }
+                publisher.publishEvent(new AuditApplicationEvent(auditEvent));
+            });
+            return result;
         }
+        return event;
     }
 
     @Override
@@ -104,8 +107,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
 
     @Override
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
-        return load()
-            .filter(e -> e.getPrincipalId().equalsIgnoreCase(id));
+        return load().filter(e -> e.getPrincipalId().equalsIgnoreCase(id));
     }
 
     @Override

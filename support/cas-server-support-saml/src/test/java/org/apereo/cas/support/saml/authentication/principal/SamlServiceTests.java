@@ -8,8 +8,6 @@ import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
@@ -19,7 +17,6 @@ import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -32,8 +29,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -58,6 +53,10 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
 
     @Autowired
+    @Qualifier("servicesManagerConfigurationContext")
+    private ServicesManagerConfigurationContext servicesManagerConfigurationContext;
+
+    @Autowired
     @Qualifier(UrlValidator.BEAN_NAME)
     private UrlValidator urlValidator;
 
@@ -71,15 +70,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
 
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(mock(ServiceRegistry.class))
-            .applicationContext(applicationContext)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-
-        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context), this.urlValidator)
+        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(servicesManagerConfigurationContext), this.urlValidator)
             .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
@@ -100,15 +91,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
-        val context = ServicesManagerConfigurationContext.builder()
-            .serviceRegistry(mock(ServiceRegistry.class))
-            .applicationContext(applicationContext)
-            .environments(new HashSet<>(0))
-            .servicesCache(Caffeine.newBuilder().build())
-            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-            .build();
-
-        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(context), this.urlValidator)
+        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(servicesManagerConfigurationContext), this.urlValidator)
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());

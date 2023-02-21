@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("CosmosDb")
+@Tag("Azure")
 @SpringBootTest(classes = {
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,

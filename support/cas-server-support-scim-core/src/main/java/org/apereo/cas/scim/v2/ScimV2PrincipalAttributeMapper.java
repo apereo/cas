@@ -3,7 +3,7 @@ package org.apereo.cas.scim.v2;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
-import com.unboundid.scim2.common.types.UserResource;
+import de.captaingoldfish.scim.sdk.common.resources.User;
 
 /**
  * This is {@link ScimV2PrincipalAttributeMapper}.
@@ -20,5 +20,5 @@ public interface ScimV2PrincipalAttributeMapper {
      * @param principal  the current principal as the source object
      * @param credential the current credential being used/validated
      */
-    void map(UserResource user, Principal principal, Credential credential);
+    void map(User user, Principal principal, Credential credential);
 }

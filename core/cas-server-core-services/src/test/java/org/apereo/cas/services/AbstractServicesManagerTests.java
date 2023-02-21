@@ -194,6 +194,7 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
         applicationContext.refresh();
         return ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))

@@ -15,8 +15,8 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

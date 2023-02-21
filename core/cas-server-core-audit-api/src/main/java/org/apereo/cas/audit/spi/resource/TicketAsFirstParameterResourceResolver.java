@@ -24,11 +24,6 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Exception object) {
-        return resolveFrom(joinPoint, (Object) object);
-    }
-
-    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         val jp = AopUtils.unWrapJoinPoint(joinPoint);
         if (jp != null) {
@@ -46,5 +41,10 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
             }
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
+    }
+
+    @Override
+    public String[] resolveFrom(final JoinPoint joinPoint, final Exception object) {
+        return resolveFrom(joinPoint, (Object) object);
     }
 }

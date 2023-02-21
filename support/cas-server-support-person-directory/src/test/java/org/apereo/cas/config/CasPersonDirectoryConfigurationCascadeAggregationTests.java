@@ -4,7 +4,6 @@ import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class CasPersonDirectoryConfigurationCascadeAggregationTests {
     @Test
     public void verifyOperation() {
         assertNotNull(aggregatingAttributeRepository);
-        val person = aggregatingAttributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = aggregatingAttributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributeValue("uid"));
         assertNotNull(person.getAttributeValue("givenName"));

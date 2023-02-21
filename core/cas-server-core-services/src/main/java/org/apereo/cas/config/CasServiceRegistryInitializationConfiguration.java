@@ -36,6 +36,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -76,10 +77,10 @@ public class CasServiceRegistryInitializationConfiguration {
     public static class CasServiceRegistryInitializationEventsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("serviceRegistryInitializer")
-            final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer) {
+            @Qualifier("serviceRegistryInitializer") final ObjectProvider<ServiceRegistryInitializer> serviceRegistryInitializer) {
             return BeanSupplier.of(ServiceRegistryInitializerEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultServiceRegistryInitializerEventListener(serviceRegistryInitializer))
@@ -93,14 +94,12 @@ public class CasServiceRegistryInitializationConfiguration {
     public static class CasServiceRegistryInitializationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public ServiceRegistryInitializer serviceRegistryInitializer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("embeddedJsonServiceRegistry")
-            final ServiceRegistry embeddedJsonServiceRegistry,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(ServiceRegistry.BEAN_NAME)
-            final ChainingServiceRegistry serviceRegistry) {
+            @Qualifier("embeddedJsonServiceRegistry") final ServiceRegistry embeddedJsonServiceRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(ServiceRegistry.BEAN_NAME) final ChainingServiceRegistry serviceRegistry) {
             return BeanSupplier.of(ServiceRegistryInitializer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager))
@@ -159,8 +158,7 @@ public class CasServiceRegistryInitializationConfiguration {
         @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
         public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("embeddedJsonServiceRegistry")
-            final ServiceRegistry embeddedJsonServiceRegistry) {
+            @Qualifier("embeddedJsonServiceRegistry") final ServiceRegistry embeddedJsonServiceRegistry) {
             return BeanSupplier.of(ServiceRegistryExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry))

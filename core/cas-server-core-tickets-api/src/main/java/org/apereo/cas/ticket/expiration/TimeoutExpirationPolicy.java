@@ -52,8 +52,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     @JsonCreator
     public TimeoutExpirationPolicy(
-        @JsonProperty("timeToIdle")
-        final long timeToKillInSeconds) {
+        @JsonProperty("timeToIdle") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 

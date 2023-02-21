@@ -1,4 +1,11 @@
 description = "Apereo CAS Token Authentication Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "JWT & Token Authentication"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 

@@ -5,12 +5,12 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.UUID;
@@ -119,14 +120,14 @@ public class OidcAuthorizeEndpointControllerTests {
             val context = new JEEContext(mockRequest, mockResponse);
             val ticket = new MockTicketGrantingTicket("casuser");
             oidcAuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-            sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+            profile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
             sessionStore.set(context, Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
             val modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
             val view = modelAndView.getView();
             assertTrue(view instanceof RedirectView);
-            val url = ((RedirectView) view).getUrl();
+            val url = ((AbstractUrlBasedView) view).getUrl();
             assertTrue(url.startsWith("https://oauth.example.org/"));
 
             val fragment = new URIBuilder(url).getFragment();

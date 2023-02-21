@@ -1,17 +1,13 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.ha.session.BackupManager;
 import org.apache.catalina.ha.session.ClusterManagerBase;
 import org.apache.catalina.ha.session.ClusterSessionListener;
@@ -32,11 +28,8 @@ import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.apache.tomcat.util.net.SSLHostConfig;
-import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
@@ -56,21 +49,13 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private final CasConfigurationProperties casProperties;
 
     public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
-        final ServerProperties serverProperties) {
+                                            final ServerProperties serverProperties) {
         super(serverProperties.getPort());
         if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
             setContextPath(serverProperties.getServlet().getContextPath());
         }
         this.casProperties = casProperties;
-
-        configureConnectorForApr();
         configureContextForSessionClustering();
-    }
-
-    @Override
-    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
-        configureSessionClustering(tomcat);
-        return super.getTomcatWebServer(tomcat);
     }
 
     @Override
@@ -88,61 +73,10 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             });
     }
 
-    private void configureConnectorForApr() {
-        val apr = casProperties.getServer().getTomcat().getApr();
-        if (apr.isEnabled()) {
-            LOGGER.trace("Attempting to initialize APR protocol via [{}] for port [{}]",
-                Http11AprProtocol.class.getName(), getPort());
-            val arpLifecycle = new AprLifecycleListener();
-            setProtocol(Http11AprProtocol.class.getName());
-            addContextLifecycleListeners(arpLifecycle);
-            addConnectorCustomizers(c -> {
-                if (c.getPort() == getPort()) {
-                    LOGGER.debug("Enabling APR on connector port [{}]", c.getPort());
-                    c.setSecure(true);
-                    c.setScheme("https");
-
-                    if (apr.getSslHostConfig().isEnabled()) {
-                        configureConnectorForSslHostConfig(c, apr.getSslHostConfig());
-                    }
-
-                    val handler = (Http11AprProtocol) c.getProtocolHandler();
-                    handler.setSSLEnabled(true);
-                    if (StringUtils.isNotBlank(apr.getSslProtocol())) {
-                        handler.setSSLProtocol(apr.getSslProtocol());
-                    }
-                    if (apr.getSslVerifyDepth() > 0) {
-                        handler.setSSLVerifyDepth(apr.getSslVerifyDepth());
-                    }
-                    if (StringUtils.isNotBlank(apr.getSslVerifyClient())) {
-                        handler.setSSLVerifyClient(apr.getSslVerifyClient());
-                    }
-                    if (StringUtils.isNotBlank(apr.getSslCipherSuite())) {
-                        handler.setSSLCipherSuite(apr.getSslCipherSuite());
-                    }
-                    if (StringUtils.isNotBlank(apr.getSslPassword())) {
-                        handler.setSSLPassword(apr.getSslPassword());
-                    }
-                    handler.setSSLDisableCompression(apr.isSslDisableCompression());
-                    handler.setSSLHonorCipherOrder(apr.isSslHonorCipherOrder());
-
-                    FunctionUtils.doIfNotNull(apr.getSslCaCertificateFile(),
-                        f -> handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath()));
-
-                    FunctionUtils.doIfNotNull(apr.getSslCertificateFile(),
-                        f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath()));
-
-                    FunctionUtils.doIfNotNull(apr.getSslCertificateKeyFile(),
-                        f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath()));
-
-                    FunctionUtils.doIfNotNull(apr.getSslCertificateChainFile(),
-                        f -> handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath()));
-
-                    FunctionUtils.doIfNotNull(apr.getSslCaRevocationFile(),
-                        f -> handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath()));
-                }
-            });
-        }
+    @Override
+    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
+        configureSessionClustering(tomcat);
+        return super.getTomcatWebServer(tomcat);
     }
 
     private void configureSessionClustering(final Tomcat tomcat) {
@@ -242,31 +176,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         val backupManager = new BackupManager();
         backupManager.setNotifyListenersOnReplication(true);
         return backupManager;
-    }
-
-    private static void configureConnectorForSslHostConfig(final Connector c,
-        final CasEmbeddedApacheSslHostConfigProperties properties) {
-
-        val hostConfig = new SSLHostConfig();
-        hostConfig.setCertificateVerification(properties.getCertificateVerification());
-        hostConfig.setCertificateVerificationDepth(properties.getCertificateVerificationDepth());
-        hostConfig.setHostName(properties.getHostName());
-        hostConfig.setProtocols(properties.getProtocols());
-        hostConfig.setSslProtocol(properties.getSslProtocol());
-        hostConfig.setCaCertificateFile(properties.getCaCertificateFile());
-        hostConfig.setInsecureRenegotiation(properties.isInsecureRenegotiation());
-        hostConfig.setRevocationEnabled(properties.isRevocationEnabled());
-
-        properties.getCertificates().forEach(cert -> {
-            val certificate = new SSLHostConfigCertificate(hostConfig,
-                SSLHostConfigCertificate.Type.valueOf(cert.getType().trim().toUpperCase()));
-            certificate.setCertificateChainFile(cert.getCertificateChainFile());
-            certificate.setCertificateFile(cert.getCertificateFile());
-            certificate.setCertificateKeyFile(cert.getCertificateKeyFile());
-            certificate.setCertificateKeyPassword(cert.getCertificateKeyPassword());
-            hostConfig.addCertificate(certificate);
-        });
-        c.addSslHostConfig(hostConfig);
     }
 
     @Getter

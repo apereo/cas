@@ -28,6 +28,6 @@ public interface WsFederationAttributeMutator extends Serializable {
      * @return the ws federation attribute mutator
      */
     static WsFederationAttributeMutator noOp() {
-        return (WsFederationAttributeMutator) attributes -> attributes;
+        return attributes -> attributes;
     }
 }

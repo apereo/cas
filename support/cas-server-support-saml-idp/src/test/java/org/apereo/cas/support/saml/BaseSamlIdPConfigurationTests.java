@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -41,6 +42,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataCustomizer;
@@ -70,6 +72,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -119,6 +122,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
+    @Autowired
+    @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+    protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -188,7 +195,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Autowired
-    @Qualifier("samlIdPMetadataGenerator")
+    @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired
@@ -202,6 +209,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
     protected ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
+
+    @Autowired
+    @Qualifier("defaultAuthnContextClassRefBuilder")
+    protected SamlProfileObjectBuilder<AuthnContext> defaultAuthnContextClassRefBuilder;
 
     protected static AuthenticatedAssertionContext getAssertion() {
         return getAssertion(Map.of());
@@ -222,7 +233,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         return AuthenticatedAssertionContext.builder()
             .name(user)
             .authenticationDate(ZonedDateTime.now(Clock.systemUTC()))
-            .validUntilDate(ZonedDateTime.now(Clock.systemUTC()).plusDays(1))
+            .validUntilDate(ZonedDateTime.now(Clock.systemUTC()).plusHours(1))
             .validFromDate(ZonedDateTime.now(Clock.systemUTC()))
             .attributes(attributes)
             .build();
@@ -350,6 +361,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPMetadataConfiguration.class,
         SamlIdPTicketSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreAuditConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,

@@ -2,8 +2,12 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -130,5 +134,44 @@ public class Beans {
      */
     public static String getTempFilePath(final String prefix, final String suffix) {
         return Unchecked.supplier(() -> File.createTempFile(prefix, suffix).getCanonicalPath()).get();
+    }
+
+    /**
+     * New cache.
+     *
+     * @param <T>              the type parameter
+     * @param <V>              the type parameter
+     * @param cache            the cache
+     * @param expiryAfterWrite the expiry after write
+     * @return the caffeine
+     */
+    public static <T, V> Cache<T, V> newCache(final SimpleCacheProperties cache,
+                                              final Duration expiryAfterWrite) {
+        return newCache(cache)
+            .expireAfterWrite(expiryAfterWrite)
+            .build();
+    }
+
+    /**
+     * New cache.
+     *
+     * @param <T>         the type parameter
+     * @param <V>         the type parameter
+     * @param cache       the cache
+     * @param expiryAfter the expiry after
+     * @return the cache
+     */
+    public static <T, V> Cache<T, V> newCache(final SimpleCacheProperties cache,
+                                              final Expiry<T, V> expiryAfter) {
+        return newCache(cache)
+            .expireAfter(expiryAfter)
+            .build();
+    }
+
+    private static Caffeine newCache(final SimpleCacheProperties cache) {
+        val builder = Caffeine.newBuilder();
+        return builder
+            .initialCapacity(cache.getInitialCapacity())
+            .maximumSize(cache.getCacheSize());
     }
 }

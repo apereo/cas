@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +36,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
 
     /**
      * Get the authentication policy assigned to this service.
+     *
      * @return the policy
      */
     RegisteredServiceAuthenticationPolicy getAuthenticationPolicy();
@@ -44,6 +44,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     /**
      * Get service matching strategy used to evaluate
      * given service identifiers against this service.
+     *
      * @return the strategy
      */
     RegisteredServiceMatchingStrategy getMatchingStrategy();
@@ -100,13 +101,12 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     }
 
     /**
-     * Response determines how CAS should contact the matching service
-     * typically with a ticket id. By default, the strategy is a 302 redirect.
+     * Gets template name that acts
+     * as the base version of this registered service.
      *
-     * @return the response type
-     * @see Response.ResponseType
+     * @return the template name
      */
-    String getResponseType();
+    String getTemplateName();
 
     /**
      * Gets the relative evaluation order of this service when determining
@@ -242,7 +242,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     default String getFriendlyName() {
         return this.getClass().getSimpleName();
     }
-    
+
     /**
      * Initialize the registered service instance by defaulting fields to specific
      * values or object instances, etc.

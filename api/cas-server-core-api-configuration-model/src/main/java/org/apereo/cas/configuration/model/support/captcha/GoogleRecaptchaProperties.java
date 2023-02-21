@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -26,24 +27,6 @@ public class GoogleRecaptchaProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -8955074129123813915L;
-
-    /**
-     * Recaptcha API versions.
-     */
-    public enum RecaptchaVersions {
-        /**
-         * V2 version of the recaptcha API.
-         */
-        GOOGLE_RECAPTCHA_V2,
-        /**
-         * V3 version of the recaptcha API.
-         */
-        GOOGLE_RECAPTCHA_V3,
-        /**
-         * hCaptcha.
-         */
-        HCAPTCHA
-    }
 
     /**
      * Indicate the version of the recaptcha api.
@@ -106,5 +89,24 @@ public class GoogleRecaptchaProperties implements Serializable {
      * captcha should be activated when the remote IP address
      * matches this pattern, and otherwise skipped and disabled.
      */
+    @RegularExpressionCapable
     private String activateForIpAddressPattern;
+
+    /**
+     * Recaptcha API versions.
+     */
+    public enum RecaptchaVersions {
+        /**
+         * V2 version of the recaptcha API.
+         */
+        GOOGLE_RECAPTCHA_V2,
+        /**
+         * V3 version of the recaptcha API.
+         */
+        GOOGLE_RECAPTCHA_V3,
+        /**
+         * hCaptcha.
+         */
+        HCAPTCHA
+    }
 }

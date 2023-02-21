@@ -1,4 +1,13 @@
-apply from: rootProject.file("gradle/webapp.gradle")
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Undertow",
+            facets: ["web"],
+            aliases: ["undertow"],
+            category: "Web Application"
+    ]
+}
+apply from: rootProject.file("gradle/war.gradle")
 description = "Apereo CAS Web Application via Undertow"
 
 dependencies {

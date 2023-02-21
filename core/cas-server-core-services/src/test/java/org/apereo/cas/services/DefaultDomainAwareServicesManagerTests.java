@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Travis Schmidt
@@ -51,7 +52,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
     @Test
     public void verifyDeleteEmptyDomains() {
         servicesManager.deleteAll();
-        
+
         var r = new CasRegisteredService();
         r.setId(10);
         r.setName("domainService1");
@@ -69,7 +70,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
 
         assertNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://whatever.com")));
         assertNotNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
-        
+
         servicesManager.deleteAll();
         assertEquals(0, domainServicesManager.getDomains().count());
     }
@@ -82,6 +83,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))

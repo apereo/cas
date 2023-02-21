@@ -13,20 +13,29 @@ configurations.all {
         if (!dependencyUpdates) {
             eachDependency { DependencyResolveDetails details ->
                 def requested = details.requested
-                if (requested.group == "org.bouncycastle" && requested.name.endsWith("-jdk15on")) {
-                    details.useTarget group: "org.bouncycastle", name: requested.name.replaceAll("-jdk15on","-jdk18on"), version: "${bouncyCastleVersion}"
+                if (requested.group == "org.bouncycastle") {
+                    details.useVersion("${bouncyCastleVersion}")
                 }
                 if (requested.group == "gnu-getopt")  {
-                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: requested.version
                 }
                 if (requested.group == "org.opensaml")  {
                     details.useVersion("${opensamlVersion}")
                 }
+                if (requested.group == "jakarta.activation")  {
+                    details.useVersion("${jakartaActivationVersion}")
+                }
                 if (requested.group == "com.h2database")  {
                     details.useVersion("${h2Version}")
                 }
-                if (requested.group == "org.hibernate")  {
+                if (requested.name == "hibernate-validator") {
+                    details.useVersion("${hibernateValidatorVersion}")
+                }
+                if (requested.group == "org.hibernate.orm")  {
                     details.useVersion("${hibernateVersion}")
+                }
+                if (requested.group == "com.squareup.okhttp3")  {
+                    details.useVersion("${okhttp3Version}")
                 }
                 if (requested.group == "org.postgresql")  {
                     details.useVersion("${postgresqlVersion}")
@@ -34,8 +43,14 @@ configurations.all {
                 if (requested.group == "com.hazelcast" && requested.name == "hazelcast")  {
                     details.useVersion("${hazelcastVersion}")
                 }
+                if (requested.group == "org.pac4j" && requested.name.startsWith("pac4j-"))  {
+                    details.useVersion("${pac4jVersion}")
+                }
                 if (requested.group == "org.springframework")  {
                     details.useVersion("${springVersion}")
+                }
+                if (requested.group == "io.github.classgraph")  {
+                    details.useVersion("${classgraphVersion}")
                 }
                 if (requested.group == "org.springframework.session")  {
                     if (requested.name == "spring-session-data-mongodb") {
@@ -44,8 +59,16 @@ configurations.all {
                         details.useVersion("${springSessionVersion}")
                     }
                 }
-                if (requested.group == "org.apache.tomcat")  {
-                    details.useVersion("${tomcatVersion}")
+                if (requested.group.startsWith("org.eclipse.jetty")) {
+                    details.useVersion("${jettyVersion}")
+                }
+                if (requested.group.startsWith("io.undertow")) {
+                    details.useVersion("${undertowVersion}")
+                }
+                if (requested.group.startsWith( "org.apache.tomcat")) {
+                    if (requested.name != "jakartaee-migration") {
+                        details.useVersion("${tomcatVersion}")
+                    }
                 }
                 if (requested.group == "org.hsqldb")  {
                     details.useVersion("${hsqlVersion}")
@@ -64,6 +87,9 @@ configurations.all {
                         details.useVersion("${nettyVersion}")
                     }
                 }
+                if (requested.group == "org.apache.kafka") {
+                    details.useVersion("${kafkaVersion}")
+                }
                 if (requested.group == "org.mongodb")  {
                     details.useVersion("${mongoDriverVersion}")
                 }
@@ -73,7 +99,7 @@ configurations.all {
                 if (requested.group == "net.sourceforge.jtds")  {
                     details.useVersion("${jtdsVersion}")
                 }
-                if (requested.group == "com.couchbase.client" && details.requested.name == "java-client")  {
+                if (requested.group == "com.couchbase.client" && requested.name == "java-client")  {
                     details.useVersion("${couchbaseVersion}")
                 }
                 if (requested.group == "com.github.ben-manes.caffeine")  {
@@ -84,6 +110,9 @@ configurations.all {
                 }
                 if (requested.group == "org.apache.groovy")  {
                     details.useVersion("${groovyVersion}")
+                }
+                if (requested.group == "org.apache.cxf")  {
+                    details.useVersion("${apacheCxfVersion}")
                 }
                 if (requested.group == "com.zaxxer")  {
                     details.useVersion("${hikariVersion}")
@@ -100,31 +129,34 @@ configurations.all {
                 if (requested.group == "ch.qos.logback")  {
                     details.useVersion("${logbackVersion}")
                 }
-                if (requested.group == "org.glassfish.jaxb")  {
-                    details.useVersion("${jaxbRuntimeVersion}")
+                if (requested.group.startsWith("jakarta.xml.bind"))  {
+                    details.useVersion("${jaxbApiVersion}")
                 }
-
-                if (requested.group == "org.apache.httpcomponents")  {
-                    if (details.requested.name == "httpcore") {
-                        details.useVersion("${httpCoreVersion}")
-                    } else {
-                        details.useVersion("${httpclientVersion}")
-                    }
+                if (requested.name == "jakarta.servlet.jsp.jstl-api") {
+                    details.useVersion("${jakartaJstlVersion}")
+                } else if (requested.group.startsWith("jakarta.servlet"))  {
+                    details.useVersion("${jakartaServletVersion}")
+                }
+                if (requested.group == "org.apache.httpcomponents.client5") {
+                    details.useVersion("${httpclientVersion}")
+                }
+                if (requested.group == "org.apache.httpcomponents.core5") {
+                    details.useVersion("${httpCoreVersion}")
                 }
                 if (requested.group.startsWith("com.fasterxml.jackson"))  {
                     details.useVersion("${jacksonVersion}")
                 }
-                if (requested.group == "io.micrometer")  {
+                if (requested.group == "io.micrometer" && requested.name.startsWith("micrometer-"))  {
                     details.useVersion("${micrometerVersion}")
-                }
-                if (requested.group == "com.timgroup")  {
-                    details.useVersion("${statsdVersion}")
-                }
-                if (requested.group == "com.signalfx.public")  {
-                    details.useVersion("${signalFxVersion}")
                 }
                 if (requested.group == "org.apache.wss4j")  {
                     details.useVersion("${wss4jVersion}")
+                }
+                if (requested.group == "org.slf4j")  {
+                    details.useVersion("${slf4jVersion}")
+                }
+                if (requested.group == "org.apache.logging.log4j") {
+                    details.useVersion("${log4jVersion}")
                 }
             }
         }
@@ -137,32 +169,13 @@ configurations.all {
     exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
     exclude(group: "pull-parser", module: "pull-parser")
     exclude(group: "javax.servlet", module: "servlet-api")
+    exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
+    exclude(group: "javax.annotation", module: "javax.annotation-api")
+    exclude(group: "javax.activation", module: "activation")
+    exclude group: "com.sun.activation", module: "jakarta.activation"
     exclude(group: "commons-logging", module: "commons-logging")
+    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+    exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
+    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
 }
-
-ext["couchbase-client.version"] = ext["couchbaseVersion"]
-ext["caffeine.version"] = ext["caffeineVersion"]
-ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
-ext["hazelcast.version"] = ext["hazelcastVersion"]
-ext["hibernate.version"] = ext["hibernateVersion"]
-ext["tomcat.version"] = ext["tomcatVersion"]
-ext["h2.version"] = ext["h2Version"]
-ext["spring.version"] = ext["springVersion"]
-ext["jackson.version"] = ext["jacksonVersion"]
-ext["thymeleaf.version"] = ext["thymeleafVersion"]
-ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
-ext["hsqldb.version"] = ext["hsqlVersion"]
-ext["httpcore.version"] = ext["httpCoreVersion"]
-ext["spring-session.version"] = ext["springSessionVersion"]
-ext["hikaricp.version"] = ext["hikariVersion"]
-ext["groovy.version"] = ext["groovyVersion"]
-ext["log4j2.version"] = ext["log4jVersion"]
-ext["logback.version"] = ext["logbackVersion"]
-ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
-ext["mysql.version"] = ext["mysqlVersion"]
-ext["postgresql.version"] = ext["postgresqlVersion"]
-ext["mariadb.version"] = ext["mariaDbVersion"]
-ext["jtds.version"] = ext["jtdsVersion"]
-ext["mssql-jdbc.version"] = ext["mssqlServerVersion"]
-ext["mongodb.version"] = ext["mongoDriverVersion"]
-ext["micrometer.version"] = ext["micrometerVersion"]

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -30,7 +31,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This is {@link SpnegoConfiguration}.
@@ -44,12 +49,9 @@ import java.util.stream.Collectors;
 @AutoConfiguration
 public class SpnegoConfiguration {
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean
-    @ConditionalOnMissingBean(name = "spnegoAuthentications")
-    public BeanContainer<Authentication> spnegoAuthentications(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
+    private static BeanContainer<Authentication> buildSpnegoAuthentications(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
 
         JcifsConfig.SystemSettings.initialize(applicationContext, spnegoSystem.getLoginConf());
@@ -66,45 +68,60 @@ public class SpnegoConfiguration {
 
         val props = casProperties.getAuthn().getSpnego().getProperties();
         return BeanContainer.of(props.stream()
-            .map(p -> {
-                val c = new JcifsConfig();
-                val jcifsSettings = c.getJcifsSettings();
-                jcifsSettings.setJcifsDomain(p.getJcifsDomain());
-                jcifsSettings.setJcifsDomainController(p.getJcifsDomainController());
-                jcifsSettings.setJcifsNetbiosCachePolicy(p.getCachePolicy());
-                jcifsSettings.setJcifsNetbiosWins(p.getJcifsNetbiosWins());
-                jcifsSettings.setJcifsPassword(p.getJcifsPassword());
-                jcifsSettings.setJcifsServicePassword(p.getJcifsServicePassword());
-                jcifsSettings.setJcifsServicePrincipal(p.getJcifsServicePrincipal());
-                jcifsSettings.setJcifsSocketTimeout(Beans.newDuration(p.getTimeout()).toMillis());
-                jcifsSettings.setJcifsUsername(p.getJcifsUsername());
-                return new Authentication(jcifsSettings.getProperties());
-            })
-            .collect(Collectors.toList()));
+                .map(p -> {
+                    val c = new JcifsConfig();
+                    val jcifsSettings = c.getJcifsSettings();
+                    jcifsSettings.setJcifsDomain(p.getJcifsDomain());
+                    jcifsSettings.setJcifsDomainController(p.getJcifsDomainController());
+                    jcifsSettings.setJcifsNetbiosCachePolicy(p.getCachePolicy());
+                    jcifsSettings.setJcifsNetbiosWins(p.getJcifsNetbiosWins());
+                    jcifsSettings.setJcifsPassword(p.getJcifsPassword());
+                    jcifsSettings.setJcifsServicePassword(p.getJcifsServicePassword());
+                    jcifsSettings.setJcifsServicePrincipal(p.getJcifsServicePrincipal());
+                    jcifsSettings.setJcifsSocketTimeout(Beans.newDuration(p.getTimeout()).toMillis());
+                    jcifsSettings.setJcifsUsername(p.getJcifsUsername());
+                    return new Authentication(jcifsSettings.getProperties());
+                })
+                .collect(Collectors.toList()));
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    @ConditionalOnMissingBean(name = "spnegoAuthenticationsPool")
+    public BlockingQueue<List<Authentication>> spnegoAuthenticationsPool(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        val poolSize = spnegoProperties.getPoolSize();
+        val spnegoAuthenticationPool = new ArrayBlockingQueue<List<Authentication>>(poolSize);
+        IntStream.range(0, poolSize).forEach(i -> spnegoAuthenticationPool.add(buildSpnegoAuthentications(casProperties, applicationContext).toList()));
+        return spnegoAuthenticationPool;
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler(
-        @Qualifier("spnegoAuthentications")
-        final BeanContainer<Authentication> spnegoAuthentications,
+        @Qualifier("spnegoAuthenticationsPool")
+        final BlockingQueue<List<Authentication>> spnegoAuthenticationsPool,
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(),
-            servicesManager, spnegoPrincipalFactory, spnegoAuthentications.toList(),
-            spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed(),
-            spnegoProperties.getOrder());
+        return new JcifsSpnegoAuthenticationHandler(spnegoProperties,
+            servicesManager, spnegoPrincipalFactory, spnegoAuthenticationsPool);
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver(
+        @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+        final AttributeDefinitionStore attributeDefinitionStore,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -115,7 +132,9 @@ public class SpnegoConfiguration {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(
             casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory,
-            attributeRepository, attributeMerger, SpnegoPrincipalResolver.class, spnegoPrincipal, personDirectory);
+            attributeRepository, attributeMerger, SpnegoPrincipalResolver.class,
+            servicesManager, attributeDefinitionStore,
+            spnegoPrincipal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

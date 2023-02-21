@@ -42,12 +42,8 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
-    @CanIgnoreReturnValue
-    public DistributedCacheManager<K, V, PublisherIdentifier> set(final K key,
-                                                                  final V item,
-                                                                  final boolean publish) {
-        this.mapInstance.put(buildKey(key), item);
-        return this;
+    public boolean contains(final K key) {
+        return this.mapInstance.containsKey(buildKey(key));
     }
 
     @Override
@@ -56,8 +52,12 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
-    public boolean contains(final K key) {
-        return this.mapInstance.containsKey(buildKey(key));
+    @CanIgnoreReturnValue
+    public DistributedCacheManager<K, V, PublisherIdentifier> set(final K key,
+                                                                  final V item,
+                                                                  final boolean publish) {
+        this.mapInstance.put(buildKey(key), item);
+        return this;
     }
 
     @Override

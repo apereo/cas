@@ -12,8 +12,8 @@ CouchDB integration is enabled by including the following dependency in the WAR 
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-couchdb-ticket-registry" %}
 
-[CouchDB](http://couchdb.apache.org) is a highly available, open source NoSQL database server based on
-[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this
+[CouchDB](https://couchdb.apache.org) is a highly available, open source NoSQL database server based on
+[Erlang/OTP](https://www.erlang.org) and its mnesia database. The intention of this
 registry is to leverage the multi-master, multi-datacenter capabilities of CouchDB server to provide high availability to CAS.
 
 ## Configuration

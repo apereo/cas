@@ -20,6 +20,7 @@ import org.springframework.core.io.Resource;
 @Slf4j
 public class GroovyAuthenticationPreProcessor implements AuthenticationPreProcessor, DisposableBean {
     private final transient WatchableGroovyScriptResource watchableScript;
+
     private int order;
 
     public GroovyAuthenticationPreProcessor(final Resource groovyResource) {

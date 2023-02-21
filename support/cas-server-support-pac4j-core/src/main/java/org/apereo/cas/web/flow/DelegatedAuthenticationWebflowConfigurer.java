@@ -54,7 +54,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
                 createStopWebflowViewState(flow);
                 createDelegatedClientLogoutAction();
                 createClientRedirectSubflow(flow);
-
+                createIdentityProviderLogoutState(flow);
+                
                 val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
                 if (selectionType.isDynamic()) {
                     createDynamicDiscoveryViewState(flow);
@@ -92,6 +93,14 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         createTransitionForState(finalize, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
     }
 
+    protected void createIdentityProviderLogoutState(final Flow flow) {
+        val logoutState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT,
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT));
+        createTransitionForState(logoutState, CasWebflowConstants.TRANSITION_ID_PROCEED, "redirectToCasLogout");
+        val redirectToLogout = createEndState(flow, "redirectToCasLogout");
+        redirectToLogout.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT));
+    }
+
     protected void createClientActionState(final Flow flow) {
         val delegatedAuthentication = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));
@@ -102,6 +111,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
         val currentStartState = getStartState(flow).getId();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_GENERATE, currentStartState));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_LOGOUT, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT));
 
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_RESUME, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
@@ -161,7 +171,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createRedirectToProviderViewState(final Flow flow) {
-        var factory = createExternalRedirectViewFactory(
+        val factory = createExternalRedirectViewFactory(
             "requestScope." + DelegatedAuthenticationDynamicDiscoveryProviderLocator.REQUEST_SCOPE_ATTR_PROVIDER_REDIRECT_URL);
         createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_REDIRECT_TO_AUTHN_PROVIDER, factory);
     }

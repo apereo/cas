@@ -27,7 +27,7 @@ public @interface ConditionalOnFeatureEnabled {
      *
      * @return the feature ref from the catalog
      */
-    CasFeatureModule.FeatureCatalog feature();
+    CasFeatureModule.FeatureCatalog[] feature();
 
     /**
      * Module identifier.
@@ -39,6 +39,7 @@ public @interface ConditionalOnFeatureEnabled {
     /**
      * Indicate if this feature should be enabled by default
      * if not explicitly enabled.
+     *
      * @return true/false
      */
     boolean enabledByDefault() default true;

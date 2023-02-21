@@ -1,7 +1,6 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.LdapPasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.impl.BasePasswordManagementService;
@@ -10,6 +9,7 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -63,7 +63,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, List.of(properties.getReset().getMail().getAttributeName()),
+        val email = findAttribute(query, properties.getReset().getMail().getAttributeName(),
             CollectionUtils.wrap(query.getUsername()));
         if (EmailValidator.getInstance().isValid(email)) {
             LOGGER.debug("Email address [{}] for [{}] appears valid", email, query.getUsername());
@@ -151,28 +151,27 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
         val question = Optional.ofNullable(questionAttribute)
             .map(LdapAttribute::getStringValue)
-            .orElseGet(() -> StringUtils.EMPTY);
+            .orElse(StringUtils.EMPTY);
 
         val answer = Optional.ofNullable(answerAttribute)
             .map(LdapAttribute::getStringValue)
-            .orElseGet(() -> StringUtils.EMPTY);
+            .orElse(StringUtils.EMPTY);
 
         return Pair.of(question, answer);
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
-            val results = findEntries(CollectionUtils.wrap(credential.getId()))
+            val results = findEntries(CollectionUtils.wrap(bean.getUsername()))
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     val dn = entry.getKey().getDn();
                     LOGGER.debug("Updating account password for [{}]", dn);
-                    val upc = (UsernamePasswordCredential) credential;
                     val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
-                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, upc.toPassword(), bean.getPassword(),
-                        entry.getValue().getType())) {
+                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, bean.getCurrentPassword(),
+                        bean.getPassword(), entry.getValue().getType())) {
                         LOGGER.debug("Successfully updated the account password for [{}]", dn);
                         return Boolean.TRUE;
                     }
@@ -201,6 +200,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 LOGGER.debug("Found LDAP entry [{}] to use", entry);
                 return attributeNames
                     .stream()
+                    .map(attributeName -> SpringExpressionLanguageValueResolver.getInstance().resolve(attributeName))
                     .map(attributeName -> {
                         val attr = entry.getAttribute(attributeName);
                         if (attr != null) {

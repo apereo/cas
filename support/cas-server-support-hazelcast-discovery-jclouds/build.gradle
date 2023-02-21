@@ -1,4 +1,11 @@
 description = "Apereo CAS Hazelcast Discovery JClouds Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Hazelcast Discovery",
+            title: "Hazelcast Discovery via Apache JClouds"
+    ]
+}
 dependencies {
     implementation libraries.hazelcast
     implementation libraries.jclouds

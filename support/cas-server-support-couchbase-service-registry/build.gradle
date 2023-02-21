@@ -2,6 +2,11 @@ description = "Apereo CAS Couchbase Service Registry"
 
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: "Couchbase Service Registry"
+    ]
 }
 
 dependencies {

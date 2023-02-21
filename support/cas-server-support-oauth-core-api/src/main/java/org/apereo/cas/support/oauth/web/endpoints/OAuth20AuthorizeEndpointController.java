@@ -3,7 +3,9 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -30,8 +32,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -143,24 +147,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         return manager.getProfile().isPresent();
     }
 
-    protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
-        val cookieAutoconfigured = replicationProps.getCookie().isAutoConfigureCookiePath();
-        if (replicationProps.isReplicateSessions() && cookieAutoconfigured) {
-            val contextPath = request.getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-            val path = getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
-                getConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
-                    getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
-            }
-        }
-    }
-
     /**
      * Gets registered service by client id.
      *
@@ -193,14 +179,24 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
+
+            val originalAttributes = Optional.ofNullable(profile.getAttribute(Authentication.class.getName()))
+                .map(Authentication.class::cast)
+                .map(Authentication::getPrincipal)
+                .map(Principal::getAttributes)
+                .orElseGet(HashMap::new);
+            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalAttributes,
+                authentication.getPrincipal().getAttributes());
+            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
+                .createPrincipal(authentication.getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(service)
-                .authentication(authentication)
                 .registeredService(registeredService)
+                .principal(accessStrategyPrincipal)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
-
+            
             val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
             return Optional.ofNullable(modelAndView)
                 .filter(ModelAndView::hasView)
@@ -269,7 +265,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 Map.of("Service", service.getId(), "Client ID", payload.getClientId(),
                     "Response Mode", payload.getResponseMode(), "Response Type", payload.getResponseType(),
                     "Redirect URI", payload.getRedirectUri()),
-                JsonUtils.render(result.getModel()));
+                result.getModel().isEmpty() ? StringUtils.EMPTY : JsonUtils.render(result.getModel()));
         }
         return result;
     }

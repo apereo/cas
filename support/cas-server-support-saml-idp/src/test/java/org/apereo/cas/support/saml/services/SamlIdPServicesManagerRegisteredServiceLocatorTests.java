@@ -11,7 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -112,8 +112,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_LOGOUT_REQUEST1, service.getId()));
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
-        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(candidateServices, service);
         assertNotNull(result);
     }
 
@@ -134,8 +133,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_AUTHN_REQUEST1, service.getId()));
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
-        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(candidateServices, service);
         assertNotNull(result);
     }
 
@@ -155,8 +153,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(SAML_AUTHN_REQUEST2)));
 
-        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(candidateServices, service);
         assertNotNull(result);
     }
 
@@ -177,7 +174,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            candidateServices, service);
         assertNotNull(result);
     }
 
@@ -198,7 +195,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlIdPConstants.PROVIDER_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices, service);
+            candidateServices, service);
         assertNotNull(result);
     }
 

@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.springframework.webflow.execution.Action;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link PrincipalFromRequestExtractorAction}.

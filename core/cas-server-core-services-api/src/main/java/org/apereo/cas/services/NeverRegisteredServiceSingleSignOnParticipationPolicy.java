@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

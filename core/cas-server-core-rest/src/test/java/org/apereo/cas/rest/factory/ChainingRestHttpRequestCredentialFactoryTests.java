@@ -44,7 +44,7 @@ public class ChainingRestHttpRequestCredentialFactoryTests {
         val factory = mock(RestHttpRequestCredentialFactory.class);
         when(factory.fromAuthentication(any(), any(), any(), any())).thenCallRealMethod();
         when(factory.getOrder()).thenCallRealMethod();
-        
+
         assertEquals(Integer.MAX_VALUE, factory.getOrder());
         assertTrue(factory.fromAuthentication(request, body,
             CoreAuthenticationTestUtils.getAuthentication(),

@@ -36,7 +36,7 @@ public class NullPrincipal implements Principal {
      * The singleton instance.
      **/
     private static NullPrincipal INSTANCE;
-    
+
     /**
      * Returns the single instance of this class. Will create
      * one if none exists.

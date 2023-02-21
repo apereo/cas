@@ -20,7 +20,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

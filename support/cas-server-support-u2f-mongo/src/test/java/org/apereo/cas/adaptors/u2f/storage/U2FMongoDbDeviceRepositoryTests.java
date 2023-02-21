@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @EnabledIfListeningOnPort(port = 27017)
 @SpringBootTest(classes = {
     U2FMongoDbConfiguration.class,

@@ -1,7 +1,15 @@
 description = "Apereo CAS Configuration - Cloud Bus AMQP"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management Bus via AMQP"
+    ]
+}
 dependencies {
     implementation libraries.springcloudbusamqp
     implementation libraries.springintegrationamqp
+    implementation libraries.springcloudbootstrap
 
     implementation project(":core:cas-server-core-util-api")
     runtimeOnly project(":core:cas-server-core-events-configuration-cloud-bus")

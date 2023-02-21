@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
@@ -18,15 +18,18 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.Response;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SSOSamlIdPProfileCallbackHandlerController}, which handles
@@ -57,28 +60,20 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE
+        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE
             && !request.getParameterMap().containsKey(BrowserSessionStorage.KEY_SESSION_STORAGE)) {
             return new ModelAndView(CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
         }
         return handleProfileRequest(response, request);
     }
 
-    /**
-     * Handle callback profile request post.
-     *
-     * @param response the response
-     * @param request  the request
-     * @return the model and view
-     * @throws Exception the exception
-     */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
                                                             final HttpServletRequest request) throws Exception {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
             val storage = request.getParameter(BrowserSessionStorage.KEY_SESSION_STORAGE);
             val context = new JEEContext(request, response);
             configurationContext.getSessionStore().buildFromTrackableSession(context, storage);
@@ -91,7 +86,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val authnContext = retrieveAuthenticationRequest(response, request);
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket)) {
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof AuthnRequest authnRequest && !authnRequest.isPassive()) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to handle SAML request"));
         }
@@ -103,17 +98,23 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));
         }
-        buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        val resultObject = buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        request.setAttribute(Response.class.getName(), resultObject);
         return null;
     }
 
-    private AuthenticatedAssertionContext validateRequestAndBuildCasAssertion(
+    protected Optional<AuthenticatedAssertionContext> validateRequestAndBuildCasAssertion(
         final HttpServletResponse response,
         final HttpServletRequest request,
         final Pair<? extends RequestAbstractType, MessageContext> authnContext)
         throws Exception {
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+        if (StringUtils.isBlank(ticket) && authnContext.getKey() instanceof AuthnRequest authnRequest && authnRequest.isPassive()) {
+            LOGGER.info("Unable to establish authentication context for passive authentication request");
+            return Optional.empty();
+        }
+
         val validator = getConfigurationContext().getTicketValidator();
         val serviceUrl = constructServiceUrl(request, response, authnContext);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
@@ -122,10 +123,10 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
         val asserted = (Assertion) assertion.getContext().get(Assertion.class.getName());
         Objects.requireNonNull(asserted, "Validation assertion cannot be null");
-        return AuthenticatedAssertionContext.builder()
+        return Optional.of(AuthenticatedAssertionContext.builder()
             .name(assertion.getPrincipal().getId())
             .authenticationDate(DateTimeUtils.zonedDateTimeOf(asserted.primaryAuthentication().getAuthenticationDate()))
             .attributes(CollectionUtils.merge(assertion.getAttributes(), assertion.getPrincipal().getAttributes()))
-            .build();
+            .build());
     }
 }

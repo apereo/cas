@@ -18,9 +18,9 @@ const cas = require('../../cas.js');
 <SOAP-ENV:Header/>
 <SOAP-ENV:Body>
 <samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1"
-  MinorVersion="1" RequestID="_192.168.16.51.1024506224022"
-  IssueInstant="2021-06-19T17:03:44.022Z">
-  <samlp:AssertionArtifact>${ticket}</samlp:AssertionArtifact>
+MinorVersion="1" RequestID="_192.168.16.51.1024506224022"
+IssueInstant="2021-06-19T17:03:44.022Z">
+<samlp:AssertionArtifact>${ticket}</samlp:AssertionArtifact>
 </samlp:Request>
 </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>`;

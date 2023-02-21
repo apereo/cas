@@ -26,6 +26,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,7 +70,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(facade)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -103,7 +104,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion(null, Map.of()))
+            .authenticatedAssertion(Optional.of(getAssertion(null, Map.of())))
             .registeredService(service)
             .adaptor(facade)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -139,7 +140,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -176,7 +177,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(attributeQuery)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -205,7 +206,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -234,7 +235,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -265,7 +266,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -303,7 +304,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(facade)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -335,7 +336,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             .samlRequest(authnRequest)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(facade)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)

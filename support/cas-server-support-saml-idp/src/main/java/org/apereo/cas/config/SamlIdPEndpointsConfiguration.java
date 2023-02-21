@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -23,6 +23,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.support.saml.services.SamlIdPServiceRegistry;
 import org.apereo.cas.support.saml.services.SamlIdPServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -55,7 +56,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -63,6 +66,7 @@ import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -246,7 +250,7 @@ public class SamlIdPEndpointsConfiguration {
         public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSso();
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             decoders.put(HttpMethod.POST, new HTTPPostDecoder());
             return decoders;
@@ -258,7 +262,7 @@ public class SamlIdPEndpointsConfiguration {
         public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             decoders.put(HttpMethod.POST, new HTTPPostSimpleSignDecoder());
             return decoders;
@@ -269,7 +273,7 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             return decoders;
         }
@@ -279,7 +283,7 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders() {
-            val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
+            val decoders = new HttpServletRequestXMLMessageDecodersMap();
             decoders.put(HttpMethod.POST, new HTTPPostDecoder());
             return decoders;
         }
@@ -456,18 +460,47 @@ public class SamlIdPEndpointsConfiguration {
 
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+                    return List.of(
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_IDP, "/"),
+                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
                         StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
                 }
             };
         }
 
+        @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieCipherExecutor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public CipherExecutor samlIdPDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
+            return FunctionUtils.doIf(type == SessionStorageTypes.TICKET_REGISTRY,
+                () -> {
+                    val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
+                    val crypto = cookie.getCrypto();
+                    var enabled = crypto.isEnabled();
+                    if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                        && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+                        LOGGER.warn("Encryption/Signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
+                                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", cookie.getName());
+                        enabled = true;
+                    }
+                    return enabled
+                        ? CipherExecutorUtils.newStringCipherExecutor(crypto, SamlIdPDistributedSessionCookieCipherExecutor.class)
+                        : CipherExecutor.noOp();
+                },
+                CipherExecutor::noOp).get();
+        }
+
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(
+            @Qualifier("samlIdPDistributedSessionCookieCipherExecutor")
+            final CipherExecutor samlIdPDistributedSessionCookieCipherExecutor,
+            final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
-            return CookieUtils.buildCookieRetrievingGenerator(cookie);
+            return CookieUtils.buildCookieRetrievingGenerator(cookie,
+                new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, cookie));
         }
 
         @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
@@ -484,14 +517,12 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-            if (type == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY) {
-                return new DistributedJEESessionStore(ticketRegistry,
+            return switch (type) {
+                case TICKET_REGISTRY -> new DistributedJEESessionStore(ticketRegistry,
                     ticketFactory, samlIdPDistributedSessionCookieGenerator);
-            }
-            if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
-                return new BrowserWebStorageSessionStore(webflowCipherExecutor);
-            }
-            return JEESessionStore.INSTANCE;
+                case BROWSER_SESSION_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor);
+                default -> JEESessionStore.INSTANCE;
+            };
         }
     }
 

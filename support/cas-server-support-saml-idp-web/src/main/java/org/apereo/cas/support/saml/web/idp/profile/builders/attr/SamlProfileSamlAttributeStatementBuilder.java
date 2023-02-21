@@ -74,7 +74,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     @Override
     public AttributeStatement build(final SamlProfileBuilderContext context) throws Exception {
-        val attributes = new HashMap<>(context.getAuthenticatedAssertion().getAttributes());
+        val attributes = new HashMap<>(context.getAuthenticatedAssertion().get().getAttributes());
         val webApplicationService = serviceFactory.createService(context.getAdaptor().getEntityId(), WebApplicationService.class);
         val encodedAttrs = ProtocolAttributeEncoder.decodeAttributes(attributes, context.getRegisteredService(), webApplicationService);
 
@@ -88,7 +88,9 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             return context.getRegisteredService().getAttributeFriendlyNames().get(name);
         }
         return attributeDefinitionStore.getAttributeDefinitionsBy(SamlIdPAttributeDefinition.class)
-            .filter(defn -> StringUtils.equalsIgnoreCase(name, defn.getKey()) || StringUtils.equalsIgnoreCase(name, defn.getUrn()))
+            .filter(defn -> StringUtils.equalsIgnoreCase(name, defn.getKey())
+                            || StringUtils.equalsIgnoreCase(name, defn.getName())
+                            || StringUtils.equalsIgnoreCase(name, defn.getUrn()))
             .findFirst()
             .map(SamlIdPAttributeDefinition::getFriendlyName)
             .filter(StringUtils::isNotBlank)
@@ -128,9 +130,10 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             .forEach(defn -> {
                 if (StringUtils.isNotBlank(defn.getUrn())) {
                     urns.put(defn.getKey(), defn.getUrn());
+                    urns.put(defn.getName(), defn.getUrn());
                 }
             });
-
+        LOGGER.debug("Attribute definitions tagged with URNs in the attribute definition store are [{}]", urns);
         LOGGER.debug("Attributes to process for SAML2 attribute statement are [{}]", attributes);
         for (val entry : attributes.entrySet()) {
             var attributeValue = entry.getValue();
