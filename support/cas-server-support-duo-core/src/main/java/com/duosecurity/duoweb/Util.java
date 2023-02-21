@@ -1,10 +1,10 @@
 package com.duosecurity.duoweb;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 public class Util {
 	public static String hmacSign(String skey, String data)

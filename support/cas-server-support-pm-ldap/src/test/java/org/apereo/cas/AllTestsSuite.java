@@ -1,7 +1,7 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.pm.ADPasswordManagementServiceTests;
+import org.apereo.cas.pm.ActiveDirectoryPasswordManagementServiceTests;
 import org.apereo.cas.pm.LdapPasswordManagementServiceTests;
 import org.apereo.cas.pm.OpenLdapPasswordManagementServiceTests;
 
@@ -15,7 +15,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.1.0
  */
 @SelectClasses({
-    ADPasswordManagementServiceTests.class,
+    ActiveDirectoryPasswordManagementServiceTests.class,
     OpenLdapPasswordManagementServiceTests.class,
     LdapPasswordManagementServiceTests.class
 })

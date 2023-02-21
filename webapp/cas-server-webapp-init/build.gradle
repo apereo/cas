@@ -1,5 +1,7 @@
 description = "Apereo CAS Web Application Initializer"
 dependencies {
+    implementation libraries.hibernatevalidator
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")
@@ -35,4 +37,6 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     
     testImplementation libraries.springboottomcat
+    testImplementation libraries.springcloudbootstrap
+    testImplementation libraries.springbootpropertymigrator
 }

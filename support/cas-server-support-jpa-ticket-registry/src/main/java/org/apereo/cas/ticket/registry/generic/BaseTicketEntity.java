@@ -7,12 +7,15 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link BaseTicketEntity}.
@@ -21,13 +24,13 @@ import java.time.ZonedDateTime;
  * @since 6.4.0
  */
 @MappedSuperclass
-@Getter
-@Setter
 @ToString
 @SuperBuilder
 @NoArgsConstructor
 @Accessors(chain = true)
-public class BaseTicketEntity implements Serializable {
+@Getter
+@Setter
+public abstract class BaseTicketEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 6534421912995436609L;
 
@@ -39,6 +42,8 @@ public class BaseTicketEntity implements Serializable {
     private String id;
 
     @Column(length = 1024)
+    @Getter
+    @Setter
     private String parentId;
 
     @Column(length = 1024)
@@ -49,4 +54,12 @@ public class BaseTicketEntity implements Serializable {
 
     @Column(nullable = false, length = 512)
     private ZonedDateTime creationTime;
+
+    /**
+     * Sets attributes.
+     *
+     * @param attributes the attributes
+     * @return the attributes
+     */
+    public abstract BaseTicketEntity setAttributes(Map<String, List<Object>> attributes);
 }

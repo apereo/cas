@@ -16,6 +16,7 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.InputStreamResource;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 
@@ -41,10 +42,9 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
     @Override
     public PropertySource<?> locate(final Environment environment) {
         val properties = new LinkedHashMap<String, Object>();
-        try {
-            val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            val s3Client = builder.build(S3Client.builder(), S3Client.class);
-
+        val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled).forcePathStyle(true);
+        try (val s3Client = builder.build(clientBuilder, S3Client.class)) {
             val bucketName = builder.getSetting("bucket-name", "cas-properties");
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
             val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());

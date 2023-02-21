@@ -1,4 +1,11 @@
 description = "Apereo CAS U2F FIDO CouchDb Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "U2F Multifactor Authentication",
+            title: "U2F Support via Apache CouchDb"
+    ]
+}
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver

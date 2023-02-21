@@ -1,13 +1,10 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigCertificateProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigProperties;
 
 import lombok.val;
 import org.apache.catalina.connector.Connector;
 import org.apache.commons.io.FileUtils;
-import org.apache.coyote.http11.Http11AprProtocol;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +15,7 @@ import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,6 +32,14 @@ import static org.mockito.Mockito.*;
 public class CasTomcatServletWebServerFactoryCustomizerTests {
     @Autowired
     protected ServerProperties serverProperties;
+
+    private static TomcatServletWebServerFactory execCustomize(final CasTomcatServletWebServerFactoryCustomizer customizer) {
+        val factory = mock(TomcatServletWebServerFactory.class);
+        val customizers = new ArrayList<TomcatConnectorCustomizer>();
+        when(factory.getTomcatConnectorCustomizers()).thenReturn(customizers);
+        assertDoesNotThrow(() -> customizer.customize(factory));
+        return factory;
+    }
 
     @Test
     public void verifyExtAccessLogDir() {
@@ -105,50 +108,6 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         val factory = execCustomize(customizer);
         factory.getTomcatConnectorCustomizers().forEach(c ->
             assertDoesNotThrow(() -> c.customize(new Connector())));
-    }
-
-    @Test
-    public void verifyAprSettings() throws Exception {
-        val casProperties = new CasConfigurationProperties();
-
-        val hostConfig = new CasEmbeddedApacheSslHostConfigProperties()
-            .setCaCertificateFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
-            .setHostName("hostfile")
-            .setCertificateVerification("optional")
-            .setCertificateVerificationDepth(5)
-            .setCertificates(List.of(
-                new CasEmbeddedApacheSslHostConfigCertificateProperties()
-                    .setCertificateChainFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
-                    .setCertificateFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
-                    .setCertificateKeyFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
-                    .setCertificateKeyPassword("changeit")))
-            .setEnabled(true);
-
-        casProperties.getServer().getTomcat().getApr()
-            .setEnabled(true)
-            .setSslCaCertificateFile(File.createTempFile("cert1", ".crt"))
-            .setSslCertificateFile(File.createTempFile("cert2", ".crt"))
-            .setSslCertificateKeyFile(File.createTempFile("cert3", ".crt"))
-            .setSslCertificateChainFile(File.createTempFile("cert4", ".crt"))
-            .setSslCaRevocationFile(File.createTempFile("cert5", ".crt"))
-            .setSslHostConfig(hostConfig);
-
-        serverProperties.setPort(1234);
-        val factory = new CasTomcatServletWebServerFactory(casProperties, serverProperties);
-        factory.getTomcatConnectorCustomizers().forEach(c -> {
-            val connector = new Connector(Http11AprProtocol.class.getCanonicalName());
-            connector.setPort(serverProperties.getPort());
-            assertDoesNotThrow(() -> c.customize(connector));
-
-        });
-    }
-
-    private static TomcatServletWebServerFactory execCustomize(final CasTomcatServletWebServerFactoryCustomizer customizer) {
-        val factory = mock(TomcatServletWebServerFactory.class);
-        val customizers = new ArrayList<TomcatConnectorCustomizer>();
-        when(factory.getTomcatConnectorCustomizers()).thenReturn(customizers);
-        assertDoesNotThrow(() -> customizer.customize(factory));
-        return factory;
     }
 
 }

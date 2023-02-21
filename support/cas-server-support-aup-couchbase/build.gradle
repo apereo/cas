@@ -1,6 +1,11 @@
 description = "Apereo CAS AUP Couchbase Support"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via Couchbase",
+            category: "Acceptable Usage Policy"
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api")
@@ -31,6 +36,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -24,9 +26,11 @@ import java.time.ZoneOffset;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link MultiTimeUseOrTimeoutExpirationPolicy}.
+ *
  * @author Scott Battaglia
  * @since 3.0.0
  */
@@ -34,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "multiTimeUseOrTimeoutExpirationPolicy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -44,6 +49,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     private MultiTimeUseOrTimeoutExpirationPolicy expirationPolicy;
 
     private TicketGrantingTicketImpl ticket;
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
+    }
 
     @BeforeEach
     public void initialize() {
@@ -89,11 +100,5 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, MultiTimeUseOrTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
-    }
-
-    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
-        val props = new CasConfigurationProperties();
-        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
-        return new DefaultServiceTicketSessionTrackingPolicy(props, new DefaultTicketRegistry());
     }
 }

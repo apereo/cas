@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -20,23 +20,17 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
 
-    protected AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
-        setCipherExecutor(cipherExecutor);
-    }
-
-    @Override
-    public void addTicketInternal(final Ticket ticket) throws Exception {
-        val encTicket = encodeTicket(ticket);
-        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
-        getMapInstance().put(encTicket.getId(), encTicket);
+    public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor,
+                                          final TicketSerializationManager ticketSerializationManager,
+                                          final TicketCatalog ticketCatalog) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
     }
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
@@ -52,12 +46,6 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
             return null;
         }
         return result;
-    }
-
-    @Override
-    public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = encodeTicketId(ticketId);
-        return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
     }
 
     @Override
@@ -77,6 +65,19 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
         LOGGER.trace("Updating ticket [{}] in registry...", ticket.getId());
         addTicket(ticket);
         return ticket;
+    }
+
+    @Override
+    public long deleteSingleTicket(final String ticketId) {
+        val encTicketId = digest(ticketId);
+        return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
+    }
+
+    @Override
+    public void addTicketInternal(final Ticket ticket) throws Exception {
+        val encTicket = encodeTicket(ticket);
+        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
+        getMapInstance().put(encTicket.getId(), encTicket);
     }
 
     /**

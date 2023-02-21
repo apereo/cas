@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.jee.context.JEEContext;
@@ -31,8 +32,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * {@link RestController} implementation of a REST API
@@ -100,7 +101,8 @@ public class RegisteredServiceResource {
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
-        val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
+        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val credentialsResult = extractor.extract(callContext);
         val credentials = (UsernamePasswordCredentials) credentialsResult.get();
         LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
         val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());

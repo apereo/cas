@@ -22,16 +22,17 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSaml2AttributeQueryProfileHandlerController}.
@@ -111,7 +112,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .samlRequest(query)
                 .httpRequest(request)
                 .httpResponse(response)
-                .authenticatedAssertion(casAssertion)
+                .authenticatedAssertion(Optional.of(casAssertion))
                 .registeredService(registeredService)
                 .adaptor(facade)
                 .binding(SAMLConstants.SAML2_SOAP11_BINDING_URI)

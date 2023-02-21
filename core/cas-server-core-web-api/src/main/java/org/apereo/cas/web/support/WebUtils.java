@@ -50,17 +50,16 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -1079,66 +1078,6 @@ public class WebUtils {
         return authentication;
     }
 
-    /**
-     * Put passwordless authentication enabled.
-     *
-     * @param requestContext the request context
-     * @param value          the value
-     */
-    public static void putPasswordlessAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
-        requestContext.getFlowScope().put("passwordlessAuthenticationEnabled", value);
-    }
-
-    /**
-     * Put passwordless authentication account.
-     *
-     * @param requestContext the request context
-     * @param account        the account
-     */
-    public static void putPasswordlessAuthenticationAccount(final RequestContext requestContext, final Object account) {
-        requestContext.getFlowScope().put("passwordlessAccount", account);
-    }
-
-    /**
-     * Gets passwordless authentication account.
-     *
-     * @param <T>   the type parameter
-     * @param event the event
-     * @param clazz the clazz
-     * @return the passwordless authentication account
-     */
-    public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
-        if (event != null) {
-            return event.getAttributes().get("passwordlessAccount", clazz);
-        }
-        return null;
-    }
-
-    /**
-     * Gets passwordless authentication account.
-     *
-     * @param <T>            the type parameter
-     * @param requestContext the context
-     * @param clazz          the clazz
-     * @return the passwordless authentication account
-     */
-    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext requestContext, final Class<T> clazz) {
-        var result = getPasswordlessAuthenticationAccount(requestContext.getCurrentEvent(), clazz);
-        if (result == null) {
-            result = requestContext.getFlowScope().get("passwordlessAccount", clazz);
-        }
-        return result;
-    }
-
-    /**
-     * Has passwordless authentication account.
-     *
-     * @param requestContext the request context
-     * @return true /false
-     */
-    public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
-        return requestContext.getFlowScope().contains("passwordlessAccount");
-    }
 
     /**
      * Put request surrogate authentication.
@@ -1249,25 +1188,6 @@ public class WebUtils {
         return requestContext.getFlowScope().contains("guaUserImage");
     }
 
-    /**
-     * Put delegated authentication provider dominant.
-     *
-     * @param context the context
-     * @param client  the client
-     */
-    public static void putDelegatedAuthenticationProviderPrimary(final RequestContext context, final Object client) {
-        context.getFlowScope().put("delegatedAuthenticationProviderPrimary", client);
-    }
-
-    /**
-     * Gets delegated authentication provider primary.
-     *
-     * @param context the context
-     * @return the delegated authentication provider primary
-     */
-    public static Object getDelegatedAuthenticationProviderPrimary(final RequestContext context) {
-        return context.getFlowScope().get("delegatedAuthenticationProviderPrimary");
-    }
 
     /**
      * Put available authentication handle names.
@@ -1319,7 +1239,7 @@ public class WebUtils {
      */
     public static <T> T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
         if (requestContext.getFlowScope().contains("aupPolicy")) {
-            return (T) requestContext.getFlowScope().get("aupPolicy", clazz);
+            return requestContext.getFlowScope().get("aupPolicy", clazz);
         }
         return null;
     }
@@ -1441,52 +1361,6 @@ public class WebUtils {
         if (flowVariable != null) {
             flowVariable.create(requestContext);
         }
-    }
-
-    /**
-     * Put delegated authentication provider configurations.
-     *
-     * @param context the context
-     * @param urls    the urls
-     */
-    public static void putDelegatedAuthenticationProviderConfigurations(final RequestContext context,
-                                                                        final Set<? extends Serializable> urls) {
-        context.getFlowScope().put("delegatedAuthenticationProviderConfigurations", urls);
-    }
-
-    /**
-     * Put delegated authentication dynamic provider selection.
-     *
-     * @param context the context
-     * @param result  the result
-     */
-    public static void putDelegatedAuthenticationDynamicProviderSelection(final RequestContext context,
-                                                                          final Boolean result) {
-        context.getFlowScope().put("delegatedAuthenticationDynamicProviderSelection", result);
-    }
-
-    /**
-     * Put delegated authentication dynamic provider selection.
-     *
-     * @param context the context
-     * @return true/false
-     */
-    public static Boolean isDelegatedAuthenticationDynamicProviderSelection(final RequestContext context) {
-        return context.getFlowScope().get("delegatedAuthenticationDynamicProviderSelection", Boolean.class, Boolean.FALSE);
-    }
-
-    /**
-     * Gets delegated authentication provider configurations.
-     *
-     * @param context the context
-     * @return the delegated authentication provider configurations
-     */
-    public static Set<? extends Serializable> getDelegatedAuthenticationProviderConfigurations(final RequestContext context) {
-        val scope = context.getFlowScope();
-        if (scope.contains("delegatedAuthenticationProviderConfigurations", Set.class)) {
-            return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
-        }
-        return new HashSet<>(0);
     }
 
     /**
@@ -1612,25 +1486,6 @@ public class WebUtils {
         return (String) request.getAttribute("singleLogoutRequest");
     }
 
-    /**
-     * Gets delegated authentication client name.
-     *
-     * @param requestContext the request context
-     * @return the delegated authentication client name
-     */
-    public static String getDelegatedAuthenticationClientName(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("delegatedAuthenticationClientName", String.class);
-    }
-
-    /**
-     * Put delegated authentication client name.
-     *
-     * @param requestContext the request context
-     * @param clientName     the client name
-     */
-    public static void putDelegatedAuthenticationClientName(final RequestContext requestContext, final String clientName) {
-        requestContext.getFlowScope().put("delegatedAuthenticationClientName", clientName);
-    }
 
     /**
      * Put authorized services.
@@ -1979,96 +1834,5 @@ public class WebUtils {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 
-    /**
-     * Put delegated authentication.
-     *
-     * @param requestContext the request context
-     * @param disabled       the disabled
-     */
-    public static void putDelegatedAuthenticationDisabled(final RequestContext requestContext, final boolean disabled) {
-        requestContext.getFlowScope().put("delegatedAuthenticationDisabled", disabled);
-    }
 
-    /**
-     * Put delegated client authentication resolved credentials.
-     *
-     * @param context          the context
-     * @param candidateMatches the candidate matches
-     */
-    public static void putDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
-                                                                           final List<? extends Serializable> candidateMatches) {
-        context.getFlowScope().put("delegatedAuthenticationCredentials", candidateMatches);
-    }
-
-    /**
-     * Gets delegated client authentication resolved credentials.
-     *
-     * @param <T>     the type parameter
-     * @param context the context
-     * @param clazz   the clazz
-     * @return the delegated client authentication resolved credentials
-     */
-    public static <T extends Serializable> List<T> getDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
-                                                                                                       final Class<T> clazz) {
-        val results = context.getFlowScope().get("delegatedAuthenticationCredentials", List.class);
-        return ObjectUtils.defaultIfNull(results, List.of());
-    }
-
-    /**
-     * Gets delegated client authentication candidate profile.
-     *
-     * @param <T>     the type parameter
-     * @param context the context
-     * @param clazz   the clazz
-     * @return the delegated client authentication candidate profile
-     */
-    public static <T> T getDelegatedClientAuthenticationCandidateProfile(final RequestContext context,
-                                                                         final Class<T> clazz) {
-        return context.getFlashScope().get("delegatedClientAuthenticationCandidateProfile", clazz);
-    }
-
-    /**
-     * Has delegated client authentication candidate profile?
-     *
-     * @param context the context
-     * @return true /false
-     */
-    public static boolean hasDelegatedClientAuthenticationCandidateProfile(final RequestContext context) {
-        return context.getFlashScope().contains("delegatedClientAuthenticationCandidateProfile");
-    }
-
-    /**
-     * Put delegated client authentication candidate profile.
-     *
-     * @param context the context
-     * @param profile the profile
-     */
-    public static void putDelegatedClientAuthenticationCandidateProfile(final RequestContext context,
-                                                                        final Serializable profile) {
-        context.getFlashScope().put("delegatedClientAuthenticationCandidateProfile", profile);
-    }
-
-    /**
-     * Put delegated authentication logout request.
-     *
-     * @param requestContext the request context
-     * @param logoutAction   the logout action
-     */
-    public static void putDelegatedAuthenticationLogoutRequest(final RequestContext requestContext,
-                                                               final Serializable logoutAction) {
-        requestContext.getFlashScope().put("delegatedAuthenticationLogoutRequest", logoutAction);
-    }
-
-    /**
-     * Gets delegated authentication logout request.
-     *
-     * @param <T>            the type parameter
-     * @param requestContext the request context
-     * @param clazz          the clazz
-     * @return the delegated authentication logout request
-     */
-    public <T> T getDelegatedAuthenticationLogoutRequest(final RequestContext requestContext,
-                                                         final Class<T> clazz) {
-        return requestContext.getFlashScope().get("delegatedAuthenticationLogoutRequest", clazz);
-    }
 }

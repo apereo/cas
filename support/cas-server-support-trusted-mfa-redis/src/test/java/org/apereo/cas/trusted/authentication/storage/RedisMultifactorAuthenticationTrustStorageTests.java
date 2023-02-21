@@ -49,7 +49,7 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
     @BeforeEach
     public void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
-        val keys = redisMfaTrustedAuthnTemplate.keys(key, 0).collect(Collectors.toSet());
+        val keys = redisMfaTrustedAuthnTemplate.scan(key, 0).collect(Collectors.toSet());
         redisMfaTrustedAuthnTemplate.delete(keys);
     }
 

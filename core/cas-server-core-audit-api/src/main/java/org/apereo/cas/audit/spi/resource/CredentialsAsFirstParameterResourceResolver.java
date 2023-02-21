@@ -20,6 +20,16 @@ import org.aspectj.lang.JoinPoint;
 public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
+    @Override
+    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+        return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
+    }
+
+    @Override
+    public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
+        return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
+    }
+
     /**
      * Turn the arguments into a list.
      *
@@ -37,15 +47,5 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
 
     private String toResourceString(final Object credential) {
         return auditFormat.serialize(credential);
-    }
-
-    @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
-        return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
-    }
-
-    @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
-        return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 }

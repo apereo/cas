@@ -19,6 +19,13 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 public class DefaultRegisteredServiceResourceNamingStrategyTests {
+    private static void verifyFileNamePattern(final Pattern pattern, final String name) {
+        val matcher = pattern.matcher(name);
+        assertTrue(matcher.find());
+        assertNotNull(matcher.group(1));
+        assertNotNull(matcher.group(2));
+    }
+
     @Test
     public void verifyOperation() {
         val service = mock(RegisteredService.class);
@@ -35,12 +42,5 @@ public class DefaultRegisteredServiceResourceNamingStrategyTests {
         verifyFileNamePattern(pattern, "Test-1000.json");
         verifyFileNamePattern(pattern, "Test-Example-1000.json");
         verifyFileNamePattern(pattern, "Multiple-Test-Example-1.xml");
-    }
-
-    private static void verifyFileNamePattern(final Pattern pattern, final String name) {
-        val matcher = pattern.matcher(name);
-        assertTrue(matcher.find());
-        assertNotNull(matcher.group(1));
-        assertNotNull(matcher.group(2));
     }
 }

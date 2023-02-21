@@ -1,4 +1,11 @@
 description = "Apereo CAS Google Authenticator CouchDb"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Google Authenticator Multifactor Authentication",
+            title: "Google Authenticator Support via Apache CouchDb"
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-gauth")
     implementation project(":support:cas-server-support-gauth-core")

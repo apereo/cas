@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -38,7 +38,8 @@ import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -175,8 +176,8 @@ public class SamlObjectSignatureValidator {
         var foundValidCredential = false;
         val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
-            val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
-            try {
+            foundValidCredential = FunctionUtils.doAndHandle(() -> {
+                val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
                 val credential = it.next();
                 val resolver = new StaticCredentialResolver(credential);
                 val keyResolver = new StaticKeyInfoCredentialResolver(credential);
@@ -184,25 +185,24 @@ public class SamlObjectSignatureValidator {
                 validationParams.setSignatureTrustEngine(trustEngine);
                 secCtx.setSignatureValidationParameters(validationParams);
 
-                handler.setHttpServletRequest(request);
+                handler.setHttpServletRequestSupplier(() -> request);
                 LOGGER.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peerEntityId);
                 handler.initialize();
                 LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peerEntityId);
                 handler.invoke(context);
                 LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
-
-                foundValidCredential = true;
-            } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
-            } finally {
                 handler.destroy();
-            }
+                return true;
+            }, e -> {
+                LOGGER.debug(e.getMessage(), e);
+                return false;
+            }).get();
         }
 
-        if (!foundValidCredential) {
+        FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            throw new SamlException("No valid signing credentials for validation could not be resolved");
-        }
+            return new SamlException("No valid signing credentials for validation could not be resolved");
+        });
     }
 
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
@@ -233,10 +233,10 @@ public class SamlObjectSignatureValidator {
             }
         }
 
-        if (!foundValidCredential) {
+        FunctionUtils.throwIf(!foundValidCredential, () -> {
             LOGGER.error("No valid credentials could be found to verify the signature for [{}]", profileRequest.getIssuer());
-            throw new SamlException("No valid signing credentials for validation could not be resolved");
-        }
+            return new SamlException("No valid signing credentials for validation could not be resolved");
+        });
     }
 
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver,

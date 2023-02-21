@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class MultifactorAuthenticationProviderBeanTests {
     public void verifyOperation() {
         val input = new MultifactorAuthenticationProviderBean(
             mock(MultifactorAuthenticationProviderFactoryBean.class),
-            mock(DefaultListableBeanFactory.class), List.of());
+            mock(SingletonBeanRegistry.class), List.of());
         assertDoesNotThrow(() -> input.onRefreshScopeRefreshed(new RefreshScopeRefreshedEvent()));
     }
 }

@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.RedisCoreConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-import org.apereo.cas.ticket.Ticket;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRedisTemplate")
-    protected CasRedisTemplate<String, Ticket> ticketRedisTemplate;
+    protected CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate;
 
     @Autowired
     @Qualifier("redisHealthIndicator")

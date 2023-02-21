@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -51,9 +52,10 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final CasConfigurationProperties casProperties;
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private final PrincipalFactory principalFactory;
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
-    
+
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;

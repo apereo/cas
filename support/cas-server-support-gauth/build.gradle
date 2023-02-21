@@ -1,4 +1,11 @@
 description = "Apereo CAS Google Authenticator Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Google Authenticator Multifactor Authentication",
+            title: "Google Authenticator Support"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     

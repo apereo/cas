@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa;
 
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
@@ -122,7 +123,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,
             Optional.of(chainProvider), applicationContext,
             BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED.toString());
-        
+
         val assertion = mock(Assertion.class);
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER, CollectionUtils.wrap(CASUSER, AUTH_ATTRIBUTES));
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
@@ -252,7 +253,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         casProperties.getAuthn().getMfa().getCore()
             .setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
-        ((TestUnavailableMultifactorAuthenticationProvider) provider.get()).setFailureModeEvaluator(failureEvaluator);
+        ((AbstractMultifactorAuthenticationProvider) provider.get()).setFailureModeEvaluator(failureEvaluator);
 
         val servicesManager = mock(ServicesManager.class);
         val validator = MultifactorAuthenticationTestUtils.mockRequestAuthnContextValidator(servicesManager,

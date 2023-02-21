@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
-    private static List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
+    private static final List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
 
     @Autowired
     @Qualifier("u2fDeviceRepository")

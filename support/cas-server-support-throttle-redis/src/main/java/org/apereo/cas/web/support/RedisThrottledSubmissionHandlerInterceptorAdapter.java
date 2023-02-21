@@ -9,7 +9,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.redis.core.BoundValueOperations;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
-        val keys = redisTemplate.keys(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount);
+        val keys = redisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount);
         val username = getUsernameParameterFromRequest(request);
         val failures = keys
             .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)

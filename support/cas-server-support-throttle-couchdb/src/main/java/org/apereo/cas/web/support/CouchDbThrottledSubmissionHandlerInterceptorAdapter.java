@@ -5,7 +5,7 @@ import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.stream.Collectors;

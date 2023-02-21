@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";
+
     private static final String TICKET_VALUE = "foobar";
 
     @Test

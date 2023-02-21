@@ -8,7 +8,7 @@ category: Authentication
 
 # REST Authentication
 
-<div class="alert alert-warning"><strong>Be Careful</strong><p>This documentation describes
+<div class="alert alert-warning">:warning: <strong>Be Careful</strong><p>This documentation describes
 how to delegate and submit authentication requests to a remote REST endpoint. It has nothing
 to do with the native CAS REST API, whose configuration and caveats are
 <a href="../protocol/REST-Protocol.html">documented here</a>.</p></div>
@@ -62,5 +62,5 @@ If the authentication is successful, these warnings will be shown to the user di
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.rest" %}
+{% include_cached casproperties.html properties="cas.authn.rest[]" %}
 

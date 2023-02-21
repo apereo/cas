@@ -22,6 +22,22 @@ import java.util.List;
  */
 public interface StringSerializer<T> extends Serializable {
     /**
+     * Helper method with reusable code.
+     *
+     * @param <T>  the type param
+     * @param elem the elem
+     * @return collection
+     */
+    private static <T> Collection<T> makeCollectionOf(T elem) {
+        if (elem != null) {
+            val list = new ArrayList<T>(1);
+            list.add(elem);
+            return list;
+        }
+        return new ArrayList<>(0);
+    }
+
+    /**
      * Create the object type from the given  string.
      *
      * @param data the  string
@@ -150,24 +166,17 @@ public interface StringSerializer<T> extends Serializable {
      * @return the list
      */
     List<T> fromList(String json);
-    
-    /**
-     * Helper method with reusable code.
-     *
-     * @param <T> the type param
-     * @param elem the elem
-     * @return collection
-     */
-    private static <T> Collection<T> makeCollectionOf(T elem) {
-        if (elem != null) {
-            val list = new ArrayList<T>(1);
-            list.add(elem);
-            return list;
-        }
-        return new ArrayList<>(0);
-    }
 
     default List<MediaType> getContentTypes() {
         return List.of(MediaType.TEXT_PLAIN);
     }
+
+    /**
+     * Merge.
+     *
+     * @param baseEntity  the base entity
+     * @param childEntity the child entity
+     * @return the result
+     */
+    T merge(T baseEntity, T childEntity);
 }

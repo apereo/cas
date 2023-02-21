@@ -46,8 +46,7 @@ public class CasCookieConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieCipherExecutor")
-            final CipherExecutor cookieCipherExecutor) {
+            @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
             if (casProperties.getTgc().getCrypto().isEnabled()) {
                 return new DefaultCasCookieValueManager(cookieCipherExecutor, casProperties.getTgc());
             }
@@ -62,8 +61,8 @@ public class CasCookieConfiguration {
             var enabled = crypto.isEnabled();
             if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
                 && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
-                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
-                            + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
+                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
+                            + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", casProperties.getTgc().getName());
                 enabled = true;
             }
 
@@ -94,8 +93,7 @@ public class CasCookieConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieValueManager")
-            final CookieValueManager cookieValueManager) {
+            @Qualifier("cookieValueManager") final CookieValueManager cookieValueManager) {
             val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
             return new TicketGrantingCookieRetrievingCookieGenerator(context, cookieValueManager);
         }

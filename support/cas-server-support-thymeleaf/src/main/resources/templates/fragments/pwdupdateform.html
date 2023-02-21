@@ -16,8 +16,8 @@
         <script th:inline="javascript">
             /*<![CDATA[*/
 
-            var policyPattern = /*[[${passwordPolicyPattern}]]*/;
-            var passwordStrengthI18n = {
+            let policyPattern = /*[[${passwordPolicyPattern}]]*/;
+            let passwordStrengthI18n = {
                 0: /*[[#{screen.pm.password.strength.0}]]*/,
                 1: /*[[#{screen.pm.password.strength.1}]]*/,
                 2: /*[[#{screen.pm.password.strength.2}]]*/,
@@ -26,16 +26,34 @@
             };
 
             /*]]>*/
+
+            function generatePassword() {
+                let possible = /*[[${passwordPolicyCharacterSet}]]*/;
+                let text = '';
+                for(let i = 0; i < /*[[${passwordPolicyPasswordLength}]]*/; i++) {
+                    text += possible.charAt(Math.floor(Math.random() * possible.length));
+                }
+                $("#password").val(text);
+                $("#confirmedPassword").val(text);
+
+                let fields = document.querySelectorAll('.mdc-text-field');
+                fields.forEach(f => {
+                    const textField = new mdc.textField.MDCTextField(f);
+                    textField.focus();
+                });
+                $('#submit').prop('disabled', "");
+                document.getElementById("password").dispatchEvent(new Event("keyup"));
+            }
+
         </script>
         <h3 th:utext="${expiredPass}
-        ? #{screen.expiredpass.heading(${credential.id})}
-        : #{screen.mustchangepass.heading(${credential.id})}">
+        ? #{screen.expiredpass.heading(${username})}
+        : #{screen.mustchangepass.heading(${username})}">
             Change Password Heading</h3>
 
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
               th:object="${password}">
             <div class="banner banner-danger alert alert-danger banner-dismissible my-4" th:if="${#fields.hasErrors('*')}">
-
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
 
@@ -64,9 +82,15 @@
                         <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
                     </div>
                 </div>
+                &nbsp;
                 <button class="reveal-password align-self-end mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button btn btn-primary"
                     tabindex="-1" type="button">
                     <i class="mdi mdi-eye reveal-password-icon fas fa-eye"></i>
+                    <span class="visually-hidden">Toggle Password</span>
+                </button>
+                <button class="align-self-end mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button btn btn-primary"
+                        tabindex="-1" type="button" onclick="generatePassword();">
+                    <i class="mdi mdi-reload fas fa-eye"></i>
                     <span class="visually-hidden">Toggle Password</span>
                 </button>
             </div>

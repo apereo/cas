@@ -1,6 +1,9 @@
 {
   "dependencies": "x509-webflow",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
     "--server.ssl.trust-store-password=changeit",
     "--server.ssl.key-store-type=PKCS12",

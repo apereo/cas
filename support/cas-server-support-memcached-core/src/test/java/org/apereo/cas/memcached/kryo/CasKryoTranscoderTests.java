@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
@@ -14,6 +13,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
@@ -78,6 +78,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreAuthenticationComponentSerializationConfiguration.class,
     CasCoreUtilSerializationConfiguration.class
@@ -156,11 +157,10 @@ public class CasKryoTranscoderTests {
             .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now(ZoneId.systemDefault()));
-        bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
+        bldr.addCredential(userPassCredential);
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
-            new AcceptUsersAuthenticationHandler(StringUtils.EMPTY),
-            new BasicCredentialMetaData(userPassCredential)));
+            new AcceptUsersAuthenticationHandler(StringUtils.EMPTY), userPassCredential));
 
         val authentication = bldr.build();
         val expectedTGT = new TicketGrantingTicketImpl(TGT_ID,

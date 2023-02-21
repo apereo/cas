@@ -12,12 +12,15 @@ buildscript {
             url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
+        maven {
+            url "https://repo.spring.io/snapshot"
+            mavenContent { snapshotsOnly() }
+        }
     }
 
     dependencies {
 //        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
-        classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -25,7 +28,7 @@ buildscript {
 
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:$gradleShadowVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
     }
 }
@@ -126,8 +129,12 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("install") }) {
-        apply plugin: "maven"
+    jacoco {
+        toolVersion = "$gradleJacocoVersion"
+    }
+
+    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("publishToMavenLocal") }) {
+        apply plugin: "maven-publish"
     }
 
     def skipRetry = providers.systemProperty('skipTestRetry').present
@@ -151,10 +158,6 @@ allprojects {
     project.ext["forceBootifulArtifact"] = null
 
     afterEvaluate { project ->
-        jacoco {
-            toolVersion = "$gradleJacocoVersion"
-        }
-
         if (rootProject.generateGitProperties) {
             gitProperties {
                 customProperty 'project.group', project.group
@@ -212,39 +215,6 @@ subprojects {
     configurations {
         tests
         provided
-    }
-
-    if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
-        tasks.named('jacocoTestReport') {
-            reports {
-                xml.required.set(true)
-                html.required.set(true)
-            }
-            afterEvaluate {
-                classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
-                }))
-            }
-            sourceSets sourceSets.main
-            getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-        }
-
-        tasks.named('jacocoTestCoverageVerification') {
-            getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
-            afterEvaluate {
-                classDirectories.setFrom(files(classDirectories.files.collect {
-                    fileTree(dir: it, include: ['**/*.*'], exclude: rootProject.excludedFilesFromTestCoverage)
-                }))
-            }
-            violationRules {
-                rule {
-                    element = 'CLASS'
-                    limit {
-                        minimum = 0.80
-                    }
-                }
-            }
-        }
     }
 
     apply from: rootProject.file("gradle/overrides.gradle")
@@ -394,6 +364,7 @@ subprojects {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
+            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs
@@ -442,26 +413,10 @@ subprojects {
         }
     }
 
-
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("checkLicense") }) {
-        apply plugin: "com.github.jk1.dependency-license-report"
-        licenseReport {
-            outputDir = "$projectDir/build/licenses"
-            projects = project
-            excludeOwnGroup = true
-            configurations = ['runtimeClasspath']
-            filters = [new com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter()]
-            allowedLicensesFile = new File("$rootProject.projectDir/etc/allowed-licenses.json")
-        }
-        checkLicense.finalizedBy outputDependenciesWithoutLicense
-    }
-
     dependencies {
 
         implementation libraries.aspectj
-        implementation libraries.validationapi
 
-        api libraries.jaxb
         api libraries.swaggerannotations
         api libraries.slf4j
         api libraries.guava
@@ -472,7 +427,6 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.bvalidator
         api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
@@ -480,20 +434,23 @@ subprojects {
         api libraries.springsecurity
         api libraries.springintegration
         api libraries.springwebflow
-        api libraries.javaxel
-        api libraries.javax
+        api libraries.jakarta
 
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
+        
         testImplementation libraries.tests
         testImplementation libraries.log4j
+        testImplementation libraries.hibernatevalidator
 
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
+
+        runtimeOnly libraries.httpclient4
     }
 }
 
@@ -537,27 +494,28 @@ if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
 }
 
 if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
-    tasks.register('jacocoMerge', JacocoMerge) {
-        subprojects.each { subproject ->
-            executionData subproject.tasks.withType(Test)
-            dependsOn tasks.withType(Test)
-        }
-        doFirst {
-            executionData = files(executionData.findAll { it.exists() })
-        }
-    }
-
     tasks.register('jacocoRootReport', JacocoReport) {
-        description = 'Generates an aggregate report from all projects'
-
-        subprojects.each {
-            if (!it.path.contains(":docs")) {
-                it.tasks.withType(Test).each { task -> dependsOn(task) }
+        def executions = subprojects.findAll { subproject ->
+            if (!subproject.path.contains(":docs")) {
+                subproject.tasks.withType(Test).each{ task ->
+                    dependsOn(task)
+                    mustRunAfter(task)
+                }
             }
+            def execFile = subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            logger.info "${subproject.name} with execution file ${execFile}"
+            true
+        }.collect {subproject ->
+            subproject.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
         }
+        logger.info "Coverage execution data files: ${executions}"
+        executionData.from(executions)
 
-        dependsOn jacocoMerge
-
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            csv.required.set(true)
+        }
         additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
         sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
         classDirectories.setFrom(
@@ -567,14 +525,6 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
                             exclude: rootProject.excludedFilesFromTestCoverage
                     )
                 })
-        //executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
-        executionData jacocoMerge.destinationFile
-
-        reports {
-            html.required.set(true)
-            xml.required.set(true)
-            csv.required.set(true)
-        }
     }
 }
 
@@ -603,6 +553,55 @@ tasks.register('verifyRequiredJavaVersion') {
     def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
     if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
         throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
+    }
+}
+
+tasks.register('publishProjectModules') {
+    enabled(System.getenv().containsKey("RESTDB_CAS_API_KEY"))
+    doLast {
+        def apiKey = System.getenv().get("RESTDB_CAS_API_KEY") as String
+
+        println "Deleting records for CAS ${rootProject.version}"
+        def url = new URL("https://apereocas-42e7.restdb.io/rest/casmodules/*?q=" + URLEncoder.encode("{\"version\": \"${rootProject.version}\"}"))
+        def httpCon = (HttpURLConnection) url.openConnection()
+        httpCon.setRequestProperty("Content-Type", "application/json")
+        httpCon.setRequestProperty("x-apikey", apiKey)
+        httpCon.setRequestMethod("DELETE");
+        httpCon.connect()
+        println httpCon.getResponseCode()
+
+        def results = []
+        subprojects.each {
+            def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
+            if (publishMetadata) {
+                def metadata = it.ext.projectMetadata
+                if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
+                    throw new GradleException("Missing required project metadata for ${it.name}")
+                }
+                results += [
+                    name: it.name,
+                    version: it.version,
+                    group: it.group,
+                    description: it.description,
+                    details: metadata
+                ]
+            }
+        }
+
+        println "Uploading records for CAS ${rootProject.version}"
+        def postUrl = new URL('https://apereocas-42e7.restdb.io/rest/casmodules')
+        def connection = postUrl.openConnection() as HttpURLConnection
+        connection.setRequestProperty("Content-Type", "application/json")
+        connection.setRequestProperty("x-apikey", apiKey)
+        connection.requestMethod = 'POST'
+        def json = groovy.json.JsonOutput.toJson(results)
+        connection.doOutput = true
+        connection.with {
+            outputStream.withWriter { outputStreamWriter ->
+                outputStreamWriter << json
+            }
+        }
+        println connection.responseCode
     }
 }
 

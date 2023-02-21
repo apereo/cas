@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
@@ -37,7 +38,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata",
-    "cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY"
+    "cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY",
+
+    "cas.authn.saml-idp.core.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
+    "cas.authn.saml-idp.core.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw",
+
+    "cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=false"
 })
 public class SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests extends BaseSamlIdPConfigurationTests {
     @Autowired
@@ -61,6 +67,7 @@ public class SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests exten
     public void verifyPostSignRequest() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Firefox");
         samlIdPDistributedSessionCookieGenerator.setCookiePath(StringUtils.EMPTY);
         request.setContextPath("/custompath");
         val response = new MockHttpServletResponse();

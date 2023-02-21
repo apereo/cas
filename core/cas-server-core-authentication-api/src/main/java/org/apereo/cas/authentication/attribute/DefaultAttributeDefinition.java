@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -65,43 +67,10 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String patternFormat;
 
+    @ExpressionLanguageCapable
     private String script;
 
     private String canonicalizationMode;
-    
-    @Override
-    public int compareTo(final AttributeDefinition o) {
-        return new CompareToBuilder()
-            .append(getKey(), o.getKey())
-            .build();
-    }
-
-    @JsonIgnore
-    @Override
-    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) {
-        List<Object> currentValues = new ArrayList<>(context.getAttributeValues());
-        if (StringUtils.isNotBlank(getScript())) {
-            currentValues = getScriptedAttributeValue(key, currentValues, context);
-        }
-        if (isScoped()) {
-            currentValues = formatValuesWithScope(context.getScope(), currentValues);
-        }
-        if (StringUtils.isNotBlank(getPatternFormat())) {
-            currentValues = formatValuesWithPattern(currentValues);
-        }
-        if (isEncrypted()) {
-            currentValues = encryptValues(currentValues, context.getRegisteredService());
-        }
-        if (StringUtils.isNotBlank(this.canonicalizationMode)) {
-            val mode = CaseCanonicalizationMode.valueOf(canonicalizationMode.toUpperCase());
-            currentValues = currentValues
-                .stream()
-                .map(value -> mode.canonicalize(value.toString()))
-                .collect(Collectors.toList());
-        }
-        LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
-        return currentValues;
-    }
 
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues
@@ -131,32 +100,6 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 return result;
             }))
             .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private List<Object> formatValuesWithPattern(final List<Object> currentValues) {
-        return currentValues
-            .stream()
-            .map(v -> MessageFormat.format(getPatternFormat(), v))
-            .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    @JsonIgnore
-    private List<Object> getScriptedAttributeValue(final String attributeKey,
-                                                   final List<Object> currentValues,
-                                                   final AttributeDefinitionResolutionContext context) {
-        LOGGER.trace("Locating attribute value via script for definition [{}]", this);
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
-
-        if (matcherInline.find()) {
-            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1), context);
-        }
-
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(getScript());
-        if (matcherFile.find()) {
-            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group(), context);
-        }
-
-        return new ArrayList<>(0);
     }
 
     private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
@@ -199,5 +142,66 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             "attributes", context.getAttributes());
         scriptToExec.setBinding(args);
         return scriptToExec.execute(args.values().toArray(), List.class);
+    }
+
+    @Override
+    public int compareTo(final AttributeDefinition o) {
+        return new CompareToBuilder()
+            .append(getKey(), o.getKey())
+            .build();
+    }
+
+    @JsonIgnore
+    @Override
+    public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) {
+        List<Object> currentValues = new ArrayList<>(context.getAttributeValues());
+        if (StringUtils.isNotBlank(getScript())) {
+            currentValues = getScriptedAttributeValue(key, currentValues, context);
+        }
+        if (isScoped()) {
+            currentValues = formatValuesWithScope(context.getScope(), currentValues);
+        }
+        if (StringUtils.isNotBlank(getPatternFormat())) {
+            currentValues = formatValuesWithPattern(currentValues);
+        }
+        if (isEncrypted()) {
+            currentValues = encryptValues(currentValues, context.getRegisteredService());
+        }
+        if (StringUtils.isNotBlank(this.canonicalizationMode)) {
+            val mode = CaseCanonicalizationMode.valueOf(canonicalizationMode.toUpperCase());
+            currentValues = currentValues
+                .stream()
+                .map(value -> mode.canonicalize(value.toString()))
+                .collect(Collectors.toList());
+        }
+        LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
+        return currentValues;
+    }
+
+    private List<Object> formatValuesWithPattern(final List<Object> currentValues) {
+        return currentValues
+            .stream()
+            .map(v -> MessageFormat.format(getPatternFormat(), v))
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @JsonIgnore
+    private List<Object> getScriptedAttributeValue(final String attributeKey,
+                                                   final List<Object> currentValues,
+                                                   final AttributeDefinitionResolutionContext context) {
+        LOGGER.trace("Locating attribute value via script for definition [{}]", this);
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
+
+        if (matcherInline.find()) {
+            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1), context);
+        }
+
+        val scriptDefinition = SpringExpressionLanguageValueResolver.getInstance().resolve(getScript());
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(scriptDefinition);
+        if (matcherFile.find()) {
+            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group(), context);
+        }
+
+        return new ArrayList<>(0);
     }
 }

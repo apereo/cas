@@ -22,6 +22,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private final FlowDefinitionRegistry loginFlowRegistry;
+
     public AccountProfileWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                            final FlowDefinitionRegistry mainFlowDefinitionRegistry,
                                            final FlowDefinitionRegistry loginFlowRegistry,

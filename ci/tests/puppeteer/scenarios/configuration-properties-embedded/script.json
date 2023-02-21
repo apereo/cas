@@ -13,6 +13,8 @@
     "--spring.security.user.name=casuser",
     "--spring.profiles.active=embedded",
 
+    "--logging.level.org.apereo.cas=debug",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
     
     "--management.endpoints.web.exposure.include=*",

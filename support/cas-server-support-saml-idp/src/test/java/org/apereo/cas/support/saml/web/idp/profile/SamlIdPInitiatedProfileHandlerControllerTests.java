@@ -42,6 +42,20 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
         this.samlRegisteredService.setSignUnsolicitedAuthnRequest(true);
         servicesManager.save(samlRegisteredService);
     }
+    
+    @Test
+    public void verifySignedAuthnRequest() throws Exception {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setServiceId("signed:authn:service");
+        servicesManager.save(service);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());
+        request.addParameter(SamlIdPConstants.TARGET, "relay-state");
+        val response = new MockHttpServletResponse();
+        val mv = idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
+    }
 
     @Test
     public void verifyNoShire() {

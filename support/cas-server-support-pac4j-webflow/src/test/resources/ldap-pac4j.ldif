@@ -1,0 +1,10 @@
+dn: cn=$user,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: $user
+userPassword: 123456
+sn: caspac4j
+uid: caspac4j
+mail: caspac4j@example.org

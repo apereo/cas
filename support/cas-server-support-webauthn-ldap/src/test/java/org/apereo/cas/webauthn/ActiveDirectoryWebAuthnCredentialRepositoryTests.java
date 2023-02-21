@@ -39,7 +39,7 @@ import org.springframework.test.context.TestPropertySource;
         "cas.authn.mfa.web-authn.ldap.min-pool-size=0",
         "cas.authn.mfa.web-authn.ldap.hostname-verifier=DEFAULT"
     })
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 @EnabledIfListeningOnPort(port = 10636)
 @Getter
 @Import(LdapWebAuthnConfiguration.class)

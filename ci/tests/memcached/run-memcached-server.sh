@@ -9,8 +9,8 @@ docker run --rm  -p 11211:11211 --name memcached -d memcached:alpine memcached -
 docker ps | grep "memcached"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "Memcached docker image is running."
+    echo "Memcached docker container is running."
 else
-    echo "Memcached docker image failed to start."
+    echo "Memcached docker container failed to start."
     exit $retVal
 fi

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -41,6 +42,7 @@ public class SchedulingProperties implements Serializable {
      * is hard. The value can be an exact hostname
      * or a regular expression that will be used to match the hostname.
      */
+    @RegularExpressionCapable
     private String enabledOnHost = ".*";
 
     /**
@@ -51,7 +53,7 @@ public class SchedulingProperties implements Serializable {
     private String startDelay = "PT15S";
 
     /**
-     * String representation of a repeat interval of re-loading data for an data store implementation.
+     * String representation of a repeat interval of re-loading data for a data store implementation.
      * This is the timeout between consecutive job’s executions.
      */
     @DurationCapable

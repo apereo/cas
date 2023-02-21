@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.sso.required-service-pattern=^https://www.google.com.*",
+    "cas.sso.services.required-service-pattern=^https://www.google.com.*",
     "cas.tgc.crypto.enabled=false"
 })
 @Tag("WebflowActions")

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,8 @@ import java.util.Optional;
 public class EchoingPrincipalResolver implements PrincipalResolver {
 
     @Override
-    public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> principal,
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
         LOGGER.debug("Echoing back the authenticated principal [{}]", principal);
         return principal.orElse(null);
     }

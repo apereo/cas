@@ -1,8 +1,17 @@
 description = "Apereo CAS SCIM 2 Provisioning Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Provisioning",
+            title: "SCIM",
+            aliases: ["scim"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
-    implementation libraries.unboundidscim
+    implementation libraries.scimsdk
     implementation libraries.pac4jcore
     
     implementation project(":core:cas-server-core-util-api")

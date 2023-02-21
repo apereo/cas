@@ -9,12 +9,13 @@ import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -23,6 +24,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.Ordered;
 
@@ -66,9 +68,8 @@ public class SamlSPUtils {
             attributesToRelease.add(sp.getNameIdAttribute());
             service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
         }
-        if (StringUtils.isNotBlank(sp.getNameIdFormat())) {
-            service.setRequiredNameIdFormat(sp.getNameIdFormat());
-        }
+
+        FunctionUtils.doIfNotBlank(sp.getNameIdFormat(), __ -> service.setRequiredNameIdFormat(sp.getNameIdFormat()));
 
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
         val policy = new ChainingAttributeReleasePolicy();
@@ -79,9 +80,8 @@ public class SamlSPUtils {
         service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         service.setMetadataCriteriaRemoveRolelessEntityDescriptors(true);
 
-        if (StringUtils.isNotBlank(sp.getSignatureLocation())) {
-            service.setMetadataSignatureLocation(sp.getSignatureLocation());
-        }
+
+        FunctionUtils.doIfNotBlank(sp.getSignatureLocation(), __ -> service.setMetadataSignatureLocation(sp.getSignatureLocation()));
 
         val entityIDList = determineEntityIdList(sp, resolver, service);
 
@@ -122,7 +122,7 @@ public class SamlSPUtils {
 
             resolvers.forEach(r -> {
                 if (r instanceof AbstractBatchMetadataResolver) {
-                    val it = ((AbstractBatchMetadataResolver) r).iterator();
+                    val it = ((Iterable<EntityDescriptor>) r).iterator();
                     val descriptor =
                         StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
                             .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)

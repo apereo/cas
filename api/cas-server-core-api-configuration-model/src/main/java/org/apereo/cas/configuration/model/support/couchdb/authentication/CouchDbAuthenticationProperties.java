@@ -27,6 +27,7 @@ public class CouchDbAuthenticationProperties extends BaseCouchDbProperties {
 
     @Serial
     private static final long serialVersionUID = 1830797033934229732L;
+
     /**
      * Principal transformation settings.
      */

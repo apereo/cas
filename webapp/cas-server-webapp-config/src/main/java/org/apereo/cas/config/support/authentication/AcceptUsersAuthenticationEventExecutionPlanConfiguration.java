@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -36,10 +37,8 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("acceptUsersAuthenticationHandler")
-        final AuthenticationHandler acceptUsersAuthenticationHandler,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver,
+        @Qualifier("acceptUsersAuthenticationHandler") final AuthenticationHandler acceptUsersAuthenticationHandler,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
         final CasConfigurationProperties casProperties) {
         return plan -> {
             val accept = casProperties.getAuthn().getAccept();
@@ -51,6 +50,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
     public InitializingBean acceptUsersAuthenticationInitializingBean(
         final CasConfigurationProperties casProperties) {
         return () -> {

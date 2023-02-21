@@ -39,7 +39,7 @@ reasonable basis for throttling policy. Regardless of policy care should be
 taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
 
-<div class="alert alert-info mt-3"><strong>Threshold Rate</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Threshold Rate</strong><p>
 The failure threshold rate is calculated as: <code>failureThreshold / failureRangeInSeconds</code>. For instance,
 the failure rate for the above scenario would be <code>0.333333</code>. An authentication attempt may be considered throttled
 if the request submission rate (calculated as the difference between the current date and the last submission date) exceeds
@@ -52,7 +52,7 @@ Enable the following module in your configuration overlay:
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
+{% include_cached casproperties.html properties="cas.authn.throttle" includes=".core,.schedule,.failure" %}
 
 ### Actuator Endpoints
 

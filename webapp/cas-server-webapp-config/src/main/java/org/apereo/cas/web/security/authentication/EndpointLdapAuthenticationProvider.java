@@ -20,7 +20,8 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
-import org.pac4j.core.authorization.generator.DefaultRolesPermissionsAuthorizationGenerator;
+import org.pac4j.core.authorization.generator.DefaultRolesAuthorizationGenerator;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -104,7 +105,9 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 val context = new JEEContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
                     HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
                 val authZGen = buildAuthorizationGenerator();
-                authZGen.generate(context, JEESessionStore.INSTANCE, profile);
+
+                val callContext = new CallContext(context, JEESessionStore.INSTANCE);
+                authZGen.generate(callContext, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
                 val authorities = profile.getRoles()
@@ -159,7 +162,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
         }
         val roles = securityProperties.getUser().getRoles();
         LOGGER.info("Could not determine authorization generator based on users or groups. Authorization will generate static roles based on [{}]", roles);
-        return new DefaultRolesPermissionsAuthorizationGenerator(roles, new ArrayList<>(0));
+        return new DefaultRolesAuthorizationGenerator(roles);
     }
 
     private boolean isGroupBasedAuthorization() {

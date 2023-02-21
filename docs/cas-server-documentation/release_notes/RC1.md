@@ -69,7 +69,7 @@ are sent to the `PROTOCOL_MESSAGE` logger.
 
 ### Removed Modules
 
-The following modules that were previously marked as deprecared are now removed from CAS and will no longer
+The following modules that were previously marked as deprecated are now removed from CAS and will no longer
 be supported, maintained or released:
 
 - OpenID Protocol
@@ -99,7 +99,7 @@ now be [conditionally activated](../services/Service-Access-Strategy-ABAC-Activa
 ### OAuth2/UMA Scopes
 
 Certain OAuth2 and/or UMA authorization requests are now able to enforce scope access by comparing requested scopes in the authorization
-requeds with what must be explicitly allowed in the registered service definition. In other words, scopes can only be allowed and requested
+request with what must be explicitly allowed in the registered service definition. In other words, scopes can only be allowed and requested
 if they are already authorized for the application definition in CAS.
 
 ### SAML2 Metadata Resolution
@@ -112,7 +112,7 @@ of the metadata over HTTP to be disabled.
 
 [Dynamic Discovery](../integration/Delegate-Authentication-DiscoverySelection.html) configured for delegated authentication is able to
 start the delegation flow based on a principal attribute that would then be matched against the configuration rules to locate the 
-approprivate external identity provider.
+appropriate external identity provider.
      
 ### AMQP Ticket Registry
 

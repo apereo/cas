@@ -42,6 +42,54 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
 
     @Override
     public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                           final Assertion assertion,
+                                                                           final Map<String, Object> model,
+                                                                           final RegisteredService service) {
+        if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
+            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
+            return new LinkedHashMap<>(0);
+        }
+        val attrs = getAuthenticationAttributesForRelease(authentication, service);
+
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
+            var forceAuthn = assertion != null && assertion.fromNewLogin();
+            if (!forceAuthn) {
+                val values = authentication.getAttributes().getOrDefault(
+                    CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, List.of(Boolean.FALSE));
+                forceAuthn = values.contains(Boolean.TRUE);
+            }
+            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, CollectionUtils.wrap(forceAuthn));
+        }
+
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
+            var rememberMe = assertion != null && CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion);
+            if (!rememberMe) {
+                val values = authentication.getAttributes().getOrDefault(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, List.of(Boolean.FALSE));
+                rememberMe = values.contains(Boolean.TRUE);
+            }
+            attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
+        }
+
+        if (StringUtils.isNotBlank(authenticationContextAttribute)) {
+            org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute)
+                .stream()
+                .filter(model::containsKey)
+                .forEach(attr -> {
+                    val contextProvider = CollectionUtils.firstElement(model.get(attr));
+                    contextProvider.ifPresent(provider -> {
+                        if (isAttributeAllowedForRelease(attr)) {
+                            attrs.put(attr, CollectionUtils.wrap(provider));
+                        }
+                    });
+                });
+        }
+        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
+        LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
+        return attrs;
+    }
+
+    @Override
+    public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
                                                                            final RegisteredService service) {
         if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
@@ -62,50 +110,6 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attrs, authentication, service);
 
-        LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
-        return attrs;
-    }
-
-    @Override
-    public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
-                                                                           final Assertion assertion,
-                                                                           final Map<String, Object> model,
-                                                                           final RegisteredService service) {
-        if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
-            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
-            return new LinkedHashMap<>(0);
-        }
-        val attrs = getAuthenticationAttributesForRelease(authentication, service);
-        
-        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
-            var forceAuthn = assertion != null && assertion.fromNewLogin();
-            if (!forceAuthn) {
-                val values = authentication.getAttributes().getOrDefault(
-                    CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, List.of(Boolean.FALSE));
-                forceAuthn = values.contains(Boolean.TRUE);
-            }
-            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, CollectionUtils.wrap(forceAuthn));
-        }
-
-        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
-            var rememberMe = assertion != null && CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion);
-            if (!rememberMe) {
-                val values = authentication.getAttributes().getOrDefault(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, List.of(Boolean.FALSE));
-                rememberMe = values.contains(Boolean.TRUE);
-            }
-            attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
-        }
-
-        if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
-            val contextProvider = CollectionUtils.firstElement(model.get(this.authenticationContextAttribute));
-            contextProvider.ifPresent(provider -> {
-                if (isAttributeAllowedForRelease(authenticationContextAttribute)) {
-                    attrs.put(this.authenticationContextAttribute, CollectionUtils.wrap(provider));
-                }
-            });
-        }
-
-        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
         LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
         return attrs;
     }

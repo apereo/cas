@@ -55,7 +55,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         val expirationDate = getDeviceExpiration();
-        val keys = redisTemplate.keys(getPatternRedisKey(),
+        val keys = redisTemplate.scan(getPatternRedisKey(),
             casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
         return queryDeviceRegistrations(expirationDate, keys);
     }
@@ -63,7 +63,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val expirationDate = getDeviceExpiration();
-        val keys = redisTemplate.keys(buildRedisKeyForUser(username),
+        val keys = redisTemplate.scan(buildRedisKeyForUser(username),
             casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
         return queryDeviceRegistrations(expirationDate, keys);
     }
@@ -116,7 +116,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     private Stream<String> getRedisKeys() {
-        return redisTemplate.keys(getPatternRedisKey(),
+        return redisTemplate.scan(getPatternRedisKey(),
             casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
     }
 }

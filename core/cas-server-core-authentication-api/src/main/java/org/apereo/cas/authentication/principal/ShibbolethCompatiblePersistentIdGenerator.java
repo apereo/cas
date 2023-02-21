@@ -55,6 +55,26 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.salt = salt;
     }
 
+    /**
+     * Prepare message digest message digest.
+     *
+     * @param principal the principal
+     * @param service   the service
+     * @return the message digest
+     */
+    protected static MessageDigest prepareMessageDigest(final String principal, final String service) {
+        return FunctionUtils.doUnchecked(() -> {
+            val md = MessageDigest.getInstance("SHA");
+            if (StringUtils.isNotBlank(service)) {
+                md.update(service.getBytes(StandardCharsets.UTF_8));
+                md.update(CONST_SEPARATOR);
+            }
+            md.update(principal.getBytes(StandardCharsets.UTF_8));
+            md.update(CONST_SEPARATOR);
+            return md;
+        });
+    }
+
     @Override
     public String generate(final String principal, final String service) {
         if (StringUtils.isBlank(salt)) {
@@ -116,25 +136,5 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         val sanitizedSalt = StringUtils.replace(salt, "\n", " ");
         val digested = md.digest(sanitizedSalt.getBytes(StandardCharsets.UTF_8));
         return EncodingUtils.encodeBase64(digested, false);
-    }
-
-    /**
-     * Prepare message digest message digest.
-     *
-     * @param principal the principal
-     * @param service   the service
-     * @return the message digest
-     */
-    protected static MessageDigest prepareMessageDigest(final String principal, final String service) {
-        return FunctionUtils.doUnchecked(() -> {
-            val md = MessageDigest.getInstance("SHA");
-            if (StringUtils.isNotBlank(service)) {
-                md.update(service.getBytes(StandardCharsets.UTF_8));
-                md.update(CONST_SEPARATOR);
-            }
-            md.update(principal.getBytes(StandardCharsets.UTF_8));
-            md.update(CONST_SEPARATOR);
-            return md;
-        });
     }
 }

@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -30,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowAuthenticationActions")
+@Tag("Delegation")
 public class DelegatedAuthenticationGenerateClientsActionTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
@@ -47,7 +49,7 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
             val context2 = getMockRequestContext();
             WebUtils.getHttpServletResponseFromExternalWebflowContext(context2).setStatus(HttpStatus.UNAUTHORIZED.value());
             assertDoesNotThrow(() -> delegatedAuthenticationCreateClientsAction.execute(context2));
-            assertFalse(WebUtils.getDelegatedAuthenticationProviderConfigurations(context2).isEmpty());
+            assertFalse(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context2).isEmpty());
         }
 
         @Test
@@ -55,8 +57,8 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
             val context1 = getMockRequestContext();
             val result = delegatedAuthenticationCreateClientsAction.execute(context1);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-            assertFalse(WebUtils.getDelegatedAuthenticationProviderConfigurations(context1).isEmpty());
-            assertFalse(WebUtils.isDelegatedAuthenticationDynamicProviderSelection(context1));
+            assertFalse(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context1).isEmpty());
+            assertFalse(DelegationWebflowUtils.isDelegatedAuthenticationDynamicProviderSelection(context1));
             assertEquals(HttpStatus.FOUND.value(),
                 WebUtils.getHttpServletResponseFromExternalWebflowContext(context1).getStatus());
         }
@@ -65,6 +67,7 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
     private static RequestContext getMockRequestContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
@@ -87,8 +90,8 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
 
             val result = delegatedAuthenticationCreateClientsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-            assertTrue(WebUtils.getDelegatedAuthenticationProviderConfigurations(context).isEmpty());
-            assertTrue(WebUtils.isDelegatedAuthenticationDynamicProviderSelection(context));
+            assertTrue(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context).isEmpty());
+            assertTrue(DelegationWebflowUtils.isDelegatedAuthenticationDynamicProviderSelection(context));
         }
     }
 }

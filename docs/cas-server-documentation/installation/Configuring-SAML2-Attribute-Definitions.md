@@ -7,8 +7,8 @@ category: Attributes
 
 # SAML2 Attribute Definitions
 
-Attribute definitions that specifically apply to the release of attributes as part of SAML response can be
-defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
+[Attribute definitions](../integration/Attribute-Definitions.html) that specifically apply to the release of 
+attributes as part of SAML response can be defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
 prevent it from being released by other protocols.
 
 ```json
@@ -29,14 +29,14 @@ prevent it from being released by other protocols.
 }
 ```
 
-The following additional settings can be specified for a Saml IdP attribute definition:
+The following additional settings can be specified for a SAML attribute definition:
 
-| Name           | Description                                                                                                                                                                                          |
-|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release.                                                                                               |
-| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).                                                                                               |
-| `persistent`   | (Optional) Boolean flag to indicate whether the attribute value should be generated as a persistent value.                                                                                           |
-| `salt`         | Required Salt value to use when creating persistent attribute definition values. This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax |
+| Name           | Description                                                                                                                                                                                           |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release.                                                                                                |
+| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).                                                                                                |
+| `persistent`   | (Optional) Boolean flag to indicate whether the attribute value should be generated as a persistent value.                                                                                            |
+| `salt`         | Required Salt value to use when creating persistent attribute definition values. This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. |
 
 To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
  

@@ -68,10 +68,8 @@ public class CasCoreValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyHandler proxy20Handler(
-            @Qualifier("proxy20TicketUniqueIdGenerator")
-            final UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator,
-            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
-            final HttpClient httpClient,
+            @Qualifier("proxy20TicketUniqueIdGenerator") final UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE) final HttpClient httpClient,
             final ConfigurableApplicationContext applicationContext) throws Exception {
             return BeanSupplier.of(ProxyHandler.class)
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
@@ -89,8 +87,7 @@ public class CasCoreValidationConfiguration {
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "casSingleAuthenticationProtocolValidationSpecification")
         public CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultCasProtocolValidationSpecification(servicesManager,
                 AbstractCasProtocolValidationSpecification.ASSERTION_SINGLE_AUTHENTICATION);
         }
@@ -100,8 +97,7 @@ public class CasCoreValidationConfiguration {
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "casAlwaysSatisfiedProtocolValidationSpecification")
         public CasProtocolValidationSpecification casAlwaysSatisfiedProtocolValidationSpecification(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new DefaultCasProtocolValidationSpecification(servicesManager,
                 AbstractCasProtocolValidationSpecification.ASSERTION_ALWAYS_SATISFIED);
         }
@@ -131,8 +127,7 @@ public class CasCoreValidationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casCoreServiceTicketValidationAuthorizerConfigurer")
         public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer(
-            @Qualifier("authenticationPolicyAwareServiceTicketValidationAuthorizer")
-            final ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer) {
+            @Qualifier("authenticationPolicyAwareServiceTicketValidationAuthorizer") final ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer) {
             return plan -> plan.registerAuthorizer(authenticationPolicyAwareServiceTicketValidationAuthorizer);
         }
 
@@ -141,10 +136,8 @@ public class CasCoreValidationConfiguration {
         @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
         public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME) final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager,
                 authenticationEventExecutionPlan, applicationContext);
         }

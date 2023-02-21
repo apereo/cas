@@ -23,7 +23,7 @@ import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.jose4j.jwt.ReservedClaimNames;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.http.HttpMethod;
@@ -106,7 +106,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getStatusLine().getStatusCode())).isError()) {
+            if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {
                 LOGGER.trace("Received OK logout response");
                 return true;
             }

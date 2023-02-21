@@ -62,19 +62,19 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         val delegatedClientIdentityProviderRedirectionStrategy = configurationContext.getObject().getDelegatedClientIdentityProviderRedirectionStrategy();
         delegatedClientIdentityProviderRedirectionStrategy.select(context, service, providers)
-            .ifPresent(p -> WebUtils.putDelegatedAuthenticationProviderPrimary(context, p));
+            .ifPresent(p -> DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(context, p));
 
         if (!providers.isEmpty()) {
             val casProperties = configurationContext.getObject().getCasProperties();
             val selectionType = casProperties.getAuthn().getPac4j().getCore().getDiscoverySelection().getSelectionType();
             switch (selectionType) {
                 case DYNAMIC -> {
-                    WebUtils.putDelegatedAuthenticationProviderConfigurations(context, new HashSet<>());
-                    WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.TRUE);
+                    DelegationWebflowUtils.putDelegatedAuthenticationProviderConfigurations(context, new HashSet<>());
+                    DelegationWebflowUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.TRUE);
                 }
                 case MENU -> {
-                    WebUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
-                    WebUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.FALSE);
+                    DelegationWebflowUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
+                    DelegationWebflowUtils.putDelegatedAuthenticationDynamicProviderSelection(context, Boolean.FALSE);
                 }
             }
 

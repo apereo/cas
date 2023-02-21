@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -71,12 +72,14 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
      * Skip multifactor authentication if the http request's remote address or host
      * matches the value defined here. The value may be specified as a regular expression.
      */
+    @RegularExpressionCapable
     private String httpRequestRemoteAddress;
 
     /**
      * Skip multifactor authentication if the http request contains the defined header names.
      * Header names may be comma-separated and can be regular expressions; values are ignored.
      */
+    @RegularExpressionCapable
     private String httpRequestHeaders;
 
     /**

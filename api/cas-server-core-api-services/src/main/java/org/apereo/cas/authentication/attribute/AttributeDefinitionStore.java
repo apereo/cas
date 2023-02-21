@@ -60,6 +60,7 @@ public interface AttributeDefinitionStore {
     /**
      * Register attribute definition attribute.
      * The definition will only be added if one does not already exist in the store.
+     *
      * @param key  the key
      * @param defn the defn
      * @return the attribute definition store
@@ -120,20 +121,12 @@ public interface AttributeDefinitionStore {
     /**
      * Gets attribute values.
      *
-     * @param key               the key
-     * @param values            the values
-     * @param principal         the principal
-     * @param registeredService the registered service
-     * @param service           the service
-     * @param attributes        the attributes
+     * @param key     the key
+     * @param context the context
      * @return the attribute values
      */
     Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(
-        String key, List<Object> values,
-        Principal principal,
-        RegisteredService registeredService,
-        Service service,
-        Map<String, List<Object>> attributes);
+        String key, AttributeDefinitionResolutionContext context);
 
     /**
      * Gets attribute values.
@@ -152,31 +145,36 @@ public interface AttributeDefinitionStore {
         final RegisteredService registeredService,
         final Service service) {
         val finalAttributes = new LinkedHashMap<String, List<Object>>(attributeDefinitions.size());
-        attributeDefinitions
-            .forEach(entry -> locateAttributeDefinition(entry).ifPresentOrElse(definition -> {
-                val attributeValues = determineValuesForAttributeDefinition(availableAttributes, entry, definition);
-                LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry, attributeValues);
-                val result = resolveAttributeValues(entry, attributeValues, principal,
-                    registeredService, service, availableAttributes);
-                if (result.isPresent()) {
-                    val resolvedValues = result.get().getValue();
-                    if (resolvedValues.isEmpty()) {
-                        LOGGER.debug("Unable to produce or determine attributes values for attribute definition [{}]", definition);
-                    } else {
-                        LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry, definition);
-                        val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(
-                            StringUtils.defaultIfBlank(definition.getName(), entry));
+        attributeDefinitions.forEach(entry -> locateAttributeDefinition(entry).ifPresentOrElse(definition -> {
+            val attributeValues = determineValuesForAttributeDefinition(availableAttributes, entry, definition);
+            LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry, attributeValues);
+            val attributeDefinitionResolutionContext = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(attributeValues)
+                .principal(principal)
+                .registeredService(registeredService)
+                .service(service)
+                .attributes(availableAttributes)
+                .build();
+            val result = resolveAttributeValues(entry, attributeDefinitionResolutionContext);
+            if (result.isPresent()) {
+                val resolvedValues = result.get().getValue();
+                if (resolvedValues.isEmpty()) {
+                    LOGGER.debug("Unable to produce or determine attributes values for attribute definition [{}]", definition);
+                } else {
+                    LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry, definition);
+                    val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                        StringUtils.defaultIfBlank(definition.getName(), entry));
 
-                        attributeKeys.forEach(key -> {
-                            LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
-                            finalAttributes.put(key, resolvedValues);
-                        });
-                    }
+                    attributeKeys.forEach(key -> {
+                        LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
+                        finalAttributes.put(key, resolvedValues);
+                    });
                 }
-            }, () -> {
-                LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
-                finalAttributes.put(entry, availableAttributes.get(entry));
-            }));
+            }
+        }, () -> {
+            LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry);
+            finalAttributes.put(entry, availableAttributes.get(entry));
+        }));
         LOGGER.trace("Final collection of attributes resolved from attribute definition store is [{}]", finalAttributes);
         return finalAttributes;
     }

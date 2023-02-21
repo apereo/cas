@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.profile;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,7 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
     public void init() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);

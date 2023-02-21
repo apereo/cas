@@ -11,9 +11,10 @@ import java.util.stream.Stream;
  */
 public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
     /**
-     *Default bean name.
+     * Default bean name.
      */
     String BEAN_NAME = "throttleSubmissionMap";
+
     /**
      * Remove element passing the given condition.
      *

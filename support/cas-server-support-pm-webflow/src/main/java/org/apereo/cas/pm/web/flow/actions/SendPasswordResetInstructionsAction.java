@@ -38,6 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -125,7 +126,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val phone = passwordManagementService.findPhone(query);
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
-            return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
+            return getInvalidContactEvent(requestContext);
         }
 
         val service = WebUtils.getService(requestContext);
@@ -155,6 +156,17 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             LOGGER.warn("No username parameter is provided");
         }
         return builder.username(username).build();
+    }
+
+    /**
+     * Get the "invalid contact" event.
+     * It could be overriden to return success and hide the fact that the login does not exist.
+     *
+     * @param requestContext the request context
+     * @return the event
+     */
+    protected Event getInvalidContactEvent(final RequestContext requestContext) {
+        return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
     }
 
     protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {
@@ -191,9 +203,13 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
                 .get();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
 
-            val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+            val emailRequest = EmailMessageRequest.builder()
+                .emailProperties(reset)
                 .principal(person)
-                .to(List.of(to)).body(text).build();
+                .to(List.of(to))
+                .locale(locale.orElseGet(Locale::getDefault))
+                .body(text)
+                .build();
             return this.communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().success(false).to(List.of(to)).build();

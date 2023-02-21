@@ -155,6 +155,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'restore'.
+     */
+    String TRANSITION_ID_RESTORE = "restore";
+
+    /**
      * The transition state 'validate'.
      */
     String TRANSITION_ID_VALIDATE = "validate";
@@ -253,6 +258,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_GENERATE = "generate";
 
     /**
+     * The transition state 'logout'.
+     */
+    String TRANSITION_ID_LOGOUT = "logout";
+
+    /**
      * Transition id 'delegatedAuthenticationRedirect' .
      */
     String TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT = "delegatedAuthenticationRedirect";
@@ -261,6 +271,11 @@ public interface CasWebflowConstants {
      * Transition id 'redirect' .
      */
     String TRANSITION_ID_REDIRECT = "redirect";
+
+    /**
+     * The transition id 'serviceUnauthorizedCheck'.
+     */
+    String TRANSITION_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
 
     /**
      * Transition id 'post' .
@@ -432,6 +447,16 @@ public interface CasWebflowConstants {
      * The state id 'sendTicketGrantingTicket'.
      */
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
+
+    /**
+     * The state id 'casSessionStorageWriteView'.
+     */
+    String STATE_ID_SESSION_STORAGE_WRITE = "casSessionStorageWriteView";
+
+    /**
+     * The state id 'casSessionStorageReadView'.
+     */
+    String STATE_ID_SESSION_STORAGE_READ = "casSessionStorageReadView";
 
     /**
      * The state id 'ticketGrantingTicketCheck'.
@@ -712,6 +737,12 @@ public interface CasWebflowConstants {
      * State id 'delegatedAuthenticationSelectCredential'.
      */
     String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION = "delegatedAuthenticationSelectCredential";
+
+    /**
+     * State id 'delegatedAuthenticationIdPLogout'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT = "delegatedAuthenticationIdPLogout";
+
     /**
      * State id 'delegatedAuthenticationFinalizeCredential'.
      */
@@ -1138,6 +1169,11 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
 
+    /**
+     * The view state 'dynamicHtmlView'.
+     */
+    String VIEW_ID_DYNAMIC_HTML = "dynamicHtmlView";
+
     /*
      ****************************************
      * Decisions.
@@ -1196,6 +1232,15 @@ public interface CasWebflowConstants {
      * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE = "delegatedAuthenticationClientCredentialSelectionFinalizeAction";
+    /**
+     * Action id 'delegatedAuthenticationIdentityProviderLogoutAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT = "delegatedAuthenticationIdentityProviderLogoutAction";
+
+    /**
+     * Action id 'delegatedAuthenticationIdentityProviderFinalizeLogoutAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT = "delegatedAuthenticationIdentityProviderFinalizeLogoutAction";
 
     /**
      * Action id 'delegatedAuthenticationClientCredentialSelectionAction'.
@@ -1916,11 +1961,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_SAML_METADATA_UI_PARSER = "samlMetadataUIParserAction";
 
     /**
-     * Action id 'samlIdPSessionStoreTicketGrantingTicketAction'.
-     */
-    String ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET = "samlIdPSessionStoreTicketGrantingTicketAction";
-
-    /**
      * Action id 'samlIdPMetadataUIParserAction'.
      */
     String ACTION_ID_SAML_IDP_METADATA_UI_PARSER = "samlIdPMetadataUIParserAction";
@@ -1934,11 +1974,6 @@ public interface CasWebflowConstants {
      * Action id 'oauth20RegisteredServiceUIAction'.
      */
     String ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI = "oauth20RegisteredServiceUIAction";
-
-    /**
-     * Action id 'oauth20SessionStoreTicketGrantingTicketAction'.
-     */
-    String ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET = "oauth20SessionStoreTicketGrantingTicketAction";
 
     /**
      * Action id 'inweboPushAuthenticateAction'.

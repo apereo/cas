@@ -3,7 +3,8 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
+
 
 /**
  * This is {@link SamlRegisteredServiceCachingMetadataResolver}

@@ -12,6 +12,14 @@ if (!dependencyUpdates) {
 }
 
 description = "Apereo CAS RADIUS RSA MFA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication",
+            title: "RADIUS"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")

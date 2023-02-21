@@ -17,8 +17,15 @@ const assert = require('assert');
     await cas.logg(`Trying with URL ${url2}`);
     payload = await getPayload(page, url2, "client2", "secret2");
     decoded = await cas.decodeJwt(payload.id_token);
-    assert(decoded.sub === "CASUSER");
-    assert(decoded["preferred_username"] === "CASUSER");
+    assert(decoded.sub === "CASSSO");
+    assert(decoded["preferred_username"] === "CASSSO");
+
+    let url3 = "https://httpbin.org/anything/sample3";
+    await cas.logg(`Trying with URL ${url3}`);
+    payload = await getPayload(page, url3, "client3", "secret3");
+    decoded = await cas.decodeJwt(payload.id_token);
+    assert(decoded.sub === "ABCDEFG@APEREO.ORG");
+    assert(decoded["preferred_username"] === "ABCDEFG@APEREO.ORG");
 
     await browser.close();
 })();

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -83,6 +84,7 @@ public class JaasAuthenticationProperties implements Serializable {
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**

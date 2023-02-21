@@ -72,6 +72,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())

@@ -23,13 +23,11 @@ const path = require('path');
     await cas.goto(page, "https://localhost:8443/cas/logout?service=https://apereo.github.io");
     await page.waitForTimeout(6000);
 
-    // await cas.goto(page, "https://localhost:8443/cas/login");
-    // await page.waitForTimeout(2000);
-    // let url = await page.url()
-    // console.log(`Page url: ${url}`)
-    // await page.waitForTimeout(2000);
-    // await cas.assertCookie(page, true, "Pac4jCookie");
-    // await cas.assertCookie(page);
+    await cas.goto(page, "https://localhost:8443/cas/login");
+    await page.waitForTimeout(2000);
+    let url = await page.url();
+    console.log(`Page url: ${url}`);
+    await cas.assertCookie(page, false);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

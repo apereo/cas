@@ -2,7 +2,7 @@ package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.principal.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link ServiceTicketValidationAuthorizer}.

@@ -13,7 +13,7 @@
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "authenticationMethod" : [ "java.util.HashSet", [ "Accept","GoogleAuth" ] ]
+      "authenticationMethod" : [ "java.util.HashSet", [ "Accept", "GoogleAuth" ] ]
     }
   }
 }

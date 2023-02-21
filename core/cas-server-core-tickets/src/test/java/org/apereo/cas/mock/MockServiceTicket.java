@@ -74,6 +74,16 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
+    public Authentication getAuthentication() {
+        return this.ticketGrantingTicket.getAuthentication();
+    }
+
+    @Override
+    public int getCountOfUses() {
+        return 0;
+    }
+
+    @Override
     public String getPrefix() {
         return ServiceTicket.PREFIX;
     }
@@ -84,17 +94,8 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
-    public Authentication getAuthentication() {
-        return this.ticketGrantingTicket.getAuthentication();
-    }
-
-    @Override
-    public void update() {
-    }
-
-    @Override
-    public int getCountOfUses() {
-        return 0;
+    public void markTicketExpired() {
+        this.expired = true;
     }
 
     @Override
@@ -108,13 +109,12 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
-    public int compareTo(final Ticket o) {
-        return this.id.compareTo(o.getId());
+    public void update() {
     }
 
     @Override
-    public void markTicketExpired() {
-        this.expired = true;
+    public int compareTo(final Ticket o) {
+        return this.id.compareTo(o.getId());
     }
 
     @Override

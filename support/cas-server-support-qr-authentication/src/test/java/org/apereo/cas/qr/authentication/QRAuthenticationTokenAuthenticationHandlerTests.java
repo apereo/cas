@@ -23,6 +23,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,7 +84,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -103,7 +104,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
             .subject("unknown")
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);

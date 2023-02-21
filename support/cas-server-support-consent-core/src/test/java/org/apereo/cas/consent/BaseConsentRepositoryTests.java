@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
@@ -70,15 +71,11 @@ public abstract class BaseConsentRepositoryTests {
     protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
 
     public abstract ConsentRepository getRepository();
-
-    public ConsentRepository getRepository(final String testName) {
-        return getRepository();
-    }
-
+    
     @Test
     public void verifyConsentDecisionIsNotFound() throws Exception {
         val user = getUser();
-        val repo = getRepository("verifyConsentDecisionIsNotFound");
+        val repo = getRepository();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(1);
         assertNotNull(repo.storeConsentDecision(decision));
@@ -91,7 +88,7 @@ public abstract class BaseConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
         val user = getUser();
-        val repo = getRepository("verifyConsentDecisionIsFound");
+        val repo = getRepository();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);
@@ -112,7 +109,7 @@ public abstract class BaseConsentRepositoryTests {
     @Test
     public void verifyDeleteRecordsForPrincipal() throws Exception {
         val user = getUser();
-        val repo = getRepository("verifyDeleteRecordsForPrincipal");
+        val repo = getRepository();
         repo.deleteAll();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
 
@@ -157,6 +154,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreAuditConfiguration.class,

@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 
@@ -31,8 +32,9 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
     @Override
     public AccessTokenRequestContext extractRequest(final WebContext context) {
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getKey();
+            .resolveClientIdAndClientSecret(callContext).getKey();
 
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);

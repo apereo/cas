@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.ldap.object-class=account"
 })
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapServices")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 }

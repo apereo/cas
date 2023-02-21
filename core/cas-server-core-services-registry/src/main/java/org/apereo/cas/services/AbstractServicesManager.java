@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -47,6 +48,19 @@ public abstract class AbstractServicesManager implements ServicesManager {
         final Predicate<RegisteredService>... p) {
         val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
         return predicates.stream().reduce(x -> true, Predicate::and);
+    }
+
+    @Override
+    public void save(final Stream<RegisteredService> toSave) {
+        val resultingStream = toSave.peek(registeredService ->
+            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
+        configurationContext.getServiceRegistry()
+            .save(resultingStream)
+            .forEach(r -> {
+                cacheRegisteredService(r);
+                saveInternal(r);
+                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+            });
     }
 
     @Override
@@ -82,18 +96,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
             }
             return null;
         }, andThenConsume, countExclusive);
-    }
-
-    @Override
-    public void save(final Stream<RegisteredService> toSave) {
-        val resultingStream = toSave.peek(registeredService ->
-            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
-        configurationContext.getServiceRegistry().save(resultingStream)
-            .forEach(r -> {
-                cacheRegisteredService(r);
-                saveInternal(r);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
-            });
     }
 
     @Override
@@ -295,6 +297,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(this::supports)
             .filter(this::validateAndFilterServiceByEnvironment)
             .peek(this::loadInternal)
+            .filter(Objects::nonNull)
+            .map(this::applyTemplate)
+            .filter(Objects::nonNull)
             .collect(Collectors.toMap(r -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
                     r.getServiceId(), r.getName(), r.getId());
@@ -351,6 +356,24 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * @param service the service
      */
     protected void loadInternal(final RegisteredService service) {
+    }
+
+    protected RegisteredService applyTemplate(final RegisteredService service) {
+        return this.configurationContext.getRegisteredServicesTemplatesManager().apply(service);
+    }
+
+    /**
+     * Gets cacheable services stream.
+     *
+     * @return the cacheable services stream
+     */
+    protected Supplier<Stream<RegisteredService>> getCacheableServicesStream() {
+        configurationContext.getServicesCache().cleanUp();
+        val size = configurationContext.getServicesCache().estimatedSize();
+        if (size <= 0) {
+            return () -> (Stream<RegisteredService>) configurationContext.getServiceRegistry().getServicesStream();
+        }
+        return () -> configurationContext.getServicesCache().asMap().values().stream();
     }
 
     private void cacheRegisteredService(final RegisteredService service) {
@@ -433,19 +456,5 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(filter)
             .findFirst()
             .orElse(null);
-    }
-
-    /**
-     * Gets cacheable services stream.
-     *
-     * @return the cacheable services stream
-     */
-    protected Supplier<Stream<RegisteredService>> getCacheableServicesStream() {
-        configurationContext.getServicesCache().cleanUp();
-        val size = configurationContext.getServicesCache().estimatedSize();
-        if (size <= 0) {
-            return () -> (Stream<RegisteredService>) configurationContext.getServiceRegistry().getServicesStream();
-        }
-        return () -> configurationContext.getServicesCache().asMap().values().stream();
     }
 }

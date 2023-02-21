@@ -6,14 +6,14 @@
 echo "Running MongoDb docker image..."
 docker stop mongodb-server || true && docker rm mongodb-server || true
 docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root \
-  -e MONGO_INITDB_ROOT_PASSWORD=secret --name="mongodb-server" mongo:5.0.12
-
+  -e MONGO_INITDB_ROOT_PASSWORD=secret --name="mongodb-server" mongo:6.0.3
+docker logs mongodb-server &
 docker ps | grep "mongodb-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "MongoDb docker image is running."
+    echo "MongoDb docker container is running."
 else
-    echo "MongoDb docker image failed to start."
+    echo "MongoDb docker container failed to start."
     exit $retVal
 fi
 

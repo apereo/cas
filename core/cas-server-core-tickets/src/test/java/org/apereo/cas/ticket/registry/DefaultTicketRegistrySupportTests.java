@@ -2,7 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultTicketRegistrySupportTests}.
@@ -26,7 +29,7 @@ public class DefaultTicketRegistrySupportTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val registry = new DefaultTicketRegistry();
+        val registry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
         val tgt = new MockTicketGrantingTicket("casuser", Map.of("name", List.of("CAS")));
         registry.addTicket(tgt);
         val support = new DefaultTicketRegistrySupport(registry);

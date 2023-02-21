@@ -10,8 +10,9 @@
         <Logger name="org.apereo.cas.ticket.registry" level="warn" />
         <Logger name="org.hibernate.stat" level="debug" />
         <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="info" />
-        <Logger name="org.springframework.jdbc" level="error" />
-        <Logger name="org.springframework.transaction" level="error" />
+        <Logger name="org.springframework.jdbc" level="warn" />
+        <Logger name="org.springframework.transaction" level="warn" />
+        <Logger name="org.springframework.integration" level="warn" />
         <Logger name="org.hibernate.sql" level="warn" />
         <Logger name="org.hibernate.engine" level="warn" />
         <Root level="off">

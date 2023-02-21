@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -46,6 +47,7 @@ import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
@@ -53,6 +55,9 @@ import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandler;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.decorator.GroovyLoginWebflowDecorator;
+import org.apereo.cas.web.flow.decorator.RestfulLoginWebflowDecorator;
+import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
@@ -77,7 +82,9 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -90,6 +97,7 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
+
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebflowEventResolutionConfiguration {
@@ -138,6 +146,8 @@ public class CasCoreWebflowConfiguration {
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier("principalFactory")
+            final PrincipalFactory principalFactory,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
@@ -177,6 +187,7 @@ public class CasCoreWebflowConfiguration {
                 .applicationContext(applicationContext)
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .authenticationEventExecutionPlan(authenticationEventExecutionPlan)
+                .principalFactory(principalFactory)
                 .build();
         }
     }
@@ -349,28 +360,37 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
         public CasWebflowExceptionCatalog handledAuthenticationExceptions(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            val errors = new DefaultCasWebflowExceptionCatalog();
-            errors.registerException(AccountLockedException.class);
-            errors.registerException(CredentialExpiredException.class);
-            errors.registerException(AccountExpiredException.class);
-            errors.registerException(AccountDisabledException.class);
-            errors.registerException(InvalidLoginLocationException.class);
-            errors.registerException(AccountPasswordMustChangeException.class);
-            errors.registerException(InvalidLoginTimeException.class);
-            errors.registerException(UniquePrincipalRequiredException.class);
+            val catalog = new DefaultCasWebflowExceptionCatalog();
+            catalog.registerException(AccountLockedException.class);
+            catalog.registerException(CredentialExpiredException.class);
+            catalog.registerException(AccountExpiredException.class);
+            catalog.registerException(AccountDisabledException.class);
+            catalog.registerException(InvalidLoginLocationException.class);
+            catalog.registerException(AccountPasswordMustChangeException.class);
+            catalog.registerException(InvalidLoginTimeException.class);
+            catalog.registerException(UniquePrincipalRequiredException.class);
 
-            errors.registerException(AccountNotFoundException.class);
-            errors.registerException(FailedLoginException.class);
-            errors.registerException(UnauthorizedServiceForPrincipalException.class);
-            errors.registerException(PrincipalException.class);
-            errors.registerException(UnsatisfiedAuthenticationPolicyException.class);
-            errors.registerException(UnauthorizedAuthenticationException.class);
-            errors.registerException(MultifactorAuthenticationProviderAbsentException.class);
-            errors.registerException(MultifactorAuthenticationRequiredException.class);
+            catalog.registerException(AccountNotFoundException.class);
+            catalog.registerException(FailedLoginException.class);
+            catalog.registerException(UnauthorizedServiceForPrincipalException.class);
+            catalog.registerException(PrincipalException.class);
+            catalog.registerException(UnsatisfiedAuthenticationPolicyException.class);
+            catalog.registerException(UnauthorizedAuthenticationException.class);
+            catalog.registerException(MultifactorAuthenticationProviderAbsentException.class);
+            catalog.registerException(MultifactorAuthenticationRequiredException.class);
+            catalog.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
 
-            errors.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
-            return errors;
+            val configurers = applicationContext.getBeansOfType(CasWebflowExceptionConfigurer.class)
+                .values()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .collect(Collectors.toList());
+            AnnotationAwareOrderComparator.sort(configurers);
+            configurers.forEach(cfg -> cfg.configure(catalog));
+
+            return catalog;
         }
     }
 
@@ -440,6 +460,48 @@ public class CasCoreWebflowConfiguration {
             @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy) {
             return chain -> chain.addStrategy(requiredAuthenticationHandlersSingleSignOnParticipationStrategy);
+        }
+    }
+
+    @Configuration(value = "CasCoreWebflowDecoratorsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreWebflowDecoratorsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "groovyLoginWebflowDecorator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebflowDecorator groovyLoginWebflowDecorator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(WebflowDecorator.class)
+                .when(BeanCondition.on("cas.webflow.login-decorator.groovy.location")
+                    .exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val decorator = casProperties.getWebflow().getLoginDecorator();
+                    val groovyScript = decorator.getGroovy().getLocation();
+                    LOGGER.trace("Decorating login webflow using [{}]", groovyScript);
+                    return new GroovyLoginWebflowDecorator(groovyScript);
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "restfulLoginWebflowDecorator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebflowDecorator restfulLoginWebflowDecorator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(WebflowDecorator.class)
+                .when(BeanCondition.on("cas.webflow.login-decorator.rest.url")
+                    .isUrl().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val decorator = casProperties.getWebflow().getLoginDecorator();
+                    LOGGER.trace("Decorating login webflow REST endpoint [{}]", decorator.getRest().getUrl());
+                    return new RestfulLoginWebflowDecorator(decorator.getRest());
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 }

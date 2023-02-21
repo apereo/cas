@@ -27,6 +27,11 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RestfulApi")
 public class RestfulLoginWebflowDecoratorTests {
+    @SneakyThrows
+    private static String getJsonData() {
+        return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));
+    }
+
     @Test
     public void verifyOperation() {
         val props = new RestfulWebflowLoginDecoratorProperties();
@@ -42,10 +47,5 @@ public class RestfulLoginWebflowDecoratorTests {
             rest.decorate(requestContext, mock(ApplicationContext.class));
             assertTrue(requestContext.getFlowScope().contains("decoration"));
         }
-    }
-
-    @SneakyThrows
-    private static String getJsonData() {
-        return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));
     }
 }

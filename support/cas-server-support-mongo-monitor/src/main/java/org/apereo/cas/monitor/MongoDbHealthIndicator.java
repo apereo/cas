@@ -36,7 +36,7 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected String getName() {
-        val dbName = mongoTemplate.getMongoDbFactory().getMongoDatabase().getName();
+        val dbName = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase().getName();
         return super.getName() + '-' + dbName;
     }
 }

@@ -16,13 +16,27 @@ $config = [
       'saml:SP',
       'privatekey' => 'saml.pem',
       'certificate' => 'saml.crt',
-      'idp' => $_ENV['IDP_ENTITYID']
+      'idp' => getenv('IDP_ENTITYID'),
+      'IsPassive' => (getenv('SP_PASSIVE_AUTHN') === 'true'),
+      'discoURL' => null
  ],
   'signed-sp' => [
        'saml:SP',
        'privatekey' => 'saml.pem',
        'certificate' => 'saml.crt',
-       'idp' => $_ENV['IDP_ENTITYID'],
-       'sign.authnrequest' => true
+       'idp' => getenv('IDP_ENTITYID'),
+       'sign.authnrequest' => true,
+       'IsPassive' => (getenv('SP_PASSIVE_AUTHN') === 'true'),
+       'discoURL' => null
   ],
+   'refeds-sp' => [
+      'saml:SP',
+      'privatekey' => 'saml.pem',
+      'certificate' => 'saml.crt',
+      'idp' => getenv('IDP_ENTITYID'),
+      'sign.authnrequest' => true,
+      'IsPassive' => (getenv('SP_PASSIVE_AUTHN') === 'true'),
+      'discoURL' => null,
+      'AuthnContextClassRef' => 'https://refeds.org/profile/mfa'
+   ],
 ];

@@ -49,6 +49,11 @@ public interface OAuth20Constants {
     String REDIRECT_URI = "redirect_uri";
 
     /**
+     * The Authorization Server is unable to meet the requirements of the Relying Party for the authentication of the End-User. 
+     */
+    String UNMET_AUTHENTICATION_REQUIREMENTS = "unmet_authentication_requirements";
+    
+    /**
      * The response type.
      */
     String RESPONSE_TYPE = "response_type";

@@ -64,7 +64,7 @@ public class RadiusMultifactorAuthenticationProperties extends BaseMultifactorAu
      * that no limit is enforced.
      */
     private long allowedAuthenticationAttempts = -1;
-    
+
     /**
      * Indicates whether this provider should support trusted devices.
      */

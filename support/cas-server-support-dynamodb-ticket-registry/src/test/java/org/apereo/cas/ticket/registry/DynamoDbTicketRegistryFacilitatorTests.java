@@ -34,21 +34,31 @@ public class DynamoDbTicketRegistryFacilitatorTests {
         @Test
         public void verifyBuildAttributeMap() {
             val ticket = new MockTicketGrantingTicket("casuser",
-                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                    CollectionUtils.wrap("name", "CAS"));
-            val map = dynamoDbTicketRegistryFacilitator.buildTableAttributeValuesMapFromTicket(ticket, ticket, "casuser");
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                CollectionUtils.wrap("name", "CAS"));
+            val map = dynamoDbTicketRegistryFacilitator.buildTableAttributeValuesMapFromTicket(
+                DynamoDbTicketRegistryFacilitator.TicketPayload.builder()
+                    .originalTicket(ticket)
+                    .encodedTicket(ticket)
+                    .principal("casuser")
+                    .build());
             assertFalse(map.isEmpty());
             Arrays.stream(DynamoDbTicketRegistryFacilitator.ColumnNames.values())
-                    .forEach(c -> assertTrue(map.containsKey(c.getColumnName())));
+                .forEach(c -> assertTrue(map.containsKey(c.getColumnName())));
         }
 
         @Test
         public void verifyTicketOperations() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
             val ticket = new MockTicketGrantingTicket("casuser",
-                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                    CollectionUtils.wrap("name", "CAS"));
-            dynamoDbTicketRegistryFacilitator.put(ticket, ticket, "casuser");
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                CollectionUtils.wrap("name", "CAS"));
+            dynamoDbTicketRegistryFacilitator.put(
+                DynamoDbTicketRegistryFacilitator.TicketPayload.builder()
+                    .originalTicket(ticket)
+                    .encodedTicket(ticket)
+                    .principal("casuser")
+                    .build());
             val col = dynamoDbTicketRegistryFacilitator.getAll();
             assertFalse(col.isEmpty());
             val ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
@@ -63,15 +73,15 @@ public class DynamoDbTicketRegistryFacilitatorTests {
     @TestPropertySource(properties = "cas.ticket.registry.dynamo-db.billing-mode=PAY_PER_REQUEST")
     @SuppressWarnings("ClassCanBeStatic")
     public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
-            extends BaseDynamoDbTicketRegistryFacilitatorTests {
+        extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
         public void verifyCreateTableWithOnDemandBilling() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
-            val client = dynamoDbTicketRegistryFacilitator.amazonDynamoDBClient();
-            dynamoDbTicketRegistryFacilitator.ticketCatalog().findAll().forEach(td -> {
+            val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
+            dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {
                 DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
-                        .tableName(td.getProperties().getStorageName())
-                        .build());
+                    .tableName(td.getProperties().getStorageName())
+                    .build());
                 assertEquals(BillingMode.PAY_PER_REQUEST, resp.table().billingModeSummary().billingMode());
             });
         }

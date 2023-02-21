@@ -14,7 +14,7 @@ to use a CAS client  to accept Service Tickets rather than to rely upon another 
 client SSL certificates for application-to-application authentication of requests. This is achieved
 by exposing a way to REST-fully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>The REST endpoint may
  become a tremendously convenient target for brute force dictionary attacks on CAS server. Consider
  enabling throttling support to ensure brute force attacks are prevented upon authentication failures.</p></div>
 

@@ -14,6 +14,7 @@ public interface LogoutExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureLogoutExecutionPlan(LogoutExecutionPlan plan);
+
     /**
      * Gets name.
      *

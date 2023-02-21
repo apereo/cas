@@ -11,7 +11,7 @@ category: SSO & SLO
 There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
 logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. 
 
-<div class="alert alert-info"><strong>Protocol Support</strong><p>Note that SLO described here specifically deals with the semantics of the CAS protocol. All other available protocols in CAS may offer and behave differently when it comes to handling, receiving and publishing logout requests whether CAS is acting as an identity provider or service provider. SLO support for each protocol implementation may vary and you should always verify the extent of available functionality for each protocol implementation.</p></div>
+<div class="alert alert-info">:information_source: <strong>Protocol Support</strong><p>Note that SLO described here specifically deals with the semantics of the CAS protocol. All other available protocols in CAS may offer and behave differently when it comes to handling, receiving and publishing logout requests whether CAS is acting as an identity provider or service provider. SLO support for each protocol implementation may vary and you should always verify the extent of available functionality for each protocol implementation.</p></div>
 
 The scope of logout is determined by where the action takes place:
 
@@ -43,7 +43,7 @@ invalidate client application sessions in addition to its own SSO session.
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the
 logout protocol may notice extra requests in their access logs that appear not to do anything.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
 When a CAS session ends, it notifies each of the services that the SSO session is no longer valid, and that relying parties
 need to invalidate their own session. Remember that the callback submitted to each CAS-protected application is 
@@ -80,7 +80,7 @@ A sample back channel SLO message:
 CAS issues asynchronous AJAX `GET` logout requests via `JSONP` to authenticated services.
 The expected behaviour of the CAS client is to invalidate the application web session. 
 
-<div class="alert alert-warning"><strong>Usage Warning</strong><p>Front channel logout may not be available for all CAS clients. Ensure your CAS client does support this behavior before trying it out.</p></div>
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong><p>Front channel logout may not be available for all CAS clients. Ensure your CAS client does support this behavior before trying it out.</p></div>
 
 A sample front channel SLO request submitted by CAS resembles the following format:
 
@@ -153,7 +153,7 @@ This behavior can be modified via CAS settings.
 In order to better understand the SSO session management of CAS and how it regards application sessions,
 one important note is to be first and foremost considered:
 
-<div class="alert alert-info"><strong>CAS is NOT a session manager!</strong>
+<div class="alert alert-info">:information_source: <strong>CAS is NOT a session manager!</strong>
 <p>Application session is the responsibility of the application.</p></div>
 
 CAS wants to maintain and control the SSO session in the form of

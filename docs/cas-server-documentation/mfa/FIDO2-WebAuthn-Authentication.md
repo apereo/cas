@@ -18,7 +18,7 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
 
-{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.core,cas.authn.mfa.web-authn.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.web-authn" includes=".core,.crypto" %}
 
 ## Discoverable Credentials
 
@@ -42,7 +42,7 @@ expire after a fixed period since a user registered their device.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.web-authn.cleaner" %}
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep 
+<div class="alert alert-warning">:warning: <strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep 
 the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running 
 on all nodes may likely lead to severe performance and locking issues.</p></div>
 
@@ -62,14 +62,14 @@ This option should only be used for demo and testing purposes.
 
 Device registrations can also be managed using any one of the following strategies.
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------------------
-| JSON     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html).  
-| MongoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html).  
-| LDAP     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html).  
-| JPA     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).  
-| Redis     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).  
-| DynamoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html).
-| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html).
+| Storage  | Description                                                                 |
+|----------|-----------------------------------------------------------------------------|
+| JSON     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html).     |
+| MongoDb  | [See this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html).  |
+| LDAP     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html).     |
+| JPA      | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).      |
+| Redis    | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).    |
+| DynamoDb | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html). |
+| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html).     |
 
 

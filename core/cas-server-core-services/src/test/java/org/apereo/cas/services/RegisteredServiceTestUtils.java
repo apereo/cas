@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -233,10 +232,10 @@ public class RegisteredServiceTestUtils {
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credential = new UsernamePasswordCredential();
         return new DefaultAuthenticationBuilder(principal)
-            .addCredential(meta)
-            .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))
+            .addCredential(credential)
+            .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, credential))
             .setAttributes(attributes)
             .build();
     }

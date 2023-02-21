@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionResolutionContext;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -18,7 +19,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyReturnAll() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
 
         val policy = new ReturnAllAttributeReleasePolicy();
@@ -154,7 +154,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyMismatchedKeyReturnAll() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
 
         val policy = new ReturnAllAttributeReleasePolicy();
@@ -182,10 +182,15 @@ public class DefaultAttributeDefinitionStoreTests {
                 .scoped(true)
                 .build();
             store.registerAttributeDefinition(defn);
-            var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever",
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME),
-                CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME))
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .registeredService(service)
+                .service(CoreAuthenticationTestUtils.getService())
+                .attributes(Map.of())
+                .build();
+            var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever", context);
             assertTrue(values.isEmpty());
         }
     }
@@ -225,10 +230,14 @@ public class DefaultAttributeDefinitionStoreTests {
                 .scoped(true)
                 .build();
             store.registerAttributeDefinition(defn);
-            var values = store.resolveAttributeValues("eduPersonPrincipalName",
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME),
-                CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME))
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .registeredService(service)
+                .service(CoreAuthenticationTestUtils.getService())
+                .attributes(Map.of())
+                .build();
+            var values = store.resolveAttributeValues("eduPersonPrincipalName", context);
             assertTrue(values.isPresent());
             assertTrue(values.get().getValue().contains("test@example.org"));
         }
@@ -246,9 +255,14 @@ public class DefaultAttributeDefinitionStoreTests {
                 .script("groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } ")
                 .build();
             store.registerAttributeDefinition(defn);
-            var values = store.resolveAttributeValues("eduPersonPrincipalName",
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME))
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .registeredService(service)
+                .service(CoreAuthenticationTestUtils.getService())
+                .attributes(Map.of())
+                .build();
+            var values = store.resolveAttributeValues("eduPersonPrincipalName", context);
             assertTrue(values.isPresent());
             assertTrue(values.get().getValue().contains("hello@example.org"));
             assertTrue(values.get().getValue().contains("world@example.org"));
@@ -267,9 +281,14 @@ public class DefaultAttributeDefinitionStoreTests {
                 .script("classpath:/attribute-definition.groovy")
                 .build();
             store.registerAttributeDefinition(defn);
-            var values = store.resolveAttributeValues("eduPersonPrincipalName",
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME))
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .registeredService(service)
+                .service(CoreAuthenticationTestUtils.getService())
+                .attributes(Map.of())
+                .build();
+            val values = store.resolveAttributeValues("eduPersonPrincipalName", context);
             assertTrue(values.isPresent());
             assertTrue(values.get().getValue().contains("casuser@system.org"));
             assertTrue(values.get().getValue().contains("groovy@system.org"));
@@ -288,9 +307,14 @@ public class DefaultAttributeDefinitionStoreTests {
                 .patternFormat("hello,{0}")
                 .build();
             store.registerAttributeDefinition(defn);
-            var values = store.resolveAttributeValues("eduPersonPrincipalName",
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME), CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(CollectionUtils.wrap(CoreAuthenticationTestUtils.CONST_USERNAME))
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .registeredService(service)
+                .service(CoreAuthenticationTestUtils.getService())
+                .attributes(Map.of())
+                .build();
+            val values = store.resolveAttributeValues("eduPersonPrincipalName", context);
             assertTrue(values.isPresent());
             assertTrue(values.get().getValue().contains("hello,test@example.org"));
         }
@@ -360,16 +384,21 @@ public class DefaultAttributeDefinitionStoreTests {
             store.setScope("example.org");
 
             val service = CoreAuthenticationTestUtils.getRegisteredService();
-            var results = store.resolveAttributeValues("cn", List.of("common-name"),
-                CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+
+            val context = AttributeDefinitionResolutionContext.builder()
+                .attributeValues(List.of("common-name"))
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .registeredService(service)
+                .service(CoreAuthenticationTestUtils.getService())
+                .attributes(Map.of())
+                .build();
+
+            var results = store.resolveAttributeValues("cn", context);
             assertFalse(results.isEmpty());
             assertTrue(results.get().getValue().isEmpty());
 
             when(service.getPublicKey()).thenReturn(mock(RegisteredServicePublicKey.class));
-            results = store.resolveAttributeValues("cn", List.of("common-name"),
-                CoreAuthenticationTestUtils.getPrincipal(),
-                service, CoreAuthenticationTestUtils.getService(), Map.of());
+            results = store.resolveAttributeValues("cn", context);
             assertTrue(results.get().getValue().isEmpty());
         }
     }

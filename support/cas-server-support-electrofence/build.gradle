@@ -1,10 +1,19 @@
 description = "Apereo CAS Risk-based Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Risk-based Authentication",
+            title: "Electrofence",
+            aliases: ["electrofence"]
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
@@ -34,6 +43,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")

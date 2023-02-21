@@ -59,12 +59,12 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
     public void verifyUserPasswordChange() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
-        bean.setConfirmedPassword("newPassword1");
+        bean.setConfirmedPassword("newPassword1".toCharArray());
         bean.setUsername(c.getUsername());
-        bean.setPassword("newPassword1");
-        assertTrue(passwordChangeService.change(c, bean));
+        bean.setPassword("newPassword1".toCharArray());
+        assertTrue(passwordChangeService.change(bean));
         assertFalse(passwordHistoryService.fetch(c.getUsername()).isEmpty());
-        assertFalse(passwordChangeService.change(c, bean));
+        assertFalse(passwordChangeService.change(bean));
     }
 
     @Test

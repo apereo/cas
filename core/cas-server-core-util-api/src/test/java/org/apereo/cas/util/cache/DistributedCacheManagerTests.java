@@ -32,7 +32,7 @@ public class DistributedCacheManagerTests {
             .value("value")
             .publisherIdentifier(id)
             .build();
-        
+
         assertDoesNotThrow(() -> mgr.set("key", object, true));
         assertDoesNotThrow(mgr::clear);
         assertDoesNotThrow(() -> mgr.set("key", object, true));

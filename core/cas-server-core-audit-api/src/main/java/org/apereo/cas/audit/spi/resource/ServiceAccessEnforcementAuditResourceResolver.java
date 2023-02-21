@@ -24,7 +24,7 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
         val serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
         val accessCheckOutcome = "Service Access "
-            + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
+                                 + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
         val values = new HashMap<>();
         values.put("result", accessCheckOutcome);
         serviceAccessCheckResult.getService()

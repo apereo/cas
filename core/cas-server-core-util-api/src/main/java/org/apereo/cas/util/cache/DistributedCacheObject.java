@@ -62,7 +62,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
             }
             if (!clazz.isAssignableFrom(item.getClass())) {
                 throw new ClassCastException("Object [" + item + " is of type "
-                    + item.getClass() + " when we were expecting " + clazz);
+                                             + item.getClass() + " when we were expecting " + clazz);
             }
             return (T) item;
         }

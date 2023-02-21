@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -59,8 +60,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 public abstract class BaseSurrogateAuthenticationServiceTests {
-    public static final String CASUSER = "casuser";
-
     public static final String BANDERSON = "banderson";
 
     public static final String ADMIN = "casadmin";
@@ -72,7 +71,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     public void verifyUserAllowedToProxy() throws Exception {
-        assertFalse(getService().getImpersonationAccounts(CASUSER).isEmpty());
+        assertFalse(getService().getImpersonationAccounts(getTestUser()).isEmpty());
     }
 
     @Test
@@ -84,17 +83,26 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public void verifyProxying() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val surrogateService = getService();
-        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(getTestUser()), service));
         assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
-        assertFalse(surrogateService.canImpersonate("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER), service));
-        assertFalse(surrogateService.canImpersonate(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
+        assertFalse(surrogateService.canImpersonate("XXXX", CoreAuthenticationTestUtils.getPrincipal(getTestUser()), service));
+        assertFalse(surrogateService.canImpersonate(getTestUser(), CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
     }
 
     @Test
     public void verifyWildcard() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
-        assertTrue(getService().canImpersonate("anyone", CoreAuthenticationTestUtils.getPrincipal(ADMIN), service));
-        assertTrue(getService().isWildcardedAccount("anyone", CoreAuthenticationTestUtils.getPrincipal(ADMIN)));
+        val admin = CoreAuthenticationTestUtils.getPrincipal(getAdminUser());
+        assertTrue(getService().canImpersonate("anyone", admin, service));
+        assertTrue(getService().isWildcardedAccount("anyone", admin));
+    }
+
+    public String getAdminUser() {
+        return ADMIN;
+    }
+
+    public String getTestUser() {
+        return "casuser";
     }
 
     @ImportAutoConfiguration({
@@ -137,6 +145,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketsConfiguration.class
     })

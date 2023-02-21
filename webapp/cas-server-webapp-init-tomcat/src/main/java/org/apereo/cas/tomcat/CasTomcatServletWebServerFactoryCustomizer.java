@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -18,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.apache.coyote.ajp.AjpNio2Protocol;
 import org.apache.coyote.ajp.AjpNioProtocol;
-import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11Nio2Protocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http2.Http2Protocol;
@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -44,6 +43,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServerFactoryCustomizer {
+    private static final int PORT_RANGE_MIN = 4000;
+    private static final int PORT_RANGE_MAX = 9000;
+
     private final CasConfigurationProperties casProperties;
 
     private final ServerProperties serverProperties;
@@ -65,7 +67,6 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             } else {
                 val protocolHandlerInstance = switch (proxy.getProtocol()) {
                     case "AJP/2" -> new AjpNio2Protocol();
-                    case "APR" -> new Http11AprProtocol();
                     case "HTTP/1.2" -> new Http11Nio2Protocol();
                     case "HTTP/1.1" -> new Http11NioProtocol();
                     default -> new AjpNioProtocol();
@@ -182,8 +183,8 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 val connector = new Connector(http.getProtocol());
                 var port = http.getPort();
                 if (port <= 0) {
-                    LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
-                    port = SocketUtils.findAvailableTcpPort();
+                    port = RandomUtils.nextInt(PORT_RANGE_MIN, PORT_RANGE_MAX);
+                    LOGGER.warn("No explicit port configuration is provided to CAS. Using random port [{}]", port);
                 }
                 LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
                 connector.setPort(port);
