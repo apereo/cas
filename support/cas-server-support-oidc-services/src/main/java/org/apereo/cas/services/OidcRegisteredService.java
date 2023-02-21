@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
@@ -39,9 +40,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String jwksKeyId;
 
-    private long jwksCacheDuration;
-
-    private String jwksCacheTimeUnit;
+    @DurationCapable
+    private String jwksCacheDuration;
 
     private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
@@ -72,7 +72,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private boolean dynamicallyRegistered;
 
     private long clientSecretExpiration;
-
+    
     @JsonIgnore
     @Deprecated(since = "6.2.0")
     @Transient
