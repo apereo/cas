@@ -47,7 +47,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -114,7 +113,7 @@ public class CasAuthenticationEventListenerTests {
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         var current = numEventsReceived.get();
         applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current +1);
+        waitForSpringEventToProcess(current + 1);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
         val savedEvent = savedEventOptional.get();
@@ -179,6 +178,7 @@ public class CasAuthenticationEventListenerTests {
         waitForSpringEventToProcess(current + 1);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
+
     @Test
     public void verifyEventRepositoryHasOneEventOnly() {
         clearEventRepository();
@@ -187,7 +187,7 @@ public class CasAuthenticationEventListenerTests {
         var current = numEventsReceived.get();
         applicationContext.publishEvent(event);
         waitForSpringEventToProcess(current + 1);
-        assertEquals(1,casEventRepository.load().count());
+        assertEquals(1, casEventRepository.load().count());
     }
 
     @Test
@@ -200,11 +200,11 @@ public class CasAuthenticationEventListenerTests {
         waitForSpringEventToProcess(current + 1);
         assertFalse(casEventRepository.load().findAny().isEmpty());
         val result = casEventRepository.load().toList().get(0).getClientIpAddress();
-        assertEquals(REMOTE_ADDR_IP ,result);
+        assertEquals(REMOTE_ADDR_IP, result);
     }
 
     @Test
-    public void verifyCasTicketGrantingTicketDestroyedHasClientInfoWithMultipleThreads() throws Exception{
+    public void verifyCasTicketGrantingTicketDestroyedHasClientInfoWithMultipleThreads() throws Exception {
         clearEventRepository();
         var current = numEventsReceived.get();
         val threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
@@ -227,29 +227,27 @@ public class CasAuthenticationEventListenerTests {
         waitForSpringEventToProcess(current + maxThread + 1);
         val eventSize = (int) casEventRepository.load().count();
         val numOfIp1s = (int) casEventRepository.load().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
-        assertEquals(maxThread+1 ,eventSize);
-        assertEquals(expectedNumOfIp1,numOfIp1s);
+        assertEquals(maxThread + 1, eventSize);
+        assertEquals(expectedNumOfIp1, numOfIp1s);
     }
 
-    private  boolean shouldUseIp1(int x) {
+    private boolean shouldUseIp1(int x) {
         return x % NUM_TO_USE_IP1 == 0;
     }
 
-    private void clearEventRepository(){
+    private void clearEventRepository() {
         casEventRepository.removeAll();
     }
 
     private void waitForSpringEventToProcess(int expected) {
-        try {
-            //let async event process, so wait a bit
-            while(numEventsReceived.get() < expected) {
-                waitAtMost(Duration.of(10,ChronoUnit.MILLIS));
-            }
-        }catch (Exception e){
-           //thread interupted..
-            throw new RuntimeException("Thread interrupted");
+        //let async event process, so wait a bit up to 2 seconds.
+        val maxLoop = 200;
+        var currentLoop = 0;
+        while (numEventsReceived.get() < expected || currentLoop++ < maxLoop) {
+            waitAtMost(Duration.of(10, ChronoUnit.MILLIS));
         }
     }
+
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
     @EnableAsync
     public static class EventTestConfiguration implements AsyncConfigurer {
@@ -276,6 +274,7 @@ public class CasAuthenticationEventListenerTests {
                 }
             };
         }
+
         @Override
         public Executor getAsyncExecutor() {
             ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
