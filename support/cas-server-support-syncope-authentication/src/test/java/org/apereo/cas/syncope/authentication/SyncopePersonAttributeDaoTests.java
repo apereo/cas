@@ -34,7 +34,9 @@ public class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.url=http://localhost:18080/syncope",
             "cas.authn.attribute-repository.syncope.basic-auth-username=admin",
             "cas.authn.attribute-repository.syncope.basic-auth-password=password",
-            "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
+            "cas.authn.attribute-repository.syncope.search-filter=username=={user}",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.username=userId",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_email=email"
         })
     @Nested
     @EnabledIfListeningOnPort(port = 18080)
@@ -51,6 +53,16 @@ public class SyncopePersonAttributeDaoTests {
             var people = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")),
                 IPersonAttributeDaoFilter.alwaysChoose());
             assertFalse(people.iterator().next().getAttributes().isEmpty());
+        }
+        
+        @Test
+        public void verifyUserAttributeMappings() {
+            var found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
+            var attributes = found.iterator().next().getAttributes();
+            assertFalse(attributes.isEmpty());
+            assertNotNull(attributes.get("userId"));
+            assertNotNull(attributes.get("email"));
+            assertNull(attributes.get("syncopeUserAttr_email"));
         }
     }
 

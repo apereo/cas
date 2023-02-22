@@ -15,7 +15,6 @@ import lombok.val;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is a ticket validator that uses CAS back channels to validate ST.
