@@ -258,6 +258,10 @@ if [[ "${dockerRequired}" == "true" ]]; then
     printred "Docker engine is not running. Skipping running test since the test requires Docker."
     exit 0
   fi
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Docker engine is available"
+    docker --version
+  fi  
 fi
 
 
