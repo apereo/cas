@@ -42,7 +42,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     private final GeoLocationService geoLocationService;
 
-    private CasEvent prepareCasEvent(final AbstractCasEvent event,final ClientInfo clientInfo) {
+    private CasEvent prepareCasEvent(final AbstractCasEvent event, final ClientInfo clientInfo) {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
