@@ -134,6 +134,7 @@ public class CookieRetrievingCookieGeneratorTests {
         val cookie = gen.retrieveCookieValue(request);
         assertNull(cookie);
     }
+
     @Test
     public void verifyCookieSameSiteLax() {
         val ctx = getCookieGenerationContext();
