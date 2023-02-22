@@ -97,9 +97,7 @@ public class CasAuthenticationEventListenerTests {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
@@ -111,9 +109,7 @@ public class CasAuthenticationEventListenerTests {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
         val savedEvent = savedEventOptional.get();
@@ -125,9 +121,7 @@ public class CasAuthenticationEventListenerTests {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
         val savedEvent = savedEventOptional.get();
@@ -138,9 +132,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyTicketGrantingTicketCreated() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
@@ -151,9 +143,7 @@ public class CasAuthenticationEventListenerTests {
             new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                 CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())),
             CoreAuthenticationTestUtils.getAuthentication());
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
@@ -163,9 +153,7 @@ public class CasAuthenticationEventListenerTests {
             CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(),
             new Object());
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
@@ -173,9 +161,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyCasTicketGrantingTicketDestroyed() {
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"));
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
@@ -184,10 +170,21 @@ public class CasAuthenticationEventListenerTests {
         clearEventRepository();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
                 new MockTicketGrantingTicket("casuser"));
+        publishEventAndWaitToProcess(event);
+        assertEquals(1, casEventRepository.load().count());
+    }
+
+    /**
+     * Count the current number of events in the CasEventRepository
+     * Publish the async event to the application context,
+     * Wait for the async event to process.
+     *
+     * @param event The event to publish
+     */
+    private void publishEventAndWaitToProcess(AbstractCasEvent event) {
         var current = numEventsReceived.get();
         applicationContext.publishEvent(event);
         waitForSpringEventToProcess(current + 1);
-        assertEquals(1, casEventRepository.load().count());
     }
 
     @Test
@@ -195,9 +192,7 @@ public class CasAuthenticationEventListenerTests {
         clearEventRepository();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
                 new MockTicketGrantingTicket("casuser"));
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
+        publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
         val result = casEventRepository.load().toList().get(0).getClientIpAddress();
         assertEquals(REMOTE_ADDR_IP, result);
@@ -223,7 +218,6 @@ public class CasAuthenticationEventListenerTests {
                maxThread = currentThread;
            }
         }
-        //wait 5 seconds for async threads to complete.
         waitForSpringEventToProcess(current + maxThread + 1);
         val eventSize = (int) casEventRepository.load().count();
         val numOfIp1s = (int) casEventRepository.load().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
@@ -239,6 +233,11 @@ public class CasAuthenticationEventListenerTests {
         casEventRepository.removeAll();
     }
 
+    /**
+     * Pass in the number of expected events that should have been stored in the CasEventRepository after publishing a new event.
+     * Wait for the repository to have that many events.
+     * @param expected  The expected number of events to have been saved into the CasEventRepository
+     */
     private void waitForSpringEventToProcess(int expected) {
         //let async event process, so wait a bit up to 2 seconds.
         val maxLoop = 200;
