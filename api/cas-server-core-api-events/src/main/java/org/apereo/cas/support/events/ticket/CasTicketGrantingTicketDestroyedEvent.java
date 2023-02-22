@@ -4,8 +4,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+
 import java.io.Serial;
 
 /**
