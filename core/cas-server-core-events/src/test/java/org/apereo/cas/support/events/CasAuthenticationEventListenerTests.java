@@ -93,6 +93,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasAuthenticationWithNoClientInfo() {
+        clearEventRepository();
         assertTrue(casEventRepository.load().findAny().isEmpty());
         ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
@@ -131,6 +132,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyTicketGrantingTicketCreated() {
+        clearEventRepository();
         assertTrue(casEventRepository.load().findAny().isEmpty());
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
@@ -140,6 +142,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasAuthenticationPolicyFailureEvent() {
+        clearEventRepository();
         assertTrue(casEventRepository.load().findAny().isEmpty());
         val event = new CasAuthenticationPolicyFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
@@ -152,6 +155,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasRiskyAuthenticationDetectedEvent() {
+        clearEventRepository();
         assertTrue(casEventRepository.load().findAny().isEmpty());
         val event = new CasRiskyAuthenticationDetectedEvent(this,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -163,6 +167,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasTicketGrantingTicketDestroyed() {
+        clearEventRepository();
         assertTrue(casEventRepository.load().findAny().isEmpty());
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"));
