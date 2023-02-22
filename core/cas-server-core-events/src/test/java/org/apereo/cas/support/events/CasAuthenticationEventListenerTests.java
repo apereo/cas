@@ -93,6 +93,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasAuthenticationWithNoClientInfo() {
+        assertTrue(casEventRepository.load().findAny().isEmpty());
         ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
@@ -130,6 +131,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyTicketGrantingTicketCreated() {
+        assertTrue(casEventRepository.load().findAny().isEmpty());
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
         publishEventAndWaitToProcess(event);
@@ -138,6 +140,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasAuthenticationPolicyFailureEvent() {
+        assertTrue(casEventRepository.load().findAny().isEmpty());
         val event = new CasAuthenticationPolicyFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
@@ -149,6 +152,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasRiskyAuthenticationDetectedEvent() {
+        assertTrue(casEventRepository.load().findAny().isEmpty());
         val event = new CasRiskyAuthenticationDetectedEvent(this,
             CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(),
@@ -159,6 +163,7 @@ public class CasAuthenticationEventListenerTests {
 
     @Test
     public void verifyCasTicketGrantingTicketDestroyed() {
+        assertTrue(casEventRepository.load().findAny().isEmpty());
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"));
         publishEventAndWaitToProcess(event);
@@ -172,19 +177,6 @@ public class CasAuthenticationEventListenerTests {
                 new MockTicketGrantingTicket("casuser"));
         publishEventAndWaitToProcess(event);
         assertEquals(1, casEventRepository.load().count());
-    }
-
-    /**
-     * Count the current number of events in the CasEventRepository
-     * Publish the async event to the application context,
-     * Wait for the async event to process.
-     *
-     * @param event The event to publish
-     */
-    private void publishEventAndWaitToProcess(AbstractCasEvent event) {
-        var current = numEventsReceived.get();
-        applicationContext.publishEvent(event);
-        waitForSpringEventToProcess(current + 1);
     }
 
     @Test
@@ -245,6 +237,19 @@ public class CasAuthenticationEventListenerTests {
         while (numEventsReceived.get() < expected || currentLoop++ < maxLoop) {
             waitAtMost(Duration.of(10, ChronoUnit.MILLIS));
         }
+    }
+
+    /**
+     * Count the current number of events in the CasEventRepository
+     * Publish the async event to the application context,
+     * Wait for the async event to process.
+     *
+     * @param event The event to publish
+     */
+    private void publishEventAndWaitToProcess(AbstractCasEvent event) {
+        var current = numEventsReceived.get();
+        applicationContext.publishEvent(event);
+        waitForSpringEventToProcess(current + 1);
     }
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
