@@ -1,7 +1,3 @@
-import org.gradle.internal.logging.LoggingOutputInternal
-import org.gradle.internal.logging.events.OutputEvent
-import org.gradle.internal.logging.events.OutputEventListener
-
 class Ansi {
     static final String NORMAL = "\u001B[0m"
 
