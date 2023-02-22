@@ -194,6 +194,7 @@ public class CasAuthenticationEventListenerTests {
         var current = numEventsReceived.get();
         applicationContext.publishEvent(event);
         sleep(current + 1);
+        assertFalse(casEventRepository.load().findAny().isEmpty());
         val result = casEventRepository.load().toList().get(0).getClientIpAddress();
         assertEquals(REMOTE_ADDR_IP ,result);
     }
