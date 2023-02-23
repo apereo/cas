@@ -52,7 +52,7 @@ improve the performance of ticket registry queries that attempt to look up ticke
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `393` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `395` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Apache Cassandra Ticket Registry
@@ -79,7 +79,7 @@ The implementation of the [Apache Ignite ticket registry](../ticketing/Cassandra
 has internally changed its data structure to allow for proper indexing of
 ticket documents and their fields to assist with full-text searching.
 
-### Linked Attributes Release Policy
+### Linked Attributes & Release Policy
 
 A [new attribute release policy](../integration/Attribute-Release-Policy-ReturnLinked.html) is now available 
 that can be linked to a collection of attributes to treat them as a source of values on a per-application basis.
@@ -91,7 +91,16 @@ significantly improves build performance by caching the result of the configurat
 also enabled and activated for all [CAS Overlays](../installation/WAR-Overlay-Installation.html) that are produced by the CAS Initializr.
 
 Note that not all build plugins may support the Gradle configuration cache. If you run into issues, you can always disable the cache in your `gradle.properties`
-file via the following settings: `org.gradle.unsafe.configuration-cache=false`
+file via the following setting: 
+
+```properties
+org.gradle.unsafe.configuration-cache=false
+```
+
+### OpenID Connect ID Token Expiration Policy
+
+The expiration policy of [OpenID Connect ID tokens](../authentication/OIDC-Authentication-TokenExpirationPolicy.html) can 
+now be defined on a per-application basis.
 
 ## Other Stuff
         

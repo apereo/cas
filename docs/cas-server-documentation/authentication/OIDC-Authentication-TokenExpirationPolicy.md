@@ -15,3 +15,23 @@ defined for the OAuth Protocol. Expiration policies may also be controlled and d
 ## ID Tokens
 
 {% include_cached casproperties.html properties="cas.authn.oidc.id-token" %}
+         
+### Per Service
+
+The expiration policy of certain ID tokens can be conditionally decided on a per-application basis. The candidate 
+service whose id token expiration policy is to deviate from the default configuration must be designed as the following snippets demonstrate.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "Service",
+  "id" : 1,
+  "idTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy",
+    "timeToLive": "PT60S"
+  }
+}
+```
