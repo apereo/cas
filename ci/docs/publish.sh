@@ -29,7 +29,7 @@ function validateProjectDocumentation() {
 
 clear
 
-GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8"
+GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
