@@ -71,6 +71,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private long clientSecretExpiration;
 
+    private RegisteredServiceOidcIdTokenExpirationPolicy idTokenExpirationPolicy;
 
     /**
      * Gets subject type.

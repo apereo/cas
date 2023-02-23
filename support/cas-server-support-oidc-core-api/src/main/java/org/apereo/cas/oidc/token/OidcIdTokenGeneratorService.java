@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceOidcIdTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -147,18 +148,26 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     }
 
     protected void buildExpirationClaim(final JwtClaims claims, final OidcRegisteredService registeredService) {
+        val expirationPolicy = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy();
+        val timeoutInSeconds = Optional.ofNullable(registeredService.getIdTokenExpirationPolicy())
+            .map(RegisteredServiceOidcIdTokenExpirationPolicy::getTimeToKill)
+            .filter(StringUtils::isNotBlank)
+            .map(ttl -> Beans.newDuration(ttl).getSeconds())
+            .orElseGet(expirationPolicy::getTimeToLive);
+        LOGGER.debug("ID token expiration policy set to expire the ID token in [{}]", timeoutInSeconds);
+
         val expirationDate = NumericDate.now();
-        val timeoutInSeconds = getConfigurationContext().getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive();
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
+
         LOGGER.debug("Calculated ID token expiration claim to be [{}]", expirationDate);
     }
 
     protected void buildAuthenticationContextClassRef(final JwtClaims claims,
-                                                    final Authentication authentication) {
+                                                      final Authentication authentication) {
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
-        
+
         val attributes = authentication.getAttributes();
         val mappedAcrValues = org.springframework.util.StringUtils.commaDelimitedListToSet(mfa.getCore().getAuthenticationContextAttribute())
             .stream()
