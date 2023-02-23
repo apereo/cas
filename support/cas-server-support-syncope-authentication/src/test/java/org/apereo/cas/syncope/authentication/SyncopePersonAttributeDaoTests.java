@@ -36,7 +36,9 @@ public class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.basic-auth-password=password",
             "cas.authn.attribute-repository.syncope.search-filter=username=={user}",
             "cas.authn.attribute-repository.syncope.attribute-mappings.username=userId",
-            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_email=email"
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_email=email",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_description=email_description",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_toBeVirtualized=toBeVirtualized"
         })
     @Nested
     @EnabledIfListeningOnPort(port = 18080)
@@ -63,6 +65,10 @@ public class SyncopePersonAttributeDaoTests {
             assertNotNull(attributes.get("userId"));
             assertNotNull(attributes.get("email"));
             assertNull(attributes.get("syncopeUserAttr_email"));
+            assertNotNull(attributes.get("email_description"));
+            assertNull(attributes.get("syncopeUserAttr_description"));
+            assertNotNull(attributes.get("toBeVirtualized"));
+            assertNull(attributes.get("syncopeUserAttr_toBeVirtualized"));
         }
     }
 
