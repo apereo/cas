@@ -35,9 +35,10 @@ dependencies {
 
 tasks.register('jsonDependencies') {
     mustRunAfter(build)
-    
-    def rcp = configurations.runtimeClasspath.resolvedConfiguration
-    def results = rcp.firstLevelModuleDependencies
+    it.notCompatibleWithConfigurationCache("Task is not compatible with configuration cache")
+    doLast {
+        def rcp = configurations.runtimeClasspath.resolvedConfiguration
+        def results = rcp.firstLevelModuleDependencies
             .findAll { dependency ->
                 {
                     !dependency.module.id.group.startsWith("org.apereo.cas")
@@ -47,8 +48,7 @@ tasks.register('jsonDependencies') {
             .stream()
             .map(dependency -> [group: dependency.module.id.group, name: dependency.module.id.name, version: dependency.module.id.version])
             .toList()
-    def jsonFile = new File("${buildDir}/dependencies.json")
-    doLast {
+        def jsonFile = new File("${buildDir}/dependencies.json")
         def output = new groovy.json.JsonBuilder(results).toPrettyString();
         jsonFile.delete()
         jsonFile << output
