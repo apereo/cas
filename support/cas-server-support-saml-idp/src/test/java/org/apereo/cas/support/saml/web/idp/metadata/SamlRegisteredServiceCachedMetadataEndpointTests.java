@@ -41,8 +41,8 @@ public class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlId
 
     @Test
     public void verifyInvalidate() {
-        endpoint.invalidate(samlRegisteredService.getServiceId());
-        endpoint.invalidate(StringUtils.EMPTY);
+        endpoint.invalidate(samlRegisteredService.getServiceId(), null);
+        endpoint.invalidate(StringUtils.EMPTY, null);
     }
 
     @Test
