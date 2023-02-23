@@ -50,9 +50,9 @@ public class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlId
 
     @Test
     public void verifyInvalidateByEntityId() {
-        var response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), true);
+        endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), true);
         endpoint.invalidate(samlRegisteredService.getName(), samlRegisteredService.getServiceId());
-        response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), false);
+        val response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), false);
         assertNotNull(response);
         assertFalse(response.getBody().containsKey(samlRegisteredService.getServiceId()));
     }

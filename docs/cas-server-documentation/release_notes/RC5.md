@@ -65,8 +65,7 @@ ticket documents and their fields to assist with full-text searching.
 
 [Remapping OpenID Connect claims](../authentication/OIDC-Authentication-Claims.html) at the service level is now able to reprocess and rebuild
 claim definitions using inline Groovy scripts. This in particular might be useful when there are custom
-user-defined scopes that contain non-standard claims that need to be rebuilt off of existing attributes
-for a specific service.
+user-defined scopes that contain non-standard claims that need to be rebuilt off of existing attributes for a specific service.
             
 ### Template Service Definitions
 
@@ -80,6 +79,20 @@ The implementation of the [Apache Ignite ticket registry](../ticketing/Cassandra
 has internally changed its data structure to allow for proper indexing of
 ticket documents and their fields to assist with full-text searching.
 
+### Linked Attributes Release Policy
+
+A [new attribute release policy](../integration/Attribute-Release-Policy-ReturnLinked.html) is now available 
+that can be linked to a collection of attributes to treat them as a source of values on a per-application basis.
+                                                                                                 
+### Gradle Configuration Cache
+
+Adjustments to the CAS Gradle build now allow the build process to turn on the Gradle configuration cache. The configuration cache is a feature that
+significantly improves build performance by caching the result of the configuration phase and reusing this for subsequent builds. The same change is
+also enabled and activated for all [CAS Overlays](../installation/WAR-Overlay-Installation.html) that are produced by the CAS Initializr.
+
+Note that not all build plugins may support the Gradle configuration cache. If you run into issues, you can always disable the cache in your `gradle.properties`
+file via the following settings: `org.gradle.unsafe.configuration-cache=false`
+
 ## Other Stuff
         
 - Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.
@@ -87,8 +100,6 @@ ticket documents and their fields to assist with full-text searching.
 - The `jwksCacheDuration` is able to support the duration syntax for OpenID Connect services, removing the need to specify a time unit separately.
 - The `aud` claim for OpenID Connect ID tokens or JWT access tokens can now be [controlled for each application](../authentication/OAuth-Authentication-Clients.html).
 - CAS features supporting Couchbase are now deprecated and scheduled to be removed in the future.
-- Adjustments to the CAS Gradle build that allow the build process to turn on the Gradle configuration cache. The configuration cache is a feature that 
-  significantly improves build performance by caching the result of the configuration phase and reusing this for subsequent builds.
 
 ## Library Upgrades
 
