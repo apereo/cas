@@ -8,7 +8,7 @@ category: Attributes
 
 # Attribute Release Policy - Return Mapped
 
-Similar to above, this policy will return a collection of allowed principal attributes for the
+This policy will return a collection of allowed principal attributes for the
 service, but also allows those principal attributes to be mapped and "renamed" at the more granular service level.
 
 For example, the following configuration will recognize the resolved

@@ -228,6 +228,7 @@ layout: null
             *   [Return Allowed ](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnAllowed.html)     
             *   [Return Encrypted](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnEncrypted.html)   
             *   [Return Mapped](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnMapped.html)      
+            *   [Return Linked](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnLinked.html)      
             *   [Mapped Groovy File](/cas/{{ version }}/integration/Attribute-Release-Policy-ExternalGroovy.html)    
             *   [Mapped Inline Groovy](/cas/{{ version }}/integration/Attribute-Release-Policy-InlineGroovy.html)      
             *   [Return MultiMapped](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnMultiMapped.html) 

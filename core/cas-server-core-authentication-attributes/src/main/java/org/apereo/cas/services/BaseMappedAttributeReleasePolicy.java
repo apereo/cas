@@ -72,24 +72,39 @@ public abstract class BaseMappedAttributeReleasePolicy extends AbstractRegistere
 
         val attributesToRelease = new HashMap<String, List<Object>>();
         getAllowedAttributes().forEach((attributeName, value) -> {
-            val mappedAttributes = CollectionUtils.wrap(value);
+            val mappedAttributes = determineMappedAttributes(value);
+
             LOGGER.trace("Attempting to map allowed attribute name [{}]", attributeName);
-            val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {
                 val mappedAttributeName = mapped.toString();
+                val attributeValue = getAttributeValue(resolvedAttributes, attributeName, mappedAttributeName);
                 LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]",
                     attributeName, mappedAttributeName, attributeValue);
-
-                val mappingRequest = AttributeMappingRequest.builder()
-                    .attributeName(attributeName)
-                    .mappedAttributeName(mappedAttributeName)
-                    .attributeValue(attributeValue)
-                    .resolvedAttributes(resolvedAttributes)
-                    .build();
+                val mappingRequest = buildAttributeMappingRequest(resolvedAttributes, attributeName, mappedAttributeName, attributeValue);
                 val mappingResults = PrincipalAttributesMapper.defaultMapper().map(mappingRequest);
                 attributesToRelease.putAll(mappingResults);
             });
         });
         return attributesToRelease;
+    }
+
+    protected AttributeMappingRequest buildAttributeMappingRequest(final Map<String, List<Object>> resolvedAttributes,
+                                                                   final String attributeName, final String mappedAttributeName,
+                                                                   final List<Object> attributeValue) {
+        return AttributeMappingRequest.builder()
+            .attributeName(attributeName)
+            .mappedAttributeName(mappedAttributeName)
+            .attributeValue(attributeValue)
+            .resolvedAttributes(resolvedAttributes)
+            .build();
+    }
+
+    protected List<Object> getAttributeValue(final Map<String, List<Object>> resolvedAttributes,
+                                             final String attributeName, final String mappedAttributeName) {
+        return resolvedAttributes.get(attributeName);
+    }
+
+    protected List<Object> determineMappedAttributes(final Object value) {
+        return CollectionUtils.wrap(value);
     }
 }

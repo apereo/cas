@@ -52,7 +52,9 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
     void invalidate(SamlRegisteredService service, CriteriaSet criteriaSet);
 
     /**
-     * Contains cached entry?
+     * Attempts to fetch the entry from cache if present.
+     * If the entry is not found, it will not attempt
+     * to force resolve the entry and will return back empty.
      *
      * @param service     the service
      * @param criteriaSet the criteria set
