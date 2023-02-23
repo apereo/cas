@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Arrays;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,25 +44,50 @@ public class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlId
 
     @Test
     public void verifyInvalidate() {
-        endpoint.invalidate(samlRegisteredService.getServiceId());
-        endpoint.invalidate(StringUtils.EMPTY);
+        endpoint.invalidate(samlRegisteredService.getServiceId(), null);
+        endpoint.invalidate(StringUtils.EMPTY, null);
+    }
+
+    @Test
+    public void verifyInvalidateByEntityId() {
+        var response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), true);
+        endpoint.invalidate(samlRegisteredService.getName(), samlRegisteredService.getServiceId());
+        response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), false);
+        assertNotNull(response);
+        assertFalse(response.getBody().containsKey(samlRegisteredService.getServiceId()));
     }
 
     @Test
     public void verifyCachedMetadataObject() {
-        val results = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), StringUtils.EMPTY);
+        val response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), StringUtils.EMPTY, true);
+        val results = response.getBody();
+        assertNotNull(results);
         assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
+    }
+
+    @Test
+    public void verifyCachedServiceWithoutResolution() {
+        val response = endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getName()), UUID.randomUUID().toString(), false);
+        val results = response.getBody();
+        assertNotNull(results);
+        assertFalse(results.containsKey(samlRegisteredService.getServiceId()));
     }
 
     @Test
     public void verifyCachedService() {
-        val results = endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getId()), StringUtils.EMPTY);
-        assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
+        Arrays.asList(Boolean.TRUE, Boolean.FALSE).forEach(force -> {
+            val response = endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getId()), StringUtils.EMPTY, force);
+            val results = response.getBody();
+            assertNotNull(results);
+            assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
+        });
     }
 
     @Test
     public void verifyBadService() {
-        val results = endpoint.getCachedMetadataObject("bad-service-id", StringUtils.EMPTY);
+        val response = endpoint.getCachedMetadataObject("bad-service-id", StringUtils.EMPTY, true);
+        val results = response.getBody();
+        assertNotNull(results);
         assertTrue(results.containsKey("error"));
     }
 }
