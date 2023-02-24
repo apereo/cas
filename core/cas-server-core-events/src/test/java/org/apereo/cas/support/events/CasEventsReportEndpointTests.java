@@ -102,7 +102,7 @@ public class CasEventsReportEndpointTests {
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         applicationContext.publishEvent(failureEvent);
         val successEvent = new CasAuthenticationTransactionSuccessfulEvent(this,
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
         applicationContext.publishEvent(successEvent);
     }
 

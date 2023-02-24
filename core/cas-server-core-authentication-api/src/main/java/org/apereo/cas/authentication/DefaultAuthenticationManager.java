@@ -187,7 +187,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         builder.addSuccess(authenticationHandlerName, result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
 
-        publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
+        publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential, clientInfo));
         var principal = result.getPrincipal();
 
         if (resolver != null) {
