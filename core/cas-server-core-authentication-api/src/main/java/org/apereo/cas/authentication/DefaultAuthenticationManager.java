@@ -180,7 +180,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final AuthenticationHandler handler,
                                                    final Service service) throws Exception {
         val clientInfo = ClientInfoHolder.getClientInfo();
-        publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
+        publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential, clientInfo));
 
         val result = handler.authenticate(credential, service);
         val authenticationHandlerName = handler.getName();
@@ -329,7 +329,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                final Set<AuthenticationHandler> authenticationHandlers) throws AuthenticationException {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (builder.getSuccesses().isEmpty()) {
-            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(),clientInfo));
+            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(), clientInfo));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
