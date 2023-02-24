@@ -326,8 +326,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .context(CollectionUtils.wrap(TicketGrantingTicket.class.getName(), serviceTicket.getTicketGrantingTicket().getRoot().getId()))
                 .build()
                 .assemble();
-
-            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion, clientInfo));
             return assertion;
         } finally {
             FunctionUtils.doUnchecked(__ -> {
