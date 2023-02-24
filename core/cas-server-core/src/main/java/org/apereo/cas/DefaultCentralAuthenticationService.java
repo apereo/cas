@@ -48,6 +48,7 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 
@@ -375,10 +376,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val authentication = authenticationResult.getAuthentication();
                     val factory = (ProxyGrantingTicketFactory) configurationContext.getTicketFactory().get(ProxyGrantingTicket.class);
                     val proxyGrantingTicket = factory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
+                    val clientInfo = ClientInfoHolder.getClientInfo();
                     LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
                     configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket);
                     configurationContext.getTicketRegistry().updateTicket(serviceTicket.getTicketGrantingTicket());
-                    doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket));
+                    doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket, clientInfo));
                     return proxyGrantingTicket;
                 }))
             .orElseThrow(UnauthorizedProxyingException::new);
