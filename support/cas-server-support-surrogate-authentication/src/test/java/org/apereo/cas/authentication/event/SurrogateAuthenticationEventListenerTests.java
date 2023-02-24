@@ -73,7 +73,7 @@ public class SurrogateAuthenticationEventListenerTests {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
                     principal, "surrogate"));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
-                    principal, "surrogate"));
+                    principal, "surrogate", null));
             }
         });
     }
@@ -86,7 +86,7 @@ public class SurrogateAuthenticationEventListenerTests {
             @Override
             public void execute() {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
-                    principal, "surrogate"));
+                    principal, "surrogate", null));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
                     principal, "surrogate"));
             }

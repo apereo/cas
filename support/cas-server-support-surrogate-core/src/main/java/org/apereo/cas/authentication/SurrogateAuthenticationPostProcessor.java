@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEventPublisher;
 
 import javax.security.auth.login.CredentialNotFoundException;
@@ -113,7 +114,8 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     }
 
     private void publishFailureEvent(final Principal principal, final String surrogate) {
-        val event = new CasSurrogateAuthenticationFailureEvent(this, principal, surrogate);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val event = new CasSurrogateAuthenticationFailureEvent(this, principal, surrogate, clientInfo);
         publishEvent(event);
     }
 
