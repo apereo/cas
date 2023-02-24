@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -333,8 +334,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
         val authentication = builder.build();
         val executionResult = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (!executionResult.isSuccess()) {
-            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
+            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
