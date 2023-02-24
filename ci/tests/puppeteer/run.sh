@@ -274,6 +274,7 @@ fi
 
 export SCENARIO="${scenarioName}"
 export SCENARIO_PATH="${scenario}"
+export SCENARIO_FOLDER=$( cd -- "${SCENARIO_PATH}" &> /dev/null && pwd )
 
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
