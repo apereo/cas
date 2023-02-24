@@ -207,6 +207,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                         val principal = authentication.getPrincipal();
                         val factory = (ProxyTicketFactory) configurationContext.getTicketFactory().get(ProxyTicket.class);
                         val proxyTicket = factory.create(proxyGrantingTicketObject, service, ProxyTicket.class);
+                        val clientInfo = ClientInfoHolder.getClientInfo();
 
                         configurationContext.getTicketRegistry().updateTicket(proxyGrantingTicketObject);
                         configurationContext.getTicketRegistry().addTicket(proxyTicket);
@@ -214,7 +215,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                         LOGGER.info("Granted proxy ticket [{}] for service [{}] for user [{}]",
                             proxyTicket.getId(), service.getId(), principal.getId());
 
-                        doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
+                        doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket, clientInfo));
                         return proxyTicket;
                     }
                 }))
