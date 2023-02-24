@@ -179,7 +179,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final PrincipalResolver resolver,
                                                    final AuthenticationHandler handler,
                                                    final Service service) throws Exception {
-
+        val clientInfo = ClientInfoHolder.getClientInfo();
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
         val result = handler.authenticate(credential, service);
@@ -208,7 +208,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             builder.setPrincipal(principal);
         }
         LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
-        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
+        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
     }
 
 
