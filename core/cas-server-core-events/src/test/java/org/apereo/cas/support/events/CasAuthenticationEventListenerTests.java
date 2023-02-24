@@ -154,7 +154,7 @@ public class CasAuthenticationEventListenerTests {
         val event = new CasRiskyAuthenticationDetectedEvent(this,
                 CoreAuthenticationTestUtils.getAuthentication(),
                 CoreAuthenticationTestUtils.getRegisteredService(),
-                new Object());
+                new Object(), null);
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
