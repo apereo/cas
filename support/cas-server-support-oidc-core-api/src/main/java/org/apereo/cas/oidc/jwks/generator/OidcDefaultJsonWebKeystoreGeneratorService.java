@@ -91,7 +91,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             }
         }
         val resultingResource = generate(resource);
-        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource));
+        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource, clientInfo));
         return resultingResource;
     }
 
