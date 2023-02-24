@@ -13,24 +13,31 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +66,11 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
+    private static final String MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY =
+        "The functionality provided here requires that the underlying "
+        + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
+        + "You will not be able to collect and review sessions, if the ticket registry does not have this capability";
+
     private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
 
     private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
@@ -71,34 +83,53 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
     }
+    
+    /**
+     * Gets sso sessions for user.
+     *
+     * @param username the username
+     * @return the sso sessions for user
+     */
+    @GetMapping(path = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get all single sign-on sessions for username. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+    public Map<String, Object> getSsoSessionsForUser(
+        @PathVariable
+        final String username) {
+        return getSsoSessions(new SsoSessionsRequest().withUsername(username));
+    }
 
     /**
-     * Endpoint for getting SSO Sessions in JSON format.
+     * Gets sso sessions for user.
      *
-     * @param type     the type
      * @param username the username
-     * @param from     the from
-     * @param count    the count
+     * @return the sso sessions for user
+     */
+    @DeleteMapping(path = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Destroy all single sign-on sessions for username. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+    public Map<String, Object> destroySsoSessionsForUser(
+        @PathVariable
+        final String username,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
+        return destroySsoSessions(new SsoSessionsRequest().withUsername(username), request, response);
+    }
+
+    /**
+     * Gets sso sessions.
+     *
+     * @param ssoSessionsRequest the request
      * @return the sso sessions
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all single sign-on sessions with the given type. The functionality provided here requires that the underlying "
-                         + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
-                         + "You will not be able to collect and review sessions, if the ticket registry does not have this capability")
+    @Operation(summary = "Get all single sign-on sessions with the given type. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY)
     public Map<String, Object> getSsoSessions(
-        @Nullable
-        @RequestParam(name = "type", required = false)
-        final String type,
-        @Nullable
-        @RequestParam(name = "username", required = false)
-        final String username,
-        @RequestParam(name = "from", required = false, defaultValue = "0")
-        final long from,
-        @RequestParam(name = "count", required = false, defaultValue = "1000")
-        final long count) {
+        @Valid
+        final SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
-        val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
-        val activeSsoSessions = getActiveSsoSessions(option, username, from, count);
+
+        val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
@@ -139,7 +170,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return result map
      */
     @DeleteMapping(path = "/{ticketGrantingTicket}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Remove single sign-on session for ticket id")
+    @Operation(summary = "Remove single sign-on session for ticket id",
+        parameters = @Parameter(name = "ticketGrantingTicket", required = true, in = ParameterIn.PATH))
     public Map<String, Object> destroySsoSession(
         @PathVariable
         final String ticketGrantingTicket,
@@ -163,49 +195,37 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     /**
      * Destroy sso sessions map.
      *
-     * @param type     the type
-     * @param username the username
-     * @param from     the from
-     * @param count    the count
-     * @param request  the request
-     * @param response the response
+     * @param ssoSessionsRequest the sso sessions request
+     * @param request            the request
+     * @param response           the response
      * @return the map
      */
     @Operation(summary = "Remove single sign-on session for type and user")
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> destroySsoSessions(
-        @Nullable
-        @RequestParam(name = "type", required = false)
-        final String type,
-        @Nullable
-        @RequestParam(name = "username", required = false)
-        final String username,
-        @RequestParam(name = "from", required = false, defaultValue = "0")
-        final long from,
-        @RequestParam(name = "count", required = false, defaultValue = "1000")
-        final long count,
+        @Valid
+        final SsoSessionsRequest ssoSessionsRequest,
         final HttpServletRequest request,
         final HttpServletResponse response) {
-        if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
+        if (StringUtils.isBlank(ssoSessionsRequest.getUsername()) && StringUtils.isBlank(ssoSessionsRequest.getType())) {
             return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        if (StringUtils.isNotBlank(username)) {
+        if (StringUtils.isNotBlank(ssoSessionsRequest.getUsername())) {
             val sessionsMap = new HashMap<String, Object>(1);
-            var tickets = ticketRegistryProvider.getObject().getSessionsFor(username);
-            if (from >= 0) {
-                tickets = tickets.skip(from);
+            var tickets = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername());
+            if (ssoSessionsRequest.getFrom() >= 0) {
+                tickets = tickets.skip(ssoSessionsRequest.getFrom());
             }
-            if (count >= 0) {
-                tickets = tickets.limit(count);
+            if (ssoSessionsRequest.getCount() >= 0) {
+                tickets = tickets.limit(ssoSessionsRequest.getCount());
             }
             tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             return sessionsMap;
         }
 
         val sessionsMap = new HashMap<String, Object>();
-        val option = SsoSessionReportOptions.valueOf(type);
-        val collection = getActiveSsoSessions(option, username, from, count);
+        val collection = getActiveSsoSessions(ssoSessionsRequest);
         collection
             .stream()
             .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
@@ -258,14 +278,31 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         }
     }
 
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option,
-                                                                 final String username,
-                                                                 final long from,
-                                                                 final long count) {
-        return getNonExpiredTicketGrantingTickets(from, count)
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @With
+    public static class SsoSessionsRequest implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 9132400807103771828L;
+
+        private String type = SsoSessionReportOptions.ALL.getType();
+
+        private String username;
+
+        private long from = 0;
+
+        private long count = 1000L;
+    }
+
+    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionsRequest ssoSessionsRequest) {
+        val option = Optional.ofNullable(ssoSessionsRequest.getType()).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
+        return getNonExpiredTicketGrantingTickets(ssoSessionsRequest.getFrom(), ssoSessionsRequest.getCount())
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
-            .filter(tgt -> StringUtils.isBlank(username) || StringUtils.equalsIgnoreCase(username, tgt.getAuthentication().getPrincipal().getId()))
+            .filter(tgt -> StringUtils.isBlank(ssoSessionsRequest.getUsername())
+                           || StringUtils.equalsIgnoreCase(ssoSessionsRequest.getUsername(), tgt.getAuthentication().getPrincipal().getId()))
             .map(tgt -> buildSingleSignonSessionFromTickettGrantingTicket(option, tgt))
             .collect(Collectors.toList());
     }

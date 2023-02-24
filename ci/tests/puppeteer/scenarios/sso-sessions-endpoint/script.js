@@ -36,11 +36,19 @@ const cas = require('../../cas.js');
         throw err;
     });
 
+    await cas.logg("Checking for SSO sessions for single user");
+    await cas.doGet(`${baseUrl}/users/casuser3`, res => {
+        assert(res.status === 200);
+        assert(Object.keys(res.data.activeSsoSessions).length === 1)
+    }, err => {
+        throw err;
+    });
 
     await cas.logg("Removing all SSO Sessions for single user");
     await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser1`, "DELETE", {});
     await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser2`, "DELETE", {});
     await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser3`, "DELETE", {});
+    await cas.doRequest(`${baseUrl}/users/casuser3`, "DELETE", {});
 
 })();
 
