@@ -26,11 +26,11 @@ import java.io.File;
 @Slf4j
 @RequiredArgsConstructor
 public class CasConfigurationWatchService implements Closeable, InitializingBean {
-    private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath(), null);
 
-    private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath(), null);
 
-    private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath(), null);
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
@@ -92,4 +92,5 @@ public class CasConfigurationWatchService implements Closeable, InitializingBean
             configurationFileWatch.close();
         }
     }
+
 }
