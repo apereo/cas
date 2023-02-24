@@ -34,8 +34,9 @@ public class CasRiskyAuthenticationDetectedEvent extends AbstractCasEvent {
 
     public CasRiskyAuthenticationDetectedEvent(final Object source, final Authentication authentication,
                                                final RegisteredService service,
-                                               final Object riskScore) {
-        super(source);
+                                               final Object riskScore,
+                                               final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.authentication = authentication;
         this.service = service;
         this.score = riskScore;
