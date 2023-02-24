@@ -15,6 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -69,8 +70,9 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         final RegisteredService service) {
 
         val applicationContext = getConfigurationContext().getApplicationContext();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         applicationContext
-            .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
+            .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service, clientInfo));
 
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
