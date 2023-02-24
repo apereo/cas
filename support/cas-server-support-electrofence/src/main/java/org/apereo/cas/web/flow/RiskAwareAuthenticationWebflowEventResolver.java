@@ -90,7 +90,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                 .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score, clientInfo));
             val res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             applicationContext
-                .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
+                .publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res, clientInfo));
 
             return CollectionUtils.wrapSet(res.result());
         }
