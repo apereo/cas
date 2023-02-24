@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -23,8 +24,8 @@ public class CasAuthenticationPrincipalResolvedEvent extends AbstractCasEvent {
 
     private final Principal principal;
 
-    public CasAuthenticationPrincipalResolvedEvent(final Object source, final Principal p) {
-        super(source);
+    public CasAuthenticationPrincipalResolvedEvent(final Object source, final Principal p, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.principal = p;
     }
 }

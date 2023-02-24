@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 import java.nio.file.Path;
@@ -35,8 +36,8 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
      * @param source the source
      * @param file   the file
      */
-    public CasConfigurationModifiedEvent(final Object source, final Path file) {
-        this(source, file, false);
+    public CasConfigurationModifiedEvent(final Object source, final Path file, final ClientInfo clientInfo) {
+        this(source, file, false, clientInfo);
     }
 
     /**
@@ -45,8 +46,8 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
      * @param source   the source
      * @param override the override
      */
-    public CasConfigurationModifiedEvent(final Object source, final boolean override) {
-        this(source, null, override);
+    public CasConfigurationModifiedEvent(final Object source, final boolean override, final ClientInfo clientInfo) {
+        this(source, null, override, clientInfo);
     }
 
     /**
@@ -56,8 +57,8 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
      * @param file     the file
      * @param override the override
      */
-    public CasConfigurationModifiedEvent(final Object source, final Path file, final boolean override) {
-        super(source);
+    public CasConfigurationModifiedEvent(final Object source, final Path file, final boolean override, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.file = file;
         this.override = override;
     }
