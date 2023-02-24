@@ -143,7 +143,7 @@ public class CasAuthenticationEventListenerTests {
                 CollectionUtils.wrap("error", new FailedLoginException()),
                 new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                         CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())),
-                CoreAuthenticationTestUtils.getAuthentication());
+                CoreAuthenticationTestUtils.getAuthentication(), null);
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
