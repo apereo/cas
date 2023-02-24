@@ -101,6 +101,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         val authentication = authenticationResult.getAuthentication();
         var service = authenticationResult.getService();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
         if (service != null) {
@@ -115,7 +116,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         FunctionUtils.doUnchecked(__ -> {
             configurationContext.getTicketRegistry().addTicket(ticketGrantingTicket);
-            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
+            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket, clientInfo));
         });
         return ticketGrantingTicket;
     }

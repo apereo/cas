@@ -131,7 +131,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyTicketGrantingTicketCreated() {
         assertRepositoryIsEmpty();
         val tgt = new MockTicketGrantingTicket("casuser");
-        val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
+        val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
