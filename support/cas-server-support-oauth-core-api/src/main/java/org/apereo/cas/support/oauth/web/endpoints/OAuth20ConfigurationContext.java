@@ -34,7 +34,6 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.Setter;
