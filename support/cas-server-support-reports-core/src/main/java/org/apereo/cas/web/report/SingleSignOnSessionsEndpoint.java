@@ -30,6 +30,7 @@ import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEn
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,7 +84,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
     }
-    
+
     /**
      * Gets sso sessions for user.
      *
@@ -123,9 +124,16 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all single sign-on sessions with the given type. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY)
+    @Operation(summary = "Get all single sign-on sessions with the given type. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
+        parameters = {
+            @Parameter(name = "type", in = ParameterIn.QUERY, description = "Type of sessions to retrieve (ALL, DIRECT, PROXIED)"),
+            @Parameter(name = "username", in = ParameterIn.QUERY, description = "Username assigned to each session"),
+            @Parameter(name = "from", in = ParameterIn.QUERY, description = "Starting position/index of the query"),
+            @Parameter(name = "count", in = ParameterIn.QUERY, description = "Total number of sessions to return")
+        })
     public Map<String, Object> getSsoSessions(
         @Valid
+        @ModelAttribute
         final SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
 
@@ -200,7 +208,13 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @param response           the response
      * @return the map
      */
-    @Operation(summary = "Remove single sign-on session for type and user")
+    @Operation(summary = "Remove single sign-on session for type and user",
+        parameters = {
+            @Parameter(name = "type", in = ParameterIn.QUERY, description = "Type of sessions to retrieve (ALL, DIRECT, PROXIED)"),
+            @Parameter(name = "username", in = ParameterIn.QUERY, description = "Username assigned to each session"),
+            @Parameter(name = "from", in = ParameterIn.QUERY, description = "Starting position/index of the query"),
+            @Parameter(name = "count", in = ParameterIn.QUERY, description = "Total number of sessions to return")
+        })
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> destroySsoSessions(
         @Valid
@@ -291,7 +305,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         private String username;
 
-        private long from = 0;
+        private long from;
 
         private long count = 1000L;
     }

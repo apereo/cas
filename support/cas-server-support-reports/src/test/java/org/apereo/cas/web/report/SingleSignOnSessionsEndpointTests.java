@@ -112,7 +112,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         assertTrue(results.containsKey("status"));
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
-        results = singleSignOnSessionsEndpoint.destroySsoSessions( new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
                 .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()),
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(1, results.size());
