@@ -327,14 +327,14 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
                                                final AuthenticationTransaction transaction,
                                                final Set<AuthenticationHandler> authenticationHandlers) throws AuthenticationException {
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (builder.getSuccesses().isEmpty()) {
-            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials()));
+            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(),clientInfo));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
         val authentication = builder.build();
         val executionResult = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
-        val clientInfo = ClientInfoHolder.getClientInfo();
         if (!executionResult.isSuccess()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));

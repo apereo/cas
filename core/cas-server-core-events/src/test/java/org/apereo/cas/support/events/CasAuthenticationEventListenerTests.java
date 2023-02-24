@@ -95,7 +95,7 @@ public class CasAuthenticationEventListenerTests {
         ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
                 CollectionUtils.wrap("error", new FailedLoginException()),
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
@@ -107,7 +107,7 @@ public class CasAuthenticationEventListenerTests {
 
         val event = new CasAuthenticationTransactionFailureEvent(this,
                 CollectionUtils.wrap("error", new FailedLoginException()),
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         publishEventAndWaitToProcess(event);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
@@ -119,7 +119,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyCasAuthenticationTransactionFailureEvent() {
         val event = new CasAuthenticationTransactionFailureEvent(this,
                 CollectionUtils.wrap("error", new FailedLoginException()),
-                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+                CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
         publishEventAndWaitToProcess(event);
         val savedEventOptional = casEventRepository.load().findFirst();
         assertFalse(savedEventOptional.isEmpty());
