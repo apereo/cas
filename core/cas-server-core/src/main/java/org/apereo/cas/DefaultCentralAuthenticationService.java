@@ -130,6 +130,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         throws AuthenticationException, AbstractTicketException {
 
         val credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         return configurationContext.getLockRepository().execute(ticketGrantingTicketId,
             Unchecked.supplier(new CheckedSupplier<ServiceTicket>() {
                 @Override
@@ -167,7 +168,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
                     LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]",
                         serviceTicket.getId(), DigestUtils.abbreviate(selectedService.getId()), principal.getId());
-                    doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
+                    doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket, clientInfo));
                     return serviceTicket;
                 }
             })).orElseThrow(() -> new InvalidTicketException(ticketGrantingTicketId));
