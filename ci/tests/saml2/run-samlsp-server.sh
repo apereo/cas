@@ -12,7 +12,7 @@ if [[ -n "${ACS_URL}" ]]; then
   echo -e "Found requested ACS url: ${ACS_URL}"
 fi
 
-SCENARIO_FOLDER=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 echo "Launching SAML2 service provider from scenario ${SCENARIO_FOLDER}"
 
 echo "Accessing CAS SAML2 identity provider metadata"
