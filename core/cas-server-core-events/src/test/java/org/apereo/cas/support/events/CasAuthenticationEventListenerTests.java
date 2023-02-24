@@ -163,7 +163,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyCasTicketGrantingTicketDestroyed() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"));
+                new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
@@ -173,7 +173,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyEventRepositoryHasOneEventOnly() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"));
+                new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertEquals(1, casEventRepository.load().count());
     }
@@ -182,7 +182,7 @@ public class CasAuthenticationEventListenerTests {
     public void verifyCasTicketGrantingTicketDestroyedHasClientInfo() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
-                new MockTicketGrantingTicket("casuser"));
+                new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
         val result = casEventRepository.load().toList().get(0).getClientIpAddress();
