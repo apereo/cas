@@ -102,6 +102,11 @@ org.gradle.unsafe.configuration-cache=false
 The expiration policy of [OpenID Connect ID tokens](../authentication/OIDC-Authentication-TokenExpirationPolicy.html) can 
 now be defined on a per-application basis.
 
+### Feature Deprecations
+
+Modules, features and plugins that support functionality for Apache CouchDb or Couchbase are now deprecated.
+These components are scheduled to be removed in a future CAS version and will no longer be maintained or supported. 
+
 ## Other Stuff
         
 - Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.

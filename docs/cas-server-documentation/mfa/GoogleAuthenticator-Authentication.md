@@ -64,16 +64,16 @@ authentication if multiple device registration records
 are found. The ability to handle multiple device registration 
 records can be controlled via CAS settings.
 
-| Storage  | Description                                                                      |
-|----------|----------------------------------------------------------------------------------|
-| JPA      | [See this guide](GoogleAuthenticator-Authentication-Registration-JPA.html).      |
-| CouchDb  | [See this guide](GoogleAuthenticator-Authentication-Registration-CouchDb.html).  |
-| MongoDb  | [See this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html).  |
-| DynamoDb | [See this guide](GoogleAuthenticator-Authentication-Registration-DynamoDb.html). |
-| Redis    | [See this guide](GoogleAuthenticator-Authentication-Registration-Redis.html).    |
-| LDAP     | [See this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html).     |
-| REST     | [See this guide](GoogleAuthenticator-Authentication-Registration-Rest.html).     |
-| JSON     | [See this guide](GoogleAuthenticator-Authentication-Registration-JSON.html).     |
+| Storage     | Description                                                                      |
+|-------------|----------------------------------------------------------------------------------|
+| JPA         | [See this guide](GoogleAuthenticator-Authentication-Registration-JPA.html).      |
+| ~~CouchDb~~ | [See this guide](GoogleAuthenticator-Authentication-Registration-CouchDb.html).  |
+| MongoDb     | [See this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html).  |
+| DynamoDb    | [See this guide](GoogleAuthenticator-Authentication-Registration-DynamoDb.html). |
+| Redis       | [See this guide](GoogleAuthenticator-Authentication-Registration-Redis.html).    |
+| LDAP        | [See this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html).     |
+| REST        | [See this guide](GoogleAuthenticator-Authentication-Registration-Rest.html).     |
+| JSON        | [See this guide](GoogleAuthenticator-Authentication-Registration-JSON.html).     |
 
 ## REST Protocol Credential Extraction 
 

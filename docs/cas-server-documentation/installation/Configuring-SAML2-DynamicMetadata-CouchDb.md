@@ -25,6 +25,10 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-couchdb" %}
 
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future</strong>.</p>
+</div>
+
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from CouchDb instances:
 
 ```json
