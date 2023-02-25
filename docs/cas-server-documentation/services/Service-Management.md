@@ -79,7 +79,7 @@ The following options may be used to store services in CAS.
 | LDAP          | [See this guide](LDAP-Service-Management.html).      | Store service definitions in a directory server. Candidate for HA deployments.                           |
 | JPA           | [See this guide](JPA-Service-Management.html).       | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.   |
 | ~~Couchbase~~ | [See this guide](Couchbase-Service-Management.html). | Store service definitions in Couchbase. Candidate for HA deployments.                                    |
-| CouchDB       | [See this guide](CouchDb-Service-Management.html).   | Store service definitions in CouchDb. Candidate for HA deployments.                                      |
+| ~~CouchDB~~   | [See this guide](CouchDb-Service-Management.html).   | Store service definitions in CouchDb. Candidate for HA deployments.                                      |
 | DynamoDb      | [See this guide](DynamoDb-Service-Management.html).  | Store service definitions in DynamoDb. Candidate for HA deployments.                                     |
 | Amazon S3     | [See this guide](AmazonS3-Service-Management.html).  | Store service definitions in Amazon S3 buckets. Candidate for HA deployments.                            |
 | CosmosDb      | [See this guide](CosmosDb-Service-Management.html).  | Store service definitions in an Azure CosmosDb. Candidate for HA deployments.                            |
