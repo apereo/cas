@@ -101,6 +101,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
+        val clientInfo = ClientInfoHolder.getClientInfo();
         val list = getRegisteredServiceKeys()
             .map(redisKey -> this.template.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
@@ -108,7 +109,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
         LOGGER.trace("Loaded registered services [{}]", list);
-        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
         return list;
     }
 

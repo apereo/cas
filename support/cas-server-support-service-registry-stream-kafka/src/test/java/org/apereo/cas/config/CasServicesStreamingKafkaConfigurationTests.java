@@ -138,7 +138,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
             new CasRegisteredServiceSavedEvent(this, registeredService),
             casRegisteredServiceStreamPublisherIdentifier);
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceLoadedEvent(this, registeredService),
+            new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }

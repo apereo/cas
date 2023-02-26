@@ -43,8 +43,9 @@ public class CasServicesRegistryStreamingEventListenerTests {
     @Test
     public void verifyLoaded() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceLoadedEvent(
-            new CasRegisteredServiceLoadedEvent(this, service)));
+            new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
     }
 
     @Test
