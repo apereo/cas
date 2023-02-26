@@ -116,7 +116,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     public synchronized RegisteredService delete(final RegisteredService service) {
         if (service != null) {
             val clientInfo = ClientInfoHolder.getClientInfo();
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
             configurationContext.getServiceRegistry().delete(service);
             configurationContext.getServicesCache().invalidate(service.getId());
             deleteInternal(service);

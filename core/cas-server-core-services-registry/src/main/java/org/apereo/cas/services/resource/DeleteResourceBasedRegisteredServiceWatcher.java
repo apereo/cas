@@ -32,7 +32,7 @@ public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBas
             val service = serviceRegistryDao.getRegisteredServiceFromFile(file);
             val clientInfo = ClientInfoHolder.getClientInfo();
             if (service != null) {
-                serviceRegistryDao.publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+                serviceRegistryDao.publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
                 serviceRegistryDao.removeRegisteredService(service);
                 LOGGER.debug("Successfully deleted service definition [{}]", service.getName());
                 serviceRegistryDao.publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
