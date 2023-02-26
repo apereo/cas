@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,9 @@ public class CasServicesRegistryStreamingEventListenerTests {
     @Test
     public void verifyDeleted() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceDeletedEvent(
-            new CasRegisteredServiceDeletedEvent(this, service)));
+            new CasRegisteredServiceDeletedEvent(this, service, clientInfo)));
     }
 
     @Test

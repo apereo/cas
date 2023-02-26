@@ -12,6 +12,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
@@ -76,9 +77,10 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             LOGGER.trace("Deleting registered service [{}]", registeredService);
             val redisKey = getRegisteredServiceRedisKey(registeredService);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             this.template.delete(redisKey);
             LOGGER.trace("Deleted registered service [{}]", registeredService);
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo));
             return true;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

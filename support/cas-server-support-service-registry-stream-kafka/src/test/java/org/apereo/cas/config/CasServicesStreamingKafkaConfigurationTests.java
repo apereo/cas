@@ -14,6 +14,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,14 +82,14 @@ public class CasServicesStreamingKafkaConfigurationTests {
     public void verifyListener() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val publisherId = new PublisherIdentifier();
-        
+        val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,
             new CasRegisteredServiceSavedEvent(this, registeredService), publisherId);
         Thread.sleep(3000);
         assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
 
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceDeletedEvent(this, registeredService), publisherId);
+            new CasRegisteredServiceDeletedEvent(this, registeredService), publisherId, clientInfo);
 
         Thread.sleep(2500);
         registeredServiceDistributedCacheManager.clear();
@@ -129,8 +130,9 @@ public class CasServicesStreamingKafkaConfigurationTests {
     @Test
     public void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceDeletedEvent(this, registeredService),
+            new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         casRegisteredServiceStreamPublisher.publish(registeredService,
             new CasRegisteredServiceSavedEvent(this, registeredService),
