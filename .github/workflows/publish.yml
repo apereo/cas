@@ -119,7 +119,7 @@ jobs:
              ${{ runner.os }}-gradle-
        - name: Publish SNAPSHOTs
          if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
-         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
+         run: ./gradlew -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
          
   ##########################################################################
 
@@ -150,4 +150,4 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Publish 
         if: ${{ env.RESTDB_CAS_API_KEY != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel publishProjectModules -x test -x javadoc -x check
+        run: ./gradlew --no-configuration-cache --build-cache --configure-on-demand --no-daemon --parallel publishProjectModules -x test -x javadoc -x check
