@@ -120,7 +120,8 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     }
 
     private void publishSuccessEvent(final Principal principal, final String surrogate) {
-        val event = new CasSurrogateAuthenticationSuccessfulEvent(this, principal, surrogate);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val event = new CasSurrogateAuthenticationSuccessfulEvent(this, principal, surrogate, clientInfo);
         publishEvent(event);
     }
 
