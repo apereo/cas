@@ -314,7 +314,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
         configurationContext.getServicesCache().invalidateAll();
         configurationContext.getServicesCache().putAll(servicesMap);
         loadInternal();
-        publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
         evaluateExpiredServiceDefinitions();
         LOGGER.info("Loaded [{}] service(s) from [{}].", configurationContext.getServicesCache().asMap().size(),
             configurationContext.getServiceRegistry().getName());

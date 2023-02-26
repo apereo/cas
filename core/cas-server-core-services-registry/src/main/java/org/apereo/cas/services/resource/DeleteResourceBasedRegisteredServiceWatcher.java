@@ -39,7 +39,7 @@ public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBas
             } else {
                 LOGGER.warn("Unable to locate a matching service definition from file [{}]. Reloading cache...", file);
                 val results = serviceRegistryDao.load();
-                serviceRegistryDao.publishEvent(new CasRegisteredServicesLoadedEvent(this, results));
+                serviceRegistryDao.publishEvent(new CasRegisteredServicesLoadedEvent(this, results, clientInfo));
             }
         }
     }
