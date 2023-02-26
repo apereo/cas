@@ -39,7 +39,7 @@ public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBas
                         LOGGER.debug("Updating service definitions with [{}]", newService);
                         serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, newService, clientInfo));
                         serviceRegistryDao.update(newService);
-                        serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, newService));
+                        serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, newService, clientInfo));
                     } else {
                         LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
                                      + "in the event processing pipeline", newService.getId(), file.getName());
