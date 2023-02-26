@@ -61,7 +61,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .forEach(r -> {
                 cacheRegisteredService(r);
                 saveInternal(r);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+                publishEvent(new CasRegisteredServiceSavedEvent(this, r, clientInfo));
             });
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         saveInternal(registeredService);
 
         if (publishEvent) {
-            publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+            publishEvent(new CasRegisteredServiceSavedEvent(this, r, clientInfo));
         }
         return r;
     }
@@ -95,7 +95,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
                 cacheRegisteredService(registeredService);
                 saveInternal(registeredService);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService));
+                publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo));
                 return registeredService;
             }
             return null;

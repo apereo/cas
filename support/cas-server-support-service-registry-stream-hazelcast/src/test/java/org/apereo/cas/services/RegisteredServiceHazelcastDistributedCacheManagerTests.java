@@ -81,7 +81,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
             new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         publisher.publish(registeredService,
-            new CasRegisteredServiceSavedEvent(this, registeredService),
+            new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         publisher.publish(registeredService,
             new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo),

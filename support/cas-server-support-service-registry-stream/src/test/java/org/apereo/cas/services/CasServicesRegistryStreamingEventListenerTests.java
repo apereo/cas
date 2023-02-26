@@ -51,7 +51,8 @@ public class CasServicesRegistryStreamingEventListenerTests {
     @Test
     public void verifySaved() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         assertDoesNotThrow(() -> casServicesRegistryStreamingEventListener.handleCasRegisteredServiceSavedEvent(
-            new CasRegisteredServiceSavedEvent(this, service)));
+            new CasRegisteredServiceSavedEvent(this, service, clientInfo)));
     }
 }

@@ -78,9 +78,10 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
                     "description", rs.getDescription()))
                 .build();
             val body = this.registeredServiceSerializer.toString(rs);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             s3Client.putObject(request, RequestBody.fromString(body));
             LOGGER.trace("Saved registered service [{}]", rs);
-            publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
+            publishEvent(new CasRegisteredServiceSavedEvent(this, rs, clientInfo));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

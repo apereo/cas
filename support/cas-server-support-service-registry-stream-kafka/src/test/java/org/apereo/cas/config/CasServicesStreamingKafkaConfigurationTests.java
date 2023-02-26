@@ -84,7 +84,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
         val publisherId = new PublisherIdentifier();
         val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceSavedEvent(this, registeredService), publisherId);
+            new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo), publisherId);
         Thread.sleep(3000);
         assertFalse(registeredServiceDistributedCacheManager.getAll().isEmpty());
 
@@ -135,7 +135,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
             new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         casRegisteredServiceStreamPublisher.publish(registeredService,
-            new CasRegisteredServiceSavedEvent(this, registeredService),
+            new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         casRegisteredServiceStreamPublisher.publish(registeredService,
             new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo),

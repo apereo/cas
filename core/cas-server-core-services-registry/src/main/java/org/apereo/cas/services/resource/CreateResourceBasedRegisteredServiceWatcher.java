@@ -41,7 +41,7 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
                     LOGGER.trace("Updating service definitions with [{}]", service);
                     serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, service, clientInfo));
                     serviceRegistryDao.update(service);
-                    serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, service));
+                    serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, service, clientInfo));
                 });
         }
     }

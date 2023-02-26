@@ -62,10 +62,11 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             LOGGER.trace("Saving registered service [{}]", rs);
             val redisKey = getRegisteredServiceRedisKey(rs);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             invokeServiceRegistryListenerPreSave(rs);
             this.template.boundValueOps(redisKey).set(rs);
             LOGGER.trace("Saved registered service [{}]", rs);
-            publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
+            publishEvent(new CasRegisteredServiceSavedEvent(this, rs, clientInfo));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
