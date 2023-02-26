@@ -202,7 +202,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         return FunctionUtils.doUnchecked(() -> {
             val f = getRegisteredServiceFileName(service);
             val clientInfo = ClientInfoHolder.getClientInfo();
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
             val result = !f.exists() || f.delete();
             if (!result) {
                 LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
