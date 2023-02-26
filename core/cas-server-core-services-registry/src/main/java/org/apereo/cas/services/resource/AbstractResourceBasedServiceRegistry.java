@@ -26,6 +26,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -200,6 +201,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     public synchronized boolean delete(final RegisteredService service) {
         return FunctionUtils.doUnchecked(() -> {
             val f = getRegisteredServiceFileName(service);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
             val result = !f.exists() || f.delete();
             if (!result) {
@@ -208,7 +210,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 removeRegisteredService(service);
                 LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
             }
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service , clientInfo));
             return result;
         });
     }

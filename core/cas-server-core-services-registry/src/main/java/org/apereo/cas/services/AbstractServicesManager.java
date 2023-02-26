@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.ArrayList;
@@ -114,11 +115,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public synchronized RegisteredService delete(final RegisteredService service) {
         if (service != null) {
+            val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
             configurationContext.getServiceRegistry().delete(service);
             configurationContext.getServicesCache().invalidate(service.getId());
             deleteInternal(service);
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
         }
         return service;
     }

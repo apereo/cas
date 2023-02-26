@@ -11,6 +11,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -118,9 +119,10 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
                     .key(object.key())
                     .build()));
                 val bucketName = determineBucketName(registeredService);
+                val clientInfo = ClientInfoHolder.getClientInfo();
                 s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
                 LOGGER.trace("Deleted registered service [{}]", registeredService);
-                publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
+                publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo));
                 return true;
             }
         } catch (final Exception e) {
