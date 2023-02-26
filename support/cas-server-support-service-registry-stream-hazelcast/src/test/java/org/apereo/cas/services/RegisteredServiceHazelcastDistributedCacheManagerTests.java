@@ -84,7 +84,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
             new CasRegisteredServiceSavedEvent(this, registeredService),
             casRegisteredServiceStreamPublisherIdentifier);
         publisher.publish(registeredService,
-            new CasRegisteredServiceLoadedEvent(this, registeredService),
+            new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo),
             casRegisteredServiceStreamPublisherIdentifier);
         assertFalse(mgr.getAll().isEmpty());
     }

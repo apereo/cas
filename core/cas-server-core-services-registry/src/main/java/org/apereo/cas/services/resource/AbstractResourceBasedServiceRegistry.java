@@ -226,6 +226,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
         val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
         LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
+        val clientInfo = ClientInfoHolder.getClientInfo();
 
         this.services = files
             .stream()
@@ -240,7 +241,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 }, LinkedHashMap::new));
         val listedServices = new ArrayList<>(this.services.values());
         val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
-        results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
+        results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
         return results;
     }
 

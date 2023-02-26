@@ -15,6 +15,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
@@ -86,6 +87,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     public Collection<RegisteredService> load() {
         val list = new ArrayList<RegisteredService>();
         val response = getSearchResultResponse();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (LdapUtils.containsResultEntry(response)) {
             response.getEntries()
                 .stream()
@@ -94,7 +96,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
                 .forEach(s -> {
-                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo));
                     list.add(s);
                 });
         }
