@@ -210,7 +210,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 removeRegisteredService(service);
                 LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
             }
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service , clientInfo));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
             return result;
         });
     }

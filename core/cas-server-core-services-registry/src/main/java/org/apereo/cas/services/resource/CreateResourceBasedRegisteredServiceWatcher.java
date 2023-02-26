@@ -36,8 +36,8 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
                 .filter(Objects::nonNull)
                 .forEach(service -> {
                     if (serviceRegistryDao.findServiceById(service.getId()) != null) {
-                        LOG_SERVICE_DUPLICATE.accept(service);                    }
-
+                        LOG_SERVICE_DUPLICATE.accept(service);
+                    }
                     LOGGER.trace("Updating service definitions with [{}]", service);
                     serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, service, clientInfo));
                     serviceRegistryDao.update(service);
