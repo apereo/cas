@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
     @Override
     public void accept(final File file) {
         val fileName = file.getName();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
             LOGGER.debug("New service definition [{}] was created. Locating service entry from cache...", file);
             val services = serviceRegistryDao.load(file);
@@ -34,10 +36,10 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
                 .filter(Objects::nonNull)
                 .forEach(service -> {
                     if (serviceRegistryDao.findServiceById(service.getId()) != null) {
-                        LOG_SERVICE_DUPLICATE.accept(service);
-                    }
+                        LOG_SERVICE_DUPLICATE.accept(service);                    }
+
                     LOGGER.trace("Updating service definitions with [{}]", service);
-                    serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, service));
+                    serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, service, clientInfo));
                     serviceRegistryDao.update(service);
                     serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, service));
                 });

@@ -53,8 +53,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public void save(final Stream<RegisteredService> toSave) {
+        val clientInfo = ClientInfoHolder.getClientInfo();
         val resultingStream = toSave.peek(registeredService ->
-            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
+            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo)));
         configurationContext.getServiceRegistry()
             .save(resultingStream)
             .forEach(r -> {
@@ -71,7 +72,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
-        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
         val r = configurationContext.getServiceRegistry().save(registeredService);
         cacheRegisteredService(r);
         saveInternal(registeredService);
@@ -88,8 +90,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
                      final long countExclusive) {
         configurationContext.getServiceRegistry().save(() -> {
             val registeredService = supplier.get();
+            val clientInfo = ClientInfoHolder.getClientInfo();
             if (registeredService != null) {
-                publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
+                publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
                 cacheRegisteredService(registeredService);
                 saveInternal(registeredService);
                 publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService));
