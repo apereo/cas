@@ -106,7 +106,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     public synchronized void deleteAll() {
         configurationContext.getServicesCache().asMap().forEach((k, v) -> delete(v));
         configurationContext.getServicesCache().invalidateAll();
-        publishEvent(new CasRegisteredServicesDeletedEvent(this));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasRegisteredServicesDeletedEvent(this, clientInfo));
     }
 
     @Override
