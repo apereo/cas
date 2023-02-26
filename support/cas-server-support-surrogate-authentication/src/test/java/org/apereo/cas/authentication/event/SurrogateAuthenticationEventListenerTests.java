@@ -12,6 +12,9 @@ import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthen
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -62,6 +65,13 @@ public class SurrogateAuthenticationEventListenerTests {
     @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
+    private ClientInfo clientInfo;
+
+    @BeforeEach
+    public void setup(){
+        clientInfo = ClientInfoHolder.getClientInfo();
+    }
+
     @Test
     public void verifyOperation() {
         val listener = new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);
@@ -71,9 +81,9 @@ public class SurrogateAuthenticationEventListenerTests {
             @Override
             public void execute() {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
-                    principal, "surrogate"));
+                    principal, "surrogate", clientInfo));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
-                    principal, "surrogate", null));
+                    principal, "surrogate", clientInfo));
             }
         });
     }
@@ -86,9 +96,9 @@ public class SurrogateAuthenticationEventListenerTests {
             @Override
             public void execute() {
                 listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
-                    principal, "surrogate", null));
+                    principal, "surrogate", clientInfo));
                 listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
-                    principal, "surrogate"));
+                    principal, "surrogate", clientInfo));
             }
         });
     }
