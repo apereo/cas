@@ -410,17 +410,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
         val policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
-
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (policy.isNotifyWhenExpired()) {
             LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry", registeredService.getServiceId());
-            publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, false));
+            publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, false, clientInfo));
         }
         if (policy.isDeleteWhenExpired()) {
             LOGGER.debug("Deleting expired registered service [{}] from registry.", registeredService.getServiceId());
             if (policy.isNotifyWhenDeleted()) {
                 LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry and removal",
                     registeredService.getServiceId());
-                publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, true));
+                publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, true, clientInfo));
             }
             delete(registeredService);
             return null;
