@@ -118,7 +118,7 @@ public class RegisteredServicesEventListenerTests {
         contact.setPhone("13477465421");
         registeredService.getContacts().add(contact);
         val listener = new DefaultRegisteredServicesEventListener(this.servicesManager, casProperties, communicationsManager);
-        listener.handleRefreshEvent(new CasRegisteredServicesRefreshEvent(this));
+        listener.handleRefreshEvent(new CasRegisteredServicesRefreshEvent(this, clientInfo));
         listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of()));
         val event = new CasRegisteredServiceExpiredEvent(this, registeredService, true, clientInfo);
         listener.handleRegisteredServiceExpiredEvent(event);
