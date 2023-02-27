@@ -2,9 +2,9 @@ package org.apereo.cas.support.events.ticket;
 
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.time.ZonedDateTime;
 
@@ -24,8 +24,8 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
 
     private final TicketGrantingTicket ticketGrantingTicket;
 
-    protected AbstractCasTicketGrantingTicketEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket) {
-        super(source);
+    protected AbstractCasTicketGrantingTicketEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.ticketGrantingTicket = ticketGrantingTicket;
     }
 

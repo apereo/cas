@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
@@ -62,12 +63,13 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val services = new ArrayList<RegisteredService>(registeredServices.size());
+        val clientInfo = ClientInfoHolder.getClientInfo();
         registeredServices
             .stream()
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
             .forEach(s -> {
-                publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo));
                 services.add(s);
             });
         return services;

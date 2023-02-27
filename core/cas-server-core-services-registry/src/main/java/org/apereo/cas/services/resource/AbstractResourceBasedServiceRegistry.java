@@ -26,6 +26,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -200,7 +201,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     public synchronized boolean delete(final RegisteredService service) {
         return FunctionUtils.doUnchecked(() -> {
             val f = getRegisteredServiceFileName(service);
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
             val result = !f.exists() || f.delete();
             if (!result) {
                 LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
@@ -208,7 +210,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 removeRegisteredService(service);
                 LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
             }
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
             return result;
         });
     }
@@ -224,6 +226,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
         val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
         LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
+        val clientInfo = ClientInfoHolder.getClientInfo();
 
         this.services = files
             .stream()
@@ -238,7 +241,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 }, LinkedHashMap::new));
         val listedServices = new ArrayList<>(this.services.values());
         val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
-        results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
+        results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
         return results;
     }
 

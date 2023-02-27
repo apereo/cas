@@ -78,7 +78,7 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         val tgt = new MockTicketGrantingTicket("casuser");
-        val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
+        val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());
         applicationContext.publishEvent(event);
     }
 }
