@@ -17,10 +17,12 @@ import java.io.Serial;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
 @SuperBuilder
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlMetadataDocument extends SamlMetadataDocument {
     @Serial
     private static final long serialVersionUID = 6558457970842836213L;

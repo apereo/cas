@@ -55,6 +55,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @SpringBootTest(classes = {
@@ -94,6 +95,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("CouchDb")
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class CouchDbAuthenticationHandlerTests {
     @Autowired
     @Qualifier("authenticationCouchDbFactory")

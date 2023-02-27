@@ -17,8 +17,10 @@ import java.util.Collection;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private final GoogleAuthenticatorAccountCouchDbRepository couchDbRepository;
 

@@ -24,10 +24,12 @@ import java.util.stream.Collectors;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Slf4j
 @Getter
 @Setter
+@Deprecated(since = "7.0.0")
 public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implements DisposableBean {
 
     private final U2FDeviceRegistrationCouchDbRepository couchDb;

@@ -16,10 +16,12 @@ import java.time.LocalDate;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@Deprecated(since = "7.0.0")
 public class CouchDbU2FDeviceRegistration extends U2FDeviceRegistration {
 
     @Serial

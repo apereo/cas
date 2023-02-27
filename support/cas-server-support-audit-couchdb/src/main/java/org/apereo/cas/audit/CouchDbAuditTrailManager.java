@@ -18,10 +18,12 @@ import java.util.Set;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @AllArgsConstructor
 @Getter
 @Setter
+@Deprecated(since = "7.0.0")
 public class CouchDbAuditTrailManager extends AbstractAuditTrailManager {
     private final AuditActionContextCouchDbRepository couchDb;
 

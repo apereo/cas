@@ -19,8 +19,10 @@ import java.util.stream.Collectors;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public record CouchDbConsentRepository(ConsentDecisionCouchDbRepository couchDb) implements ConsentRepository {
 
     @Serial

@@ -19,9 +19,11 @@ import java.time.temporal.ChronoUnit;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
+@Deprecated(since = "7.0.0")
 public class CouchDbConsentDecision extends ConsentDecision {
     @Serial
     private static final long serialVersionUID = -685282558102325489L;

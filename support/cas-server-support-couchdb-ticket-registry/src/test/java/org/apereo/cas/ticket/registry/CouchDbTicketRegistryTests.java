@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @Import({
     CasCouchDbCoreConfiguration.class,
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("CouchDb")
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired

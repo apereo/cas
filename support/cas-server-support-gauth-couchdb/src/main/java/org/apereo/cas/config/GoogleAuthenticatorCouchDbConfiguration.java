@@ -30,11 +30,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "couchdb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class GoogleAuthenticatorCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "oneTimeTokenAccountCouchDbFactory")

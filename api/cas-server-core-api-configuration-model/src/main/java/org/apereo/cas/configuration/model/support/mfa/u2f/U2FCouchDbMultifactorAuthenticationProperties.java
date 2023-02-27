@@ -15,12 +15,14 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-u2f-couchdb")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("U2FCouchDbMultifactorAuthenticationProperties")
+@Deprecated(since = "7.0.0")
 public class U2FCouchDbMultifactorAuthenticationProperties extends BaseAsynchronousCouchDbProperties {
 
     @Serial

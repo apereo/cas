@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Tag("CouchDb")
 @SpringBootTest(classes = {
@@ -38,6 +39,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @Getter
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
     @Autowired

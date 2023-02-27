@@ -9,7 +9,9 @@ import org.ektorp.impl.ObjectMapperFactory;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public interface CouchDbConnectorFactory {
     /**
      * Gets object mapper factory.

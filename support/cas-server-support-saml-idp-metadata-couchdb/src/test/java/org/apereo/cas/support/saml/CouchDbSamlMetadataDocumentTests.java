@@ -13,8 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated Since 7
  */
 @Tag("CouchDb")
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlMetadataDocumentTests {
     @Test
     public void verifyOperation() {

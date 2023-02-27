@@ -18,9 +18,11 @@ import java.time.ZoneId;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "7.0.0")
 public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenRepository<GoogleAuthenticatorToken> {
 
     private final GoogleAuthenticatorTokenCouchDbRepository couchDb;

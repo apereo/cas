@@ -51,6 +51,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Tag("CouchDb")
 @SpringBootTest(classes = {
@@ -98,6 +99,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Getter
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class GoogleAuthenticatorCouchDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Autowired
