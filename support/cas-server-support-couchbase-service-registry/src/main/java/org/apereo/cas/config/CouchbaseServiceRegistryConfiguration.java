@@ -31,10 +31,12 @@ import java.util.Optional;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "couchbase")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchbaseServiceRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

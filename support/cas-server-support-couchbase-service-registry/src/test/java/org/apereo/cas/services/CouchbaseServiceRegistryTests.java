@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 7.0.0
  */
 @SpringBootTest(classes = {
     CouchbaseServiceRegistryTests.CouchbaseServiceRegistryTestConfiguration.class,
@@ -64,6 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DependencyInjectionTestExecutionListener.class,
     CouchbaseServiceRegistryTests.DisposingTestExecutionListener.class
 })
+@Deprecated(since = "7.0.0")
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

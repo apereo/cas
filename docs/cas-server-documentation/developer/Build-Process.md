@@ -63,22 +63,22 @@ auto-detect the location of the Gradle Wrapper anywhere in the project structure
 
 The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
 
-| Flag                              | Description
-|-----------------------------------+---------------------------------------------------------------------------+
-| `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
-| `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
-| `verbose`                         | Control the logging level for tests and output additional data about passing/failing/skipped tests.
-| `skipCheckstyle`                  | Skip running Checkstyle checks.
-| `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
-| `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
-| `skipSonarqube`                   | Ignore reporting results to Sonarqube.
-| `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
-| `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
-| `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
-| `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
-| `ignoreTestFailures`              | Ignore test failures and let the build resume.
-| `casModules`                      | Build property; Comma separated list of modules without the `cas-server-[support|core]` prefix.
-| `buildScript`                     | Build fragment to include when building the project. Typically used by and during integration tests.
+| Flag                          | Description                                                                                          |
+|-------------------------------|------------------------------------------------------------------------------------------------------|
+| `enableRemoteDebugging`       | Allows for remote debugging via a pre-defined port (i.e. `5000`).                                    |
+| `remoteDebuggingSuspend`      | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.    |
+| `verbose`                     | Control the logging level for tests and output additional data about passing/failing/skipped tests.  |
+| `skipCheckstyle`              | Skip running Checkstyle checks.                                                                      |
+| `skipVersionConflict`         | If a dependency conflict is found, use the latest version rather than failing the build.             |
+| `skipNestedConfigMetadataGen` | Skip generating configuration metadata for nested properties and generic collections.                |
+| `skipSonarqube`               | Ignore reporting results to Sonarqube.                                                               |
+| `skipErrorProneCompiler`      | Skip running the `error-prone` static-analysis compiler.                                             |
+| `skipBootifulArtifact`        | Do not apply the Spring Boot plugin to bootify application artifacts.                                |
+| `ignoreJavadocFailures`       | Ignore javadoc failures and let the build resume.                                                    |
+| `ignoreFindbugsFailures`      | Ignore Findbugs failures and let the build resume.                                                   |
+| `ignoreTestFailures`          | Ignore test failures and let the build resume.                                                       |
+| `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support                     |core]` prefix.
+| `buildScript`                 | Build fragment to include when building the project. Typically used by and during integration tests. |
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.

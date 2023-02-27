@@ -232,6 +232,20 @@ public interface RegisteredServiceProperty extends Serializable {
             "Produce a signed JWT as a response when generating access tokens using the provided signing key."),
 
         /**
+         * Indicate whether the client was registered with CAS using OpenID Connect client dynamic registration flow.
+         */
+        OIDC_DYNAMIC_CLIENT_REGISTRATION("oidcDynamicClientRegistration", "false",
+            RegisteredServicePropertyGroups.OIDC, RegisteredServicePropertyTypes.BOOLEAN,
+            "Indicate whether the client was registered with CAS using OpenID Connect client dynamic registration flow."),
+
+        /**
+         * Indicate the registration date/time when the client was registered with CAS using OpenID Connect client dynamic registration flow.
+         */
+        OIDC_DYNAMIC_CLIENT_REGISTRATION_DATE("oidcDynamicClientRegistrationDate", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.OIDC, RegisteredServicePropertyTypes.STRING,
+            "Indicate the registration date/time when the client was registered with CAS using OpenID Connect client dynamic registration flow."),
+
+        /**
          * Indicate the cipher strategy for JWTs for OIDC responses, to determine order of signing/encryption operations.
          */
         OIDC_RESPONSE_MODE_JWT_CIPHER_STRATEGY_TYPE("oidcResponseModeAsJwtCipherStrategyType", StringUtils.EMPTY,
