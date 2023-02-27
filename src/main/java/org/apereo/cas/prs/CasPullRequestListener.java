@@ -156,40 +156,42 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         if (pr.isDraft() || pr.isWorkInProgress()) {
-            log.info("Pull request {} is a work-in-progress", pr);
+            log.info("Pull request {} is a work-in-progress or is under review", pr);
             return true;
         }
-        
-        val count = repository.getPullRequestFiles(pr).stream()
-            .filter(file -> {
-                var filename = file.getFilename();
-                return !filename.contains("src/test/java")
-                       && !filename.endsWith(".html")
-                       && !filename.endsWith(".properties")
-                       && !filename.endsWith(".js")
-                       && !filename.endsWith(".yml")
-                       && !filename.endsWith(".yaml")
-                       && !filename.endsWith(".json")
-                       && !filename.endsWith(".jpg")
-                       && !filename.endsWith(".jpeg")
-                       && !filename.endsWith(".sh")
-                       && !filename.endsWith(".bat")
-                       && !filename.endsWith(".txt")
-                       && !filename.endsWith(".md")
-                       && !filename.endsWith(".gif")
-                       && !filename.endsWith(".css");
-            })
-            .count();
 
-        if (count >= repository.getGitHubProperties().getMaximumChangedFiles()) {
-            log.info("Closing invalid pull request {} with large number of changes", pr);
-            repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
-            repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+        if (!pr.isUnderReview()) {
+            val count = repository.getPullRequestFiles(pr).stream()
+                .filter(file -> {
+                    var filename = file.getFilename();
+                    return !filename.contains("src/test/java")
+                           && !filename.endsWith(".html")
+                           && !filename.endsWith(".properties")
+                           && !filename.endsWith(".js")
+                           && !filename.endsWith(".yml")
+                           && !filename.endsWith(".yaml")
+                           && !filename.endsWith(".json")
+                           && !filename.endsWith(".jpg")
+                           && !filename.endsWith(".jpeg")
+                           && !filename.endsWith(".sh")
+                           && !filename.endsWith(".bat")
+                           && !filename.endsWith(".txt")
+                           && !filename.endsWith(".md")
+                           && !filename.endsWith(".gif")
+                           && !filename.endsWith(".css");
+                })
+                .count();
 
-            var template = IOUtils.toString(new ClassPathResource("template-large-patch.md").getInputStream(), StandardCharsets.UTF_8);
-            repository.addComment(pr, template);
-            repository.close(pr);
-            return true;
+            if (count >= repository.getGitHubProperties().getMaximumChangedFiles()) {
+                log.info("Closing invalid pull request {} with large number of changes", pr);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+
+                var template = IOUtils.toString(new ClassPathResource("template-large-patch.md").getInputStream(), StandardCharsets.UTF_8);
+                repository.addComment(pr, template);
+                repository.close(pr);
+                return true;
+            }
         }
 
         if (pr.getTitle().matches("Update\\s\\w.java")) {

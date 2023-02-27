@@ -129,6 +129,9 @@ public class PullRequest {
         return isLabeledAs(CasLabels.LABEL_WIP) || this.title.startsWith("WIP ");
     }
 
+    public boolean isUnderReview() {
+        return isLabeledAs(CasLabels.LABEL_UNDER_REVIEW) || this.title.startsWith("WIP ");
+    }
 
     public boolean isLabeledAs(final CasLabels labelName) {
         return this.labels.stream().anyMatch(l -> l.getName().equalsIgnoreCase(labelName.getTitle()));
