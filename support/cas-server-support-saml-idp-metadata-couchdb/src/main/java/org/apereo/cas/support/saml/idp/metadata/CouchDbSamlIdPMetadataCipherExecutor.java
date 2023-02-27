@@ -7,7 +7,9 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlIdPMetadataCipherExecutor extends BaseStringCipherExecutor {
     public CouchDbSamlIdPMetadataCipherExecutor(final String secretKeyEncryption,
                                                 final String secretKeySigning,

@@ -28,10 +28,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey, module = "couchdb")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchDbYubiKeyConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbYubiKeyAccountRepository")

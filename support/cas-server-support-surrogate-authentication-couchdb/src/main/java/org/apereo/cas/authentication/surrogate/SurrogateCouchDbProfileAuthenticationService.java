@@ -19,8 +19,10 @@ import java.util.Optional;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateAuthenticationService {
 
     private final ProfileCouchDbRepository couchDb;

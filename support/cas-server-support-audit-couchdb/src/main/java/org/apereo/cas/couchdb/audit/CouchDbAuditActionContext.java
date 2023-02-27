@@ -14,9 +14,11 @@ import java.util.Date;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
+@Deprecated(since = "7.0.0")
 public class CouchDbAuditActionContext extends AuditActionContext {
     @Serial
     private static final long serialVersionUID = 5316526142085559254L;

@@ -15,8 +15,10 @@ import java.util.List;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if(doc.record && doc.createdDate && doc.username) { emit(doc._id, doc) } }")
+@Deprecated(since = "7.0.0")
 public class U2FDeviceRegistrationCouchDbRepository extends CouchDbRepositorySupport<CouchDbU2FDeviceRegistration> {
     private final CouchDbInstance couchDbInstance;
 

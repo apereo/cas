@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 7
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("CouchDb")
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class RegisteredServiceCouchDbRepositoryTests {
     @Autowired
     @Qualifier("serviceRegistryCouchDbRepository")

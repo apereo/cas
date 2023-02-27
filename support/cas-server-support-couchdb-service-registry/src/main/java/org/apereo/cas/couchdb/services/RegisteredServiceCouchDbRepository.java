@@ -13,9 +13,11 @@ import org.ektorp.support.View;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if (doc.service) { emit(doc._id, doc) } }")
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport<RegisteredServiceDocument> {
     public RegisteredServiceCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
         super(RegisteredServiceDocument.class, db, createIfNotExists);

@@ -30,10 +30,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "couchdb")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchDbTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

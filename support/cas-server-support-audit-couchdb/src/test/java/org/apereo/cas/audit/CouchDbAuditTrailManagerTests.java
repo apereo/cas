@@ -25,6 +25,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
@@ -44,6 +45,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("CouchDb")
 @Getter
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @Autowired
