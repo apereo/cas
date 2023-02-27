@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -218,6 +219,8 @@ public class OidcIdTokenGeneratorServiceTests {
             val accessToken = buildAccessToken(tgt);
 
             val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid");
+            registeredService.setIdTokenExpirationPolicy(new DefaultRegisteredServiceOidcIdTokenExpirationPolicy("PT60S"));
+
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
             val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);

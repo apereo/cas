@@ -25,9 +25,11 @@ import java.util.stream.Collectors;
  *
  * @author Misagh Moayyed
  * @since 6.0.0
+ * @deprecated Since 7.0.0
  */
 @Setter
 @RequiredArgsConstructor
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
     private final CouchbaseClientFactory couchbase;
 

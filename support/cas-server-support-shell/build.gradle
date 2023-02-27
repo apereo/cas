@@ -1,5 +1,3 @@
-project.ext[""] = "org.apereo.cas.CasCommandLineShellApplication"
-
 ext {
     forceBootifulArtifact = true
     mainClassName = "org.apereo.cas.CasCommandLineShellApplication"

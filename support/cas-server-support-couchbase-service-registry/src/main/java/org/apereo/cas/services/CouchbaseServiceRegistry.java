@@ -32,8 +32,10 @@ import java.util.stream.StreamSupport;
  * @author Fredrik Jönsson "fjo@kth.se"
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 7.0.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
     private final CouchbaseClientFactory couchbase;
 

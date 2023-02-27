@@ -115,7 +115,10 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.markAsDynamicallyRegistered();
         val mv = consentApprovalViewResolver.resolve(context, service);
         assertTrue(mv.hasView());
+        assertTrue(mv.getModel().containsKey("dynamic"));
+        assertTrue(mv.getModel().containsKey("dynamicTime"));
     }
 }

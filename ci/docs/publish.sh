@@ -29,7 +29,7 @@ function validateProjectDocumentation() {
 
 clear
 
-GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8"
+GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
@@ -236,7 +236,7 @@ if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
-    ./gradlew :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
+    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
     if [ $? -eq 1 ]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1

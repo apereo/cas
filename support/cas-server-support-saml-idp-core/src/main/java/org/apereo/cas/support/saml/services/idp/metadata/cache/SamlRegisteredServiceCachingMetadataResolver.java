@@ -5,6 +5,8 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import net.shibboleth.shared.resolver.CriteriaSet;
 
+import java.util.Optional;
+
 
 /**
  * This is {@link SamlRegisteredServiceCachingMetadataResolver}
@@ -48,6 +50,17 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * @param criteriaSet the criteria set
      */
     void invalidate(SamlRegisteredService service, CriteriaSet criteriaSet);
+
+    /**
+     * Attempts to fetch the entry from cache if present.
+     * If the entry is not found, it will not attempt
+     * to force resolve the entry and will return back empty.
+     *
+     * @param service     the service
+     * @param criteriaSet the criteria set
+     * @return the optional
+     */
+    Optional<CachedMetadataResolverResult> getIfPresent(SamlRegisteredService service, CriteriaSet criteriaSet);
 
     /**
      * Gets OpenSAML config bean.
