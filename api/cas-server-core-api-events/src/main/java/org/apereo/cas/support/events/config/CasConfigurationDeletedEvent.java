@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 import java.nio.file.Path;
@@ -29,8 +30,8 @@ public class CasConfigurationDeletedEvent extends AbstractCasEvent {
      * @param source the source
      * @param file   the file
      */
-    public CasConfigurationDeletedEvent(final Object source, final Path file) {
-        super(source);
+    public CasConfigurationDeletedEvent(final Object source, final Path file, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.file = file;
     }
 }

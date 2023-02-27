@@ -21,7 +21,7 @@ public class CasConfigurationDeletedEventTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                new CasConfigurationDeletedEvent(this, File.createTempFile("temp", ".file").toPath());
+                new CasConfigurationDeletedEvent(this, File.createTempFile("temp", ".file").toPath(), null);
             }
         });
     }

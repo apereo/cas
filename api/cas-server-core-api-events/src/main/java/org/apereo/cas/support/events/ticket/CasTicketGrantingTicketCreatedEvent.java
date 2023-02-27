@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import java.io.Serial;
 
@@ -25,15 +24,13 @@ public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGranti
     @Serial
     private static final long serialVersionUID = -1862937393590213844L;
 
-    private final ClientInfo clientInfo;
     /**
      * Instantiates a new CAS sso session established event.
      *
      * @param source               the source
      * @param ticketGrantingTicket the ticket granting ticket
      */
-    public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket) {
-        super(source, ticketGrantingTicket);
-        clientInfo = ClientInfoHolder.getClientInfo();
+    public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ClientInfo clientInfo) {
+        super(source, ticketGrantingTicket, clientInfo);
     }
 }

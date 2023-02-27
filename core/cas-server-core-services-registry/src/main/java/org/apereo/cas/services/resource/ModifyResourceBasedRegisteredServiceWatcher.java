@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import java.io.File;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBas
         if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
             LOGGER.debug("New service definition [{}] was modified. Locating service entry from cache...", file);
             val newServices = serviceRegistryDao.load(file);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             newServices.stream()
                 .filter(Objects::nonNull)
                 .forEach(newService -> {
@@ -35,9 +37,9 @@ public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBas
 
                     if (!newService.equals(oldService)) {
                         LOGGER.debug("Updating service definitions with [{}]", newService);
-                        serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, newService));
+                        serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, newService, clientInfo));
                         serviceRegistryDao.update(newService);
-                        serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, newService));
+                        serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, newService, clientInfo));
                     } else {
                         LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
                                      + "in the event processing pipeline", newService.getId(), file.getName());
