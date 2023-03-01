@@ -58,10 +58,10 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-        CasAuthenticationEventListenerTests.EventTestConfiguration.class,
-        CasCoreEventsConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        RefreshAutoConfiguration.class
+    CasAuthenticationEventListenerTests.EventTestConfiguration.class,
+    CasCoreEventsConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class
 })
 @Tag("Events")
 public class CasAuthenticationEventListenerTests {
