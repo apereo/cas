@@ -62,7 +62,7 @@
                                         th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)},redirectUrl=@{${entry.redirectUrl}}"
                                         th:title="${entry.name + ' ' + entry.type}"
                                         th:id="${entry.name}"
-                                        th:classappend="'mdc-button-' + ${entry.type}"
+                                        th:classappend="'mdc-button-' + ${entry.type} + ${entry.cssClass}"
                                         accesskey="s">
                                     <span class="mdc-button__label">[[${#strings.defaultString(entry.title,entry.name)}]]</span>
                                 </button>
