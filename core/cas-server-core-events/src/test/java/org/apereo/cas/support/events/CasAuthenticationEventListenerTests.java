@@ -175,7 +175,9 @@ public class CasAuthenticationEventListenerTests {
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
                 new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
-        assertEquals(1, casEventRepository.load().count());
+        assertNotNull(casEventRepository.load());
+        val resultingCount = casEventRepository.load().count();
+        assertEquals(1, resultingCount);
     }
 
     @Test
@@ -184,8 +186,10 @@ public class CasAuthenticationEventListenerTests {
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
                 new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
         publishEventAndWaitToProcess(event);
-        assertFalse(casEventRepository.load().findAny().isEmpty());
-        val result = casEventRepository.load().toList().get(0).getClientIpAddress();
+        assertNotNull(casEventRepository.load());
+        val list = casEventRepository.load().toList();
+        assertFalse(list.isEmpty());
+        val result = list.get(0).getClientIpAddress();
         assertEquals(REMOTE_ADDR_IP, result);
     }
 
@@ -211,8 +215,11 @@ public class CasAuthenticationEventListenerTests {
         }
 
         waitForSpringEventToProcess(currentCount + maxThread + 1);
-        val eventSize = (int) casEventRepository.load().count();
-        val numOfIp1s = (int) casEventRepository.load().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
+        assertNotNull(casEventRepository.load());
+        val list = casEventRepository.load().toList();
+        assertFalse(list.isEmpty());
+        val eventSize = list.size();
+        val numOfIp1s = (int) list.stream().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
         assertEquals(maxThread + 1, eventSize);
         assertEquals(expectedNumOfIp1, numOfIp1s);
     }
