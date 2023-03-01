@@ -2,7 +2,6 @@ package org.apereo.cas.support.events.ticket;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
-import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
 
@@ -18,7 +17,6 @@ import java.io.Serial;
  * @since 4.2
  */
 @ToString(callSuper = true)
-@Getter
 public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGrantingTicketEvent {
 
     @Serial
