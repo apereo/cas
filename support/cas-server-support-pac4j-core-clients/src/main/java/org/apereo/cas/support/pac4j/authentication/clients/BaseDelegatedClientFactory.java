@@ -135,15 +135,14 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
         val customProperties = client.getCustomProperties();
         customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
-        if (StringUtils.isNotBlank(clientProperties.getPrincipalIdAttribute())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute());
-        }
-        if (StringUtils.isNotBlank(clientProperties.getCssClass())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass());
-        }
-        if (StringUtils.isNotBlank(clientProperties.getDisplayName())) {
-            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, clientProperties.getDisplayName());
-        }
+
+        FunctionUtils.doIfNotBlank(clientProperties.getPrincipalIdAttribute(),
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute()));
+        FunctionUtils.doIfNotBlank(clientProperties.getCssClass(),
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass()));
+        FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
+            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
+
         val callbackUrl = StringUtils.defaultString(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
         LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);

@@ -79,17 +79,18 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val autoRedirect = (DelegationAutoRedirectTypes) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.NONE);
         val title = (String) client.getCustomProperties()
-            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, name);
-
-        val p = DelegatedClientIdentityProviderConfiguration.builder()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, name);
+        val cssClass = (String) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, StringUtils.EMPTY);
+        val providerConfig = DelegatedClientIdentityProviderConfiguration.builder()
             .name(name)
             .autoRedirectType(autoRedirect)
             .redirectUrl(redirectUrl)
             .type(type)
             .title(title)
-            .cssClass(getCssClass(client))
+            .cssClass(cssClass)
             .build();
-        return Optional.of(p);
+        return Optional.of(providerConfig);
     }
 
     /**
@@ -137,21 +138,5 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         });
-    }
-
-    /**
-     * Get a valid CSS class for the given provider name.
-     *
-     * @param client the client
-     * @return the css class
-     */
-    protected String getCssClass(final BaseClient client) {
-        val customProperties = client.getCustomProperties();
-        if (customProperties != null && customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
-            val css = customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS).toString();
-            LOGGER.debug("Located custom CSS class [{}] for client [{}]", client, css);
-            return css;
-        }
-        return null;
     }
 }
