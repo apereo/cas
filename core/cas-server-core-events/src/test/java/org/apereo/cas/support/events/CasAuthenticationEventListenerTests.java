@@ -226,17 +226,17 @@ public class CasAuthenticationEventListenerTests {
     }
 
     /**
-     * Pass in the number of expected events that should have been stored in the CasEventRepository after publishing a new event.
+     * Pass in the number of expected events that should have been stored in the {@link CasEventRepository } after publishing a new event.
      * Wait for the repository to have that many events.  Waits for 2 seconds at most.
      *
-     * @param expected The expected number of events to have been saved into the CasEventRepository
+     * @param expected The expected number of events to have been saved into the {@link CasEventRepository }
      */
     private void waitForSpringEventToProcess(final long expected) {
         await().atMost(Duration.of(2, ChronoUnit.SECONDS)).until(() -> casEventRepository.load().count() >= expected);
     }
 
     /**
-     * Count the current number of events in the CasEventRepository
+     * Count the current number of events in the {@link CasEventRepository }
      * Publish the async event to the application context,
      * Wait for the async event to process.
      *
