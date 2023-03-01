@@ -18,8 +18,8 @@ import java.util.concurrent.Callable;
  *
  *  This {@link Callable} class simulates a thread that an application server would create for
  *  incoming HttpServletRequests, and will publish a {@link CasTicketGrantingTicketCreatedEvent}
- *  to the application context.  It will populate the {@link ClientInfo} object for each 'thread' with data from the {@link HttpServletRequest}.
- *  This is meant to be used for testing with the  {@link CasAuthenticationEventListenerTests} class.
+ *  to the application context. It will populate the {@link ClientInfo} object for each 'thread' with data from the {@link HttpServletRequest}.
+ *  This is meant to be used for testing with the {@link CasAuthenticationEventListenerTests} class.
  *  It will set the ips of the server/client to either IP1 or IP2 depending on the constructor value. *
  *
  *  @author David Malia
