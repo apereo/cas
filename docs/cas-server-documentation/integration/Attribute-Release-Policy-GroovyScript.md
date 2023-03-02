@@ -40,7 +40,7 @@ def run(final Object... args) {
 }
 ```
 
-<div class="alert alert-info"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
+<div class="alert alert-info">:information_source: <strong>Usage Warning</strong><p>Activating this policy is not without cost,
 as CAS needs to evaluate the inline script, compile and run it for subsequent executions. While the compiled
 script is cached and should help with execution performance, as a general rule, you should avoid opting
 for and designing complicated scripts.</p></div>

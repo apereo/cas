@@ -5,6 +5,7 @@ import com.yubico.webauthn.attestation.DeviceMatcher;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.exception.HexException;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
 
@@ -63,7 +64,7 @@ public class ExtensionMatcher implements DeviceMatcher {
 
     private boolean matchStringValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
         if (value instanceof DEROctetString) {
-            final String readValue = new String(((DEROctetString) value).getOctets(), CHARSET);
+            final String readValue = new String(((ASN1OctetString) value).getOctets(), CHARSET);
             return matchValue.asText().equals(readValue);
         } else {
             LOGGER.debug("Expected text string value for extension {}, was: {}", matchKey, value);
@@ -95,7 +96,7 @@ public class ExtensionMatcher implements DeviceMatcher {
         final ASN1Primitive innerValue;
         if (value instanceof DEROctetString) {
             try {
-                innerValue = ASN1Primitive.fromByteArray(((DEROctetString) value).getOctets());
+                innerValue = ASN1Primitive.fromByteArray(((ASN1OctetString) value).getOctets());
             } catch (IOException e) {
                 LOGGER.debug("Failed to parse {} extension value as ASN1: {}", matchKey, value);
                 return false;
@@ -106,7 +107,7 @@ public class ExtensionMatcher implements DeviceMatcher {
         }
 
         if (innerValue instanceof DEROctetString) {
-            final ByteArray readBytes = new ByteArray(((DEROctetString) innerValue).getOctets());
+            final ByteArray readBytes = new ByteArray(((ASN1OctetString) innerValue).getOctets());
             return matchBytes.equals(readBytes);
         } else {
             LOGGER.debug("Expected nested bit string value for extension {}, was: {}", matchKey, value);

@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -20,16 +20,17 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
 
-    protected AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
-        setCipherExecutor(cipherExecutor);
+    public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor,
+                                          final TicketSerializationManager ticketSerializationManager,
+                                          final TicketCatalog ticketCatalog) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
     }
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
@@ -68,7 +69,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = encodeTicketId(ticketId);
+        val encTicketId = digest(ticketId);
         return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
     }
 

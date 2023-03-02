@@ -11,8 +11,8 @@ docker run --rm -d -e 'DEBUG=1' -e 'SERVICES=ssm,events,cloudwatch,logs,s3,s3api
 docker ps | grep "localstack"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "localstack docker image is running."
+    echo "localstack docker container is running."
 else
-    echo "localstack docker image failed to start."
+    echo "localstack docker container failed to start."
     exit $retVal
 fi

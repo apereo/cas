@@ -3,7 +3,7 @@ set -e
 clear
 ${PWD}/ci/tests/mongodb/run-mongodb-server.sh
 echo "Waiting for MongoDb database to get ready..."
-sleep 5
+sleep 10
 
 function runscript {
   docker exec mongodb-server mongosh \

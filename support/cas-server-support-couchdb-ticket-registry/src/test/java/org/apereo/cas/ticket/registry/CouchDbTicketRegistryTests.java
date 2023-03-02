@@ -5,6 +5,7 @@ import org.apereo.cas.config.CouchDbTicketRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @Import({
     CasCouchDbCoreConfiguration.class,
@@ -39,6 +41,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("CouchDb")
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
@@ -64,7 +67,7 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyFails() throws Exception {
         val couchDb = mock(TicketRepository.class);
         doThrow(new DbAccessException()).when(couchDb).update(any());
-        val registry = new CouchDbTicketRegistry(couchDb, 1);
+        val registry = new CouchDbTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, couchDb, 1);
         assertNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
 
         doThrow(new UpdateConflictException()).when(couchDb).remove(any());

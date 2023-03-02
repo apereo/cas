@@ -10,7 +10,7 @@ category: Ticketing
 
 The JPA Ticket Registry allows CAS to store tickets in a relational database back-end such as MySQL.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using a relational database as
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Using a relational database as
 the back-end persistence choice for ticket registry state management is a fairly unnecessary and complicated
 process. Unless you are already outfitted with clustered database technology and the resources to manage it,
 the complexity is likely not worth the trouble.</p></div>
@@ -30,7 +30,7 @@ database periodically and remove expired records based on configured threshold p
 
 {% include_cached casproperties.html properties="cas.ticket.registry.cleaner" %}
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is 
+<div class="alert alert-warning">:warning: <strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is 
 best to keep the cleaner running on one designated CAS node only and turn it off on all others 
 via CAS settings. Keeping the cleaner running on all nodes may likely lead to 
 severe performance and locking issues.</p></div>

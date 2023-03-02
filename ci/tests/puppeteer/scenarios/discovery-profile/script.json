@@ -1,11 +1,13 @@
 {
-  "dependencies": "discovery-profile,pac4j-webflow,oidc,simple-mfa",
+  "dependencies": "discovery-profile,oidc,pac4j-webflow,simple-mfa",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.http-client.host-name-verifier=none",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",

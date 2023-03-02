@@ -20,8 +20,10 @@ import java.util.stream.StreamSupport;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { emit(doc._id, doc) }")
+@Deprecated(since = "7.0.0")
 public class EventCouchDbRepository extends CouchDbRepositorySupport<CouchDbCasEvent> {
     private final ObjectMapper objectMapper;
 

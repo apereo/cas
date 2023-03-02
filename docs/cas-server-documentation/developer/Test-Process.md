@@ -12,7 +12,7 @@ This page documents the steps that a CAS developer/contributor should take for t
 server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
-<div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
+<div class="alert alert-info">:information_source: <strong>Contributions</strong><p>Patches submitted to the CAS codebase 
 in form of pull requests must pass all automated unit or integration tests, and/or 
 provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
 the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
@@ -21,7 +21,7 @@ the contribution most likely will not be accepted into the codebase and ultimate
 
 The following types of test cases in the project are those that CAS developers/contributors need to review,
 
-<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are about to describe a problem, please try to put together a test case that concretely demonstrates
 the issue in an automated fashion in an environment that is fairly 
 isolated, <strong>WITHOUT</strong> manual instructions and guidance 
@@ -61,7 +61,7 @@ at reproducing scenarios related to an issue or possible defect, and can be very
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp.gradle` build script of web application you intend to run:
+- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp-dependencies.gradle` build script of web application you intend to run:
 
 ```gradle
 implementation project(":support:cas-server-support-modulename")
@@ -98,19 +98,19 @@ All unit and integration tests are executed by the [continuous integration syste
 
 Code coverage metrics are collected and reported by the following platforms:
 
-| System                            | Badge
-|-----------------------------------+---------------------------------------------------------+
-| Codacy           | [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&utm_medium=referral&utm_content=apereo/cas&utm_campaign=Badge_Coverage)
-| SonarCloud           | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=coverage)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
-| CodeCov           | [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
+| System     | Badge                                                                                                                                                                                                                                          |
+|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Codacy     | [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&utm_medium=referral&utm_content=apereo/cas&utm_campaign=Badge_Coverage) |
+| SonarCloud | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=coverage)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                                            |
+| CodeCov    | [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)                                                                                                                                 |
 
 Quality metrics are collected and reported by the following platforms:
 
-| System                            | Badge
-|-----------------------------------+---------------------------------------------------------------------------+
-| Codacy           | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=apereo/cas&amp;utm_campaign=Badge_Grade)
-| SonarCloud Quality Gate           | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
-| SonarCloud Maintainability            | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server) 
+| System                     | Badge                                                                                                                                                                                                                                                |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Codacy                     | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=apereo/cas&amp;utm_campaign=Badge_Grade) |
+| SonarCloud Quality Gate    | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                                     |
+| SonarCloud Maintainability | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                                     |
 
 ## Browser & Functional Testing
 
@@ -178,6 +178,7 @@ The following command-line options are supported for test execution:
 | `--hb`                                    | A combination of `--headless` and `--build`.                                             |
 | `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
+| `--io`, `initonly`                        | Initialize the execution of the test scenario, but do not run it.                        |
 
 For example, the `login-success` test scenario may be run using: 
 

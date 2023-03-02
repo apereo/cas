@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.validation.ValidationResponseType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vladmihalcea.hibernate.type.json.JsonType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

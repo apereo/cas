@@ -16,8 +16,10 @@ import java.util.List;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if(doc.token && doc.userId) { emit(doc._id, doc) } }")
+@Deprecated(since = "7.0.0")
 public class GoogleAuthenticatorTokenCouchDbRepository extends CouchDbRepositorySupport<CouchDbGoogleAuthenticatorToken> {
     public GoogleAuthenticatorTokenCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
         super(CouchDbGoogleAuthenticatorToken.class, db, createIfNotExists);

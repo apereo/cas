@@ -36,12 +36,12 @@ public class DelegatedSaml2ClientMetadataControllerTests {
     @Test
     public void verifyOperation() {
         assertNotNull(delegatedAuthenticationAction);
-        assertNotNull(delegatedSaml2ClientMetadataController.getFirstIdentityProviderMetadata(true));
+        assertNotNull(delegatedSaml2ClientMetadataController.getFirstIdentityProviderMetadata());
         assertNotNull(delegatedSaml2ClientMetadataController.getFirstServiceProviderMetadata());
-        assertTrue(delegatedSaml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client", true).getStatusCode().is2xxSuccessful());
+        assertTrue(delegatedSaml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
         assertTrue(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
 
-        assertFalse(delegatedSaml2ClientMetadataController.getIdentityProviderMetadataByName("UnknownClient", true).getStatusCode().is2xxSuccessful());
+        assertFalse(delegatedSaml2ClientMetadataController.getIdentityProviderMetadataByName("UnknownClient").getStatusCode().is2xxSuccessful());
         assertFalse(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("UnknownClient").getStatusCode().is2xxSuccessful());
     }
 }

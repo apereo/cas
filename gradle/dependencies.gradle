@@ -189,6 +189,7 @@ ext.libraries = [
                 dependencies.create("org.cryptacular:cryptacular:$cryptacularVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk18on")
                 },
                 dependencies.create("org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -358,11 +359,12 @@ ext.libraries = [
         casclient                  : dependencies.create("org.apereo.cas.client:cas-client-core:$casClientVersion") {
             exclude(group: "javax.servlet", module: "servlet-api")
             exclude(group: "org.slf4j", module: "log4j-over-slf4j")
-            exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
+            exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "org.glassfish.jaxb", module: "jaxb-core")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "org.apereo.cas.client", module: "cas-client-support-saml")
         },
         commons                    : [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
@@ -524,34 +526,6 @@ ext.libraries = [
                 dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
-                },
-                dependencies.create("org.springmodules:spring-modules-cache:0.8") {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "ant", module: "ant")
-                    exclude(group: "xstream", module: "xstream")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "xpp3", module: "xpp3_min")
-                    exclude(group: "jcs", module: "jcs")
-                    exclude(group: "jboss", module: "jboss-system")
-                    exclude(group: "jboss", module: "javassist")
-                    exclude(group: "jboss", module: "jboss-cache")
-                    exclude(group: "jboss", module: "jboss-jmx")
-                    exclude(group: "jboss", module: "jboss-minimal")
-                    exclude(group: "jboss", module: "jboss-common")
-                    exclude(group: "jgroups", module: "jgroups-all")
-                    exclude(group: "log4j", module: "log4j")
-                    exclude(group: "xjavadoc", module: "xjavadoc")
-                    exclude(group: "jini", module: "xjavadoc")
-                    exclude(group: "jini", module: "jsk-platform")
-                    exclude(group: "jini", module: "boot")
-                    exclude(group: "jini", module: "jsk-lib")
-                    exclude(group: "jini", module: "mahalo")
-                    exclude(group: "jini", module: "reggie")
-                    exclude(group: "jini", module: "start")
-                    exclude(group: "jini", module: "webster")
-                    exclude(group: "gigaspaces", module: "gigaspaces-ce")
-                    exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "org.springframework", module: "spring")
                 }
         ],
         classgraph                 : [
@@ -623,7 +597,7 @@ ext.libraries = [
                 }
         ],
         hibernate                  : [
-                dependencies.create("com.vladmihalcea:hibernate-types-60:$hibernateTypesVersion") {
+                dependencies.create("io.hypersistence:hypersistence-utils-hibernate-60:$hypersistenceVersion") {
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                 },
                 dependencies.create("org.hibernate.orm:hibernate-graalvm:$hibernateVersion") {
@@ -927,7 +901,7 @@ ext.libraries = [
                 dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$jaxbApiVersion") {
                     transitive = false
                 },
-                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbApiVersion") {
+                dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbRuntimeVersion") {
                     transitive = false
                 },
                 dependencies.create("jakarta.xml.soap:jakarta.xml.soap-api:$jakartaSoapApiVersion") {
@@ -1432,6 +1406,18 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        fluentd : [
+                dependencies.create("org.fluentd:fluent-logger:$fluentdVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("io.github.technologize:fluentd-log4j-appender:$fluentdLog4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         log4j                      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -1933,6 +1919,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-support-saml")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-core")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
         pac4jsaml                  : [
@@ -2244,6 +2231,26 @@ ext.libraries = [
                 },
                 dependencies.create("com.sun.mail:jakarta.mail:$jakartaMailVersion")
         ],
+        springbootpropertymigrator : [
+                dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
+                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-reactor-netty")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-parent")
+                }
+        ],
         springboot                 : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-aop:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2331,24 +2338,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
-                dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
-                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
-                    exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "com.vaadin.external.google", module: "android-json")
-                    exclude(group: "com.vaadin.external.google", module: "android-json")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-reactor-netty")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-parent")
-                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-actuator")
@@ -2429,6 +2418,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
+                    exclude(group: "org.apache.tomcat", module: "tomcat-catalina")
                 },
                 dependencies.create("org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion") {
                     exclude(group: "org.apache.tomcat", module: "tomcat-annotations-api")
@@ -2469,7 +2459,14 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.springframework.data", module: "spring-data-redis")
                 },
-                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion")
+                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion"),
+                dependencies.create("com.redis:spring-lettucemod:$springLettuceModVersion") {
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                }
         ],
         springintegration          : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {
@@ -2893,7 +2890,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                 }
         ],
-        springcloud                : [
+        springcloudbootstrap : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudCommonsVersion") {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.objenesis", module: "objenesis")
@@ -2918,7 +2915,9 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
-                },
+                }
+        ],
+        springcloud                : [
                 dependencies.create("org.springframework.cloud:spring-cloud-commons:$springCloudCommonsVersion") {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.objenesis", module: "objenesis")
@@ -2966,7 +2965,6 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                 }
         ],
-
         springsession              : [
                 dependencies.create("org.springframework.session:spring-session-core:$springSessionVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -3390,6 +3388,7 @@ ext.libraries = [
         ],
         webjars                    : [
                 dependencies.create("org.webjars:webjars-locator-core:$webjarLocatorVersion") {
+                    exclude(group: "io.github.classgraph", module: "classgraph")
                 },
                 dependencies.create("org.webjars:hal-explorer:$halVersion") {
                 },

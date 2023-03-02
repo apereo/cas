@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -25,8 +26,8 @@ public class CasSurrogateAuthenticationSuccessfulEvent extends AbstractCasEvent 
 
     private final String surrogate;
 
-    public CasSurrogateAuthenticationSuccessfulEvent(final Object source, final Principal principal, final String surrogate) {
-        super(source);
+    public CasSurrogateAuthenticationSuccessfulEvent(final Object source, final Principal principal, final String surrogate, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.principal = principal;
         this.surrogate = surrogate;
     }

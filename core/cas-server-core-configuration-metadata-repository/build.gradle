@@ -1,4 +1,12 @@
 description = "Apereo CAS Core Configuration Metadata Repository"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Metadata Repository"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-configuration-model")
     

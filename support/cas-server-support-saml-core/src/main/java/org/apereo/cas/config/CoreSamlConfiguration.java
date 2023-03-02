@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
@@ -75,9 +76,10 @@ public class CoreSamlConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
     public OpenSamlConfigBean openSamlConfigBean(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("shibboleth.ParserPool")
         final BasicParserPool parserPool) throws Exception {
-        return new DefaultOpenSamlConfigBean(parserPool);
+        return new DefaultOpenSamlConfigBean(parserPool, applicationContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

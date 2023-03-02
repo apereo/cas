@@ -33,11 +33,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "couchbase")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbasePrincipalFactory")

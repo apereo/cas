@@ -27,6 +27,7 @@ import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.ServiceValidationViewTypes;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.v1.LegacyValidateController;
 import org.apereo.cas.web.v2.ProxyController;
@@ -232,6 +233,25 @@ public class CasValidationConfiguration {
     @Configuration(value = "CasValidationViewsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasValidationViewsConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public View casSessionStorageWriteView(
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolViewFactory,
+            final ConfigurableApplicationContext applicationContext) {
+            return casProtocolViewFactory.create(applicationContext, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_WRITE);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public View casSessionStorageReadView(
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
+            final CasProtocolViewFactory casProtocolViewFactory,
+            final ConfigurableApplicationContext applicationContext) {
+            return casProtocolViewFactory.create(applicationContext, CasWebflowConstants.VIEW_ID_SESSION_STORAGE_READ);
+        }
+
 
         @Bean
         @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")

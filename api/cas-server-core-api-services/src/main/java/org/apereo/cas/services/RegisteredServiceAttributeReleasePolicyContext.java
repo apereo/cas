@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * This is {@link RegisteredServiceAttributeReleasePolicyContext}.
@@ -28,4 +29,7 @@ public class RegisteredServiceAttributeReleasePolicyContext {
 
     @Builder.Default
     private final Map<String, List<Object>> releasingAttributes = new LinkedHashMap<>();
+
+    @Builder.Default
+    private final Predicate<RegisteredServiceAttributeReleasePolicy> attributeReleasePolicyPredicate = policy -> true;
 }

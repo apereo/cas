@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,7 +27,7 @@ public class LogoutWebApplicationServiceFactoryTests {
         val factory = new LogoutWebApplicationServiceFactory(properties);
         assertNull(factory.getRequestedService(request));
 
-        properties.setRedirectParameter("url");
+        properties.setRedirectParameter(List.of("url"));
         request.setRequestURI(CasProtocolConstants.ENDPOINT_LOGOUT);
         request.addParameter("url", "https://google.com");
         assertNotNull(factory.getRequestedService(request));

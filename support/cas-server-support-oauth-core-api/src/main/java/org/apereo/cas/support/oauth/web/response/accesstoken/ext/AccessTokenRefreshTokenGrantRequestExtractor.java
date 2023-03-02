@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 
 import java.util.Set;
@@ -72,7 +73,9 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     protected String getRegisteredServiceIdentifierFromRequest(final WebContext context) {
-        return getConfigurationContext().getRequestParameterResolver().resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
+        return getConfigurationContext().getRequestParameterResolver()
+            .resolveClientIdAndClientSecret(callContext).getLeft();
     }
 
     /**

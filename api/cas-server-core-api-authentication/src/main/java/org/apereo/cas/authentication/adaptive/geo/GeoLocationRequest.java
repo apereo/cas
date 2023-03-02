@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Setter
 @EqualsAndHashCode(exclude = {"accuracy", "timestamp"})
+@Accessors(chain = true)
 public class GeoLocationRequest implements Serializable {
 
     @Serial

@@ -170,4 +170,13 @@ public interface StringSerializer<T> extends Serializable {
     default List<MediaType> getContentTypes() {
         return List.of(MediaType.TEXT_PLAIN);
     }
+
+    /**
+     * Merge.
+     *
+     * @param baseEntity  the base entity
+     * @param childEntity the child entity
+     * @return the result
+     */
+    T merge(T baseEntity, T childEntity);
 }

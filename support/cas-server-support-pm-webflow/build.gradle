@@ -1,4 +1,12 @@
 description = "Apereo CAS Password Management - Core"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Password Management",
+            title: "Password Management",
+            aliases: ["pm"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-protocol")

@@ -1,4 +1,11 @@
 description = "Apereo CAS Themes Collection"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Themes Collection",
+            category: "User Interface"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services")

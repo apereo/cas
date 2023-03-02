@@ -52,7 +52,7 @@ and privileges to allow it to impersonate any other account. Accounts that are w
 in this strategy are not assigned a specific list of authorized impersonatees but instead are able to impersonate
 any other username without any restrictions or additional checks.
 
-<div class="alert alert-warning"><strong>Usage Warning</strong>
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong>
 <p>Be careful with this strategy! Designating an account as a wildcard will disable any and all other checks
 on the surrgate/impersonatee account and CAS will completely back away from validating and verifying
 the requested surrogate account.</p></div>

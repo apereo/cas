@@ -117,20 +117,20 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @SneakyThrows
-    private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential c) {
+    private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential givenCredential) {
         try {
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
-            val credential = (DuoSecurityUniversalPromptCredential) c;
+            val credential = (DuoSecurityUniversalPromptCredential) givenCredential;
             val result = duoAuthenticationService.authenticate(credential);
             if (result.isSuccess()) {
                 val principal = principalFactory.createPrincipal(result.getUsername(), result.getAttributes());
-                LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
+                LOGGER.debug("Duo Security has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        throw new FailedLoginException("Duo universal prompt authentication has failed");
+        throw new FailedLoginException("Duo Security universal prompt authentication has failed");
     }
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {

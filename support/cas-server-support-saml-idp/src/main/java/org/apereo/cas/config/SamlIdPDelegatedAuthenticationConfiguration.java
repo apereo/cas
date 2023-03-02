@@ -38,10 +38,11 @@ public class SamlIdPDelegatedAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "saml2DelegatedClientAuthenticationRequestCustomizer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public DelegatedClientAuthenticationRequestCustomizer saml2DelegatedClientAuthenticationRequestCustomizer(
+        final CasConfigurationProperties casProperties,
         @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
         final SessionStore sessionStore,
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {
-        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(sessionStore, openSamlConfigBean);
+        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(sessionStore, openSamlConfigBean, casProperties);
     }
 }

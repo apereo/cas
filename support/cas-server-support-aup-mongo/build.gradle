@@ -1,4 +1,11 @@
 description = "Apereo CAS AUP Mongo Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via MongoDb",
+            category: "Acceptable Usage Policy"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")

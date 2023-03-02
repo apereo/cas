@@ -90,7 +90,7 @@ For developers modifying CAS, if adding or modifying a 3rd party library, the st
 - Add entry to `core/cas-server-core-web/src/main/resources/cas_common_messages.properties` for each resource (e.g. js or css). 
 - Reference the version from `gradle.properties` in the URL and it will be filtered in at build time).
 
-<div class="alert alert-info"><strong>Resource Caching</strong><p>The build attempts to 
+<div class="alert alert-info">:information_source: <strong>Resource Caching</strong><p>The build attempts to 
 rebuild all relevant modules again when version numbers change and resources upgraded. If
 you do need to forcefully remove cached artifacts and repackage the application anew, run 
 the build's <code>clean</code> task inside the <code>core/cas-server-core-web</code> module.</p></div>

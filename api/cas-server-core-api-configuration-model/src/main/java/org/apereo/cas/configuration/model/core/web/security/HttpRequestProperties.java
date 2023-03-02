@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -58,6 +59,7 @@ public class HttpRequestProperties implements Serializable {
      * against the request URL. If a successful match is found,
      * the request would be blocked.
      */
+    @RegularExpressionCapable
     private String patternToBlock;
 
     /**

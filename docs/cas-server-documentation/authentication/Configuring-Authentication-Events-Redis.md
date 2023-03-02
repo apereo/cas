@@ -5,7 +5,7 @@ category: Authentication
 ---
 {% include variables.html %}
 
-# MongoDb Authentication Events
+# Redis Authentication Events
 
 Stores authentication events into a Redis database.
 

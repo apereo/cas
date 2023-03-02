@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.password=Oradoc_db1",
     "cas.audit.jdbc.driver-class=oracle.jdbc.driver.OracleDriver",
     "cas.audit.jdbc.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
-    "cas.audit.jdbc.dialect=org.hibernate.dialect.Oracle12cDialect"
+    "cas.audit.jdbc.dialect=org.hibernate.dialect.OracleDialect"
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")

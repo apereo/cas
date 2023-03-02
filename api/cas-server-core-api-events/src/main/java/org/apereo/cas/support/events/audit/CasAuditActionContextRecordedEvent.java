@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -27,8 +28,8 @@ public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
      * @param source             the source
      * @param auditActionContext the audit action context
      */
-    public CasAuditActionContextRecordedEvent(final Object source, final AuditActionContext auditActionContext) {
-        super(source);
+    public CasAuditActionContextRecordedEvent(final Object source, final AuditActionContext auditActionContext, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.auditActionContext = auditActionContext;
     }
 }

@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -27,8 +28,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
 
     @BeforeEach
     public void init() {
-        authenticator = new OAuth20AccessTokenAuthenticator(
-            ticketRegistry, accessTokenJwtBuilder);
+        authenticator = new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 
@@ -71,7 +71,8 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(InvalidTicketException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(InvalidTicketException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
@@ -90,7 +91,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         val credentials = new TokenCredentials(encoder.encode(accessToken.getId()));
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 }

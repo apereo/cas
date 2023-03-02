@@ -15,12 +15,14 @@ import java.io.Serial;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @Accessors(chain = true)
 @Getter
 @Setter
 @JsonFilter("CouchDbServiceRegistryProperties")
+@Deprecated(since = "7.0.0")
 public class CouchDbServiceRegistryProperties extends BaseCouchDbProperties {
     @Serial
     private static final long serialVersionUID = -5101551655756163621L;

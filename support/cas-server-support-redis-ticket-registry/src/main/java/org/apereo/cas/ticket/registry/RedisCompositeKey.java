@@ -21,7 +21,10 @@ public class RedisCompositeKey {
      */
     public static final String REDIS_TICKET_REGISTRY_MESSAGE_TOPIC = "redisTicketRegistryMessageTopic";
 
-    private static final String CAS_TICKET_PREFIX = "CAS_TICKET";
+    /**
+     * Ticket prefix.
+     */
+    public static final String CAS_TICKET_PREFIX = "CAS_TICKET";
 
     @Builder.Default
     private final String principal = "*";

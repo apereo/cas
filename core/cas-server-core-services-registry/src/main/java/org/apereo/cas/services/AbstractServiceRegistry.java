@@ -24,12 +24,12 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
     /**
      * The Event publisher.
      */
-    private final transient ConfigurableApplicationContext applicationContext;
+    private final ConfigurableApplicationContext applicationContext;
 
     /**
      * The Service registry listeners.
      */
-    private final transient Collection<ServiceRegistryListener> serviceRegistryListeners;
+    private final Collection<ServiceRegistryListener> serviceRegistryListeners;
 
     /**
      * Publish event.

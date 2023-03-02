@@ -1,4 +1,12 @@
 description = "Apereo CAS Bucket4j Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via Bucket4j",
+            aliases: ["bucket4j"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-throttle")

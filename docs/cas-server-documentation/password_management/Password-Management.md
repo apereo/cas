@@ -31,7 +31,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
 
-<div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
+<div class="alert alert-info">:information_source: <strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to teach you that it exists.</p></div>
 
 ## Account Management

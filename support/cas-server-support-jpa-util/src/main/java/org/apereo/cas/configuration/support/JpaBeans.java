@@ -113,6 +113,7 @@ public class JpaBeans {
         val dataSourceProperties = new Properties();
         dataSourceProperties.putAll(jpaProperties.getProperties());
         bean.setDataSourceProperties(dataSourceProperties);
+        
         return new DefaultCloseableDataSource(bean);
     }
 

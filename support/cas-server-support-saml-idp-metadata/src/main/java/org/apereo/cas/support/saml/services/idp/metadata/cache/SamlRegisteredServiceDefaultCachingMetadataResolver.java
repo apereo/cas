@@ -109,6 +109,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         cache.invalidate(cacheKey);
     }
 
+    @Override
+    public Optional<CachedMetadataResolverResult> getIfPresent(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+        LOGGER.trace("Invalidating cache for [{}].", service.getName());
+        val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
+        return Optional.ofNullable(cache.getIfPresent(cacheKey));
+    }
+
     protected MetadataResolutionResult isMetadataResolverAcceptable(
         final MetadataResolverCacheQueryResult queryResult,
         final CriteriaSet criteriaSet) {

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -39,6 +40,7 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
     }
 
     @Bean
+    @Lazy(false)
     public InitializingBean wsSecurityTokenServiceInitializingBean(
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {

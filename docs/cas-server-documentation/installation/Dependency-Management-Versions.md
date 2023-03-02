@@ -47,7 +47,7 @@ You may not immediately see all the listed artifacts and libraries in your
 deployment. Depending on which CAS feature module is included in the final build,
 the above libraries and dependencies will be pulled into the final web application artifact.
 
-<div class="alert alert-info"><strong>Ownership</strong><p>
+<div class="alert alert-info">:information_source: <strong>Ownership</strong><p>
 Please note that the above listed dependencies are generally those that are explicitly requested, owned and controlled
 by the CAS software. There are of course many other modules and dependencies that would be <i>transitively</i> pulled on
 whose specifics and versions are not directly controlled by CAS. In such scenarios, the specific feature module or library itself is

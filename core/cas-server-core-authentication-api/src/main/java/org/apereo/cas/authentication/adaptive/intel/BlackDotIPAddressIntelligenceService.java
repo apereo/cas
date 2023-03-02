@@ -51,11 +51,12 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 builder.append(properties.getEmailAddress());
             }
 
-            switch (properties.getMode().toUpperCase()) {
-                case "DYNA_LIST" -> builder.append("&flags=m");
-                case "DYNA_CHECK" -> builder.append("&flags=b");
-                default -> builder.append("&flags=f");
-            }
+            val flags = switch (properties.getMode().toUpperCase()) {
+                case "DYNA_LIST" -> "&flags=m";
+                case "DYNA_CHECK" -> "&flags=b";
+                default -> "&flags=f";
+            };
+            builder.append(flags);
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
 

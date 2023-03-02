@@ -19,10 +19,12 @@ import java.util.Date;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
 @TypeDiscriminator("doc.principal && doc.deviceFingerprint && doc.recordDate")
+@Deprecated(since = "7.0.0")
 public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuthenticationTrustRecord {
 
     @Serial

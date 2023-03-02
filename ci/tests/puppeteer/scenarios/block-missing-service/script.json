@@ -6,6 +6,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     
-    "--cas.sso.allow-missing-service-parameter=false"
+    "--cas.sso.services.allow-missing-service-parameter=false"
   ]
 }

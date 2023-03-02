@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -38,7 +37,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
-        doc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
+        doc.setAppliesTo(getAppliesToFor(registeredService));
         return this.mongoTemplate.save(doc, this.collectionName);
     }
 

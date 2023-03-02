@@ -16,8 +16,8 @@ Support is enabled by including the following dependencies in the WAR overlay:
 
 The expected database schema that is automatically created and configured by CAS contains a single table as `YubiKeyAccount` with the following fields:
 
-| Field              | Description
-|--------------------------------------------------------------------------------------
-| `id`               | Unique record identifier, acting as the primary key.
-| `publicId`         | The public identifier/key of the device used for authentication.
-| `username`         | The username whose device is registered.
+| Field      | Description                                                      |
+|------------|------------------------------------------------------------------|
+| `id`       | Unique record identifier, acting as the primary key.             |
+| `publicId` | The public identifier/key of the device used for authentication. |
+| `username` | The username whose device is registered.                         |

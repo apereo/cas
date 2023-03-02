@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.DisposableBean;
@@ -71,6 +72,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     public Resource generate() throws Exception {
         val resource = determineJsonWebKeystoreResource();
         val isWatcherEnabled = oidcProperties.getJwks().getFileSystem().isWatcherEnabled();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (ResourceUtils.isFile(resource) && isWatcherEnabled) {
             if (resourceWatcherService == null) {
                 resourceWatcherService = new FileWatcherService(resource.getFile(),
@@ -80,7 +82,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
                             FunctionUtils.doUnchecked(__ -> {
                                 if (applicationContext.isActive()) {
                                     LOGGER.info("Publishing event to broadcast change in [{}]", file);
-                                    applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
+                                    applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file, clientInfo));
                                 }
                             });
                         }
@@ -89,7 +91,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             }
         }
         val resultingResource = generate(resource);
-        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource));
+        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource, clientInfo));
         return resultingResource;
     }
 

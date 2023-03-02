@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
@@ -87,7 +88,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
                + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
                + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
                + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
-               + "Destination=\"http://callback.example.org?client_name=SAML2Client&amp;logoutendpoint=true\" "
+               + "Destination=\"http://callback.example.org?client_name=SAML2Client\" "
                + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
                + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
                + "  <samlp:Status>%n"
@@ -98,6 +99,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
 
     protected void assertStartAuthentication(final Service service) throws Exception {
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         val response = new MockHttpServletResponse();
         val flow = new Flow("mockFlow");
         flow.addVariable(new FlowVariable("credential",

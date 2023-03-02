@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import lombok.val;
@@ -26,8 +27,10 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth10Configuration;
@@ -67,7 +70,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.pac4j.cookie.enabled=true")
+    properties = {
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw",
+        "cas.authn.pac4j.cookie.enabled=true"
+    })
 @Tag("Webflow")
 public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
@@ -96,6 +103,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void setup() {
         val service = RegisteredServiceTestUtils.getService();
         httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
 
@@ -252,8 +260,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
     }
 
-    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath,
-                                                                       final String spEntityId) throws Exception {
+    private Pair<SAML2Client, SAML2MessageContext> setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         val saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
@@ -267,9 +274,10 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        val saml2MessageContext = new SAML2MessageContext();
+        val webContext = new JEEContext(this.httpServletRequest, new MockHttpServletResponse());
+        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        saml2MessageContext.setWebContext(context);
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 

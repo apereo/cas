@@ -2,6 +2,7 @@ package org.apereo.cas.shell.commands.jwt;
 
 import org.apereo.cas.util.RandomUtils;
 
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -109,7 +110,7 @@ public class GenerateJwtCommand {
             .filter(f -> f.getType().equals(JWEAlgorithm.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
-                return ((JWEAlgorithm) f.get(null)).getName();
+                return ((Algorithm) f.get(null)).getName();
             }))
             .collect(Collectors.joining(","));
         LOGGER.debug("Encryption algorithm: [{}]. Available algorithms are [{}]", encryptionAlgorithm, acceptedEncAlgs);
@@ -118,7 +119,7 @@ public class GenerateJwtCommand {
             .filter(f -> f.getType().equals(EncryptionMethod.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
-                return ((EncryptionMethod) f.get(null)).getName();
+                return ((Algorithm) f.get(null)).getName();
             }))
             .collect(Collectors.joining(","));
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
@@ -158,7 +159,7 @@ public class GenerateJwtCommand {
             .filter(f -> f.getType().equals(JWSAlgorithm.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
-                return ((JWSAlgorithm) f.get(null)).getName();
+                return ((Algorithm) f.get(null)).getName();
             }))
             .collect(Collectors.joining(","));
         LOGGER.debug("Signing algorithm: [{}]. Available algorithms are [{}]", signingAlgorithm, acceptedSigningAlgs);

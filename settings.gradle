@@ -25,7 +25,7 @@ dependencyResolutionManagement {
         mavenLocal()
         mavenCentral()
         maven {
-            url "https://build.shibboleth.net/nexus/content/repositories/snapshots"
+            url "https://build.shibboleth.net/maven/snapshots"
             mavenContent { snapshotsOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -34,6 +34,7 @@ dependencyResolutionManagement {
         }
         maven {
             url "https://build.shibboleth.net/maven/releases/"
+            mavenContent {releasesOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
                 includeGroupByRegex "net\\.shibboleth.*"
@@ -305,6 +306,7 @@ include "support:cas-server-support-ldap-monitor"
 include "support:cas-server-support-ldap-service-registry"
 include "support:cas-server-support-logback"
 include "support:cas-server-support-logging-config-cloudwatch"
+include "support:cas-server-support-logging-config-fluentd"
 include "support:cas-server-support-logging-config-splunk"
 include "support:cas-server-support-logging-config-sqs"
 include "support:cas-server-support-memcached-aws-elasticache"
@@ -511,6 +513,7 @@ include "webapp:cas-server-webapp-init-config-server"
 include "webapp:cas-server-webapp-init-eureka-server"
 include "webapp:cas-server-webapp-init-tomcat"
 include "webapp:cas-server-webapp-starter-tomcat"
+include "webapp:cas-server-webapp-native"
 
 include "webapp:cas-server-webapp-jetty"
 include "webapp:cas-server-webapp-tomcat"

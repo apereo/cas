@@ -19,7 +19,9 @@ import java.util.Set;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
     private final MultifactorAuthenticationTrustRecordCouchDbRepository couchDb;

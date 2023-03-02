@@ -37,16 +37,16 @@ public class CassandraTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
+        final TicketCatalog ticketCatalog,
+        final CasConfigurationProperties casProperties,
         @Qualifier("cassandraTicketRegistrySessionFactory")
         final CassandraSessionFactory cassandraTicketRegistrySessionFactory,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
-        val registry = new CassandraTicketRegistry(ticketCatalog, cassandraTicketRegistrySessionFactory,
-            cassandra, ticketSerializationManager);
-        registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra"));
-        return registry;
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra");
+        return new CassandraTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+            cassandraTicketRegistrySessionFactory, cassandra);
     }
 
     @Bean

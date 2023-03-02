@@ -13,8 +13,10 @@ import java.util.List;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if(doc.surrogate && doc.principal) { emit(doc._id, doc) } }")
+@Deprecated(since = "7.0.0")
 public class SurrogateAuthorizationCouchDbRepository extends CouchDbRepositorySupport<CouchDbSurrogateAuthorization> {
     public SurrogateAuthorizationCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
         super(CouchDbSurrogateAuthorization.class, db, createIfNotExists);

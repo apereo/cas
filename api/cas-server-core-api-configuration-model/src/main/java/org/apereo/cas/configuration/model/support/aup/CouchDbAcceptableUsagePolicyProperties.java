@@ -15,12 +15,14 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-aup-couchdb")
 @Accessors(chain = true)
 @Getter
 @Setter
 @JsonFilter("CouchDbAcceptableUsagePolicyProperties")
+@Deprecated(since = "7.0.0")
 public class CouchDbAcceptableUsagePolicyProperties extends BaseAsynchronousCouchDbProperties {
 
     @Serial

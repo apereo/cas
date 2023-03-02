@@ -1,4 +1,12 @@
 description = "Apereo CAS Consent Support via CouchDbDb"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Attribute Consent via Apache CouchDb",
+            category: "Attribute Consent"
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

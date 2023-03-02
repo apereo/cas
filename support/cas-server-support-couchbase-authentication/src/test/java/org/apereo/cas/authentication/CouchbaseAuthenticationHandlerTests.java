@@ -29,6 +29,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Jerome LELEU
  * @since 6.0.4
+ * @deprecated Since 7.0.0
  */
 @Tag("Couchbase")
 @EnabledIfListeningOnPort(port = 8091)
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.couchbase.bucket=pplbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -11,6 +11,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -53,6 +54,10 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 }
                 if (entry.getAttribute(ldapProperties.getPhoneAttribute()) != null) {
                     acctBuilder.phone(entry.getAttribute(ldapProperties.getPhoneAttribute()).getStringValue());
+                }
+                if (entry.getAttribute(ldapProperties.getRequestPasswordAttribute()) != null) {
+                    val value = entry.getAttribute(ldapProperties.getRequestPasswordAttribute()).getStringValue();
+                    acctBuilder.requestPassword(BooleanUtils.toBoolean(value));
                 }
                 val attributes = new LinkedHashMap<String, List<String>>(entry.getAttributes().size());
                 entry.getAttributes().forEach(attr -> attributes.put(attr.getName(), new ArrayList<>(attr.getStringValues())));

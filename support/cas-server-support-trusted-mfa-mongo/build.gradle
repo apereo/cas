@@ -1,4 +1,11 @@
 description = "Apereo CAS Trusted MFA Browser/Device Mongo Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication Trusted Devices",
+            title: "Multifactor Authentication Trusted Devices via MongoDb"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")

@@ -265,8 +265,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
         if (value instanceof NameIDType) {
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, value);
-            ((NameIDType) value).detach();
-            return (NameIDType) value;
+            ((XMLObject) value).detach();
+            return (XMLObject) value;
         }
 
         if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {

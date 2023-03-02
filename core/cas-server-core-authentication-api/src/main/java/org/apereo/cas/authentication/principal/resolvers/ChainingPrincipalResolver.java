@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -57,13 +58,14 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     private List<PrincipalResolver> chain;
 
     @Override
-    public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> principal,
+                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) {
         val principals = new ArrayList<Principal>(chain.size());
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {
                 LOGGER.debug("Invoking principal resolver [{}]", resolver.getName());
-                val p = resolver.resolve(credential, principal, handler);
+                val p = resolver.resolve(credential, principal, handler, service);
                 if (p != null) {
                     LOGGER.debug("Resolved principal [{}]", p);
                     principals.add(p);

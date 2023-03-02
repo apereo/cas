@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Import({
     CasCouchDbCoreConfiguration.class,
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CouchDb")
 @Getter
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired

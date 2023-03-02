@@ -1,5 +1,14 @@
 description = "Apereo CAS Configuration - JDBC"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via JDBC"
+    ]
+}
 dependencies {
+    implementation libraries.springcloudbootstrap
+
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-jpa-util")

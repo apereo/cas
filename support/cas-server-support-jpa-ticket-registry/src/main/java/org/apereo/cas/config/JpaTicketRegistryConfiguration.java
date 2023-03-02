@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketEntityFactory;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
@@ -34,6 +35,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
@@ -63,6 +65,7 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Primary
         public CloseableDataSource dataSourceTicket(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
@@ -166,6 +169,8 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaTicketRegistryTransactionTemplate")
@@ -178,10 +183,9 @@ public class JpaTicketRegistryConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val jpa = casProperties.getTicket().getRegistry().getJpa();
-                    val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog,
+                    val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa");
+                    return new JpaTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         jpaBeanFactory, jpaTicketRegistryTransactionTemplate, casProperties);
-                    bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
-                    return bean;
                 })
                 .otherwiseProxy()
                 .get();

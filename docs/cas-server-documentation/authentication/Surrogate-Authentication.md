@@ -39,15 +39,15 @@ Surrogate accounts may be defined statically in the CAS configuration.
 
 ### Others
 
-| Storage          | Description                                         
-|------------------------------------------------------------------------------------
-| JSON             | [See this guide](Surrogate-Authentication-Storage-JSON.html).
-| LDAP             | [See this guide](Surrogate-Authentication-Storage-LDAP.html).
-| CouchDb          | [See this guide](Surrogate-Authentication-Storage-CouchDb.html).
-| JDBC             | [See this guide](Surrogate-Authentication-Storage-JDBC.html).
-| REST             | [See this guide](Surrogate-Authentication-Storage-REST.html).
-| Groovy           | [See this guide](Surrogate-Authentication-Storage-Groovy.html).
-| Custom           | [See this guide](Surrogate-Authentication-Storage-Custom.html).
+| Storage     | Description                                                      |
+|-------------|------------------------------------------------------------------|
+| JSON        | [See this guide](Surrogate-Authentication-Storage-JSON.html).    |
+| LDAP        | [See this guide](Surrogate-Authentication-Storage-LDAP.html).    |
+| ~~CouchDb~~ | [See this guide](Surrogate-Authentication-Storage-CouchDb.html). |
+| JDBC        | [See this guide](Surrogate-Authentication-Storage-JDBC.html).    |
+| REST        | [See this guide](Surrogate-Authentication-Storage-REST.html).    |
+| Groovy      | [See this guide](Surrogate-Authentication-Storage-Groovy.html).  |
+| Custom      | [See this guide](Surrogate-Authentication-Storage-Custom.html).  |
 
 ## Account Selection
 
@@ -59,7 +59,7 @@ An impersonation session can be assigned a specific expiration policy that would
 may last. This means that the SSO session established as part of impersonation will rightly vanish, once the 
 expiration policy dictates as such. It is recommended that you keep the expiration length short (i.e. 30 minutes) to avoid possible security issues.
 
-<div class="alert alert-info"><strong>Remember</strong><p>
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
 The expiration policy assigned to impersonation sessions is expected to be <i>shorter</i> than the <i>normal</i> expiration policy
 assigned to non-surrogate sessions. In other words, if the usual expiration policy that controls the single sign-on session is set to last
 2 hours, the surrogate session expiration is expected to be a time period less than or equal to 2 hours.

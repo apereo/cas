@@ -11,7 +11,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
         </Console>
 
         <RollingFile name="casFile" fileName="caseurekaserver.log" append="true"
-                     filePattern="caseurekaserver-%d{yyyy-MM-dd-HH}-%i.log">
+                     filePattern="caseurekaserver-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />

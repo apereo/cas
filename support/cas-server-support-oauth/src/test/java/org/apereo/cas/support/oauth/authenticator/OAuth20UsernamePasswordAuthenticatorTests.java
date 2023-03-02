@@ -7,6 +7,7 @@ import org.apereo.cas.util.HttpUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
@@ -39,7 +40,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
         assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
@@ -52,7 +53,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
         assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);
@@ -65,7 +66,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secretnotfound");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(CredentialsException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
@@ -75,7 +77,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(CredentialsException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
@@ -84,7 +87,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(CredentialsException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
@@ -93,7 +97,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(CredentialsException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
@@ -101,7 +106,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         val credentials = new UsernamePasswordCredentials("casuser", "casuser");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
+        assertThrows(CredentialsException.class,
+            () -> authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials));
     }
 
     @Test
@@ -113,7 +119,7 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
         assertNotNull(authz);
         request.addHeader(AUTHORIZATION, authz);
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        authenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         assertNotNull(credentials.getUserProfile());
         assertEquals("casuser", credentials.getUserProfile().getId());
         assertTrue(((BasicUserProfile) credentials.getUserProfile()).getAuthenticationAttributes().size() >= 1);

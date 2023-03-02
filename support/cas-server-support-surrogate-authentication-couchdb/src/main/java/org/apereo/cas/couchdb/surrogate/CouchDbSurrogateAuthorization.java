@@ -13,9 +13,11 @@ import java.io.Serial;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
+@Deprecated(since = "7.0.0")
 public class CouchDbSurrogateAuthorization extends OpenCouchDbDocument {
 
     @Serial

@@ -1,4 +1,11 @@
 description = "Apereo CAS CouchDB Ticket Registry"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Apache CouchDb Ticket Registry"
+    ]
+}
 dependencies {
     api libraries.ektorp
 
