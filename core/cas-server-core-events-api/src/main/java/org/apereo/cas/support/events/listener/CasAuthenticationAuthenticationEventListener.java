@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
+
 
 import java.time.Instant;
 
@@ -48,8 +48,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         dto.putTimestamp(event.getTimestamp());
         val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
         dto.setCreationTime(dt.toString());
-
-        val clientInfo = ClientInfoHolder.getClientInfo();
+        val clientInfo = event.getClientInfo();
         if (clientInfo != null) {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());
             dto.putServerIpAddress(clientInfo.getServerIpAddress());

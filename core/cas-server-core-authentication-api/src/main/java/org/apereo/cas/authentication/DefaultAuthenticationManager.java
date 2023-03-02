@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -178,15 +179,15 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                                                    final PrincipalResolver resolver,
                                                    final AuthenticationHandler handler,
                                                    final Service service) throws Exception {
-
-        publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential, clientInfo));
 
         val result = handler.authenticate(credential, service);
         val authenticationHandlerName = handler.getName();
         builder.addSuccess(authenticationHandlerName, result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
 
-        publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
+        publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential, clientInfo));
         var principal = result.getPrincipal();
 
         if (resolver != null) {
@@ -207,7 +208,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             builder.setPrincipal(principal);
         }
         LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
-        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
+        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
     }
 
 
@@ -326,15 +327,16 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
                                                final AuthenticationTransaction transaction,
                                                final Set<AuthenticationHandler> authenticationHandlers) throws AuthenticationException {
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (builder.getSuccesses().isEmpty()) {
-            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials()));
+            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(), clientInfo));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
         val authentication = builder.build();
         val executionResult = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
         if (!executionResult.isSuccess()) {
-            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
+            publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }

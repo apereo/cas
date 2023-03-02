@@ -7,6 +7,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 
@@ -72,13 +73,14 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
         return transactionTemplate.execute(status -> {
             val query = String.format("SELECT r FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
             val list = entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
+            val clientInfo = ClientInfoHolder.getClientInfo();
             return list
                 .stream()
                 .map(this::toRegisteredService)
                 .sorted()
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
-                .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
+                .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)))
                 .collect(Collectors.toList());
         });
     }
