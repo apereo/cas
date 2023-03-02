@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -34,8 +35,8 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
      * @param proxyGrantingTicket the ticket granting ticket
      * @param proxyTicket         the service ticket
      */
-    public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket, final ProxyTicket proxyTicket) {
-        super(source);
+    public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket, final ProxyTicket proxyTicket, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.proxyGrantingTicket = proxyGrantingTicket;
         this.proxyTicket = proxyTicket;
     }

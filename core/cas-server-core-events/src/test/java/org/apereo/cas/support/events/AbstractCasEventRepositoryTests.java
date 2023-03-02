@@ -91,7 +91,7 @@ public abstract class AbstractCasEventRepositoryTests {
 
     private CasEvent getCasEvent(final String user) {
         val ticket = new MockTicketGrantingTicket(user);
-        val event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
+        val event = new CasTicketGrantingTicketCreatedEvent(this, ticket, null);
 
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());

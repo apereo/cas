@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -23,8 +24,8 @@ public class CasAuthenticationTransactionSuccessfulEvent extends AbstractCasEven
 
     private final Credential credential;
 
-    public CasAuthenticationTransactionSuccessfulEvent(final Object source, final Credential c) {
-        super(source);
+    public CasAuthenticationTransactionSuccessfulEvent(final Object source, final Credential c, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.credential = c;
     }
 }

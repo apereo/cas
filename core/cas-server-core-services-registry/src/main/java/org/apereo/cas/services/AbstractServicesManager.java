@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.ArrayList;
@@ -52,14 +53,15 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public void save(final Stream<RegisteredService> toSave) {
+        val clientInfo = ClientInfoHolder.getClientInfo();
         val resultingStream = toSave.peek(registeredService ->
-            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
+            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo)));
         configurationContext.getServiceRegistry()
             .save(resultingStream)
             .forEach(r -> {
                 cacheRegisteredService(r);
                 saveInternal(r);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+                publishEvent(new CasRegisteredServiceSavedEvent(this, r, clientInfo));
             });
     }
 
@@ -70,13 +72,14 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
-        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
         val r = configurationContext.getServiceRegistry().save(registeredService);
         cacheRegisteredService(r);
         saveInternal(registeredService);
 
         if (publishEvent) {
-            publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+            publishEvent(new CasRegisteredServiceSavedEvent(this, r, clientInfo));
         }
         return r;
     }
@@ -87,11 +90,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
                      final long countExclusive) {
         configurationContext.getServiceRegistry().save(() -> {
             val registeredService = supplier.get();
+            val clientInfo = ClientInfoHolder.getClientInfo();
             if (registeredService != null) {
-                publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
+                publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
                 cacheRegisteredService(registeredService);
                 saveInternal(registeredService);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService));
+                publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo));
                 return registeredService;
             }
             return null;
@@ -102,7 +106,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     public synchronized void deleteAll() {
         configurationContext.getServicesCache().asMap().forEach((k, v) -> delete(v));
         configurationContext.getServicesCache().invalidateAll();
-        publishEvent(new CasRegisteredServicesDeletedEvent(this));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasRegisteredServicesDeletedEvent(this, clientInfo));
     }
 
     @Override
@@ -114,11 +119,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public synchronized RegisteredService delete(final RegisteredService service) {
         if (service != null) {
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
             configurationContext.getServiceRegistry().delete(service);
             configurationContext.getServicesCache().invalidate(service.getId());
             deleteInternal(service);
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
         }
         return service;
     }
@@ -308,7 +314,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
         configurationContext.getServicesCache().invalidateAll();
         configurationContext.getServicesCache().putAll(servicesMap);
         loadInternal();
-        publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
         evaluateExpiredServiceDefinitions();
         LOGGER.info("Loaded [{}] service(s) from [{}].", configurationContext.getServicesCache().asMap().size(),
             configurationContext.getServiceRegistry().getName());
@@ -408,17 +415,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
         val policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
-
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (policy.isNotifyWhenExpired()) {
             LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry", registeredService.getServiceId());
-            publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, false));
+            publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, false, clientInfo));
         }
         if (policy.isDeleteWhenExpired()) {
             LOGGER.debug("Deleting expired registered service [{}] from registry.", registeredService.getServiceId());
             if (policy.isNotifyWhenDeleted()) {
                 LOGGER.debug("Contacts for registered service [{}] will be notified of service expiry and removal",
                     registeredService.getServiceId());
-                publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, true));
+                publishEvent(new CasRegisteredServiceExpiredEvent(this, registeredService, true, clientInfo));
             }
             delete(registeredService);
             return null;
