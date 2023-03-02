@@ -289,7 +289,7 @@ public class GitHubTemplate implements GitHubOperations {
         final Map<String, String> body = new HashMap<>();
         body.put("milestone", milestone.getNumber());
 
-        final ResponseEntity response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        var response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to add milestone to pull request. Response status: {}", response.getStatusCode());
         }

@@ -87,7 +87,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private void processLabelReadyForContinuousIntegration(final PullRequest pr) {
         val ci = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
-        if (ci && !pr.isLabeledAs(CasLabels.LABEL_CI)) {
+        if (ci && !pr.isLabeledAs(CasLabels.LABEL_CI) && !pr.isDraft() && !pr.isWorkInProgress()) {
             log.info("Pull request {} is for continuous integration", pr);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
         }
@@ -264,11 +264,21 @@ public class CasPullRequestListener implements PullRequestListener {
         return false;
     }
 
+    @SneakyThrows
     private void processLabelPendingPortForward(final PullRequest pr) {
-        if (!pr.isTargetBranchOnHeroku() && !pr.getBase().isRefMaster()
-            && !pr.isLabeledAs(CasLabels.LABEL_PENDING_PORT_FORWARD)) {
+        if (!pr.isTargetBranchOnHeroku() && !pr.getBase().isRefMaster()) {
             log.info("{} is targeted at a branch {} and should be ported forward to the master branch", pr, pr.getBase());
-            repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_PORT_FORWARD);
+            if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_PORT_FORWARD)) {
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_PORT_FORWARD);
+            }
+
+            if (!pr.isDraft() && !pr.isWorkInProgress() && StringUtils.hasText(pr.getBody())
+                && !pr.getBody().contains("master: https://github.com/apereo/cas/pull/")) {
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+                var template = IOUtils.toString(new ClassPathResource("template-port-forward.md").getInputStream(), StandardCharsets.UTF_8);
+                repository.addComment(pr, template);
+                repository.close(pr);
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.springframework.util.StringUtils;
 
 import java.util.regex.Pattern;
 
@@ -141,8 +142,10 @@ public enum CasLabels {
 
     CasLabels(final String title, final String keywords) {
         this.title = title;
-        if (keywords != null) {
+        if (StringUtils.hasText(keywords)) {
             this.keywords = Pattern.compile(keywords, Pattern.CASE_INSENSITIVE);
+        } else {
+            this.keywords = Pattern.compile("a^");
         }
     }
 }
