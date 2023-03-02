@@ -19,7 +19,7 @@ The cas-overlay comes with an external log42.xml in etc/cas/config and a propert
 By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code.
 For debugging and diagnostic purposes you may want to set these levels to `DEBUG` or `TRACE`.
 
-<div class="alert alert-warning"><strong>Production</strong><p>You should always run everything under
+<div class="alert alert-warning">:warning: <strong>Production</strong><p>You should always run everything under
 <code>WARN</code>. In production warnings and errors are things you care about. Everything else is just diagnostics. Only
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
@@ -151,7 +151,7 @@ JVM starts, when the log size reaches `10` megabytes, and when the current date 
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
-                    filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz">
     ...
     <Policies>
         <OnStartupTriggeringPolicy />
@@ -179,11 +179,11 @@ directory that match the `*/*.log` glob and are `7` days old or older.
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
-             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
+             filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz">
     ...
-    <DefaultRolloverStrategy max="5">
+    <DefaultRolloverStrategy max="5" compressionLevel="9">
         <Delete basePath="${baseDir}" maxDepth="2">
-            <IfFileName glob="*/*.log" />
+            <IfFileName glob="*/*.log.gz" />
             <IfLastModified age="7d" />
         </Delete>
     </DefaultRolloverStrategy>

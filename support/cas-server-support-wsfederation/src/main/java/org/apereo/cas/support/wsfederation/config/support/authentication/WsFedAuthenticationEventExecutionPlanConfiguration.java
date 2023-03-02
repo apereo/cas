@@ -2,6 +2,7 @@ package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -153,6 +154,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             final CasConfigurationProperties casProperties,
             @Qualifier("wsfedPrincipalFactory")
             final PrincipalFactory wsfedPrincipalFactory,
@@ -170,9 +173,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                                  && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
                 .forEach(wsfed -> {
                     val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, wsfedPrincipalFactory, wsfed.getOrder());
-                    if (!wsfed.isAttributeResolverEnabled()) {
-                        plan.registerAuthenticationHandler(handler);
-                    } else {
+                    if (wsfed.isAttributeResolverEnabled()) {
                         val cfg = wsFederationConfigurations.toSet().stream()
                             .filter(c -> {
                                 val resolver = SpringExpressionLanguageValueResolver.getInstance();
@@ -184,10 +185,12 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                         val principal = wsfed.getPrincipal();
                         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory, attributeRepository,
                             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-                            WsFederationCredentialsToPrincipalResolver.class,
+                            WsFederationCredentialsToPrincipalResolver.class, servicesManager, attributeDefinitionStore,
                             principal, personDirectory);
                         resolver.setConfiguration(cfg);
                         plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
+                    } else {
+                        plan.registerAuthenticationHandler(handler);
                     }
                 });
         }

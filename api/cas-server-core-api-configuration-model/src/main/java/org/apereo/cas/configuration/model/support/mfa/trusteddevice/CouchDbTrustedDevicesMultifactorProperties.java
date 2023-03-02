@@ -15,12 +15,14 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-trusted-mfa-couchdb")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CouchDbTrustedDevicesMultifactorProperties")
+@Deprecated(since = "7.0.0")
 public class CouchDbTrustedDevicesMultifactorProperties extends BaseCouchDbProperties {
 
     @Serial

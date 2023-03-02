@@ -58,7 +58,7 @@ public class CasConfigurationEventListenerTests {
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new EnvironmentChangeEvent(Set.of("cas.server.name"))));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
-            new CasConfigurationModifiedEvent(this, true)));
+            new CasConfigurationModifiedEvent(this, true, null)));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new RefreshScopeRefreshedEvent()));
     }

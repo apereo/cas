@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = {
-    "server.ssl.key-store=file:/tmp/keystore",
+    "server.ssl.key-store=file:/tmp/keystore-${#randomNumber6}.jks",
     "server.ssl.key-store-password=changeit",
 
     "server.ssl.trust-store=file:/tmp/thekeystore",

@@ -1,4 +1,12 @@
 description = "Apereo CAS YubiKey Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support",
+            aliases: ["yubikey"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")

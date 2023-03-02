@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -23,8 +24,8 @@ public class CasRegisteredServiceSavedEvent extends BaseCasRegisteredServiceEven
 
     private final RegisteredService registeredService;
 
-    public CasRegisteredServiceSavedEvent(final Object source, final RegisteredService registeredService) {
-        super(source);
+    public CasRegisteredServiceSavedEvent(final Object source, final RegisteredService registeredService, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.registeredService = registeredService;
     }
 }

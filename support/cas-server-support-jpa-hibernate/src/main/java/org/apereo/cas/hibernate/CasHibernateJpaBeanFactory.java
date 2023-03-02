@@ -100,7 +100,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
 
     @Override
     public Stream<? extends Serializable> streamQuery(final jakarta.persistence.Query query) {
-        val hibernateQuery = Query.class.cast(query);
+        val hibernateQuery = query.unwrap(Query.class);
         return hibernateQuery.stream();
     }
 }

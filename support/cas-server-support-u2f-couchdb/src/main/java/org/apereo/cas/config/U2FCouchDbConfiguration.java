@@ -27,10 +27,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.U2F, module = "couchdb")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class U2FCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fCouchDbFactory")

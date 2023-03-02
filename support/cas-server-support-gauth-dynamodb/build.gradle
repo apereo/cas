@@ -2,8 +2,12 @@ description = "Apereo CAS Google Authentication w/ DynamoDb "
 
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Google Authenticator Multifactor Authentication",
+            title: "Google Authenticator Support via DynamoDb"
+    ]
 }
-
 dependencies {
     implementation libraries.awsjavadynamodb
 

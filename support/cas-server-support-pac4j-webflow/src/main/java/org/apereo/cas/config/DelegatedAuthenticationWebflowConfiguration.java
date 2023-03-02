@@ -66,6 +66,8 @@ import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflow
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientFinishLogoutAction;
 import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutAction;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationIdentityProviderFinalizeLogoutAction;
+import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationIdentityProviderLogoutAction;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
 import org.apereo.cas.web.flow.error.DefaultDelegatedClientAuthenticationFailureEvaluator;
@@ -387,7 +389,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action delegatedAuthenticationStoreWebflowAction(
             @Qualifier(DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME) final DelegatedClientAuthenticationWebflowManager delegatedClientWebflowManager,
-            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME) final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
+            final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -399,6 +402,41 @@ public class DelegatedAuthenticationWebflowConfiguration {
                 .build()
                 .get();
         }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action delegatedAuthenticationIdentityProviderLogoutAction(
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
+            final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new DelegatedAuthenticationIdentityProviderLogoutAction(delegatedClientAuthenticationConfigurationContext))
+                .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT)
+                .build()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action delegatedAuthenticationIdentityProviderFinalizeLogoutAction(
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
+            final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new DelegatedAuthenticationIdentityProviderFinalizeLogoutAction(delegatedClientAuthenticationConfigurationContext))
+                .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT)
+                .build()
+                .get();
+        }
+
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
         @Bean

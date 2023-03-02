@@ -1,4 +1,11 @@
 description = "Apereo CAS OAuth UMA Server Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "OAuth2 User-Managed Access (UMA)",
+            title: "OAuth2 UMA Identity Provider via JDBC"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")

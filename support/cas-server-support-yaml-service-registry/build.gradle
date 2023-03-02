@@ -1,4 +1,11 @@
 description = "Apereo CAS YAML Service Registry"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: "YAML Service Registry"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
     

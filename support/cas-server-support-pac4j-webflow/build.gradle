@@ -1,4 +1,13 @@
 description = "Apereo CAS Pac4j Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Delegated Authentication",
+            title: "Delegated (Proxy) Authentication",
+            aliases: ["delegation", "pac4j"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
@@ -45,6 +54,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-mongo-core")
+    compileOnly project(":support:cas-server-support-saml-idp-web")
 
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
@@ -67,6 +77,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(":support:cas-server-support-saml-idp-web")
 
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")

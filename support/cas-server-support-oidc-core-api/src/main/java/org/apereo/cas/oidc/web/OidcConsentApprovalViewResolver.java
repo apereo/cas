@@ -5,6 +5,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
@@ -68,11 +69,17 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     @Override
     protected void prepareApprovalViewModel(final Map<String, Object> model,
                                             final WebContext webContext,
-                                            final OAuthRegisteredService svc) throws Exception {
-        super.prepareApprovalViewModel(model, webContext, svc);
-        if (svc instanceof OidcRegisteredService oidcRegisteredService) {
-            model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
-            model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
+                                            final OAuthRegisteredService registeredService) throws Exception {
+        super.prepareApprovalViewModel(model, webContext, registeredService);
+        if (registeredService instanceof OidcRegisteredService oidcRegisteredService) {
+
+            val dynamicRegistrationPropName = RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION.getPropertyName();
+            if (oidcRegisteredService.getProperties().containsKey(dynamicRegistrationPropName)) {
+                val dynamic = oidcRegisteredService.getProperties().get(dynamicRegistrationPropName).getBooleanValue();
+                model.put("dynamic", dynamic);
+                model.put("dynamicTime", oidcRegisteredService.getProperties()
+                    .get(RegisteredServiceProperties.OIDC_DYNAMIC_CLIENT_REGISTRATION_DATE.getPropertyName()).getValue(String.class));
+            }
             val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
 

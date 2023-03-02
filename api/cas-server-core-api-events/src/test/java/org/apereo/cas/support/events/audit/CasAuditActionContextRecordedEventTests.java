@@ -29,7 +29,7 @@ public class CasAuditActionContextRecordedEventTests {
                 val ctx = new AuditActionContext("casuser", "TEST", "TEST",
                     "CAS", new Date(), "1.2.3.4",
                     "1.2.3.4", UUID.randomUUID().toString());
-                new CasAuditActionContextRecordedEvent(this, ctx);
+                new CasAuditActionContextRecordedEvent(this, ctx, null);
             }
         });
     }

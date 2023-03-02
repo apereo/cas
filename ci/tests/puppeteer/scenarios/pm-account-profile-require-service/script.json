@@ -14,6 +14,6 @@
 
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.pm.core.enabled=true",
-    "--cas.sso.allow-missing-service-parameter=false"
+    "--cas.sso.services.allow-missing-service-parameter=false"
   ]
 }

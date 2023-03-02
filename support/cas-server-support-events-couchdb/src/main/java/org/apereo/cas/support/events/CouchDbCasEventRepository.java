@@ -18,7 +18,9 @@ import java.util.stream.Stream;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class CouchDbCasEventRepository extends AbstractCasEventRepository implements DisposableBean {
 
     private final EventCouchDbRepository couchDb;
@@ -37,6 +39,11 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository implem
 
     private static Stream<? extends CasEvent> castEvents(final Stream<? extends CouchDbCasEvent> events) {
         return events;
+    }
+
+    @Override
+    public void removeAll() {
+        couchDb.getAll().forEach(couchDb::remove);
     }
 
     @Override

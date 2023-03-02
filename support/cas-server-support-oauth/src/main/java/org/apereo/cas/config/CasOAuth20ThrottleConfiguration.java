@@ -135,10 +135,9 @@ public class CasOAuth20ThrottleConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
-            val interceptor = new SecurityInterceptor(oauthSecConfig.withSecurityLogic(logic),
+            return new SecurityInterceptor(oauthSecConfig.withSecurityLogic(logic),
                 Authenticators.CAS_OAUTH_CLIENT,
                 DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS);
-            return interceptor;
         }
 
         @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")

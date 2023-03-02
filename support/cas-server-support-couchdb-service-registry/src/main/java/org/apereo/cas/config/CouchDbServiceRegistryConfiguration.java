@@ -34,11 +34,13 @@ import java.util.Optional;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "couchdb")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchDbServiceRegistryConfiguration {
 
     @Bean

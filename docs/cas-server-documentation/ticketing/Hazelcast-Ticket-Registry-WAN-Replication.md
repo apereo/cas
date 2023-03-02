@@ -11,7 +11,7 @@ category: Ticketing
 Hazelcast WAN Replication allows you to keep multiple Hazelcast clusters 
 in sync by replicating their state over WAN environments such as the Internet.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using Hazelcast 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Using Hazelcast 
 WAN Replication requires a Hazelcast Enterprise subscription. Make sure you 
 have acquired the proper license, SDK and tooling from Hazelcast before 
 activating this feature. Please contact Hazelcast for more information.</p></div>

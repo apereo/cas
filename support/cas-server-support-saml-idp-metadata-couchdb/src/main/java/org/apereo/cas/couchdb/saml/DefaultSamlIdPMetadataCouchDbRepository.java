@@ -1,6 +1,5 @@
 package org.apereo.cas.couchdb.saml;
 
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
@@ -15,7 +14,9 @@ import java.util.Optional;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class DefaultSamlIdPMetadataCouchDbRepository extends CouchDbRepositorySupport<CouchDbSamlIdPMetadataDocument>
     implements SamlIdPMetadataCouchDbRepository {
     public DefaultSamlIdPMetadataCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
@@ -32,9 +33,10 @@ public class DefaultSamlIdPMetadataCouchDbRepository extends CouchDbRepositorySu
 
     @View(name = "service", map = "function(doc) { if (doc.metadata && doc.signingKey && doc.encryptionKey) { emit(doc._id, doc) } }")
     @Override
-    public CouchDbSamlIdPMetadataDocument getForService(final Optional<SamlRegisteredService> registeredService) {
+    public CouchDbSamlIdPMetadataDocument getForService(final Optional<SamlRegisteredService> registeredService,
+                                                        final String owner) {
         if (registeredService.isPresent()) {
-            val view = createQuery("service").limit(1).queryParam("appliesTo", SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
+            val view = createQuery("service").limit(1).queryParam("appliesTo", owner);
             return db.queryView(view, CouchDbSamlIdPMetadataDocument.class).stream().findFirst().orElse(null);
         }
         return getForAll();

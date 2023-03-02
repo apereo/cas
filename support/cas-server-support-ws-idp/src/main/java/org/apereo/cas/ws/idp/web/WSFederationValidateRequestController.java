@@ -63,7 +63,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                     val registeredService = getWsFederationRegisteredService(service);
                     LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
                         fedRequest, fedRequest.wreply(), registeredService);
-                    val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter();
+                    val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter().get(0);
                     return getConfigContext().getCasProperties()
                         .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
                 },

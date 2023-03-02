@@ -35,7 +35,10 @@ public class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.url=http://localhost:18080/syncope",
             "cas.authn.attribute-repository.syncope.basic-auth-username=admin",
             "cas.authn.attribute-repository.syncope.basic-auth-password=password",
-            "cas.authn.attribute-repository.syncope.search-filter=username=={user}"
+            "cas.authn.attribute-repository.syncope.search-filter=username=={user}",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.username=userId",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_email=email",
+            "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_description=email_description"
         })
     @Nested
     @EnabledIfListeningOnPort(port = 18080)
@@ -53,6 +56,20 @@ public class SyncopePersonAttributeDaoTests {
                 IPersonAttributeDaoFilter.alwaysChoose());
             assertFalse(people.iterator().next().getAttributes().isEmpty());
         }
+
+        @Test
+        public void verifyUserAttributeMappings() {
+            val found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
+            val attributes = found.iterator().next().getAttributes();
+            assertFalse(attributes.isEmpty());
+            assertNotNull(attributes.get("userId"));
+            assertNotNull(attributes.get("email"));
+            assertNull(attributes.get("syncopeUserAttr_email"));
+            assertNotNull(attributes.get("email_description"));
+            assertNull(attributes.get("syncopeUserAttr_description"));
+
+        }
+
     }
 
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,

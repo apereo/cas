@@ -11,7 +11,9 @@ import java.util.Optional;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public interface SamlIdPMetadataCouchDbRepository extends GenericRepository<CouchDbSamlIdPMetadataDocument> {
 
     /**
@@ -25,9 +27,11 @@ public interface SamlIdPMetadataCouchDbRepository extends GenericRepository<Couc
      * Gets for service.
      *
      * @param registeredService the registered service
+     * @param owner             the owner
      * @return the for service
      */
-    CouchDbSamlIdPMetadataDocument getForService(Optional<SamlRegisteredService> registeredService);
+    CouchDbSamlIdPMetadataDocument getForService(Optional<SamlRegisteredService> registeredService,
+                                                 String owner);
 
     /**
      * Initialize.

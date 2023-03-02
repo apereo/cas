@@ -1,4 +1,11 @@
 description = "Apereo CAS Surrogate Authentication REST Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation via REST"
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")

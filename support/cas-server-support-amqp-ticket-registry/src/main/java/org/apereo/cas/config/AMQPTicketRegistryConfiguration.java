@@ -2,12 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.AMQPDefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.AMQPMessageSerializationHandler;
 import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
 import org.apereo.cas.ticket.registry.AMQPTicketRegistryQueueReceiver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.queue.AMQPTicketRegistryQueuePublisher;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -33,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.nio.charset.StandardCharsets;
@@ -63,6 +66,7 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
+    @Lazy(false)
     public AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final AMQPTicketRegistry ticketRegistry,
@@ -94,6 +98,10 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AMQPTicketRegistry ticketRegistry(
+        @Qualifier(TicketCatalog.BEAN_NAME)
+        final TicketCatalog ticketCatalog,
+        @Qualifier(TicketSerializationManager.BEAN_NAME)
+        final TicketSerializationManager ticketSerializationManager,
         @Qualifier("messageQueueCipherExecutor")
         final CipherExecutor messageQueueCipherExecutor,
         final RabbitTemplate rabbitTemplate,
@@ -103,10 +111,8 @@ public class AMQPTicketRegistryConfiguration {
         final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
         rabbitTemplate.setMessageConverter(messageQueueTicketRegistryConverter);
         LOGGER.debug("Configuring AMQP ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        val registry = new AMQPDefaultTicketRegistry(new AMQPTicketRegistryQueuePublisher(rabbitTemplate),
-            messageQueueTicketRegistryIdentifier);
-        registry.setCipherExecutor(messageQueueCipherExecutor);
-        return registry;
+        return new AMQPDefaultTicketRegistry(messageQueueCipherExecutor, ticketSerializationManager, ticketCatalog,
+            new AMQPTicketRegistryQueuePublisher(rabbitTemplate), messageQueueTicketRegistryIdentifier);
     }
 
     @Bean
@@ -121,6 +127,7 @@ public class AMQPTicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "amqpTicketRegistryMessageListenerContainer")
+    @Lazy(false)
     public MessageListenerContainer amqpTicketRegistryMessageListenerContainer(
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
@@ -138,6 +145,7 @@ public class AMQPTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amqpTicketRegistryListenerAdapter")
+    @Lazy(false)
     public MessageListenerAdapter amqpTicketRegistryListenerAdapter(
         @Qualifier("messageQueueTicketRegistryReceiver")
         final AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver,

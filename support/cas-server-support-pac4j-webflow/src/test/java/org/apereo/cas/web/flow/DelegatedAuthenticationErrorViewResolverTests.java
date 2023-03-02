@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.sso.allow-missing-service-parameter=false")
+    properties = "cas.sso.services.allow-missing-service-parameter=false")
 @Tag("Webflow")
 public class DelegatedAuthenticationErrorViewResolverTests {
     @Autowired

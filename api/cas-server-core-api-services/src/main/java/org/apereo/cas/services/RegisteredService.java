@@ -100,6 +100,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
         return StringUtils.EMPTY;
     }
 
+    /**
+     * Gets template name that acts
+     * as the base version of this registered service.
+     *
+     * @return the template name
+     */
+    String getTemplateName();
 
     /**
      * Gets the relative evaluation order of this service when determining

@@ -7,11 +7,11 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.PathWatcherService;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -26,12 +26,15 @@ import java.io.File;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasConfigurationWatchService implements Closeable, CasEventListener, InitializingBean {
-    private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
+public class CasConfigurationWatchService implements Closeable, InitializingBean {
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file ->
+            new CasConfigurationCreatedEvent(this, file.toPath(), ClientInfoHolder.getClientInfo());
 
-    private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file ->
+            new CasConfigurationModifiedEvent(this, file.toPath(), ClientInfoHolder.getClientInfo());
 
-    private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
+    private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file ->
+            new CasConfigurationDeletedEvent(this, file.toPath(), ClientInfoHolder.getClientInfo());
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
@@ -93,4 +96,5 @@ public class CasConfigurationWatchService implements Closeable, CasEventListener
             configurationFileWatch.close();
         }
     }
+
 }

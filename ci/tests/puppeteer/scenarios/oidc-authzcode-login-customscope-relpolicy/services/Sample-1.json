@@ -1,0 +1,34 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": ".*",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "evaluationOrder": 10,
+  "informationUrl": "https://github.com/apereo/cas",
+  "privacyUrl": "https://github.com/apereo/cas",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "MyCustomScope" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "audience": [ "java.util.HashSet", [ "client", "cas", "apereo" ] ],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy",
+          "order": 1,
+          "scopeName": "MyCustomScope",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "entitlements" ] ],
+          "claimMappings" : {
+            "@class" : "java.util.TreeMap",
+            "entitlements" : "groovy { return ['ent-A', 'ent-B'] }"
+          }
+        }
+      ]
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.analytics;
 
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class GoogleAnalyticsCookieProperties extends CookieProperties {
      * to only release and allow those that produce
      * a successful match.
      */
+    @RegularExpressionCapable
     private String attributeValuePattern = ".+";
 
     public GoogleAnalyticsCookieProperties() {

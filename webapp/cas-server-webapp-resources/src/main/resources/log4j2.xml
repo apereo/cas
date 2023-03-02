@@ -39,7 +39,7 @@ or override log42.component.properties to turn off async
         </Console>
 
         <RollingFile name="file" fileName="${sys:baseDir}/cas.log" append="true"
-                     filePattern="${sys:baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log"
+                     filePattern="${sys:baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
             <PatternLayout pattern="${logPattern}"
                            alwaysWriteExceptions="${sys:log.file.stacktraces}" />
@@ -57,7 +57,7 @@ or override log42.component.properties to turn off async
         </RollingFile>
 
         <RollingFile name="stacktracefile" fileName="${sys:baseDir}/cas_stacktrace.log" append="true"
-                     filePattern="${sys:baseDir}/cas_stacktrace-%d{yyyy-MM-dd-HH}-%i.log"
+                     filePattern="${sys:baseDir}/cas_stacktrace-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
@@ -74,7 +74,7 @@ or override log42.component.properties to turn off async
         </RollingFile>
 
         <RollingFile name="auditlogfile" fileName="${sys:baseDir}/cas_audit.log" append="true"
-                     filePattern="${sys:baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log"
+                     filePattern="${sys:baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>

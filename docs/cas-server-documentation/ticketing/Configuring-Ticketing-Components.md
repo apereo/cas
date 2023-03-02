@@ -58,7 +58,7 @@ CAS also provides support for a variety of other databases, including Redis, Mon
 Cassandra, for ticket storage and persistence:
 
 * [Redis](Redis-Ticket-Registry.html)
-* [CouchDb](CouchDb-Ticket-Registry.html)
+* [~~CouchDb~~](CouchDb-Ticket-Registry.html)
 * [MongoDb](MongoDb-Ticket-Registry.html)
 * [DynamoDb](DynamoDb-Ticket-Registry.html)
 

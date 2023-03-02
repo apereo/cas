@@ -3,6 +3,8 @@ package org.apereo.cas.authentication.principal;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link DelegatedAuthenticationCredentialExtractor}.
  *
@@ -19,5 +21,5 @@ public interface DelegatedAuthenticationCredentialExtractor {
      * @param webContext the web context
      * @return the client credential
      */
-    ClientCredential extract(BaseClient client, RequestContext webContext);
+    Optional<ClientCredential> extract(BaseClient client, RequestContext webContext);
 }

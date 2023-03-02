@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.TreeMap;
  */
 @SuperBuilder
 @Getter
+@With
+@AllArgsConstructor
 public class AttributeMappingRequest {
     private final String attributeName;
 

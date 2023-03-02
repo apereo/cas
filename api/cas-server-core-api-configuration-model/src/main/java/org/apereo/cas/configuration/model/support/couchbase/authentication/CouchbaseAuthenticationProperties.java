@@ -18,11 +18,13 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Getter
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
+@Deprecated(since = "7.0.0")
 public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties {
 
     @Serial

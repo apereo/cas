@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.AbstractMap;
@@ -100,7 +101,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
         assertTrue(modelAndView.getModel().isEmpty());
 
-        val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
+        val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
         val params = splitQuery(redirectUrl.substring(redirectUrl.indexOf('#') + 1));
 
         verifyParam(params, OAuth20Constants.STATE, STATE);

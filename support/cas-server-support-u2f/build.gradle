@@ -1,4 +1,12 @@
 description = "Apereo CAS U2F Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "U2F Multifactor Authentication",
+            title: "U2F Support",
+            aliases: ["u2f"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
@@ -51,4 +59,5 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 
     testImplementation libraries.springboottomcat
+    testImplementation libraries.springcloudbootstrap
 }

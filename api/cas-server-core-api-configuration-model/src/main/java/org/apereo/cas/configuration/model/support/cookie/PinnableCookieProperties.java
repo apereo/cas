@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -41,5 +42,6 @@ public class PinnableCookieProperties extends CookieProperties {
      * the cookie can still be considered valid if the new IP address matches the pattern
      * specified here.
      */
+    @RegularExpressionCapable
     private String allowedIpAddressesPattern;
 }

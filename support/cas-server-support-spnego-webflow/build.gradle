@@ -1,4 +1,12 @@
 description = "Apereo CAS SPNEGO Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "SPNEGO Authentication"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     

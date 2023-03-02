@@ -64,6 +64,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 
@@ -82,6 +83,9 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableRetry
 public abstract class BaseOAuth20AuthenticatorTests {
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
@@ -203,9 +207,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketComponentSerializationConfiguration.class,
-        CasCoreTicketsSerializationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCoreWebConfiguration.class,
@@ -231,6 +235,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(accessToken.getService()).thenReturn(service);
+        when(accessToken.getClientId()).thenReturn("client");
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return accessToken;

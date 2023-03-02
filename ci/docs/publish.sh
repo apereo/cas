@@ -29,7 +29,7 @@ function validateProjectDocumentation() {
 
 clear
 
-GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8"
+GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
@@ -206,6 +206,7 @@ if [[ $cloneRepository == "true" ]]; then
   mkdir -p "$PWD/gh-pages/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes"
+  mkdir -p "$PWD/gh-pages/javascripts"
   mkdir -p "$PWD/gh-pages/_layouts"
   mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
@@ -216,6 +217,8 @@ if [[ $cloneRepository == "true" ]]; then
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
   mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"  
+  mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"  
+  mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"  
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"
@@ -233,7 +236,7 @@ if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
-    ./gradlew :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
+    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
     if [ $? -eq 1 ]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1

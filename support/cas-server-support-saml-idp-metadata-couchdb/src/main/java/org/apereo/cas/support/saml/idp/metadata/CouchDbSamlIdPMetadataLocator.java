@@ -16,7 +16,9 @@ import java.util.Optional;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
 
     private final SamlIdPMetadataCouchDbRepository couchDb;
@@ -31,7 +33,7 @@ public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (registeredService.isPresent()) {
-            val doc = couchDb.getForService(registeredService);
+            val doc = couchDb.getForService(registeredService, getAppliesToFor(registeredService));
             if (doc != null && doc.isValid()) {
                 return doc;
             }

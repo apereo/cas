@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -44,6 +45,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
     /**
      * The unique identifier for this service.
      */
+    @RegularExpressionCapable
     protected String serviceId;
 
     private String name;
@@ -55,6 +57,8 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private String informationUrl;
 
     private String privacyUrl;
+
+    private String templateName;
 
     @Id
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -73,7 +73,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         try {
             authenticationHandler.authenticate(credentials, mock(Service.class));
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");
-        } catch (final GeneralSecurityException e) {
+        } catch (final Exception e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }
@@ -95,7 +95,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
 
-        assertFalse(authenticationHandler.supports((SpnegoCredential) null));
+        assertFalse(authenticationHandler.supports((Credential) null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
         assertFalse(authenticationHandler.supports(new UsernamePasswordCredential()));
     }

@@ -21,10 +21,12 @@ import org.ektorp.impl.StdCouchDbInstance;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @Getter
 @RequiredArgsConstructor
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class DefaultCouchDbConnectorFactory implements CouchDbConnectorFactory {
 
     private final BaseCouchDbProperties couchDbProperties;

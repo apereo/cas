@@ -13,21 +13,23 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthentica
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Pac4j authentication handler which gets the credentials and then the user profile
@@ -83,7 +85,9 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {
                 val credentials = clientCredentials.getCredentials();
-                userProfileResult = client.getUserProfile(credentials, webContext, this.sessionStore);
+
+                val callContext = new CallContext(webContext, this.sessionStore);
+                userProfileResult = client.getUserProfile(callContext, credentials);
             }
             val userProfile = userProfileResult.orElseThrow(
                 () -> new PreventedException("Unable to fetch user profile from client " + client.getName()));
@@ -105,7 +109,11 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
     @Override
     protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
                                                         final ClientCredential credential, final Service service) {
-        val processors = new ArrayList<>(applicationContext.getBeansOfType(DelegatedAuthenticationPreProcessor.class).values());
+        val processors = applicationContext.getBeansOfType(DelegatedAuthenticationPreProcessor.class)
+            .values()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
         AnnotationAwareOrderComparator.sortIfNecessary(processors);
         var processingPrincipal = initialPrincipal;
         for (val processor : processors) {

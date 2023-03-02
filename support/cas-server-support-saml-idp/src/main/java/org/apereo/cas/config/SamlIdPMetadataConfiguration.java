@@ -108,7 +108,7 @@ public class SamlIdPMetadataConfiguration {
         public SamlIdPMetadataController samlIdPMetadataController(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
@@ -277,16 +277,16 @@ public class SamlIdPMetadataConfiguration {
 
         @Lazy
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
-        @DependsOn("samlIdPMetadataGenerator")
+        @DependsOn(SamlIdPMetadataGenerator.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MetadataResolver casSamlIdPMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) throws Exception {
+            final OpenSamlConfigBean openSamlConfigBean) {
             val idp = casProperties.getAuthn().getSamlIdp();
             val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator, samlIdPMetadataGenerator, openSamlConfigBean, casProperties);
             resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
@@ -298,9 +298,10 @@ public class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataGenerationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @Lazy(false)
     public static class SamlIdPMetadataGenerationConfiguration {
-        @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
-        @Bean
+        @ConditionalOnMissingBean(name = SamlIdPMetadataGenerator.BEAN_NAME)
+        @Bean(initMethod = "initialize")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
             @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
@@ -313,10 +314,12 @@ public class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter(
             final CasConfigurationProperties casProperties) throws Exception {
+            val properties = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
             val url = new URL(casProperties.getServer().getPrefix());
-            val generator = new DefaultSamlIdPCertificateAndKeyWriter();
-            generator.setHostname(url.getHost());
+            val generator = new DefaultSamlIdPCertificateAndKeyWriter(url.getHost());
             generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
+            properties.setCertificateAlgorithm(properties.getCertificateAlgorithm());
+            properties.setKeySize(properties.getKeySize());
             return generator;
         }
 
@@ -429,8 +432,10 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
+        @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
         public SamlIdPCasEventListener samlIdPCasEventListener(
-            @Qualifier("samlIdPMetadataGenerator")
+            @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
             return new DefaultSamlIdPCasEventListener(samlIdPMetadataGenerator);
         }

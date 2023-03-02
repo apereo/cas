@@ -1,0 +1,23 @@
+description = "Apereo CAS Core Logging Fluentd"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "Fluentd"
+    ]
+}
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+
+    implementation libraries.fluentd
+    implementation libraries.log4j
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-logging-api")
+
+    annotationProcessor libraries.log4j
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}

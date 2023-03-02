@@ -30,6 +30,9 @@ enum TestCategories {
     GeoLocation,
     Git,
     Groovy,
+    GroovyAuthentication,
+    GroovyMfa,
+    GroovyServices,
     Grouper,
     Hazelcast,
     Hibernate,
@@ -121,20 +124,26 @@ if (rootProject.tasks.findByName("testCategories") == null) {
 if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     rootProject.tasks.register("puppeteerScenarios") {
         description = "Display all available puppeteer scenarios"
+
+        def puppeteerScenariosFrom = project.providers.gradleProperty("puppeteerScenariosFrom").getOrNull()
+        def puppeteerScenariosTo = project.providers.gradleProperty("puppeteerScenariosTo").getOrNull()
+        def scenariosDirectory = rootProject.file("ci/tests/puppeteer/scenarios")
+
         doLast {
             def scenarios = []
             def pattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
             def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
-            rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(scenarioMatchPattern) {
+
+            scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
                 scenarios += it.getName()
             }
             Collections.sort(scenarios)
-            if (project.hasProperty("puppeteerScenariosFrom") && project.hasProperty("puppeteerScenariosTo")) {
-                def start = Integer.parseInt(project.puppeteerScenariosFrom)
-                def to = Integer.parseInt(project.puppeteerScenariosTo)
-                if (to > scenarios.size())
-                    to = scenarios.size()
-                scenarios = scenarios.subList(start, to)
+            if (puppeteerScenariosFrom != null && puppeteerScenariosTo != null) {
+                def fromScenario = Integer.parseInt(puppeteerScenariosFrom)
+                def toScenario = Integer.parseInt(puppeteerScenariosTo)
+                if (toScenario > scenarios.size())
+                    toScenario = scenarios.size()
+                scenarios = scenarios.subList(fromScenario, toScenario)
             }
 //            println scenarios.size()
             println(groovy.json.JsonOutput.toJson(scenarios))
@@ -143,14 +152,17 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
 }
 
 TestCategories.values().each({ category ->
-    if (hasTestsOfCategory(project, category.name())) {
+    def sourceTestDirs = project.sourceSets.test.java.srcDirs
+    def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+    if (hasTestsOfCategory(sourceTestDirs, category.name())) {
         def taskName = "test${category.name()}"
         if (!tasks.getNames().contains(taskName)) {
             // println "Creating task ${taskName} for ${project.name}"
             tasks.register(taskName, Test) {
-                description = "Testing category ${category.name()}"
-                enabled = shouldTest(project, category.name())
-                //finalizedBy jacocoTestReport
+                description = "Run unit/integration tests to verify the test category: ${category.name()}"
+                group = "CAS Tests"
+                enabled = shouldTest(sourceTestDirs, category.name())
+                outputs.file(jacocoTestExecutionResultsFile)
                 useJUnitPlatform {
                     includeTags category.name()
                 }
@@ -174,19 +186,15 @@ tasks.withType(Test).configureEach {
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
-    doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 8)
-        if (maxParallelForks != 2) {
-            logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
-        }
+    maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 8)
+    if (maxParallelForks != 2) {
+        logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
     }
-
     def ci = System.getenv().containsKey("CI")
     if (ci) {
         outputs.upToDateWhen { false }
     }
     systemProperty("spring.main.banner-mode", "off")
-//    systemProperty("spring.main.lazy-initialization", "true")
     systemProperty("CI", ci)
 
     failFast = true
@@ -266,36 +274,40 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             failOnPassedAfterRetry = false
         }
     }
-    jacoco {
-        dumpOnExit = true
-        excludes = rootProject.excludedFilesFromTestCoverage
+    if (!project.path.contains(":docs")) {
+        jacoco {
+            dumpOnExit = true
+            excludes = rootProject.excludedFilesFromTestCoverage
+            destinationFile = layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile
+            classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
+        }
     }
+    
     filter {
         setFailOnNoMatchingTests(false)
         excludeTestsMatching "*TestsSuite"
     }
 }
 
-def shouldTest(Project project, String category) {
+def shouldTest(Set sourceTestDirectories, String category) {
     def foundTest = gradle.startParameter.taskNames.any { task -> task.matches(/^test${category}$/) }
     if (!foundTest) {
-        logger.debug "No tests with category ${category} found for ${project.name}"
+        logger.debug "No tests with category ${category} found"
     }
-    return !providers.systemProperty("skipTests").present && foundTest && hasTestsOfCategory(project, category)
+    return !providers.systemProperty("skipTests").present && foundTest && hasTestsOfCategory(sourceTestDirectories, category)
 }
 
-def hasTestsOfCategory(Project project, String category) {
-    def testSrc = project.sourceSets.test.java.srcDirs
-    def res = srcTagMap.computeIfAbsent(testSrc) {
+def hasTestsOfCategory(Set sourceTestDirectories, String category) {
+    def res = srcTagMap.computeIfAbsent(sourceTestDirectories) {
         def tags = new HashSet()
-        testSrc.each { src ->
+        sourceTestDirectories.each { src ->
             try {
                 src.eachFileRecurse { file ->
                     if (file ==~ /.*Tests\.\w+/) {
                         file.readLines().parallelStream().forEach() { line ->
-                            def m = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
-                            if (m) {
-                                tags.addAll(m.collect { it[1] })
+                            def match = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
+                            if (match) {
+                                tags.addAll(match.collect { it[1] })
                             }
                         }
                     }

@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListenerTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolverTests;
+import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriterTests;
 import org.apereo.cas.support.saml.services.AttributeQueryAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
@@ -42,7 +43,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfil
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinitionTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
-import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultSamlProfileAuthnContextClassRefBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileAuthnContextClassRefBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.DefaultSamlIdPObjectSignerTests;
@@ -113,7 +114,7 @@ import org.junit.platform.suite.api.Suite;
     SamlRegisteredServiceAttributeReleasePolicyTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,
     SamlIdPServiceFactoryTests.class,
-    DefaultSamlProfileAuthnContextClassRefBuilderTests.class,
+    SamlProfileAuthnContextClassRefBuilderTests.class,
     SamlIdPMetadataResolverTests.class,
     SSOSamlIdPProfileCallbackHandlerControllerTests.class,
     SLOSamlIdPPostProfileHandlerControllerTests.class,
@@ -146,6 +147,7 @@ import org.junit.platform.suite.api.Suite;
     SamlIdPLogoutResponseObjectBuilderTests.class,
     SamlRegisteredServiceMetadataHealthIndicatorTests.class,
     SamlTemplatesVelocityEngineTests.class,
+    DefaultSamlIdPCertificateAndKeyWriterTests.class,
     SamlIdPDelegatedAuthenticationConfigurationTests.class,
     SamlIdPAuthenticationContextTests.class,
     SamlIdPConsentableAttributeBuilderTests.class,

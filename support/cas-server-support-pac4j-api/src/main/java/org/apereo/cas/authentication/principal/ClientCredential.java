@@ -75,10 +75,7 @@ public class ClientCredential extends AbstractCredential {
     public String getId() {
         val up = getUserProfile();
         if (up != null) {
-            if (this.typedIdUsed) {
-                return up.getTypedId();
-            }
-            return up.getId();
+            return this.typedIdUsed ? up.getTypedId() : up.getId();
         }
         return NOT_YET_AUTHENTICATED + UUID.randomUUID();
     }

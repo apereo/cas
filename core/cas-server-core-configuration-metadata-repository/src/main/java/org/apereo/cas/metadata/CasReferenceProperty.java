@@ -26,6 +26,8 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
 
     private final boolean expressionLanguage;
 
+    private final boolean regexPattern;
+
     private final boolean duration;
 
     private final boolean required;

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -222,7 +223,7 @@ public class DefaultAuthenticationManagerTests {
         assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
 
         when(resolver.supports(any())).thenReturn(Boolean.TRUE);
-        when(resolver.resolve(any(), any(), any())).thenThrow(new RuntimeException("Fails"));
+        when(resolver.resolve(any(), any(), any(), any(Optional.class))).thenThrow(new RuntimeException("Fails"));
         assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
     }
 

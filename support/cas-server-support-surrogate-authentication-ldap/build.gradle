@@ -1,4 +1,11 @@
 description = "Apereo CAS Surrogate Authentication LDAP Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation via LDAP & Active Directory"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
     
