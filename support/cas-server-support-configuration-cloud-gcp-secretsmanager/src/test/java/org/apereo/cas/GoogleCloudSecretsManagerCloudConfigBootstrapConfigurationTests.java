@@ -52,7 +52,7 @@ public class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
             assertEquals("casuser::Mellon", propertyValue);
         }
 
-        @TestConfiguration
+        @TestConfiguration(value = "GoogleCloudSecretsManagerTestConfiguration", proxyBeanMethods = false)
         public static class GoogleCloudSecretsManagerTestConfiguration {
             @Bean
             public SecretManagerTemplate googleCloudSecretsManagerTemplate() {
