@@ -1,28 +1,25 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-
+import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.SecretPayload;
+import com.google.cloud.secretmanager.v1.SecretVersionName;
+import com.google.cloud.spring.core.DefaultGcpProjectIdProvider;
+import com.google.cloud.spring.secretmanager.SecretManagerTemplate;
+import com.google.protobuf.ByteString;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
-import org.junit.jupiter.api.BeforeEach;
+import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests}.
@@ -30,27 +27,46 @@ import static org.awaitility.Awaitility.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration.class
-}, properties = {
-
-})
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-
+@Tag("CasConfiguration")
 @Slf4j
 public class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @BeforeAll
-    public static void initialize() {
-
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    public class DefaultTests extends BaseGoogleCloudSecretsManagerTests {
+        @Test
+        public void verifyOperation() {
+            val source = propertySourceLocator.locate(environment);
+            val propertyValue = source.getProperty("sm://projects/1234567890/secrets/cas_authn_accept_users");
+            assertNull(propertyValue);
+        }
     }
 
-    @Test
-    public void verifyOperation() {
-        assertNotNull(casProperties);
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @Import(MockTests.GoogleCloudSecretsManagerTestConfiguration.class)
+    public class MockTests extends BaseGoogleCloudSecretsManagerTests {
+        @Test
+        public void verifyOperation() {
+            val source = propertySourceLocator.locate(environment);
+            val propertyValue = source.getProperty("sm://projects/1234567890/secrets/cas_authn_accept_users");
+            assertEquals("casuser::Mellon", propertyValue);
+        }
+
+        @TestConfiguration
+        public static class GoogleCloudSecretsManagerTestConfiguration {
+            @Bean
+            public SecretManagerTemplate googleCloudSecretsManagerTemplate() {
+                val secretResponse = AccessSecretVersionResponse
+                    .newBuilder()
+                    .setName("cas.authn.accept.users")
+                    .setPayload(SecretPayload.newBuilder()
+                        .setData(ByteString.copyFrom("casuser::Mellon".getBytes(StandardCharsets.UTF_8)))
+                        .build())
+                    .build();
+                val serviceClient = mock(SecretManagerServiceClient.class);
+                when(serviceClient.accessSecretVersion(any(SecretVersionName.class))).thenReturn(secretResponse);
+                return new SecretManagerTemplate(serviceClient, new DefaultGcpProjectIdProvider());
+            }
+        }
     }
 }

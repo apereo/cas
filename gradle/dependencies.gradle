@@ -14,10 +14,19 @@ ext.libraries = [
                 }
         ],
         googlecloudsecretsmanager   : [
-                dependencies.create("com.google.cloud:google-cloud-secretmanager:$googleCloudSdkVersion") {
+                dependencies.create("com.google.cloud:spring-cloud-gcp-secretmanager:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("com.google.cloud:spring-cloud-gcp-starter-secretmanager:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         firebaseadmin              : [
@@ -25,11 +34,15 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("com.google.firebase:firebase-admin:$firebaseAdminVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         aspectj                    : [

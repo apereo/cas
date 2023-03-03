@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - Google Cloud Secrets Manager"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via GCP"
+    ]
+}
 dependencies {
 
     implementation libraries.googlecloudsecretsmanager
