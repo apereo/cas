@@ -52,10 +52,67 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 
 {% include_cached casproperties.html properties="cas.sso" %}
 
+## SameSite Attribute
+   
+CAS configuration allows the deployer to control and modify the `SameAttribute` cookie attribute statically.
+The deployer also has the option to generate this cookie attribute dynamically via the following strategies.
+
+{% tabs samesitecookie %}
+
+{% tab samesitecookie Groovy %}
+        
+The cookie setting in CAS configuration may point to a Groovy script that is tasked to generate the `SameAttribute` cookie attribute.
+The outline of the script may be as follows:
+
+```groovy
+import org.apereo.cas.web.cookie.*
+
+def run(final Object... args) {
+    def request = args[0]
+    def response = args[1]
+    def context = args[2] as CookieGenerationContext
+    def logger = args[3]
+    
+    logger.info("Generating SameSite for ${context.name}")
+    return "SameSite=Lax;"
+}
+```
+
+The parameters that may be passed are as follows:
+
+| Parameter  | Description                                                                                        |
+|------------|----------------------------------------------------------------------------------------------------|
+| `request`  | The HTTP request object.                                                                           |
+| `response` | The HTTP response object.                                                                          |
+| `context`  | The cookie configuration context that points to the cookie configuration and other helper objects. |
+| `logger`   | The object responsible for issuing log messages such as `logger.info(...)`.                        |
+
+{% endtab %}
+
+{% tab samesitecookie Java %}
+
+The cookie setting in CAS configuration may point to a Java class usonig its FQDN 
+that is tasked to generate the `SameAttribute` cookie attribute.
+
+```java
+public class MyCookieSameSitePolicy implements CookieSameSitePolicy {
+    @Override
+    public Optional<String> build(HttpServletRequest request, 
+                                  HttpServletResponse response, 
+                                  CookieGenerationContext context) {
+        return Optional.of("SameSite=Lax;");
+    }
+}
+```
+
+{% endtab %}
+
+{% endtabs %}
+
 ## Cookie Generation for Renewed Authentications
 
 By default, forced authentication requests that challenge the user for credentials
-either via the [`renew` request parameter](../protocol/CAS-Protocol.html)
+either via the [`renew` request parameter](../protocol/CAS-Protocol.html) (that is, using the CAS protocol),
 or via [the service-specific setting](../services/Service-Management.html) of
 the CAS service registry will always generate the ticket-granting cookie
 nonetheless. What this means is, logging in to a non-SSO-participating application

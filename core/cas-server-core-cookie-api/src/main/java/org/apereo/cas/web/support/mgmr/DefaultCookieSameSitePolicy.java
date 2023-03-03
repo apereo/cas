@@ -1,10 +1,14 @@
 package org.apereo.cas.web.support.mgmr;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.jooq.lambda.Unchecked;
@@ -21,13 +25,20 @@ import java.util.Optional;
  * @since 7.0.0
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class DefaultCookieSameSitePolicy implements CookieSameSitePolicy {
+    /**
+     * Policy instance.
+     */
     public static final CookieSameSitePolicy INSTANCE = new DefaultCookieSameSitePolicy();
 
     @Override
     public Optional<String> build(final HttpServletRequest request, final HttpServletResponse response,
                                   final CookieGenerationContext cookieGenerationContext) {
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy();
+        if (ResourceUtils.doesResourceExist(sameSitePolicy)) {
+            return buildSameSitePolicyFromScript(request, response, cookieGenerationContext);
+        }
         if (sameSitePolicy.contains(".")) {
             return Unchecked.supplier(() -> {
                 val clazz = ClassUtils.getClass(CookieSameSitePolicy.class.getClassLoader(), sameSitePolicy);
@@ -41,5 +52,17 @@ public class DefaultCookieSameSitePolicy implements CookieSameSitePolicy {
             default -> CookieSameSitePolicy.none();
         };
         return result.build(request, response, cookieGenerationContext);
+    }
+
+    protected Optional<String> buildSameSitePolicyFromScript(final HttpServletRequest request, final HttpServletResponse response,
+                                                             final CookieGenerationContext cookieGenerationContext) {
+        return FunctionUtils.doUnchecked(() -> {
+            val sameSitePolicy = cookieGenerationContext.getSameSitePolicy();
+            val resource = ResourceUtils.getResourceFrom(sameSitePolicy);
+            try (val groovyResource = new WatchableGroovyScriptResource(resource, false)) {
+                return Optional.ofNullable(groovyResource.execute(
+                    new Object[]{request, response, cookieGenerationContext, LOGGER}, String.class));
+            }
+        });
     }
 }

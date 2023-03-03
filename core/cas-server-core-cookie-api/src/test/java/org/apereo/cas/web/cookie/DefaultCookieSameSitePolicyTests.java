@@ -16,51 +16,54 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CookieSameSitePolicyTests}.
+ * This is {@link DefaultCookieSameSitePolicyTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Tag("Cookie")
-public class CookieSameSitePolicyTests {
+public class DefaultCookieSameSitePolicyTests {
     @Test
-    public void verifyOff() {
+    public void verifyOff() {   
         val opt = CookieGenerationContext.builder().sameSitePolicy("Off").build();
-        assertNotNull(opt);
         assertTrue(getPolicyResult(opt).isEmpty());
     }
 
     @Test
     public void verifyNone() {
         val opt = CookieGenerationContext.builder().sameSitePolicy("NONE").build();
-        assertNotNull(opt);
-        assertEquals("SameSite=None;", getPolicyResult(opt));
+        assertEquals("SameSite=None;", getPolicyResult(opt).get());
     }
 
     @Test
     public void verifyLax() {
         val opt = CookieGenerationContext.builder().sameSitePolicy("LAX").build();
-        assertNotNull(opt);
-        assertEquals("SameSite=Lax;", getPolicyResult(opt));
+        assertEquals("SameSite=Lax;", getPolicyResult(opt).get());
     }
 
     @Test
     public void verifyStrict() {
         val opt = CookieGenerationContext.builder().sameSitePolicy("STRICT").build();
-        assertNotNull(opt);
-        assertEquals("SameSite=Strict;", getPolicyResult(opt));
+        assertEquals("SameSite=Strict;", getPolicyResult(opt).get());
     }
 
     @Test
     public void verifyCustomImpl() {
         val opt = CookieGenerationContext.builder()
-            .sameSitePolicy(CustomCookieSameSitePolicy.class.getName()).build();
-        assertNotNull(opt);
-        assertEquals("SameSite=Something;", getPolicyResult(opt));
+            .sameSitePolicy(CustomCookieSameSitePolicy.class.getName())
+            .build();
+        assertEquals("SameSite=Something;", getPolicyResult(opt).get());
     }
 
-    private static String getPolicyResult(final CookieGenerationContext context) {
-        return DefaultCookieSameSitePolicy.INSTANCE.build(new MockHttpServletRequest(), new MockHttpServletResponse(), context).get();
+    @Test
+    public void verifyGroovyImpl() {
+        val opt = CookieGenerationContext.builder().sameSitePolicy("classpath:/SameSiteCookie.groovy").build();
+        assertEquals("SameSite=Something;", getPolicyResult(opt).get());
+    }
+
+
+    private static Optional<String> getPolicyResult(final CookieGenerationContext context) {
+        return DefaultCookieSameSitePolicy.INSTANCE.build(new MockHttpServletRequest(), new MockHttpServletResponse(), context);
     }
 
     public static class CustomCookieSameSitePolicy implements CookieSameSitePolicy {
