@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.cookie.PinnableCookiePropertie
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.support.InvalidCookieException;
 
 import com.google.common.base.Splitter;
@@ -41,8 +42,9 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     private final PinnableCookieProperties cookieProperties;
 
     public DefaultCasCookieValueManager(final CipherExecutor<Serializable, Serializable> cipherExecutor,
+                                        final CookieSameSitePolicy cookieSameSitePolicy,
                                         final PinnableCookieProperties cookieProperties) {
-        super(cipherExecutor);
+        super(cipherExecutor, cookieSameSitePolicy);
         this.cookieProperties = cookieProperties;
     }
 

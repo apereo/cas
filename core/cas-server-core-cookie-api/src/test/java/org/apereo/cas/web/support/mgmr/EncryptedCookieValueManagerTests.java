@@ -22,7 +22,7 @@ public class EncryptedCookieValueManagerTests {
 
     @Test
     public void verifyNoValue() {
-        val mgr = new EncryptedCookieValueManager(mock(CipherExecutor.class));
+        val mgr = new EncryptedCookieValueManager(mock(CipherExecutor.class), DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
 
@@ -30,7 +30,7 @@ public class EncryptedCookieValueManagerTests {
     public void verifyEmptyValue() {
         val cipher = mock(CipherExecutor.class);
         when(cipher.decode(anyString(), any())).thenReturn(StringUtils.EMPTY);
-        val mgr = new EncryptedCookieValueManager(cipher);
+        val mgr = new EncryptedCookieValueManager(cipher, DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
 }

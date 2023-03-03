@@ -347,7 +347,12 @@ layout: null
             *   [Mitigation](/cas/{{ version }}/authentication/Configuring-RiskBased-Authentication-Mitigation.html) 
 
 * [SSO & SLO](#ssoandslo)
-    *   [SSO Session](/cas/{{ version }}/authentication/Configuring-SSO.html)
+    *   [SSO Sessions](#ssosessionmgmt)
+      *   [Overview](/cas/{{ version }}/authentication/Configuring-SSO.html)
+      *   [SSO Cookie](/cas/{{ version }}/authentication/Configuring-SSO-Cookie.html)
+      *   [SSO Warning Cookie](/cas/{{ version }}/authentication/Configuring-SSO-Cookie.html)
+      *   [Public Workstations](/cas/{{ version }}/authentication/Configuring-SSO-Public-Workstations.html)
+      *   [SSO & Services](/cas/{{ version }}/authentication/Configuring-SSO-Services.html)
     *   [Remember Me](/cas/{{ version }}/authentication/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/cas/{{ version }}/installation/Logout-Single-Signout.html)
 

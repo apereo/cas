@@ -12,7 +12,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.TicketGrantingCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.gen.WarningCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
-import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -48,9 +48,10 @@ public class CasCookieConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
             if (casProperties.getTgc().getCrypto().isEnabled()) {
-                return new DefaultCasCookieValueManager(cookieCipherExecutor, casProperties.getTgc());
+                return new DefaultCasCookieValueManager(cookieCipherExecutor,
+                    DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc());
             }
-            return NoOpCookieValueManager.INSTANCE;
+            return CookieValueManager.noOp();
         }
 
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")

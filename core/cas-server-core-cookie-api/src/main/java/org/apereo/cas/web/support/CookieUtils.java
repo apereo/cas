@@ -10,7 +10,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -37,7 +36,29 @@ public class CookieUtils {
     public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie,
                                                                   final CookieValueManager cookieValueManager) {
         val context = buildCookieGenerationContext(cookie);
+        return buildCookieRetrievingGenerator(cookieValueManager, context);
+    }
+
+    /**
+     * Build cookie retrieving generator cookie retrieving cookie generator.
+     *
+     * @param cookieValueManager the cookie value manager
+     * @param context            the context
+     * @return the cookie retrieving cookie generator
+     */
+    public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieValueManager cookieValueManager,
+                                                                                  final CookieGenerationContext context) {
         return new CookieRetrievingCookieGenerator(context, cookieValueManager);
+    }
+
+    /**
+     * Build cookie retrieving generator cookie.
+     *
+     * @param context the context
+     * @return the cookie retrieving cookie generator
+     */
+    public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieGenerationContext context) {
+        return buildCookieRetrievingGenerator(CookieValueManager.noOp(), context);
     }
 
     /**
@@ -47,7 +68,7 @@ public class CookieUtils {
      * @return the cookie retrieving cookie generator
      */
     public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie) {
-        return buildCookieRetrievingGenerator(cookie, NoOpCookieValueManager.INSTANCE);
+        return buildCookieRetrievingGenerator(cookie, CookieValueManager.noOp());
     }
 
     /**
