@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import com.google.api.gax.core.CredentialsProvider;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
 import com.google.cloud.spring.autoconfigure.secretmanager.GcpSecretManagerAutoConfiguration;
@@ -79,9 +80,12 @@ public class GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "googleCloudSecretsManagerTemplate")
-    public SecretManagerTemplate googleCloudSecretsManagerTemplate(final GcpSecretManagerProperties properties) throws Exception {
+    public SecretManagerTemplate googleCloudSecretsManagerTemplate(
+        @Qualifier("googleCloudSecretsManagerCredentialProvider")
+        final CredentialsProvider googleCloudSecretsManagerCredentialProvider,
+        final GcpSecretManagerProperties properties) throws Exception {
         val settings = SecretManagerServiceSettings.newBuilder()
-            .setCredentialsProvider(new DefaultCredentialsProvider(properties))
+            .setCredentialsProvider(googleCloudSecretsManagerCredentialProvider)
             .setHeaderProvider(new UserAgentHeaderProvider(getClass()))
             .build();
         val serviceClient = SecretManagerServiceClient.create(settings);
@@ -89,6 +93,12 @@ public class GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration {
         val secretManagerTemplate = new SecretManagerTemplate(serviceClient, projectIdProvider);
         secretManagerTemplate.setAllowDefaultSecretValue(properties.isAllowDefaultSecret());
         return secretManagerTemplate;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "googleCloudSecretsManagerTemplate")
+    public CredentialsProvider googleCloudSecretsManagerCredentialProvider(final GcpSecretManagerProperties properties) throws Exception {
+        return new DefaultCredentialsProvider(properties);
     }
 
     private static GcpProjectIdProvider getProjectIdProvider(final GcpSecretManagerProperties properties) {

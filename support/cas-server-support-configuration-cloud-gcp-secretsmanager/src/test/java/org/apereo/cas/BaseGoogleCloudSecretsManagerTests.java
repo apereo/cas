@@ -3,13 +3,17 @@ package org.apereo.cas;
 import org.apereo.cas.config.GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 /**
@@ -20,6 +24,7 @@ import org.springframework.core.env.Environment;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    BaseGoogleCloudSecretsManagerTests.BaseGoogleCloudSecretsManagerTestConfiguration.class,
     PropertyPlaceholderAutoConfiguration.class,
     GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration.class
 }, properties = {
@@ -34,4 +39,12 @@ public abstract class BaseGoogleCloudSecretsManagerTests {
 
     @Autowired
     protected Environment environment;
+
+    @TestConfiguration(value = "BaseGoogleCloudSecretsManagerTestConfiguration", proxyBeanMethods = false)
+    public static class BaseGoogleCloudSecretsManagerTestConfiguration {
+        @Bean
+        public CredentialsProvider googleCloudSecretsManagerCredentialProvider() {
+            return new NoCredentialsProvider();
+        }
+    }
 }

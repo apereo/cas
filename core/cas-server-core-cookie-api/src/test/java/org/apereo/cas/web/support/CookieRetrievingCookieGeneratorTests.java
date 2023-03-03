@@ -2,9 +2,13 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -141,7 +145,8 @@ public class CookieRetrievingCookieGeneratorTests {
         val ctx = getCookieGenerationContext();
         ctx.setSameSitePolicy("lax");
 
-        val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+            DefaultCookieSameSitePolicy.INSTANCE, new PinnableCookieProperties().setPinToSession(false)), ctx);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
