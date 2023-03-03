@@ -139,6 +139,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -698,7 +699,8 @@ public class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
-                new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor, cookie));
+                new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor,
+                    DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
         @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")

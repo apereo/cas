@@ -6,11 +6,9 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
-import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -55,7 +53,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     private final CookieGenerationContext cookieGenerationContext;
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context) {
-        this(context, NoOpCookieValueManager.INSTANCE);
+        this(context, CookieValueManager.noOp());
     }
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context,
@@ -209,13 +207,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         val path = cleanCookiePath(cookie.getPath());
         builder.append(String.format(" Path=%s;", path));
-        val sameSiteResult = CookieSameSitePolicy.of(cookieGenerationContext).build(request, response);
+
+        val sameSitePolicy = casCookieValueManager.getCookieSameSitePolicy();
+        val sameSiteResult = sameSitePolicy.build(request, response, cookieGenerationContext);
         sameSiteResult.ifPresent(result -> builder.append(String.format(" %s", result)));
-        val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
         if (cookie.getSecure() || (sameSiteResult.isPresent() && StringUtils.equalsIgnoreCase(sameSiteResult.get(), "none"))) {
             builder.append(" Secure;");
-            LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or "
-                         + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
+            LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or the configured same-site policy", cookie.getName());
         }
         if (cookie.isHttpOnly()) {
             builder.append(" HttpOnly;");
