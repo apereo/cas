@@ -6,9 +6,13 @@ category: Multifactor Authentication
 
 {% include variables.html %}
 
-# Inwebo Multifactor Authentication
+# Inwebo/TrustBuilder Multifactor Authentication
 
-You can secure your CAS server with a second factor provided by [Inwebo](https://www.inwebo.com).
+You can secure your CAS server with a second factor provided by [Inwebo](https://trustbuilder.com/).
+
+<div class="alert alert-info">:information_source: <strong>TrustBuilder vs inWebo</strong>
+<p>In 2023 and one year after the strategic acquisition of TrustBuilder by inWebo, the two companies have now officially become one 
+and are rebranded as TrustBuilder</p></div>
 
 A complete documentation of this integration can be found [on the Inwebo documentation website](https://docs.inwebo.com/documentation/cas-apereo-inwebo-integration).
 

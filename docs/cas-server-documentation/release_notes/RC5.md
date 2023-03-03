@@ -106,6 +106,11 @@ now be defined on a per-application basis.
 
 Modules, features and plugins that support functionality for Apache CouchDb or Couchbase are now deprecated.
 These components are scheduled to be removed in a future CAS version and will no longer be maintained or supported. 
+ 
+### Google Cloud (GCP) Secret Manager
+
+[Google Cloud Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-GCP-SecretManager.html) can 
+now be used as configuration source for CAS properties and settings. 
 
 ## Other Stuff
         

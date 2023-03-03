@@ -42,12 +42,11 @@ public class JdbcCloudConfigBootstrapConfigurationTests {
     public static void initialize() {
         val jpa = new Jpa();
         val ds = JpaBeans.newDataSource(jpa);
-        try (val c = ds.getConnection()) {
-            try (val s = c.createStatement()) {
-                c.setAutoCommit(true);
-                s.execute("create table CAS_SETTINGS_TABLE (id VARCHAR(255), name VARCHAR(255), value VARCHAR(255));");
-                s.execute("insert into CAS_SETTINGS_TABLE (id, name, value) values('1', 'cas.authn.accept.users', '" + STATIC_AUTHN_USERS + "');");
-            }
+        try (val connection = ds.getConnection();
+             val statement = connection.createStatement()) {
+            connection.setAutoCommit(true);
+            statement.execute("create table CAS_SETTINGS_TABLE (id VARCHAR(255), name VARCHAR(255), value VARCHAR(255));");
+            statement.execute("insert into CAS_SETTINGS_TABLE (id, name, value) values('1', 'cas.authn.accept.users', '" + STATIC_AUTHN_USERS + "');");
         }
     }
 

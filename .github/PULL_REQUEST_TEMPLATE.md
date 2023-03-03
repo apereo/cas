@@ -17,4 +17,16 @@ Please make sure you include the following:
 
 For more information, please see [this page](https://apereo.github.io/cas/developer/Contributor-Guidelines.html).
 
+If your pull request targets a maintenance branch and is not directed at `master`, make sure your reference the pull request that
+has already ported your changes forward to the `master` branch. You may do so by including the following in your pull request description:
+
+```
+master: https://github.com/apereo/cas/pull/$PR_NUMBER
+```
+
+Do not keep this template as is when you submit. Please remove or adjust the description when you submit your pull request.
+
+If you have questions, please [reach out](https://apereo.github.io/cas/Mailing-Lists.html).
+
+Thanks again!
 -->
