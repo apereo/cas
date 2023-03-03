@@ -22,7 +22,7 @@ import java.util.Map;
 @UtilityClass
 public class SyncopeUserTOConverterUtils {
     private static final ObjectMapper MAPPER =
-        JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
+            JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Convert user as a JSON node into a map of details.
@@ -43,6 +43,9 @@ public class SyncopeUserTOConverterUtils {
         var name = attributeMappings.getOrDefault("key", "syncopeUserKey");
         attributes.put(name, CollectionUtils.wrapList(user.get("key").asText()));
 
+        name = attributeMappings.getOrDefault("username", "username");
+        attributes.put(name, CollectionUtils.wrapList(user.get("username").asText()));
+        
         name = attributeMappings.getOrDefault("status", "syncopeUserStatus");
         attributes.put(name, CollectionUtils.wrapList(user.get("status").asText()));
 
@@ -90,7 +93,7 @@ public class SyncopeUserTOConverterUtils {
         if (user.has("relationships")) {
             val relationships = new ArrayList<>();
             user.get("relationships").forEach(
-                r -> relationships.add(r.get("type").asText() + ';' + r.get("otherEndName").asText()));
+                    r -> relationships.add(r.get("type").asText() + ';' + r.get("otherEndName").asText()));
             if (!relationships.isEmpty()) {
                 name = attributeMappings.getOrDefault("relationships", "syncopeUserRelationships");
                 attributes.put(name, relationships);
@@ -98,34 +101,43 @@ public class SyncopeUserTOConverterUtils {
         }
 
         if (user.has("plainAttrs")) {
-            val attrName = attributeMappings.getOrDefault("plainAttrs", "syncopeUserAttr_");
-            user.get("plainAttrs").forEach(attr -> attributes.put(
-                attrName + attr.get("schema").asText(),
-                MAPPER.convertValue(attr.get("values"), ArrayList.class)));
+            val prefix = attributeMappings.getOrDefault("plainAttrs", "syncopeUserAttr_");
+            user.get("plainAttrs").forEach(attr -> {
+                val attrName = prefix + attr.get("schema").asText();
+                attributes.put(
+                        attributeMappings.getOrDefault(attrName, attrName),
+                        MAPPER.convertValue(attr.get("values"), ArrayList.class));
+            });
         }
         if (user.has("derAttrs")) {
-            val attrName = attributeMappings.getOrDefault("derAttrs", "syncopeUserAttr_");
-            user.get("derAttrs").forEach(a -> attributes.put(
-                attrName + a.get("schema").asText(),
-                MAPPER.convertValue(a.get("values"), ArrayList.class)));
+            val prefix = attributeMappings.getOrDefault("derAttrs", "syncopeUserAttr_");
+            user.get("derAttrs").forEach(attr -> {
+                val attrName = prefix + attr.get("schema").asText();
+                attributes.put(
+                        attributeMappings.getOrDefault(attrName, attrName),
+                        MAPPER.convertValue(attr.get("values"), ArrayList.class));
+            });
         }
         if (user.has("virAttrs")) {
-            val attrName = attributeMappings.getOrDefault("virAttrs", "syncopeUserAttr_");
-            user.get("virAttrs").forEach(a -> attributes.put(
-                attrName + a.get("schema").asText(),
-                MAPPER.convertValue(a.get("values"), ArrayList.class)));
+            val prefix = attributeMappings.getOrDefault("virAttrs", "syncopeUserAttr_");
+            user.get("virAttrs").forEach(attr -> {
+                val attrName = prefix + attr.get("schema").asText();
+                attributes.put(
+                        attributeMappings.getOrDefault(attrName, attrName),
+                        MAPPER.convertValue(attr.get("values"), ArrayList.class));
+            });
         }
 
         return attributes;
     }
 
     private void collectListableAttribute(final Map<String, List<Object>> attributes,
-                                          final JsonNode user, final String syncopeAttribute,
-                                          final String casAttribute,
-                                          final Map<String, String> attributeMappings) {
+            final JsonNode user, final String syncopeAttribute,
+            final String casAttribute,
+            final Map<String, String> attributeMappings) {
         val values = user.has(syncopeAttribute)
-            ? MAPPER.convertValue(user.get(syncopeAttribute), ArrayList.class)
-            : CollectionUtils.wrapList();
+                ? MAPPER.convertValue(user.get(syncopeAttribute), ArrayList.class)
+                : CollectionUtils.wrapList();
         if (!values.isEmpty()) {
             val name = attributeMappings.getOrDefault(syncopeAttribute, casAttribute);
             attributes.put(name, values);

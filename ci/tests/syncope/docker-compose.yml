@@ -11,7 +11,7 @@ services:
   syncope:
     depends_on:
       - db
-    image: apache/syncope:2.1.11
+    image: apache/syncope:2.1.13
     container_name: syncope-core
     ports:
       - "18080:8080"

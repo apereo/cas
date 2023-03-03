@@ -67,16 +67,20 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasActuator
      * Invalidate.
      *
      * @param serviceId the service id
+     * @param entityId  the entity id
      */
     @DeleteOperation
-    @Operation(summary = "Invalidate SAML2 metadata cache using an entity id.", parameters = @Parameter(name = "serviceId"))
-    public void invalidate(@Nullable final String serviceId) {
+    @Operation(summary = "Invalidate SAML2 metadata cache using an entity id.", parameters = {
+        @Parameter(name = "serviceId"), @Parameter(name = "entityId")
+    })
+    public void invalidate(@Nullable final String serviceId, @Nullable final String entityId) {
         if (StringUtils.isBlank(serviceId)) {
             cachingMetadataResolver.invalidate();
         } else {
             val registeredService = findRegisteredService(serviceId);
             val criteriaSet = new CriteriaSet();
-            criteriaSet.add(new EntityIdCriterion(serviceId));
+            val effectiveEntityId = StringUtils.defaultIfBlank(entityId, registeredService.getServiceId());
+            criteriaSet.add(new EntityIdCriterion(effectiveEntityId));
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
             cachingMetadataResolver.invalidate(registeredService, criteriaSet);
         }
