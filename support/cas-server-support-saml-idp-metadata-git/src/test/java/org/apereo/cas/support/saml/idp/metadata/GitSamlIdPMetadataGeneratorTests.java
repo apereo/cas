@@ -48,10 +48,11 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
             }
-            val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            git.add().addFilepattern("*.*").call();
-            git.commit().setSign(false).setMessage("Initial commit").call();
+            try (val git = Git.init().setDirectory(gitDir).setBare(false).call()) {
+                FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                git.add().addFilepattern("*.*").call();
+                git.commit().setSign(false).setMessage("Initial commit").call();
+            }
             assertTrue(gitDir.exists());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
