@@ -31,7 +31,7 @@ The Consul Config Watch takes advantage of the ability of consul to [watch a key
 thirdPartyStartsWith="spring.cloud.consul.config"
 %}
 
-<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>the configuration modules provided here may also be used verbatim inside a CAS server overlay and do not exclusively belong to a Spring Cloud Configuration server. While this module is primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay directly to fetch settings from a source.</p></div>
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>The configuration modules provided here may also be used verbatim inside a CAS server overlay and do not exclusively belong to a Spring Cloud Configuration server. While this module is primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay directly to fetch settings from a source.</p></div>
 
 The following endpoints are provided by Spring Cloud:
 
