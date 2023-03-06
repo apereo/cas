@@ -1,7 +1,6 @@
 package org.apereo.cas.trusted;
 
 import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests;
-import org.apereo.cas.trusted.authentication.keys.LegacyMultifactorAuthenticationTrustRecordKeyGeneratorTests;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleanerTests;
@@ -36,7 +35,6 @@ import org.junit.platform.suite.api.Suite;
     MultifactorAuthnTrustedDeviceFingerprintConfigurationTests.class,
     MultifactorAuthenticationTrustReportEndpointTests.class,
     DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests.class,
-    LegacyMultifactorAuthenticationTrustRecordKeyGeneratorTests.class,
     MultifactorAuthenticationSetTrustActionTests.class,
     MultifactorAuthenticationPrepareTrustDeviceViewActionTests.class,
     GeoLocationDeviceFingerprintComponentManagerTests.class,

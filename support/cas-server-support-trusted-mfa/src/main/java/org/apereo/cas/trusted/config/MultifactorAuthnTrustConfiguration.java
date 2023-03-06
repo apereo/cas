@@ -13,7 +13,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.trusted.authentication.keys.LegacyMultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
@@ -78,13 +77,8 @@ public class MultifactorAuthnTrustConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(
-            final CasConfigurationProperties casProperties) {
-            val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
-            if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
-                return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
-            }
-            return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
+        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator() {
+            return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
         }
     }
 

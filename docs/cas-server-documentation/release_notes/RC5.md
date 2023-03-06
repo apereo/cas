@@ -105,8 +105,17 @@ now be defined on a per-application basis.
 ### Feature Deprecations
 
 Modules, features and plugins that support functionality for Apache CouchDb or Couchbase are now deprecated.
-These components are scheduled to be removed in a future CAS version and will no longer be maintained or supported. 
+These components are scheduled to be removed in a future CAS version and will no longer be maintained or supported. If you are currently using any of these 
+plugins or features, we recommend that you consider a better alternative or prepare to adopt and maintain the feature on your own. 
+
+### Feature Removals
  
+The following deprecated features and settings are now removed from the CAS codebase:
+
+- Custom components used to provide or validate SAML2 tokens when CAS is configured to support [the WS Federation Protocol](../protocol/WS-Federation-Protocol.html). These components where only supplied to support OpenSAML v4 APIs and were deprecated in CAS `6.6.0`.
+- The *Legacy* strategy used to generate device record keys for trusted devices in a multifactor authentication flow. This strategy was deprecated in CAS `6.2.0`
+- The `requiredHandlers` setting assigned to a registered service definition. This setting was deprecated in CAS `6.2.0`.
+
 ### Google Cloud (GCP) Secret Manager
 
 [Google Cloud Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-GCP-SecretManager.html) can 
