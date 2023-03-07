@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
@@ -97,8 +98,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         val logoutState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT));
         createTransitionForState(logoutState, CasWebflowConstants.TRANSITION_ID_PROCEED, "redirectToCasLogout");
+        createTransitionForState(logoutState, CasWebflowConstants.TRANSITION_ID_DONE, "logoutCompleted");
+
         val redirectToLogout = createEndState(flow, "redirectToCasLogout");
         redirectToLogout.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT));
+
+        val logoutCompleted = createEndState(flow, "logoutCompleted");
+        logoutCompleted.setFinalResponseAction(ConsumerExecutionAction.NO_CONTENT);
     }
 
     protected void createClientActionState(final Flow flow) {

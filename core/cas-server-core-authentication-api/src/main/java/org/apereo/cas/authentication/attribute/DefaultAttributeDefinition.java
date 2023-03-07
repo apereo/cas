@@ -13,6 +13,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,6 +76,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String canonicalizationMode;
 
+    @Builder.Default
     private Map<String, String> patterns = new LinkedHashMap<>();
 
     private String flattened;
@@ -166,7 +168,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             currentValues = getScriptedAttributeValue(key, currentValues, context);
         }
         if (getPatterns() != null && !getPatterns().isEmpty() && !currentValues.isEmpty()) {
-            currentValues = getPatternValuesFor(key, currentValues, context);
+            currentValues = getPatternValuesFor(currentValues, context);
         }
         if (isScoped()) {
             currentValues = formatValuesWithScope(context.getScope(), currentValues);
@@ -193,7 +195,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         return currentValues;
     }
 
-    private List<Object> getPatternValuesFor(final String key, final List<Object> currentValues,
+    private List<Object> getPatternValuesFor(final List<Object> currentValues,
                                              final AttributeDefinitionResolutionContext context) {
         return patterns
             .entrySet()

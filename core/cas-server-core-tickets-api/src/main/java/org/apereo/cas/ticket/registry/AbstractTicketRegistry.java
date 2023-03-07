@@ -9,8 +9,10 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -186,6 +188,24 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return false;
         };
         return getTickets(ticketPredicate).count();
+    }
+
+    @Override
+    public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
+        return getTickets(ticket -> {
+            if (ticket instanceof TicketGrantingTicketAwareTicket ticketGrantingTicket && !ticket.isExpired()
+                && ticketGrantingTicket.getAuthentication() != null) {
+                val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
+                return queryAttributes.entrySet().stream().anyMatch(entry -> {
+                    if (attributes.containsKey(entry.getKey())) {
+                        val authnAttributeValues = CollectionUtils.toCollection(attributes.get(entry.getKey()));
+                        return authnAttributeValues.stream().anyMatch(value -> entry.getValue().contains(value));
+                    }
+                    return false;
+                });
+            }
+            return false;
+        });
     }
 
     /**
