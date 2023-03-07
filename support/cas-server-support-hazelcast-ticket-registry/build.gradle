@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",
-            title: "Hazelcast Ticket Registry"
+            title: "Hazelcast Ticket Registry",
+            aliases: ["hazelcast"]
     ]
 }
 dependencies {
