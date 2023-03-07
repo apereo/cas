@@ -196,10 +196,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             if (ticket instanceof TicketGrantingTicketAwareTicket ticketGrantingTicket && !ticket.isExpired()
                 && ticketGrantingTicket.getAuthentication() != null) {
                 val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
-                return queryAttributes.entrySet().stream().anyMatch(entry -> {
-                    if (attributes.containsKey(entry.getKey())) {
-                        val authnAttributeValues = CollectionUtils.toCollection(attributes.get(entry.getKey()));
-                        return authnAttributeValues.stream().anyMatch(value -> entry.getValue().contains(value));
+
+                return queryAttributes.entrySet().stream().anyMatch(queryEntry -> {
+                    val attributeKey = digest(queryEntry.getKey());
+
+                    if (attributes.containsKey(attributeKey)) {
+                        
+                        val authnAttributeValues = CollectionUtils.toCollection(attributes.get(attributeKey));
+                        
+                        return authnAttributeValues.stream().anyMatch(value -> {
+                            val attributeValue = value.toString();
+                            return queryEntry.getValue()
+                                .stream()
+                                .map(queryValue -> digest(queryValue.toString()))
+                                .anyMatch(attributeValue::equalsIgnoreCase);
+                        });
                     }
                     return false;
                 });
