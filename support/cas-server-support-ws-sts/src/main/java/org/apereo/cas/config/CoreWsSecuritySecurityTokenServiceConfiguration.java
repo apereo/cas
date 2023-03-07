@@ -66,7 +66,6 @@ import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.cxf.ws.security.tokenstore.MemoryTokenStore;
 import org.apache.cxf.ws.security.tokenstore.TokenStore;
 import org.apache.wss4j.dom.validate.Validator;
-import org.apache.wss4j.stax.validate.SamlTokenValidator;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Qualifier;

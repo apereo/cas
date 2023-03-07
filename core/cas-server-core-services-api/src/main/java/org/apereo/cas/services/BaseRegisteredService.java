@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
