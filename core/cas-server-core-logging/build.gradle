@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Logging",
-            title: "Apache Log4j"
+            title: "Apache Log4j",
+            aliases: ["log4j"]
     ]
 }
 dependencies {

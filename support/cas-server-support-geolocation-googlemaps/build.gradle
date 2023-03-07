@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "GeoLocation",
-            title: "GoogleMaps GeoLocation"
+            title: "GoogleMaps GeoLocation",
+            aliases: ["googlemaps"]
     ]
 }
 dependencies {

@@ -4,7 +4,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             title: "Attribute Consent via LDAP & Active Directory",
-            category: "Attribute Consent"
+            category: "Attribute Consent",
+            aliases: ["ldapconsent"]
     ]
 }
 dependencies {

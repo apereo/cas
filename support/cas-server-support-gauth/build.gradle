@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Google Authenticator Multifactor Authentication",
-            title: "Google Authenticator Support"
+            title: "Google Authenticator Support",
+            aliases: ["gauth"]
     ]
 }
 dependencies {

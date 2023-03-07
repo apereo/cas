@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Integrations",
-            title: "ACME & Let's Encrypt"
+            title: "ACME & Let's Encrypt",
+            aliases: ["acme"]
     ]
 }
 
