@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "SMS & Text Messaging",
-            title: "Nexmo"
+            title: "Nexmo",
+            aliases: ["nexmo"]
     ]
 }
 

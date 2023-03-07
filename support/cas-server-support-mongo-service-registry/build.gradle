@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Service Registries",
-            title: "MongoDb Service Registry"
+            title: "MongoDb Service Registry",
+            aliases: ["mongosvc"]
     ]
 }
 dependencies {

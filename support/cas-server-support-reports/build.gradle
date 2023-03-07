@@ -4,7 +4,7 @@ ext {
     projectMetadata = [
             category: "Reporting",
             title: "Reports & Actuators",
-            aliases: ["reports"]
+            aliases: ["reports", "actuators"]
     ]
 }
 

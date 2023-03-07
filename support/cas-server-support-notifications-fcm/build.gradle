@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Integrations",
-            title: "FCM Notifications"
+            title: "FCM Notifications",
+            aliases: ["fcm"]
     ]
 }
 

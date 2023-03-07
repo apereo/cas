@@ -16,7 +16,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Multifactor Authentication",
-            title: "RADIUS"
+            title: "RADIUS",
+            aliases: ["radiusmfa"]
     ]
 }
 
