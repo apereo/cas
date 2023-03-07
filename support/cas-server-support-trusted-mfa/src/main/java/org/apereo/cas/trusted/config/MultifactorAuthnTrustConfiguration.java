@@ -6,7 +6,6 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
