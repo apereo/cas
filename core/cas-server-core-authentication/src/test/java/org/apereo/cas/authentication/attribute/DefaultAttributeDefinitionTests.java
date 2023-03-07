@@ -164,6 +164,6 @@ public class DefaultAttributeDefinitionTests {
             .build();
         val context = getAttributeDefinitionResolutionContext();
         val values = defn.resolveAttributeValues(context);
-        assertNull(values);
+        assertTrue(values.isEmpty());
     }
 }
