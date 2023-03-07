@@ -121,6 +121,11 @@ The following deprecated features and settings are now removed from the CAS code
 [Google Cloud Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-GCP-SecretManager.html) can 
 now be used as configuration source for CAS properties and settings. 
 
+### Attribute Definition Enhancements
+
+Attributes registered in the [CAS attribute definition store](../integration/Attribute-Definitions.html) are now able to build values
+using regular expressions and pattern matching. Moreover, definitions are also allowed to flatten their values using an assigned delimiter.
+
 ## Other Stuff
         
 - Locating SAML2 assertion consumer service URLs in the metadata is handled via a case-insensitive strategy.
