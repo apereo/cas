@@ -153,4 +153,7 @@ jobs:
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - name: Publish Modules Metadata
         if: ${{ env.CAS_PROJECT_DB_URL_ENDPOINT != null && env.CAS_PROJECT_DB_API_KEY != null }}
-        run: ./ci/metadata/publish-modules.sh
+        run: |
+          python -m pip install --upgrade pip wheel
+          python -m pip install httpie
+          ./ci/metadata/publish-project-metadata.sh
