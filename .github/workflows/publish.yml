@@ -11,7 +11,8 @@ env:
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
-  RESTDB_CAS_API_KEY: ${{ secrets.RESTDB_CAS_API_KEY }}
+  CAS_PROJECT_DB_URL_ENDPOINT: ${{ secrets.CAS_PROJECT_DB_URL_ENDPOINT }}
+  CAS_PROJECT_DB_API_KEY: ${{ secrets.CAS_PROJECT_DB_API_KEY }}
   JDK_CURRENT: 17
 
 ##########################################################################
@@ -123,7 +124,7 @@ jobs:
          
   ##########################################################################
 
-  publish-module-metadata:
+  publish-modules-metadata:
     runs-on: ubuntu-latest
     needs: [cache]
     continue-on-error: false
@@ -148,6 +149,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Publish 
-        if: ${{ env.RESTDB_CAS_API_KEY != null }}
-        run: ./gradlew --no-configuration-cache --build-cache --configure-on-demand --no-daemon --parallel publishProjectModules -x test -x javadoc -x check
+      - name: Initialize
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+      - name: Publish Modules Metadata
+        if: ${{ env.CAS_PROJECT_DB_URL_ENDPOINT != null && env.CAS_PROJECT_DB_API_KEY != null }}
+        run: ./ci/metadata/publish-modules.sh
