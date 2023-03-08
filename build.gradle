@@ -577,6 +577,7 @@ tasks.register('publishProjectModules') {
         }
     }
     doLast {
+        outputFile.getParentFile().mkdirs()
         def json = groovy.json.JsonOutput.toJson(results)
         outputFile.write json
         println "Published project modules to ${outputFile}"
