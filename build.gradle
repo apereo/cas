@@ -530,8 +530,9 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
 
 tasks.register('casVersion') {
     description = "Display current CAS version"
+    def casVersion = rootProject.version
     doLast {
-        println rootProject.version
+        println casVersion
     }
 }
 
@@ -557,51 +558,28 @@ tasks.register('verifyRequiredJavaVersion') {
 }
 
 tasks.register('publishProjectModules') {
-    enabled(System.getenv().containsKey("RESTDB_CAS_API_KEY"))
+    def outputFile = new File("${buildDir}", "modules.json")
+    def results = []
+    subprojects.each {
+        def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
+        if (publishMetadata) {
+            def metadata = it.ext.projectMetadata
+            if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
+                throw new GradleException("Missing required project metadata for ${it.name}")
+            }
+            results += [
+                name: it.name,
+                version: it.version,
+                group: it.group,
+                description: it.description,
+                details: metadata
+            ]
+        }
+    }
     doLast {
-        def apiKey = System.getenv().get("RESTDB_CAS_API_KEY") as String
-
-        println "Deleting records for CAS ${rootProject.version}"
-        def url = new URL("https://apereocas-42e7.restdb.io/rest/casmodules/*?q=" + URLEncoder.encode("{\"version\": \"${rootProject.version}\"}"))
-        def httpCon = (HttpURLConnection) url.openConnection()
-        httpCon.setRequestProperty("Content-Type", "application/json")
-        httpCon.setRequestProperty("x-apikey", apiKey)
-        httpCon.setRequestMethod("DELETE");
-        httpCon.connect()
-        println httpCon.getResponseCode()
-
-        def results = []
-        subprojects.each {
-            def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
-            if (publishMetadata) {
-                def metadata = it.ext.projectMetadata
-                if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
-                    throw new GradleException("Missing required project metadata for ${it.name}")
-                }
-                results += [
-                    name: it.name,
-                    version: it.version,
-                    group: it.group,
-                    description: it.description,
-                    details: metadata
-                ]
-            }
-        }
-
-        println "Uploading records for CAS ${rootProject.version}"
-        def postUrl = new URL('https://apereocas-42e7.restdb.io/rest/casmodules')
-        def connection = postUrl.openConnection() as HttpURLConnection
-        connection.setRequestProperty("Content-Type", "application/json")
-        connection.setRequestProperty("x-apikey", apiKey)
-        connection.requestMethod = 'POST'
         def json = groovy.json.JsonOutput.toJson(results)
-        connection.doOutput = true
-        connection.with {
-            outputStream.withWriter { outputStreamWriter ->
-                outputStreamWriter << json
-            }
-        }
-        println connection.responseCode
+        outputFile.write json
+        println "Published project modules to ${outputFile}"
     }
 }
 
