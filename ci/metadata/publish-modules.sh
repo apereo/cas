@@ -15,6 +15,10 @@ fi
 echo "Publishing CAS modules for CAS version ${casVersion}"
 ./gradlew --no-configuration-cache --build-cache --configure-on-demand \
   --no-daemon --parallel publishProjectModules -x test -x javadoc -x check
+if [ $? -eq 1 ]; then
+  echo "Unable to successfully generate metadata for project modules"
+  exit 1
+fi
 
 coords="\"collection\":\"casmodules\",\"database\":\"apereocas\",\"dataSource\":\"cascluster\"";
 function execPostRequest() {
