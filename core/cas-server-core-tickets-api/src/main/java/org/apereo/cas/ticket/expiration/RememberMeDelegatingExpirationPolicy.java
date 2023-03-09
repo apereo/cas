@@ -38,8 +38,8 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
         if (rememberMeRes.isEmpty()) {
             return POLICY_NAME_DEFAULT;
         }
-        val b = (Boolean) rememberMeRes.get();
-        if (b.equals(Boolean.FALSE)) {
+        val rememberMeValue = (Boolean) rememberMeRes.get();
+        if (rememberMeValue.equals(Boolean.FALSE)) {
             LOGGER.trace("Ticket is not associated with a remember-me authentication.");
             return POLICY_NAME_DEFAULT;
         }

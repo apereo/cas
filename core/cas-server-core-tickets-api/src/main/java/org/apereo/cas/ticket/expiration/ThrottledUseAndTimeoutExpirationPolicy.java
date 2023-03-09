@@ -59,7 +59,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
 
         val margin = Duration.between(lastTimeUsed, currentTime).toSeconds();
-
         LOGGER.trace("The duration in seconds between current time and last used time is [{}]", margin);
 
         if (ticketState.getCountOfUses() == 0 && margin < this.timeToKillInSeconds) {
