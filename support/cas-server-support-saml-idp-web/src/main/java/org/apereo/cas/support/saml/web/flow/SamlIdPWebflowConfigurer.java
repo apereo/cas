@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
