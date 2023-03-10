@@ -1,6 +1,6 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.pubsub;
 
-import org.apereo.cas.ticket.registry.queue.commands.BaseMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
@@ -16,13 +16,13 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
- * This is {@link AMQPMessageSerializationHandler}.
+ * This is {@link MessageQueueMessageSerializationHandler}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @RequiredArgsConstructor
-public class AMQPMessageSerializationHandler implements Serializer<Object>, Deserializer<Object> {
+public class MessageQueueMessageSerializationHandler implements Serializer<Object>, Deserializer<Object> {
     private final CipherExecutor cipher;
 
     @Override

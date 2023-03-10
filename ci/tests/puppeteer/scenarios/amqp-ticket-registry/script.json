@@ -19,8 +19,8 @@
     "--spring.rabbitmq.username=rabbituser",
     "--spring.rabbitmq.password=bugsbunny",
 
-    "--cas.ticket.registry.amqp.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
-    "--cas.ticket.registry.amqp.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+    "--cas.ticket.registry.in-memory.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+    "--cas.ticket.registry.in-memory.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
 
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
@@ -39,12 +39,12 @@
   "instances": 2,
   "instance1": {
     "properties": [
-      "--cas.ticket.registry.amqp.queue-identifier=cas-jms-queue-1"
+      "--cas.ticket.registry.core.queue-identifier=cas-queue-1"
     ]
   },
   "instance2": {
     "properties": [
-      "--cas.ticket.registry.amqp.queue-identifier=cas-jms-queue-2"
+      "--cas.ticket.registry.core.queue-identifier=cas-queue-2"
     ]
   }
 }

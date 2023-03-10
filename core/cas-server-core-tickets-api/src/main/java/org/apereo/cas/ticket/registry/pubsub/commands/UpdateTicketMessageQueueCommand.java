@@ -1,7 +1,7 @@
-package org.apereo.cas.ticket.registry.queue.commands;
+package org.apereo.cas.ticket.registry.pubsub.commands;
 
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,7 +33,7 @@ public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
     }
 
     @Override
-    public void execute(final AMQPTicketRegistry registry) throws Exception {
+    public void execute(final QueueableTicketRegistry registry) throws Exception {
         LOGGER.debug("Executing queue command on ticket registry id [{}] to update ticket [{}]", getId().getId(), ticket);
         registry.updateTicketInQueue(this.ticket);
     }

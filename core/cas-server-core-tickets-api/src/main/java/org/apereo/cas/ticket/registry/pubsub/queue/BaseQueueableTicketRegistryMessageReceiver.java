@@ -1,7 +1,7 @@
-package org.apereo.cas.ticket.registry.queue;
+package org.apereo.cas.ticket.registry.pubsub.queue;
 
-import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
-import org.apereo.cas.ticket.registry.queue.commands.BaseMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This is {@link BaseTicketRegistryQueueReceiver}.
+ * This is {@link BaseQueueableTicketRegistryMessageReceiver}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -17,17 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class BaseTicketRegistryQueueReceiver {
-    private final AMQPTicketRegistry ticketRegistry;
+public abstract class BaseQueueableTicketRegistryMessageReceiver implements QueueableTicketRegistryMessageReceiver {
+    private final QueueableTicketRegistry ticketRegistry;
 
     private final PublisherIdentifier ticketRegistryId;
 
-    /**
-     * Receive message from queue and execute command.
-     *
-     * @param command the command
-     * @throws Exception the exception
-     */
+    @Override
     public void receive(final BaseMessageQueueCommand command) throws Exception {
         LOGGER.debug("[{}] received message [{}]", ticketRegistryId, command);
         if (command.getId().equals(this.ticketRegistryId)) {

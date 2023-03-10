@@ -1,6 +1,6 @@
-package org.apereo.cas.ticket.registry.queue.commands;
+package org.apereo.cas.ticket.registry.pubsub.commands;
 
-import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -38,5 +38,5 @@ public abstract class BaseMessageQueueCommand implements Serializable {
      * @param registry the registry
      * @throws Exception the exception
      */
-    public abstract void execute(AMQPTicketRegistry registry) throws Exception;
+    public abstract void execute(QueueableTicketRegistry registry) throws Exception;
 }
