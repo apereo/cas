@@ -4,6 +4,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,10 +20,10 @@ public class LoggingGitProgressMonitorTests {
     public void verifyOperation() {
         val monitor = new LoggingGitProgressMonitor();
         assertDoesNotThrow(() -> {
-            monitor.onUpdate("taskName", 10);
-            monitor.onUpdate("taskName", 10, 100, 10);
-            monitor.onEndTask("taskName", 10, 100, 10);
-            monitor.onEndTask("taskName", 10, 100, 10);
+            monitor.onUpdate("taskName", 10, Duration.ZERO);
+            monitor.onUpdate("taskName", 10, 100, 10, Duration.ZERO);
+            monitor.onEndTask("taskName", 10, 100, 10, Duration.ZERO);
+            monitor.onEndTask("taskName", 10, 100, 10, Duration.ZERO);
         });
     }
 }
