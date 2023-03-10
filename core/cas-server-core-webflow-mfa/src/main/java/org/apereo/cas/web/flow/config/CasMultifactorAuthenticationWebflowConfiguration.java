@@ -23,9 +23,11 @@ import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenti
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -77,6 +79,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Webflow)
 @ConditionalOnWebApplication
 @AutoConfiguration
 public class CasMultifactorAuthenticationWebflowConfiguration {
@@ -188,14 +191,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
                 casWebflowConfigurationContext,
                 principalAttributeMultifactorAuthenticationTrigger);
         }
-
-        /**
-         * Scripted registered service authentication policy webflow event resolver .
-         *
-         * @param scriptedRegisteredServiceMultifactorAuthenticationTrigger the scripted registered service multifactor authentication trigger
-         * @param casWebflowConfigurationContext                            the cas webflow configuration context
-         * @return the cas webflow event resolver
-         */
+        
         @ConditionalOnMissingBean(name = "scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -239,18 +235,9 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
                 casWebflowConfigurationContext, authenticationAttributeMultifactorAuthenticationTrigger);
         }
 
-        /**
-         * Scripted registered service multifactor authentication trigger.
-         *
-         * @param applicationContext the application context
-         * @param casProperties      the cas properties
-         * @return the multifactor authentication trigger
-         * @deprecated Since 6.6.
-         */
         @Bean
         @ConditionalOnMissingBean(name = "scriptedRegisteredServiceMultifactorAuthenticationTrigger")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Deprecated(since = "6.2.0")
         @SuppressWarnings("InlineMeSuggester")
         public MultifactorAuthenticationTrigger scriptedRegisteredServiceMultifactorAuthenticationTrigger(
             final ConfigurableApplicationContext applicationContext,

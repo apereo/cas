@@ -3,6 +3,8 @@ package org.apereo.cas.git;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.BatchingProgressMonitor;
 
+import java.time.Duration;
+
 /**
  * This is {@link LoggingGitProgressMonitor}.
  *
@@ -12,22 +14,22 @@ import org.eclipse.jgit.lib.BatchingProgressMonitor;
 @Slf4j
 public class LoggingGitProgressMonitor extends BatchingProgressMonitor {
     @Override
-    protected void onUpdate(final String taskName, final int workCurr) {
-        LOGGER.debug("[{}] -> [{}]", taskName, workCurr);
+    protected void onUpdate(final String taskName, final int workCurr, final Duration duration) {
+        LOGGER.debug("[{}] -> [{}] in [{}]", taskName, workCurr, duration);
     }
 
     @Override
-    protected void onUpdate(final String taskName, final int workCurr, final int workTotal, final int percentDone) {
-        LOGGER.debug("[{}] -> [{}], total [{}] [{}]% Completed", taskName, workCurr, workTotal, percentDone);
+    protected void onUpdate(final String taskName, final int workCurr, final int workTotal, final int percentDone, final Duration duration) {
+        LOGGER.debug("[{}] -> [{}], total [{}] [{}]% completed in [{}]", taskName, workCurr, workTotal, percentDone, duration);
     }
 
     @Override
-    protected void onEndTask(final String taskName, final int workCurr) {
-        LOGGER.debug("Finished [{}] -> [{}]", taskName, workCurr);
+    protected void onEndTask(final String taskName, final int workCurr, final Duration duration) {
+        LOGGER.debug("Finished [{}] -> [{}] in [{}]", taskName, workCurr, duration);
     }
 
     @Override
-    protected void onEndTask(final String taskName, final int workCurr, final int workTotal, final int percentDone) {
-        LOGGER.debug("Finished [{}] -> [{}], total [{}] [{}]% Completed", taskName, workCurr, workTotal, percentDone);
+    protected void onEndTask(final String taskName, final int workCurr, final int workTotal, final int percentDone, final Duration duration) {
+        LOGGER.debug("Finished [{}] -> [{}], total [{}] [{}]% completed in [{}]", taskName, workCurr, workTotal, percentDone, duration);
     }
 }

@@ -530,8 +530,9 @@ if (gradle.startParameter.taskNames.any { task -> task.startsWith("jacoco") }) {
 
 tasks.register('casVersion') {
     description = "Display current CAS version"
+    def casVersion = rootProject.version
     doLast {
-        println rootProject.version
+        println casVersion
     }
 }
 
@@ -553,6 +554,33 @@ tasks.register('verifyRequiredJavaVersion') {
     def requiredVersion = JavaVersion.toVersion(project.targetCompatibility)
     if (!JavaVersion.current().isCompatibleWith(requiredVersion)) {
         throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${requiredVersion}")
+    }
+}
+
+tasks.register('publishProjectModules') {
+    def outputFile = new File("${buildDir}", "modules.json")
+    def results = []
+    subprojects.each {
+        def publishMetadata = it.hasProperty("publishMetadata") ? it.property("publishMetadata") : false
+        if (publishMetadata) {
+            def metadata = it.ext.projectMetadata
+            if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
+                throw new GradleException("Missing required project metadata for ${it.name}")
+            }
+            results += [
+                name: it.name,
+                version: it.version,
+                group: it.group,
+                description: it.description,
+                details: metadata
+            ]
+        }
+    }
+    doLast {
+        outputFile.getParentFile().mkdirs()
+        def json = groovy.json.JsonOutput.toJson(results)
+        outputFile.write json
+        println "Published project modules to ${outputFile}"
     }
 }
 

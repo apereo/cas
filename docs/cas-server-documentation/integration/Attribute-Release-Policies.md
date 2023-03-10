@@ -69,6 +69,7 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 | Return Allowed       | [See this page](Attribute-Release-Policy-ReturnAllowed.html).     |
 | Return Encrypted     | [See this page](Attribute-Release-Policy-ReturnEncrypted.html).   |
 | Return Mapped        | [See this page](Attribute-Release-Policy-ReturnMapped.html).      |
+| Return Linked        | [See this page](Attribute-Release-Policy-ReturnLinked.html).      |
 | Mapped Groovy File   | [See this page](Attribute-Release-Policy-ExternalGroovy.html).    |
 | Mapped Inline Groovy | [See this page](Attribute-Release-Policy-InlineGroovy.html).      |
 | Return MultiMapped   | [See this page](Attribute-Release-Policy-ReturnMultiMapped.html). |

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
+import org.apereo.cas.configuration.support.DurationCapable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -31,5 +33,6 @@ public class DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy implements
     @Serial
     private static final long serialVersionUID = 2146436756392637728L;
 
+    @DurationCapable
     private String timeToKill;
 }

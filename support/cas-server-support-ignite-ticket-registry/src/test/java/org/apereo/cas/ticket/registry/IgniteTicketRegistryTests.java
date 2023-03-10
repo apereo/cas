@@ -4,6 +4,7 @@ import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.val;
@@ -78,7 +79,7 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyDeleteUnknown() {
         val catalog = mock(TicketCatalog.class);
-        val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
+        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, igniteConfiguration,
             casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
         assertTrue(registry.deleteSingleTicket("unknownticket") > 0);

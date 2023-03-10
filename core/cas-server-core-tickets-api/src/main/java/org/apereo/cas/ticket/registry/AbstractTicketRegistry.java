@@ -1,21 +1,25 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.google.common.io.ByteSource;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,20 +46,19 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @Slf4j
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Monitorable
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
+    @Setter
     protected CipherExecutor cipherExecutor;
 
-    /**
-     * Gets principal id from ticket.
-     *
-     * @param ticket the ticket
-     * @return the principal id from
-     */
+    protected final TicketSerializationManager ticketSerializationManager;
+
+    protected final TicketCatalog ticketCatalog;
+
     protected static String getPrincipalIdFrom(final Ticket ticket) {
         return ticket instanceof AuthenticationAwareTicket
             ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
@@ -183,6 +186,35 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return getTickets(ticketPredicate).count();
     }
 
+    @Override
+    public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
+        return getTickets(ticket -> {
+            if (ticket instanceof TicketGrantingTicketAwareTicket ticketGrantingTicket && !ticket.isExpired()
+                && ticketGrantingTicket.getAuthentication() != null) {
+                val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
+
+                return queryAttributes.entrySet().stream().anyMatch(queryEntry -> {
+                    val attributeKey = digest(queryEntry.getKey());
+
+                    if (attributes.containsKey(attributeKey)) {
+                        
+                        val authnAttributeValues = CollectionUtils.toCollection(attributes.get(attributeKey));
+                        
+                        return authnAttributeValues.stream().anyMatch(value -> {
+                            val attributeValue = value.toString();
+                            return queryEntry.getValue()
+                                .stream()
+                                .map(queryValue -> digest(queryValue.toString()))
+                                .anyMatch(attributeValue::equalsIgnoreCase);
+                        });
+                    }
+                    return false;
+                });
+            }
+            return false;
+        });
+    }
+
     /**
      * Delete a single ticket instance from the store.
      *
@@ -191,31 +223,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     public abstract long deleteSingleTicket(String ticketId);
 
-    /**
-     * Add ticket internally by the
-     * registry implementation.
-     *
-     * @param ticket the ticket
-     * @throws Exception the exception
-     */
     protected abstract void addTicketInternal(Ticket ticket) throws Exception;
 
-    /**
-     * Delete tickets.
-     *
-     * @param tickets the tickets
-     * @return the total number of deleted tickets
-     */
     protected int deleteTickets(final Set<String> tickets) {
         return deleteTickets(tickets.stream());
     }
-
-    /**
-     * Delete tickets.
-     *
-     * @param tickets the tickets
-     * @return the total number of deleted tickets
-     */
+    
     protected int deleteTickets(final Stream<String> tickets) {
         return tickets.mapToInt(Unchecked.toIntFunction(this::deleteTicket)).sum();
     }
@@ -306,22 +319,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
-    /**
-     * Decode tickets.
-     *
-     * @param items the items
-     * @return the set
-     */
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
         return decodeTickets(items.stream()).collect(Collectors.toSet());
     }
-
-    /**
-     * Decode tickets.
-     *
-     * @param items the items
-     * @return the set
-     */
+    
     protected Stream<Ticket> decodeTickets(final Stream<Ticket> items) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
@@ -332,6 +333,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
+    }
+
+    protected String serializeTicket(final Ticket ticket) {
+        return ticketSerializationManager.serializeTicket(ticket);
     }
 
     private Ticket createEncodedTicket(final Ticket ticket) throws Exception {

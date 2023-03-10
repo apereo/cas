@@ -16,8 +16,10 @@ import java.util.List;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if (doc.recordKey && doc.principal && doc.deviceFingerprint && doc.recordDate) { emit(doc._id, doc) } }")
+@Deprecated(since = "7.0.0")
 public class MultifactorAuthenticationTrustRecordCouchDbRepository extends CouchDbRepositorySupport<CouchDbMultifactorAuthenticationTrustRecord> {
 
     public MultifactorAuthenticationTrustRecordCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {

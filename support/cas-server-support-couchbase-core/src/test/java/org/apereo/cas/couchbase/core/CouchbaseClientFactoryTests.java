@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 7.0.0
  */
 @Tag("Couchbase")
 @EnabledIfListeningOnPort(port = 8091)
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.couchbase.bucket=testbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Deprecated(since = "7.0.0")
 public class CouchbaseClientFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;

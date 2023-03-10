@@ -62,12 +62,13 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests
 
         val builder = new AmazonEnvironmentAwareClientBuilder(
             AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
-        val client = builder.build(SsmClient.builder(), SsmClient.class);
-        var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users").value(STATIC_AUTHN_USERS).overwrite(Boolean.TRUE).build();
-        client.putParameter(request);
+        try (val client = builder.build(SsmClient.builder(), SsmClient.class)) {
+            var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users").value(STATIC_AUTHN_USERS).overwrite(Boolean.TRUE).build();
+            client.putParameter(request);
 
-        request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name").value("Example").overwrite(Boolean.TRUE).build();
-        client.putParameter(request);
+            request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name").value("Example").overwrite(Boolean.TRUE).build();
+            client.putParameter(request);
+        }
     }
 
     @Test

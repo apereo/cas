@@ -40,6 +40,7 @@ The following fields are supported:
 | `jwtAccessToken`         | Whether access tokens should be created as JWTs. Default is `false`.                                                                                                                                                                                        |
 | `serviceId`              | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).                                                                                            |
 | `responseMode`           | Allow CAS to alter the mechanism used for returning responses back to the client. Typical values might be `query`, `fragment`, or `form_post`.                                                                                                              |
+| `audience`               | Optional. Set of values that can control the `aud` field in JWT access tokens or ID tokens. If left undefined, the client ID will typically be used instead.                                                                                                |
 
 <div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
 properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of 

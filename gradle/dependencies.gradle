@@ -13,16 +13,36 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
+        googlecloudsecretsmanager   : [
+                dependencies.create("com.google.cloud:spring-cloud-gcp-secretmanager:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("com.google.cloud:spring-cloud-gcp-starter-secretmanager:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         firebaseadmin              : [
                 dependencies.create("com.google.api-client:google-api-client:$googleApiClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("com.google.firebase:firebase-admin:$firebaseAdminVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         aspectj                    : [
@@ -1399,6 +1419,18 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        fluentd : [
+                dependencies.create("org.fluentd:fluent-logger:$fluentdVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("io.github.technologize:fluentd-log4j-appender:$fluentdLog4jVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         log4j                      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -2441,7 +2473,13 @@ ext.libraries = [
                     exclude(group: "org.springframework.data", module: "spring-data-redis")
                 },
                 dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion"),
-                dependencies.create("com.redis:spring-lettucemod:$springLettuceModVersion"),
+                dependencies.create("com.redis:spring-lettucemod:$springLettuceModVersion") {
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                }
         ],
         springintegration          : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {

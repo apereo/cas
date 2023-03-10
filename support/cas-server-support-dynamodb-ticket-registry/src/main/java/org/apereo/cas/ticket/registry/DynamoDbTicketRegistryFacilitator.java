@@ -154,6 +154,7 @@ public class DynamoDbTicketRegistryFacilitator {
                 .stream()
                 .map(DynamoDbTicketRegistryFacilitator::deserializeTicket)
                 .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired())
                 .toList());
         });
         return tickets;
@@ -354,9 +355,9 @@ public class DynamoDbTicketRegistryFacilitator {
                 .operator(ComparisonOperator.EQ)
                 .build());
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
-            dynamoDbProperties.getTicketGrantingTicketsTableName(),
-            keys,
-            DynamoDbTicketRegistryFacilitator::deserializeTicket);
+                dynamoDbProperties.getTicketGrantingTicketsTableName(),
+                keys, DynamoDbTicketRegistryFacilitator::deserializeTicket)
+            .filter(ticket -> !ticket.isExpired());
     }
 
     /**

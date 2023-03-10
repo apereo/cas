@@ -100,6 +100,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
         return StringUtils.EMPTY;
     }
 
+    /**
+     * Gets template name that acts
+     * as the base version of this registered service.
+     *
+     * @return the template name
+     */
+    String getTemplateName();
 
     /**
      * Gets the relative evaluation order of this service when determining
@@ -137,16 +144,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the ticket granting ticket expiration policy
      */
     RegisteredServiceTicketGrantingTicketExpirationPolicy getTicketGrantingTicketExpirationPolicy();
-
-    /**
-     * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
-     * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
-     *
-     * @return Non -null set of required handler names.
-     * @deprecated Since 6.2, replaced by {@link org.apereo.cas.services.RegisteredServiceAuthenticationPolicy#getRequiredAuthenticationHandlers()}.
-     */
-    @Deprecated(since = "6.2.0")
-    Set<String> getRequiredHandlers();
 
     /**
      * Gets the set of  names that correspond to the environment to which this service belongs.

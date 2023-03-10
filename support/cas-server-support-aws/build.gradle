@@ -1,4 +1,11 @@
 description = 'Apereo CAS Amazon Web Services Support'
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "AWS Support"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
 

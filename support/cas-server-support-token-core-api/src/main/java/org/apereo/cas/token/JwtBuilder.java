@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -28,12 +29,14 @@ import lombok.val;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link JwtBuilder}.
@@ -140,7 +143,7 @@ public class JwtBuilder {
         val serviceAudience = payload.getServiceAudience();
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
-            .audience(serviceAudience)
+            .audience(new ArrayList<>(serviceAudience))
             .issuer(payload.getIssuer())
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
@@ -162,9 +165,12 @@ public class JwtBuilder {
         val claimsSet = claims.build();
 
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
-        val registeredService = payload.getRegisteredService().isEmpty()
-            ? locateRegisteredService(serviceAudience)
-            : payload.getRegisteredService().get();
+        val registeredService = payload.getRegisteredService()
+            .orElseGet(() -> serviceAudience.stream()
+                .map(this::locateRegisteredService)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new UnauthorizedServiceException("Unable to locate registered service via any of " + serviceAudience)));
         return build(registeredService, claimsSet);
     }
 
@@ -198,14 +204,9 @@ public class JwtBuilder {
         return token;
     }
 
-    /**
-     * Locate registered service.
-     *
-     * @param serviceAudience the service audience
-     * @return the registered service
-     */
     protected RegisteredService locateRegisteredService(final String serviceAudience) {
-        return servicesManager.findServiceBy(new WebApplicationServiceFactory().createService(serviceAudience));
+        val service = new WebApplicationServiceFactory().createService(serviceAudience);
+        return servicesManager.findServiceBy(service);
     }
 
     /**
@@ -218,7 +219,7 @@ public class JwtBuilder {
     public static class JwtRequest {
         private final String jwtId;
 
-        private final String serviceAudience;
+        private final Set<String> serviceAudience;
 
         @Builder.Default
         private final Date issueDate = new Date();

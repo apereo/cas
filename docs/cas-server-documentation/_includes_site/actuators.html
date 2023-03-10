@@ -358,7 +358,7 @@ management.endpoints.web.exposure.include={{ cfg.name }}
                                     </div>
 
                                     <div id="casEndpointConfigPropsDiv">
-                                        {{ casendpointsconfigprops | markdownify }}
+                                        {{ casendpointsconfigprops | replace: "[key]", cfg.name | markdownify }}
 
                                     </div>
 

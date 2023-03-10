@@ -67,7 +67,21 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
      */
     @JsonIgnore
     default boolean isProviderRequired() {
-        return isExclusive() && (!getAllowedProviders().isEmpty() || (getAllowedProviders().isEmpty() && !isPermitUndefined()));
+        return isExclusive() && getAllowedProviders() != null
+               && (!getAllowedProviders().isEmpty() || (getAllowedProviders().isEmpty() && !isPermitUndefined()));
     }
 
+    /**
+     * Is exclusive to provider?.
+     *
+     * @param name the name
+     * @return the boolean
+     */
+    @JsonIgnore
+    default boolean isExclusiveToProvider(final String name) {
+        return isExclusive()
+               && getAllowedProviders() != null
+               && getAllowedProviders().size() == 1
+               && name.equalsIgnoreCase(getAllowedProviders().iterator().next());
+    }
 }

@@ -161,7 +161,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .requestCache()
             .disable();
 
-        protocolEndpointWebSecurityConfigurers.forEach(cfg -> cfg.configure(http));
+        protocolEndpointWebSecurityConfigurers.forEach(Unchecked.consumer(cfg -> cfg.configure(http)));
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
             val endpoint = EndpointRequest.to(key);

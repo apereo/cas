@@ -1,4 +1,11 @@
 description = "Apereo CAS Hazelcast Monitoring Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS Hazelcast Monitoring"
+    ]
+}
 dependencies {
     implementation libraries.hazelcast
 

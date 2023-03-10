@@ -11,9 +11,9 @@ docker logs mongodb-server &
 docker ps | grep "mongodb-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "MongoDb docker image is running."
+    echo "MongoDb docker container is running."
 else
-    echo "MongoDb docker image failed to start."
+    echo "MongoDb docker container failed to start."
     exit $retVal
 fi
 

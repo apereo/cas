@@ -22,6 +22,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import org.apereo.cas.web.support.mgmr.EncryptedCookieValueManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -169,7 +170,8 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         public CookieValueManager deviceFingerprintCookieValueManager(
             @Qualifier("deviceFingerprintCookieCipherExecutor")
             final CipherExecutor deviceFingerprintCookieCipherExecutor) {
-            return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor);
+            return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor,
+                DefaultCookieSameSitePolicy.INSTANCE);
         }
 
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")

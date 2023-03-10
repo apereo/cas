@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.accounts.ldap.bind-dn=cn=Directory Manager",
     "cas.authn.passwordless.accounts.ldap.bind-credential=password",
     "cas.authn.passwordless.accounts.ldap.email-attribute=mail",
-    "cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber"
+    "cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber",
+    "cas.authn.passwordless.accounts.ldap.request-password-attribute=description"
 })
 @Slf4j
 @Import(LdapPasswordlessAuthenticationConfiguration.class)
@@ -55,5 +56,6 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
         assertTrue(user.isPresent());
         assertEquals("passwordlessuser@example.org", user.get().getEmail());
         assertEquals("123456789", user.get().getPhone());
+        assertTrue(user.get().isRequestPassword());
     }
 }

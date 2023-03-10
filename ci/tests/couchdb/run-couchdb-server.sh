@@ -11,9 +11,9 @@ docker run --rm  -d -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password \
 docker ps | grep "couchdb-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "CouchDb docker image is running."
+    echo "CouchDb docker container is running."
 else
-    echo "CouchDb docker image failed to start."
+    echo "CouchDb docker container failed to start."
     exit $retVal
 fi
 

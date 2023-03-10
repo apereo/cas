@@ -56,7 +56,7 @@ public interface OidcAttributeReleasePolicyFactory {
         return userDefinedScopes
             .entrySet()
             .stream()
-            .map(k -> custom(k.getKey(), k.getValue()))
+            .map(scope -> custom(scope.getKey(), scope.getValue()))
             .collect(Collectors.toSet());
     }
 

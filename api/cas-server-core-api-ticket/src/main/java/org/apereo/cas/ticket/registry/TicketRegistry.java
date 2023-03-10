@@ -3,9 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
-import lombok.val;
 import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
@@ -182,24 +180,10 @@ public interface TicketRegistry {
     }
 
     /**
-     * Gets tickets with authenication attributes.
+     * Gets tickets with authentication attributes.
      *
      * @param queryAttributes the query attributes
-     * @return the tickets with authenication attributes
+     * @return the tickets with authentication attributes
      */
-    default Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
-        return getTickets(ticket -> {
-            if (ticket instanceof TicketGrantingTicketAwareTicket ticketGrantingTicket && !ticket.isExpired()) {
-                val authentication = ticketGrantingTicket.getAuthentication();
-                return queryAttributes.entrySet().stream().anyMatch(entry -> {
-                    if (authentication.getAttributes().containsKey(entry.getKey())) {
-                        val authnAttributeValues = authentication.getAttributes().get(entry.getKey());
-                        return authnAttributeValues.stream().anyMatch(value -> entry.getValue().contains(value));
-                    }
-                    return false;
-                });
-            }
-            return false;
-        });
-    }
+    Stream<? extends Ticket> getSessionsWithAttributes(Map<String, List<Object>> queryAttributes);
 }

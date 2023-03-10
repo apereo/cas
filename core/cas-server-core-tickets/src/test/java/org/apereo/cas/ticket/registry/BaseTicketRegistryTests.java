@@ -34,6 +34,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -44,6 +45,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -117,6 +119,14 @@ public abstract class BaseTicketRegistryTests {
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
+    @Autowired
+    @Qualifier(TicketCatalog.BEAN_NAME)
+    protected TicketCatalog ticketCatalog;
+
+    @Autowired
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
+    protected TicketSerializationManager ticketSerializationManager;
+    
     protected boolean useEncryption;
 
     protected String ticketGrantingTicketId;
@@ -165,6 +175,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyTicketsWithAuthnAttributes() throws Exception {
         assumeTrue(isIterableRegistry());
         val authn = CoreAuthenticationTestUtils.getAuthentication(
@@ -266,6 +277,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyCountSessionsPerUser() throws Exception {
         assumeTrue(isIterableRegistry());
         val id = UUID.randomUUID().toString();
@@ -387,6 +399,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     public void verifyDeleteNonExistingTicket() throws Exception {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),

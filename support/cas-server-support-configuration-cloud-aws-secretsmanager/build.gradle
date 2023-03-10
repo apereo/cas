@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - AWS Secrets Manager"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via AWS Secrets Manager"
+    ]
+}
 dependencies {
     implementation libraries.awssecretsmanager
     implementation libraries.springcloudbootstrap

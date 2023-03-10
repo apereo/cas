@@ -1,6 +1,11 @@
 description = "Apereo CAS AUP Couchbase Support"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via Couchbase",
+            category: "Acceptable Usage Policy"
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api")

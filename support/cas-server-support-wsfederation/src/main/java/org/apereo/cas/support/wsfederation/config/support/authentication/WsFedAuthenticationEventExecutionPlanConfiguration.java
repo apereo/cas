@@ -27,6 +27,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -106,7 +107,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         private static CasCookieBuilder getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
             val cookie = wsfed.getCookie();
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
-            return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);
+            return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, DefaultCookieSameSitePolicy.INSTANCE, cookie), cookie);
         }
 
         private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {

@@ -1,4 +1,12 @@
 description = "Apereo CAS Simple Multifactor Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication",
+            title: "Simple MFA"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-util")

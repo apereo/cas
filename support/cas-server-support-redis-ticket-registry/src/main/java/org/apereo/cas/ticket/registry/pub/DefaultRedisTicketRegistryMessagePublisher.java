@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.pub;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisCompositeKey;
+import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.val;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRegistryMessagePublisher {
-    private final CasRedisTemplate<String, Ticket> redisTemplate;
+    private final CasRedisTemplate<String, RedisTicketDocument> redisTemplate;
 
     private final PublisherIdentifier publisherIdentifier;
 

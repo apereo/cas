@@ -97,13 +97,13 @@ should be able to take advantage of the established single sign-on session.</p>
 
 Interrupt queries can be executed via the following ways:
 
-| Storage             | Description                                           
-|----------------------------------------------------------------------------------
-| JSON                | [See this guide](Webflow-Customization-Interrupt-JSON.html).   
-| Regex Attribute     | [See this guide](Webflow-Customization-Interrupt-RegexAttribute.html).   
-| Groovy              | [See this guide](Webflow-Customization-Interrupt-Groovy.html).   
-| REST                | [See this guide](Webflow-Customization-Interrupt-REST.html).   
-| Custom              | [See this guide](Webflow-Customization-Interrupt-Custom.html).   
+| Storage         | Description                                                            |
+|-----------------|------------------------------------------------------------------------|
+| JSON            | [See this guide](Webflow-Customization-Interrupt-JSON.html).           |
+| Regex Attribute | [See this guide](Webflow-Customization-Interrupt-RegexAttribute.html). |
+| Groovy          | [See this guide](Webflow-Customization-Interrupt-Groovy.html).         |
+| REST            | [See this guide](Webflow-Customization-Interrupt-REST.html).           |
+| Custom          | [See this guide](Webflow-Customization-Interrupt-Custom.html).         |
 
 ## Interrupt Policy Per Service
 
@@ -125,16 +125,15 @@ Application definitions may be assigned a dedicated webflow interrupt policy. A 
   
 The following policy settings are supported:
 
-| Field               | Description                                           
-|---------------------------------------------------------------------------------------------------------------
-| `enabled`           | Whether interrupt notifications are enabled for this application. Default is `true`.
-| `forceExecution`    | Whether execution should proceed anyway regardless whether the flow/user is already interrupted. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`.
+| Field            | Description                                                                                                                                          |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `enabled`        | Whether interrupt notifications are enabled for this application. Default is `true`.                                                                 |
+| `forceExecution` | Whether execution should proceed anyway regardless whether the flow/user is already interrupted. Accepted values are `TRUE`, `FALSE` or `UNDEFINED`. |
 
 ## Skipping Interrupts
 
 <div class="alert alert-warning">:warning: <strong>Usage</strong>
-<p><strong>This option is deprecated and is scheduled to be removed in the future</strong>. Consider
-assigning a dedicated interrupt policy to the application definition instead.</p>
+<p><strong>This option is deprecated and is scheduled to be removed in the future</strong>.</p>
 </div>
 
 Interrupt notifications may be disabled on a per-service basis. A sample JSON file follows:

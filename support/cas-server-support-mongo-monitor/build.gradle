@@ -1,4 +1,11 @@
 description = "Apereo CAS MongoDB Monitoring"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS MongoDb Monitoring"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-util-api")

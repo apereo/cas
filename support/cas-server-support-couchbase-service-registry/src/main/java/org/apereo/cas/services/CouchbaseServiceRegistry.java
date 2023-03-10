@@ -8,6 +8,7 @@ import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.query.QueryResult;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -31,8 +32,10 @@ import java.util.stream.StreamSupport;
  * @author Fredrik Jönsson "fjo@kth.se"
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 7.0.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
     private final CouchbaseClientFactory couchbase;
 
@@ -79,6 +82,8 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     public Collection<RegisteredService> load() {
         val allServices = queryForAllServices().rowsAsObject();
         val spliterator = Spliterators.spliteratorUnknownSize(allServices.iterator(), Spliterator.ORDERED);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+
         return StreamSupport.stream(spliterator, false)
             .filter(document -> document.containsKey(couchbase.getBucket()))
             .map(document -> {
@@ -89,7 +94,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
             .filter(Objects::nonNull)
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
-            .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)))
+            .peek(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)))
             .collect(Collectors.toList());
     }
 

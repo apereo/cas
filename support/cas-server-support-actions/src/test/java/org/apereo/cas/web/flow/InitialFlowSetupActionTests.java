@@ -16,9 +16,9 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -94,9 +94,9 @@ public class InitialFlowSetupActionTests {
                 .httpOnly(false)
                 .build();
 
-            this.warnCookieGenerator = new CookieRetrievingCookieGenerator(warn);
+            this.warnCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(warn);
             this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-            this.tgtCookieGenerator = new CookieRetrievingCookieGenerator(tgt);
+            this.tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(tgt);
             this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
             val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));

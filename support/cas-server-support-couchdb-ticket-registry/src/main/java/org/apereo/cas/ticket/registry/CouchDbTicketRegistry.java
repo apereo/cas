@@ -3,8 +3,10 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.couchdb.tickets.TicketDocument;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,14 +23,22 @@ import java.util.stream.Collectors;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
-@RequiredArgsConstructor
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     private final TicketRepository couchDb;
 
     private final int conflictRetries;
+
+    public CouchDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog, final TicketRepository couchDb, final int conflictRetries) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.couchDb = couchDb;
+        this.conflictRetries = conflictRetries;
+    }
 
     @Override
     public long deleteSingleTicket(final String ticketIdToDelete) {

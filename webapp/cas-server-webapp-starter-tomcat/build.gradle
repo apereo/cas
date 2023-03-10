@@ -1,6 +1,13 @@
 ext {
     mainClassName = "org.apereo.cas.web.CasWebApplication"
+    publishMetadata = true
+    projectMetadata = [
+            title: "Apache Tomcat Starter",
+            facets: ["web"],
+            category: "Web Application"
+    ]
 }
+
 description = "Apereo CAS Starter with Apache Tomcat"
 
 apply from: rootProject.file("gradle/springboot.gradle")

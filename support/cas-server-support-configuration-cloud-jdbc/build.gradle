@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - JDBC"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via JDBC"
+    ]
+}
 dependencies {
     implementation libraries.springcloudbootstrap
 

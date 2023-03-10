@@ -16,11 +16,13 @@ import java.io.Serial;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-couchdb-ticket-registry")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class CouchDbTicketRegistryProperties extends BaseCouchDbProperties {
     @Serial
     private static final long serialVersionUID = 6895485069081125319L;

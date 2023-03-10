@@ -45,6 +45,7 @@ import org.apereo.cas.web.DelegatedClientAuthenticationDistributedSessionCookieC
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -149,7 +150,9 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
-                new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor, cookie));
+                new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor,
+                    DefaultCookieSameSitePolicy.INSTANCE,
+                    cookie));
         }
 
         @ConditionalOnMissingBean(name = "clientPrincipalFactory")

@@ -39,10 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
-    private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
+    private ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext))
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
@@ -83,11 +84,11 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         val context = new JEEContext(request, response);
 
         val authnRequest = "eyJhbGciOiJub25lIn0.eyJzY29wZSI6Im9wZW5pZCIsInJlc3Bvbn"
-            + "NlX3R5cGUiOiJjb2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0"
-            + "cHM6XC9cL3N0YWdpbmcuY2VydGlmaWNhdGlvbi5vcGVua"
-            + "WQubmV0XC90ZXN0XC9hXC9DQVNcL2Nhb"
-            + "GxiYWNrIiwic3RhdGUiOiJ2SU4xYjBZNENrIiwibm9uY2UiOiI"
-            + "xTjltcVBPOWZ0IiwiY2xpZW50X2lkIjoiY2xpZW50In0.";
+                           + "NlX3R5cGUiOiJjb2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0"
+                           + "cHM6XC9cL3N0YWdpbmcuY2VydGlmaWNhdGlvbi5vcGVua"
+                           + "WQubmV0XC90ZXN0XC9hXC9DQVNcL2Nhb"
+                           + "GxiYWNrIiwic3RhdGUiOiJ2SU4xYjBZNENrIiwibm9uY2UiOiI"
+                           + "xTjltcVBPOWZ0IiwiY2xpZW50X2lkIjoiY2xpZW50In0.";
 
         request.setParameter(OAuth20Constants.REQUEST, authnRequest);
         assertTrue(validator.supports(context));

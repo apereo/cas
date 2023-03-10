@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -34,8 +35,9 @@ public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
      * @param ticketGrantingTicket the ticket granting ticket
      * @param serviceTicket        the service ticket
      */
-    public CasServiceTicketGrantedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ServiceTicket serviceTicket) {
-        super(source);
+    public CasServiceTicketGrantedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket,
+                                        final ServiceTicket serviceTicket, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.serviceTicket = serviceTicket;
     }

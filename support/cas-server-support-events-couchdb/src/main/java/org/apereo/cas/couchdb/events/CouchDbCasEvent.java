@@ -19,12 +19,14 @@ import java.util.Map;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @ToString
 @Getter
 @Setter
 @AllArgsConstructor
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class CouchDbCasEvent extends CasEvent {
 
     @Serial

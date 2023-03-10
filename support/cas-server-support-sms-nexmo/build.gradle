@@ -1,4 +1,13 @@
 description = "Apereo CAS Nexmo SMS Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SMS & Text Messaging",
+            title: "Nexmo",
+            aliases: ["nexmo"]
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")

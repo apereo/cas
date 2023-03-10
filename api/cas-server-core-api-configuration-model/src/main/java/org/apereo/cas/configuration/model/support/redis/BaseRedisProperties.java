@@ -46,6 +46,12 @@ public class BaseRedisProperties implements Serializable {
     private String host = "localhost";
 
     /**
+     * Login username of the redis server.
+     */
+    @RequiredProperty
+    private String username;
+
+    /**
      * Login password of the redis server.
      */
     @RequiredProperty

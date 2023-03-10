@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -41,6 +42,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataCustomizer;
@@ -120,6 +122,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
+    @Autowired
+    @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+    protected RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -355,6 +361,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPMetadataConfiguration.class,
         SamlIdPTicketSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreAuditConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,

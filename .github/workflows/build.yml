@@ -10,16 +10,20 @@ env:
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   JDK_CURRENT: 17
-  JDK_LATEST: 19
+  JDK_LATEST: 20-ea
 
 ##########################################################################
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    types: [ labeled ]
-    branches: [ master ]
+  schedule:
+    - cron: "0 0 * * 5"
+      
+#on:
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    types: [ labeled ]
+#    branches: [ master ]
 
 ##########################################################################
 

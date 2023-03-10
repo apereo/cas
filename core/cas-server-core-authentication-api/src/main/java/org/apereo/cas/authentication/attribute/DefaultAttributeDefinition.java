@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -12,6 +13,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +32,9 @@ import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -72,10 +76,15 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private String canonicalizationMode;
 
+    @Builder.Default
+    private Map<String, String> patterns = new LinkedHashMap<>();
+
+    private String flattened;
+    
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues
             .stream()
-            .map(v -> String.format("%s@%s", v, scope))
+            .map(value -> String.format("%s@%s", value, scope))
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -122,14 +131,14 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                                                                         final List<Object> currentValues,
                                                                         final String inlineGroovy,
                                                                         final AttributeDefinitionResolutionContext context) {
-        val result = ApplicationContextProvider.getScriptResourceCacheManager();
-        if (result.isPresent()) {
-            val cacheMgr = result.get();
-            val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
-            return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
-        }
-        LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
-        return new ArrayList<>(0);
+        return ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(cacheManager -> {
+                val script = cacheManager.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
+                return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
+            }).orElseGet(() -> {
+                LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
+                return new ArrayList<>(0);
+            });
     }
 
     private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
@@ -158,6 +167,9 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         if (StringUtils.isNotBlank(getScript())) {
             currentValues = getScriptedAttributeValue(key, currentValues, context);
         }
+        if (getPatterns() != null && !getPatterns().isEmpty() && !currentValues.isEmpty()) {
+            currentValues = getPatternValuesFor(currentValues, context);
+        }
         if (isScoped()) {
             currentValues = formatValuesWithScope(context.getScope(), currentValues);
         }
@@ -169,23 +181,44 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         }
         if (StringUtils.isNotBlank(this.canonicalizationMode)) {
             val mode = CaseCanonicalizationMode.valueOf(canonicalizationMode.toUpperCase());
-            currentValues = currentValues
+            currentValues = Objects.requireNonNull(currentValues)
                 .stream()
                 .map(value -> mode.canonicalize(value.toString()))
                 .collect(Collectors.toList());
+        }
+        if (StringUtils.isNotBlank(getFlattened()) && currentValues.size() > 1) {
+            val flattenedValue = currentValues.stream().map(Object::toString).collect(Collectors.joining(getFlattened()));
+            currentValues.clear();
+            currentValues.add(flattenedValue);
         }
         LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
         return currentValues;
     }
 
+    private List<Object> getPatternValuesFor(final List<Object> currentValues,
+                                             final AttributeDefinitionResolutionContext context) {
+        return patterns
+            .entrySet()
+            .stream()
+            .map(entry -> {
+                val pattern = RegexUtils.createPattern(entry.getKey());
+                return currentValues.stream()
+                    .filter(value -> RegexUtils.find(pattern, value.toString()))
+                    .map(value -> getScriptedPatternedValue(value, entry.getValue(), context))
+                    .findFirst()
+                    .orElse(StringUtils.EMPTY);
+            })
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.toList());
+    }
+
     private List<Object> formatValuesWithPattern(final List<Object> currentValues) {
         return currentValues
             .stream()
-            .map(v -> MessageFormat.format(getPatternFormat(), v))
+            .map(value -> MessageFormat.format(getPatternFormat(), value))
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    @JsonIgnore
     private List<Object> getScriptedAttributeValue(final String attributeKey,
                                                    final List<Object> currentValues,
                                                    final AttributeDefinitionResolutionContext context) {
@@ -203,5 +236,22 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         }
 
         return new ArrayList<>(0);
+    }
+
+    private static String getScriptedPatternedValue(final Object currentValue, final String patternedValue,
+                                                    final AttributeDefinitionResolutionContext context) {
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(patternedValue);
+        if (matcherInline.find()) {
+            return ApplicationContextProvider.getScriptResourceCacheManager()
+                .map(cacheManager -> {
+                    val script = cacheManager.resolveScriptableResource(patternedValue);
+                    val args = CollectionUtils.<String, Object>wrap("context", context,
+                        "currentValue", currentValue, "logger", LOGGER);
+                    script.setBinding(args);
+                    return script.execute(args.values().toArray(), String.class);
+                })
+                .orElse(patternedValue);
+        }
+        return patternedValue;
     }
 }
