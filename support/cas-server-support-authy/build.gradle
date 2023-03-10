@@ -1,4 +1,13 @@
 description = 'Apereo CAS Authy Support'
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication",
+            title: "Authy",
+            aliases: ["authy"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")

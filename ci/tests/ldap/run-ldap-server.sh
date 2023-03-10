@@ -9,9 +9,9 @@ docker run --rm  -d -p 10389:389 -p 1389:389 --name="ldap-server" mmoayyed/ldap
 docker ps | grep "ldap-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "LDAP docker image is running."
+    echo "LDAP docker container is running."
 else
-    echo "LDAP docker image failed to start."
+    echo "LDAP docker container failed to start."
     exit $retVal
 fi
 
@@ -26,8 +26,8 @@ osixia/openldap --copy-service --loglevel debug
 docker ps | grep "openldap-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "OpenLDAP docker image is running."
+    echo "OpenLDAP docker container is running."
 else
-    echo "OpenLDAP docker image failed to start."
+    echo "OpenLDAP docker container failed to start."
     exit $retVal
 fi

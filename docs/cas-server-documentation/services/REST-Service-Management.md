@@ -14,13 +14,13 @@ category: Services
 
 {% include_cached casproperties.html properties="cas.service-registry.rest" %}
 
-| Operation         | Method          | Body                       | Response
-|-------------------|-----------------|----------------------------------------------------------------------
-| Save              | `POST`          | `RegisteredService` object | `RegisteredService` object
-| Delete            | `DELETE`        | Service numeric id appended to the endpoint url as a path variable | None
-| Load              | `GET`           | None                       | Collection of `RegisteredService` objects.
-| FindById          | `GET`           | Service numeric id appended to the endpoint url as a path variable   | `RegisteredService` object
-| FindById          | `GET`           | Service url appended to the endpoint url as a path variable    | `RegisteredService` object
+| Operation | Method   | Body                                                               | Response                                   |
+|-----------|----------|--------------------------------------------------------------------|--------------------------------------------|
+| Save      | `POST`   | `RegisteredService` object                                         | `RegisteredService` object                 |
+| Delete    | `DELETE` | Service numeric id appended to the endpoint url as a path variable | None                                       |
+| Load      | `GET`    | None                                                               | Collection of `RegisteredService` objects. |
+| FindById  | `GET`    | Service numeric id appended to the endpoint url as a path variable | `RegisteredService` object                 |
+| FindById  | `GET`    | Service url appended to the endpoint url as a path variable        | `RegisteredService` object                 |
 
 All operations are expected to return a `200` status code. All other 
 response status codes will force CAS to consider the requested operation nullified.

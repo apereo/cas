@@ -190,12 +190,6 @@ public class RegisteredServiceTests {
         assertEquals(invalidId, service.getServiceId());
     }
 
-    @Test
-    public void verifySetRequiredHandlersDoesNotThrowNPEWhenNullHandlersRefIsPassedIn() {
-        val service = new CasRegisteredService();
-        assertDoesNotThrow(() -> service.setRequiredHandlers(null));
-    }
-
     private void prepareService() {
         baseService.setUsernameAttributeProvider(
             new AnonymousRegisteredServiceUsernameAttributeProvider(new ShibbolethCompatiblePersistentIdGenerator("casrox")));

@@ -22,8 +22,7 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicyTests extends Abstra
     @Test
     public void verifyOperation() {
         val service = getOidcRegisteredService();
-        service.setJwksCacheDuration(5);
-        service.setJwksCacheTimeUnit("milliseconds");
+        service.setJwksCacheDuration("PT0.005S");
         val policy = new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties);
         assertEquals(5_000_000, policy.expireAfterUpdate(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING),
             Optional.empty(), 1000, 1000));

@@ -1,9 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -26,6 +30,16 @@ public class ConsumerExecutionAction implements Action {
     public static final Action NONE = new ConsumerExecutionAction(ctx -> {
     });
 
+    /**
+     * Consumer action that sets the response status to {@link HttpStatus#NO_CONTENT}
+     * and marks the response as completed.
+     */
+    public static final Action NO_CONTENT = new ConsumerExecutionAction(ctx -> {
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(ctx);
+        response.setStatus(HttpStatus.NO_CONTENT.value());
+        ctx.getExternalContext().recordResponseComplete();
+    });
+    
     private final Consumer<RequestContext> task;
 
     @Setter

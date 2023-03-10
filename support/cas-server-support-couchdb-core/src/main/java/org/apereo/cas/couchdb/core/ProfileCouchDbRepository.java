@@ -7,7 +7,9 @@ import org.ektorp.support.GenericRepository;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public interface ProfileCouchDbRepository<T> extends GenericRepository<T> {
     /**
      * Find by username.

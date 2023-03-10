@@ -18,7 +18,7 @@ sleep 45
 docker ps | grep "mssql-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "SQL Server docker image is running."
+    echo "SQL Server docker container is running."
 
     echo "Creating audit database"
     docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE audit;'
@@ -38,7 +38,7 @@ if [ $retVal == 0 ]; then
         echo "Creating tickets database"
         docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'p@ssw0rd' -Q 'CREATE DATABASE tickets;'
 else
-    echo "SQL Server docker image failed to start."
+    echo "SQL Server docker container failed to start."
     exit $retVal
 fi
 

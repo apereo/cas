@@ -27,8 +27,10 @@ import java.util.stream.Collectors;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
 
     private final SamlMetadataDocumentCouchDbRepository couchDb;

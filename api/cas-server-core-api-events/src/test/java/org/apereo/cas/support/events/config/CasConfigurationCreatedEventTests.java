@@ -21,7 +21,7 @@ public class CasConfigurationCreatedEventTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                new CasConfigurationCreatedEvent(this, File.createTempFile("temp", ".file").toPath());
+                new CasConfigurationCreatedEvent(this, File.createTempFile("temp", ".file").toPath(), null);
             }
         });
     }

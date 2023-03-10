@@ -1,4 +1,11 @@
 description = "Apereo CAS Events Consumer CouchDb"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Events",
+            title: "Authentication Events via Apache CouchDb"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-events-api")

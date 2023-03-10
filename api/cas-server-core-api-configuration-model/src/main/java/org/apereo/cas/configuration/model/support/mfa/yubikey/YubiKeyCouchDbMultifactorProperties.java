@@ -14,11 +14,13 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-yubikey-couchdb")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class YubiKeyCouchDbMultifactorProperties extends BaseCouchDbProperties {
     @Serial
     private static final long serialVersionUID = 3757390989294642185L;

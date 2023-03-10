@@ -1,0 +1,30 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "name": "CAS",
+  "description": "This definition comes from the parent template definition",
+  "templateName": "ExampleTemplate",
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "one": {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
+    },
+    "two" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "SIGN_AND_ENCRYPT" ] ]
+    }
+  },
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "email",
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "username" ] ],
+    "consentPolicy": {
+      "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["email", "username"]],
+      "status": "TRUE"
+    }
+  }
+}

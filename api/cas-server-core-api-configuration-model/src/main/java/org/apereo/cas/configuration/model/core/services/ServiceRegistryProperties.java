@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplatesProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
@@ -163,4 +164,10 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ServiceRegistryCoreProperties core = new ServiceRegistryCoreProperties();
+
+    /**
+     * Registry templated services settings.
+     */
+    @NestedConfigurationProperty
+    private ServiceRegistryTemplatesProperties templates = new ServiceRegistryTemplatesProperties();
 }

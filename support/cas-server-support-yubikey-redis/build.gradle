@@ -1,4 +1,11 @@
 description = "Apereo CAS YubiKey Redis Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via Redis"
+    ]
+}
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.redis

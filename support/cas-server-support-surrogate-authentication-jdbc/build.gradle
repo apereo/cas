@@ -1,4 +1,11 @@
 description = "Apereo CAS Surrogate Authentication JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation via JDBC"
+    ]
+}
 dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     

@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Tag("CouchDb")
 @SpringBootTest(classes = {
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Getter
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fCouchDbFactory")

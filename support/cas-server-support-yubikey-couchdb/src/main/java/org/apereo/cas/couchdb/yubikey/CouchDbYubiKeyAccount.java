@@ -19,11 +19,13 @@ import java.util.List;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
 @SuperBuilder
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class CouchDbYubiKeyAccount extends YubiKeyAccount {
     @Serial
     private static final long serialVersionUID = 2323614397554244567L;

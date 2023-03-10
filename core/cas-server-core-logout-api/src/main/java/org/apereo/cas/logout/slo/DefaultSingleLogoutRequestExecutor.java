@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationContext;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +44,7 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
         try {
             val ticket = ticketRegistry.getTicket(ticketId, Ticket.class);
             LOGGER.debug("Ticket [{}] found. Processing logout requests and then deleting the ticket...", ticket.getId());
-
+            val clientInfo = ClientInfoHolder.getClientInfo();
             val logoutRequests = new ArrayList<SingleLogoutRequestContext>();
             if (ticket instanceof TicketGrantingTicket tgt) {
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(tgt.getAuthentication());
@@ -53,7 +54,7 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
                         .httpServletRequest(Optional.of(request))
                         .httpServletResponse(Optional.of(response))
                         .build()));
-                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt));
+                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
             LOGGER.trace("Removing ticket [{}] from registry...", ticketId);
             ticketRegistry.deleteTicket(ticketId);

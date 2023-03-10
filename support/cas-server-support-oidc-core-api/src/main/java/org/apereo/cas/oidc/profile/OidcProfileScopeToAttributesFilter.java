@@ -77,7 +77,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
             filterAttributesByAccessTokenRequestedClaims(oidcService, accessToken, principal, attributes);
             LOGGER.debug("Final collection of attributes are [{}]", attributes);
-            return this.principalFactory.createPrincipal(profile.getId(), attributes);
+            return principalFactory.createPrincipal(profile.getId(), attributes);
         }
         return principal;
     }
@@ -89,29 +89,17 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val userInfo = OAuth20Utils.parseUserInfoRequestClaims(accessToken);
         if (userInfo.isEmpty()) {
             LOGGER.trace("No userinfo requested claims are available");
-            return;
+        } else {
+            val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
+            LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]",
+                userInfo, principalAttributes);
+            userInfo
+                .stream()
+                .filter(principalAttributes::containsKey)
+                .forEach(key -> attributes.put(key, principalAttributes.get(key)));
         }
-
-        val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
-        LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]",
-            userInfo, principalAttributes);
-
-        userInfo
-            .stream()
-            .filter(principalAttributes::containsKey)
-            .forEach(key -> attributes.put(key, principalAttributes.get(key)));
     }
 
-    /**
-     * Filter attributes by scope map.
-     *
-     * @param scopes            the scopes
-     * @param principal         the principal
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param accessToken       the access token
-     * @return the map
-     */
     protected Map<String, List<Object>> filterAttributesByScope(final Collection<String> scopes,
                                                                 final Principal principal,
                                                                 final Service service,
@@ -129,9 +117,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         scopes
             .stream()
             .distinct()
-            .filter(this.attributeReleasePolicies::containsKey)
-            .map(s -> {
-                val policy = attributeReleasePolicies.get(s);
+            .filter(attributeReleasePolicies::containsKey)
+            .map(scope -> {
+                val policy = attributeReleasePolicies.get(scope);
                 val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                     .registeredService(registeredService)
                     .service(service)
@@ -145,9 +133,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return attributes;
     }
 
-    /**
-     * Configure attribute release policies by scope.
-     */
     protected void configureAttributeReleasePoliciesByScope() {
         val oidc = casProperties.getAuthn().getOidc();
         val packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();

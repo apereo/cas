@@ -1,6 +1,12 @@
 description = "Apereo CAS SAML Identity Provider Support"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 Identity Provider Discovery",
+            aliases: ["saml2"]
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api-audit")

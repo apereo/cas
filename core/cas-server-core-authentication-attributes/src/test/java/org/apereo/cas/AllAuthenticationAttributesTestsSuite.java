@@ -10,6 +10,7 @@ import org.apereo.cas.services.PatternMatchingAttributeReleasePolicyTests;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicyTests;
+import org.apereo.cas.services.ReturnLinkedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnStaticAttributeReleasePolicyTests;
@@ -35,6 +36,7 @@ import org.junit.platform.suite.api.Suite;
     ReturnRestfulAttributeReleasePolicyTests.class,
     DefaultAuthenticationAttributeReleasePolicyTests.class,
     ReturnAllowedAttributeReleasePolicyTests.class,
+    ReturnLinkedAttributeReleasePolicyTests.class,
     ChainingAttributeReleasePolicyTests.class,
     ReturnStaticAttributeReleasePolicyTests.class,
     ChainingPrincipalAttributesRepositoryTests.class,

@@ -1,4 +1,11 @@
 description = "Apereo CAS JDBC Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via JDBC"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     

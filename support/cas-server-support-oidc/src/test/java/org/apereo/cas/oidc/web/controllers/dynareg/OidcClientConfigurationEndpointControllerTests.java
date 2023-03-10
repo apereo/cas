@@ -62,6 +62,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(clientId);
+        service.markAsDynamicallyRegistered();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(
             ZonedDateTime.now(Clock.systemUTC()).toString()));
         servicesManager.save(service);

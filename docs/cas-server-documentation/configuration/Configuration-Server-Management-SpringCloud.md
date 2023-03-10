@@ -119,6 +119,7 @@ Various configuration profiles exist to determine how configuration server shoul
 - [JDBC](Configuration-Server-Management-SpringCloud-JDBC.html)
 - [MongoDb](Configuration-Server-Management-SpringCloud-MongoDb.html)
 - [ZooKeeper](Configuration-Server-Management-SpringCloud-ZooKeeper.html)
+- [GCP Secret Manager](Configuration-Server-Management-SpringCloud-GCP-SecretManager.html)
 
 The cloud configuration modules provided above may also be used verbatim inside a CAS server overlay. Remember that the
 primary objective for these modules is to retrieve settings and properties from a source. While they are mostly and primarily useful when activated inside the

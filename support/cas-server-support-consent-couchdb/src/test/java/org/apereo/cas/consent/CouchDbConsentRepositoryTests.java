@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @SpringBootTest(classes = {
     CasCouchDbCoreConfiguration.class,
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.*;
 @Tag("CouchDb")
 @Getter
 @EnabledIfListeningOnPort(port = 5984)
+@Deprecated(since = "7.0.0")
 public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

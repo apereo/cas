@@ -128,7 +128,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyFailures() throws Exception {
         val pool = mock(ObjectPool.class);
-        val registry = new MemcachedTicketRegistry(pool);
+        val registry = new MemcachedTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, pool);
         assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
         assertNotNull(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser").getId()));
         assertDoesNotThrow(() -> {

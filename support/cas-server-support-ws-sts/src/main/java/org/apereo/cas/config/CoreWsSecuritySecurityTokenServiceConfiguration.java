@@ -14,8 +14,6 @@ import org.apereo.cas.support.claims.NonWSFederationClaimsClaimsHandler;
 import org.apereo.cas.support.claims.WrappingSecurityTokenServiceClaimsHandler;
 import org.apereo.cas.support.realm.RealmPasswordVerificationCallbackHandler;
 import org.apereo.cas.support.realm.UriRealmParser;
-import org.apereo.cas.support.saml.sts.SamlTokenProvider;
-import org.apereo.cas.support.saml.sts.SamlTokenValidator;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
@@ -50,6 +48,7 @@ import org.apache.cxf.sts.token.provider.TokenProvider;
 import org.apache.cxf.sts.token.provider.jwt.JWTTokenProvider;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.sts.token.realm.Relationship;
+import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.sts.token.validator.SCTValidator;
 import org.apache.cxf.sts.token.validator.TokenValidator;
 import org.apache.cxf.sts.token.validator.X509TokenValidator;
@@ -199,7 +198,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             condProvider.setFutureTimeToLive(Beans.newDuration(wsfed.getConditionsFutureTimeToLive()).toSeconds());
             condProvider.setLifetime(Beans.newDuration(wsfed.getConditionsLifetime()).toSeconds());
             condProvider.setMaxLifetime(Beans.newDuration(wsfed.getConditionsMaxLifetime()).toSeconds());
-            val provider = new SamlTokenProvider();
+            val provider = new SAMLTokenProvider();
             provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
             provider.setRealmMap(securityTokenServiceRealms);
             provider.setConditionsProvider(condProvider);
@@ -266,7 +265,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "transportSamlTokenValidator")
         @Bean
         public TokenValidator transportSamlTokenValidator() {
-            return new SamlTokenValidator();
+            return new SAMLTokenValidator();
         }
 
         @ConditionalOnMissingBean(name = "transportJwtTokenValidator")

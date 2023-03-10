@@ -1,4 +1,12 @@
 description = "Apereo CAS OAuth Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "OAuth2 Protocol",
+            title: "OAuth2 Identity Provider",
+            aliases: ["oauth"]
+    ]
+}
 dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus

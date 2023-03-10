@@ -20,8 +20,10 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated since 7.0.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchbaseAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     @Serial
     private static final long serialVersionUID = -1276731330180695089L;

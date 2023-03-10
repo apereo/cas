@@ -39,17 +39,17 @@ storage backends. Upon authentication, CAS will begin to search the configured
 registration database for matching record for the authenticated user and device 
 in order to allow for a successful authentication event.
 
-| Storage          | Description                                         
-|------------------------------------------------------------------------------------
-| JSON              | [See this guide](YubiKey-Authentication-Registration-JSON.html).
-| REST              | [See this guide](YubiKey-Authentication-Registration-Rest.html).
-| Permissive        | [See this guide](YubiKey-Authentication-Registration-Permissive.html).
-| JPA               | [See this guide](YubiKey-Authentication-Registration-JPA.html).
-| CouchDb           | [See this guide](YubiKey-Authentication-Registration-CouchDb.html).
-| Redis             | [See this guide](YubiKey-Authentication-Registration-Redis.html).
-| DynamoDb          | [See this guide](YubiKey-Authentication-Registration-DynamoDb.html).
-| MongoDb           | [See this guide](YubiKey-Authentication-Registration-MongoDb.html).
-| Custom            | [See this guide](YubiKey-Authentication-Registration-Custom.html).
+| Storage     | Description                                                            |
+|-------------|------------------------------------------------------------------------|
+| JSON        | [See this guide](YubiKey-Authentication-Registration-JSON.html).       |
+| REST        | [See this guide](YubiKey-Authentication-Registration-Rest.html).       |
+| Permissive  | [See this guide](YubiKey-Authentication-Registration-Permissive.html). |
+| JPA         | [See this guide](YubiKey-Authentication-Registration-JPA.html).        |
+| ~~CouchDb~~ | [See this guide](YubiKey-Authentication-Registration-CouchDb.html).    |
+| Redis       | [See this guide](YubiKey-Authentication-Registration-Redis.html).      |
+| DynamoDb    | [See this guide](YubiKey-Authentication-Registration-DynamoDb.html).   |
+| MongoDb     | [See this guide](YubiKey-Authentication-Registration-MongoDb.html).    |
+| Custom      | [See this guide](YubiKey-Authentication-Registration-Custom.html).     |
 
 ## Device/Account Validation
 

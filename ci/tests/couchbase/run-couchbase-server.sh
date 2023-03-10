@@ -121,8 +121,8 @@ createPrimaryIndex
 docker ps | grep "couchbase"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "Couchbase docker image is running."
+    echo "Couchbase docker container is running."
 else
-    echo "Couchbase docker image failed to start."
+    echo "Couchbase docker container failed to start."
     exit $retVal
 fi

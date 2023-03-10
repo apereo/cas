@@ -20,6 +20,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
+import org.apereo.cas.services.DefaultRegisteredServicesTemplatesManagerTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerCachingTests;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocatorTests;
@@ -111,6 +112,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
     RegisteredServiceTests.class,
+    DefaultRegisteredServicesTemplatesManagerTests.class,
     OpenFGARegisteredServiceAccessStrategyTests.class,
     LiteralRegisteredServiceMatchingStrategyTests.class,
     PartialRegexRegisteredServiceMatchingStrategyTests.class,

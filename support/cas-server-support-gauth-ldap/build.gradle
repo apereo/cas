@@ -1,4 +1,11 @@
 description = "Apereo CAS Google Authenticator LDAP"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Google Authenticator Multifactor Authentication",
+            title: "Google Authenticator Support via LDAP & Active Directory"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
 

@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OidcServiceJsonWebKeystoreCacheExpirationPolicy}.
@@ -51,9 +50,8 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy
     private long getExpiration(final OidcJsonWebKeyCacheKey givenService) {
         LOGGER.trace("Attempting to determine JWKS cache expiration value for [{}]", givenService);
         if (givenService.getRegisteredService() instanceof OidcRegisteredService service) {
-            if (service.getJwksCacheDuration() > 0 && StringUtils.isNotBlank(service.getJwksCacheTimeUnit())) {
-                val timeUnit = TimeUnit.valueOf(service.getJwksCacheTimeUnit().trim().toUpperCase());
-                val expiration = timeUnit.toNanos(service.getJwksCacheDuration());
+            if (StringUtils.isNotBlank(service.getJwksCacheDuration())) {
+                val expiration = Beans.newDuration(service.getJwksCacheDuration()).toNanos();
                 LOGGER.trace("JWKS cache expiration value for service [{}] is set to [{}]", service, expiration);
                 return expiration;
             }

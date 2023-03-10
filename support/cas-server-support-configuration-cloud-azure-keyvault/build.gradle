@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - Microsoft Azure KeyVault"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via Azure KeyVault"
+    ]
+}
 dependencies {
     implementation libraries.azurekeyvault
     implementation libraries.springcloudbootstrap

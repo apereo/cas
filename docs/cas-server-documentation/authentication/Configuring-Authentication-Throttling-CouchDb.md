@@ -15,6 +15,10 @@ Enable the following module in your configuration overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-couchdb" %}
 
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future</strong>.</p>
+</div>
+
 {% include_cached casproperties.html properties="cas.audit.couch-db" %}
 
 When using this feature the audit facility should be in synchronous mode. For additional instructions 

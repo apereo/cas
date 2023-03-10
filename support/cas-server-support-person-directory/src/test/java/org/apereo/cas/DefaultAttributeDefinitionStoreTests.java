@@ -50,8 +50,10 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
+        "cas.authn.attribute-repository.stub.attributes.memberships=m1,m2,m3,m4",
         "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
         "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
+        "cas.authn.attribute-repository.stub.attributes.allgroups=someValue",
         "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json",
         "cas.server.scope=cas.org"
     })
@@ -72,22 +74,41 @@ public class DefaultAttributeDefinitionStoreTests {
     private IPersonAttributeDao attributeRepository;
 
     @Test
+    public void verifyFlattenedDefn() {
+        val attributes = getAllReleasedAttributesForCasUser();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.containsKey("allgroups"));
+        assertEquals(List.of("m1/m2/m3/m4"), attributes.get("allgroups"));
+    }
+
+    @Test
+    public void verifyPatternedValues() {
+        val attributes = getAllReleasedAttributesForCasUser();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.containsKey("affiliations"));
+        assertEquals(List.of("admins", "users"), attributes.get("affiliations"));
+    }
+
+    @Test
     public void verifyReturnAll() {
+        val attributes = getAllReleasedAttributesForCasUser();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.containsKey("uid"));
+        assertTrue(attributes.containsKey("givenName"));
+        assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
+        assertTrue(List.class.cast(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
+    }
+
+    private Map<String, List<Object>> getAllReleasedAttributesForCasUser() {
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
-
         val policy = new ReturnAllAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())
             .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
             .build();
-        val attributes = policy.getAttributes(releasePolicyContext);
-        assertFalse(attributes.isEmpty());
-        assertTrue(attributes.containsKey("uid"));
-        assertTrue(attributes.containsKey("givenName"));
-        assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
-        assertTrue(List.class.cast(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
+        return policy.getAttributes(releasePolicyContext);
     }
 
     @Test
@@ -154,17 +175,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyMismatchedKeyReturnAll() {
-        val person = attributeRepository.getPerson("casuser");
-        assertNotNull(person);
-
-        val policy = new ReturnAllAttributeReleasePolicy();
-        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
-            .service(CoreAuthenticationTestUtils.getService())
-            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
-            .build();
-
-        val attributes = policy.getAttributes(releasePolicyContext);
+        val attributes = getAllReleasedAttributesForCasUser();
         assertNotNull(attributes);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("interesting-attribute"));
@@ -218,6 +229,7 @@ public class DefaultAttributeDefinitionStoreTests {
             assertTrue(values.contains("TEST@example.org"));
         }
     }
+
 
     @Test
     public void verifyScopedAttrDefn() {

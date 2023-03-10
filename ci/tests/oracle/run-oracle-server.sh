@@ -13,4 +13,4 @@ docker ps | grep "oracle-db"
 #    printf '.'
 #    sleep 2
 #done
-echo "Oracle docker image is running."
+echo "Oracle docker container is running."

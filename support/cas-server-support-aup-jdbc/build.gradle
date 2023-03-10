@@ -1,4 +1,12 @@
 description = "Apereo CAS AUP JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via JDBC",
+            category: "Acceptable Usage Policy"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")

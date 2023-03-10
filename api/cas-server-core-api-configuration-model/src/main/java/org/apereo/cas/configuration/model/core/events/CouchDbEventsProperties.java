@@ -15,6 +15,7 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.3.0
+ * @deprecated Since 7
  */
 
 @RequiresModule(name = "cas-server-support-events-couchdb")
@@ -22,6 +23,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CouchDbEventsProperties")
+@Deprecated(since = "7.0.0")
 public class CouchDbEventsProperties extends BaseAsynchronousCouchDbProperties {
 
     @Serial

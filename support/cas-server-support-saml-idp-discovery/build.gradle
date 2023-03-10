@@ -1,4 +1,11 @@
 description = "Apereo CAS SAML2 Identity Provider Discovery Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 Identity Provider Discovery"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")

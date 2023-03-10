@@ -24,11 +24,13 @@ import java.util.Map;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated(since = "7.0.0")
 public class CouchDbProfileDocument extends CouchDbDocument implements Principal {
 
     @Serial

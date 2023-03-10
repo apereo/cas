@@ -15,11 +15,13 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 7.0.0
  */
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class CouchbasePrincipalAttributesProperties extends BaseCouchbaseProperties {
     @Serial
     private static final long serialVersionUID = -6573755681498251678L;

@@ -5,4 +5,4 @@ docker run --rm --name="scim-server" -p 9666:8080 -d personify/personify-scim-se
 echo "Waiting for SCIM image to prepare..."
 sleep 10
 docker ps | grep "scim-server"
-echo "SCIM docker image is running."
+echo "SCIM docker container is running."

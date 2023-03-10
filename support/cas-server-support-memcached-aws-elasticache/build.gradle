@@ -1,4 +1,11 @@
 description = "Apereo CAS Memcached Support via AWS Elasticache"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Memcached Support",
+            title: "Memcached via AWS Elasticache"
+    ]
+}
 dependencies {
     api libraries.awselasticachememcached
 }

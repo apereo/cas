@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.cosmosdb;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 
@@ -21,4 +23,14 @@ import java.io.Serial;
 public class CosmosDbTicketRegistryProperties extends BaseCosmosDbProperties {
     @Serial
     private static final long serialVersionUID = 3528153816791719898L;
+
+    /**
+     * Crypto settings for the registry.
+     */
+    @NestedConfigurationProperty
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
+
+    public CosmosDbTicketRegistryProperties() {
+        this.crypto.setEnabled(false);
+    }
 }

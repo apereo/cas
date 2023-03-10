@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
@@ -63,6 +64,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         applicationContext.refresh();
 
         val context = ServicesManagerConfigurationContext.builder()
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .serviceRegistry(dao)
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))

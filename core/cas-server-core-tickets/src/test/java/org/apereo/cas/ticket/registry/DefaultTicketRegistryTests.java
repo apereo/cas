@@ -3,16 +3,16 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +29,7 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
-        return new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), CipherExecutor.noOp());
+        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
     }
 
     @RepeatedTest(1)
@@ -60,7 +60,7 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyEncodeFails() throws Exception {
         val cipher = new DefaultTicketCipherExecutor(null, null,
             "AES", 512, 16, "webflow");
-        val reg = new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), cipher);
+        val reg = new DefaultTicketRegistry(cipher, mock(TicketSerializationManager.class), new DefaultTicketCatalog());
         assertNull(reg.encodeTicket(null));
         assertNotNull(reg.decodeTicket(mock(Ticket.class)));
     }

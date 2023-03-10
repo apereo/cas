@@ -449,4 +449,5 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertEquals("test", attributes.get("my-userid").get(0));
         assertEquals("test-new", attributes.get("new-uid").get(0));
     }
+
 }

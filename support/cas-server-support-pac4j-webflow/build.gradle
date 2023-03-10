@@ -1,4 +1,13 @@
 description = "Apereo CAS Pac4j Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Delegated Authentication",
+            title: "Delegated (Proxy) Authentication",
+            aliases: ["delegation", "pac4j"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 

@@ -40,9 +40,11 @@ import java.util.stream.Collectors;
  * @author Fredrik Jönsson "fjo@kth.se"
  * @author Misagh Moayyed
  * @since 4.2
+ * @deprecated Since 7.0.0
  */
 @Slf4j
 @Getter
+@Deprecated(since = "7.0.0")
 public class DefaultCouchbaseClientFactory implements CouchbaseClientFactory {
     private final BaseCouchbaseProperties properties;
 

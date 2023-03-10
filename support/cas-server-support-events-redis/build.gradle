@@ -1,6 +1,10 @@
 description = "Apereo CAS Events Consumer via Redis"
 ext {
-    maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Events",
+            title: "Authentication Events via Redis"
+    ]
 }
 
 dependencies {

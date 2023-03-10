@@ -1,4 +1,11 @@
 description = "Apereo CAS Support for Google Analytics"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Reporting",
+            title: "Google Analytics"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")

@@ -1,4 +1,12 @@
 description = "Apereo CAS X509 REST Implementation"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "REST Protocol",
+            title: "X.509 REST API",
+            aliases: ["rest"]
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-rest")
     implementation project(":support:cas-server-support-rest-core")

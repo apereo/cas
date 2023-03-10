@@ -159,6 +159,14 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return readObjectsFromString(jsonString);
     }
 
+    @Override
+    public T merge(final T baseEntity, final T childEntity) {
+        return FunctionUtils.doUnchecked(() -> {
+            val reader = getObjectMapper().readerForUpdating(baseEntity);
+            return reader.readValue(toString(childEntity));
+        });
+    }
+
     /**
      * Gets object mapper and builds on if uninitialized.
      *

@@ -125,6 +125,7 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         val dao = new InMemoryServiceRegistry(appCtx, List.of(registeredService), new ArrayList<>());
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())

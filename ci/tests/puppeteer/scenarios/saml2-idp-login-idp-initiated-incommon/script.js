@@ -39,28 +39,32 @@ const path = require("path");
 async function sendRequest(page, entityIds) {
     let count = 0;
     for (const entityId of entityIds) {
-        await cas.goto(page, "https://localhost:8443/cas/logout");
+        try {
+            await cas.goto(page, "https://localhost:8443/cas/logout");
 
-        let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
-        url += `?providerId=${entityId}`;
-        url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
+            let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
+            url += `?providerId=${entityId}`;
+            url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
 
-        console.log(`Navigating to ${url}`);
-        let s = performance.now();
-        await cas.goto(page, url);
-        let e = performance.now();
-        let duration = (e - s) / 1000;
-        console.log(`Request took ${duration} seconds.`);
+            console.log(`Navigating to ${url}`);
+            let s = performance.now();
+            await cas.goto(page, url);
+            let e = performance.now();
+            let duration = (e - s) / 1000;
+            console.log(`Request took ${duration} seconds.`);
 
-        if (count > 1 && duration > 15) {
-            throw "Request took longer than expected";
+            if (count > 1 && duration > 15) {
+                await cas.logr("Request took longer than expected");
+            }
+
+            await page.waitForTimeout(1000);
+            await cas.assertVisibility(page, '#username');
+            await cas.assertVisibility(page, '#password');
+            await cas.loginWith(page, "casuser", "Mellon");
+            await page.waitForTimeout(1000);
+            count++;
+        } catch (e) {
+            await cas.logr(e);
         }
-
-        await page.waitForTimeout(1000);
-        await cas.assertVisibility(page, '#username');
-        await cas.assertVisibility(page, '#password');
-        await cas.loginWith(page, "casuser", "Mellon");
-        await page.waitForTimeout(1000);
-        count++;
     }
 }

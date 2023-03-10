@@ -1,8 +1,13 @@
 description = "Apereo CAS JPA Service Registry Support"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: " JPA Service Registry",
+            aliases: ["jpasvc"]
+    ]
 }
-
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-services")

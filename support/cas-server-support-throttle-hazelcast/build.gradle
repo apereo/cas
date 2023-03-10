@@ -1,4 +1,11 @@
 description = "Apereo CAS Hazelcast Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via Hazelcast"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
 

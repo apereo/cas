@@ -1,4 +1,11 @@
 description = "Apereo CAS JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "JDBC Authentication"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

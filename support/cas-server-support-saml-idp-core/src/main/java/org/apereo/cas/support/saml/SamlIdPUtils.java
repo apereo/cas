@@ -209,7 +209,7 @@ public class SamlIdPUtils {
                     ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
                     : null;
 
-                if (StringUtils.isNotBlank(acsUrl) && locations.contains(acsUrl)) {
+                if (StringUtils.isNotBlank(acsUrl) && locations.stream().anyMatch(acsUrl::equalsIgnoreCase)) {
                     return buildAssertionConsumerService(binding, acsUrl, acsIndex);
                 }
 
@@ -255,7 +255,7 @@ public class SamlIdPUtils {
         val resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
             .map(SamlRegisteredService.class::cast)
-            .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
+            .map(service -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, entityID))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(SamlRegisteredServiceServiceProviderMetadataFacade::metadataResolver)

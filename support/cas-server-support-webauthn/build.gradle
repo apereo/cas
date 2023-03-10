@@ -1,4 +1,12 @@
 description = "Apereo CAS FIDO2 WebAuthn Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WebAuthN & FIDO2 Multifactor Authentication",
+            title: "WebAuthN Support",
+            aliases: ["webauthn", "fido2"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

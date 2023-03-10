@@ -9,7 +9,9 @@ import org.ektorp.support.View;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class DefaultProfileCouchDbRepository extends CouchDbRepositorySupport<CouchDbProfileDocument>
     implements ProfileCouchDbRepository<CouchDbProfileDocument> {
     public DefaultProfileCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {

@@ -6,14 +6,12 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.trusted.authentication.keys.LegacyMultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
@@ -78,13 +76,8 @@ public class MultifactorAuthnTrustConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(
-            final CasConfigurationProperties casProperties) {
-            val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
-            if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
-                return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
-            }
-            return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
+        public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator() {
+            return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
         }
     }
 

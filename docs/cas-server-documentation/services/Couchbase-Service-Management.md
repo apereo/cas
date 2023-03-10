@@ -15,6 +15,10 @@ Couchbase integration is enabled by including the following dependency in the WA
 [Couchbase](https://www.couchbase.com) is a highly available, open source NoSQL database server based on
 [Erlang/OTP](https://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase server to provide high availability to CAS.
 
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future</strong>.</p>
+</div>
+
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.service-registry.couchbase" %}

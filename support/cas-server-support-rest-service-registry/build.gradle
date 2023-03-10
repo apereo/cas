@@ -1,4 +1,11 @@
 description = "Apereo CAS RESTful Service Registry"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Service Registries",
+            title: "REST Service Registry"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-services")
     

@@ -40,7 +40,7 @@ tomcatVersion=$(cat gradle.properties | grep tomcatVersion | awk -F"=" '{printf 
 echo "Apache Tomcat version: ${tomcatVersion}"
 
 tomcatVersionTag="v${tomcatVersion}"
-tomcatUrl="https://downloads.apache.org/tomcat/tomcat-10/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
+tomcatUrl="https://archive.apache.org/dist/tomcat/tomcat-10/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 
 export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
 rm -Rf ${CATALINA_HOME}

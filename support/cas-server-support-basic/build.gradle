@@ -1,4 +1,11 @@
 description = "Apereo CAS Basic Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "BASIC Authentication"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")

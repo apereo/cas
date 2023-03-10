@@ -1,4 +1,12 @@
 description = 'Apereo CAS Microsoft Azure Active Directory Authentication'
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Azure Active Directory Authentication"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api")
 

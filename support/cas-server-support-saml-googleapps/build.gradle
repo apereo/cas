@@ -1,4 +1,11 @@
 description = "Apereo CAS SAML Server Google Apps SAML Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "Google Apps for Education"
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-saml-googleapps-core")
     implementation project(":support:cas-server-support-saml-core")

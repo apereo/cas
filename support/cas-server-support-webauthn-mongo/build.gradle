@@ -1,4 +1,11 @@
 description = "Apereo CAS WebAuthN MongoDb Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WebAuthN & FIDO2 Multifactor Authentication",
+            title: "WebAuthN Support via MongoDb"
+    ]
+}
 dependencies {
     implementation libraries.mongo
     implementation libraries.webauthn

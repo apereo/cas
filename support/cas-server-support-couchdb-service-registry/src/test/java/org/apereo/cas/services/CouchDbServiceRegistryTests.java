@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 5984)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Deprecated(since = "7.0.0")
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

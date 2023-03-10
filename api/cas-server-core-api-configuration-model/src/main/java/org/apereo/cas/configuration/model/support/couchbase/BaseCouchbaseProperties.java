@@ -18,11 +18,13 @@ import java.util.stream.Stream;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Getter
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-couchbase-core")
+@Deprecated(since = "7.0.0")
 public abstract class BaseCouchbaseProperties implements Serializable {
 
     @Serial

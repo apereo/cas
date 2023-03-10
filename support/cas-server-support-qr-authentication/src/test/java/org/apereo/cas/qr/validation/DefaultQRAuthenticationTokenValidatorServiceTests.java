@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,7 +68,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("casuser")
             .jwtId("unknown-id")
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .issuer(casProperties.getServer().getPrefix())
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -88,7 +89,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("casuser")
             .jwtId(tgt.getId())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).minusDays(1)))
             .build();
@@ -110,7 +111,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("unknown")
             .jwtId(tgt.getId())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
@@ -133,7 +134,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer("unknown")
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
@@ -156,7 +157,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -183,7 +184,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -210,7 +211,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of("mismatch")))
             .build();

@@ -37,17 +37,20 @@ public class MongoDbTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
+        final TicketCatalog ticketCatalog,
+        final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbTicketRegistryTemplate")
         final MongoOperations mongoDbTicketRegistryTemplate,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager) {
+
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate, ticketSerializationManager);
-        registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
         new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate,
-            mongo.isDropCollection(), mongo.isUpdateIndexes(), mongo.isDropIndexes()).createTicketCollections();
-        return registry;
+            mongo.isDropCollection(), mongo.isUpdateIndexes(), mongo.isDropIndexes())
+            .createTicketCollections();
+
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo");
+        return new MongoDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, mongoDbTicketRegistryTemplate);
     }
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")

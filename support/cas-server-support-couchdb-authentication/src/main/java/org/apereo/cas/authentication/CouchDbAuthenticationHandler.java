@@ -11,7 +11,9 @@ import org.pac4j.jee.context.session.JEESessionStore;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
+@Deprecated(since = "7.0.0")
 public class CouchDbAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
     public CouchDbAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory, final int order) {

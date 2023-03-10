@@ -1,4 +1,11 @@
 description = "Apereo CAS Configuration - DynamoDb"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via DynamoDb"
+    ]
+}
 dependencies {
     implementation libraries.awsjavadynamodb
     implementation libraries.springcloudbootstrap

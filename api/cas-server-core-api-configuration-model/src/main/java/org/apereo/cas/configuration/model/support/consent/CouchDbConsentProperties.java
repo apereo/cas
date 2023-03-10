@@ -14,11 +14,13 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-consent-couchdb")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.0.0")
 public class CouchDbConsentProperties extends BaseCouchDbProperties {
     @Serial
     private static final long serialVersionUID = 8184753250455916462L;

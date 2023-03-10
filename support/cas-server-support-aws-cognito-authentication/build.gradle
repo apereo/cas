@@ -1,4 +1,12 @@
 description = 'Apereo CAS Amazon Web Services Cognito Authentication'
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "AWS Cognito Authentication"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api")
     

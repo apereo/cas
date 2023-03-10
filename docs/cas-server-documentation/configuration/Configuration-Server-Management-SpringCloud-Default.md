@@ -15,7 +15,7 @@ CAS deployment environment which is really no different than how one would norma
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config.server.git,spring.cloud.config.server.svn" %}
 
-<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>The configuration modules provide here may also be used verbatim inside a CAS server overlay and do not exclusively belong to a Spring Cloud Configuration server. While this module is primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay directly to fetch settings from a source.</p></div>
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>The configuration modules provided here may also be used verbatim inside a CAS server overlay and do not exclusively belong to a Spring Cloud Configuration server. While this module is primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay directly to fetch settings from a source.</p></div>
 
 
 Needless to say, the repositories could use both YAML and properties syntax to host configuration files.

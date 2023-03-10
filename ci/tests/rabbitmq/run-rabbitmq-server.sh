@@ -10,8 +10,8 @@ docker run -d -p 5672:5672 -p 15672:15672 --hostname rabbitmq \
 docker ps | grep "rabbitmq"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "RabbitMQ docker image is running."
+    echo "RabbitMQ docker container is running."
 else
-    echo "RabbitMQ docker image failed to start."
+    echo "RabbitMQ docker container failed to start."
     exit $retVal
 fi

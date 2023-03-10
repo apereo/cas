@@ -20,10 +20,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider, module = "couchdb")
 @AutoConfiguration
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlIdPFactoryConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataCouchDbFactory")

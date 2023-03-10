@@ -21,7 +21,7 @@ public class OidcJsonWebKeystoreGeneratedEventTests {
     @Test
     public void verifyOperation() throws Exception {
         val event = new OidcJsonWebKeystoreGeneratedEvent(this,
-            new FileSystemResource(File.createTempFile("first", "second")));
+            new FileSystemResource(File.createTempFile("first", "second")), null);
         assertNotNull(event.getSource());
         assertNotNull(event.getFile());
     }

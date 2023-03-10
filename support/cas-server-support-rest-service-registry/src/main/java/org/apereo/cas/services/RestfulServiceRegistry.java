@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -124,6 +125,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         HttpResponse response = null;
+        val clientInfo = ClientInfoHolder.getClientInfo();
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
@@ -140,7 +142,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                     .stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
-                    .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+                    .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
                 return services;
             }
         } catch (final Exception e) {

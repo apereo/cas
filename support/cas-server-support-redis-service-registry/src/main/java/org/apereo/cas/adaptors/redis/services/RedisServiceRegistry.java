@@ -12,6 +12,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
@@ -61,10 +62,11 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             LOGGER.trace("Saving registered service [{}]", rs);
             val redisKey = getRegisteredServiceRedisKey(rs);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             invokeServiceRegistryListenerPreSave(rs);
             this.template.boundValueOps(redisKey).set(rs);
             LOGGER.trace("Saved registered service [{}]", rs);
-            publishEvent(new CasRegisteredServiceSavedEvent(this, rs));
+            publishEvent(new CasRegisteredServiceSavedEvent(this, rs, clientInfo));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -76,9 +78,10 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         try {
             LOGGER.trace("Deleting registered service [{}]", registeredService);
             val redisKey = getRegisteredServiceRedisKey(registeredService);
+            val clientInfo = ClientInfoHolder.getClientInfo();
             this.template.delete(redisKey);
             LOGGER.trace("Deleted registered service [{}]", registeredService);
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService));
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, registeredService, clientInfo));
             return true;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -99,6 +102,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Collection<RegisteredService> load() {
+        val clientInfo = ClientInfoHolder.getClientInfo();
         val list = getRegisteredServiceKeys()
             .map(redisKey -> this.template.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
@@ -106,7 +110,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
         LOGGER.trace("Loaded registered services [{}]", list);
-        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
         return list;
     }
 

@@ -258,6 +258,10 @@ if [[ "${dockerRequired}" == "true" ]]; then
     printred "Docker engine is not running. Skipping running test since the test requires Docker."
     exit 0
   fi
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Docker engine is available"
+    docker --version
+  fi  
 fi
 
 
@@ -270,6 +274,7 @@ fi
 
 export SCENARIO="${scenarioName}"
 export SCENARIO_PATH="${scenario}"
+export SCENARIO_FOLDER=$( cd -- "${SCENARIO_PATH}" &> /dev/null && pwd )
 
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
@@ -522,7 +527,10 @@ if [[ "${RERUN}" != "true" ]]; then
          ${properties} &
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-      sleepfor 30
+
+      timeout=$(jq -j '.timeout // 60' "${config}")
+      sleepfor $timeout
+      
       casLogin="https://localhost:${serverPort}/cas/login"
       printcyan "Checking CAS server's status @ ${casLogin}"
       curl -k -L --output /dev/null --silent --fail $casLogin

@@ -6,6 +6,7 @@ import org.apereo.cas.validation.Assertion;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -34,8 +35,9 @@ public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
      * @param serviceTicket the service ticket
      * @param assertion     the assertion
      */
-    public CasServiceTicketValidatedEvent(final Object source, final ServiceTicket serviceTicket, final Assertion assertion) {
-        super(source);
+    public CasServiceTicketValidatedEvent(final Object source, final ServiceTicket serviceTicket,
+                                          final Assertion assertion, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.assertion = assertion;
         this.serviceTicket = serviceTicket;
     }

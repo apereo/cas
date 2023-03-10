@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
@@ -22,13 +23,14 @@ public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasTicketGran
     @Serial
     private static final long serialVersionUID = 584961303690286494L;
 
+
     /**
      * Instantiates a new CAS sso session destroyed event.
      *
      * @param source the source
      * @param ticket the ticket
      */
-    public CasTicketGrantingTicketDestroyedEvent(final Object source, final TicketGrantingTicket ticket) {
-        super(source, ticket);
+    public CasTicketGrantingTicketDestroyedEvent(final Object source, final TicketGrantingTicket ticket, final ClientInfo clientInfo) {
+        super(source, ticket, clientInfo);
     }
 }

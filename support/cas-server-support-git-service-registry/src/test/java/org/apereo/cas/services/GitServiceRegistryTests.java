@@ -97,15 +97,17 @@ import static org.mockito.Mockito.*;
                 PathUtils.delete(gitDir.toPath(),
                     StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
-            val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
-            FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            gitSampleRepo.add().addFilepattern("*.txt").call();
-            gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+            try (val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call()) {
+                FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                gitSampleRepo.add().addFilepattern("*.txt").call();
+                gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+            }
 
-            val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            git.add().addFilepattern("*.txt").call();
-            git.commit().setSign(false).setMessage("Initial commit").call();
+            try (val git = Git.init().setDirectory(gitDir).setBare(false).call()) {
+                FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                git.add().addFilepattern("*.txt").call();
+                git.commit().setSign(false).setMessage("Initial commit").call();
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);

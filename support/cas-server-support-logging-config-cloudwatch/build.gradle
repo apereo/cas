@@ -1,4 +1,11 @@
 description = "Apereo CAS Core Logging AWS CloudWatch"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "AWS CloudWatch"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
 

@@ -1,4 +1,12 @@
 description = "Apereo CAS WebAuthN JPA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WebAuthN & FIDO2 Multifactor Authentication",
+            title: "WebAuthN Support via JDBC"
+    ]
+}
+
 dependencies {
 
     implementation libraries.webauthn

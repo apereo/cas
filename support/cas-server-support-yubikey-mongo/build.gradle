@@ -1,4 +1,11 @@
 description = "Apereo CAS YubiKey MongoDb Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via MongoDb"
+    ]
+}
 dependencies {
     implementation libraries.mongo
     implementation libraries.yubicoapi

@@ -19,9 +19,11 @@ import java.util.List;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if(doc.secretKey) { emit(doc._id, doc) } }")
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbRepositorySupport<CouchDbGoogleAuthenticatorAccount> {
 
     public GoogleAuthenticatorAccountCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {

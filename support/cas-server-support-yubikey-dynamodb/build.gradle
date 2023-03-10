@@ -2,6 +2,11 @@ description = "Apereo CAS U2F YubiKey DynamoDb Support"
 
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via Apache CouchDb"
+    ]
 }
 
 dependencies {

@@ -1,6 +1,12 @@
 description = "Apereo CAS Redis Ticket Registry"
 ext {
     maxParallelForksForTests = 1
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Redis Ticket Registry",
+            aliases: ["redis"]
+    ]
 }
 dependencies {
     implementation libraries.redis

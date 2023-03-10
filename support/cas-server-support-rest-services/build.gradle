@@ -1,4 +1,11 @@
 description = "Apereo CAS Services REST Implementation"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "REST Protocol",
+            title: "Registered Services REST API"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")

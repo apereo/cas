@@ -10,8 +10,10 @@ import org.ektorp.support.View;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @View(name = "all", map = "function(doc) { if(doc.name && doc.value) { emit(doc._id, doc) } }")
+@Deprecated(since = "7.0.0")
 public class SamlMetadataDocumentCouchDbRepository extends CouchDbRepositorySupport<CouchDbSamlMetadataDocument> {
     public SamlMetadataDocumentCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
         super(CouchDbSamlMetadataDocument.class, db, createIfNotExists);

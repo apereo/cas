@@ -18,12 +18,14 @@ import java.io.Serial;
  *
  * @author Timur Duehr
  * @since 6.0.0
+ * @deprecated Since 7
  */
 @RequiresModule(name = "cas-server-support-saml-idp-metadata-couchdb")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CouchDbSamlMetadataProperties")
+@Deprecated(since = "7.0.0")
 public class CouchDbSamlMetadataProperties extends BaseCouchDbProperties {
 
     @Serial

@@ -17,8 +17,10 @@ import java.util.stream.Collectors;
  *
  * @author Timur Duehr
  * @since 5.3.0
+ * @deprecated Since 7
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     private final RegisteredServiceCouchDbRepository dbClient;

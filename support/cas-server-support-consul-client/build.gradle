@@ -1,4 +1,11 @@
 description = "Apereo CAS Spring Cloud Consul Client"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "Consul Discovery Client"
+    ]
+}
 dependencies {
     implementation libraries.springcloudconsul
     provided project(":core:cas-server-core-util")

@@ -1,4 +1,12 @@
 description = "Apereo CAS Hazelcast Integration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Hazelcast Ticket Registry",
+            aliases: ["hazelcast"]
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")

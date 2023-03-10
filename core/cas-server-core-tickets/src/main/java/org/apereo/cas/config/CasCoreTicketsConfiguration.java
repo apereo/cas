@@ -39,6 +39,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
@@ -133,11 +134,17 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketRegistryConfiguration {
+
         @ConditionalOnMissingBean(name = TicketRegistry.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
-            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final ObjectProvider<LogoutManager> logoutManager,
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final TicketCatalog ticketCatalog,
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
+            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+            final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
             LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
@@ -145,10 +152,10 @@ public class CasCoreTicketsConfiguration {
             val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
 
             if (mem.isCache()) {
-                return new CachingTicketRegistry(cipher, logoutManager);
+                return new CachingTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, logoutManager);
             }
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
-            return new DefaultTicketRegistry(storageMap, cipher);
+            return new DefaultTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, storageMap);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

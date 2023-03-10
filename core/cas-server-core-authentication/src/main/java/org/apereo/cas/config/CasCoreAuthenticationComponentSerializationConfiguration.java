@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
@@ -79,6 +81,8 @@ public class CasCoreAuthenticationComponentSerializationConfiguration {
             plan.registerSerializableClass(UnauthorizedSsoServiceException.class);
 
             plan.registerSerializableClass(DefaultMessageDescriptor.class);
+            plan.registerSerializableClass(GeoLocationRequest.class);
+            plan.registerSerializableClass(GeoLocationResponse.class);
             plan.registerSerializableClass(PasswordExpiringWarningMessageDescriptor.class);
         };
     }
