@@ -22,8 +22,8 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
-    protected AMQPTicketRegistry ticketRegistry;
+    protected QueueableTicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier(TicketSerializationManager.BEAN_NAME)

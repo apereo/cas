@@ -1,14 +1,15 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.pubsub;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 /**
- * This is {@link AMQPTicketRegistry}.
+ * This is {@link QueueableTicketRegistry}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public interface AMQPTicketRegistry extends TicketRegistry {
+public interface QueueableTicketRegistry extends TicketRegistry {
 
     /**
      * Add ticket to queue.

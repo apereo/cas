@@ -2,7 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -19,9 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
 
-    /**
-     * A map to contain the tickets.
-     */
     private final Map<String, Ticket> mapInstance;
 
     public DefaultTicketRegistry(final TicketSerializationManager ticketSerializationManager,
@@ -32,14 +31,17 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
     public DefaultTicketRegistry(final CipherExecutor cipherExecutor,
                                  final TicketSerializationManager ticketSerializationManager,
                                  final TicketCatalog ticketCatalog) {
-        this(cipherExecutor, ticketSerializationManager, ticketCatalog, new ConcurrentHashMap<>());
+        this(cipherExecutor, ticketSerializationManager, ticketCatalog,
+            new ConcurrentHashMap<>(), QueueableTicketRegistryMessagePublisher.noOp(), new PublisherIdentifier());
     }
 
     public DefaultTicketRegistry(final CipherExecutor cipherExecutor,
                                  final TicketSerializationManager ticketSerializationManager,
                                  final TicketCatalog ticketCatalog,
-                                 final Map<String, Ticket> storageMap) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                 final Map<String, Ticket> storageMap,
+                                 final QueueableTicketRegistryMessagePublisher ticketPublisher,
+                                 final PublisherIdentifier publisherIdentifier) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, ticketPublisher, publisherIdentifier);
         this.mapInstance = storageMap;
     }
 }

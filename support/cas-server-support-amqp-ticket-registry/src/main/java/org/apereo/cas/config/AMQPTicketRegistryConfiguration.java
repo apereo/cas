@@ -2,18 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.registry.AMQPDefaultTicketRegistry;
-import org.apereo.cas.ticket.registry.AMQPMessageSerializationHandler;
-import org.apereo.cas.ticket.registry.AMQPTicketRegistry;
-import org.apereo.cas.ticket.registry.AMQPTicketRegistryQueueReceiver;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.MessageQueueMessageSerializationHandler;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.registry.queue.AMQPTicketRegistryQueuePublisher;
-import org.apereo.cas.ticket.serialization.TicketSerializationManager;
-import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,68 +45,30 @@ import java.nio.charset.StandardCharsets;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "amqp")
 @AutoConfiguration
 public class AMQPTicketRegistryConfiguration {
-    @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PublisherIdentifier messageQueueTicketRegistryIdentifier(
-        final CasConfigurationProperties casProperties) {
-        val bean = new PublisherIdentifier();
-        val amqp = casProperties.getTicket().getRegistry().getAmqp();
-
-        FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
-        return bean;
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
-    @Lazy(false)
-    public AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver(
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final AMQPTicketRegistry ticketRegistry,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
-        final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
-        return new AMQPTicketRegistryQueueReceiver(ticketRegistry, messageQueueTicketRegistryIdentifier);
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "messageQueueCipherExecutor")
-    public CipherExecutor messageQueueCipherExecutor(final CasConfigurationProperties casProperties) {
-        val amqp = casProperties.getTicket().getRegistry().getAmqp();
-        return CoreTicketUtils.newTicketRegistryCipherExecutor(amqp.getCrypto(), "amqp");
-    }
-
+    
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MessageConverter messageQueueTicketRegistryConverter(
-        @Qualifier("messageQueueCipherExecutor")
-        final CipherExecutor messageQueueCipherExecutor) {
+        @Qualifier("defaultTicketRegistryCipherExecutor")
+        final CipherExecutor defaultTicketRegistryCipherExecutor) {
         val converter = new SerializerMessageConverter();
         converter.setDefaultCharset(StandardCharsets.UTF_8.name());
-        converter.setSerializer(new AMQPMessageSerializationHandler(messageQueueCipherExecutor));
-        converter.setDeserializer(new AMQPMessageSerializationHandler(messageQueueCipherExecutor));
+        converter.setSerializer(new MessageQueueMessageSerializationHandler(defaultTicketRegistryCipherExecutor));
+        converter.setDeserializer(new MessageQueueMessageSerializationHandler(defaultTicketRegistryCipherExecutor));
         return converter;
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AMQPTicketRegistry ticketRegistry(
-        @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog,
-        @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager,
-        @Qualifier("messageQueueCipherExecutor")
-        final CipherExecutor messageQueueCipherExecutor,
-        final RabbitTemplate rabbitTemplate,
+    public QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher(
+        @Qualifier("messageQueueTicketRegistryIdentifier")
+        final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
-        final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
+        final RabbitTemplate rabbitTemplate) {
         rabbitTemplate.setMessageConverter(messageQueueTicketRegistryConverter);
         LOGGER.debug("Configuring AMQP ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        return new AMQPDefaultTicketRegistry(messageQueueCipherExecutor, ticketSerializationManager, ticketCatalog,
-            new AMQPTicketRegistryQueuePublisher(rabbitTemplate), messageQueueTicketRegistryIdentifier);
+        return new AMQPTicketRegistryQueuePublisher(rabbitTemplate);
     }
 
     @Bean
@@ -148,7 +104,7 @@ public class AMQPTicketRegistryConfiguration {
     @Lazy(false)
     public MessageListenerAdapter amqpTicketRegistryListenerAdapter(
         @Qualifier("messageQueueTicketRegistryReceiver")
-        final AMQPTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver,
+        final QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter) {
         val adapter = new MessageListenerAdapter(messageQueueTicketRegistryReceiver, "receive");
