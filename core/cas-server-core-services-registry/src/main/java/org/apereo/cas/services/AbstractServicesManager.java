@@ -172,11 +172,11 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (predicate == null) {
             return new ArrayList<>(0);
         }
-        val results = configurationContext.getServiceRegistry().findServicePredicate(predicate).
-            stream().
-            sorted().
-            peek(RegisteredService::initialize).
-            collect(Collectors.toMap(RegisteredService::getId, Function.identity(), (r, s) -> s));
+        val results = configurationContext.getServiceRegistry().findServicePredicate(predicate)
+            .stream()
+            .sorted()
+            .peek(RegisteredService::initialize)
+            .collect(Collectors.toMap(RegisteredService::getId, Function.identity(), (r, s) -> s));
         configurationContext.getServicesCache().putAll(results);
         return results.values();
     }
