@@ -4,8 +4,10 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.util.PublisherIdentifier;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +22,7 @@ import java.io.Serial;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
+@Setter
 @ToString(callSuper = true)
 public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
 
@@ -29,7 +32,9 @@ public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
     private final String ticketId;
 
     @JsonCreator
-    public DeleteTicketMessageQueueCommand(final PublisherIdentifier id,
+    public DeleteTicketMessageQueueCommand(@JsonProperty("id")
+                                           final PublisherIdentifier id,
+                                           @JsonProperty("ticketId")
                                            final String ticketId) {
         super(id);
         this.ticketId = ticketId;
