@@ -1734,9 +1734,7 @@ following SAML Logout Request XML document:
 ```xml
   <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
      ID="[RANDOM ID]" Version="2.0" IssueInstant="[CURRENT DATE/TIME]">
-    <saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
-      @NOT_USED@
-    </saml:NameID>
+    <saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">[PRINCIPAL IDENTIFIER]</saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
   </samlp:LogoutRequest>
 ```
