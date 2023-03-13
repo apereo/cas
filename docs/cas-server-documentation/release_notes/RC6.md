@@ -41,9 +41,17 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
   
+### Google Cloud Pub/Sub Ticket Registry
+
+A new ticket registry implementation backed by [Google Cloud's PubSub](../ticketing/GCP-PubSub-Ticket-Registry.html) is now available.
 
 ## Other Stuff
-        
+     
+ 
 
 ## Library Upgrades
-
+         
+- Ldaptive
+- Twillio
+- Amazon SDK
+- Spring Boot

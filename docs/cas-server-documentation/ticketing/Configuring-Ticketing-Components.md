@@ -44,6 +44,7 @@ deployments. Components for the following caching technologies are provided:
 ### Message-based Ticket Registries
 
 * [AMQP](Messaging-AMQP-Ticket-Registry.html)
+* [Google Cloud PubSub](GCP-PubSub-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 
