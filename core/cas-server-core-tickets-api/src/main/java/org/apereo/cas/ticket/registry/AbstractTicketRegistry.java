@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -189,7 +188,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         return getTickets(ticket -> {
-            if (ticket instanceof TicketGrantingTicketAwareTicket ticketGrantingTicket && !ticket.isExpired()
+            if (ticket instanceof TicketGrantingTicket ticketGrantingTicket && !ticket.isExpired()
                 && ticketGrantingTicket.getAuthentication() != null) {
                 val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
 
@@ -197,9 +196,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                     val attributeKey = digest(queryEntry.getKey());
 
                     if (attributes.containsKey(attributeKey)) {
-                        
+
                         val authnAttributeValues = CollectionUtils.toCollection(attributes.get(attributeKey));
-                        
+
                         return authnAttributeValues.stream().anyMatch(value -> {
                             val attributeValue = value.toString();
                             return queryEntry.getValue()
@@ -228,7 +227,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected int deleteTickets(final Set<String> tickets) {
         return deleteTickets(tickets.stream());
     }
-    
+
     protected int deleteTickets(final Stream<String> tickets) {
         return tickets.mapToInt(Unchecked.toIntFunction(this::deleteTicket)).sum();
     }
@@ -322,7 +321,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
         return decodeTickets(items.stream()).collect(Collectors.toSet());
     }
-    
+
     protected Stream<Ticket> decodeTickets(final Stream<Ticket> items) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
