@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.ticket.TicketDefinition;
-
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.pubsub.v1.Subscription;
 import com.google.pubsub.v1.Topic;
