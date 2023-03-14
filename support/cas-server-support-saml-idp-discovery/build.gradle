@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "SAML2 Protocol",
-            title: "SAML2 Identity Provider Discovery"
+            title: "SAML2 Identity Provider Discovery",
+            aliases: ["saml2discovery"]
     ]
 }
 dependencies {

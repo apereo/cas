@@ -23,6 +23,10 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gcp-ticket-registry" %}
 
+Integration support is backed by the [Spring Cloud GCP project](https://cloud.google.com/java/docs/spring).
+Their [reference documentation](https://googlecloudplatform.github.io/spring-cloud-gcp/reference/html/index.html) 
+provides detailed information on how to integrate Google Cloud APIs with CAS.
+
 ## CAS Configuration
 
 {% include_cached casproperties.html properties="cas.ticket.registry.in-memory" thirdPartyStartsWith="spring.cloud.gcp.pubsub" %}
@@ -32,6 +36,10 @@ Support is enabled by including the following dependency in the overlay:
 The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="health" healthIndicators="pubsub,pubsub-subscriber" %}
+
+<div class="alert alert-info">:information_source: <strong>Message Ordering</strong>
+<p>To successfully use the Spring Cloud GCP actuator endpoints, you will also need to enable the Cloud Monitoring API.</p>
+</div>
 
 ## Troubleshooting
 

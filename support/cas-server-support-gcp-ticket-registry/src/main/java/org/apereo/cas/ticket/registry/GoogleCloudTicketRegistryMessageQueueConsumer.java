@@ -41,7 +41,7 @@ public class GoogleCloudTicketRegistryMessageQueueConsumer implements Consumer<B
     public void accept(final BasicAcknowledgeablePubsubMessage message) {
         FunctionUtils.doAndHandle(o -> {
             val subName = message.getProjectSubscriptionName().getSubscription();
-            LOGGER.debug("Message received from {} subscription: {}", subName,
+            LOGGER.debug("Message received from [{}] subscription: [{}]", subName,
                 message.getPubsubMessage().getData().toStringUtf8());
             val command = pubSubMessageConverter.fromPubSubMessage(message.getPubsubMessage(), BaseMessageQueueCommand.class);
             messageQueueTicketRegistryReceiver.receive(command);

@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -29,6 +29,10 @@ public class GoogleCloudTicketRegistryQueuePublisher implements QueueableTicketR
      * Topic destination name.
      */
     public static final String QUEUE_TOPIC = "CasTicketRegistryTopic";
+
+    /**
+     * The dead-letter topic name.
+     */
     public static final String DEAD_LETTER_TOPIC = QUEUE_TOPIC + "DeadLetter";
 
     private final PubSubTemplate pubSubTemplate;
@@ -38,8 +42,9 @@ public class GoogleCloudTicketRegistryQueuePublisher implements QueueableTicketR
         FunctionUtils.doAndHandle(__ -> {
             LOGGER.debug("[{}] is publishing message [{}]", cmd.getId().getId(), cmd);
             val headers = Collections.singletonMap(GcpPubSubHeaders.ORDERING_KEY, cmd.getId().getId());
-            final CompletableFuture<String> publish = pubSubTemplate.publish(QUEUE_TOPIC, cmd, headers);
-            val publishedMessage = publish.get();
+            val future = pubSubTemplate.publish(QUEUE_TOPIC, cmd, headers);
+            Objects.requireNonNull(future);
+            val publishedMessage = future.get();
             LOGGER.trace("Sent message [{}] from ticket registry id [{}]", publishedMessage, cmd.getId());
         });
     }
