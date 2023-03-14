@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Monitorable
 public abstract class AbstractServicesManager implements ServicesManager {
 
     /**
