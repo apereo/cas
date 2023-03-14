@@ -13,7 +13,6 @@ import lombok.val;
 
 import java.util.Collections;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This is {@link GoogleCloudTicketRegistryQueuePublisher}.

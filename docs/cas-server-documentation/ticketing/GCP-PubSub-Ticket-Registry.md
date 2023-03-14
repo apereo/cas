@@ -37,7 +37,7 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="health" healthIndicators="pubsub,pubsub-subscriber" %}
 
-<div class="alert alert-info">:information_source: <strong>Message Ordering</strong>
+<div class="alert alert-info">:information_source: <strong>Cloud Monitoring</strong>
 <p>To successfully use the Spring Cloud GCP actuator endpoints, you will also need to enable the Cloud Monitoring API.</p>
 </div>
 
