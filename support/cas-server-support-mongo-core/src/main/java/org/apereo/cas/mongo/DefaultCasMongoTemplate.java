@@ -5,9 +5,6 @@ import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
