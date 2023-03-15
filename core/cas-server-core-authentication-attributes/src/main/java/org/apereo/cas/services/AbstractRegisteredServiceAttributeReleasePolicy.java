@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -123,8 +122,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             }
             LOGGER.trace("Adding policy attributes to the released set of attributes");
             attributesToRelease.putAll(policyAttributes);
-            insertPrincipalIdAsAttributeIfNeeded(context.getPrincipal(),
-                attributesToRelease, context.getService(), context.getRegisteredService());
+            insertPrincipalIdAsAttributeIfNeeded(context, attributesToRelease);
             if (getAttributeFilter() != null) {
                 LOGGER.debug("Invoking attribute filter [{}] on the final set of attributes", getAttributeFilter());
                 return getAttributeFilter().filter(attributesToRelease);
@@ -193,23 +191,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         RegisteredServiceAttributeReleasePolicyContext context,
         Map<String, List<Object>> attributes);
 
-    /**
-     * Supports this policy request..
-     *
-     * @param context the context
-     * @return true/false
-     */
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
         return true;
     }
 
-    /**
-     * Resolve attributes from attribute definition store and provide map.
-     *
-     * @param context             the context
-     * @param principalAttributes the principal attributes
-     * @return the map
-     */
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(
         final RegisteredServiceAttributeReleasePolicyContext context,
         final Map<String, List<Object>> principalAttributes) {
@@ -237,13 +222,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             });
     }
 
-    /**
-     * Resolve attributes from principal attribute repository.
-     *
-     * @param principal         the principal
-     * @param registeredService the registered service
-     * @return the map
-     */
     protected Map<String, List<Object>> resolveAttributesFromPrincipalAttributeRepository(final Principal principal,
                                                                                           final RegisteredService registeredService) {
         val attributes = getRegisteredServicePrincipalAttributesRepository()
@@ -256,35 +234,27 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return attributes;
     }
 
-    /**
-     * Release principal id as attribute if needed.
-     *
-     * @param principal           the principal
-     * @param attributesToRelease the attributes to release
-     * @param service             the service
-     * @param registeredService   the registered service
-     */
-    protected void insertPrincipalIdAsAttributeIfNeeded(final Principal principal, final Map<String, List<Object>> attributesToRelease,
-                                                        final Service service, final RegisteredService registeredService) {
+    protected void insertPrincipalIdAsAttributeIfNeeded(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                        final Map<String, List<Object>> attributesToRelease) {
         if (StringUtils.isNotBlank(getPrincipalIdAttribute())) {
-            LOGGER.debug("Attempting to resolve the principal id for service [{}]", registeredService.getServiceId());
-            val usernameProvider = registeredService.getUsernameAttributeProvider();
+            LOGGER.debug("Attempting to resolve the principal id for service [{}]", context.getRegisteredService().getServiceId());
+            val usernameProvider = context.getRegisteredService().getUsernameAttributeProvider();
             if (usernameProvider != null) {
-                val id = usernameProvider.resolveUsername(principal, service, registeredService);
+
+                val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                    .service(context.getService())
+                    .principal(context.getPrincipal())
+                    .registeredService(context.getRegisteredService())
+                    .releasingAttributes(attributesToRelease)
+                    .build();
+                
+                val id = usernameProvider.resolveUsername(usernameContext);
                 LOGGER.debug("Releasing resolved principal id [{}] as attribute [{}]", id, getPrincipalIdAttribute());
-                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(principal.getId()));
+                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(context.getPrincipal().getId()));
             }
         }
     }
 
-    /**
-     * Return the final attributes collection.
-     * Subclasses may override this minute to impose last minute rules.
-     *
-     * @param attributesToRelease the attributes to release
-     * @param service             the service
-     * @return the map
-     */
     protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease,
                                                                         final RegisteredService service) {
         LOGGER.debug("Final collection of attributes allowed are: [{}]", attributesToRelease);

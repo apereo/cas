@@ -252,9 +252,26 @@ public class FunctionUtils {
      */
     public static <T> void doIfNull(final T input,
                                     final CheckedConsumer<T> trueFunction) {
+        doIfNull(input, trueFunction, t -> {
+        });
+    }
+
+    /**
+     * Do if null.
+     *
+     * @param <T>           the type parameter
+     * @param input         the input
+     * @param trueFunction  the true function
+     * @param falseFunction the false function
+     */
+    public static <T> void doIfNull(final T input,
+                                    final CheckedConsumer<T> trueFunction,
+                                    final CheckedConsumer<T> falseFunction) {
         try {
             if (input == null) {
                 trueFunction.accept(null);
+            } else {
+                falseFunction.accept(input);
             }
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);

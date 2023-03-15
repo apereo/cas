@@ -1,8 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,8 +25,8 @@ public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServ
     private static final long serialVersionUID = 5823989148794052951L;
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        LOGGER.debug("Returning the default principal id [{}] for username.", principal.getId());
-        return principal.getId();
+    public String resolveUsernameInternal(final RegisteredServiceUsernameProviderContext context) {
+        LOGGER.debug("Returning the default principal id [{}] for username.", context.getPrincipal().getId());
+        return context.getPrincipal().getId();
     }
 }

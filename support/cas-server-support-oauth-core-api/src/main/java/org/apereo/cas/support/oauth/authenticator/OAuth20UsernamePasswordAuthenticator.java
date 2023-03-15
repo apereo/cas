@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -89,7 +90,14 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             val attributes = Objects.requireNonNull(registeredService).getAttributeReleasePolicy().getAttributes(context);
 
             val profile = new CommonProfile();
-            val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+
+            val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+
+            val id = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);

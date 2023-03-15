@@ -42,31 +42,31 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         this.groovyScript = script;
     }
 
-    private static String fetchAttributeValue(final Principal principal,
-                                              final Service service,
-                                              final RegisteredService registeredService,
+    private static String fetchAttributeValue(final RegisteredServiceUsernameProviderContext context,
                                               final String groovyScript) {
 
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> {
-                val script = cacheMgr.resolveScriptableResource(groovyScript, registeredService.getServiceId(), registeredService.getName());
-                return fetchAttributeValueFromScript(script, principal, service);
+                val script = cacheMgr.resolveScriptableResource(groovyScript,
+                    context.getRegisteredService().getServiceId(), context.getRegisteredService().getName());
+                return fetchAttributeValueFromScript(script, context.getPrincipal(), context.getService());
             })
             .map(Object::toString)
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute username provider"));
     }
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
+    public String resolveUsernameInternal(final RegisteredServiceUsernameProviderContext context) {
         if (StringUtils.isNotBlank(this.groovyScript)) {
-            val result = fetchAttributeValue(principal, service, registeredService, groovyScript);
+            val result = fetchAttributeValue(context, groovyScript);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script", result);
                 return result;
             }
         }
-        LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]", this.groovyScript, principal.getId());
-        return principal.getId();
+        LOGGER.warn("Groovy script [{}] is not valid. CAS will switch to use the default principal identifier [{}]",
+            this.groovyScript, context.getPrincipal().getId());
+        return context.getPrincipal().getId();
     }
 
     private static Object fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript script,

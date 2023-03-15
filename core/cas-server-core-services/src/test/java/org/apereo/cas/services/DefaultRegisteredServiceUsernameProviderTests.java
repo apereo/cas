@@ -42,7 +42,14 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         provider.setEncryptUsername(true);
         val principal = RegisteredServiceTestUtils.getPrincipal("ID");
         val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(), service);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(service)
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+
+        val id = provider.resolveUsername(usernameContext);
         provider.initialize();
         assertEquals(id, principal.getId().toUpperCase());
     }
@@ -52,8 +59,13 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, principal.getId().toUpperCase());
     }
 
@@ -63,8 +75,13 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         provider.setRemovePattern("@.+");
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser@example.org");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, "CASUSER");
     }
 
@@ -74,8 +91,13 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         provider.setScope("example.org");
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, principal.getId().toUpperCase().concat("@EXAMPLE.ORG"));
     }
 
@@ -83,8 +105,13 @@ public class DefaultRegisteredServiceUsernameProviderTests {
     public void verifyRegServiceUsername() {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         val principal = RegisteredServiceTestUtils.getPrincipal("id");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("id"));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("id"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, principal.getId());
     }
 
