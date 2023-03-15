@@ -14,7 +14,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,8 +38,13 @@ public class GroovyRegisteredServiceUsernameProviderTests {
     public void verifyUsernameProvider() {
         val p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("classpath:uid.groovy");
-        val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal())
+            .build();
+        val id = p.resolveUsername(usernameContext);
         assertEquals("fromscript", id);
     }
 
@@ -48,9 +52,13 @@ public class GroovyRegisteredServiceUsernameProviderTests {
     public void verifyUsernameProviderInline() {
         val p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
-        var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("uid", "CAS-System")), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System")))
+            .build();
+        val id = p.resolveUsername(usernameContext);
         assertEquals("CAS-System123456789", id);
     }
 
@@ -58,9 +66,12 @@ public class GroovyRegisteredServiceUsernameProviderTests {
     public void verifyUsernameProviderInlineAsList() {
         val p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
-        var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("uid", List.of("CAS-System"))), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System")))
+            .build();
+        val id = p.resolveUsername(usernameContext);
         assertEquals("CAS-System123456789", id);
     }
 

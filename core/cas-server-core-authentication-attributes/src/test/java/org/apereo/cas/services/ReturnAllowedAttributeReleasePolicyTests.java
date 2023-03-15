@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -286,8 +284,8 @@ public class ReturnAllowedAttributeReleasePolicyTests {
                 private static final long serialVersionUID = 6935950848419028873L;
 
                 @Override
-                public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-                    return principal.getId();
+                public String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+                    return context.getPrincipal().getId();
                 }
             });
 
