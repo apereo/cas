@@ -24,14 +24,13 @@ public class DefaultExecutableObserver implements ExecutableObserver {
     private final ObservationRegistry observationRegistry;
 
     @Override
-    public void run(final MonitorableTask task) {
-        prepareObservation(task).observe((Runnable) task.getExecutableTask());
+    public void run(final MonitorableTask task, final Runnable runnable) {
+        prepareObservation(task).observe(runnable);
     }
 
     @Override
-    public <T> T supply(final MonitorableTask task, final Class<T> clazz) {
-        return clazz.cast(prepareObservation(task)
-            .observe((Supplier<? extends T>) task.getExecutableTask()));
+    public <T> T supply(final MonitorableTask task, final Supplier<T> supplier) {
+        return prepareObservation(task).observe(supplier);
     }
 
     protected Observation prepareObservation(final MonitorableTask task) {

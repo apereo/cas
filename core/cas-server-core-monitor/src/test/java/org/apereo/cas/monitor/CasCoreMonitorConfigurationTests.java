@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.config.CasCoreMonitorConfiguration;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,16 +99,16 @@ public class CasCoreMonitorConfigurationTests {
 
     @Test
     public void verifyObserabilitySupplier() {
-        val name = Thread.currentThread().getStackTrace()[1].getMethodName();
-        val result = defaultExecutableObserver.supply(new MonitorableTask(name, (Supplier<String>) () -> "CAS"), String.class);
+        val name = FunctionUtils.getMethodNameFromCurrentThead();
+        val result = defaultExecutableObserver.supply(new MonitorableTask(name), () -> "CAS");
         assertEquals("CAS", result);
     }
 
     @Test
     public void verifyObserabilityRunner() {
-        val name = Thread.currentThread().getStackTrace()[1].getMethodName();
+        val name = FunctionUtils.getMethodNameFromCurrentThead();
         val result = new AtomicBoolean(false);
-        defaultExecutableObserver.run(new MonitorableTask(name, (Runnable) () -> result.set(true)));
+        defaultExecutableObserver.run(new MonitorableTask(name), () -> result.set(true));
         assertTrue(result.get());
     }
 }

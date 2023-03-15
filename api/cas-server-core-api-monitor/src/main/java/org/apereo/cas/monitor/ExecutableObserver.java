@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import java.util.function.Supplier;
+
 /**
  * This is {@link ExecutableObserver}.
  *
@@ -10,17 +12,18 @@ public interface ExecutableObserver {
     /**
      * Observe a task as a runnable.
      *
-     * @param task the task
+     * @param task     the task
+     * @param runnable the runnable
      */
-    void run(MonitorableTask task);
+    void run(MonitorableTask task, Runnable runnable);
 
     /**
      * Observe a task as a supplier.
      *
-     * @param <T>   the type parameter
-     * @param task  the task
-     * @param clazz the clazz
+     * @param <T>      the type parameter
+     * @param task     the task
+     * @param supplier the supplier
      * @return the t
      */
-    <T> T supply(MonitorableTask task, Class<T> clazz);
+    <T> T supply(MonitorableTask task, Supplier<T> supplier);
 }

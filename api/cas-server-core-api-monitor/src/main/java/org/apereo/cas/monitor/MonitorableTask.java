@@ -22,6 +22,4 @@ public class MonitorableTask {
     private final Map<String, String> unboundedValues = new HashMap<>();
 
     private final String name;
-
-    private final Object executableTask;
 }
