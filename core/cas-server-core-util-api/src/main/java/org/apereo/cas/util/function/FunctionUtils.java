@@ -538,11 +538,4 @@ public class FunctionUtils {
             throw handler.apply(e);
         }
     }
-
-    /**
-     * Gets method name from current thead.
-     */
-    public static String getMethodNameFromCurrentThead() {
-        return Thread.currentThread().getStackTrace()[1].getMethodName();
-    }
 }

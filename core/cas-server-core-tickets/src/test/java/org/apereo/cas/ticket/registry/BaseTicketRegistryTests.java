@@ -68,6 +68,7 @@ import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -642,7 +643,10 @@ public abstract class BaseTicketRegistryTests {
         }
     }
 
-    @ImportAutoConfiguration(RefreshAutoConfiguration.class)
+    @ImportAutoConfiguration({
+        ObservationAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
     @SpringBootConfiguration
     @Import({
         CasCoreHttpConfiguration.class,
@@ -669,6 +673,6 @@ public abstract class BaseTicketRegistryTests {
         CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }
