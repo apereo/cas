@@ -131,6 +131,11 @@ public class OidcClientRegistrationRequestTranslator {
             registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
         }
 
+        FunctionUtils.doIfNotNull(registrationRequest.getGrantTypes(),
+            __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
+        FunctionUtils.doIfNotNull(registrationRequest.getResponseTypes(),
+            __ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())));
+        
         if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
             registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
         }
