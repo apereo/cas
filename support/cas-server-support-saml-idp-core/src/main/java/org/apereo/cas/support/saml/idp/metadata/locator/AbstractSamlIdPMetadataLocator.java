@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.ResourceUtils;
@@ -31,7 +30,6 @@ import java.util.Optional;
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-@Monitorable
 public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
 
     private static final String CACHE_KEY_METADATA = "CasSamlIdentityProviderMetadata";
