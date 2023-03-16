@@ -2,6 +2,7 @@ description = "Apereo CAS Core Services"
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-audit")
+    api project(":api:cas-server-core-api-monitor")
     
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")

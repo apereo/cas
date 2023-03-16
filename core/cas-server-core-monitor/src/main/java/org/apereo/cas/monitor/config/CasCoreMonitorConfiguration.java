@@ -10,7 +10,10 @@ import org.apereo.cas.monitor.TicketRegistryHealthIndicator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.ObservationTextPublisher;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -47,6 +50,11 @@ public class CasCoreMonitorConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ExecutableObserver defaultExecutableObserver(final ObservationRegistry observationRegistry) {
         return new DefaultExecutableObserver(observationRegistry);
+    }
+
+    @Bean
+    public ObservationHandler<Observation.Context> observationTextPublisher() {
+        return new ObservationTextPublisher();
     }
 
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")

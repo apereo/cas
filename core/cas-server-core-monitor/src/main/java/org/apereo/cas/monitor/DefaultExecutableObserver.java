@@ -29,7 +29,7 @@ public class DefaultExecutableObserver implements ExecutableObserver {
     }
 
     @Override
-    public <T> T supply(final MonitorableTask task, final Supplier<T> supplier) {
+    public <T> T supply(final MonitorableTask task, final Supplier<T> supplier) throws Throwable {
         return prepareObservation(task).observe(supplier);
     }
 

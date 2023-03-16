@@ -46,12 +46,18 @@ The following items are new improvements and enhancements presented in this rele
 A new ticket registry implementation backed by [Google Cloud's PubSub](../ticketing/GCP-PubSub-Ticket-Registry.html) is now available.
 
 ## Other Stuff
-     
- 
+   
+- Supported grant types and response types are recognized during [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html).  
+- Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io/docs/observation) and then reported as metrics.
 
 ## Library Upgrades
-         
+       
+- Spring  
+- Spring Integration
+- Netty
+- Logback 
 - Ldaptive
 - Twillio
+- jQuery
 - Amazon SDK
 - Spring Boot
