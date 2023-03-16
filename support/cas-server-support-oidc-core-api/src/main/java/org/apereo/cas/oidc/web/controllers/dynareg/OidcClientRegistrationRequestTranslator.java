@@ -123,10 +123,13 @@ public class OidcClientRegistrationRequestTranslator {
 
 
         FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), __ -> registeredService.setLogo(registrationRequest.getLogo()));
-
         FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), __ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()));
-
         FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), __ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()));
+
+        FunctionUtils.doIfNotNull(registrationRequest.getGrantTypes(),
+            __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
+        FunctionUtils.doIfNotNull(registrationRequest.getResponseTypes(),
+            __ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())));
 
         if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
             registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
