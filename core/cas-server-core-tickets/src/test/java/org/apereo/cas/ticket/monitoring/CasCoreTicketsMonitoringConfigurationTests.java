@@ -41,11 +41,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @AutoConfigureObservability
 public class CasCoreTicketsMonitoringConfigurationTests {
+    private static final List<String> ENTRIES = new ArrayList<>();
+    
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
-    
-    private static final List<String> ENTRIES = new ArrayList<>();
+
 
     @Test
     public void verifyOperation() throws Exception {
