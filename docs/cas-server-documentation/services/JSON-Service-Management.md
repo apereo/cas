@@ -44,6 +44,8 @@ Please make sure all field values in the JSON blob are correctly escaped, specia
 regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped.
 </p></div>
 
+## Naming Conventions
+
 The naming convention for new JSON files is recommended to be the following:
 
 ```bash
@@ -54,6 +56,19 @@ Based on the above formula, for example the above JSON snippet shall be named: `
 that because files are created based on the `serviceName`, you will need to make 
 sure [characters considered invalid for file names](https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words) are not used 
 as part of the name. Furthermore, note that CAS **MUST** be given full read/write permissions on directory which contains service definition files.
+    
+The registry is able to auto-organize service definition files into dedicated directories based on the service type. If any of the following 
+subdirectories exist inside the base services directory for a CAS service, CAS would auto-choose the appropriate directory by type:
+
+| Service Type   | Subdirectories                                                 |
+|----------------|----------------------------------------------------------------|
+| CAS            | `CAS Client`, `cas-client`                                     |
+| OpenID Connect | `OpenID Connect Relying Party`, `openid-connect-relying-party` |
+| OAuth2         | `OAuth2 Client`, `oauth2-client`                               |
+| SAML2          | `SAML2 Service Provider`, `saml2-service-provider`             |
+| WS-Federation  | `WS Federation Relying Party`, `ws-federation-relying-party`   |
+
+If no subdirectory for a service type is found, the base services directory would be used.
 
 <div class="alert alert-warning">:warning: <strong>Duplicate Services</strong><p>
 As you add more files to the directory, you need to be absolutely sure that no two service definitions
