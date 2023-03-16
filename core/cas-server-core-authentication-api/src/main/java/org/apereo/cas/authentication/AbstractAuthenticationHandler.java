@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.EqualsAndHashCode;
@@ -24,7 +23,6 @@ import java.util.function.Predicate;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"name", "state", "order"})
-@Monitorable
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /**

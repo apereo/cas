@@ -1,5 +1,7 @@
 package org.apereo.cas.util.spring.beans;
 
+import org.apereo.cas.monitor.Monitorable;
+
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Monitorable
 public interface BeanContainer<T> {
 
     /**
