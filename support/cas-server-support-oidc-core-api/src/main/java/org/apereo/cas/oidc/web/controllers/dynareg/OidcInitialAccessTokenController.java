@@ -120,8 +120,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
                     .service(service)
                     .grantType(OAuth20GrantTypes.NONE)
                     .responseType(OAuth20ResponseTypes.NONE)
-                    .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(),
-                        OidcConstants.CLIENT_REGISTRATION_SCOPE))
+                    .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(), OidcConstants.CLIENT_REGISTRATION_SCOPE))
                     .build();
                 return generateInitialAccessToken(holder)
                     .map(accessToken -> {
