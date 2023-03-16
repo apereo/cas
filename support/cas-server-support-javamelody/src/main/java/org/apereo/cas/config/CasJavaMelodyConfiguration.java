@@ -26,8 +26,8 @@ import org.springframework.context.annotation.Bean;
 public class CasJavaMelodyConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "monitoringTicketRegistryAdvisor")
-    public MonitoringSpringAdvisor monitoringTicketRegistryAdvisor() {
+    @ConditionalOnMissingBean(name = "monitorableComponentsAdvisor")
+    public MonitoringSpringAdvisor monitorableComponentsAdvisor() {
         return new MonitoringSpringAdvisor(new AnnotationMatchingPointcut(Monitorable.class, true));
     }
 }
