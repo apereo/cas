@@ -104,7 +104,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                     .getClientRegistrationRequestSerializer().from(jsonInput);
                 LOGGER.debug("Received client registration request [{}]", registrationRequest);
-                service = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+                service = getConfigurationContext().getClientRegistrationRequestTranslator()
                     .translate(registrationRequest, Optional.of(service));
             }
             val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()
