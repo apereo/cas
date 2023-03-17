@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.PostLoad;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -223,7 +224,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 requestedDefinitions.addAll(principalAttributes.keySet());
 
 
-
                 LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
                     requestedDefinitions, availableAttributes);
                 return attributeDefinitionStore.resolveAttributeValues(requestedDefinitions,
@@ -264,13 +264,13 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      */
     protected void insertPrincipalIdAsAttributeIfNeeded(final Principal principal, final Map<String, List<Object>> attributesToRelease,
                                                         final Service service, final RegisteredService registeredService) {
-        if (StringUtils.isNotBlank(getPrincipalIdAttribute())) {
+        if (StringUtils.isNotBlank(getPrincipalIdAttribute()) && !attributesToRelease.containsKey(getPrincipalIdAttribute())) {
             LOGGER.debug("Attempting to resolve the principal id for service [{}]", registeredService.getServiceId());
             val usernameProvider = registeredService.getUsernameAttributeProvider();
             if (usernameProvider != null) {
                 val id = usernameProvider.resolveUsername(principal, service, registeredService);
                 LOGGER.debug("Releasing resolved principal id [{}] as attribute [{}]", id, getPrincipalIdAttribute());
-                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(principal.getId()));
+                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(id));
             }
         }
     }
