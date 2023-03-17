@@ -32,7 +32,9 @@ const assert = require('assert');
         "id_token_encrypted_response_enc": "A128CBC-HS256",
         "userinfo_encrypted_response_alg": "RSA1_5",
         "userinfo_encrypted_response_enc": "A128CBC-HS256",
-        "contacts": ["sample@example.org", "user@example.org"]
+        "contacts": ["sample@example.org", "user@example.org"],
+        "grant_types": ["authorization_code"],
+        "response_types": ["code"],
     };
 
     body = JSON.stringify(service, undefined, 2);
