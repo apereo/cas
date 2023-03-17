@@ -44,10 +44,14 @@ The following items are new improvements and enhancements presented in this rele
 ### Google Cloud Pub/Sub Ticket Registry
 
 A new ticket registry implementation backed by [Google Cloud's PubSub](../ticketing/GCP-PubSub-Ticket-Registry.html) is now available.
+  
+### OpenID Connect Dynamic Registration
+
+Supported grant types and response types are recognized during [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html). 
+Furthermore, sensible defaults would be used if grant types or response types are not explicitly requested.
 
 ## Other Stuff
    
-- Supported grant types and response types are recognized during [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html).  
 - Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io/docs/observation) and then reported as metrics.
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 
