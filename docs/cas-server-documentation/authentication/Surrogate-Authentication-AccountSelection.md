@@ -54,7 +54,7 @@ any other username without any restrictions or additional checks.
 
 <div class="alert alert-warning">:warning: <strong>Usage Warning</strong>
 <p>Be careful with this strategy! Designating an account as a wildcard will disable any and all other checks
-on the surrgate/impersonatee account and CAS will completely back away from validating and verifying
+on the surrogate/impersonatee account and CAS will completely back away from validating and verifying
 the requested surrogate account.</p></div>
 
 To designate an account as a wildcard, the account store must be able to return and provide a list of

@@ -90,7 +90,7 @@ A proxy policy that reaches out to an external REST endpoint to determine proxy 
 ```
 
 Endpoints must be designed to accept/process `application/json`, where the request body will contain
-the contents of the registered service definition, and the requesing PGT url is passed as `pgtUrl` request parameter.
+the contents of the registered service definition, and the requesting PGT url is passed as `pgtUrl` request parameter.
 A successful `200` status code will allow proxy authentication to proceed.
 
 {% endtab %}

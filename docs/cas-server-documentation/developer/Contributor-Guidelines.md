@@ -27,7 +27,7 @@ In the context of the Apereo CAS project, a *contribution* generally means the g
 of bug fixes, modest feature enhancements, documentation improvements, test cases, etc back to the project typically in the form of a pull request or patch. 
 All such items and donations play a significant part in improving the state of the project and the software for all involved. Such contributions
 are concrete, actionable and measurable and signal back to the larger community that you, the contributor, are actively involved, engaged and concerned
-with the overal health status and future direction of the project. Of course, for non-technical folks, contributions do not always equal writing some 
+with the overall health status and future direction of the project. Of course, for non-technical folks, contributions do not always equal writing some 
 kind of code. That is only one of many possible options. We hope that you consider that as a good starting place and when all else fails,
 consider [supporting the project](https://apereo.github.io/cas/Support.html).
 
