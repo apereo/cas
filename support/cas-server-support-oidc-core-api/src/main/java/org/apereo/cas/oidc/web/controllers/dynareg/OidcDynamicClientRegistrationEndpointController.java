@@ -72,7 +72,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
-            val registeredService = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+            val registeredService = getConfigurationContext().getClientRegistrationRequestTranslator()
                 .translate(registrationRequest, Optional.empty());
             registeredService.markAsDynamicallyRegistered();
             
