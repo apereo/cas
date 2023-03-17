@@ -131,16 +131,16 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         attrs.put("userid", List.of("u1"));
         attrs.put("cn", List.of("TheName"));
 
-        val p = RegisteredServiceTestUtils.getPrincipal("person", attrs);
+        val principal = RegisteredServiceTestUtils.getPrincipal("person", attrs);
 
-        val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
-        service.setAttributeReleasePolicy(null);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
+        registeredService.setAttributeReleasePolicy(null);
 
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
-            .registeredService(service)
+            .registeredService(registeredService)
             .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
-            .principal(p)
+            .principal(principal)
             .build();
         assertThrows(UnauthorizedServiceException.class, () -> provider.resolveUsername(usernameContext));
     }

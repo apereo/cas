@@ -48,6 +48,8 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
 
     @Override
     public final String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(context.getRegisteredService());
+            
         val resolvedUsername = resolveUsernameInternal(context);
         if (canonicalizationMode == null) {
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
