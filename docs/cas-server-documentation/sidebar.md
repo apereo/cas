@@ -471,6 +471,7 @@ layout: null
                 *   [Refresh Token](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-RefreshToken.html)
                 *   [ResourceOwner](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-ResourceOwner.html)
             *   [Clients](/cas/{{ version }}/authentication/OAuth-Authentication-Clients.html)
+            *   [Response/Grant Types](/cas/{{ version }}/authentication/OAuth-Authentication-Clients-ResponsesGrants.html)
             *   [CSRF](/cas/{{ version }}/authentication/OAuth-Authentication-CSRF.html)
             *   [JWT Access Tokens](/cas/{{ version }}/authentication/OAuth-Authentication-JWT-AccessTokens.html)
             *   [User Profiles](/cas/{{ version }}/authentication/OAuth-Authentication-UserProfiles.html)
