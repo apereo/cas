@@ -236,7 +236,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     protected void insertPrincipalIdAsAttributeIfNeeded(final RegisteredServiceAttributeReleasePolicyContext context,
                                                         final Map<String, List<Object>> attributesToRelease) {
-        if (StringUtils.isNotBlank(getPrincipalIdAttribute())) {
+        if (StringUtils.isNotBlank(getPrincipalIdAttribute()) && !attributesToRelease.containsKey(getPrincipalIdAttribute())) {
             LOGGER.debug("Attempting to resolve the principal id for service [{}]", context.getRegisteredService().getServiceId());
             val usernameProvider = context.getRegisteredService().getUsernameAttributeProvider();
             if (usernameProvider != null) {
@@ -247,10 +247,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                     .registeredService(context.getRegisteredService())
                     .releasingAttributes(attributesToRelease)
                     .build();
-                
                 val id = usernameProvider.resolveUsername(usernameContext);
                 LOGGER.debug("Releasing resolved principal id [{}] as attribute [{}]", id, getPrincipalIdAttribute());
-                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(context.getPrincipal().getId()));
+                attributesToRelease.put(getPrincipalIdAttribute(), CollectionUtils.wrapList(id));
             }
         }
     }
