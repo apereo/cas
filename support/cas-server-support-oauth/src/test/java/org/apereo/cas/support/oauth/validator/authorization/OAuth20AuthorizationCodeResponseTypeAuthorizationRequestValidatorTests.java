@@ -174,7 +174,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
         assertNotNull(validator.getRegisteredServiceAccessStrategyEnforcer());
-        assertEquals(OAuth20ResponseTypes.CODE, validator.getResponseType());
+        assertTrue(validator.getSupportedResponseTypes().contains(OAuth20ResponseTypes.CODE));
         assertNotNull(validator.getServicesManager());
         assertNotNull(validator.getWebApplicationServiceServiceFactory());
     }

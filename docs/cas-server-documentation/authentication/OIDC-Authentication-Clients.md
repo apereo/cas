@@ -9,6 +9,10 @@ category: Protocols
 
 Clients can be registered with CAS in the following ways.
 
+Note that OpenID connect clients as service definitions are an
+extension of [OAuth services](OAuth-Authentication-Clients.html) in CAS. All settings
+that apply to an OAuth service definition should equally apply here as well.
+
 ## Static Registration 
 
 OpenID Connect clients can be *statically* registered with CAS as such:
@@ -23,10 +27,6 @@ OpenID Connect clients can be *statically* registered with CAS as such:
   "id": 1000
 }
 ```
-
-Note that OpenID connect clients as service definitions are an 
-extension of [OAuth services](OAuth-Authentication-Clients.html) in CAS. All settings 
-that apply to an OAuth service definition should equally apply here as well. 
 
 <div class="alert alert-info">:information_source: <strong>Redirect URIs</strong><p>Client application redirect URIs are specified
 using the <code>serviceId</code> field which supports regular expression patterns. If you need to support multiple URIs, you can
@@ -60,21 +60,18 @@ The following fields are specifically available for OpenID connect services:
 | `sectorIdentifierUri`               | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.                                         |
 
 <div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to 
-only keep and maintain properties and settings needed for a 
-particular integration. It is UNNECESSARY to grab a copy of all service fields and try to 
-configure them yet again based on their default. While 
-you may wish to keep a copy as a reference, this strategy would ultimately lead to poor 
-upgrades increasing chances of breaking changes and a messy 
-deployment at that.</p></div>
+only keep and maintain properties and settings needed for a particular integration. It is UNNECESSARY to grab a copy of all service fields and try to 
+configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor 
+upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
-Service definitions are typically managed and registered 
-with CAS by the [service management](../services/Service-Management.html) facility.
+Service definitions are typically managed and registered with CAS by the [service management](../services/Service-Management.html) facility.
+          
+## Response/Grant Types
+ 
+Supported responses and grant types can be authorized on a per-service basis.
+[See this guide](OAuth-Authentication-Clients-ResponsesGrants.html) for more info.
 
-<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>CAS today does not strictly 
-enforce the collection of authorized supported response/grant types for backward compatibility reasons if left blank. This means that if left 
-undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior 
-is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for 
-each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
+## Example
 
 An example registration record for an OpenID Connect relying party follows that allows the application with the redirect URI `https://app.example.org/oidc`
 to send authorization requests to CAS using the *authorization code* authentication flow. The registration record also instructs CAS to bypass the 

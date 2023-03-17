@@ -52,7 +52,7 @@ Furthermore, sensible defaults would be used if grant types or response types ar
 
 ## Other Stuff
    
-- Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io/docs/observation) and then reported as metrics.
+- Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics.
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 
 ## Library Upgrades
