@@ -10,6 +10,10 @@ import java.util.function.Supplier;
  */
 public interface ExecutableObserver {
     /**
+     * Bean name.
+     */
+    String BEAN_NAME = "defaultExecutableObserver";
+    /**
      * Observe a task as a runnable.
      *
      * @param task     the task

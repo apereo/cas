@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.monitor.ExecutableObserver;
 import org.apereo.cas.monitor.MonitorableTask;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -30,28 +33,39 @@ import org.springframework.context.annotation.Bean;
     CasFeatureModule.FeatureCatalog.Monitoring,
     CasFeatureModule.FeatureCatalog.TicketRegistry
 })
+@ConditionalOnBean(name = ExecutableObserver.BEAN_NAME)
 @AutoConfiguration
 public class CasCoreTicketsMonitoringConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryMonitoringAspect")
-    public TicketRegistryMonitoringAspect ticketRegistryMonitoringAspect(final ExecutableObserver observer) {
+    public TicketRegistryMonitoringAspect ticketRegistryMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
         return new TicketRegistryMonitoringAspect(observer);
     }
 
     @Aspect
     @Slf4j
     @SuppressWarnings("UnusedMethod")
-    record TicketRegistryMonitoringAspect(ExecutableObserver observer) {
+    record TicketRegistryMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
         @Around("allComponentsInTicketRegistryNamespace()")
-        public Object aroundAdvice(final ProceedingJoinPoint joinPoint) throws Throwable {
-            val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
-            val task = new MonitorableTask(taskName);
-            return observer.supply(task, Unchecked.supplier(() -> {
+        public Object aroundTicketRegistryOperations(final ProceedingJoinPoint joinPoint) {
+            return observerProvider
+                .stream()
+                .map(Unchecked.function(observer -> {
+                    val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
+                    val task = new MonitorableTask(taskName);
+                    return observer.supply(task, () -> executeJoinpoint(joinPoint));
+                }))
+                .findFirst()
+                .orElseGet(() -> executeJoinpoint(joinPoint));
+        }
+
+        private static Object executeJoinpoint(final ProceedingJoinPoint joinPoint) {
+            return FunctionUtils.doUnchecked(() -> {
                 var args = joinPoint.getArgs();
                 LOGGER.trace("Executing [{}]", joinPoint.getStaticPart().toLongString());
                 return joinPoint.proceed(args);
-            }));
+            });
         }
 
         @Pointcut("within(org.apereo.cas.ticket.registry.*)")

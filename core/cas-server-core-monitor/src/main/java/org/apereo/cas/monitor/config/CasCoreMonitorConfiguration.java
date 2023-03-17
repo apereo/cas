@@ -45,7 +45,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 public class CasCoreMonitorConfiguration {
 
-    @ConditionalOnMissingBean(name = "defaultExecutableObserver")
+    @ConditionalOnMissingBean(name = ExecutableObserver.BEAN_NAME)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ExecutableObserver defaultExecutableObserver(final ObservationRegistry observationRegistry) {
