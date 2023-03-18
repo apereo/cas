@@ -16,15 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * {@link RestController} implementation of CAS' REST API.
- * <p>
- * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- * </p>
+ * CAS RESTful resource validating TGTs:
  * <ul>
- * <li>{@code POST /v1/tickets}</li>
- * <li>{@code POST /v1/tickets/{TGT-id}}</li>
  * <li>{@code GET /v1/tickets/{TGT-id}}</li>
- * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
  * </ul>
  *
  * @author Dmitriy Kopylenko
