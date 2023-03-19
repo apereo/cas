@@ -24,7 +24,7 @@ Copyright © 2005, Yale University
 This is the official specification of the CAS 1.0 and 2.0 protocols. It is subject to change.
 
 ## 1.1. Conventions & Definitions
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
 and "OPTIONAL" in this document are to be interpreted as described in RFC 2119[1].
 
 * "Client" refers to the end user and/or the web browser.
@@ -61,7 +61,7 @@ to present credentials regardless of the existence of a single sign-on session w
 with the "gateway" parameter. Services redirecting to the */login* URI and login form views posting to the */login* URI
 SHOULD NOT set both the "renew" and "gateway" request parameters. Behavior is undefined if both are set. It is RECOMMENDED
 that CAS implementations ignore the "gateway" parameter if "renew" is set. It is RECOMMENDED that when the renew parameter
-is set itsvalue be "true".
+is set, its value be "true".
 3. `gateway [OPTIONAL]` - if this parameter is set, CAS will not ask the client for credentials. If the client has a pre-existing
 single sign-on session with CAS, or if a single sign-on session can be established through non-interactive means
 (i.e. trust authentication), CAS MAY redirect the client to the URL specified by the "service" parameter, appending a valid
