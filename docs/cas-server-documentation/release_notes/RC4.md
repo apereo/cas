@@ -35,7 +35,7 @@ maintenance and release planning, especially when it comes to addressing critica
 ## System Requirements
 
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
-such as Amazon Corretto, Zulu, eclipse Temurin, etc should work and are implicitly supported.
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
 ## New & Noteworthy
 
