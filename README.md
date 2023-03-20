@@ -48,7 +48,7 @@ Additional resources are available as follows:
 ## Getting Started
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.apereo.cas/cas-server-webapp?style=for-the-badge&logo=apachemaven)][casmavencentral]
-[![Github Releases](https://img.shields.io/github/release/apereo/cas.svg?style=for-the-badge&logo=github)][githubreleases]
+[![GitHub Releases](https://img.shields.io/github/release/apereo/cas.svg?style=for-the-badge&logo=github)][githubreleases]
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase
 is **ONLY** required if you wish to contribute to the development of the project.
@@ -64,11 +64,11 @@ The following features are supported by the CAS project:
 * OAuth v2 Protocol
 * OpenID Connect Protocol
 * WS-Federation Passive Requestor Protocol
-* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDB, Pac4J and more.
 * Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, and more.
-* Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, MongoDb, DynamoDb, Redis and more.
+* HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
+* Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, MongoDB, DynamoDb, Redis and more.
 * Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator, U2F, WebAuthn and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.

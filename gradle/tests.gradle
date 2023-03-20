@@ -81,6 +81,8 @@ enum TestCategories {
     SAMLMetadata,
     SAMLServiceProvider,
     SAMLLogout,
+    SAMLAttributes,
+    SAMLResponse,
     SCIM,
     SHELL,
     Simple,

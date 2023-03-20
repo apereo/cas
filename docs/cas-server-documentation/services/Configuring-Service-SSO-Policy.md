@@ -13,7 +13,7 @@ to participation in single sign-on sessions, creating SSO cookies, etc.
 
 ## Disable Service SSO Access
 
-Participation in existing single signon sessions can be disabled on a per-application basis. For example,
+Participation in existing single sign-on sessions can be disabled on a per-application basis. For example,
 the following service will be challenged to present credentials every time, thereby not using SSO:
 
 ```json

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -87,7 +88,13 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
                 profile.setId(id);
             } else {
-                val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+
+                val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                    .registeredService(registeredService)
+                    .service(service)
+                    .principal(principal)
+                    .build();
+                val username = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
                 profile.setId(username);
             }
             profile.addAttribute(OAuth20Constants.CLIENT_ID, id);

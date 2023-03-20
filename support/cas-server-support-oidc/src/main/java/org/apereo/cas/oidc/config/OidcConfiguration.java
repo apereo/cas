@@ -57,6 +57,8 @@ import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcClientSecretValidator;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequestTranslator;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcDefaultClientRegistrationRequestTranslator;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutor;
 import org.apereo.cas.oidc.web.response.OidcRegisteredServiceJwtResponseModeCipherExecutor;
 import org.apereo.cas.oidc.web.response.OidcResponseModeFormPostJwtBuilder;
@@ -644,6 +646,8 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier("oidcClientRegistrationRequestTranslator")
+            final OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator,
             @Qualifier("oidcResponseModeJwtBuilder")
             final JwtBuilder oidcResponseModeJwtBuilder,
             @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
@@ -732,6 +736,7 @@ public class OidcConfiguration {
                 .discoverySettings(oidcServerDiscoverySettings)
                 .requestParameterResolver(oauthRequestParameterResolver)
                 .issuerService(oidcIssuerService)
+                .clientRegistrationRequestTranslator(oidcClientRegistrationRequestTranslator)
                 .ticketFactory(ticketFactory)
                 .idTokenClaimCollector(oidcIdTokenClaimCollector)
                 .idTokenGeneratorService(oidcIdTokenGenerator)
@@ -844,6 +849,15 @@ public class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcClientRegistrationRequestTranslator")
+        public OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcDefaultClientRegistrationRequestTranslator(oidcConfigurationContext);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder(
             @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
             final OAuth20ResponseModeFactory oauthResponseModeFactory,
@@ -934,6 +948,7 @@ public class OidcConfiguration {
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcResponseModeFormPostJwtBuilder(oidcConfigurationContext);
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcResponseModeJwtCipherExecutor")

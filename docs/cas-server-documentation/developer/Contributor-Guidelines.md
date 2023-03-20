@@ -27,7 +27,7 @@ In the context of the Apereo CAS project, a *contribution* generally means the g
 of bug fixes, modest feature enhancements, documentation improvements, test cases, etc back to the project typically in the form of a pull request or patch. 
 All such items and donations play a significant part in improving the state of the project and the software for all involved. Such contributions
 are concrete, actionable and measurable and signal back to the larger community that you, the contributor, are actively involved, engaged and concerned
-with the overal health status and future direction of the project. Of course, for non-technical folks, contributions do not always equal writing some 
+with the overall health status and future direction of the project. Of course, for non-technical folks, contributions do not always equal writing some 
 kind of code. That is only one of many possible options. We hope that you consider that as a good starting place and when all else fails,
 consider [supporting the project](https://apereo.github.io/cas/Support.html).
 
@@ -135,7 +135,7 @@ you for longer prosperity. Be not afraid; the worst that could happen is someone
 
 ## How do I know who's working on what?
 
-- Follow the *WIP Pattern* and submit an early pull requests in Draft status. This is the recommended strategy from Github:
+- Follow the *WIP Pattern* and submit an early pull requests in Draft status. This is the recommended strategy from GitHub:
 
 > Pull Requests are a great way to start a conversation of a feature, so start one as soon as possible- 
 > even before you are finished with the code. Your team can comment on the feature as it evolves, 
@@ -199,7 +199,7 @@ share your use case and ideas with others and brainstorm about variations and po
 often help clear the path to better and more objective solutions. That said, if you are specifically looking for an idea repository where you would
 log an idea or feature request for someone else to come along and spend time, money and energy to review and 
 provide a solution or enhancement for you, that place does not exist with the CAS project. As was noted earlier, 
-if you would like to see a enhancement in CAS, you are to either study, learn and do the work yourself and contribute that back 
+if you would like to see an enhancement in CAS, you are to either study, learn and do the work yourself and contribute that back 
 to the CAS project after having had the proper discussions with the wider developer community, or you can provide funding for 
 the work or contract with someone so they can do the work on your behalf. There are no other viable, sustainable options.
 
@@ -290,13 +290,13 @@ Before you do anything else, make sure you have a [functional build](Build-Proce
 To successfully finish this exercise you need:
 
 1. [Git](https://git-scm.com/downloads)
-2. [IntelliJ IDEA](https://www.jetbrains.com/idea/download/), eclipse or NetBeans (Depending on the change, `vim` may be perfectly fine too)
+2. [IntelliJ IDEA](https://www.jetbrains.com/idea/download/), Eclipse or NetBeans (Depending on the change, `vim` may be perfectly fine too)
 3. [Java (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 ### Fork the repository
 
 First thing you need to do is to fork the CAS repository under your own account. The 
-CAS repository is hosted on Github and is available [here](https://github.com/apereo/cas).
+CAS repository is hosted on GitHub and is available [here](https://github.com/apereo/cas).
 
 ### Clone Repositories
 

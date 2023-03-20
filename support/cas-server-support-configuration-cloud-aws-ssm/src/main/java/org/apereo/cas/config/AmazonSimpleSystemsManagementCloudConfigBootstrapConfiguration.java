@@ -62,7 +62,9 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration impl
                     LOGGER.trace("Fetched [{}] parameters with next token as [{}]", result.parameters().size(), result.nextToken());
 
                     result.parameters().forEach(p -> {
-                        val key = StringUtils.removeEnd(StringUtils.removeStart(p.name(), prefix), "/");
+                        var propKey = StringUtils.removeStart(p.name(), prefix);
+                        propKey = StringUtils.removeStart(propKey, "/");
+                        val key = StringUtils.removeEnd(propKey, "/");
                         props.put(key, p.value());
                     });
                 } while (nextToken != null);

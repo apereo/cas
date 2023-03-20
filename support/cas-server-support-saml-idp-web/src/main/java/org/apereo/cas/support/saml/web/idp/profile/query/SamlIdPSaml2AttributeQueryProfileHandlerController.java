@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -100,8 +101,13 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .getAuthenticationAttributesForRelease(authentication, null, Map.of(), registeredService);
             val finalAttributes = CollectionUtils.merge(principalAttributes, authenticationAttributes);
 
-            val principalId = registeredService.getUsernameAttributeProvider()
-                .resolveUsername(authentication.getPrincipal(), ticket.getService(), registeredService);
+            val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                .registeredService(registeredService)
+                .service(ticket.getService())
+                .principal(authentication.getPrincipal())
+                .build();
+            
+            val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
             LOGGER.debug("Principal id used for attribute query response should be [{}]", principalId);
             LOGGER.debug("Final attributes to be processed for the SAML2 response are [{}]", finalAttributes);
 
