@@ -2,8 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -50,20 +48,19 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service,
-                                          final RegisteredService registeredService) {
-        if (registeredService == null || !OidcRegisteredService.class.isAssignableFrom(registeredService.getClass())) {
-            LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
-            return principal.getId();
+    public String resolveUsernameInternal(final RegisteredServiceUsernameProviderContext context) {
+        if (context.getRegisteredService() == null || !OidcRegisteredService.class.isAssignableFrom(context.getRegisteredService().getClass())) {
+            LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", context.getRegisteredService());
+            return context.getPrincipal().getId();
         }
-        val oidcSvc = (OidcRegisteredService) registeredService;
+        val oidcSvc = (OidcRegisteredService) context.getRegisteredService();
         if (StringUtils.isBlank(oidcSvc.getSubjectType())
             || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
-            return principal.getId();
+            return context.getPrincipal().getId();
         }
         val sectorIdentifier = getSectorIdentifier(oidcSvc);
-        val id = this.persistentIdGenerator.generate(principal, sectorIdentifier);
+        val id = this.persistentIdGenerator.generate(context.getPrincipal(), sectorIdentifier);
         LOGGER.debug("Resolved username [{}] for pairwise access", id);
         return id;
     }

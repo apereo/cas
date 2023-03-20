@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
     @Test
@@ -35,7 +35,8 @@ public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
         request.addParameter(casProperties.getTgc().getName(), tgt.getId());
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
 
-        samlArtifactMap.put("artifact", "relying-party", "issuer", getAuthnRequestFor("example"));
+        val authnRequest = getAuthnRequestFor("example");
+        samlArtifactMap.put("artifact", "relying-party", "issuer", authnRequest);
         assertTrue(samlArtifactMap.contains("artifact"));
     }
 
@@ -54,7 +55,8 @@ public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
         profileManager.save(true, profile, false);
         
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
-        samlArtifactMap.put("artifact", "relying-party", "issuer", getAuthnRequestFor("example"));
+        val authnRequest = getAuthnRequestFor("example");
+        samlArtifactMap.put("artifact", "relying-party", "issuer", authnRequest);
         assertTrue(samlArtifactMap.contains("artifact"));
     }
 }

@@ -33,14 +33,9 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 
 /**
- * {@link RestController} implementation of CAS' REST API.
- * <p>
- * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- * </p>
+ * CAS RESTful resource for vending and deleting TGTs:
  * <ul>
  * <li>{@code POST /v1/tickets}</li>
- * <li>{@code POST /v1/tickets/{TGT-id}}</li>
- * <li>{@code GET /v1/tickets/{TGT-id}}</li>
  * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
  * </ul>
  *

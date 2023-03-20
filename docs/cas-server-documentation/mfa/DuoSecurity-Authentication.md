@@ -83,7 +83,7 @@ requests and of course, the user in question must not have been onboard, enrolle
 in Duo Security. 
                    
 The redirect URL to your enrollment application may include a special `principal` parameter that contains
-the user's identity as JWT. Cipher operations and settings must be abled in CAS settings for Duo Security's
+the user's identity as JWT. Cipher operations and settings must be enabled in CAS settings for Duo Security's
 registration before this parameter can be built and added to the final URL.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.duo[].registration" %}

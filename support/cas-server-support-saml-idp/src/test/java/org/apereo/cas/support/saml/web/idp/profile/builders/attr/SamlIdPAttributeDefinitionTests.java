@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("SAML2")
+@Tag("SAMLAttributes")
 public class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)

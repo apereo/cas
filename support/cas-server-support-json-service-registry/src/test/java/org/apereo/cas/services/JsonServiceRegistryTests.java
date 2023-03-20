@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -16,6 +17,8 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,5 +96,33 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
         val policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
         assertEquals(2, policy.getAllowedAttributes().size());
+    }
+
+    @Test
+    public void verifyUsernameProviderWithAttributeReleasePolicy() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val resource = new ClassPathResource("UsernameAttrRelease-100.json");
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
+        val service = serializer.from(resource.getInputStream());
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser",
+                Map.of("groups", List.of("g1", "g2"), "username", List.of("casuser"))))
+            .build();
+        val attributes = service.getAttributeReleasePolicy().getAttributes(context);
+        assertEquals(3, attributes.size());
+        assertTrue(attributes.containsKey("groups"));
+        assertTrue(attributes.containsKey("username"));
+        assertTrue(attributes.containsKey("familyName"));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(context.getRegisteredService())
+            .service(context.getService())
+            .principal(context.getPrincipal())
+            .build();
+        val username = service.getUsernameAttributeProvider().resolveUsername(usernameContext);
+        assertEquals("casuser", username);
     }
 }

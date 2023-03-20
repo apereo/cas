@@ -31,7 +31,7 @@ git clone --recursive --depth=1 --single-branch --branch=master git@github.com:a
 # git fetch --unshallow
 ```
 
-For a successful clone, you will need to have set up SSH keys for your account on Github.
+For a successful clone, you will need to have set up SSH keys for your account on GitHub.
 If that is not an option, you may clone the CAS repository under `https` via `https://github.com/apereo/cas.git`.
 
 You may also need to update submodules linked to the CAS repository. Newer versions of Git will do this automatically, 
@@ -186,7 +186,7 @@ cd cas-server
 ./gradlew eclipse
 ```
 
-Then, import the project into eclipse using "General\Existing Projects into Workspace" 
+Then, import the project into Eclipse using "General\Existing Projects into Workspace" 
 and choose "Add Gradle Nature" from the "Configure" context menu of the project.
 
 <div class="alert alert-warning">:warning: <strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based 

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLAttributes")
 public class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyNoSamlService() {

@@ -2,12 +2,18 @@ package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.monitor.DefaultExecutableObserver;
+import org.apereo.cas.monitor.ExecutableObserver;
 import org.apereo.cas.monitor.MemoryMonitorHealthIndicator;
 import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
 import org.apereo.cas.monitor.TicketRegistryHealthIndicator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationHandler;
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.ObservationTextPublisher;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,6 +29,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -35,7 +42,21 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring)
 @AutoConfiguration
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 public class CasCoreMonitorConfiguration {
+
+    @ConditionalOnMissingBean(name = ExecutableObserver.BEAN_NAME)
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ExecutableObserver defaultExecutableObserver(final ObservationRegistry observationRegistry) {
+        return new DefaultExecutableObserver(observationRegistry);
+    }
+
+    @Bean
+    public ObservationHandler<Observation.Context> observationTextPublisher() {
+        return new ObservationTextPublisher();
+    }
+
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("memoryHealthIndicator")

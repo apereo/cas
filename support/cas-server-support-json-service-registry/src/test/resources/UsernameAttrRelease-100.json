@@ -1,0 +1,40 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^http(s)?://.*/demo/std.*",
+  "name": "UsernameAttrRelease",
+  "id": 100,
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute": "internal"
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "principalIdAttribute": "familyName",
+          "allowedAttributes": {
+            "@class": "java.util.TreeMap",
+            "fiscalNumber": "cf",
+            "groups": "groovy { if(attributes['groups'] != null && (attributes['groups'].contains('cn=mqax') || attributes['groups'].contains('CN=POLO GIURIDICO'))) return ['MQAX','MQAX1'] else ['SGP']}",
+            "username": "groovy { if(attributes['username'] != null) return attributes['username'] else attributes['mituid']; }"
+          }
+        },
+        {
+          "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes": [
+            "java.util.ArrayList",
+            [
+              "username",
+              "internal",
+              "familyName"
+            ]
+          ]
+        }
+      ]
+    ]
+  }
+}
+

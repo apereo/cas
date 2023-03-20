@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -229,8 +228,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             private static final long serialVersionUID = 771643288929352964L;
 
             @Override
-            public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-                return principal.getId();
+            public String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+                return context.getPrincipal().getId();
             }
         });
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()

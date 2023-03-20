@@ -23,7 +23,7 @@ config/application/
 
 The most specific property source is at the top, with the least specific at the bottom. Properties in the `config/application` folder are applicable to all applications using consul for configuration. Properties in the `config/cas` folder are only available to the instances of the service named `cas`.
 
-Configuration is currently read on startup of the application. Sending a HTTP POST to `/refresh` will cause the configuration to be reloaded. Watching the key value store (which Consul supports) is not currently possible, but will be a future addition to this project.
+Configuration is currently read on startup of the application. Sending an HTTP POST to `/refresh` will cause the configuration to be reloaded. Watching the key value store (which Consul supports) is not currently possible, but will be a future addition to this project.
 
 The Consul Config Watch takes advantage of the ability of consul to [watch a key prefix](https://www.consul.io/docs/agent). The Config Watch makes a blocking Consul HTTP API call to determine if any relevant configuration data has changed for the current application. If there is new configuration data a `Refresh Event` is published. This is equivalent to calling the `/refresh` Spring Boot actuator endpoint.
 

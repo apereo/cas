@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @SuppressWarnings("JavaUtilDate")
 public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired

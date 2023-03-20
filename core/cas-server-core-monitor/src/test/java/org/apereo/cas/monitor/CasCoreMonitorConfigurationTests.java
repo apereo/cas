@@ -13,6 +13,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.config.CasCoreMonitorConfiguration;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     MetricsAutoConfiguration.class,
+    ObservationAutoConfiguration.class,
     SimpleMetricsExportAutoConfiguration.class,
     MetricsEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class,
@@ -65,7 +71,12 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
+@AutoConfigureObservability
 public class CasCoreMonitorConfigurationTests {
+    @Autowired
+    @Qualifier("defaultExecutableObserver")
+    private ExecutableObserver defaultExecutableObserver;
+
     @Autowired
     @Qualifier("memoryHealthIndicator")
     private HealthIndicator memoryHealthIndicator;
@@ -83,5 +94,18 @@ public class CasCoreMonitorConfigurationTests {
         assertNotNull(memoryHealthIndicator);
         assertNotNull(sessionHealthIndicator);
         assertNotNull(systemHealthIndicator);
+    }
+
+    @Test
+    public void verifyObserabilitySupplier() throws Throwable {
+        val result = defaultExecutableObserver.supply(new MonitorableTask("verifyObserabilitySupplier"), () -> "CAS");
+        assertEquals("CAS", result);
+    }
+
+    @Test
+    public void verifyObserabilityRunner() throws Throwable {
+        val result = new AtomicBoolean(false);
+        defaultExecutableObserver.run(new MonitorableTask("verifyObserabilityRunner"), () -> result.set(true));
+        assertTrue(result.get());
     }
 }

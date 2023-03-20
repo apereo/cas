@@ -101,7 +101,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.cherwell.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="110"></a>
 
-<a href="https://www.bynder.com">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/30205852-69921a5e-949f-11e7-8326-ba4c00fceba4.png" height="48" width="120"></a>
 
 <a href="https://www.everbridge.com/">

@@ -43,7 +43,14 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         when(service.getId()).thenReturn("id");
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("uid");
-        val id = provider.resolveUsername(principal, service, RegisteredServiceTestUtils.getRegisteredService("id"));
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("id"))
+            .service(service)
+            .principal(principal)
+            .build();
+
+        val id = provider.resolveUsername(usernameContext);
         assertNotNull(id);
     }
 
@@ -74,10 +81,14 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         val gen = new ShibbolethCompatiblePersistentIdGenerator(salt);
         gen.setAttribute("employeeId");
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
-        val result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
-                CollectionUtils.wrap("employeeId", List.of("T911327"))),
-            CoreAuthenticationTestUtils.getService("https://cas.example.org/app"),
-            CoreAuthenticationTestUtils.getRegisteredService());
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService("https://cas.example.org/app"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("anyuser",
+                CollectionUtils.wrap("employeeId", List.of("T911327"))))
+            .build();
+        val result = provider.resolveUsername(usernameContext);
         assertEquals("ujWTRNKPPso8S+4geOvcOZtv778=", result);
     }
 
@@ -87,10 +98,14 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         val gen = new ShibbolethCompatiblePersistentIdGenerator(salt);
         gen.setAttribute("uid");
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
-        val result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
-                CollectionUtils.wrap("uid", CollectionUtils.wrap("obegon"))),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"),
-            CoreAuthenticationTestUtils.getRegisteredService());
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("anyuser",
+                CollectionUtils.wrap("uid", CollectionUtils.wrap("obegon"))))
+            .build();
+        val result = provider.resolveUsername(usernameContext);
         assertEquals("lykoGRE9QbbrsEBlHJVEz0U8AJ0=", result);
     }
 }

@@ -298,6 +298,12 @@ while (( "$#" )); do
             saml2)
                 task+="testSAML2 "
                 ;;
+            samlresponse)
+                task+="testSAMLResponse "
+                ;;
+            samlattributes|samlattrs)
+                task+="testSAMLAttributes "
+                ;;
             saml)
                 task+="testSAML "
                 ;;

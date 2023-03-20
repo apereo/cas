@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 public class SamlProfileAuthnContextClassRefBuilderTests {
 
     @Nested

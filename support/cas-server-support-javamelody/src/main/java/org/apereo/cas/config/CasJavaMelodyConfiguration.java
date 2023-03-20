@@ -34,8 +34,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 public class CasJavaMelodyConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "monitoringTicketRegistryAdvisor")
-    public MonitoringSpringAdvisor monitoringTicketRegistryAdvisor() {
+    @ConditionalOnMissingBean(name = "monitorableComponentsAdvisor")
+    public MonitoringSpringAdvisor monitorableComponentsAdvisor() {
         return new MonitoringSpringAdvisor(new AnnotationMatchingPointcut(Monitorable.class, null));
     }
 
