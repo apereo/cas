@@ -9,7 +9,7 @@ category: Configuration
 # Spring Cloud Configuration Server - Spring Cloud Default
 
 The Spring Cloud Configuration Server is able to handle `git` or `svn` based repositories that host CAS configuration.
-Such repositories can either be local to the deployment, or they could be on the cloud in form of GitHub/BitBucket. Access to
+Such repositories can either be local to the deployment, or they could be on the cloud in form of GitHub/Bitbucket. Access to
 cloud-based repositories can either be in form of a username/password, or via SSH so as long the appropriate keys are configured in the
 CAS deployment environment which is really no different than how one would normally access a git repository via SSH.
 
@@ -44,5 +44,5 @@ thirdPartyStartsWith="spring.cloud.config.server.git"
 thirdPartyExactMatch="spring.profiles.active"
 %}
 
-The above configuration also applies to online git-based repositories such as Github, BitBucket, etc.
+The above configuration also applies to online git-based repositories such as GitHub, Bitbucket, etc.
 
