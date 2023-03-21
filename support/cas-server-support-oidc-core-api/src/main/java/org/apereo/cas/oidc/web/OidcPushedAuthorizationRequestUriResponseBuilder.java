@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -71,23 +72,31 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
             return Optional.empty();
         }
 
-        val builder = super.toAuthorizationRequest(context, authentication, service, registeredService).get();
+        val authzRequestBuilder = super.toAuthorizationRequest(context, authentication, service, registeredService).get();
         return requestUri
             .map(Unchecked.function(uri -> {
                 val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
-                val request = configurationContext.getTicketRegistry().getTicket(uri, OidcPushedAuthorizationRequest.class);
-                val tokenRequest = factory.toAccessTokenRequest(request);
-                request.update();
-                FunctionUtils.doIf(request.isExpired(), Unchecked.consumer(r -> configurationContext.getTicketRegistry().deleteTicket(request)),
-                    Unchecked.consumer(r -> configurationContext.getTicketRegistry().updateTicket(request))).accept(request);
+                val pushAuthzTicket = configurationContext.getTicketRegistry().getTicket(uri, OidcPushedAuthorizationRequest.class);
+                FunctionUtils.doIf(pushAuthzTicket.isExpired(), Unchecked.consumer(r -> configurationContext.getTicketRegistry().deleteTicket(pushAuthzTicket)),
+                    Unchecked.consumer(r -> configurationContext.getTicketRegistry().updateTicket(pushAuthzTicket))).accept(pushAuthzTicket);
                 val tgt = configurationContext.fetchTicketGrantingTicketFrom((JEEContext) context);
-                tokenRequest.setTicketGrantingTicket(tgt);
-                return Optional.of(builder.accessTokenRequest(tokenRequest)
+
+                val pushAuthzAuthentication = DefaultAuthenticationBuilder.newInstance(tgt.getAuthentication())
+                    .mergeAttributes(pushAuthzTicket.getAuthentication().getAttributes())
+                    .build();
+                val tokenRequest = factory.toAccessTokenRequest(pushAuthzTicket)
+                    .withTicketGrantingTicket(tgt)
+                    .withAuthentication(pushAuthzAuthentication);
+                pushAuthzTicket.update();
+                configurationContext.getTicketRegistry().updateTicket(pushAuthzTicket);
+
+                val value = authzRequestBuilder.accessTokenRequest(tokenRequest)
                     .responseType(tokenRequest.getResponseType().getType())
                     .clientId(tokenRequest.getClientId())
-                    .grantType(tokenRequest.getGrantType().getType()));
+                    .grantType(tokenRequest.getGrantType().getType());
+                return Optional.of(value);
             }))
-            .orElseGet(() -> Optional.of(builder.singleSignOnSessionRequired(!context.getRequestURL().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL))));
+            .orElseGet(() -> Optional.of(authzRequestBuilder.singleSignOnSessionRequired(!context.getRequestURL().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL))));
     }
 
     @Override
