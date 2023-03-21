@@ -32,8 +32,7 @@ const assert = require('assert');
 
     page.setRequestInterception(false);
 
-    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
-        + "&client_id=client&request_uri=" + requestUri;
+    const url = `https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code&client_id=client&request_uri=${requestUri}`;
 
     await cas.goto(page, url);
     await page.waitForTimeout(3000);

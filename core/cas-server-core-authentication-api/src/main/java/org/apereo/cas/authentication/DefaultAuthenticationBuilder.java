@@ -180,7 +180,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     @Override
     @CanIgnoreReturnValue
     public AuthenticationBuilder addAttribute(final String key, final List<Object> value) {
-        this.attributes.put(key, value);
+        if (value != null && !value.isEmpty()) {
+            this.attributes.put(key, value);
+        }
         return this;
     }
 

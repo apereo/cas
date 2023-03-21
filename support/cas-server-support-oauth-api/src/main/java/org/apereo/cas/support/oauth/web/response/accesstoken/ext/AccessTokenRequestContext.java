@@ -11,10 +11,12 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
@@ -38,6 +40,8 @@ import java.util.Set;
 @Getter
 @SuperBuilder
 @Jacksonized
+@With
+@AllArgsConstructor
 public class AccessTokenRequestContext implements Serializable {
 
     @Serial
@@ -56,8 +60,7 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final OAuthRegisteredService registeredService;
 
-    @Setter
-    private TicketGrantingTicket ticketGrantingTicket;
+    private final TicketGrantingTicket ticketGrantingTicket;
 
     @Builder.Default
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
