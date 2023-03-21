@@ -53,14 +53,17 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
                 return getCasTicketGrantingTicketCreatedEventsFor(principal.getId());
             }
         };
-        try (val eventStream = events.get()) {
-            if (eventStream.findAny().isEmpty()) {
-                return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
-            }
+
+        if (doesNotHaveEvents(events)) {
+            return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
         val score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
         LOGGER.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), score);
         return score;
+    }
+
+    protected boolean doesNotHaveEvents(final Supplier<Stream<? extends CasEvent>> events) {
+        return events.get().findAny().isEmpty();
     }
 
     /**
