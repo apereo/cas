@@ -61,8 +61,7 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
         val events = new Supplier<Stream<? extends CasEvent>>() {
             @Override
             public Stream<? extends CasEvent> get() {
-                val iterator = getCloseableIterator(list, closeCalls);
-                return StreamSupport.stream(iterator.spliterator(), false);
+                return getCloseableIterator(list, closeCalls).stream();
             }
         };
         val newList = events.get().collect(Collectors.toList());
@@ -70,12 +69,12 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
         assertTrue(!closeCalls.isEmpty());
         closeCalls.clear();
         val calculator = new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
-        assertTrue(calculator.hasEvents(events));
+        assertTrue(!calculator.doesNotHaveEvents(events));
         assertTrue(!closeCalls.isEmpty());
 
     }
 
-    private static CloseableIterator<CasEvent> getCloseableIterator(final List<CasEvent> list, final List<Boolean> closeCalls) {
+    private CloseableIterator<CasEvent> getCloseableIterator(final List<CasEvent> list, final List<Boolean> closeCalls) {
         return new CloseableIterator<CasEvent>(){
             private Iterator<CasEvent> iterator = list.iterator();
             @Override
@@ -102,6 +101,5 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
             }
         };
     }
-
 
 }
