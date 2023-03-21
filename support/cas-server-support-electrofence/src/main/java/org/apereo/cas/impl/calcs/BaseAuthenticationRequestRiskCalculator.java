@@ -63,7 +63,9 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     }
 
     protected boolean doesNotHaveEvents(final Supplier<Stream<? extends CasEvent>> events) {
-        return events.get().findAny().isEmpty();
+        try (val stream = events.get()){
+            return stream.findAny().isEmpty();
+        }
     }
 
     /**
