@@ -86,10 +86,11 @@ public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTe
 
     @Test
     public void makeSureCursorsGetClosed() throws Exception {
-        val stream = eventRepository.load();
-        assertNotNull(stream);
-        val noValues = stream.findAny().isEmpty();
-        assertFalse(noValues);
+        try (val stream = eventRepository.load()) {
+            assertNotNull(stream);
+            val noValues = stream.findAny().isEmpty();
+            assertFalse(noValues);
+        }
         assertEquals(currentCount, getOpenCursorCount());
 
     }
