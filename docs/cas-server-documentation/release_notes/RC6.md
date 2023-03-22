@@ -67,3 +67,8 @@ Furthermore, sensible defaults would be used if grant types or response types ar
 - jQuery
 - Amazon SDK
 - Spring Boot
+- Azure CosmosDb
+- Swagger
+- Spring BootAdmin
+- Slf4j
+- PostgreSQL
