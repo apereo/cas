@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.security.auth.login.FailedLoginException;
 
 /**
- * CAS RESTful resource for validating user credentials:
+ * CAS RESTful resource for validating user credentials.
  * <ul>
  * <li>{@code POST /v1/users}</li>
  * </ul>

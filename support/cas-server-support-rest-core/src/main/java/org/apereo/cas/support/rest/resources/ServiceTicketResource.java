@@ -31,7 +31,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
- * CAS RESTful resource for vending STs:
+ * CAS RESTful resource for vending STs.
+ *
  * <ul>
  * <li>{@code POST /v1/tickets/{TGT-id}}</li>
  * </ul>

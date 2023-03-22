@@ -99,9 +99,6 @@ configurations.all {
                 if (requested.group == "net.sourceforge.jtds")  {
                     details.useVersion("${jtdsVersion}")
                 }
-                if (requested.group == "com.couchbase.client" && requested.name == "java-client")  {
-                    details.useVersion("${couchbaseVersion}")
-                }
                 if (requested.group == "com.github.ben-manes.caffeine")  {
                     details.useVersion("${caffeineVersion}")
                 }

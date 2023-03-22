@@ -78,12 +78,6 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorAut
     private RestfulGoogleAuthenticatorMultifactorProperties rest = new RestfulGoogleAuthenticatorMultifactorProperties();
 
     /**
-     * Store google authenticator devices via CouchDb.
-     */
-    @NestedConfigurationProperty
-    private CouchDbGoogleAuthenticatorMultifactorProperties couchDb = new CouchDbGoogleAuthenticatorMultifactorProperties();
-
-    /**
      * Store google authenticator devices via Redis.
      */
     @NestedConfigurationProperty

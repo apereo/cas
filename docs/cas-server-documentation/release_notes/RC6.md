@@ -50,6 +50,12 @@ A new ticket registry implementation backed by [Google Cloud's PubSub](../ticket
 Supported grant types and response types are recognized during [OpenID Connect Dynamic Registration](../authentication/OIDC-Authentication-Dynamic-Registration.html). 
 Furthermore, sensible defaults would be used if grant types or response types are not explicitly requested.
 
+### Feature Removals
+
+Modules, features and plugins that support functionality for Apache CouchDb or Couchbase are now removed.
+If you are currently using any of these plugins or features, we recommend that you consider a 
+better alternative or prepare to adopt and maintain the feature on your own.
+
 ## Other Stuff
    
 - Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics.

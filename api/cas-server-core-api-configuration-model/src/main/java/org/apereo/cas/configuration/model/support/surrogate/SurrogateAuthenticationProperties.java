@@ -36,12 +36,6 @@ public class SurrogateAuthenticationProperties implements Serializable {
     private String separator = "+";
 
     /**
-     * Locate surrogate accounts via CouchDB.
-     */
-    @NestedConfigurationProperty
-    private SurrogateCouchDbAuthenticationProperties couchDb = new SurrogateCouchDbAuthenticationProperties();
-
-    /**
      * Locate surrogate accounts via CAS configuration, hardcoded as properties.
      */
     @NestedConfigurationProperty
