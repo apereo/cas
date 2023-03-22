@@ -45,9 +45,15 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
      */
     protected final ServicesManager servicesManager;
 
+    /**
+     * Indicates whether RefreshToken issued and linked to a ticket-granting ticket
+     * should also be removed as part of logout
+     */
+    protected final  boolean removeDescendantTickets;
+
     public OAuth20DefaultRefreshTokenFactory(final ExpirationPolicyBuilder<OAuth20RefreshToken> expirationPolicy,
                                              final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager);
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager, false);
     }
 
     @Override
@@ -78,7 +84,9 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             val policy = registeredService.getRefreshTokenExpirationPolicy();
             val timeToKill = policy.getTimeToKill();
             if (StringUtils.isNotBlank(timeToKill)) {
-                return new OAuth20RefreshTokenExpirationPolicy(Beans.newDuration(timeToKill).getSeconds());
+                long timeToKillInSeconds = Beans.newDuration(timeToKill).getSeconds();
+                return removeDescendantTickets ? new OAuth20RefreshTokenExpirationPolicy(timeToKillInSeconds) :
+                    new OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeToKillInSeconds);
             }
         }
         return this.expirationPolicy.buildTicketExpirationPolicy();

@@ -36,6 +36,7 @@ public class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests
             Set.of("Scope1", "Scope2"), "clientid-rt",
             "at-1234567890", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
+        assertEquals(OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy.class, token.getExpirationPolicy().getClass());
         assertNotNull(defaultAccessTokenFactory.get(OAuth20RefreshToken.class));
     }
 }
