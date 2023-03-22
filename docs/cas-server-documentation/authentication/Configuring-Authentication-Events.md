@@ -65,7 +65,6 @@ The following options may be used to store events in CAS.
 | MongoDb     | [See this guide](Configuring-Authentication-Events-MongoDb.html).  |
 | DynamoDb    | [See this guide](Configuring-Authentication-Events-DynamoDb.html). |
 | Redis       | [See this guide](Configuring-Authentication-Events-Redis.html).    |
-| ~~CouchDb~~ | [See this guide](Configuring-Authentication-Events-CouchDb.html).  |
 | JPA         | [See this guide](Configuring-Authentication-Events-JPA.html).      |
 | InfluxDb    | [See this guide](Configuring-Authentication-Events-InfluxDb.html). |
 | Memory      | [See this guide](Configuring-Authentication-Events-Memory.html).   |

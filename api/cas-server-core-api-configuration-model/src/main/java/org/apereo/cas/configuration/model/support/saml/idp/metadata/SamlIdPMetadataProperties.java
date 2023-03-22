@@ -85,12 +85,6 @@ public class SamlIdPMetadataProperties implements Serializable {
     private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
 
     /**
-     * Properties pertaining to CouchDB metadata resolution.
-     */
-    @NestedConfigurationProperty
-    private CouchDbSamlMetadataProperties couchDb = new CouchDbSamlMetadataProperties();
-
-    /**
      * Metadata management settings via MDQ protocol.
      */
     @NestedConfigurationProperty

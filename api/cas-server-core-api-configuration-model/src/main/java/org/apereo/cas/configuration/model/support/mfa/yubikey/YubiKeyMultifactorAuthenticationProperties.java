@@ -86,12 +86,6 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
     private boolean trustedDeviceEnabled;
 
     /**
-     * Keep device registration records inside a CouchDb resource.
-     */
-    @NestedConfigurationProperty
-    private YubiKeyCouchDbMultifactorProperties couchDb = new YubiKeyCouchDbMultifactorProperties();
-
-    /**
      * Keep device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty

@@ -45,6 +45,22 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
+        googlecloudfirestore   : [
+                dependencies.create("com.google.cloud:spring-cloud-gcp-starter-data-firestore:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("com.google.cloud:spring-cloud-gcp-data-firestore:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         firebaseadmin              : [
                 dependencies.create("com.google.api-client:google-api-client:$googleApiClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1091,8 +1107,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 }
         ],
-        couchbase                  : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
-        ektorp                     : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
         jcifs                      : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
@@ -2059,14 +2073,6 @@ ext.libraries = [
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
                 },
                 dependencies.create("com.github.stephenc.jcip:jcip-annotations:1.0-1") {
-                }
-        ],
-        pac4jcouchdb               : [
-                dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
-                    exclude(group: "org.pac4j", module: "pac4j-core")
-                    exclude(group: "org.ektorp", module: "org.ektorp")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                 }
         ],
         persondirectory            : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {

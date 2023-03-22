@@ -149,7 +149,6 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.web.socket" level="warn"/>
         <Logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="trace"/>
 
-        <Logger name="com.couchbase" level="warn" />
         <Logger name="org.apache" level="error"/>
         <Logger name="com.netflix" level="warn"/>
         <Logger name="org.quartz" level="warn"/>

@@ -52,12 +52,6 @@ public class EventsProperties implements Serializable {
     private MongoDbEventsProperties mongo = new MongoDbEventsProperties();
 
     /**
-     * Track authentication events inside a couchdb instance.
-     */
-    @NestedConfigurationProperty
-    private CouchDbEventsProperties couchDb = new CouchDbEventsProperties();
-
-    /**
      * Track authentication events inside a DynamoDb instance.
      */
     @NestedConfigurationProperty

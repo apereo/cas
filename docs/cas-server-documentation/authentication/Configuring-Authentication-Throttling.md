@@ -72,7 +72,6 @@ The following throttling strategies are offered by CAS.
 | MongoDb          | [See this guide](Configuring-Authentication-Throttling-MongoDb.html).
 | Redis            | [See this guide](Configuring-Authentication-Throttling-Redis.html).
 | Hazelcast        | [See this guide](Configuring-Authentication-Throttling-Hazelcast.html).
-| CouchDb          | [See this guide](Configuring-Authentication-Throttling-CouchDb.html).
 
 ## High Availability
 

@@ -75,8 +75,6 @@ ask for policy acceptance. Upon accepting the policy, the result will be stored 
 | LDAP          | [See this guide](Webflow-Customization-AUP-LDAP.html).      |
 | MongoDb       | [See this guide](Webflow-Customization-AUP-MongoDb.html).   |
 | Redis         | [See this guide](Webflow-Customization-AUP-Redis.html).     |
-| ~~CouchDb~~   | [See this guide](Webflow-Customization-AUP-CouchDb.html).   |
-| ~~Couchbase~~ | [See this guide](Webflow-Customization-AUP-Couchbase.html). |
 | JDBC          | [See this guide](Webflow-Customization-AUP-JDBC.html).      |
 | REST          | [See this guide](Webflow-Customization-AUP-REST.html).      |
 | Custom        | [See this guide](Webflow-Customization-AUP-Custom.html).    |

@@ -74,12 +74,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private MongoDbTrustedDevicesMultifactorProperties mongo = new MongoDbTrustedDevicesMultifactorProperties();
 
     /**
-     * Store devices records inside CouchDb.
-     */
-    @NestedConfigurationProperty
-    private CouchDbTrustedDevicesMultifactorProperties couchDb = new CouchDbTrustedDevicesMultifactorProperties();
-
-    /**
      * Store devices records inside DynamoDb.
      */
     @NestedConfigurationProperty

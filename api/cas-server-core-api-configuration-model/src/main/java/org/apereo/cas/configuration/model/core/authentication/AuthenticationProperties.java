@@ -5,8 +5,6 @@ import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAu
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.GroovyAuthenticationProperties;
@@ -123,12 +121,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OktaAuthenticationProperties okta = new OktaAuthenticationProperties();
-
-    /**
-     * Couchbase authentication settings.
-     */
-    @NestedConfigurationProperty
-    private CouchbaseAuthenticationProperties couchbase = new CouchbaseAuthenticationProperties();
 
     /**
      * Redis authentication settings.
@@ -284,12 +276,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbAuthenticationProperties mongo = new MongoDbAuthenticationProperties();
-
-    /**
-     * CouchDb authentication settings.
-     */
-    @NestedConfigurationProperty
-    private CouchDbAuthenticationProperties couchDb = new CouchDbAuthenticationProperties();
 
     /**
      * OAuth authentication settings.

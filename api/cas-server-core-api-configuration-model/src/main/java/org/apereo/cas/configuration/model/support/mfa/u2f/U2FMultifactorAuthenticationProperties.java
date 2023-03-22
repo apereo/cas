@@ -82,13 +82,7 @@ public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthe
      */
     @NestedConfigurationProperty
     private U2FRestfulMultifactorAuthenticationProperties rest = new U2FRestfulMultifactorAuthenticationProperties();
-
-    /**
-     * Store device registration records via CouchDb.
-     */
-    @NestedConfigurationProperty
-    private U2FCouchDbMultifactorAuthenticationProperties couchDb = new U2FCouchDbMultifactorAuthenticationProperties();
-
+    
     /**
      * Clean up expired records via a background cleaner process.
      */

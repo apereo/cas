@@ -49,12 +49,6 @@ public class AuditProperties implements Serializable {
     private AuditMongoDbProperties mongo = new AuditMongoDbProperties();
 
     /**
-     * Family of sub-properties pertaining to CouchDb-based audit destinations.
-     */
-    @NestedConfigurationProperty
-    private AuditCouchDbProperties couchDb = new AuditCouchDbProperties();
-
-    /**
      * Family of sub-properties pertaining to Redis-based audit destinations.
      */
     @NestedConfigurationProperty
@@ -71,12 +65,6 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditSlf4jLogProperties slf4j = new AuditSlf4jLogProperties();
-
-    /**
-     * Family of sub-properties pertaining to couchbase-based audit destinations.
-     */
-    @NestedConfigurationProperty
-    private AuditCouchbaseProperties couchbase = new AuditCouchbaseProperties();
 
     /**
      * Family of sub-properties pertaining to dynamodb-based audit destinations.
