@@ -72,6 +72,7 @@ better alternative or prepare to adopt and maintain the feature on your own.
 - Twillio
 - jQuery
 - Amazon SDK
+- MariaDb
 - Spring Boot
 - Azure CosmosDb
 - Swagger

@@ -46,12 +46,11 @@ public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTe
         request.setCookies(response.getCookies());
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
-
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn("cas");
-
-        val samlResponse = mock(Response.class);
-        when(samlResponse.getIssuer()).thenReturn(issuer);
+        
+        val samlResponse = samlProfileSamlResponseBuilder.newSamlObject(Response.class);
+        val issuer = samlProfileSamlResponseBuilder.newSamlObject(Issuer.class);
+        issuer.setValue("cas");
+        samlResponse.setIssuer(issuer);
         assertNotNull(encoder.encode(authnRequest, samlResponse, "relay-state", new MessageContext()));
     }
 
