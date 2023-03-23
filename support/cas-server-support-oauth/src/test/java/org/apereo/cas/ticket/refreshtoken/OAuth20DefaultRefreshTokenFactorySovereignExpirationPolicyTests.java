@@ -19,14 +19,13 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OAuth20DefaultRefreshTokenFactoryTests}.
+ * This is {@link OAuth20DefaultRefreshTokenFactorySovereignExpirationPolicyTests}.
  *
- * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("OAuthToken")
-@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
-public class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
+@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=false")
+public class OAuth20DefaultRefreshTokenFactorySovereignExpirationPolicyTests extends AbstractOAuth20Tests {
     @Test
     public void verifyOperationWithExpPolicy() {
         val registeredService = getRegisteredService("https://rt.oauth.org", "clientid-rt", "secret-at");
@@ -44,7 +43,7 @@ public class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests
 
         assertFalse(token.isExpired(), "Refresh token should not be expired");
         tgt.markTicketExpired();
-        assertTrue(token.isExpired(),
-            "Refresh token must expire when TGT is expired and removeDescendantTickets is true");
+        assertFalse(token.isExpired(),
+            "Refresh token must not expire when TGT is expired and removeDescendantTickets is false");
     }
 }
