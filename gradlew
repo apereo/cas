@@ -85,6 +85,9 @@ done
 APP_BASE_NAME=${0##*/}
 APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
 
+# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD=maximum
 
@@ -193,10 +196,6 @@ if "$cygwin" || "$msys" ; then
         set -- "$@" "$arg"      # push replacement arg
     done
 fi
-
-
-# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
 # Collect all arguments for the java command;
 #   * $DEFAULT_JVM_OPTS, $JAVA_OPTS, and $GRADLE_OPTS can contain fragments of
