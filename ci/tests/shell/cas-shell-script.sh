@@ -12,5 +12,5 @@ generate-ddl --dialect MYSQL --file ./cas-db-schema.sql
 generate-jwt --subject casuser
 find --name cas.server.name
 generate-anonymous-user --username casuser --service example --salt ythr91%^1
-validate-endpoint --url https://google.com
+validate-endpoint --url https://apereo.github.io
 quit
