@@ -73,6 +73,8 @@ better alternative or prepare to adopt and maintain the feature on your own.
 - jQuery
 - Amazon SDK
 - MariaDb
+- Hazelcast
+- Joda-Time
 - Spring Boot
 - Azure CosmosDb
 - Swagger
