@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
@@ -95,12 +94,6 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private InMemoryTicketRegistryProperties inMemory = new InMemoryTicketRegistryProperties();
-
-    /**
-     * CouchDb registry settings.
-     */
-    @NestedConfigurationProperty
-    private CouchDbTicketRegistryProperties couchDb = new CouchDbTicketRegistryProperties();
 
     /**
      * Ticket registry cleaner settings.

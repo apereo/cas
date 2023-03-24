@@ -33,7 +33,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 
 /**
- * CAS RESTful resource for vending and deleting TGTs:
+ * CAS RESTful resource for vending and deleting TGTs.
  * <ul>
  * <li>{@code POST /v1/tickets}</li>
  * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>

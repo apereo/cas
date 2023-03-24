@@ -97,6 +97,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -239,16 +240,17 @@ public abstract class BaseSamlIdPConfigurationTests {
             .build();
     }
 
-    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+    protected AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
         return getAuthnRequestFor(service.getServiceId());
     }
 
-    protected static AuthnRequest getAuthnRequestFor(final String service) {
-        val authnRequest = mock(AuthnRequest.class);
-        when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn(service);
-        when(authnRequest.getIssuer()).thenReturn(issuer);
+    protected AuthnRequest getAuthnRequestFor(final String service) {
+        val authnRequest = samlProfileSamlResponseBuilder.newSamlObject(AuthnRequest.class);
+        authnRequest.setID("23hgbcehfgeb7843jdv1");
+        val issuer = samlProfileSamlResponseBuilder.newSamlObject(Issuer.class);
+        issuer.setValue(service);
+        authnRequest.setIssuer(issuer);
+        authnRequest.setIssueInstant(Instant.now(Clock.systemUTC()));
         return authnRequest;
     }
 

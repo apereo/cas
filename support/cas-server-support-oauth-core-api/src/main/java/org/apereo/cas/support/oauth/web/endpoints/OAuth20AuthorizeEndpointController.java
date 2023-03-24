@@ -247,7 +247,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
-            .filter(b -> b.supports(authzRequest))
+            .filter(bldr -> bldr.supports(authzRequest))
             .findFirst()
             .map(Unchecked.function(builder -> {
                 if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null) {

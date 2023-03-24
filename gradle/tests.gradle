@@ -19,8 +19,6 @@ enum TestCategories {
     Cipher,
     Consent,
     Cookie,
-    Couchbase,
-    CouchDb,
     Delegation,
     DuoSecurity,
     DynamoDb,
