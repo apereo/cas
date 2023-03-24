@@ -206,7 +206,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         if (initParamValue.trim().isEmpty()) {
             throwException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
-        val tokens = Splitter.onPattern("\\s+").splitToList(initParamValue.trim());
+        val tokens = Splitter.onPattern("\\,").splitToList(initParamValue.trim());
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.getFirst())) {
             return new HashSet<>(0);
         }
@@ -221,10 +221,12 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
     }
 
     /**
-     * Parse a whitespace delimited set of Characters from a String.
+     * Parse a space delimited set of Characters from a String.
      * <p>
      * If the String is "none" parse to empty set meaning block no characters.
      * If the String is empty throw, to avoid configurer accidentally configuring not to block any characters.
+     * <p>
+     * Note that only the space charater should be used as a delimiter, not tabs or newlines.
      *
      * @param value value of the init param to parse
      * @return non-null Set of zero or more Characters to block
@@ -243,7 +245,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             return charactersToForbid;
         }
 
-        val tokens = Splitter.onPattern("\\s+").splitToList(paramValue);
+        val tokens = Splitter.onPattern("\\ +").splitToList(paramValue);
         for (val token : tokens) {
             if (token.length() > 1) {
                 throwException(new IllegalArgumentException("Expected tokens of length 1 but found [" + token + "] when parsing [" + paramValue + ']'));
