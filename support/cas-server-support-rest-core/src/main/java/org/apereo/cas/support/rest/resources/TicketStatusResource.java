@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * CAS RESTful resource validating TGTs:
+ * CAS RESTful resource validating TGTs.
  * <ul>
  * <li>{@code GET /v1/tickets/{TGT-id}}</li>
  * </ul>

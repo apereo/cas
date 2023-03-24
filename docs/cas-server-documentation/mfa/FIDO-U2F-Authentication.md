@@ -62,5 +62,4 @@ The following options are available to store registration records:
 | MongoDb     | Please [see this guide](FIDO-U2F-Authentication-MongoDb.html).  |
 | DynamoDb    | Please [see this guide](FIDO-U2F-Authentication-DynamoDb.html). |
 | Redis       | Please [see this guide](FIDO-U2F-Authentication-Redis.html).    |
-| ~~CouchDb~~ | Please [see this guide](FIDO-U2F-Authentication-CouchDb.html).  |
 | REST        | Please [see this guide](FIDO-U2F-Authentication-Rest.html).     |

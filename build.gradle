@@ -28,7 +28,7 @@ buildscript {
 
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:$gradleShadowVersion"
+        classpath "com.github.johnrengelman:shadow:$gradleShadowVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
     }
 }
@@ -133,7 +133,7 @@ allprojects {
         toolVersion = "$gradleJacocoVersion"
     }
 
-    if (gradle.startParameter.taskNames.any { task -> task.equalsIgnoreCase("publishToMavenLocal") }) {
+    if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
         apply plugin: "maven-publish"
     }
 
@@ -266,7 +266,6 @@ subprojects {
                         }
                     }
                 }
-
 
                 if (!"${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
                     repositories {

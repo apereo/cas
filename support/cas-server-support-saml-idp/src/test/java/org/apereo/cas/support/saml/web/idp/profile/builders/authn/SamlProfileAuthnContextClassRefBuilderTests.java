@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAMLResponse")
 public class SamlProfileAuthnContextClassRefBuilderTests {
-
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class DefaultTests extends BaseSamlIdPConfigurationTests {
@@ -77,7 +76,7 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
             val authnRequest = getAuthnRequestFor(service);
             val context = mock(RequestedAuthnContext.class);
             when(context.getAuthnContextClassRefs()).thenReturn(List.of());
-            when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
+            authnRequest.setRequestedAuthnContext(context);
             val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
@@ -100,7 +99,7 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
             when(classRef.getURI()).thenReturn("some-context");
             val context = mock(RequestedAuthnContext.class);
             when(context.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
-            when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
+            authnRequest.setRequestedAuthnContext(context);
             val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
@@ -114,8 +113,6 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
             assertEquals(AuthnContext.PPT_AUTHN_CTX, result.getAuthnContextClassRef().getURI());
         }
     }
-
-
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
@@ -130,7 +127,7 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
             when(classRef.getURI()).thenReturn("https://refeds.org/profile/mfa");
             val context = mock(RequestedAuthnContext.class);
             when(context.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
-            when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
+            authnRequest.setRequestedAuthnContext(context);
             val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
             val assertion = getAssertion(Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
@@ -146,8 +143,6 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
             assertEquals("https://refeds.org/profile/mfa", result.getAuthnContextClassRef().getURI());
         }
     }
-
-
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {

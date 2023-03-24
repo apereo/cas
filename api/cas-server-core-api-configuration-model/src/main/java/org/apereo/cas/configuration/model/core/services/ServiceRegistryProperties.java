@@ -4,8 +4,6 @@ import org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplate
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.couchdb.serviceregistry.CouchDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
@@ -64,12 +62,6 @@ public class ServiceRegistryProperties implements Serializable {
     private GitServiceRegistryProperties git = new GitServiceRegistryProperties();
 
     /**
-     * Properties pertaining to Cosmos DB service registry.
-     */
-    @NestedConfigurationProperty
-    private CouchDbServiceRegistryProperties couchDb = new CouchDbServiceRegistryProperties();
-
-    /**
      * Properties pertaining to REST service registry.
      */
     @NestedConfigurationProperty
@@ -110,12 +102,6 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbServiceRegistryProperties mongo = new MongoDbServiceRegistryProperties();
-
-    /**
-     * Properties pertaining to couchbase service registry.
-     */
-    @NestedConfigurationProperty
-    private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
     /**
      * Properties pertaining to dynamo db service registry.

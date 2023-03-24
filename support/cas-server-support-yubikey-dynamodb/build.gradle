@@ -5,7 +5,7 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "YubiKey Multifactor Authentication",
-            title: "YubiKey Support via Apache CouchDb"
+            title: "YubiKey Support via DynamoDb"
     ]
 }
 

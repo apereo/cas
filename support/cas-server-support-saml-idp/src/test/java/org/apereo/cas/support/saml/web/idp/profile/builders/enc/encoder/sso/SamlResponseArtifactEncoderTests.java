@@ -18,7 +18,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlResponseArtifactEncoderTests}.
@@ -46,12 +45,11 @@ public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTe
         request.setCookies(response.getCookies());
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
-
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn("cas");
-
-        val samlResponse = mock(Response.class);
-        when(samlResponse.getIssuer()).thenReturn(issuer);
+        
+        val samlResponse = samlProfileSamlResponseBuilder.newSamlObject(Response.class);
+        val issuer = samlProfileSamlResponseBuilder.newSamlObject(Issuer.class);
+        issuer.setValue("cas");
+        samlResponse.setIssuer(issuer);
         assertNotNull(encoder.encode(authnRequest, samlResponse, "relay-state", new MessageContext()));
     }
 

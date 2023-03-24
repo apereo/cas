@@ -132,7 +132,6 @@ The following options may be used to fetch attributes in CAS.
 | Groovy                           | [See this guide](Attribute-Resolution-Groovy.html).    |
 | REST                             | [See this guide](Attribute-Resolution-REST.html).      |
 | Grouper                          | [See this guide](Attribute-Resolution-Grouper.html).   |
-| ~~Couchbase~~                    | [See this guide](Attribute-Resolution-Couchbase.html). |
 | Redis                            | [See this guide](Attribute-Resolution-Redis.html).     |
 | JDBC                             | [See this guide](Attribute-Resolution-JDBC.html).      |
 | OKTA                             | [See this guide](Attribute-Resolution-Okta.html).      |
