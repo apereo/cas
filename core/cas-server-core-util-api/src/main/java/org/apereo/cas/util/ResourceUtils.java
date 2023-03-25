@@ -324,4 +324,17 @@ public class ResourceUtils {
     public static boolean isUrl(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith("http");
     }
+
+    /**
+     * To file system resource.
+     *
+     * @param artifact the artifact
+     * @return the resource
+     */
+    public static Resource toFileSystemResource(final File artifact) {
+        val canonicalPath = FunctionUtils.doUnchecked(artifact::getCanonicalPath);
+        FunctionUtils.throwIf(artifact.exists() && !artifact.canRead(),
+            () -> new IllegalArgumentException("Resource " + canonicalPath + " is not readable."));
+        return new FileSystemResource(artifact);
+    }
 }
