@@ -206,13 +206,13 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         if (initParamValue.trim().isEmpty()) {
             throwException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
-        val tokens = Splitter.onPattern("\\,").splitToList(initParamValue.trim());
+        val tokens = Splitter.onPattern("\\,\\s*").splitToList(initParamValue.trim());
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.getFirst())) {
             return new HashSet<>(0);
         }
         val parameterNames = new HashSet<String>();
         for (val parameterName : tokens) {
-            if ("*".equals(parameterName)) {
+            if (parameterName.contains("*")) {
                 throwException(new IllegalArgumentException("Star token encountered among other tokens in parsing [" + initParamValue + ']'));
             }
             parameterNames.add(parameterName);
