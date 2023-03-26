@@ -19,6 +19,8 @@ public class CasSpringBootAdminServerServletInitializerTests {
 
     @Test
     public void verifyInitializer() {
+        System.setProperty("spring.cloud.compatibility-verifier.enabled", "false");
+        
         val servletContext = new MockServletContext();
         val servletInitializer = new CasSpringBootAdminServletInitializer();
         assertDoesNotThrow(() -> servletInitializer.onStartup(servletContext));
