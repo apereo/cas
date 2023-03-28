@@ -127,7 +127,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).exists(true));
-        return ticketCatalog.findAll().stream()
+        return ticketCatalog.findAll()
+            .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .filter(StringUtils::isNotBlank)
             .mapToLong(collectionName -> {
@@ -175,7 +176,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<Ticket> stream() {
-        return ticketCatalog.findAll().stream()
+        return ticketCatalog
+            .findAll()
+            .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
             .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));

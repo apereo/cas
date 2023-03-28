@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
@@ -52,6 +53,12 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbTicketRegistryProperties mongo = new MongoDbTicketRegistryProperties();
+
+    /**
+     * GoogleCloud Firestore registry settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleCloudFirestoreTicketRegistryProperties googleCloudFirestore = new GoogleCloudFirestoreTicketRegistryProperties();
 
     /**
      * Hazelcast registry settings.

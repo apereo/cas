@@ -25,6 +25,7 @@ enum TestCategories {
     ExpirationPolicy,
     Events,
     FileSystem,
+    GCP,
     GeoLocation,
     Git,
     Groovy,

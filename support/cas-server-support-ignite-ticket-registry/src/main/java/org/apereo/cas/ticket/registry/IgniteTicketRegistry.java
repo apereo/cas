@@ -152,7 +152,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return stream().collect(Collectors.toSet());
+        try (val stream = stream()) {
+            return stream.collect(Collectors.toSet());
+        }
     }
 
     @Override
