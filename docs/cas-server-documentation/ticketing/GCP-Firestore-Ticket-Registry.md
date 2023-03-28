@@ -27,7 +27,7 @@ To understand how to set up application default credentials, please [review this
 
 ## CAS Configuration
 
-{% include_cached casproperties.html properties="cas.ticket.registry.firestore" thirdPartyStartsWith="spring.cloud.gcp.firestore</div>
+{% include_cached casproperties.html properties="cas.ticket.registry.google-cloud-firestore" thirdPartyStartsWith="spring.cloud.gcp.firestore" %}
 
 ## Troubleshooting
 
