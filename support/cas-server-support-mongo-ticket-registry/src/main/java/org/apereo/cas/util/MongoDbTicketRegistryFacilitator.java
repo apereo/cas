@@ -44,8 +44,8 @@ public class MongoDbTicketRegistryFacilitator {
     public void createTicketCollections() {
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            val c = createTicketCollection(t);
-            LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
+            val collection = createTicketCollection(t);
+            LOGGER.debug("Created MongoDb collection configuration for [{}]", collection.getNamespace().getFullName());
         });
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }

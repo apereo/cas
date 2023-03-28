@@ -61,6 +61,7 @@ Cassandra, for ticket storage and persistence:
 * [Redis](Redis-Ticket-Registry.html)
 * [MongoDb](MongoDb-Ticket-Registry.html)
 * [DynamoDb](DynamoDb-Ticket-Registry.html)
+* [Google Cloud Firestore](GCP-Firestore-Ticket-Registry.html)
 
 ### Secure Cache Replication
 
