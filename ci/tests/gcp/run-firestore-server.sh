@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Building Firestore image..."
-docker build ci/tests/firestore/ -t cas/firestore:latest
+docker build ci/tests/gcp/ -t cas/firestore:latest
 
 echo "Running Firestore docker image..."
 docker stop firestore-server || true
