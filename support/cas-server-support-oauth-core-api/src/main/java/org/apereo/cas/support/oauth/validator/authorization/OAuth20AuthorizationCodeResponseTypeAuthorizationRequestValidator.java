@@ -18,6 +18,7 @@ import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
@@ -43,17 +44,20 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     @Override
     public boolean validate(final WebContext context) {
         val clientIdResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID);
-        return clientIdResult.map(clientId -> {
-            val registeredService = getRegisteredServiceByClientId(clientId);
-            if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService)) {
-                val responseTypeResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
-                val msg = String.format("Client is not allowed to use the [%s] response type", responseTypeResult.orElse("unknown"));
-                LOGGER.warn(msg);
-                setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
-                return false;
-            }
-            return true;
-        }).orElse(false);
+        return clientIdResult
+            .map(this::getRegisteredServiceByClientId)
+            .filter(Objects::nonNull)
+            .map(registeredService -> {
+                if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService)) {
+                    val responseTypeResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
+                    val msg = String.format("Client is not allowed to use the [%s] response type", responseTypeResult.orElse("unknown"));
+                    LOGGER.warn(msg);
+                    setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
+                    return false;
+                }
+                return true;
+            })
+            .orElse(false);
     }
 
     @Override

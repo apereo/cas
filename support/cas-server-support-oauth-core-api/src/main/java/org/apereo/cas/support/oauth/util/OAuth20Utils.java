@@ -105,7 +105,7 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(clientId)) {
             return null;
         }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equalsIgnoreCase(clientId));
+        return getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.getClientId().equalsIgnoreCase(clientId));
     }
 
     /**
@@ -120,13 +120,14 @@ public class OAuth20Utils {
         if (StringUtils.isBlank(redirectUri)) {
             return null;
         }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
+        return getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri));
     }
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
         val services = servicesManager.getAllServicesOfType(OAuthRegisteredService.class);
-        return services.stream()
+        return services
+            .stream()
             .filter(predicate)
             .findFirst()
             .orElse(null);

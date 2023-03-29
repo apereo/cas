@@ -93,3 +93,5 @@ A new ticket registry implementation backed by [Google Cloud's Firestore](../tic
 - Spring BootAdmin
 - Slf4j
 - PostgreSQL
+- Gradle
+- Thymeleaf Dialect

@@ -156,15 +156,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
-
-    /**
-     * Redirect to callback redirect url model and view.
-     *
-     * @param manager           the manager
-     * @param registeredService the registered service
-     * @param context           the context
-     * @return the model and view
-     */
+    
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context) {
