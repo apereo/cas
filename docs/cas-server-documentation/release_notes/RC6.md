@@ -87,6 +87,8 @@ A new ticket registry implementation backed by [Google Cloud's Firestore](../tic
 - Joda-Time
 - Spring Boot
 - Azure CosmosDb
+- Grouper Client
+- Spring Cloud
 - Swagger
 - Spring BootAdmin
 - Slf4j

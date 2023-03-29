@@ -12,6 +12,7 @@ import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreProperties;
+import com.google.firestore.v1.FirestoreGrpc;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GoogleCloudFirestoreTicketRegistryTests}.
@@ -78,6 +80,11 @@ public class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryT
 
     @TestConfiguration(value = "GoogleCloudFirestoreTestConfiguration", proxyBeanMethods = false)
     public static class GoogleCloudFirestoreTestConfiguration {
+
+        @Bean
+        public FirestoreGrpc.FirestoreStub firestoreGrpcStub() {
+            return mock(FirestoreGrpc.FirestoreStub.class);
+        }
 
         @Bean
         public FirestoreOptions firestoreOptions(final GcpFirestoreProperties properties) {
