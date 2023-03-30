@@ -59,6 +59,8 @@ public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
         val claims = getClaims(id);
         val oidcRegisteredService = new OidcRegisteredService();
         oidcRegisteredService.setClientId(id);
+        oidcRegisteredService.setServiceId("https://example.org");
+        oidcRegisteredService.setName(id);
         servicesManager.save(oidcRegisteredService);
 
         val idToken = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);

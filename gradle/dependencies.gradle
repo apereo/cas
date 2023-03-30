@@ -13,7 +13,7 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                 }
         ],
-        googlecloudpubsub   : [
+        googlecloudpubsub          : [
                 dependencies.create("com.google.cloud:spring-cloud-gcp-starter-pubsub:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
@@ -29,7 +29,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
-        googlecloudsecretsmanager   : [
+        googlecloudsecretsmanager  : [
                 dependencies.create("com.google.cloud:spring-cloud-gcp-secretmanager:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
@@ -45,7 +45,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
-        googlecloudfirestore   : [
+        googlecloudfirestore       : [
                 dependencies.create("com.google.cloud:spring-cloud-gcp-starter-data-firestore:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
@@ -497,6 +497,10 @@ ext.libraries = [
             exclude(group: "org.quartz-scheduler", module: "quartz")
             exclude(group: "log4j", module: "log4j")
         },
+        cqengine                   : [
+                dependencies.create("com.googlecode.cqengine:cqengine:$cqEngineVersion") {
+                }
+        ],
         maxmind                    : [
                 dependencies.create("com.maxmind.geoip2:geoip2:$maxmindVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1453,7 +1457,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-        fluentd : [
+        fluentd                    : [
                 dependencies.create("org.fluentd:fluent-logger:$fluentdVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "ch.qos.logback", module: "logback-core")
@@ -2930,7 +2934,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                 }
         ],
-        springcloudbootstrap : [
+        springcloudbootstrap       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudCommonsVersion") {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.objenesis", module: "objenesis")

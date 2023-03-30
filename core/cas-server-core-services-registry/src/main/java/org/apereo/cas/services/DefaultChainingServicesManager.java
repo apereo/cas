@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 
 import lombok.Getter;
 import lombok.val;
@@ -20,6 +21,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link DefaultChainingServicesManager}.
@@ -85,7 +87,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public RegisteredService delete(final long id) {
         return serviceManagers.stream()
-            .map(s -> s.delete(id))
+            .map(manager -> manager.delete(id))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
@@ -109,7 +111,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> clazz) {
         return serviceManagers.stream()
-            .flatMap(s -> s.findServiceBy(clazz).stream())
+            .flatMap(manager -> manager.findServiceBy(clazz).stream())
             .collect(Collectors.toList());
     }
 
@@ -122,7 +124,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public RegisteredService findServiceBy(final long id) {
         return serviceManagers.stream()
-            .map(s -> s.findServiceBy(id))
+            .map(manager -> manager.findServiceBy(id))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
@@ -152,22 +154,22 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public Collection<RegisteredService> getAllServices() {
         return serviceManagers.stream()
-            .flatMap(s -> s.getAllServices().stream())
+            .flatMap(manager -> manager.getAllServices().stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public <T extends RegisteredService> Collection<T> getAllServicesOfType(final Class<T> clazz) {
         return serviceManagers.stream()
-            .filter(s -> s.supports(clazz))
-            .flatMap(s -> s.getAllServicesOfType(clazz).stream())
+            .filter(manager -> manager.supports(clazz))
+            .flatMap(manager -> manager.getAllServicesOfType(clazz).stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public Collection<RegisteredService> load() {
         return serviceManagers.stream()
-            .flatMap(s -> s.load().stream())
+            .flatMap(manager -> manager.load().stream())
             .collect(Collectors.toList());
     }
 
@@ -201,21 +203,30 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
-        return serviceManagers.stream()
-            .flatMap(d -> d.getServicesForDomain(domain).stream())
+        return serviceManagers
+            .stream()
+            .flatMap(manager -> manager.getServicesForDomain(domain).stream())
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Stream<RegisteredService> findServicesBy(final RegisteredServiceQuery... queries) {
+        return serviceManagers
+            .stream()
+            .map(manager -> manager.findServicesBy(queries))
+            .flatMap(results -> StreamSupport.stream(results.spliterator(), false));
+    }
+
     private Optional<ServicesManager> findServicesManager(final RegisteredService service) {
-        return serviceManagers.stream().filter(s -> s.supports(service)).findFirst();
+        return serviceManagers.stream().filter(manager -> manager.supports(service)).findFirst();
     }
 
     private Optional<ServicesManager> findServicesManager(final Service service) {
-        return serviceManagers.stream().filter(s -> s.supports(service)).findFirst();
+        return serviceManagers.stream().filter(manager -> manager.supports(service)).findFirst();
     }
 
     private Optional<ServicesManager> findServicesManager(final Class<?> clazz) {
-        return serviceManagers.stream().filter(s -> s.supports(clazz)).findFirst();
+        return serviceManagers.stream().filter(manager -> manager.supports(clazz)).findFirst();
     }
 
 }

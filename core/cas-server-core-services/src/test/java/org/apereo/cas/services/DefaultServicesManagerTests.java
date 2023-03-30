@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.query.RegisteredServiceQuery;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultServicesManager> {
 
     private static final String TEST = "test";
+
+    @Test
+    public void verifyFindByQuery() {
+        val service = new CasRegisteredService();
+        service.setId(1984);
+        service.setName(TEST + 1984);
+        service.setServiceId(service.getName());
+        servicesManager.save(service);
+        assertEquals(0, servicesManager.findServicesBy().count());
+        assertEquals(1, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(CasRegisteredService.class, "id", service.getId())).count());
+        assertEquals(1, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(CasRegisteredService.class, "id", service.getId()),
+            RegisteredServiceQuery.of(CasRegisteredService.class, "name", service.getName())).count());
+    }
 
     @Test
     public void verifyFindByName() {
