@@ -207,11 +207,14 @@ Use POST responses instead of redirects:
 When `/login` behaves as a credential requestor, the response will vary depending
 on the type of credentials it is requesting. In most cases, CAS will respond by
 displaying a login screen requesting a username and password. This page MUST
-include a form with the parameters, "username", "password", and "lt". The form
-MAY also include the parameter "warn". If `service` was specified to `/login`,
+include a form with the parameters, "username" and "password". The form
+MAY also include other parameters, "warn", "rememberMe" and "lt".
+If `service` was specified to `/login`,
 `service` MUST also be a parameter of the form, containing the value originally
-passed to `/login`. These parameters are discussed in detail in Section [2.2.1](#head2.2.1). The
-form MUST be submitted through the HTTP POST method to `/login` which will then
+passed to `/login`. All the mentioned parameters are discussed
+in detail in Sections [2.2.1](#head2.2.1) and [2.2.2](#head2.2.2).
+
+The form MUST be submitted through the HTTP POST method to `/login` which will then
 act as a credential acceptor, discussed in Section [2.2](#head2.2).
 
 <a name="head2.1.4"/>
@@ -298,9 +301,7 @@ all case-sensitive.
 
 -   `password` [REQUIRED] - the password of the client that is trying to log in
 
--   `lt` [OPTIONAL] - a login ticket. This is provided as part of the login form
-    discussed in Section [2.1.3](#head2.1.3). The login ticket itself is discussed
-    in Section [3.5](#head3.5).
+-   `lt` [OPTIONAL] - a login ticket as discussed in Section [3.5](#head3.5)
 
 -   `rememberMe` [OPTIONAL, CAS 3.0] - if this parameter is set, a Long-Term
     Ticket Granting Ticket might be created by the CAS server (referred to as
