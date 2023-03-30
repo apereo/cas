@@ -177,6 +177,10 @@ while (( "$#" )); do
             cipher)
                 task+="testCipher "
                 ;;
+            gcp)
+                isDockerOnLinux && ./ci/tests/gcp/run-firestore-server.sh
+                task+="testGCP "
+                ;;
             web)
                 task+="testWeb "
                 ;;

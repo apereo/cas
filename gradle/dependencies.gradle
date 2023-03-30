@@ -52,6 +52,8 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "io.projectreactor", module: "reactor-core")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
                 },
                 dependencies.create("com.google.cloud:spring-cloud-gcp-data-firestore:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -59,6 +61,8 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "io.projectreactor", module: "reactor-core")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
                 }
         ],
         firebaseadmin              : [
@@ -2509,6 +2513,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.integration:spring-integration-jmx:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "io.projectreactor", module: "reactor-core")
                 }
         ],
         springintegrationjdbc      : [

@@ -21,11 +21,13 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gcp-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gcp-pubsub-ticket-registry" %}
 
 Integration support is backed by the [Spring Cloud GCP project](https://cloud.google.com/java/docs/spring).
 Their [reference documentation](https://googlecloudplatform.github.io/spring-cloud-gcp/reference/html/index.html) 
 provides detailed information on how to integrate Google Cloud APIs with CAS.
+
+To understand how to set up application default credentials, please [review this page](https://cloud.google.com/docs/authentication/application-default-credentials).
 
 ## CAS Configuration
 

@@ -52,9 +52,19 @@ Furthermore, sensible defaults would be used if grant types or response types ar
 
 ### Feature Removals
 
-Modules, features and plugins that support functionality for Apache CouchDb or Couchbase are now removed.
+Modules, features and plugins that support functionality for Apache CouchDb or Couchbase, previously deprecated, are now removed.
 If you are currently using any of these plugins or features, we recommend that you consider a 
 better alternative or prepare to adopt and maintain the feature on your own.
+    
+### Spring Boot
+
+CAS has switched and upgraded to Spring Boot `3.1.x`, presently in milestone/release-candidate mode, and one that is 
+anticipated to be released around mid May 2023. It is unlikely that CAS `7.0.x` would be released prior to that date, and 
+we intend to take advantage of this time window to run integration tests against the next Spring Boot release. 
+
+### Google Cloud Firestore Ticket Registry
+
+A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
 
 ## Other Stuff
    
@@ -77,7 +87,11 @@ better alternative or prepare to adopt and maintain the feature on your own.
 - Joda-Time
 - Spring Boot
 - Azure CosmosDb
+- Grouper Client
+- Spring Cloud
 - Swagger
 - Spring BootAdmin
 - Slf4j
 - PostgreSQL
+- Gradle
+- Thymeleaf Dialect

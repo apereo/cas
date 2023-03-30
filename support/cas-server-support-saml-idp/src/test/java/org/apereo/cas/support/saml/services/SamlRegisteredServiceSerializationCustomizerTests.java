@@ -47,7 +47,7 @@ public class SamlRegisteredServiceSerializationCustomizerTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyDefaults() throws Exception {
+        public void verifyDefaults() {
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1000.json").getInputStream());
             assertNotNull(service);
@@ -55,7 +55,7 @@ public class SamlRegisteredServiceSerializationCustomizerTests {
         }
 
         @Test
-        public void verifyDefaultsOverriddenByService() throws Exception {
+        public void verifyDefaultsOverriddenByService() {
             val serializer = new RegisteredServiceJsonSerializer(applicationContext);
             val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1001.json").getInputStream());
             assertNotNull(service);
