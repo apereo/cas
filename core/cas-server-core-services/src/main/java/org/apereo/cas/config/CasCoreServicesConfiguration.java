@@ -309,7 +309,7 @@ public class CasCoreServicesConfiguration {
         public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("servicesManagerConfigurationContext")
-            final ServicesManagerConfigurationContext configurationContext) throws Exception {
+            final ServicesManagerConfigurationContext configurationContext) {
             return BeanSupplier.of(ServicesManagerExecutionPlanConfigurer.class)
                 .alwaysMatch()
                 .supply(() -> {

@@ -1,6 +1,9 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
+import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
+import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +13,7 @@ import lombok.val;
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiPredicate;
 
 /**
@@ -23,6 +27,7 @@ import java.util.function.BiPredicate;
 @Setter
 @Getter
 public class DefaultServicesManagerRegisteredServiceLocator implements ServicesManagerRegisteredServiceLocator {
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     private BiPredicate<RegisteredService, Service> registeredServiceFilter = (registeredService, service) -> {
@@ -47,4 +52,19 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
                || (RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
                    && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME));
     }
+
+    @Override
+    public List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {
+        return List.of(BasicRegisteredServiceQueryIndex.hashIndex(
+                new RegisteredServiceQueryAttribute(CasRegisteredService.class, long.class, "id")),
+            BasicRegisteredServiceQueryIndex.hashIndex(
+                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "name")),
+            BasicRegisteredServiceQueryIndex.hashIndex(
+                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "serviceId")),
+            BasicRegisteredServiceQueryIndex.hashIndex(
+                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "friendlyName")),
+            BasicRegisteredServiceQueryIndex.hashIndex(
+                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "@class")));
+    }
+
 }

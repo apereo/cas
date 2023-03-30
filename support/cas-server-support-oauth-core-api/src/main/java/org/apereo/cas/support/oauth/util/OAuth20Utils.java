@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,10 +103,9 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
                                                                              final String clientId) {
-        if (StringUtils.isBlank(clientId)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.getClientId().equalsIgnoreCase(clientId));
+        return FunctionUtils.doIfNotBlank(clientId,
+            () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.getClientId().equalsIgnoreCase(clientId)),
+            () -> null);
     }
 
     /**
@@ -117,10 +117,9 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
                                                                                 final String redirectUri) {
-        if (StringUtils.isBlank(redirectUri)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri));
+        return FunctionUtils.doIfNotBlank(redirectUri,
+            () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
+            () -> null);
     }
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
@@ -197,7 +196,6 @@ public class OAuth20Utils {
         return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
     }
 
-
     /**
      * Check the grant type against an expected grant type.
      *
@@ -230,7 +228,6 @@ public class OAuth20Utils {
     public static boolean isResponseModeType(final String type, final OAuth20ResponseModeTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
     }
-
 
     /**
      * Gets service request header if any.

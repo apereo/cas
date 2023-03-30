@@ -7,7 +7,9 @@ import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -46,9 +48,29 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     }
 
     @Test
+    public void verifyFindByQuery() {
+        val service1 = getOidcRegisteredService(UUID.randomUUID().toString());
+        val service2 = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(service1, service2);
+
+        assertEquals(1, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(OidcRegisteredService.class, "id", service1.getId())).count());
+        assertEquals(1, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(OidcRegisteredService.class, "id", service2.getId()),
+            RegisteredServiceQuery.of(OidcRegisteredService.class, "clientId", service2.getClientId()),
+            RegisteredServiceQuery.of(OidcRegisteredService.class, "name", service2.getName())).count());
+        assertEquals(0, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(CasRegisteredService.class, "clientId", service1.getClientId())).count());
+        assertEquals(0, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", service1.getClientId())).count());
+        assertEquals(1, servicesManager.findServicesBy(
+            RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", service1.getClientId(), true)).count());
+    }
+
+    @Test
     public void verifyWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas"
-            + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
+                          + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
         service0.setEvaluationOrder(0);
@@ -72,6 +94,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         val service = webApplicationServiceFactory.createService(url.toString());
         val result = servicesManager.findServiceBy(service);
         assertEquals(result, service1);
+        assertFalse(oidcServicesManagerRegisteredServiceLocator.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test

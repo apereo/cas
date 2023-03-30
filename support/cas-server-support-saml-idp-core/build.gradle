@@ -2,6 +2,7 @@ description = "Apereo CAS SAML Identity Provider Core"
 dependencies {
     implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
+    implementation libraries.cqengine
 
     api project(":api:cas-server-core-api-monitor")
     
