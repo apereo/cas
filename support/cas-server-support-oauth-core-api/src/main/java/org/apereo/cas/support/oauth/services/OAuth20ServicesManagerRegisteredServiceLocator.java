@@ -56,13 +56,16 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
 
     @Override
     public List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {
-        return List.of(
-            BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(OAuthRegisteredService.class, String.class, "clientId")),
-            BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(OAuthRegisteredService.class, String.class, "friendlyName")),
-            BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(OAuthRegisteredService.class, String.class, "@class")));
+        val indexes = super.getRegisteredServiceIndexes();
+        val registeredServiceIndexedType = getRegisteredServiceIndexedType();
+        indexes.add(BasicRegisteredServiceQueryIndex.hashIndex(
+            new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "clientId")));
+        return indexes;
+    }
+
+    @Override
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return OAuthRegisteredService.class;
     }
 
     protected boolean supportsInternal(final RegisteredService registeredService, final Service givenService) {

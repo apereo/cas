@@ -8,22 +8,24 @@ import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueComma
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.util.PublisherIdentifier;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
-import com.google.cloud.pubsub.v1.TopicAdminClient;
-import com.google.cloud.spring.core.GcpProjectIdProvider;
-import com.google.cloud.spring.pubsub.PubSubAdmin;
-import com.google.cloud.spring.pubsub.core.PubSubTemplate;
-import com.google.cloud.spring.pubsub.core.publisher.PubSubPublisherTemplate;
-import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
+import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
+import com.google.cloud.spring.autoconfigure.pubsub.GcpPubSubAutoConfiguration;
+import com.google.cloud.spring.autoconfigure.pubsub.GcpPubSubProperties;
 import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage;
 import com.google.cloud.spring.pubsub.support.converter.PubSubMessageConverter;
-import com.google.pubsub.v1.ProjectName;
 import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.Subscription;
 import com.google.pubsub.v1.Topic;
-import com.google.pubsub.v1.TopicName;
+import io.grpc.ManagedChannelBuilder;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
@@ -33,8 +35,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -51,9 +53,23 @@ import static org.mockito.Mockito.*;
 @Tag("GCP")
 @Import({
     GoogleCloudPubSubTicketRegistryTests.GoogleCloudTestConfiguration.class,
+    GcpContextAutoConfiguration.class,
+    GcpPubSubAutoConfiguration.class,
     GoogleCloudPubSubTicketRegistryConfiguration.class
 })
 @Getter
+@TestPropertySource(properties = {
+    "spring.cloud.gcp.pubsub.publisher.enable-message-ordering=true",
+    "spring.cloud.gcp.pubsub.publisher.endpoint=localhost:8085",
+
+    "spring.cloud.gcp.pubsub.emulator-host=localhost:8085",
+    "spring.cloud.gcp.pubsub.project-id=apereo-cas-gcp",
+
+    "spring.cloud.gcp.pubsub.health.lag-threshold=5",
+    "spring.cloud.gcp.pubsub.health.backlog-threshold=3",
+    "spring.cloud.gcp.pubsub.health.look-up-interval=2"
+})
+@EnabledIfListeningOnPort(port = 8085)
 public class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
@@ -109,44 +125,41 @@ public class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTest
 
     @TestConfiguration(value = "GoogleCloudPubSubTestConfiguration", proxyBeanMethods = false)
     public static class GoogleCloudTestConfiguration {
+
         @Bean
-        public GcpProjectIdProvider gcpProjectIdProvider() {
-            return () -> UUID.randomUUID().toString();
+        public TransportChannelProvider publisherTransportChannelProvider(final GcpPubSubProperties properties) {
+            val channel = ManagedChannelBuilder.forTarget(properties.getEmulatorHost()).usePlaintext().build();
+            return FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
         }
 
         @Bean
-        public PubSubAdmin pubSubAdmin(final GcpProjectIdProvider gcpProjectIdProvider) {
-            val topicAdminClient = mock(TopicAdminClient.class);
-            val listResponse = mock(TopicAdminClient.ListTopicsPagedResponse.class);
-            when(listResponse.iterateAll()).thenReturn(List.of());
-
-            val topic = Topic.newBuilder().setName(GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC).build();
-            when(topicAdminClient.createTopic(anyString())).thenReturn(topic);
-            when(topicAdminClient.createTopic(any(TopicName.class))).thenReturn(topic);
-
-            when(topicAdminClient.listTopics(any(ProjectName.class))).thenReturn(listResponse);
-
-            val subscriptionAdminClient = mock(SubscriptionAdminClient.class);
-            val listSubsResponse = mock(SubscriptionAdminClient.ListSubscriptionsPagedResponse.class);
-            when(listSubsResponse.iterateAll()).thenReturn(List.of());
-            when(subscriptionAdminClient.listSubscriptions(any(ProjectName.class))).thenReturn(listSubsResponse);
-            val subscription = Subscription.newBuilder().setName("MySubscription").build();
-            when(subscriptionAdminClient.createSubscription(any(Subscription.class))).thenReturn(subscription);
-
-            return new PubSubAdmin(gcpProjectIdProvider, topicAdminClient, subscriptionAdminClient);
+        public TransportChannelProvider subscriberTransportChannelProvider(final GcpPubSubProperties properties) {
+            val channel = ManagedChannelBuilder.forTarget(properties.getEmulatorHost()).usePlaintext().build();
+            return FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
         }
 
         @Bean
-        public PubSubTemplate pubSubTemplate() throws Exception {
-            val apiFuture = mock(CompletableFuture.class);
-            when(apiFuture.get()).thenReturn(Boolean.TRUE.toString());
-            val pubSubPublisherTemplate = mock(PubSubPublisherTemplate.class);
-            when(pubSubPublisherTemplate.publish(anyString(), any(PubsubMessage.class))).thenReturn(apiFuture);
-            when(pubSubPublisherTemplate.publish(anyString(), any(), anyMap())).thenReturn(apiFuture);
+        public TopicAdminSettings topicAdminSettings(
+            final GcpPubSubProperties properties) throws Exception {
+            val channel = ManagedChannelBuilder.forTarget(properties.getEmulatorHost()).usePlaintext().build();
+            val channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            return TopicAdminSettings.newBuilder()
+                .setCredentialsProvider(NoCredentialsProvider.create())
+                .setTransportChannelProvider(channelProvider)
+                .build();
+        }
 
-            val pubSubSubscriberTemplate = mock(PubSubSubscriberTemplate.class);
-
-            return new PubSubTemplate(pubSubPublisherTemplate, pubSubSubscriberTemplate);
+        @Bean
+        public SubscriptionAdminClient subscriptionAdminClient(
+            final GcpPubSubProperties properties) throws Exception {
+            val channel = ManagedChannelBuilder.forTarget(properties.getEmulatorHost()).usePlaintext().build();
+            val channelProvider =
+                FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            return SubscriptionAdminClient.create(
+                SubscriptionAdminSettings.newBuilder()
+                    .setCredentialsProvider(NoCredentialsProvider.create())
+                    .setTransportChannelProvider(channelProvider)
+                    .build());
         }
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
 import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
 
     @Override
     public boolean supports(final RegisteredService registeredService, final Service service) {
-        return (CasRegisteredService.class.isAssignableFrom(registeredService.getClass())
+        return (getRegisteredServiceIndexedType().isAssignableFrom(registeredService.getClass())
                 && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME))
                || (RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
                    && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME));
@@ -55,16 +56,20 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
 
     @Override
     public List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {
-        return List.of(BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(CasRegisteredService.class, long.class, "id")),
+        val registeredServiceIndexedType = getRegisteredServiceIndexedType();
+        return CollectionUtils.wrapArrayList(BasicRegisteredServiceQueryIndex.hashIndex(
+                new RegisteredServiceQueryAttribute(registeredServiceIndexedType, long.class, "id")),
             BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "name")),
+                new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "name")),
             BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "serviceId")),
+                new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "serviceId")),
             BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "friendlyName")),
+                new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "friendlyName")),
             BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(CasRegisteredService.class, String.class, "@class")));
+                new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "@class")));
     }
 
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return CasRegisteredService.class;
+    }
 }

@@ -13,10 +13,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.google.cloud.pubsub.v1.Subscriber;
-import com.google.cloud.spring.core.GcpProjectIdProvider;
 import com.google.cloud.spring.pubsub.PubSubAdmin;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
-import com.google.cloud.spring.pubsub.support.PubSubTopicUtils;
 import com.google.cloud.spring.pubsub.support.converter.PubSubMessageConverter;
 import com.google.pubsub.v1.DeadLetterPolicy;
 import com.google.pubsub.v1.Subscription;
@@ -80,7 +78,6 @@ public class GoogleCloudPubSubTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleCloudPubSubTopics")
     public Map<String, GoogleCloudPubSubMessageContext> googleCloudPubSubTopics(
-        final GcpProjectIdProvider gcpProjectIdProvider,
         @Qualifier("pubSubMessageConverter")
         final PubSubMessageConverter pubSubMessageConverter,
         @Qualifier("messageQueueTicketRegistryReceiver")
@@ -97,13 +94,11 @@ public class GoogleCloudPubSubTicketRegistryConfiguration {
         val topicName = GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC;
         val subscriptionName = topicName.concat("Subscription");
 
-        if (findTopicByName(allTopics, GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC).isEmpty()) {
-            pubSubAdmin.createTopic(GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC);
-        }
+        val deadLetterTopic = findTopicByName(allTopics, GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC)
+            .orElseGet(() -> pubSubAdmin.createTopic(GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC));
         val topic = findTopicByName(allTopics, topicName)
             .orElseGet(() -> Objects.requireNonNull(pubSubAdmin.createTopic(topicName)));
-        val subscription = getOrCreateSubscription(pubSubAdmin, gcpProjectIdProvider,
-            allSubcriptions, subscriptionName, topic);
+        val subscription = getOrCreateSubscription(pubSubAdmin, allSubcriptions, subscriptionName, topic, deadLetterTopic);
         LOGGER.debug("Created subscription [{}] for topic [{}]", subscription.getName(), topic.getName());
         val subscriber = subscribeToTopic(messageQueueTicketRegistryReceiver, pubSubTemplate, topic, subscription, pubSubMessageConverter);
         val context = new GoogleCloudPubSubMessageContext(topic, subscription, subscriber);
@@ -129,21 +124,18 @@ public class GoogleCloudPubSubTicketRegistryConfiguration {
     }
 
     private static Subscription getOrCreateSubscription(final PubSubAdmin pubSubAdmin,
-                                                        final GcpProjectIdProvider gcpProjectIdProvider,
                                                         final List<Subscription> allSubcriptions,
                                                         final String subscriptionName,
-                                                        final Topic topic) {
+                                                        final Topic topic,
+                                                        final Topic deadLetterTopic) {
         return allSubcriptions
             .stream()
             .filter(sub -> sub.getName().contains(subscriptionName))
             .findFirst()
             .orElseGet(() -> {
-                val deadLetterTopic = PubSubTopicUtils
-                    .toTopicName(GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC, gcpProjectIdProvider.getProjectId())
-                    .toString();
                 val deadLetterPolicy = DeadLetterPolicy
                     .newBuilder()
-                    .setDeadLetterTopic(deadLetterTopic)
+                    .setDeadLetterTopic(deadLetterTopic.getName())
                     .setMaxDeliveryAttempts(5)
                     .build();
                 return pubSubAdmin.createSubscription(Subscription.newBuilder()

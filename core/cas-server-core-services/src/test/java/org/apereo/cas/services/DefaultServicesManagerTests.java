@@ -35,6 +35,19 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
     }
 
     @Test
+    public void verifyInvalidServiceSave() {
+        val service = new CasRegisteredService();
+        service.setId(2233);
+        service.setName(TEST);
+        service.setServiceId(null);
+        assertThrows(IllegalArgumentException.class, () -> servicesManager.save(service));
+
+        service.setName(null);
+        service.setServiceId(TEST);
+        assertThrows(IllegalArgumentException.class, () -> servicesManager.save(service));
+    }
+
+    @Test
     public void verifyFindByName() {
         val service = new CasRegisteredService();
         service.setId(6100);

@@ -87,6 +87,11 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
         return Optional.empty();
     }
 
+    @Override
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return SamlRegisteredService.class;
+    }
+
     @RequiredArgsConstructor
     @Getter
     private static class SamlProtocolServiceAttribute implements Ordered {

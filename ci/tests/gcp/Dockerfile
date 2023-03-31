@@ -7,12 +7,17 @@ RUN apk add --update --no-cache openjdk11
 
 # Install Firestore Emulator.
 RUN gcloud components install cloud-firestore-emulator beta --quiet
+RUN gcloud components install pubsub-emulator beta --quiet
+RUN gcloud components update
 
 COPY entrypoint.sh .
 
-ENV PORT 8080
-EXPOSE "$PORT"
+ENV FIRESTORE_PORT 8080
+EXPOSE "$FIRESTORE_PORT"
 
-ENV FIRESTORE_PROJECT_ID "apereo-cas-firestore"
+ENV PUBSUB_PORT 8085
+EXPOSE "$PUBSUB_PORT"
+
+ENV GCP_PROJECT_ID "apereo-cas-gcp"
 
 ENTRYPOINT ["./entrypoint.sh"]

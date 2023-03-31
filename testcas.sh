@@ -178,7 +178,7 @@ while (( "$#" )); do
                 task+="testCipher "
                 ;;
             gcp)
-                isDockerOnLinux && ./ci/tests/gcp/run-firestore-server.sh
+                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
                 task+="testGCP "
                 ;;
             web)

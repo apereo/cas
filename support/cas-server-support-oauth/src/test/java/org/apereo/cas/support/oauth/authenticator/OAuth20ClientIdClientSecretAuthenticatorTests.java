@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -112,6 +113,8 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
             val credentials = new UsernamePasswordCredentials("serviceWithoutSecret", refreshToken.getId());
             val registeredService = new OAuthRegisteredService();
             registeredService.setClientId(credentials.getUsername());
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(CoreAuthenticationTestUtils.CONST_TEST_URL);
             servicesManager.save(registeredService);
 
             val request = new MockHttpServletRequest();
@@ -161,9 +164,11 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
         public void verifyAuthenticationWithoutResolvedPrincipal() {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
-            val service = new OAuthRegisteredService();
-            service.setClientId(credentials.getUsername());
-            servicesManager.save(service);
+            val registeredService = new OAuthRegisteredService();
+            registeredService.setClientId(credentials.getUsername());
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(CoreAuthenticationTestUtils.CONST_TEST_URL);
+            servicesManager.save(registeredService);
 
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());

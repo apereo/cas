@@ -4,9 +4,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
-import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
-import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.util.CollectionUtils;
@@ -14,8 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
-
-import java.util.List;
 
 /**
  * This is {@link OidcServicesManagerRegisteredServiceLocator}.
@@ -56,14 +51,8 @@ public class OidcServicesManagerRegisteredServiceLocator extends OAuth20Services
     }
 
     @Override
-    public List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {
-        return List.of(
-            BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(OidcRegisteredService.class, String.class, "clientId")),
-            BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(OidcRegisteredService.class, String.class, "friendlyName")),
-            BasicRegisteredServiceQueryIndex.hashIndex(
-                new RegisteredServiceQueryAttribute(OidcRegisteredService.class, String.class, "@class")));
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return OidcRegisteredService.class;
     }
 }
 
