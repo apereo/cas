@@ -46,8 +46,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
     protected final ServicesManager servicesManager;
 
     /**
-     * Indicates whether RefreshToken issued and linked to a ticket-granting ticket
-     * should also be removed as part of logout
+     * Indicates whether token expiration policy should be standalone or not
      */
     protected final  boolean removeDescendantTickets;
 
