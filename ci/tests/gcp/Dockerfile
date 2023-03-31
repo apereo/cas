@@ -1,4 +1,4 @@
-ARG GCLOUD_SDK_VERSION=423.0.0-alpine
+ARG GCLOUD_SDK_VERSION=424.0.0-alpine
 
 FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:$GCLOUD_SDK_VERSION
 
@@ -12,7 +12,7 @@ RUN gcloud components update
 
 COPY entrypoint.sh .
 
-ENV FIRESTORE_PORT 8080
+ENV FIRESTORE_PORT 9980
 EXPOSE "$FIRESTORE_PORT"
 
 ENV PUBSUB_PORT 8085

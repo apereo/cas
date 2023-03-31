@@ -7,11 +7,14 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreProperties;
+import com.google.cloud.spring.core.GcpProjectIdProvider;
 import com.google.firestore.v1.FirestoreGrpc;
 import lombok.Getter;
 import lombok.val;
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -47,9 +51,10 @@ import static org.mockito.Mockito.*;
     GcpContextAutoConfiguration.class
 })
 @TestPropertySource(properties = {
-    "spring.cloud.gcp.firestore.project-id=apereo-cas-gcp",
+    "spring.cloud.gcp.project-id=apereo-cas-gcp",
+    
     "spring.cloud.gcp.firestore.emulator.enabled=true",
-    "spring.cloud.gcp.firestore.host-port=localhost:8080"
+    "spring.cloud.gcp.firestore.host-port=localhost:9980"
 })
 public class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 100;
@@ -80,6 +85,17 @@ public class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryT
 
     @TestConfiguration(value = "GoogleCloudFirestoreTestConfiguration", proxyBeanMethods = false)
     public static class GoogleCloudFirestoreTestConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public CredentialsProvider googleCredentials(){
+            return NoCredentialsProvider.create();
+        }
+
+        @Bean
+        public GcpProjectIdProvider gcpProjectIdProvider(final GcpFirestoreProperties properties) {
+            return properties::getProjectId;
+        }
 
         @Bean
         public FirestoreGrpc.FirestoreStub firestoreGrpcStub() {
