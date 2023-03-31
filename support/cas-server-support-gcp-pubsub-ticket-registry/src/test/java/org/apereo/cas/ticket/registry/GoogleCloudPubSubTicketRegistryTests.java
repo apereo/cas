@@ -59,11 +59,12 @@ import static org.mockito.Mockito.*;
 })
 @Getter
 @TestPropertySource(properties = {
+    "spring.cloud.gcp.project-id=apereo-cas-gcp",
+    
     "spring.cloud.gcp.pubsub.publisher.enable-message-ordering=true",
     "spring.cloud.gcp.pubsub.publisher.endpoint=localhost:8085",
 
     "spring.cloud.gcp.pubsub.emulator-host=localhost:8085",
-    "spring.cloud.gcp.pubsub.project-id=apereo-cas-gcp",
 
     "spring.cloud.gcp.pubsub.health.lag-threshold=5",
     "spring.cloud.gcp.pubsub.health.backlog-threshold=3",
