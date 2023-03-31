@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
@@ -104,7 +105,10 @@ public class OAuth20Utils {
     public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
                                                                              final String clientId) {
         return FunctionUtils.doIfNotBlank(clientId,
-            () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.getClientId().equalsIgnoreCase(clientId)),
+            () -> {
+                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId, true);
+                return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
+            },
             () -> null);
     }
 

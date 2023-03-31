@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -328,20 +329,29 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(Objects::nonNull)
             .map(this::applyTemplate)
             .filter(Objects::nonNull)
-            .collect(Collectors.toMap(r -> {
+            .collect(Collectors.toMap(service -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
-                    r.getServiceId(), r.getName(), r.getId());
-                return r.getId();
-            }, Function.identity(), (r, s) -> s));
-        configurationContext.getServicesCache().invalidateAll();
-        configurationContext.getServicesCache().putAll(servicesMap);
+                    service.getServiceId(), service.getName(), service.getId());
+                return service.getId();
+            }, Function.identity(), (__, service) -> service));
+        cacheRegisteredServices(servicesMap);
         loadInternal();
         val clientInfo = ClientInfoHolder.getClientInfo();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
         evaluateExpiredServiceDefinitions();
-        LOGGER.info("Loaded [{}] service(s) from [{}].", configurationContext.getServicesCache().asMap().size(),
+
+        val results = configurationContext.getServicesCache().asMap();
+        LOGGER.info("Loaded [{}] service(s) from [{}].", results.size(),
             configurationContext.getServiceRegistry().getName());
-        return configurationContext.getServicesCache().asMap().values();
+        return results.values();
+    }
+
+    private Map<Long, RegisteredService> cacheRegisteredServices(final Map<Long, RegisteredService> servicesMap) {
+        val servicesCache = configurationContext.getServicesCache();
+        servicesCache.invalidateAll();
+        servicesCache.putAll(servicesMap);
+        indexedRegisteredServices.addAll(servicesMap.values());
+        return servicesCache.asMap();
     }
 
     @Override
