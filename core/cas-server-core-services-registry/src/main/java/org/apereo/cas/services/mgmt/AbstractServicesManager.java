@@ -1,7 +1,11 @@
-package org.apereo.cas.services;
+package org.apereo.cas.services.mgmt;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
 import org.apereo.cas.services.query.RegisteredServiceQueryIndex;

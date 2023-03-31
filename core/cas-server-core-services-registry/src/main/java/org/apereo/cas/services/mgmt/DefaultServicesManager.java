@@ -1,4 +1,8 @@
-package org.apereo.cas.services;
+package org.apereo.cas.services.mgmt;
+
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 
 import java.util.Collection;
 import java.util.Comparator;

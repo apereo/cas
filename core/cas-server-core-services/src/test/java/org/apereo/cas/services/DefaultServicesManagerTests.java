@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 
 import lombok.val;
