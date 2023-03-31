@@ -26,7 +26,7 @@ public class RegexRegisteredService extends BaseWebBasedRegisteredService {
         LOGGER.warn("CAS has located a service definition type that is now tagged as [RegexRegisteredService]. "
                     + "This registered service definition type is scheduled for removal and should no longer be "
                     + "used for CAS-enabled applications, and MUST be replaced with [{}] instead. We STRONGLY advise "
-                    + "that you update your service definitions and make the replacement to faciliate future CAS upgrades.",
+                    + "that you update your service definitions and make the replacement to facilitate future CAS upgrades.",
             CasRegisteredService.class.getName());
     }
 

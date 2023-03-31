@@ -9,7 +9,10 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -131,6 +134,18 @@ public class OidcClientRegistrationRequestTranslator {
             registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri());
         }
 
+        FunctionUtils.doIfNotNull(registrationRequest.getGrantTypes(),
+            __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
+        FunctionUtils.doIfNotNull(registrationRequest.getResponseTypes(),
+            __ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())));
+
+        if (registeredService.getSupportedGrantTypes().isEmpty()) {
+            registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+        }
+        if (registeredService.getSupportedResponseTypes().isEmpty()) {
+            registeredService.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.getType()));
+        }
+        
         if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedReponseAlg())) {
             registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedReponseAlg());
         }

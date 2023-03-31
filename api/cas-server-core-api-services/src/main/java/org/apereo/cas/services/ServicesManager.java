@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.monitor.Monitorable;
 
 import lombok.val;
 import org.springframework.core.Ordered;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Monitorable
 public interface ServicesManager extends Ordered {
     /**
      * Implementation bean name.
