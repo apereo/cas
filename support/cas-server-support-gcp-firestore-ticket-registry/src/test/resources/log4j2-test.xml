@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"  />
-        <Logger name="com.google.cloud" level="error" />
+        <Logger name="com.google.cloud" level="debug" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

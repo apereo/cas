@@ -79,6 +79,7 @@ A new ticket registry implementation backed by [Google Cloud's Firestore](../tic
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now prepped to also a starter test suite based on Puppeteer.
+- Registered service types are now internally indexed by the services management facility to assist with advanced and faster querying oeprations.
 
 ## Library Upgrades
        
