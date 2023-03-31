@@ -7,8 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
@@ -24,12 +22,12 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -52,7 +50,7 @@ import static org.mockito.Mockito.*;
 })
 @TestPropertySource(properties = {
     "spring.cloud.gcp.project-id=apereo-cas-gcp",
-    
+
     "spring.cloud.gcp.firestore.emulator.enabled=true",
     "spring.cloud.gcp.firestore.host-port=localhost:9980"
 })
@@ -87,12 +85,6 @@ public class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryT
     public static class GoogleCloudFirestoreTestConfiguration {
 
         @Bean
-        @ConditionalOnMissingBean
-        public CredentialsProvider googleCredentials(){
-            return NoCredentialsProvider.create();
-        }
-
-        @Bean
         public GcpProjectIdProvider gcpProjectIdProvider(final GcpFirestoreProperties properties) {
             return properties::getProjectId;
         }
@@ -111,6 +103,7 @@ public class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryT
                     .setEndpoint(properties.getHostPort())
                     .build())
                 .setEmulatorHost(properties.getHostPort())
+                .setDatabaseId(UUID.randomUUID().toString())
                 .build();
         }
     }
