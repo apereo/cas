@@ -176,6 +176,7 @@ public class CoreAuthenticationTestUtils {
 
     public static CasModelRegisteredService getRegisteredService(final String url) {
         val service = mock(CasModelRegisteredService.class);
+        when(service.getFriendlyName()).thenCallRealMethod();
         when(service.getServiceId()).thenReturn(url);
         when(service.getName()).thenReturn("service name");
         when(service.getId()).thenReturn(Long.MAX_VALUE);

@@ -36,6 +36,11 @@ public class WsFederationServicesManagerRegisteredServiceLocator extends Default
     }
 
     @Override
+    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
+        return WSFederationRegisteredService.class;
+    }
+
+    @Override
     public boolean supports(final RegisteredService registeredService, final Service service) {
         return service.getAttributes().containsKey(WSFederationConstants.WREPLY)
             && registeredService instanceof WSFederationRegisteredService;

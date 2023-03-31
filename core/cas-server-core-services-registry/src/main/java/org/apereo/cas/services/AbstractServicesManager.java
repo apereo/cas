@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
+import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
@@ -47,6 +48,7 @@ import java.util.stream.Stream;
 @Monitorable
 public abstract class AbstractServicesManager implements ServicesManager {
     protected final ServicesManagerConfigurationContext configurationContext;
+
     private final IndexedCollection<RegisteredService> indexedRegisteredServices;
 
     protected AbstractServicesManager(final ServicesManagerConfigurationContext configurationContext) {
@@ -55,7 +57,15 @@ public abstract class AbstractServicesManager implements ServicesManager {
         this.indexedRegisteredServices = new ConcurrentIndexedCollection<>();
         configurationContext.getRegisteredServiceLocators()
             .forEach(locator -> locator.getRegisteredServiceIndexes()
-                .forEach(index -> this.indexedRegisteredServices.addIndex((AttributeIndex) index.getIndex())));
+                .stream()
+                .map(RegisteredServiceQueryIndex::getIndex)
+                .filter(idx -> idx instanceof AttributeIndex<?, ?>)
+                .map(AttributeIndex.class::cast)
+                .forEach(index -> {
+                    LOGGER.debug("Adding registered service index [{}] supplied by [{}]",
+                        index.getAttribute().toString(), locator.getClass().getSimpleName());
+                    indexedRegisteredServices.addIndex(index);
+                }));
     }
 
     private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
@@ -66,16 +76,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public void save(final Stream<RegisteredService> toSave) {
-        val clientInfo = ClientInfoHolder.getClientInfo();
-        val resultingStream = toSave.peek(registeredService ->
-            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo)));
-        configurationContext.getServiceRegistry()
-            .save(resultingStream)
-            .forEach(r -> {
-                cacheRegisteredService(r);
-                saveInternal(r);
-                publishEvent(new CasRegisteredServiceSavedEvent(this, r, clientInfo));
-            });
+        toSave.forEach(this::save);
     }
 
     @Override
@@ -85,6 +86,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
+        if (StringUtils.isBlank(registeredService.getName())
+            || StringUtils.isBlank(registeredService.getServiceId())
+            || StringUtils.isBlank(registeredService.getFriendlyName())) {
+            throw new IllegalArgumentException("Unable to save invalid registered service with id " + registeredService.getId()
+                                               + ". Service name, service id or friendly name are undefined");
+        }
+
         val clientInfo = ClientInfoHolder.getClientInfo();
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
         val savedService = configurationContext.getServiceRegistry().save(registeredService);
@@ -152,7 +160,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         var foundService = configurationContext.getRegisteredServiceLocators()
             .stream()
             .map(locator -> locator.locate(candidates, service))
-            .filter(s -> validateRegisteredService(s) != null)
+            .filter(registeredService -> validateRegisteredService(registeredService) != null)
             .findFirst();
 
         if (foundService.isEmpty()) {

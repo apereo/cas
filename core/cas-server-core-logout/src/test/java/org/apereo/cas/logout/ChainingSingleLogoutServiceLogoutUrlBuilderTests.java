@@ -24,6 +24,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -66,6 +67,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
         when(registeredService.matches(anyString())).thenReturn(Boolean.TRUE);
         when(registeredService.getAccessStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy());
         when(registeredService.getLogoutUrl()).thenReturn("https://somewhere.org");
+        when(registeredService.getName()).thenReturn(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
         assertTrue(builder.supports(registeredService, service, Optional.empty()));

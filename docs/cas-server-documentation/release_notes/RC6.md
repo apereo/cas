@@ -9,7 +9,7 @@ category: Planning
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
 that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks,
-statistics or completion of features. To gain confidence in a particular
+statistics or completion of features or bug fixes. To gain confidence in a particular
 release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
@@ -31,6 +31,7 @@ maintenance and release planning, especially when it comes to addressing critica
 
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
+- [Support](https://apereo.github.io/cas/Support.html)
 
 ## System Requirements
 
@@ -55,7 +56,13 @@ Furthermore, sensible defaults would be used if grant types or response types ar
 Modules, features and plugins that support functionality for Apache CouchDb or Couchbase, previously deprecated, are now removed.
 If you are currently using any of these plugins or features, we recommend that you consider a 
 better alternative or prepare to adopt and maintain the feature on your own.
-    
+
+### Testing Strategy
+
+The collection of end-to-end browser [tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `396` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
 ### Spring Boot
 
 CAS has switched and upgraded to Spring Boot `3.1.x`, presently in milestone/release-candidate mode, and one that is 
@@ -71,6 +78,7 @@ A new ticket registry implementation backed by [Google Cloud's Firestore](../tic
 - Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics.
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
+- [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now prepped to also a starter test suite based on Puppeteer.
 
 ## Library Upgrades
        

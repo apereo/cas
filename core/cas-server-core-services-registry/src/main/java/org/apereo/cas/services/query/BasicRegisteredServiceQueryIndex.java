@@ -7,6 +7,7 @@ import com.googlecode.cqengine.index.AttributeIndex;
 import com.googlecode.cqengine.index.hash.HashIndex;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 /**
  * This is {@link BasicRegisteredServiceQueryIndex}.
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Getter
+@ToString
 public class BasicRegisteredServiceQueryIndex implements RegisteredServiceQueryIndex<AttributeIndex<RegisteredService, Object>> {
     private final AttributeIndex index;
 
