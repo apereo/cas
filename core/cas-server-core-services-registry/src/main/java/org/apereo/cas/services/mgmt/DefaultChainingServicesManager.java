@@ -1,9 +1,12 @@
-package org.apereo.cas.services;
+package org.apereo.cas.services.mgmt;
 
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.ChainingServicesManager;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;

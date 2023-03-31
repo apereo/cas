@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.RandomUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
