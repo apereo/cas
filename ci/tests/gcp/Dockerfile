@@ -5,7 +5,7 @@ FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:$GCLOUD_SDK_VERSION
 # Install Java 8 JRE (required for Firestore emulator).
 RUN apk add --update --no-cache openjdk11
 
-# Install Firestore Emulator.
+# Install Emulators
 RUN gcloud components install cloud-firestore-emulator beta --quiet
 RUN gcloud components install pubsub-emulator beta --quiet
 RUN gcloud components update
