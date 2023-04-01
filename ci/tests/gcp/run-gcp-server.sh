@@ -7,7 +7,8 @@ docker build ci/tests/gcp/ -t cas/gcp:latest
 
 echo "Running GCP docker image..."
 docker stop gcp-server || true
-docker run --name gcp-server -d --rm -p 9980:9980 -p 8085:8085 cas/gcp
+docker run --name gcp-server -d --rm -p 9980:9980 -p 8085:8085 cas/gcp:latest
+docker logs gcp-server &
 sleep 5
 docker ps | grep "gcp-server"
 retVal=$?
