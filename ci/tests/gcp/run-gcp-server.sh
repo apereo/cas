@@ -7,9 +7,9 @@ function runContainer() {
  docker build ci/tests/gcp/ --build-arg GCLOUD_COMPONENT="$1" -t cas/gcp-$1:latest
  retVal=$?
  if [ $retVal == 0 ]; then
-     echo "GCP $1 docker container is running."
+     echo "GCP $1 docker container is built successfully."
  else
-     echo "GCP $1 docker container failed to start."
+     echo "GCP $1 docker container failed to build."
      exit $retVal
  fi
 
@@ -27,7 +27,7 @@ function runContainer() {
  esac
 
  docker run --name gcp-$1-server --rm -d -p $ports cas/gcp-$1:latest
- docker logs gcp-$1-server &
+# docker logs gcp-$1-server &
  sleep 5
  docker ps | grep "gcp-$1-server"
  retVal=$?
