@@ -3,6 +3,7 @@ name: Build
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
+  GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache"
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
@@ -17,10 +18,8 @@ env:
 on:
   schedule:
     - cron: '0 0 * * *'
-      
-#on:
-#  push:
-#    branches: [ master ]
+  push:
+    branches: [ master ]
 #  pull_request:
 #    types: [ labeled ]
 #    branches: [ master ]
@@ -81,7 +80,7 @@ jobs:
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
       - name: Download Dependencies
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
+        run: ./gradlew downloadDependencies ${{ env.GRADLE_BUILD_OPTIONS }}
       - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
@@ -125,7 +124,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel --max-workers=8
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
       - uses: actions/upload-artifact@v3
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
@@ -161,7 +160,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel --max-workers=8
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
 
   ##########################################################################
 
@@ -203,4 +202,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel --max-workers=8
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
