@@ -21,8 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.StreamUtils;
 
@@ -195,9 +193,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .map(map -> {
-                val query = isCipherExecutorEnabled()
-                    ? new Query(Criteria.where(TicketHolder.FIELD_NAME_PRINCIPAL).is(encodeTicketId(principalId)))
-                    : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, 10));
+                val query =
+                    new Query(Criteria.where(TicketHolder.FIELD_NAME_PRINCIPAL).is(encodeTicketId(principalId)));
                 return mongoTemplate.stream(query, TicketHolder.class, map);
             })
             .flatMap(StreamUtils::createStreamFromIterator)
