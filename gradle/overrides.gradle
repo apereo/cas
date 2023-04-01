@@ -144,7 +144,11 @@ configurations.all {
                     details.useVersion("${jacksonVersion}")
                 }
                 if (requested.group == "io.micrometer" && requested.name.startsWith("micrometer-"))  {
-                    details.useVersion("${micrometerVersion}")
+                    if (requested.name.contains("tracing")) {
+                        details.useVersion("${micrometerOtelVersion}")
+                    } else {
+                        details.useVersion("${micrometerVersion}")
+                    }
                 }
                 if (requested.group == "org.apache.wss4j")  {
                     details.useVersion("${wss4jVersion}")
