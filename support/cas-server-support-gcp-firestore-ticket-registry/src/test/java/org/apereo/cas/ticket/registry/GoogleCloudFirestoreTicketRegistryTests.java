@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
     GcpContextAutoConfiguration.class
 })
 @TestPropertySource(properties = {
-    "spring.cloud.gcp.project-id=apereo-cas-gcp",
+    "spring.cloud.gcp.firestore.project-id=apereo-cas-gcp",
 
     "spring.cloud.gcp.firestore.emulator.enabled=true",
     "spring.cloud.gcp.firestore.host-port=localhost:9980"
