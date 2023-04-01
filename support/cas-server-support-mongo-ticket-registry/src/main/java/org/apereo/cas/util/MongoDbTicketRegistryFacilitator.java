@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -62,11 +61,6 @@ public class MongoDbTicketRegistryFacilitator {
                 MongoDbConnectionFactory.dropCollectionIndexes(collection);
             }
 
-            val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
-                .onField(TicketHolder.FIELD_NAME_JSON)
-                .onField(TicketHolder.FIELD_NAME_TYPE)
-                .onField(TicketHolder.FIELD_NAME_ID)
-                .build();
             val expireIndex = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC);
             
             val timeout = ticket.getProperties().getStorageTimeout();
@@ -76,7 +70,6 @@ public class MongoDbTicketRegistryFacilitator {
 
             val expectedIndexes = new ArrayList<IndexDefinition>();
             expectedIndexes.add(expireIndex);
-            expectedIndexes.add(columnsIndex);
             LOGGER.debug("Expected indexes are [{}]", expectedIndexes);
             MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, expectedIndexes);
         }
