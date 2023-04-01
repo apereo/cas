@@ -6,8 +6,8 @@ FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:$GCLOUD_SDK_VERSION
 RUN apk add --update --no-cache openjdk11
 
 # Install Emulators
-RUN gcloud components install cloud-firestore-emulator beta --quiet
-RUN gcloud components install pubsub-emulator beta --quiet
+RUN gcloud components install cloud-firestore-emulator beta
+RUN gcloud components install pubsub-emulator beta
 RUN gcloud components update
 
 COPY entrypoint.sh .
