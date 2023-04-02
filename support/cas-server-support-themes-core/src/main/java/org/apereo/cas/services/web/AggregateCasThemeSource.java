@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- * This is {@link AggregateCasThemeSource}.
+ * This is {@link AggregateCasThemeSource} which merges all the theme resource bundles that it can find.
  *
  * @author Hal Deadman
  * @since 6.6.8
@@ -27,6 +27,7 @@ import java.util.Properties;
 public class AggregateCasThemeSource extends ResourceBundleThemeSource {
     private final CasConfigurationProperties casProperties;
 
+    @Nonnull
     @Override
     protected MessageSource createMessageSource(
         @Nonnull
@@ -46,7 +47,7 @@ public class AggregateCasThemeSource extends ResourceBundleThemeSource {
                         source.addMessage(key.toString(), Locale.getDefault(), value.toString());
                     });
                 } catch (final IOException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.warn("Error loading resources from bundle: [{}] - [{}]", path, e.getMessage());
                 }
             });
         return source;
