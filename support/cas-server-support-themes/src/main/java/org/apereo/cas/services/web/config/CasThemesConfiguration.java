@@ -3,7 +3,9 @@ package org.apereo.cas.services.web.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.AggregateCasThemeSource;
 import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.DefaultCasThemeSource;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
@@ -55,6 +57,9 @@ public class CasThemesConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeSource themeSource(final CasConfigurationProperties casProperties) {
+        if (casProperties.getView().getThemeSourceType().equals(ViewProperties.ThemeSourceTypes.AGGREGATE)) {
+            return new AggregateCasThemeSource(casProperties);
+        }
         return new DefaultCasThemeSource(casProperties);
     }
 
