@@ -72,10 +72,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         }
 
         val responseType = getResponseTypeFromRequest(context);
-        if (!verifyResponseType(context, responseType)) {
-            return false;
-        }
-        return true;
+        return verifyResponseType(context, responseType);
     }
 
     /**

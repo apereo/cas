@@ -64,7 +64,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         assertEquals(0, servicesManager.findServicesBy(
             RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", service1.getClientId())).count());
         assertEquals(1, servicesManager.findServicesBy(
-            RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", service1.getClientId(), true)).count());
+            RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", service1.getClientId()).withIncludeAssignableTypes(true)).count());
     }
 
     @Test

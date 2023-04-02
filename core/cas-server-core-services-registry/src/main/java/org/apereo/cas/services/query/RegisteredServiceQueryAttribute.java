@@ -36,7 +36,7 @@ public class RegisteredServiceQueryAttribute extends SimpleAttribute<RegisteredS
             query.isIncludeAssignableTypes()
                 ? new IsAssignableFrom<>(classAttribute, serviceClass)
                 : QueryFactory.equal(classAttribute, serviceClass),
-            QueryFactory.equal(this, query.getValue())
+             QueryFactory.equal(this, query.getValue())
         );
     }
 

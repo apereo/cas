@@ -106,7 +106,7 @@ public class OAuth20Utils {
                                                                              final String clientId) {
         return FunctionUtils.doIfNotBlank(clientId,
             () -> {
-                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId, true);
+                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
                 return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
             },
             () -> null);

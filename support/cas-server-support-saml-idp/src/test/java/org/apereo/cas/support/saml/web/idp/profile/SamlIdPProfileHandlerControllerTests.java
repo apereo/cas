@@ -44,6 +44,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     public void verifyNoMetadataForRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName("SAML2Service");
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
@@ -55,9 +56,10 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifyNoSignAuthnRequest() throws Exception {
+    public void verifyNoSignAuthnRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName("SAML2Service");
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
