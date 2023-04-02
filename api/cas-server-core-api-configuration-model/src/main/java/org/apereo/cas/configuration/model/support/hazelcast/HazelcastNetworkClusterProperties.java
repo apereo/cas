@@ -41,9 +41,10 @@ public class HazelcastNetworkClusterProperties implements Serializable {
 
     /**
      * Sets the well known members.
-     * If members is empty, calling this method will have the same effect as calling clear().
-     * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which
-     * indicates multiple members are going to be added.
+     * If members is empty, calling this method will have the same effect as calling {@code clear()}.
+     * A member can be a comma separated string, e..g {@code 10.11.12.1,10.11.12.2} which
+     * indicates multiple members are going to be added. The list of members must include ALL
+     * CAS server node, including the current node that owns this configuration.
      */
     @RequiredProperty
     private List<String> members = Stream.of("localhost").toList();

@@ -57,9 +57,7 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getServicesManager(), clientId.get());
 
             LOGGER.trace("Checking if the client [{}] is eligible for refresh token authentication", clientId.get());
-            if (registeredService != null && !OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
-                return true;
-            }
+            return registeredService != null && !OAuth20Utils.doesServiceNeedAuthentication(registeredService);
         }
         return false;
     }

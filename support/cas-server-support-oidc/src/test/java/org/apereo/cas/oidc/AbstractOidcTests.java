@@ -458,11 +458,11 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20AccessToken getAccessToken(final Principal principal) throws Exception {
-        return getAccessToken(principal, StringUtils.EMPTY, "clientId");
+        return getAccessToken(principal, StringUtils.EMPTY, "clientid");
     }
 
     protected OAuth20AccessToken getAccessToken() throws Exception {
-        return getAccessToken(StringUtils.EMPTY, "clientId");
+        return getAccessToken(StringUtils.EMPTY, "clientid");
     }
 
     protected OAuth20AccessToken getAccessToken(final String clientId) throws Exception {
