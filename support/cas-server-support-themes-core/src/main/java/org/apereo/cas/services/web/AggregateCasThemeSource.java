@@ -38,7 +38,7 @@ public class AggregateCasThemeSource extends ResourceBundleThemeSource {
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
             .filter(ResourceUtils::doesResourceExist)
             .forEach(path -> {
-                try (val is = ResourceUtils.getRawResourceFrom(path.toString()).getInputStream()) {
+                try (val is = ResourceUtils.getRawResourceFrom(path).getInputStream()) {
                     val properties = new Properties();
                     properties.load(is);
                     properties.forEach((key, value) -> {
