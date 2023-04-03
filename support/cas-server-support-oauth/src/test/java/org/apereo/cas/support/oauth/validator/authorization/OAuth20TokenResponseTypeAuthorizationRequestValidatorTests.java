@@ -14,6 +14,8 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +30,7 @@ public class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests extends 
     public void verifySupports() throws Exception {
         val service = new OAuthRegisteredService();
         service.setName("OAuth");
-        service.setClientId("client");
+        service.setClientId(UUID.randomUUID().toString());
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
         servicesManager.save(service);
@@ -41,7 +43,7 @@ public class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests extends 
         val context = new JEEContext(request, response);
 
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
-        request.setParameter(OAuth20Constants.CLIENT_ID, "client");
+        request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
         assertFalse(validator.supports(context));
 

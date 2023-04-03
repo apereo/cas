@@ -92,7 +92,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
                                                                            final RegisteredService service) {
         if (service == null || !service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
-            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
+            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service);
             return new LinkedHashMap<>(0);
         }
 
