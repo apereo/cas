@@ -3,12 +3,10 @@ package org.apereo.cas.support.pac4j.serialization;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializerBase;
 import lombok.val;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oidc.profile.OidcProfile;
@@ -25,34 +23,35 @@ public class DelegatedClientJacksonModule extends SimpleModule {
     private static final long serialVersionUID = 4380897174293794761L;
 
     public DelegatedClientJacksonModule() {
-        addSerializer(OidcProfile.class, new CommonProfileSerializer(OidcProfile.class));
+        addSerializer(OidcProfile.class, new CommonProfileSerializer<OidcProfile>(OidcProfile.class));
+        addDeserializer(OidcProfile.class, new CommonProfileDeserializer<OidcProfile>(OidcProfile.class));
     }
 
-    @RequiredArgsConstructor
-    private static class CommonProfileSerializer<T extends CommonProfile> extends JsonSerializer<T> {
-        private final Class<T> typeToHandle;
+    private static class CommonProfileSerializer<T extends CommonProfile> extends ToStringSerializerBase {
+        private static final long serialVersionUID = 4143814451543166784L;
 
-        private void serialize(final T value, final JsonGenerator gen) throws IOException {
-            val profile = EncodingUtils.encodeBase64(SerializationUtils.serialize(value));
-            gen.writeString(profile);
+        public CommonProfileSerializer(Class<T> handledType) {
+            super(handledType);
         }
 
         @Override
-        public void serialize(final T value, final JsonGenerator gen,
-            final SerializerProvider serializerProvider) throws IOException {
-            serialize(value, gen);
+        public String valueToString(Object value) {
+            val profile = SerializationUtils.serialize((T) value);
+            return EncodingUtils.encodeBase64(profile);
+        }
+    }
+
+    private static class CommonProfileDeserializer<T extends CommonProfile> extends FromStringDeserializer<T> {
+        private static final long serialVersionUID = -91663841137716758L;
+
+        public CommonProfileDeserializer(Class<T> vc) {
+            super(vc);
         }
 
         @Override
-        public void serializeWithType(final T value, final JsonGenerator gen,
-            final SerializerProvider serializers, final TypeSerializer typeSer)
-            throws IOException {
-            serialize(value, gen);
-        }
-
-        @Override
-        public Class<T> handledType() {
-            return typeToHandle;
+        protected T _deserialize(String value, DeserializationContext ctxt) throws IOException {
+            val profile = EncodingUtils.decodeBase64(value);
+            return (T) SerializationUtils.deserialize(profile, handledType());
         }
     }
 }
