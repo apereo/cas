@@ -41,9 +41,10 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() throws Exception {
+        val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
         val logic = new DefaultSecurityLogic();
         logic.setLoadProfilesFromSession(false);

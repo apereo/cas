@@ -180,8 +180,6 @@ public abstract class AbstractOAuth20Tests {
 
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
 
-    public static final String CLIENT_ID = "1";
-
     public static final String CLIENT_SECRET = "secret";
 
     public static final String WRONG_CLIENT_SECRET = "wrongSecret";
@@ -372,12 +370,13 @@ public abstract class AbstractOAuth20Tests {
         val tgt = new MockTicketGrantingTicket("casuser");
         val service = RegisteredServiceTestUtils.getService();
 
+        val clientId = UUID.randomUUID().toString();
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getId()).thenReturn(OAuth20AccessToken.PREFIX + "-123456");
         when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(accessToken.getService()).thenReturn(service);
-        when(accessToken.getClientId()).thenReturn(CLIENT_ID);
+        when(accessToken.getClientId()).thenReturn(clientId);
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         return accessToken;
     }
@@ -396,7 +395,7 @@ public abstract class AbstractOAuth20Tests {
     protected static OAuthRegisteredService getRegisteredService(final String serviceId,
                                                                  final String secret,
                                                                  final Set<OAuth20GrantTypes> grantTypes) {
-        return getRegisteredService(serviceId, CLIENT_ID, secret, grantTypes);
+        return getRegisteredService(serviceId, UUID.randomUUID().toString(), secret, grantTypes);
     }
 
     protected static OAuthRegisteredService getRegisteredService(final String serviceId,
@@ -409,8 +408,8 @@ public abstract class AbstractOAuth20Tests {
         service.setClientId(clientId);
         service.setClientSecret(secret);
         service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        service.setSupportedGrantTypes(
-            grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
+        service.setSupportedGrantTypes(grantTypes.stream().map(OAuth20GrantTypes::getType)
+            .collect(Collectors.toCollection(HashSet::new)));
         return service;
     }
 
@@ -501,12 +500,12 @@ public abstract class AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
-        val auth = CLIENT_ID + ':' + CLIENT_SECRET;
+        val auth = service.getClientId() + ':' + service.getClientSecret();
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
         val header = HttpConstants.BASIC_HEADER_PREFIX + value;
         mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, header);
-        LOGGER.debug("Created header [{}] for client id [{}]", header, CLIENT_ID);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        LOGGER.debug("Created header [{}] for client id [{}]", header, service.getClientId());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
 
         if (StringUtils.isNotBlank(scopes)) {
@@ -559,7 +558,7 @@ public abstract class AbstractOAuth20Tests {
 
         val code = oAuthCodeFactory.create(service, authentication,
             tgt, new ArrayList<>(),
-            codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>(),
+            codeChallenge, codeChallengeMethod, registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
         return code;
@@ -637,7 +636,7 @@ public abstract class AbstractOAuth20Tests {
                                                                                  final Principal principal) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         val mockResponse = new MockHttpServletResponse();
@@ -745,7 +744,7 @@ public abstract class AbstractOAuth20Tests {
 
             val svc2 = (OAuthRegisteredService)
                 RegisteredServiceTestUtils.getRegisteredService("https://example.org/jwt-access-token", OAuthRegisteredService.class);
-            svc2.setClientId(CLIENT_ID);
+            svc2.setClientId(UUID.randomUUID().toString());
             svc2.setJwtAccessToken(true);
 
             return CollectionUtils.wrapList(svc1, svc2);

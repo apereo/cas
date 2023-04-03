@@ -72,7 +72,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                          + "principal attribute and not through the attribute release policy for service [{}]. "
                          + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
                          + "is explicitly authorized for release via the service attribute release policy.",
-                usernameAttribute, context.getService(), usernameAttribute);
+                usernameAttribute, context.getRegisteredService(), usernameAttribute);
             val value = originalPrincipalAttributes.get(usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {

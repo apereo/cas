@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,13 +38,14 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyNoToken() {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
 
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        servicesManager.save(service);
 
         val response = new MockHttpServletResponse();
         assertEquals(OAuth20ResponseTypes.NONE, extractor.getResponseType());
@@ -53,14 +56,15 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyDPoPRequest() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        service.setGenerateRefreshToken(true);
-        servicesManager.save(service);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
@@ -87,14 +91,14 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyExtraction() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        service.setGenerateRefreshToken(true);
-        servicesManager.save(service);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
@@ -109,14 +113,15 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyExpiredCode() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        service.setGenerateRefreshToken(true);
-        servicesManager.save(service);
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
@@ -131,14 +136,14 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyExpiredTgt() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        service.setGenerateRefreshToken(true);
-        servicesManager.save(service);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
@@ -154,12 +159,14 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyUnknownService() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, "unknown.org/abc");
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, "Unknown");
 
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
         ticketRegistry.addTicket(code.getTicketGrantingTicket());
@@ -172,10 +179,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
     @Test
     public void verifyNoClientIdOrRedirectUri() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
 
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
         ticketRegistry.addTicket(code.getTicketGrantingTicket());

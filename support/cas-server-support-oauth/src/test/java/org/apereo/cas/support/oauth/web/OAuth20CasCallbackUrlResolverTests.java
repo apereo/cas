@@ -34,9 +34,11 @@ public class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() throws Exception {
+        val registeredService = addRegisteredService();
+
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.NONCE, UUID.randomUUID().toString());
