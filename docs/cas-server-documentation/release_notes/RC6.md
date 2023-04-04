@@ -60,7 +60,7 @@ better alternative or prepare to adopt and maintain the feature on your own.
 ### Testing Strategy
 
 The collection of end-to-end browser [tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `396` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `397` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Spring Boot
@@ -72,14 +72,31 @@ we intend to take advantage of this time window to run integration tests against
 ### Google Cloud Firestore Ticket Registry
 
 A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
+                                                                                                                               
+### Service Management & Indexing
+
+Registered service types are now internally indexed by the services management facility to assist with advanced and faster querying oeprations.
+Changes in this area allow the underlying service management APIs to efficiently query for a service by a given field such as `clientId`
+without having to loop through all registered services. Available indexes include `id`, `name`, `serviceId`, `clientId`, etc.
+
+Indexed fields are generally expected to be uniquely defined. This means that if you have multiple registered services sharing the same
+`clientId` or `name` or `id` fields, you most likely will into issues and the service registry may not be able to respond back with the correct
+registered service. Review your catalog of registered applicationd with CAS and ensure each definition is assigned to unique values for said fields.
+
+### Monitoring & Observerations
+
+The following operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics:
+
+- Ticket registry operations and queries
+- Service management operations and queries
+- SAML2 service provider metadata resolution
+- Authentication attempts and transactions
 
 ## Other Stuff
-   
-- Ticket registry operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics.
+
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now prepped to also a starter test suite based on Puppeteer.
-- Registered service types are now internally indexed by the services management facility to assist with advanced and faster querying oeprations.
 
 ## Library Upgrades
        
@@ -104,3 +121,5 @@ A new ticket registry implementation backed by [Google Cloud's Firestore](../tic
 - PostgreSQL
 - Gradle
 - Thymeleaf Dialect
+- Netty
+- FontAwesome
