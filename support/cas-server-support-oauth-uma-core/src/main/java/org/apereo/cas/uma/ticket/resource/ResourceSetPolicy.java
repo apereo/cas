@@ -14,7 +14,6 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -31,7 +30,6 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@Embeddable
 @Table(name = "UMA_ResourceSetPolicy")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
