@@ -161,7 +161,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val authnBuilder = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
-            .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
+            .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().getType())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScopes());
 
         val clientId = Optional.ofNullable(holder.getRegisteredService())
