@@ -19,6 +19,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -39,7 +40,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         if (isRequestAskingForServiceTicket(context)) {
             LOGGER.trace("Authentication request is asking for service tickets");
             val source = grantServiceTicket(context);
-            return source != null ? CollectionUtils.wrapSet(source) : null;
+            return Optional.ofNullable(source).map(CollectionUtils::wrapSet).orElse(null);
         }
         return null;
     }

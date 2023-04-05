@@ -93,9 +93,8 @@ public class SpnegoConfiguration {
             final ConfigurableApplicationContext applicationContext) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val poolSize = spnegoProperties.getPoolSize();
-        val spnegoAuthenticationPool = new ArrayBlockingQueue<List<Authentication>>(poolSize);
-        IntStream.range(0, poolSize).forEach(i -> spnegoAuthenticationPool.add(buildSpnegoAuthentications(casProperties, applicationContext).toList()));
-        return spnegoAuthenticationPool;
+        return IntStream.range(0, poolSize).mapToObj(i -> buildSpnegoAuthentications(casProperties, applicationContext).toList())
+            .collect(Collectors.toCollection(() -> new ArrayBlockingQueue<>(poolSize)));
     }
 
     @Bean

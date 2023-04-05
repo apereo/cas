@@ -28,6 +28,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -84,7 +85,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private static URI[] getDistributionPoints(final X509Certificate cert) {
         try {
             val points = new ExtensionReader(cert).readCRLDistributionPoints();
-            val urls = new ArrayList<URI>(points == null ? 0 : points.size());
+            val urls = new ArrayList<URI>(Optional.ofNullable(points).map(List::size).orElse(0));
             if (points != null) {
                 points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
                     val nameSequence = ASN1Sequence.getInstance(pointName.getName());

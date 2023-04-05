@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -171,7 +172,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return time != null ? time.atZone(ZoneOffset.UTC) : null;
+        return Optional.ofNullable(time).map(instant -> instant.atZone(ZoneOffset.UTC)).orElse(null);
     }
 
     /**
@@ -202,7 +203,7 @@ public class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final Date time) {
-        return time != null ? zonedDateTimeOf(Instant.ofEpochMilli(time.getTime())) : null;
+        return Optional.ofNullable(time).map(date -> zonedDateTimeOf(Instant.ofEpochMilli(date.getTime()))).orElse(null);
     }
 
     /**

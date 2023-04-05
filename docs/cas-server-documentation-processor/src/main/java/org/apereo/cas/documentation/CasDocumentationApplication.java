@@ -63,9 +63,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -406,7 +408,7 @@ public class CasDocumentationApplication {
                     .findFirst()
                     .orElse(null);
                 map.put("method", RequestMethod.GET.name());
-                map.put("path", paths == null ? endpoint.id() : paths);
+                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
 
@@ -439,7 +441,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.DELETE.name());
-                map.put("path", paths == null ? endpoint.id() : paths);
+                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -471,7 +473,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.POST.name());
-                map.put("path", paths == null ? endpoint.id() : paths);
+                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -503,7 +505,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PATCH.name());
-                map.put("path", paths == null ? endpoint.id() : paths);
+                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
@@ -535,7 +537,7 @@ public class CasDocumentationApplication {
                                                                              + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PUT.name());
-                map.put("path", paths == null ? endpoint.id() : paths);
+                map.put("path", Optional.ofNullable(paths).map(s -> s).orElseGet(endpoint::id));
                 map.put("name", endpoint.id());
                 map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
                 collectActuatorEndpointMethodMetadata(method, map, endpoint.id());

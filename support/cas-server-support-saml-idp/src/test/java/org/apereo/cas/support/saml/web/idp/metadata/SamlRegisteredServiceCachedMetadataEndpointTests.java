@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,12 +76,13 @@ public class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlId
 
     @Test
     public void verifyCachedService() {
-        Arrays.asList(Boolean.TRUE, Boolean.FALSE).forEach(force -> {
-            val response = endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getId()), StringUtils.EMPTY, force);
-            val results = response.getBody();
-            assertNotNull(results);
-            assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
-        });
+        Stream.of(Boolean.TRUE, Boolean.FALSE)
+            .map(force -> endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getId()), StringUtils.EMPTY, force))
+            .map(HttpEntity::getBody)
+            .forEach(results -> {
+                assertNotNull(results);
+                assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
+            });
     }
 
     @Test

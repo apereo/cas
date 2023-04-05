@@ -369,9 +369,9 @@ public class LdapUtils {
                         LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
                     }
                     if (script != null) {
-                        val parameters = new LinkedHashMap<String, String>();
-                        IntStream.range(0, values.size())
-                            .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
+                        val parameters = IntStream.range(0, values.size())
+                            .boxed()
+                            .collect(Collectors.toMap(paramName::get, values::get, (__, b) -> b, LinkedHashMap::new));
                         val args = CollectionUtils.<String, Object>wrap("filter", filter,
                             "parameters", parameters,
                             "applicationContext", ApplicationContextProvider.getApplicationContext(),

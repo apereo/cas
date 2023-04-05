@@ -149,16 +149,18 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteAll() {
-        ticketCatalog.findAll().forEach(definition -> {
-            val delete = QueryBuilder
+        ticketCatalog.findAll()
+            .stream()
+            .map(definition -> QueryBuilder
                 .truncate(properties.getKeyspace(), definition.getProperties().getStorageName())
                 .build()
                 .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
                 .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
-                .setTimeout(Beans.newDuration(properties.getTimeout()));
-            LOGGER.trace("Attempting to delete all via query [{}]", delete);
-            cassandraSessionFactory.getCqlTemplate().execute(delete);
-        });
+                .setTimeout(Beans.newDuration(properties.getTimeout())))
+            .forEach(delete -> {
+                LOGGER.trace("Attempting to delete all via query [{}]", delete);
+                cassandraSessionFactory.getCqlTemplate().execute(delete);
+            });
         return -1;
     }
 

@@ -35,6 +35,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -254,7 +255,7 @@ public class OAuth20Utils {
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
                                              final String redirectUri) {
-        val matchingStrategy = registeredService != null ? registeredService.getMatchingStrategy() : null;
+        val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                          + "Service is considered unauthorized. Verify the service matching strategy used in the service "

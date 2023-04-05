@@ -20,6 +20,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -212,6 +213,6 @@ public abstract class AbstractServicesManagerTests<T extends ServicesManager> {
     protected boolean isServiceInCache(final String serviceId, final long id) {
         return servicesManager.getAllServices()
             .stream()
-            .anyMatch(r -> serviceId != null ? r.getServiceId().equals(serviceId) : r.getId() == id);
+            .anyMatch(r -> Optional.ofNullable(serviceId).map(s -> r.getServiceId().equals(s)).orElseGet(() -> r.getId() == id));
     }
 }

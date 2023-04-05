@@ -256,16 +256,18 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
                     .build());
         val records = getRecordsByKeys(query);
 
-        records.forEach(record -> {
-            val del = DeleteItemRequest.builder()
+        records
+            .stream()
+            .map(record -> DeleteItemRequest.builder()
                 .tableName(dynamoDbProperties.getTokenTableName())
                 .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
                     AttributeValue.builder().n(String.valueOf(record.getId())).build()))
-                .build();
-            LOGGER.debug("Submitting delete request [{}] since [{}]", del, epoch);
-            val res = amazonDynamoDBClient.deleteItem(del);
-            LOGGER.debug("Delete request came back with result [{}]", res);
-        });
+                .build())
+            .forEach(del -> {
+                LOGGER.debug("Submitting delete request [{}] since [{}]", del, epoch);
+                val res = amazonDynamoDBClient.deleteItem(del);
+                LOGGER.debug("Delete request came back with result [{}]", res);
+            });
     }
 
     /**
