@@ -102,7 +102,7 @@ public class CasJdbcAuthenticationConfigurationTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;
 
     @BeforeEach

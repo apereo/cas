@@ -81,5 +81,18 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 200);
     }
+
+    const authnMetrics = [
+        "authenticate"
+    ];
+    
+    for (let i = 0; i < authnMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.apereo.cas.authentication.AuthenticationManager.${authnMetrics[i]}`;
+        console.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
 })();
 
