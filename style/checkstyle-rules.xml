@@ -520,16 +520,17 @@
             <property name="message" value="Invalid JavaDoc @version tag."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="slf4jLogging"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Logging framework selection"/>
             <property name="severity" value="error"/>
             <property name="format" value="LogFactory\.getLog"/>
-            <property name="message" value="CAS uses the slf4j logging framework."/>
+            <property name="message" value="CAS uses the Slf4j logging framework."/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Logger as non-static"/>
             <property name="severity" value="error"/>
             <property name="format" value="(protected|public)\s+(final\s)*Logger"/>
-            <property name="message" value="Non-static logger must be declared as static to avoid serialization issues."/>
+            <property name="message" value="Non-static logger must be declared as static."/>
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="sysOutConsoleLogs"/>
