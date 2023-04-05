@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.monitor.ExecutableObserver;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.monitor.MonitorableTask;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -22,9 +23,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * This is {@link CasCoreAuthenticationMonitoringConfiguration}.
+ * This is {@link SamlIdPMonitoringConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -33,25 +35,25 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = {
     CasFeatureModule.FeatureCatalog.Monitoring,
-    CasFeatureModule.FeatureCatalog.Authentication
+    CasFeatureModule.FeatureCatalog.SAMLIdentityProvider
 })
 @ConditionalOnBean(name = ExecutableObserver.BEAN_NAME)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @EnableAspectJAutoProxy
-public class CasCoreAuthenticationMonitoringConfiguration {
+public class SamlIdPMonitoringConfiguration {
     @Bean
-    @ConditionalOnMissingBean(name = "authenticationManagerMonitoringAspect")
-    public AuthenticationManagerMonitoringAspect authenticationManagerMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
-        return new AuthenticationManagerMonitoringAspect(observer);
+    @ConditionalOnMissingBean(name = "samlIdPMonitoringAspect")
+    public SamlIdPMonitoringAspect samlIdPMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
+        return new SamlIdPMonitoringAspect(observer);
     }
 
     @Aspect
     @Slf4j
     @SuppressWarnings("UnusedMethod")
-    record AuthenticationManagerMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
+    record SamlIdPMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
 
-        @Around("allComponentsInAuthenticationManagementNamespace()")
-        public Object aroundAuthenticationManagementOperations(final ProceedingJoinPoint joinPoint) throws Throwable {
+        @Around("metadataComponentsInSamlIdPNamespace()")
+        public Object aroundMetadataManagementOperations(final ProceedingJoinPoint joinPoint) throws Throwable {
             val observer = observerProvider.getObject();
             val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
             val task = new MonitorableTask(taskName);
@@ -66,8 +68,8 @@ public class CasCoreAuthenticationMonitoringConfiguration {
             });
         }
 
-        @Pointcut("within(org.apereo.cas.authentication.AuthenticationManager+) && execution(* authenticate(..))")
-        private void allComponentsInAuthenticationManagementNamespace() {
+        @Pointcut("within(org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver+)")
+        private void metadataComponentsInSamlIdPNamespace() {
         }
     }
 }

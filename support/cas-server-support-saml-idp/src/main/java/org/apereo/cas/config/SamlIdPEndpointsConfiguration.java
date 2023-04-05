@@ -316,7 +316,7 @@ public class SamlIdPEndpointsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner) {
@@ -344,7 +344,7 @@ public class SamlIdPEndpointsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
             return new SamlIdPSingleLogoutServiceMessageHandler(httpClient, samlLogoutBuilder, servicesManager,
                 singleLogoutServiceLogoutUrlBuilder, casProperties.getSlo().isAsynchronous(),
@@ -418,7 +418,7 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator(
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
             return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver);
         }
@@ -546,7 +546,7 @@ public class SamlIdPEndpointsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
