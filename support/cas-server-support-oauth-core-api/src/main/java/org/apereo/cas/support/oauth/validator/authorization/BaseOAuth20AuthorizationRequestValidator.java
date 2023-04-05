@@ -52,14 +52,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      */
     protected final OAuth20RequestParameterResolver requestParameterResolver;
 
-    /**
-     * Pre-validate an Authorization request.
-     *
-     * @param context the context
-     * @return true /false
-     * @throws Exception the exception
-     */
-    protected boolean preValidate(final WebContext context) throws Exception {
+    protected boolean preValidate(final WebContext context) {
         val clientId = getClientIdFromRequest(context);
         val registeredService = verifyRegisteredServiceByClientId(context, clientId);
         if (registeredService == null) {
@@ -75,42 +68,18 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         return verifyResponseType(context, responseType);
     }
 
-    /**
-     * Gets response type from request.
-     *
-     * @param context the context
-     * @return the response type from request
-     */
     protected String getResponseTypeFromRequest(final WebContext context) {
         return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
     }
 
-    /**
-     * Gets redirect uri from request.
-     *
-     * @param context the context
-     * @return the redirect uri from request
-     */
     protected String getRedirectUriFromRequest(final WebContext context) {
         return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
     }
 
-    /**
-     * Gets client id from request.
-     *
-     * @param context the context
-     * @return the client id from request
-     */
     protected String getClientIdFromRequest(final WebContext context) {
         return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
     }
 
-    /**
-     * Verify registered service by client id.
-     *
-     * @param context the context
-     * @return the o auth registered service
-     */
     protected OAuthRegisteredService verifyRegisteredServiceByClientId(final WebContext context, final String clientId) {
         if (StringUtils.isBlank(clientId)) {
             LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);

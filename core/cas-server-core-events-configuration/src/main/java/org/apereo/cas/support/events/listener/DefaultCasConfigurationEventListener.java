@@ -71,7 +71,6 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
                 servlet.init();
             }
         });
-
     }
 
     private void rebind() {

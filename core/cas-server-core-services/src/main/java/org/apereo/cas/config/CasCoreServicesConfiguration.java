@@ -352,7 +352,7 @@ public class CasCoreServicesConfiguration {
         public ChainingServicesManager servicesManager(final List<ServicesManagerExecutionPlanConfigurer> configurers) {
             val chain = new DefaultChainingServicesManager();
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
-            configurers.forEach(c -> chain.registerServiceManager(c.configureServicesManager()));
+            configurers.forEach(cfg -> chain.registerServiceManager(cfg.configureServicesManager()));
             return chain;
         }
 

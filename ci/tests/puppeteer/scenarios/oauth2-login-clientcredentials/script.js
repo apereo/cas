@@ -16,7 +16,7 @@ const cas = require('../../cas.js');
             assert(decoded !== null);
             assert(decoded.payload["sub"] === "client");
             assert(decoded.payload.client_id === "client");
-            assert(decoded.payload.grant_type === "CLIENT_CREDENTIALS")
+            assert(decoded.payload.grant_type === "client_credentials")
         });
 
     }, error => {
