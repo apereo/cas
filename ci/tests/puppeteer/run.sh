@@ -527,14 +527,23 @@ if [[ "${RERUN}" != "true" ]]; then
          ${properties} &
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-
-      timeout=$(jq -j '.timeout // 60' "${config}")
-      sleepfor $timeout
-      
       casLogin="https://localhost:${serverPort}/cas/login"
-      printcyan "Checking CAS server's status @ ${casLogin}"
-      curl -k -L --output /dev/null --silent --fail $casLogin
-      RC=$?
+
+      if [[ "${CI}" == "true" ]]; then
+        timeout=$(jq -j '.timeout // 60' "${config}")
+        sleepfor $timeout
+
+        printcyan "Checking CAS server's status @ ${casLogin}"
+        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
+        RC=$?
+      else
+        until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+           echo -n '.'
+           sleep 1
+        done
+        RC=0
+      fi
+
       if [[ $RC -ne 0 ]]; then
         printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
         printred "Killing process id $pid and exiting"

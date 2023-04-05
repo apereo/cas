@@ -67,5 +67,19 @@ const cas = require('../../cas.js');
             'Content-Type': 'application/json'
         }, 200);
     }
+
+    const servicesMetrics = [
+        "load",
+        "count",
+        "findServiceBy"
+    ];
+    for (let i = 0; i < servicesMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.apereo.cas.services.ServicesManager.${servicesMetrics[i]}`;
+        console.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
 })();
 
