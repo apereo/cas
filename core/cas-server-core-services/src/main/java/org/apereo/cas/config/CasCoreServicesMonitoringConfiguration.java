@@ -40,7 +40,7 @@ import org.springframework.core.Ordered;
 public class CasCoreServicesMonitoringConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "servicesManagerMonitoringAspect")
-    public ServicesManagerMonitoringAspect ticketRegistryMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
+    public ServicesManagerMonitoringAspect servicesManagerMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
         return new ServicesManagerMonitoringAspect(observer);
     }
 
@@ -60,7 +60,7 @@ public class CasCoreServicesMonitoringConfiguration {
         private static Object executeJoinpoint(final ProceedingJoinPoint joinPoint) {
             return FunctionUtils.doUnchecked(() -> {
                 var args = joinPoint.getArgs();
-                LOGGER.warn("Executing [{}]", joinPoint.getStaticPart().toLongString());
+                LOGGER.trace("Executing [{}]", joinPoint.getStaticPart().toLongString());
                 return joinPoint.proceed(args);
             });
         }

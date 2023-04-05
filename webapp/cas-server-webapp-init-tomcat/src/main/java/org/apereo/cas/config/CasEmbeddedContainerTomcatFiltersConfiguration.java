@@ -71,7 +71,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         bean.setFilter(filter);
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("clientInfoRemoteAddrFilter");
-        bean.setEnabled(true);
+        bean.setEnabled(addr.isEnabled());
         return bean;
     }
 
