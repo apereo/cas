@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -52,7 +51,7 @@ import java.util.List;
 @AutoConfiguration
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
-public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+public class CasWebAppSecurityConfiguration {
 
     @Bean
     @Lazy(false)
@@ -69,7 +68,8 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
             return new WebMvcConfigurer() {
                 @Override
                 public void addViewControllers(
-                    @Nonnull final ViewControllerRegistry registry) {
+                    @Nonnull
+                    final ViewControllerRegistry registry) {
                     registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                         .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
                     registry.setOrder(Ordered.HIGHEST_PRECEDENCE);

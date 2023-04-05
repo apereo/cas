@@ -69,7 +69,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     protected static final String IP_ADDRESS = "192.0.0.1";
 
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     protected AuthenticationManager authenticationManager;
 
     private static UsernamePasswordCredential credentials(final String username,

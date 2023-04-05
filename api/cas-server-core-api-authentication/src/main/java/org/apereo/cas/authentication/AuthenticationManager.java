@@ -12,6 +12,10 @@ import org.apereo.cas.monitor.Monitorable;
 @FunctionalInterface
 @Monitorable
 public interface AuthenticationManager {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "casAuthenticationManager";
 
     /**
      * Authentication method attribute name.
