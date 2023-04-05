@@ -31,7 +31,7 @@ RediSearch is a Redis module that enables querying, secondary indexing, and full
 to build particular indexes for ticket documents for faster querying and search operations. In certain cases, this would
 significantly improve the performance of *lookup* operations.
 
-### Caching & Messaging
+## Caching & Messaging
 
 The Redis ticket registry layers an in-memory cache on top of Redis to assist with performance, particularly
 when it comes to fetching ticket objects from Redis using `SCAN` or `KEYS` operations that execute pattern matching.
@@ -43,7 +43,7 @@ via dedicated CAS settings.
 
 {% include_cached casproperties.html properties="cas.ticket.registry.redis.cache" %}
 
-### Eviction Policy
+## Eviction Policy
 
 Redis manages the internal eviction policy of cached objects via its time-alive settings.
 The timeout is the ticket's `timeToLive` value. So you need to ensure the cache is alive long enough to support the
