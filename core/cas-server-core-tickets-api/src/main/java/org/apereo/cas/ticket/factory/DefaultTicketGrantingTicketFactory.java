@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -71,9 +70,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
         val expirationPolicy = getTicketGrantingTicketExpirationPolicy(service, authentication);
         val result = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy.orElseThrow());
         if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                                         + " is of type " + result.getClass()
-                                         + " when we were expecting " + clazz);
+            throw new ClassCastException("Result [" + result + "] is of type " + result.getClass() + " when we were expecting " + clazz);
         }
         return (T) result;
     }
@@ -82,17 +79,14 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
                                                                                  final Authentication authentication) {
         return Optional.ofNullable(servicesManager.findServiceBy(service))
             .map(RegisteredService::getTicketGrantingTicketExpirationPolicy)
-            .filter(Objects::nonNull)
-            .map(policy -> policy.toExpirationPolicy().orElseGet(ticketGrantingTicketExpirationPolicy::buildTicketExpirationPolicy))
-            .filter(Objects::nonNull)
-            .or(() -> Optional.ofNullable(ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy()));
+            .map(policy -> policy.toExpirationPolicy().orElseGet(ticketGrantingTicketExpirationPolicy::buildTicketExpirationPolicy));
     }
 
     protected String produceTicketIdentifier(final Authentication authentication) {
-        var tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
-        if (this.cipherExecutor != null && this.cipherExecutor.isEnabled()) {
+        var tgtId = ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+        if (cipherExecutor != null && cipherExecutor.isEnabled()) {
             LOGGER.trace("Attempting to encode ticket-granting ticket [{}]", tgtId);
-            tgtId = this.cipherExecutor.encode(tgtId);
+            tgtId = cipherExecutor.encode(tgtId);
             LOGGER.trace("Encoded ticket-granting ticket id [{}]", tgtId);
         }
         return tgtId;
