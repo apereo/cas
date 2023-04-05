@@ -83,6 +83,11 @@ Indexed fields are generally expected to be uniquely defined. This means that if
 `clientId` or `name` or `id` fields, you most likely will into issues and the service registry may not be able to respond back with the correct
 registered service. Review your catalog of registered applicationd with CAS and ensure each definition is assigned to unique values for said fields.
 
+<div class="alert alert-info">:information_source: <strong>Client IDs</strong><p>Remember that client ids assigned to
+OAuth and OpenID Connect service definitions are expected to be globally unique. Per specifications, comparisons are handled in a case-sensitive manner.
+If you have a client id defined as <code>abc</code> and an authorization request supplies <code>AbC</code>,
+CAS may not be able to correctly find the appropriate service definition linked to the requested client id.</p></div>
+
 ### Monitoring & Observerations
 
 The following operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics:
