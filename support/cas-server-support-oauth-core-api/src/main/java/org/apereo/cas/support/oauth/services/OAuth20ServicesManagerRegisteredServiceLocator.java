@@ -43,7 +43,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
                 match = CollectionUtils.firstElement(service.getAttributes().get(OAuth20Constants.CLIENT_ID))
                     .map(Object::toString)
                     .stream()
-                    .anyMatch(clientId -> oauthService.getClientId().equalsIgnoreCase(clientId));
+                    .anyMatch(clientId -> oauthService.getClientId().equals(clientId));
             }
             return match;
         });
