@@ -27,7 +27,6 @@ on:
 ##########################################################################
 
 jobs:
-<<<<<<< HEAD
   cancel-previous-runs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -37,19 +36,6 @@ jobs:
           access_token: ${{ github.token }}
 
 ##########################################################################
-||||||| e47371a75a04
-  cancel-previous-runs:
-    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') && !contains(github.event.head_commit.message, 'ci:minimal') }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
-
-##########################################################################
-=======
->>>>>>> c566fd9913f1f7105c8fae613d2e675308d7274d
 
   initialize:
     runs-on: ubuntu-latest
