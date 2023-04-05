@@ -39,7 +39,7 @@ public class OidcServicesManagerRegisteredServiceLocator extends OAuth20Services
                     match = CollectionUtils.firstElement(clientIdAttribute)
                         .map(Object::toString)
                         .stream()
-                        .anyMatch(clientId -> oidcService.getClientId().equalsIgnoreCase(clientId));
+                        .anyMatch(clientId -> oidcService.getClientId().equals(clientId));
                 }
                 return match;
             });
