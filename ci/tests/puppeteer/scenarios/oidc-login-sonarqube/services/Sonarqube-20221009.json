@@ -21,7 +21,7 @@
           "order": 1,
           "claimMappings" : {
             "@class" : "java.util.TreeMap",
-            "preferred_username" : "uid"
+            "preferred_username" : "username"
           }
         },
         {
