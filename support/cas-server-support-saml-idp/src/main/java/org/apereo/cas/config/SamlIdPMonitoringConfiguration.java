@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.monitor.ExecutableObserver;
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.monitor.MonitorableTask;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -23,7 +22,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationUtils;
 
 /**
  * This is {@link SamlIdPMonitoringConfiguration}.
