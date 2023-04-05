@@ -37,7 +37,7 @@ import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
-import org.apereo.cas.config.SamlIdpComponentSerializationConfiguration;
+import org.apereo.cas.config.SamlIdPComponentSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -102,8 +102,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseSamlIdPConfigurationTests}.
@@ -356,7 +354,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         SamlIdPConfiguration.class,
-        SamlIdpComponentSerializationConfiguration.class,
+        SamlIdPComponentSerializationConfiguration.class,
         SamlIdPTicketCatalogConfiguration.class,
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,

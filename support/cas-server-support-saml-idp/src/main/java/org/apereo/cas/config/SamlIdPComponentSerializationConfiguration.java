@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
- * This is {@link SamlIdpComponentSerializationConfiguration}.
+ * This is {@link SamlIdPComponentSerializationConfiguration}.
  *
  * @author Bob Sandiford
  * @since 5.2.0
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @AutoConfiguration
-public class SamlIdpComponentSerializationConfiguration {
+public class SamlIdPComponentSerializationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPComponentSerializationPlanConfigurer")
