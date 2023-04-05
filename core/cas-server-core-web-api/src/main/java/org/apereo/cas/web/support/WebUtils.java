@@ -860,7 +860,7 @@ public class WebUtils {
      */
     public static <T> T getLogoutRedirectUrl(final HttpServletRequest request, final Class<T> clazz) {
         val value = request.getAttribute("logoutRedirectUrl");
-        return value != null ? clazz.cast(value) : null;
+        return Optional.ofNullable(value).map(clazz::cast).orElse(null);
     }
 
     /**
@@ -1344,9 +1344,7 @@ public class WebUtils {
     public static String getHttpRequestFullUrl(final HttpServletRequest request) {
         val requestURL = request.getRequestURL();
         val queryString = request.getQueryString();
-        return queryString == null
-            ? requestURL.toString()
-            : requestURL.append('?').append(queryString).toString();
+        return Optional.ofNullable(queryString).map(query -> requestURL.append('?').append(query).toString()).orElseGet(requestURL::toString);
     }
 
     /**

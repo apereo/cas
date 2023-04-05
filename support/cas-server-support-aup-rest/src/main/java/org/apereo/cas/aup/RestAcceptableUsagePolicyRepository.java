@@ -68,7 +68,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response == null ? HttpStatus.SERVICE_UNAVAILABLE.value() : response.getCode();
+            val statusCode = Optional.ofNullable(response).map(HttpResponse::getCode).orElseGet(HttpStatus.SERVICE_UNAVAILABLE::value);
             LOGGER.debug("AUP submit policy request returned with response code [{}]", statusCode);
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } finally {

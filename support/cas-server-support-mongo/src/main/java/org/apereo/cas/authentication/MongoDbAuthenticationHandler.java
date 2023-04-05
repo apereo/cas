@@ -14,10 +14,13 @@ import org.springframework.data.mongodb.core.MongoOperations;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * An authentication handler to verify credentials against a MongoDb instance.
@@ -58,14 +61,12 @@ public class MongoDbAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", transformedCredential.getId());
                 throw new FailedLoginException();
             }
-            val attributes = new HashMap<String, List<Object>>();
-            result
+            val attributes = result
                 .entrySet()
                 .stream()
-                .filter(s ->
-                    !s.getKey().equals(properties.getPasswordAttribute()) && !s.getKey().equals(properties.getUsernameAttribute()))
-                .forEach(entry -> attributes.put(entry.getKey(),
-                    CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
+                .filter(entry -> !entry.getKey().equals(properties.getPasswordAttribute()) && !entry.getKey().equals(properties.getUsernameAttribute()))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                    entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class), (__, b) -> b, () -> new HashMap<String, List<Object>>()));
             val principal = this.principalFactory.createPrincipal(transformedCredential.getId(), attributes);
             return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
         }

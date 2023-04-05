@@ -12,11 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.ldaptive.LdapAttribute;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapPasswordlessUserAccountStore}.
@@ -59,9 +61,11 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                     val value = entry.getAttribute(ldapProperties.getRequestPasswordAttribute()).getStringValue();
                     acctBuilder.requestPassword(BooleanUtils.toBoolean(value));
                 }
-                val attributes = new LinkedHashMap<String, List<String>>(entry.getAttributes().size());
-                entry.getAttributes().forEach(attr -> attributes.put(attr.getName(), new ArrayList<>(attr.getStringValues())));
+                val attributes = entry.getAttributes().stream()
+                    .collect(Collectors.toMap(LdapAttribute::getName, attr -> new ArrayList<>(attr.getStringValues()), (__, b) -> b,
+                        () -> new LinkedHashMap<String, List<String>>(entry.getAttributes().size())));
                 val acct = acctBuilder.attributes(attributes).build();
+                LOGGER.debug("Final passwordless account is [{}]", acct);
                 return Optional.of(acct);
             }
         } catch (final Exception e) {

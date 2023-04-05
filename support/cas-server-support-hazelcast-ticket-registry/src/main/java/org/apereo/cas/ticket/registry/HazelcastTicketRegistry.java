@@ -189,7 +189,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                         + String.format("prefix='%s'", md.getPrefix());
             LOGGER.debug("Executing SQL query [{}]", query);
             val results = ticketMapInstance.values(Predicates.sql(query));
-            return StreamSupport.stream(results.spliterator(), false)
+            return results.stream()
                 .map(row -> decodeTicket(row.getTicket()))
                 .filter(ticket -> !ticket.isExpired());
         }

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
+import java.util.Optional;
+
 /**
  * This is {@link WatchableGroovyScriptResource}.
  *
@@ -64,9 +66,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        return groovyScript != null
-            ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
-            : null;
+        return Optional.ofNullable(this.groovyScript).map(script -> ScriptingUtils.executeGroovyScript(script, args, clazz, failOnError)).orElse(null);
     }
 
     @Override
@@ -85,9 +85,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @return the t
      */
     public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError, final Object... args) {
-        return groovyScript != null
-            ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
-            : null;
+        return Optional.ofNullable(groovyScript).map(script -> ScriptingUtils.executeGroovyScript(script, methodName, args, clazz, failOnError)).orElse(null);
     }
 
 

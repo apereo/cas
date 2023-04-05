@@ -94,14 +94,15 @@ public class HazelcastHealthIndicatorTests {
         val details = health.getDetails();
         assertTrue(details.containsKey("name"));
 
-        details.values().forEach(value -> {
-            if (value instanceof Map map) {
+        details.values().stream()
+            .filter(value -> value instanceof Map)
+            .map(value -> (Map) value)
+            .forEach(map -> {
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
-            }
-        });
+            });
         assertNotNull(hazelcastHealthIndicator.toString());
     }
 
