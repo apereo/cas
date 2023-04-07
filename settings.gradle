@@ -57,15 +57,15 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex ".*splunk.*"
             }
-            mavenContent {releasesOnly() }
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/milestone"
-            mavenContent {releasesOnly() }
+            mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/snapshot"
-            mavenContent {snapshotsOnly() }
+            mavenContent { snapshotsOnly() }
         }
         maven {
             url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
@@ -74,21 +74,27 @@ dependencyResolutionManagement {
             }
             mavenContent { releasesOnly() }
         }
-        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
-            maven {
-                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
-                content {
-                    includeGroupByRegex "org.apache.wss4j"
-                }
-                credentials {
-                    username githubPackageRegistryUser
-                    password githubPackageRegistryPassword
-                }
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeGroupByRegex ".*wss4j.*"
             }
+            mavenContent { releasesOnly() }
         }
+//        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
+//            maven {
+//                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
+//                content {
+//                    includeGroupByRegex "org.apache.wss4j"
+//                }
+//                credentials {
+//                    username githubPackageRegistryUser
+//                    password githubPackageRegistryPassword
+//                }
+//            }
+//        }
     }
 }
-
 
 rootProject.name = "cas-server"
 
