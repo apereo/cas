@@ -16,7 +16,7 @@ function printgreen() {
 jmeterVersion=5.5
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
 webAppServerType="$1"
 testCategory="${2:-cas}"
 
@@ -44,18 +44,16 @@ case "$testCategory" in
 esac
 
 retVal=0
-if [[ ! -f webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war ]]; then
-  echo -e "***********************************************"
-  echo -e "Build started at $(date)"
-  echo -e "***********************************************"
-  gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc
-  -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
-  tasks="$gradle $gradleBuildOptions $gradleBuild"
-  echo $tasks
-  echo -e "***************************************************************************************"
-  eval $tasks
-  retVal=$?
-fi
+echo -e "**********************************************************"
+echo -e "Build started at $(date) for test category ${testCategory}"
+echo -e "**********************************************************"
+gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc
+-DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+tasks="$gradle $gradleBuildOptions $gradleBuild"
+echo "$tasks"
+echo -e "***************************************************************************************"
+eval "$tasks"
+retVal=$?
 
 if [ $retVal == 0 ]; then
   printgreen "Gradle build finished successfully.\nPreparing CAS web application WAR artifact..."
@@ -82,15 +80,18 @@ if [ $retVal == 0 ]; then
   # -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n
   echo "Properties: ${casProperties}"
   java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
-      --server.ssl.key-store=${keystore} --cas.service-registry.core.init-from-json=true \
-      --cas.server.name=https://localhost:8443 --cas.server.prefix=https://localhost:8443/cas \
-      --cas.audit.engine.enabled=true --spring.profiles.active=none \
+      --server.ssl.key-store=${keystore} \
+      --cas.service-registry.core.init-from-json=true \
+      --cas.server.name=https://localhost:8443 \
+      --cas.server.prefix=https://localhost:8443/cas \
+      --cas.audit.engine.enabled=true \
+      --spring.profiles.active=none \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
       --management.endpoints.enabled-by-default=true \
       --logging.level.org.apereo.cas=warn ${casProperties} &
   pid=$!
-  printgreen "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
+  printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
     sleep 2
