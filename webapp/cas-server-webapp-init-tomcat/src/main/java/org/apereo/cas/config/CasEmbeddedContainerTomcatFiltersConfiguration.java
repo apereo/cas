@@ -70,7 +70,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         filter.setDenyStatus(HttpStatus.UNAUTHORIZED.value());
         bean.setFilter(filter);
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-        bean.setName("clientInfoRemoteAddrFilter");
+        bean.setName("tomcatRemoteAddressFilter");
         bean.setEnabled(addr.isEnabled());
         return bean;
     }
