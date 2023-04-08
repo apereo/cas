@@ -29,7 +29,7 @@ service out based on the policies defined for the application in the service reg
 
 ## Configuration
 
-{% include_cached casproperties.html properties="cas.tgc,cas.ticket.tgt.core" %}
+{% include_cached casproperties.html properties="cas.tgc" %}
 
 The cookie has the following properties:
 
@@ -51,6 +51,13 @@ You should then grab each generated key for encryption and signing, and put them
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
 {% include_cached casproperties.html properties="cas.sso" %}
+
+## SSO Expiration Policy
+
+The single sign-on expiration policy that is tied to the CAS single sign-on cookie is mainly controlled by
+a specific ticket type that represents the single sign-on session managed by the CAS server.
+
+[See this page](../ticketing/Configuring-Ticket-Expiration-Policy-TGT.html) for more.
 
 ## SameSite Attribute
    
