@@ -566,6 +566,9 @@ tasks.register('publishProjectModules') {
             if (!metadata.containsKey("title") || !metadata.containsKey("category")) {
                 throw new GradleException("Missing required project metadata for ${it.name}")
             }
+            if (!metadata.containsKey("selectable")) {
+                metadata.put("selectable", true)
+            }
             results += [
                 name: it.name,
                 version: it.version,

@@ -2,7 +2,7 @@
 
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --no-configuration-cache "
 webAppServerType="$1"
 
 echo -e "***********************************************"
@@ -42,7 +42,7 @@ if [ $retVal == 0 ]; then
   echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
   sleep 30
 
-  cd etc/loadtests/locust
+  cd etc/loadtests/locust || exit
   echo -e "Current directory contains: \n\n$(ls)"
 
   echo -e "Installing virtual environment..."
