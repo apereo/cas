@@ -30,8 +30,8 @@ public class ChainingCasProtocolValidationSpecificationTests {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val handlers = (Map) Map.of(new UsernamePasswordCredential(), new SimpleTestUsernamePasswordAuthenticationHandler());
         val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers, Map.of()).build();
-        when(assertion.primaryAuthentication()).thenReturn(authentication);
-        when(assertion.chainedAuthentications()).thenReturn(List.of(authentication));
+        when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
+        when(assertion.getChainedAuthentications()).thenReturn(List.of(authentication));
         return assertion;
     }
 
@@ -40,7 +40,7 @@ public class ChainingCasProtocolValidationSpecificationTests {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(true);
         chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true),
-            new DefaultCasProtocolValidationSpecification(servicesManager, input -> input.chainedAuthentications().size() == 1));
+            new DefaultCasProtocolValidationSpecification(servicesManager, input -> input.getChainedAuthentications().size() == 1));
         assertEquals(2, chain.size());
         chain.reset();
         assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.token.JwtTokenCipherSigningPublicKeyEndpoint;
 import org.apereo.cas.token.JwtTokenTicketBuilder;
@@ -20,6 +19,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

@@ -519,7 +519,10 @@ if [[ "${RERUN}" != "true" ]]; then
 
       springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
       [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
-      
+
+      printcyan "Cleaning leftover artifacts from previous runs..."
+      rm -rf "$TMPDIR/keystore.jwks"
+
       printcyan "Launching CAS instance #${c} under port ${serverPort}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
          -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\

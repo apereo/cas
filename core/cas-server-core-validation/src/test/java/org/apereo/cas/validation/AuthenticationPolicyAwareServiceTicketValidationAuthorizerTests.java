@@ -104,7 +104,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
         val authentication = CoreAuthenticationTestUtils.getAuthenticationBuilder(principal, handlers,
             Map.of(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 handlers.values().stream().map(AuthenticationHandler::getName).collect(Collectors.toList()))).build();
-        when(assertion.primaryAuthentication()).thenReturn(authentication);
+        when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
         return assertion;
     }
 

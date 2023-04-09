@@ -6,9 +6,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.TicketValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

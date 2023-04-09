@@ -16,12 +16,10 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.client.authentication.AttributePrincipalImpl;
 import org.apereo.cas.client.validation.Assertion;
 import org.apereo.cas.client.validation.AssertionImpl;
-import org.apereo.cas.client.validation.TicketValidationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -106,7 +104,6 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -135,6 +132,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
@@ -1570,20 +1568,20 @@ public class CasOAuth20Configuration {
         private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
         @Override
-        public Assertion validate(final String ticket, final String service) throws TicketValidationException {
+        public Assertion validate(final String ticket, final String service) {
             val validationResult = validator.validate(ticket, service);
-            val assertion = (org.apereo.cas.validation.Assertion) validationResult.getContext().get(org.apereo.cas.validation.Assertion.class.getName());
+            val assertion = validationResult.getAssertion();
 
             val principalAttributes = new HashMap<String, Object>(validationResult.getPrincipal().getAttributes());
-            principalAttributes.putAll(validationResult.getContext());
+            principalAttributes.putAll(assertion.getContext());
 
             val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), principalAttributes);
-            val registeredService = (RegisteredService) validationResult.getContext().get(RegisteredService.class.getName());
+            val registeredService = validationResult.getRegisteredService();
 
             val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-                assertion.primaryAuthentication(), assertion, new HashMap<>(0), registeredService);
+                assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
 
-            return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes, validationResult.getContext());
+            return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes, assertion.getContext());
         }
     }
 }

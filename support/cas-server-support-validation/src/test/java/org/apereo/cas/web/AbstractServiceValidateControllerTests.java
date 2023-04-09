@@ -57,7 +57,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     protected static CasProtocolValidationSpecification getValidationSpecification() {
         return new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class),
-            input -> input.chainedAuthentications().size() == 1);
+            input -> input.getChainedAuthentications().size() == 1);
     }
 
     protected static ProxyHandler getProxyHandler() {
