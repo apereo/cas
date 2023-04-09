@@ -145,7 +145,7 @@ public class CoreAuthenticationUtils {
     public static boolean isRememberMeAuthentication(final Authentication model, final Assertion assertion) {
         val authnAttributes = model.getAttributes();
         val authnMethod = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.fromNewLogin();
+        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.isFromNewLogin();
     }
 
     /**
