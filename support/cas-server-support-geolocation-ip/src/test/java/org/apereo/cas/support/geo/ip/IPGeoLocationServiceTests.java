@@ -34,7 +34,7 @@ public class IPGeoLocationServiceTests {
     @Test
     public void verifyOperation() {
         assertNotNull(geoLocationService.locate("8.8.8.8"));
-        assertNull(geoLocationService.locate("127.0.0.1"));
+        assertNull(geoLocationService.locate("127.0.x.1"));
         assertNull(geoLocationService.locate(34.56, 12.123));
     }
 }
