@@ -1137,7 +1137,17 @@ ext.libraries = [
                 }
         ],
         azurekeyvault              : [
-                dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:$azureSpringCloudVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault:$azureSpringCloudVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-actuator:$azureSpringCloudVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")

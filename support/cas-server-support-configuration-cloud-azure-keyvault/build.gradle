@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Configuration Management",
-            title: "Configuration Management via Azure KeyVault"
+            title: "Configuration Management via Azure KeyVault",
+            aliases: ["azurekeyvault"]
     ]
 }
 dependencies {
