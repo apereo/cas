@@ -6,8 +6,11 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -1572,10 +1575,15 @@ public class CasOAuth20Configuration {
             val validationResult = validator.validate(ticket, service);
             val assertion = validationResult.getAssertion();
 
-            val principalAttributes = new HashMap<String, Object>(validationResult.getPrincipal().getAttributes());
+            val principalAttributes = new HashMap(validationResult.getPrincipal().getAttributes());
             principalAttributes.putAll(assertion.getContext());
-
-            val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), principalAttributes);
+            val originalAttributes = Optional.ofNullable(assertion.getOriginalAuthentication())
+                .map(Authentication.class::cast)
+                .map(Authentication::getPrincipal)
+                .map(Principal::getAttributes)
+                .orElseGet(HashMap::new);
+            val finalAttributes = CoreAuthenticationUtils.mergeAttributes(originalAttributes, principalAttributes);
+            val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), finalAttributes);
             val registeredService = validationResult.getRegisteredService();
 
             val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
