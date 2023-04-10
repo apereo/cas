@@ -42,7 +42,9 @@ public class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @BeforeEach
+    @Override
     public void setup() {
+        super.setup();
         clearAllServices();
     }
 

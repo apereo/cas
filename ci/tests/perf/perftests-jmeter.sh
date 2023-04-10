@@ -47,7 +47,7 @@ retVal=0
 echo -e "**********************************************************"
 echo -e "Build started at $(date) for test category ${testCategory}"
 echo -e "**********************************************************"
-gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo "$tasks"
 echo -e "***************************************************************************************"
