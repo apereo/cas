@@ -158,6 +158,7 @@ import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.Matcher;
 import org.pac4j.core.matching.matcher.csrf.CsrfTokenGeneratorMatcher;
 import org.pac4j.core.matching.matcher.csrf.DefaultCsrfTokenGenerator;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
@@ -446,6 +447,13 @@ public class CasOAuth20Configuration {
             oauthCasClient.setUrlResolver(casCallbackUrlResolver);
             oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
             oauthCasClient.setCheckAuthenticationAttempt(false);
+            oauthCasClient.setProfileCreator((callContext, credentials) -> {
+                val attributes = CoreAuthenticationUtils.convertAttributeValuesToObjects(
+                    credentials.getUserProfile().getAttributes());
+                val userProfile = new BasicUserProfile();
+                userProfile.build(credentials.getUserProfile().getId(), attributes);
+                return Optional.of(userProfile);
+            });
             oauthCasClient.init();
             return oauthCasClient;
         }
