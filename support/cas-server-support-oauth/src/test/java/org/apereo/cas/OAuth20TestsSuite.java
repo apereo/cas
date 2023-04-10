@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecu
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.util.OAuth20UtilsTests;
+import org.apereo.cas.support.oauth.validator.CASOAuth20TicketValidatorTests;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidatorTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests;
@@ -159,6 +160,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultOAuth20UserProfileDataCreatorTests.class,
     OAuth20ClientIdAwareProfileManagerTests.class,
     InternalTicketValidatorTests.class,
+    CASOAuth20TicketValidatorTests.class,
     OAuth20TokenGeneratedResultTests.class,
     AccessTokenGrantRequestExtractorTests.class,
     DefaultOAuth20ProfileScopeToAttributesFilterTests.class,

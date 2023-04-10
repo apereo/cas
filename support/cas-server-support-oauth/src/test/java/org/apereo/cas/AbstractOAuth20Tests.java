@@ -241,6 +241,7 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthCasClient")
     protected Client oauthCasClient;
+
     @Autowired
     @Qualifier("oauthCasClientRedirectActionBuilder")
     protected OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
