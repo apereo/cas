@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @TestPropertySource(properties = {
     "CasFeatureModule.AccountManagement.enabled=true",
     "cas.view.authorized-services-on-successful-login=true"
