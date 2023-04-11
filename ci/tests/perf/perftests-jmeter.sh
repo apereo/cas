@@ -35,6 +35,7 @@ case "$testCategory" in
   oidc)
     casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc "
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
+    casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;

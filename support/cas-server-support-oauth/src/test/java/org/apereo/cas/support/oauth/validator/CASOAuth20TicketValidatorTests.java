@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.validator;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +79,15 @@ public class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         assertTrue(validated.isPresent());
         val profileResult = oauthCasClient.getUserProfile(callContext, validated.orElseThrow());
         assertTrue(profileResult.isPresent());
-        val up = profileResult.get();
+        val up = (BasicUserProfile) profileResult.get();
         assertTrue(up.containsAttribute(TicketGrantingTicket.class.getName()));
         assertTrue(up.containsAttribute("uid"));
         assertTrue(up.containsAttribute("givenName"));
         assertTrue(up.containsAttribute("memberOf"));
+
+        assertTrue(up.containsAuthenicationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
+        assertTrue(up.containsAuthenicationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
+        assertTrue(up.containsAuthenicationAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
+        assertTrue(up.containsAuthenicationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 }
