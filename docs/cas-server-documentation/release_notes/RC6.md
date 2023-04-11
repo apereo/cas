@@ -104,6 +104,20 @@ It also has been modified to generate overlay projects based on correct and supp
 that is decidedly compatible with each CAS version supported by the Initializr. There is also an additional option to include
 support for [CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html) and relevant 
 tasks to verify CAS ticket registry functionality in high-availability deployments.
+ 
+### Docker Integration Tests
+
+The following Docker images, used for integration tests, are now upgraded:
+
+- Localstack
+- Apache Cassandra
+- Amazon DynamoDb
+- Google Cloud CLI
+- Grouper
+- InfluxDb
+- MariaDb
+- MySQL
+- OracleDb
 
 ## Other Stuff
 
