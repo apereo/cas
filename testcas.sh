@@ -338,6 +338,12 @@ while (( "$#" )); do
             webflowconfig|swfcfg|webflowcfg|webflow-config)
                 task+="testWebflowConfig "
                 ;;
+            webflowaccountactions)
+                task+="testWebflowAccountActions "
+                ;;
+            webflowserviceactions)
+                task+="testWebflowServiceActions "
+                ;;
             webflowmfaconfig)
                 task+="testWebflowMfaConfig "
                 ;;

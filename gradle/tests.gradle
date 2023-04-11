@@ -95,6 +95,8 @@ enum TestCategories {
     WebApp,
     Webflow,
     WebflowActions,
+    WebflowAccountActions,
+    WebflowServiceActions,
     WebflowAuthenticationActions,
     WebflowConfig,
     WebflowMfaConfig,
