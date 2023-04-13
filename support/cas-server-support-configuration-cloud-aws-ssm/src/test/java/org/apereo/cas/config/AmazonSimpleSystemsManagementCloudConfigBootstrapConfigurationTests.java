@@ -16,6 +16,7 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.ParameterType;
 import software.amazon.awssdk.services.ssm.model.PutParameterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,10 +64,18 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests
         val builder = new AmazonEnvironmentAwareClientBuilder(
             AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX, environment);
         try (val client = builder.build(SsmClient.builder(), SsmClient.class)) {
-            var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users").value(STATIC_AUTHN_USERS).overwrite(Boolean.TRUE).build();
+            var request = PutParameterRequest.builder().name("/cas/cas.authn.accept.users")
+                .type(ParameterType.STRING)
+                .value(STATIC_AUTHN_USERS)
+                .overwrite(Boolean.TRUE)
+                .build();
             client.putParameter(request);
 
-            request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name").value("Example").overwrite(Boolean.TRUE).build();
+            request = PutParameterRequest.builder().name("/cas/example/cas.authn.accept.name")
+                .type(ParameterType.STRING)
+                .value("Example")
+                .overwrite(Boolean.TRUE)
+                .build();
             client.putParameter(request);
         }
     }
