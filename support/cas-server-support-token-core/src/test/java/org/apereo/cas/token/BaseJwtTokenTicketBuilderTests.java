@@ -25,9 +25,9 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.TicketValidator;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;

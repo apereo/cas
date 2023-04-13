@@ -630,7 +630,7 @@ public class LdapUtils {
                 }
             }
         }
-
+        
         if (StringUtils.isNotBlank(properties.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", properties.getSaslMechanism());
 

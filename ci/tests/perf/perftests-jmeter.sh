@@ -35,6 +35,7 @@ case "$testCategory" in
   oidc)
     casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc "
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
+    casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;
@@ -47,8 +48,7 @@ retVal=0
 echo -e "**********************************************************"
 echo -e "Build started at $(date) for test category ${testCategory}"
 echo -e "**********************************************************"
-gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc
--DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo "$tasks"
 echo -e "***************************************************************************************"

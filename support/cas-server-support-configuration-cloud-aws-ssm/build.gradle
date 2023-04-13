@@ -3,7 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Configuration Management",
-            title: "Configuration Management via AWS SSM"
+            title: "Configuration Management via AWS SSM",
+            aliases: ["awsssm"]
     ]
 }
 dependencies {

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @Import(CasWebflowAccountProfileConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {

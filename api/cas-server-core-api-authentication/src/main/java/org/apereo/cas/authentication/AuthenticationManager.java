@@ -21,6 +21,14 @@ public interface AuthenticationManager {
      * Authentication method attribute name.
      **/
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
+
+    /**
+     * Authentication session timeout attribute
+     * whose value in seconds would control the
+     * session timeout for this authentication event.
+     */
+    String AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE = "authenticationSessionTimeout";
+
     /**
      * Authentication date attribute name.
      **/

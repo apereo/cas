@@ -1,7 +1,9 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ticket.AbstractTicketException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -44,7 +46,8 @@ public interface TicketValidator {
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
-        @Builder.Default
-        private final Map<String, Serializable> context = new LinkedHashMap<>();
+        private final Assertion assertion;
+
+        private final RegisteredService registeredService;
     }
 }

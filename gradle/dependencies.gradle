@@ -1071,6 +1071,11 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                 },
+                dependencies.create("com.fasterxml.jackson.module:jackson-module-parameter-names:$jacksonVersion") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                },
                 dependencies.create("com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -1132,7 +1137,17 @@ ext.libraries = [
                 }
         ],
         azurekeyvault              : [
-                dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:$azureSpringCloudVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-keyvault:$azureSpringCloudVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create("com.azure.spring:spring-cloud-azure-starter-actuator:$azureSpringCloudVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -1583,7 +1598,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
-                dependencies.create("io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion") {
+                dependencies.create("io.micrometer:micrometer-registry-cloudwatch2:$micrometerVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")

@@ -22,6 +22,3 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
-
-
-

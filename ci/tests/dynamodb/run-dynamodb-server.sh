@@ -4,7 +4,7 @@
 
 echo "Running DynamoDb docker image..."
 docker stop dynamodb-server || true && docker rm dynamodb-server || true
-docker run --rm -d -p 8000:8000 --name "dynamodb-server" amazon/dynamodb-local:1.20.0
+docker run --rm -d -p 8000:8000 --name "dynamodb-server" amazon/dynamodb-local:1.21.0
 
 docker ps | grep "dynamodb-server"
 retVal=$?

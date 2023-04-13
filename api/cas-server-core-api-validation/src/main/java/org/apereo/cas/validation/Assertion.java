@@ -22,7 +22,7 @@ public interface Assertion extends Serializable {
      *
      * @return Non-null primary authentication event.
      */
-    Authentication primaryAuthentication();
+    Authentication getPrimaryAuthentication();
 
     /**
      * Original authentication tied to this assertion
@@ -33,7 +33,7 @@ public interface Assertion extends Serializable {
      *
      * @return the authentication
      */
-    Authentication originalAuthentication();
+    Authentication getOriginalAuthentication();
 
     /**
      * Gets a list of all authentications that have occurred during a CAS SSO session.
@@ -41,7 +41,7 @@ public interface Assertion extends Serializable {
      * @return Non-null, non-empty list of authentications in leaf-first order (i.e. authentications on the root ticket
      * occur at the end).
      */
-    List<Authentication> chainedAuthentications();
+    List<Authentication> getChainedAuthentications();
 
     /**
      * True if the validated ticket was granted in the same transaction as that
@@ -50,7 +50,7 @@ public interface Assertion extends Serializable {
      * @return true if validated ticket was granted simultaneous with its
      * grantor's issuance
      */
-    boolean fromNewLogin();
+    boolean isFromNewLogin();
 
     /**
      * Method to obtain the service for which we are asserting this ticket is
@@ -58,19 +58,19 @@ public interface Assertion extends Serializable {
      *
      * @return the service for which we are asserting this ticket is valid for.
      */
-    WebApplicationService service();
+    WebApplicationService getService();
 
     /**
      * Gets registered service.
      *
      * @return the registered service
      */
-    RegisteredService registeredService();
+    RegisteredService getRegisteredService();
 
     /**
      * Context map.
      *
      * @return the map
      */
-    Map<String, Serializable> context();
+    Map<String, Serializable> getContext();
 }

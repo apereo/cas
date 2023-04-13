@@ -40,9 +40,9 @@ public class ProtocolSpecificationValidationAuditResourceResolver extends Parame
             }
             if (arg instanceof Assertion) {
                 val assertion = Assertion.class.cast(arg);
-                val authn = assertion.primaryAuthentication();
+                val authn = assertion.getPrimaryAuthentication();
                 results.put("principal", authn.getPrincipal().getId());
-                results.put("service", DigestUtils.abbreviate(assertion.service().getId()));
+                results.put("service", DigestUtils.abbreviate(assertion.getService().getId()));
                 if (casProperties.getAudit().getEngine().isIncludeValidationAssertion()) {
                     val attributes = new HashMap<String, Object>(authn.getAttributes());
                     attributes.putAll(authn.getPrincipal().getAttributes());
