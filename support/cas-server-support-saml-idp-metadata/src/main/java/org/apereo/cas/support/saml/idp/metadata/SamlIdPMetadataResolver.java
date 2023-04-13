@@ -1,10 +1,12 @@
-package org.apereo.cas.support.saml.idp.metadata.locator;
+package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -13,16 +15,12 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.util.ReflectionUtils;
-import org.w3c.dom.Element;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @Slf4j
-public class SamlIdPMetadataResolver extends DOMMetadataResolver {
+public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
     private final SamlIdPMetadataLocator locator;
 
     private final SamlIdPMetadataGenerator generator;
@@ -52,7 +50,6 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
                                    final SamlIdPMetadataGenerator generator,
                                    final OpenSamlConfigBean openSamlConfigBean,
                                    final CasConfigurationProperties casProperties) {
-        super(null);
         this.locator = locator;
         this.generator = generator;
         this.openSamlConfigBean = openSamlConfigBean;
@@ -109,13 +106,6 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
         return new ArrayList<>(0);
     }
 
-    @Override
-    protected void initMetadataResolver() throws ComponentInitializationException {
-        if (getMetadataRootElement() != null) {
-            super.initMetadataResolver();
-        }
-    }
-
     private String getMetadataCacheKey(final Optional<SamlRegisteredService> serviceResult,
                                        final CriteriaSet criteriaSet) {
         return serviceResult.map(registeredService -> registeredService.getName() + registeredService.getId())
@@ -137,27 +127,9 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
 
             LOGGER.trace("Located metadata root element [{}]", element.getNodeName());
             setMetadataRootElement(element);
-            LOGGER.trace("Initializing metadata resolver [{}]", getClass().getSimpleName());
-            initialize();
             LOGGER.trace("Resolving metadata for criteria [{}]", criteria);
             return super.resolve(criteria);
         }
         return null;
-    }
-
-    private Element getMetadataRootElement() {
-        val field = ReflectionUtils.findField(getClass(), "metadataElement");
-        ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
-        return (Element) ReflectionUtils.getField(field, this);
-    }
-
-    private void setMetadataRootElement(final Element element) {
-        var field = ReflectionUtils.findField(getClass(), "metadataElement");
-        ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
-        ReflectionUtils.setField(field, this, element);
-
-        field = ReflectionUtils.findField(getClass(), "isInitialized");
-        ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
-        ReflectionUtils.setField(field, this, Boolean.FALSE);
     }
 }

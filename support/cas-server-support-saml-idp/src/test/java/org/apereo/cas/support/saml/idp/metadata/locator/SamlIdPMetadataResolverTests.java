@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 
 import com.google.common.collect.Iterables;
