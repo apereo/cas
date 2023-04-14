@@ -128,20 +128,23 @@ public class CasThymeleafConfiguration {
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(prefix -> {
             try {
-                val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+                val prefixPath = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                        ? prefix
+                        : ResourceUtils.getFile(prefix).getCanonicalPath();
                 val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
                     ? new ThemeClassLoaderTemplateResolver(themeResolver)
                     : new ThemeFileTemplateResolver(casProperties, themeResolver);
                 configureTemplateViewResolver(theme, thymeleafProperties);
-                theme.setPrefix(viewPath + "themes/%s/");
+                theme.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX) + "themes/%s/");
                 chain.addResolver(theme);
                 val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX) ? new ClassLoaderTemplateResolver() : new FileTemplateResolver();
                 configureTemplateViewResolver(template, thymeleafProperties);
-                template.setPrefix(viewPath);
+                template.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX));
                 chain.addResolver(template);
             } catch (final Exception e) {
-                LoggingUtils.warn(LOGGER, String.format("Could not add template prefix '%s' to resolver", prefix), e);
+                LoggingUtils.warn(LOGGER,
+                        String.format("Could not add template prefix '%s' to resolver: [%s]", prefix, e.getMessage()), e);
             }
         });
         val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver);
