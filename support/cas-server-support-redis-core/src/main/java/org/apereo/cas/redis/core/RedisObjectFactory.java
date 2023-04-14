@@ -15,6 +15,7 @@ import io.lettuce.core.protocol.ProtocolVersion;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConfiguration;
@@ -96,6 +97,12 @@ public class RedisObjectFactory {
         } else {
             factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolClientConfig(redis, false, casSslContext));
         }
+        var connectionSharingEnabled = redis.getPool() == null || !redis.getPool().isEnabled();
+        if (redis.getShareNativeConnections() != null) {
+            connectionSharingEnabled = redis.getShareNativeConnections();
+        }
+        LOGGER.info("Redis native connection sharing is turned [{}]", BooleanUtils.toStringOnOff(connectionSharingEnabled));
+        factory.setShareNativeConnection(connectionSharingEnabled);
 
         if (initialize) {
             factory.afterPropertiesSet();
