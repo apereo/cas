@@ -1,6 +1,6 @@
 {
   "dependencies": "oidc,json-service-registry",
-  "enabled": false,
+  "enabled": true,
   "conditions": {
     "docker": "true"
   },

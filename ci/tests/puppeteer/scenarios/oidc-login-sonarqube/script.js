@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://host.k3d.internal");
     await page.waitForTimeout(5000);
     await cas.assertPageTitle(page, "SonarQube");
-    await cas.assertInnerText(page, 'h1.login-title',"Log In to SonarQube");
+    await cas.assertInnerText(page, 'h1.login-title',"Log in to SonarQube");
     //await cas.sleep(5000);
     await cas.click(page,'a.identity-provider-link');
     //await cas.sleep(5000);
