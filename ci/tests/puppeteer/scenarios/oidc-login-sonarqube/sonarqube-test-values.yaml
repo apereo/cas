@@ -30,7 +30,7 @@ prometheusExporter:
 
 image:
   repository: sonarqube
-  tag: 9.7.1-community
+  tag: lts-community
   pullPolicy: IfNotPresent
   
 plugins:
