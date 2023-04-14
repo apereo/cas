@@ -1351,7 +1351,7 @@ ext.libraries = [
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "junit", module: "junit")
                 },
-                dependencies.create("org.mockito:mockito-inline:$mockitoVersion") {
+                dependencies.create("org.mockito:mockito-inline:$mockitoInlineVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "junit", module: "junit")
                     exclude(group: "org.mockito", module: "mockito-core")

@@ -87,7 +87,6 @@ public class CoreAuthenticationUtils {
         val entries = attributes.entrySet();
         return entries
             .stream()
-            .filter(entry -> entry.getValue() instanceof Collection)
             .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                 val value = CollectionUtils.toCollection(entry.getValue());
