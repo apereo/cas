@@ -10,7 +10,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
-  RUBY_VERSION: 3.1.2
+  RUBY_VERSION: 3.2.2
   JDK_CURRENT: 17
   DOCS_BRANCH: master
 
@@ -123,7 +123,10 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
       - name: Install Ruby gems
         run: gem install bundler
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
       - name: Publish Documentation
-        run: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 35
+          max_attempts: 3
+          shell: bash
+          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
