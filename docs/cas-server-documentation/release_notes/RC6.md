@@ -88,6 +88,12 @@ OAuth and OpenID Connect service definitions are expected to be globally unique.
 If you have a client id defined as <code>abc</code> and an authorization request supplies <code>AbC</code>,
 CAS may not be able to correctly find the appropriate service definition linked to the requested client id.</p></div>
 
+### Redis Connection Pooling
+
+By default and in previous releases, multiple Redis connections share a single thread-safe native connection. If you enable connection pooling,
+then native connection sharing will be disabled and the connection pool will be used for all operations. You may however explicitly control connection 
+sharing via this setting as an override.
+
 ### Monitoring & Observations
 
 The following operations are now *observed* using [Micrometer Observations](https://micrometer.io) and then reported as metrics:
@@ -99,11 +105,14 @@ The following operations are now *observed* using [Micrometer Observations](http
 
 ### CAS Initializr
 
-[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now prepped to present a starter test suite based on Puppeteer.
-It also has been modified to generate overlay projects based on correct and supported versions of the Gradle build tool 
-that is decidedly compatible with each CAS version supported by the Initializr. There is also an additional option to include
-support for [CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html) and relevant 
-tasks to verify CAS ticket registry functionality in high-availability deployments.
+Several new enhancements are now offered by the [CAS Initializr](../installation/WAR-Overlay-Initializr.html):
+
+- The service is now prepped to present a starter test suite based on Puppeteer.
+- It is able to generate overlay projects based on correct and supported versions of the Gradle build tool that is compatible with each CAS version.
+- There is an option to support the [CAS Commandline Shell](../installation/Configuring-Commandline-Shell.html).
+- Additional tasks are defined inside the generated CAS overlay to verify CAS ticket registry functionality in high-availability deployments.
+- There is an option to support relevant configuration files for deployments that are on GitHub Actions. 
+- There is an option to control the deployment type of the generated web application.
  
 ### Docker Integration Tests
 
