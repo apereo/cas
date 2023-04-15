@@ -128,6 +128,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         LOGGER.trace("Attempting to sign the outbound SAML message...");
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
+        handler.initialize();
         handler.invoke(outboundContext);
         LOGGER.debug("Signed SAML message successfully");
     }

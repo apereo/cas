@@ -1773,7 +1773,7 @@ Engineering Task Force, October 1989.
 
 <a name="7"/>[7] OASIS SAML 1.1 standard, saml.xml.org, December 2009.
 
-<a name="8"/>[8] [Apereo CAS Server](<https://www.apereo.org/cas>) reference
+<a name="8"/>[8] [Apereo CAS Server](<https://www.apereo.org/projects/cas>) reference
 implementation
 
 
