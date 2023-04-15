@@ -13,7 +13,7 @@
 
 ## Introduction
 
-Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/cas), more commonly referred to as CAS. CAS is an
+Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/projects/cas), more commonly referred to as CAS. CAS is an
 enterprise multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
@@ -99,10 +99,8 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
-[downloadcas]: https://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
-[downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
 [releasenotes]: https://github.com/apereo/cas/releases
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
