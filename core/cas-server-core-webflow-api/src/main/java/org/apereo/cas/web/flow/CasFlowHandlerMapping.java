@@ -9,5 +9,4 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
  * @since 6.5.0
  */
 public class CasFlowHandlerMapping extends FlowHandlerMapping {
-
 }
