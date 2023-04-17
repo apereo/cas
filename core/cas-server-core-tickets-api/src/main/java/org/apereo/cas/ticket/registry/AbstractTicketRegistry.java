@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.google.common.io.ByteSource;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -109,10 +111,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         return getTicket(ticketId, ticket -> {
-            if (ticket == null || ticket.isExpired()) {
+            if (ticket.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
-                deleteSingleTicket(ticketId);
-                return false;
+                return FunctionUtils.doUnchecked(() -> {
+                    deleteTicket(ticket);
+                    return false;
+                });
             }
             return true;
         });
@@ -145,7 +149,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
         }
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
-        count.getAndAdd(deleteSingleTicket(ticket.getId()));
+        count.getAndAdd(deleteSingleTicket(ticket));
         return count.intValue();
     }
 
@@ -174,8 +178,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public long countSessionsFor(final String principalId) {
         val ticketPredicate = (Predicate<Ticket>) t -> {
-            if (t instanceof TicketGrantingTicket) {
-                val ticket = TicketGrantingTicket.class.cast(t);
+            if (t instanceof TicketGrantingTicket ticket) {
                 return ticket.getAuthentication().getPrincipal().getId().equalsIgnoreCase(principalId);
             }
             return false;
@@ -215,10 +218,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     /**
      * Delete a single ticket instance from the store.
      *
-     * @param ticketId the ticket id
-     * @return true/false
+     * @param ticket the ticket
+     * @return true /false
      */
-    public abstract long deleteSingleTicket(String ticketId);
+    public abstract long deleteSingleTicket(Ticket ticket);
 
     protected abstract void addTicketInternal(Ticket ticket) throws Exception;
 
@@ -241,15 +244,19 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
             val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
             if (services != null && !services.isEmpty()) {
-                services.keySet().forEach(ticketId -> {
-                    val deleteCount = deleteSingleTicket(ticketId);
-                    if (deleteCount > 0) {
-                        LOGGER.debug("Removed ticket [{}]", ticketId);
-                        count.getAndAdd(deleteCount);
-                    } else {
-                        LOGGER.debug("Unable to remove ticket [{}]", ticketId);
-                    }
-                });
+                services.keySet()
+                    .stream()
+                    .map(this::getTicket)
+                    .filter(Objects::nonNull)
+                    .forEach(serviceTicket -> {
+                        val deleteCount = deleteSingleTicket(serviceTicket);
+                        if (deleteCount > 0) {
+                            LOGGER.debug("Removed ticket [{}]", serviceTicket.getId());
+                            count.getAndAdd(deleteCount);
+                        } else {
+                            LOGGER.debug("Unable to remove ticket [{}]", serviceTicket.getId());
+                        }
+                    });
             }
         }
         return count.intValue();
@@ -292,8 +299,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
-            LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled. ", ticketToProcess.getId());
-            deleteSingleTicket(ticketToProcess.getId());
+            LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled.", ticketToProcess.getId());
+            FunctionUtils.doUnchecked(__ -> deleteTicket(ticketToProcess));
             return null;
         }
 

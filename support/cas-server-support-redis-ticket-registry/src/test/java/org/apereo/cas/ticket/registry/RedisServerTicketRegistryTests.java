@@ -1,11 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
+import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -23,6 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -41,6 +45,79 @@ import static org.mockito.Mockito.*;
 @Tag("Redis")
 @Slf4j
 public class RedisServerTicketRegistryTests {
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = {
+        "cas.ticket.registry.redis.queue-identifier=cas-node-100",
+        "cas.ticket.registry.redis.host=localhost",
+        "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.cache.cache-size=0",
+        "cas.ticket.registry.redis.enable-redis-search=false",
+        "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+        "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
+    })
+    public class WithoutCachingTests extends BaseRedisSentinelTicketRegistryTests {
+        @RepeatedTest(2)
+        public void verifyTrackingUsersAndPrefixes() {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                            .getNewTicketId(TicketGrantingTicket.PREFIX);
+                        val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                        getNewTicketRegistry().addTicket(tgt);
+
+                        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+                        val stId = new ServiceTicketIdGenerator(10, StringUtils.EMPTY)
+                            .getNewTicketId(ServiceTicket.PREFIX);
+
+                        val st = tgt.grantServiceTicket(stId, service, NeverExpiresExpirationPolicy.INSTANCE,
+                            false, serviceTicketSessionTrackingPolicy);
+                        getNewTicketRegistry().addTicket(st);
+                        getNewTicketRegistry().updateTicket(tgt);
+
+                        assertNotNull(getNewTicketRegistry().getTicket(tgtId));
+                        assertNotNull(getNewTicketRegistry().getTicket(stId));
+                    } catch (final Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+
+            val totalThreads = 25;
+            val threads = new Thread[totalThreads];
+            for (var i = 0; i < threads.length; i++) {
+                threads[i] = new Thread(runnable);
+                threads[i].start();
+            }
+            for (val thread : threads) {
+                try {
+                    thread.join();
+                } catch (final Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            var sessionCount = getNewTicketRegistry().sessionCount();
+            assertEquals(totalThreads, sessionCount);
+
+            var serviceTicketCount = getNewTicketRegistry().serviceTicketCount();
+            assertEquals(totalThreads, serviceTicketCount);
+
+            val sessions = getNewTicketRegistry().getSessionsFor(authentication.getPrincipal().getId()).toList();
+            assertEquals(totalThreads, sessions.size());
+            sessions.forEach(Unchecked.consumer(ticket -> {
+                assertTrue(ticket instanceof TicketGrantingTicket);
+                getNewTicketRegistry().deleteTicket(ticket);
+            }));
+            assertEquals(0, getNewTicketRegistry().getSessionsFor(authentication.getPrincipal().getId()).count());
+            assertEquals(0, getNewTicketRegistry().sessionCount());
+            assertEquals(0, getNewTicketRegistry().serviceTicketCount());
+        }
+    }
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -144,7 +221,7 @@ public class RedisServerTicketRegistryTests {
 
             val cache = Caffeine.newBuilder().initialCapacity(100).<String, Ticket>build();
             val secondRegistry = new RedisTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
-                ticketRedisTemplate, cache, mock(RedisTicketRegistryMessagePublisher.class), Optional.empty());
+                getCasRedisTemplates(), cache, mock(RedisTicketRegistryMessagePublisher.class), Optional.empty());
             val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
             assertNull(ticket);
             assertTrue(secondRegistry.getTickets().isEmpty());
