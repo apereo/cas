@@ -133,14 +133,14 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
         return FunctionUtils.doUnchecked(() -> {
-            val ticketId = digest(ticketIdToDelete);
+            val ticketId = digest(ticketToDelete.getId());
             LOGGER.debug("Deleting ticket [{}]", ticketId);
-            val metadata = ticketCatalog.find(ticketIdToDelete);
+            val metadata = ticketCatalog.find(ticketToDelete);
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             val updateTime = firestore.collection(collectionName).document(ticketId).delete().get().getUpdateTime();
-            LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketIdToDelete, collectionName, updateTime);
+            LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketToDelete.getId(), collectionName, updateTime);
             return 1;
         });
     }

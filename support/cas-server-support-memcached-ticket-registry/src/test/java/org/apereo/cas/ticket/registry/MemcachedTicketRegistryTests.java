@@ -130,7 +130,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         val pool = mock(ObjectPool.class);
         val registry = new MemcachedTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, pool);
         assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
-        assertNotNull(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser").getId()));
+        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser")) > 0);
         assertDoesNotThrow(() -> {
             val client = mock(MemcachedClientIF.class);
             when(pool.borrowObject()).thenReturn(client);
