@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -243,15 +244,19 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
             val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
             if (services != null && !services.isEmpty()) {
-                services.keySet().forEach(ticketId -> {
-                    val deleteCount = deleteSingleTicket(getTicket(ticketId));
-                    if (deleteCount > 0) {
-                        LOGGER.debug("Removed ticket [{}]", ticketId);
-                        count.getAndAdd(deleteCount);
-                    } else {
-                        LOGGER.debug("Unable to remove ticket [{}]", ticketId);
-                    }
-                });
+                services.keySet()
+                    .stream()
+                    .map(this::getTicket)
+                    .filter(Objects::nonNull)
+                    .forEach(serviceTicket -> {
+                        val deleteCount = deleteSingleTicket(serviceTicket);
+                        if (deleteCount > 0) {
+                            LOGGER.debug("Removed ticket [{}]", serviceTicket.getId());
+                            count.getAndAdd(deleteCount);
+                        } else {
+                            LOGGER.debug("Unable to remove ticket [{}]", serviceTicket.getId());
+                        }
+                    });
             }
         }
         return count.intValue();
