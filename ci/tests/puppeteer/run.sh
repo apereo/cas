@@ -197,7 +197,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --noclear|--nc)
+  --noclear|--nc|--ncl|--no-clear)
     CLEAR=""
     shift 1;
     ;;
@@ -525,7 +525,7 @@ if [[ "${RERUN}" != "true" ]]; then
 
       printcyan "Launching CAS instance #${c} under port ${serverPort}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-         -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
+         -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
          --spring.profiles.active=none --server.ssl.key-store="$keystore" \
          ${properties} &
       pid=$!

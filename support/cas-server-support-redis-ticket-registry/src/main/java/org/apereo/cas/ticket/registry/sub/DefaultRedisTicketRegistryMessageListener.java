@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.sub;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.RedisCompositeKey;
 import org.apereo.cas.ticket.registry.pub.RedisMessagePayload;
 import org.apereo.cas.util.PublisherIdentifier;
 
@@ -29,9 +30,14 @@ public class DefaultRedisTicketRegistryMessageListener implements RedisTicketReg
             switch (command.getMessageType()) {
                 case ADD, UPDATE -> {
                     val ticket = (Ticket) command.getTicket();
-                    ticketCache.put(ticket.getId(), ticket);
+                    val redisKey = RedisCompositeKey.forTickets().withTicketId(ticket.getPrefix(), ticket.getId());
+                    ticketCache.put(redisKey.getQuery(), ticket);
                 }
-                case DELETE -> ticketCache.invalidate(command.getTicket().toString());
+                case DELETE -> {
+                    val ticket = (Ticket) command.getTicket();
+                    val redisKey = RedisCompositeKey.forTickets().withTicketId(ticket.getPrefix(), ticket.getId());
+                    ticketCache.invalidate(redisKey.getQuery());
+                }
                 case DELETE_ALL -> ticketCache.invalidateAll();
             }
         }

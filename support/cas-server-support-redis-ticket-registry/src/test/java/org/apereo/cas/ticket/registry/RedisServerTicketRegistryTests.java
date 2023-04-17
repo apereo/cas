@@ -196,7 +196,7 @@ public class RedisServerTicketRegistryTests {
             stopwatch.stop();
             val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
             LOGGER.info("[{}]: [{}]ms", name, time);
-            assertTrue(time <= 5000);
+            assertTrue(time <= 4000);
         }
 
         @RepeatedTest(2)
