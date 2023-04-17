@@ -90,11 +90,11 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketId) {
-        val result = deleteTicketFromQueue(ticketId);
+    public long deleteSingleTicket(final Ticket ticket) {
+        val result = ticket != null ? deleteTicketFromQueue(ticket.getId()): 0;
         if (ticketPublisher.isEnabled()) {
-            LOGGER.trace("Publishing delete command for id [{}] and ticket [{}]", publisherIdentifier, ticketId);
-            ticketPublisher.publishMessageToQueue(new DeleteTicketMessageQueueCommand(publisherIdentifier, ticketId));
+            LOGGER.trace("Publishing delete command for id [{}] and ticket [{}]", publisherIdentifier, ticket.getId());
+            ticketPublisher.publishMessageToQueue(new DeleteTicketMessageQueueCommand(publisherIdentifier, ticket.getId()));
         }
         return result;
     }

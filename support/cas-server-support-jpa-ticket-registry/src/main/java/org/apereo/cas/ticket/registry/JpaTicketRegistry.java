@@ -275,12 +275,12 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
         val result = transactionTemplate.execute(transactionStatus -> {
             val factory = getJpaTicketEntityFactory();
-            val encTicketId = digest(ticketIdToDelete);
+            val encTicketId = digest(ticketToDelete.getId());
             var totalCount = 0;
-            val md = ticketCatalog.find(ticketIdToDelete);
+            val md = ticketCatalog.find(ticketToDelete);
 
             if (md.getProperties().isCascadeRemovals()) {
                 totalCount = deleteTicketGrantingTickets(encTicketId);

@@ -163,6 +163,20 @@ public class RedisTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "sessionsRedisTemplate")
+        public CasRedisTemplate<String, String> sessionsRedisTemplate(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("redisTicketConnectionFactory")
+            final RedisConnectionFactory redisTicketConnectionFactory) {
+            return BeanSupplier.of(CasRedisTemplate.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "redisTicketRegistryCache")
         public Cache<String, Ticket> redisTicketRegistryCache(final CasConfigurationProperties casProperties) {
             val redis = casProperties.getTicket().getRegistry().getRedis();
@@ -171,7 +185,19 @@ public class RedisTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RedisTicketRegistry.CasRedisTemplates casRedisTemplates(
+            @Qualifier("ticketRedisTemplate")
+            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate,
+            @Qualifier("sessionsRedisTemplate")
+            final CasRedisTemplate<String, String> sessionsRedisTemplate) {
+            return new RedisTicketRegistry.CasRedisTemplates(ticketRedisTemplate, sessionsRedisTemplate);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier("casRedisTemplates")
+            final RedisTicketRegistry.CasRedisTemplates casRedisTemplates,
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
             @Qualifier(TicketSerializationManager.BEAN_NAME)
@@ -181,18 +207,15 @@ public class RedisTicketRegistryConfiguration {
             @Qualifier("redisTicketRegistryMessagePublisher")
             final RedisTicketRegistryMessagePublisher redisTicketRegistryMessagePublisher,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties,
-            @Qualifier("ticketRedisTemplate")
-            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate) {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TicketRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val redis = casProperties.getTicket().getRegistry().getRedis();
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis");
-
                     val searchCommands = redis.isEnableRedisSearch() ? RedisObjectFactory.newRedisModulesCommands(redis) : Optional.<RedisModulesCommands>empty();
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
-                        ticketRedisTemplate, redisTicketRegistryCache, redisTicketRegistryMessagePublisher, searchCommands);
+                        casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher, searchCommands);
                 })
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();

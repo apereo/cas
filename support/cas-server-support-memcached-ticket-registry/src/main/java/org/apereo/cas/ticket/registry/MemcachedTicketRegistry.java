@@ -81,9 +81,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
         val clientFromPool = getClientFromPool();
-        val ticketId = digest(ticketIdToDelete);
+        val ticketId = digest(ticketToDelete.getId());
         try {
             clientFromPool.delete(ticketId);
         } catch (final Exception e) {
