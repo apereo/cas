@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.flow.AccountProfileWebflowConfigurerTests;
+import org.apereo.cas.web.flow.CasFlowHandlerMappingTests;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategyTests;
-import org.apereo.cas.web.flow.DefaultCasFlowHandlerMappingTests;
 import org.apereo.cas.web.flow.DefaultLoginWebflowConfigurerRememberMeTests;
 import org.apereo.cas.web.flow.DefaultLoginWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DefaultLogoutWebflowConfigurerTests;
@@ -60,7 +60,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultSingleSignOnParticipationStrategyTests.class,
     ChainingSingleSignOnParticipationStrategyTests.class,
     AuthenticationExceptionHandlerActionTests.class,
-    DefaultCasFlowHandlerMappingTests.class
+    CasFlowHandlerMappingTests.class
 })
 @Suite
 public class AllTestsSuite {

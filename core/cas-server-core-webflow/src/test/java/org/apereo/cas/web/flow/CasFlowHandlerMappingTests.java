@@ -8,20 +8,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.HandlerMapping;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultCasFlowHandlerMappingTests}.
- * Same amount of webFlowInterceptors are expected to be initialized to adaptedInterceptors
- * in AbstractHandlerMapping.
+ * This is {@link CasFlowHandlerMappingTests}.
  *
  * @author Milan Siebenburger
- * @since 6.6.0
+ * @since 7.0.0
  */
 @Tag("WebflowConfig")
-public class DefaultCasFlowHandlerMappingTests extends BaseWebflowConfigurerTests {
+public class CasFlowHandlerMappingTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier("loginFlowHandlerMapping")
@@ -29,7 +25,6 @@ public class DefaultCasFlowHandlerMappingTests extends BaseWebflowConfigurerTest
 
     @Test
     public void verifyCasFlowHandlerMappingInitialization() throws Exception {
-
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());
@@ -41,8 +36,5 @@ public class DefaultCasFlowHandlerMappingTests extends BaseWebflowConfigurerTest
 
         val adaptedInterceptors = handlerExecutionChain.getInterceptorList();
         assertEquals(interceptors.size(), adaptedInterceptors.size());
-
     }
-
-
 }
