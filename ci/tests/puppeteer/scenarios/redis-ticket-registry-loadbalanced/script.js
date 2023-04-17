@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const cas = require('../../cas.js');
-const path = require("path");
 
 async function ensureNoSsoSessionsExistAfterLogout(page, port) {
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
@@ -69,6 +68,7 @@ async function checkTicketValidationAcrossNodes(browser) {
 }
 
 async function ensureSessionsRecorded(page, port, conditions) {
+    console.log(`Checking for recorded session via CAS server running on ${port}`);
     const url = `https://localhost:${port}/cas/actuator/ssoSessions?type=ALL`;
     console.log(`Navigating to ${url}`);
     await page.goto(url);
@@ -115,7 +115,7 @@ async function checkSessionsAreSynced(browser) {
         [ticket2]: s2,
         [ticket3]: s3
     };
-    // await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
     await ensureSessionsRecorded(page, 8443, conditions);
     await ensureSessionsRecorded(page, 8444, conditions);
 

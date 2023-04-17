@@ -125,7 +125,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .forEach(id -> casRedisTemplates.getSessionsRedisTemplate().delete(id));
 
         ticketCache.invalidate(redisTicketsKey.getQuery());
-        messagePublisher.delete(redisTicketsKey.getQuery());
+        messagePublisher.delete(ticket);
         return count;
     }
 
@@ -193,7 +193,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .filter(Objects::nonNull)
             .peek(ticket -> {
                 if (!ticket.isExpired()) {
-                    ticketCache.put(ticket.getId(), ticket);
+                    val redisTicketsKey = RedisCompositeKey.forTickets()
+                        .withTicketId(ticket.getPrefix(), digest(ticket.getId()));
+                    ticketCache.put(redisTicketsKey.getQuery(), ticket);
                 }
             });
     }
@@ -329,7 +331,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             return ticket;
         }
         ticketCache.invalidate(redisKey.getQuery());
-        messagePublisher.delete(redisKey.getQuery());
+        messagePublisher.delete(ticket);
         return null;
     }
 

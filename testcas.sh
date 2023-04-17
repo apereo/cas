@@ -54,6 +54,10 @@ while (( "$#" )); do
         parallel="${parallel} --max-workers=8"
         shift
         ;;
+    --no-cache)
+        parallel="--no-configuration-cache "
+        shift
+        ;;
     --no-parallel)
         parallel="--no-parallel "
         shift
