@@ -95,7 +95,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
-            val encTicketId = digest(ticketId);
+            val encTicketId = digestIdentifier(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
@@ -202,7 +202,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {
                 val query = isCipherExecutorEnabled()
-                    ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digest(principalId)))
+                    ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digestIdentifier(principalId)))
                     : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, PAGE_SIZE));
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
@@ -223,8 +223,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                         val criteriaValues = entry.getValue()
                             .stream()
                             .map(queryValue -> {
-                                val key = MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + '.' + digest(entry.getKey());
-                                return Criteria.where(key).is(digest(queryValue.toString()));
+                                val key = MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + '.' + digestIdentifier(entry.getKey());
+                                return Criteria.where(key).is(digestIdentifier(queryValue.toString()));
                             })
                             .toList();
                         return new Criteria().orOperator(criteriaValues);
@@ -246,7 +246,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
-        val ticketId = digest(ticketToDelete.getId());
+        val ticketId = digestIdentifier(ticketToDelete.getId());
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         val metadata = ticketCatalog.find(ticketToDelete);
         val collectionName = getTicketCollectionInstanceByMetadata(metadata);
@@ -282,7 +282,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .type(encTicket.getClass().getName())
             .ticketId(encTicket.getId())
             .json(json)
-            .principal(digest(principal))
+            .principal(digestIdentifier(principal))
             .attributes(collectAndDigestTicketAttributes(ticket))
             .build();
     }

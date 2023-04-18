@@ -93,7 +93,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         val document = IgniteTicketDocument.builder()
             .id(encodedTicket.getId())
             .type(metadata.getImplementationClass().getName())
-            .principal(digest(getPrincipalIdFrom(ticket)))
+            .principal(digestIdentifier(getPrincipalIdFrom(ticket)))
             .ticket(encodedTicket)
             .prefix(metadata.getPrefix())
             .attributes(attributesEncoded)
@@ -117,7 +117,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public long deleteSingleTicket(final Ticket ticketId) {
-        val encTicketId = digest(ticketId.getId());
+        val encTicketId = digestIdentifier(ticketId.getId());
         val metadata = ticketCatalog.find(ticketId);
         if (metadata != null) {
             val cache = getIgniteCacheFromMetadata(metadata);
@@ -128,7 +128,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
-        val ticketId = digest(ticketIdToGet);
+        val ticketId = digestIdentifier(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
@@ -203,7 +203,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .findFirst()
             .orElseThrow();
         val query = new SqlFieldsQuery("SELECT _val FROM " + queryEntity.getTableName() + " WHERE principal=?;")
-            .setArgs(digest(principalId));
+            .setArgs(digestIdentifier(principalId));
         return StreamSupport.stream(cacheInstance.query(query).spliterator(), false)
             .filter(entries -> !entries.isEmpty())
             .map(entries -> (IgniteTicketDocument) entries.get(0))
@@ -226,9 +226,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         queryAttributes.forEach((key, values) ->
             values.forEach(queryValue ->
                 sql.append("attributes LIKE '%[")
-                    .append(digest(key))
+                    .append(digestIdentifier(key))
                     .append(":{%")
-                    .append(digest(queryValue.toString()))
+                    .append(digestIdentifier(queryValue.toString()))
                     .append("%}]%' OR ")
             ));
         sql.append("1=2);");

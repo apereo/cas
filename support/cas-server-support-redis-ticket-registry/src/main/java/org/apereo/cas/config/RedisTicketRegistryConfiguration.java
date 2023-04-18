@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.RedisCompositeKey;
 import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
+import org.apereo.cas.ticket.registry.RedisTicketRegistryCacheEndpoint;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pub.DefaultRedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
@@ -31,6 +32,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -69,6 +71,18 @@ public class RedisTicketRegistryConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Lazy(false)
     public static class RedisTicketRegistryCoreConfiguration {
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RedisTicketRegistryCacheEndpoint redisTicketRegistryCacheEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("redisTicketRegistryCache")
+            final Cache<String, Ticket> redisTicketRegistryCache) {
+            return new RedisTicketRegistryCacheEndpoint(casProperties, ticketRegistry, redisTicketRegistryCache);
+        }
 
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageTopic")

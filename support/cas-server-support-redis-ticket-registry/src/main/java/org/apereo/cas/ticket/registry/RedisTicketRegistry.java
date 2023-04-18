@@ -112,13 +112,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteSingleTicket(final Ticket ticket) {
-        val redisTicketsKey = RedisCompositeKey.forTickets().withTicketId(ticket.getPrefix(), digest(ticket.getId()));
+        val redisTicketsKey = RedisCompositeKey.forTickets().withTicketId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
         val redisKeyPattern = redisTicketsKey.toKeyPattern();
         val count = Stream.of(redisKeyPattern)
             .mapToInt(id -> BooleanUtils.toBoolean(casRedisTemplates.getTicketsRedisTemplate().delete(id)) ? 1 : 0)
             .sum();
 
-        val principal = digest(getPrincipalIdFrom(ticket));
+        val principal = digestIdentifier(getPrincipalIdFrom(ticket));
         val redisPrincipalKey = RedisCompositeKey.forPrincipal().withQuery(principal);
         val redisPrincipalPattern = redisPrincipalKey.toKeyPattern();
         Stream.of(redisPrincipalPattern)
@@ -161,7 +161,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return FunctionUtils.doAndHandle(() -> {
             val ticketPrefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
-            val redisKey = RedisCompositeKey.forTickets().withTicketId(ticketPrefix, digest(ticketId));
+            val redisKey = RedisCompositeKey.forTickets().withTicketId(ticketPrefix, digestIdentifier(ticketId));
             return getTicketFromRedisByKey(predicate, redisKey);
         });
 
@@ -194,7 +194,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             .peek(ticket -> {
                 if (!ticket.isExpired()) {
                     val redisTicketsKey = RedisCompositeKey.forTickets()
-                        .withTicketId(ticket.getPrefix(), digest(ticket.getId()));
+                        .withTicketId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
                     ticketCache.put(redisTicketsKey.getQuery(), ticket);
                 }
             });
@@ -203,7 +203,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        val userId = digest(principalId);
+        val userId = digestIdentifier(principalId);
         val redisPrincipalKey = RedisCompositeKey.forPrincipal().withQuery(userId);
         val members = casRedisTemplates.getSessionsRedisTemplate()
             .boundSetOps(redisPrincipalKey.toKeyPattern()).members();
@@ -244,9 +244,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 val criteria = new ArrayList<String>();
                 queryAttributes.forEach((key, value) -> value.forEach(queryValue -> {
                     val escapedValue = isCipherExecutorEnabled()
-                        ? digest(queryValue.toString())
+                        ? digestIdentifier(queryValue.toString())
                         : StringUtils.replace(queryValue.toString(), "-", "\\-");
-                    criteria.add(String.format("(%s" + (isCipherExecutorEnabled() ? " " : "_") + "*%s)", digest(key), escapedValue));
+                    criteria.add(String.format("(%s" + (isCipherExecutorEnabled() ? " " : "_") + "*%s)", digestIdentifier(key), escapedValue));
                 }));
                 val query = String.format("(%s) @%s:%s", String.join("|", criteria),
                     RedisTicketDocument.FIELD_NAME_PREFIX, TicketGrantingTicket.PREFIX);
@@ -300,7 +300,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 .ticketId(encTicket.getId())
                 .json(json)
                 .prefix(ticket.getPrefix())
-                .principal(digest(principal))
+                .principal(digestIdentifier(principal))
                 .attributes(attributesEncoded)
                 .build();
         });
@@ -337,9 +337,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
 
     private RedisCompositeKey addOrUpdateTicket(final Ticket ticket) {
-        val userId = digest(getPrincipalIdFrom(ticket));
+        val userId = digestIdentifier(getPrincipalIdFrom(ticket));
 
-        val digestedId = digest(ticket.getId());
+        val digestedId = digestIdentifier(ticket.getId());
         val redisKey = RedisCompositeKey.forTickets().withTicketId(ticket.getPrefix(), digestedId);
 
         val timeout = RedisCompositeKey.getTimeout(ticket);

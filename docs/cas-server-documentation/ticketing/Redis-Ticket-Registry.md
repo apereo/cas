@@ -43,6 +43,12 @@ via dedicated CAS settings.
 
 {% include_cached casproperties.html properties="cas.ticket.registry.redis.cache" %}
 
+### Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="redisTicketsCache" %}
+
 ## Eviction Policy
 
 Redis manages the internal eviction policy of cached objects via its time-alive settings.

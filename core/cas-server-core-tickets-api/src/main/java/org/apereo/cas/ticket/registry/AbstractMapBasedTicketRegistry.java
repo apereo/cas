@@ -45,7 +45,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = digest(ticketId);
+        val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
@@ -126,7 +126,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public long deleteTicketFromQueue(final String ticketId) {
-        val encTicketId = digest(ticketId);
+        val encTicketId = digestIdentifier(ticketId);
         return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
     }
 

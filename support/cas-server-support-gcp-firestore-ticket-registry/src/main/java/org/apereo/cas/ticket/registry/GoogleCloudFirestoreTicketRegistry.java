@@ -53,7 +53,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
-            val encTicketId = digest(ticketId);
+            val encTicketId = digestIdentifier(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
@@ -135,7 +135,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
         return FunctionUtils.doUnchecked(() -> {
-            val ticketId = digest(ticketToDelete.getId());
+            val ticketId = digestIdentifier(ticketToDelete.getId());
             LOGGER.debug("Deleting ticket [{}]", ticketId);
             val metadata = ticketCatalog.find(ticketToDelete);
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
@@ -190,7 +190,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .flatMap(definition -> FunctionUtils.doUnchecked(() -> {
                 val collection = getTicketCollectionInstanceByMetadata(definition);
                 val spliterator = firestore.collection(collection).whereEqualTo("principal",
-                    digest(principalId)).get().get().spliterator();
+                    digestIdentifier(principalId)).get().get().spliterator();
                 return StreamSupport.stream(spliterator, false);
             }))
             .map(document -> document.toObject(GoogleCloudFirestoreTicketDocument.class))
@@ -211,14 +211,14 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                     .map(entry -> entry.getValue()
                         .stream()
                         .map(queryValue -> {
-                            val key = "attributes." + digest(entry.getKey());
-                            return Filter.arrayContains(key, digest(queryValue.toString()));
+                            val key = "attributes." + digestIdentifier(entry.getKey());
+                            return Filter.arrayContains(key, digestIdentifier(queryValue.toString()));
                         })
                         .toList())
                     .flatMap(List::stream)
                     .toList();
                 val spliterator = firestore.collection(collection)
-                    .whereEqualTo("prefix", digest(definition.getPrefix()))
+                    .whereEqualTo("prefix", digestIdentifier(definition.getPrefix()))
                     .where(Filter.or(criterias.toArray(Filter[]::new)))
                     .get()
                     .get()
@@ -238,7 +238,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .mapToLong(defn -> FunctionUtils.doUnchecked(() -> {
                 val collection = getTicketCollectionInstanceByMetadata(defn);
                 return firestore.collection(collection)
-                    .whereEqualTo("prefix", digest(defn.getPrefix()))
+                    .whereEqualTo("prefix", digestIdentifier(defn.getPrefix()))
                     .count().get().get().getCount();
             }))
             .sum();
@@ -260,10 +260,10 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
 
         return GoogleCloudFirestoreTicketDocument.builder()
             .type(encTicket.getClass().getName())
-            .prefix(digest(ticket.getPrefix()))
+            .prefix(digestIdentifier(ticket.getPrefix()))
             .ticketId(encTicket.getId())
             .json(json)
-            .principal(digest(principal))
+            .principal(digestIdentifier(principal))
             .attributes(collectAndDigestTicketAttributes(ticket))
             .expireAt(expireAt)
             .build();

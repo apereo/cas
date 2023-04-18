@@ -101,10 +101,10 @@ public class RedisServerTicketRegistryTests {
                 }
             }
 
-            var sessionCount = getNewTicketRegistry().sessionCount();
+            val sessionCount = getNewTicketRegistry().sessionCount();
             assertEquals(totalThreads, sessionCount);
 
-            var serviceTicketCount = getNewTicketRegistry().serviceTicketCount();
+            val serviceTicketCount = getNewTicketRegistry().serviceTicketCount();
             assertEquals(totalThreads, serviceTicketCount);
 
             val sessions = getNewTicketRegistry().getSessionsFor(authentication.getPrincipal().getId()).toList();
