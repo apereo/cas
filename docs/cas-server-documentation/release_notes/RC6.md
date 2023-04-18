@@ -127,11 +127,14 @@ The following Docker images, used for integration tests, are now upgraded:
 - MariaDb
 - MySQL
 - OracleDb
+- Grouper
+- Redis
 
 ## Other Stuff
 
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
+- `assertionAudiences` defined for SAML2 service definition will now override the default entity id, when defined.
 
 ## Library Upgrades
        
