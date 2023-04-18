@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#residentKeysPanel');
     await cas.assertVisibility(page, '#registerDiscoverableCredentialButton');
     let xhrData = page.waitForResponse((r) => r.request().url().includes("/webauthn/register") && r.request().method() !== "OPTIONS");
-    page.click('#registerButton');
+    page.click("#registerButton");
     let xhrResp = await xhrData;
     let xhrResult = JSON.parse(await xhrResp.json());
     
