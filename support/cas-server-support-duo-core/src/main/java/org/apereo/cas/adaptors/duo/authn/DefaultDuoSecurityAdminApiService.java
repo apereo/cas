@@ -169,7 +169,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val method = params.getOrDefault("method", HttpMethod.GET.name());
 
         val originalHost = resolver.resolve(duoProperties.getDuoApiHost());
-        val request = new Http.HttpBuilder(method, new URI("https://" + originalHost).getHost(), uri).build();
+        val request = new CasHttpBuilder(method, new URI("https://" + originalHost).getHost(), uri).build();
 
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
         ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
@@ -202,5 +202,11 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
                && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)
             ? result.getJSONArray(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
             : null;
+    }
+
+    private static class CasHttpBuilder extends Http.HttpBuilder {
+        CasHttpBuilder(final String method, final String host, final String uri) {
+            super(method, host, uri);
+        }
     }
 }

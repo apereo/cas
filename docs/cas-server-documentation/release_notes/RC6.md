@@ -161,3 +161,4 @@ The following Docker images, used for integration tests, are now upgraded:
 - Thymeleaf Dialect
 - Netty
 - FontAwesome
+- Duo Security
