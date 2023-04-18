@@ -38,6 +38,12 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
         this.ticketCache = ticketCache;
     }
 
+    /**
+     * Invalidate ticket and return response entity.
+     *
+     * @param ticketId the ticket id
+     * @return the response entity
+     */
     @DeleteMapping(value = "{ticketId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Invalidate and remove the provided ticket from the Redis first-level in-memory CAS cache. "
                          + "The ticket entity is not removed from the Redis instance itself. Invalidating the ticket entity "
@@ -56,8 +62,14 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasActuatorEndpoint {
             : ResponseEntity.notFound().build();
     }
 
+    /**
+     * Fetch ticket and return response entity.
+     *
+     * @param ticketId the ticket id
+     * @return the response entity
+     */
     @GetMapping(value = "{ticketId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "",
+    @Operation(summary = "Fetch the ticket entity from the Redis first-level in-memory CAS cache.",
         parameters = @Parameter(name = "ticketId"))
     public ResponseEntity fetchTicket(
         @PathVariable
