@@ -46,7 +46,7 @@ public class CasJavaMelodyConfiguration {
             @Override
             @CanIgnoreReturnValue
             public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
-                http.authorizeHttpRequests().requestMatchers("/monitoring").authenticated();
+                http.authorizeHttpRequests(customizer -> customizer.requestMatchers("/monitoring").authenticated());
                 return this;
             }
         };

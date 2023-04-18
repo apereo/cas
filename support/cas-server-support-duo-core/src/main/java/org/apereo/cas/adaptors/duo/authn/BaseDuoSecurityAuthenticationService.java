@@ -174,7 +174,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @throws Exception the exception
      */
     protected String getHttpResponse(final Http userRequest) throws Exception {
-        return userRequest.executeHttpRequest().body().string();
+        try (val request = userRequest.executeHttpRequest()) {
+            return Objects.requireNonNull(request.body()).string();
+        }
     }
 
     /**
@@ -205,7 +207,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private Http buildHttpRequest(final String format) throws Exception {
         val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost());
-        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
+        val request = new CasHttpBuilder(HttpMethod.POST.name(),
             new URI("https://" + originalHost).getHost(),
             String.format(format, AUTH_API_VERSION)).build();
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
@@ -323,5 +325,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LoggingUtils.error(LOGGER, e);
         }
         return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
+    }
+
+    private static class CasHttpBuilder extends Http.HttpBuilder {
+        CasHttpBuilder(final String method, final String host, final String uri) {
+            super(method, host, uri);
+        }
     }
 }
