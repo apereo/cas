@@ -69,7 +69,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         val currentAttributes = getCombinedTicketAttributes(ticket);
         if (isCipherExecutorEnabled()) {
             val encodedAttributes = new HashMap<String, Object>(currentAttributes.size());
-            currentAttributes.forEach((key, value) -> encodedAttributes.put(digest(key), digest(value)));
+            currentAttributes.forEach((key, value) -> encodedAttributes.put(digestIdentifier(key), digestIdentifier(value)));
             return encodedAttributes;
         }
         return currentAttributes;
@@ -187,6 +187,28 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public String digestIdentifier(final String identifier) {
+        if (!isCipherExecutorEnabled()) {
+            LOGGER.trace(MESSAGE);
+            return identifier;
+        }
+        if (StringUtils.isBlank(identifier)) {
+            return identifier;
+        }
+        val encodedId = DigestUtils.sha512(identifier);
+        LOGGER.debug("Digested original ticket id [{}] to [{}]", identifier, encodedId);
+        return encodedId;
+    }
+
+    protected List<String> digestIdentifier(final Collection<Object> identifiers) {
+        return identifiers
+            .stream()
+            .map(Object::toString)
+            .map(this::digestIdentifier)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         return getTickets(ticket -> {
             if (ticket instanceof TicketGrantingTicket ticketGrantingTicket && !ticket.isExpired()
@@ -194,7 +216,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 val attributes = collectAndDigestTicketAttributes(ticketGrantingTicket);
 
                 return queryAttributes.entrySet().stream().anyMatch(queryEntry -> {
-                    val attributeKey = digest(queryEntry.getKey());
+                    val attributeKey = digestIdentifier(queryEntry.getKey());
 
                     if (attributes.containsKey(attributeKey)) {
 
@@ -204,7 +226,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                             val attributeValue = value.toString();
                             return queryEntry.getValue()
                                 .stream()
-                                .map(queryValue -> digest(queryValue.toString()))
+                                .map(queryValue -> digestIdentifier(queryValue.toString()))
                                 .anyMatch(attributeValue::equalsIgnoreCase);
                         });
                     }
@@ -260,27 +282,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             }
         }
         return count.intValue();
-    }
-
-    protected List<String> digest(final Collection<Object> identifiers) {
-        return identifiers
-            .stream()
-            .map(Object::toString)
-            .map(this::digest)
-            .collect(Collectors.toList());
-    }
-
-    protected String digest(final String identifier) {
-        if (!isCipherExecutorEnabled()) {
-            LOGGER.trace(MESSAGE);
-            return identifier;
-        }
-        if (StringUtils.isBlank(identifier)) {
-            return identifier;
-        }
-        val encodedId = DigestUtils.sha512(identifier);
-        LOGGER.debug("Digested original ticket id [{}] to [{}]", identifier, encodedId);
-        return encodedId;
     }
 
     protected Ticket encodeTicket(final Ticket ticket) throws Exception {
@@ -346,7 +347,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
-        val encodedTicketId = digest(ticket.getId());
+        val encodedTicketId = digestIdentifier(ticket.getId());
         return new DefaultEncodedTicket(encodedTicketId,
             ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
     }

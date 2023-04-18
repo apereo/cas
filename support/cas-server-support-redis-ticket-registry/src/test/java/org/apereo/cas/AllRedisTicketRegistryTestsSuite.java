@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.ticket.registry.RedisSentinelServerTicketRegistryTests;
 import org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests;
+import org.apereo.cas.ticket.registry.RedisTicketRegistryCacheEndpointTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -13,6 +14,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0
  */
 @SelectClasses({
+    RedisTicketRegistryCacheEndpointTests.class,
     RedisServerTicketRegistryTests.class,
     RedisSentinelServerTicketRegistryTests.class
 })

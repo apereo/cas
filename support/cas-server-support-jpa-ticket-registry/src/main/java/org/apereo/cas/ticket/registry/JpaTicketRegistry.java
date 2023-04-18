@@ -73,7 +73,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         transactionTemplate.executeWithoutResult(Unchecked.consumer(status -> {
             val ticketEntity = getTicketEntityFrom(ticket);
             if (ticket instanceof TicketGrantingTicketAwareTicket grantingTicketAware && grantingTicketAware.getTicketGrantingTicket() != null) {
-                val parentId = digest(grantingTicketAware.getTicketGrantingTicket().getId());
+                val parentId = digestIdentifier(grantingTicketAware.getTicketGrantingTicket().getId());
                 ticketEntity.setParentId(parentId);
             }
             entityManager.persist(ticketEntity);
@@ -86,7 +86,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             val encodeTicket = encodeTicket(ticket);
             return getJpaTicketEntityFactory()
                 .fromTicket(encodeTicket)
-                .setPrincipalId(digest(getPrincipalIdFrom(ticket)))
+                .setPrincipalId(digestIdentifier(getPrincipalIdFrom(ticket)))
                 .setAttributes(collectAndDigestTicketAttributes(ticket));
         });
     }
@@ -95,7 +95,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return transactionTemplate.execute(callback -> {
             try {
-                val encTicketId = digest(ticketId);
+                val encTicketId = digestIdentifier(ticketId);
                 if (StringUtils.isNotBlank(encTicketId)) {
                     val factory = getJpaTicketEntityFactory();
                     val sql = String.format("SELECT t FROM %s t WHERE t.id = :id", factory.getEntityName());
@@ -189,7 +189,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val factory = getJpaTicketEntityFactory();
         val sql = String.format("SELECT t FROM %s t WHERE t.type=:type AND t.principalId=:principalId", factory.getEntityName());
         val query = entityManager.createQuery(sql, factory.getType())
-            .setParameter("principalId", digest(principalId))
+            .setParameter("principalId", digestIdentifier(principalId))
             .setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
         query.setLockMode(LockModeType.NONE);
         return jpaBeanFactory
@@ -211,24 +211,24 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     .map(queryValue -> {
                         if (factory.isOracle()) {
                             return String.format("JSON_EXISTS(t.attributes, '$?(@.\"%s\" == \"%s\")')",
-                                digest(entry.getKey()), digest(queryValue.toString()));
+                                digestIdentifier(entry.getKey()), digestIdentifier(queryValue.toString()));
                         }
                         if (factory.isPostgres()) {
-                            return String.format("(t.attributes->'%s')\\:\\:jsonb \\?\\? '%s'", digest(entry.getKey()), digest(queryValue.toString()));
+                            return String.format("(t.attributes->'%s')\\:\\:jsonb \\?\\? '%s'", digestIdentifier(entry.getKey()), digestIdentifier(queryValue.toString()));
                         }
                         if (factory.isMariaDb()) {
                             val attributeKey = isCipherExecutorEnabled()
                                 ? entry.getKey()
                                 : entry.getKey().replace("-", "\\\\-");
                             return String.format("JSON_SEARCH(JSON_QUERY(t.attributes, '$.%s'), 'one', '%s') is not null",
-                                String.format("\"%s\"", digest(attributeKey)), digest(queryValue.toString()));
+                                String.format("\"%s\"", digestIdentifier(attributeKey)), digestIdentifier(queryValue.toString()));
                         }
                         if (factory.isMySql()) {
                             return String.format("JSON_SEARCH(JSON_EXTRACT(t.attributes, '$.%s'), 'one', '%s') is not null",
-                                String.format("\"%s\"", digest(entry.getKey())), digest(queryValue.toString()));
+                                String.format("\"%s\"", digestIdentifier(entry.getKey())), digestIdentifier(queryValue.toString()));
                         }
                         if (factory.isMsSqlServer()) {
-                            return String.format("%s.value='%s'", String.format("\"%s\"", digest(entry.getKey())), digest(queryValue.toString()));
+                            return String.format("%s.value='%s'", String.format("\"%s\"", digestIdentifier(entry.getKey())), digestIdentifier(queryValue.toString()));
                         }
                         return "1=2";
                     })
@@ -240,7 +240,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val selectClause = new StringBuilder(String.format("SELECT t.* FROM %s t ", factory.getTableName()));
         if (factory.isMsSqlServer()) {
             for (val entry : queryAttributes.entrySet()) {
-                val name = String.format("\"%s\"", digest(entry.getKey()));
+                val name = String.format("\"%s\"", digestIdentifier(entry.getKey()));
                 selectClause.append(String.format("CROSS APPLY OPENJSON(t.attributes, '$.%s') %s ", name, name));
             }
         }
@@ -278,7 +278,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public long deleteSingleTicket(final Ticket ticketToDelete) {
         val result = transactionTemplate.execute(transactionStatus -> {
             val factory = getJpaTicketEntityFactory();
-            val encTicketId = digest(ticketToDelete.getId());
+            val encTicketId = digestIdentifier(ticketToDelete.getId());
             var totalCount = 0;
             val md = ticketCatalog.find(ticketToDelete);
 

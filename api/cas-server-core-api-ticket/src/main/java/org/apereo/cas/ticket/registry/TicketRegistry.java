@@ -188,4 +188,12 @@ public interface TicketRegistry {
      * @return the tickets with authentication attributes
      */
     Stream<? extends Ticket> getSessionsWithAttributes(Map<String, List<Object>> queryAttributes);
+
+    /**
+     * Allows the registry to hash the given identifier, which may be the ticket id or the principdl id, etc.
+     *
+     * @param id the id
+     * @return the string
+     */
+    String digestIdentifier(String id);
 }

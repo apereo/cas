@@ -73,7 +73,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         LOGGER.trace("Locating ticket [{}]", ticketId);
-        val encodedTicketId = digest(ticketId);
+        val encodedTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(encodedTicketId)) {
             LOGGER.debug("Ticket id [{}] could not be found", ticketId);
             return null;
@@ -133,7 +133,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteSingleTicket(final Ticket ticketToDelete) {
-        val ticketId = digest(ticketToDelete.getId());
+        val ticketId = digestIdentifier(ticketToDelete.getId());
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         val definition = ticketCatalog.find(ticketToDelete);
         val delete = QueryBuilder
@@ -182,7 +182,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         queryAttributes.forEach((key, values) ->
             values.forEach(queryValue -> {
                 var cql = String.format("SELECT * FROM %s.%s WHERE prefix='%s' AND ", properties.getKeyspace(), metadata.getProperties().getStorageName(), metadata.getPrefix());
-                cql += String.format("attributes CONTAINS KEY '%s' AND attributes CONTAINS '%s' ALLOW FILTERING;", digest(key), digest(queryValue.toString()));
+                cql += String.format("attributes CONTAINS KEY '%s' AND attributes CONTAINS '%s' ALLOW FILTERING;", digestIdentifier(key), digestIdentifier(queryValue.toString()));
                 queryList.add(cql);
             }));
         val rowMapper = new BeanPropertyRowMapper<>(CassandraTicketHolder.class, true);
