@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -41,6 +42,7 @@ import java.util.stream.StreamSupport;
  * @since 4.1.0
  */
 @Slf4j
+@Monitorable
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements AutoCloseable, DisposableBean {
     private final HazelcastInstance hazelcastInstance;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -26,6 +27,7 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @Slf4j
+@Monitorable
 public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final transient S3Client s3Client;
 

@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
+@Monitorable
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private final JpaBeanFactory jpaBeanFactory;

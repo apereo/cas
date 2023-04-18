@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
@@ -19,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @Getter
+@Monitorable
 public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private final Map<String, Ticket> mapInstance;

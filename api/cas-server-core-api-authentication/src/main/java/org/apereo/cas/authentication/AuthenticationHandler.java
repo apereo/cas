@@ -17,7 +17,6 @@ import java.security.GeneralSecurityException;
  * @since 4.0.0
  */
 @FunctionalInterface
-@Monitorable
 public interface AuthenticationHandler extends Ordered {
 
     /**
