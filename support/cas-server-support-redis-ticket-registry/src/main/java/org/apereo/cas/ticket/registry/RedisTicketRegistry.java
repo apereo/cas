@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -54,6 +55,7 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 @Slf4j
+@Monitorable
 public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     private static final String SEARCH_INDEX_NAME = RedisTicketDocument.class.getSimpleName() + "Index";

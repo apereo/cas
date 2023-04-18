@@ -23,7 +23,6 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Monitorable
 public interface TicketRegistry {
 
     /**

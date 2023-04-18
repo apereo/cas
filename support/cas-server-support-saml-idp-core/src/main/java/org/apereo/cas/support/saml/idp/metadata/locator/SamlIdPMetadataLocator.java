@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -15,7 +14,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Monitorable
 public interface SamlIdPMetadataLocator {
     /**
      * Gets full location of signing cert file.
@@ -60,7 +58,8 @@ public interface SamlIdPMetadataLocator {
     /**
      * Initialize.
      */
-    default void initialize() {}
+    default void initialize() {
+    }
 
     /**
      * Metadata exists?
