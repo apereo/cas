@@ -16,6 +16,11 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#registerButton');
     await cas.assertVisibility(page, '#residentKeysPanel');
     await cas.assertVisibility(page, '#registerDiscoverableCredentialButton');
-
+    let xhr_data = page.waitForResponse(r => r.request().url().includes("/webauthn/register") && r.request().method() != 'OPTIONS');
+    page.click('#registerButton');
+    let xhr_resp = await xhr_data;
+    let xhr_result = JSON.parse(await xhr_resp.json());
+    console.log('CAS WebAuthn Register: ', xhr_result);
+    
     await browser.close();
 })();
