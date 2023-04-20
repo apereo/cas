@@ -162,3 +162,6 @@ The following Docker images, used for integration tests, are now upgraded:
 - Netty
 - FontAwesome
 - Duo Security
+- Spring Integration
+- Apache Tomcat
+- Kryo
