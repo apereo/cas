@@ -85,9 +85,9 @@ public class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         assertTrue(up.containsAttribute("givenName"));
         assertTrue(up.containsAttribute("memberOf"));
 
-        assertTrue(up.containsAuthenicationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
-        assertTrue(up.containsAuthenicationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
-        assertTrue(up.containsAuthenicationAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
-        assertTrue(up.containsAuthenicationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        assertTrue(up.containsAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
+        assertTrue(up.containsAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
+        assertTrue(up.containsAuthenticationAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
+        assertTrue(up.containsAuthenticationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 }
