@@ -76,6 +76,6 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
         val request = new MockHttpServletRequest();
         val content = new GoogleAuthenticatorAccountSerializer().toString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request).getStatusCode());
     }
 }

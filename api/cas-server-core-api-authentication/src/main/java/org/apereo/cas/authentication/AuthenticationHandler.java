@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
-import org.apereo.cas.monitor.Monitorable;
 
 import org.springframework.core.Ordered;
 
