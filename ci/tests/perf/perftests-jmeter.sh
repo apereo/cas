@@ -28,7 +28,7 @@ case "$testCategory" in
     casProperties="${casProperties} --cas.authn.saml-idp.metadata.file-system.location=file://${PWD}/ci/tests/perf/saml/md"
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/saml/services"
     casProperties="${casProperties} --cas.http-client.host-name-verifier=none "
-    casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true "
+    casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true --spring.main.lazy-initialization=false "
     jmeterScript="etc/loadtests/jmeter/CAS_SAML2.jmx"
     casModules="saml-idp,reports"
     ;;
@@ -36,6 +36,7 @@ case "$testCategory" in
     casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc "
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
     casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
+    casProperties="${casProperties} --spring.main.lazy-initialization=false "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;
