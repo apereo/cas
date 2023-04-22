@@ -5,6 +5,13 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.slf4j.use-single-line=true",
 
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.schedule.repeat-interval=PT2S",
+    "--cas.service-registry.schedule.start-delay=PT2S",
+
+    "--cas.ticket.registry.cleaner.schedule.repeat-interval=PT2S",
+    "--cas.ticket.registry.cleaner.schedule.start-delay=PT2S",
+
     "--spring.security.user.name=javamelody",
     "--spring.security.user.password=M3ll0n",
 
