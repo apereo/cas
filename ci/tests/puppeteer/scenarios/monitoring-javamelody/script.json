@@ -18,6 +18,6 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true",
-    "--logging.level.org.springframework.security=debug"
+    "--logging.level.org.springframework.security=info"
   ]
 }
