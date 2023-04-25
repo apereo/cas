@@ -44,10 +44,9 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        CasEmbeddedContainerUtils.getLoggingInitialization().ifPresent(init -> init.setMainArguments(args));
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().forEach(init -> init.initialize(args));
         new SpringApplicationBuilder(CasWebApplication.class)
-            .banner(banner)
+            .banner(CasEmbeddedContainerUtils.getCasBannerInstance())
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
             .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
