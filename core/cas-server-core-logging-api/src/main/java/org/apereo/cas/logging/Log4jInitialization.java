@@ -1,6 +1,6 @@
 package org.apereo.cas.logging;
 
-import org.apereo.cas.util.logging.LoggingInitialization;
+import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -16,9 +16,9 @@ import java.util.Arrays;
  * @since 6.4.0
  */
 @NoArgsConstructor
-public class Log4jInitialization implements LoggingInitialization {
+public class Log4jInitialization implements ApplicationEntrypointInitializer {
     @Override
-    public void setMainArguments(final String[] mainArguments) {
+    public void initialize(final String[] mainArguments) {
         val args = Arrays.stream(mainArguments)
             .filter(arg -> arg.startsWith("--logging.level"))
             .map(arg -> StringUtils.replace(arg, "=", " "))
