@@ -1,4 +1,4 @@
-org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration
+org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration
 org.apereo.cas.config.CasCoreServicesConfiguration
 org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration
 org.apereo.cas.config.CasServiceRegistryInitializationConfiguration

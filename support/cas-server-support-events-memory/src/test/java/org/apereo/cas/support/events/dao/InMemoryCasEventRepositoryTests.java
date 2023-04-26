@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;

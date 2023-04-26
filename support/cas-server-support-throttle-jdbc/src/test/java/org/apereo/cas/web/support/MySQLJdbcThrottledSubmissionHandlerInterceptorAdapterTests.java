@@ -1,9 +1,10 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
+import org.apereo.cas.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

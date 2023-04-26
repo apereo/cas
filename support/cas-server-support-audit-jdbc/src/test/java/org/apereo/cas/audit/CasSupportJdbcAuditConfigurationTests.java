@@ -1,10 +1,10 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;

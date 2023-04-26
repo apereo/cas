@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
-import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
+import org.apereo.cas.config.MemcachedMonitorConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
