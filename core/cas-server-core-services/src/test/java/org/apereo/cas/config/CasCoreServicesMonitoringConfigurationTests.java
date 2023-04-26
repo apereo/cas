@@ -7,8 +7,6 @@ package org.apereo.cas.config;
  * @since 7.0.0
  */
 
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.monitor.config.CasCoreMonitorConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 

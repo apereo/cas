@@ -1,9 +1,9 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasConfigurationCreatedEventTests;
+import org.apereo.cas.config.CasConfigurationDeletedEventTests;
+import org.apereo.cas.config.CasConfigurationModifiedEventTests;
 import org.apereo.cas.support.events.audit.CasAuditActionContextRecordedEventTests;
-import org.apereo.cas.support.events.config.CasConfigurationCreatedEventTests;
-import org.apereo.cas.support.events.config.CasConfigurationDeletedEventTests;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEventTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;

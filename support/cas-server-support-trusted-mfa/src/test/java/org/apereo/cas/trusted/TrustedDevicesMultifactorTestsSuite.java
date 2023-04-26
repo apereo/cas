@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted;
 
+import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfigurationTests;
 import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorageTests;
@@ -9,7 +10,6 @@ import org.apereo.cas.trusted.authentication.storage.fingerprint.DefaultDeviceFi
 import org.apereo.cas.trusted.authentication.storage.fingerprint.DeviceFingerprintComponentManagerTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.GeoLocationDeviceFingerprintComponentManagerTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.UserAgentDeviceFingerprintComponentManagerTests;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfigurationTests;
 import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustReportEndpointTests;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDeviceViewActionTests;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustActionTests;

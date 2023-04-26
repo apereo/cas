@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
-import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.WsFederationAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.WsFedAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.WsFederationAuthenticationConfiguration;
+import org.apereo.cas.config.WsFederationAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

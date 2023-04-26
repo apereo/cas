@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
+import org.apereo.cas.config.LdapMonitorConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;

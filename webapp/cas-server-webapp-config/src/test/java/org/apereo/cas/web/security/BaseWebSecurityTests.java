@@ -2,7 +2,7 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasWebAppSecurityConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;

@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.monitoring;
 
+import org.apereo.cas.config.CasCoreMonitorConfiguration;
 import org.apereo.cas.config.CasCoreTicketsMonitoringConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.monitor.config.CasCoreMonitorConfiguration;
 import org.apereo.cas.ticket.registry.BaseTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 

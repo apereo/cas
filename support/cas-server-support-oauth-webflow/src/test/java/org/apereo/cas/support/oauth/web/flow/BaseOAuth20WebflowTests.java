@@ -6,8 +6,8 @@ import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyCon
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20ServicesConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowConfiguration;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 
 import org.springframework.boot.SpringBootConfiguration;

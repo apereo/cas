@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasBasicAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.web.config.CasBasicAuthenticationConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import org.junit.jupiter.api.Tag;

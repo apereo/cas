@@ -1,5 +1,5 @@
-org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration
-org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration
-org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration
-org.apereo.cas.config.authentication.support.SamlRestConfiguration
+org.apereo.cas.config.SamlAuthenticationEventExecutionPlanConfiguration
+org.apereo.cas.config.SamlServiceFactoryConfiguration
+org.apereo.cas.config.SamlUniqueTicketIdGeneratorConfiguration
+org.apereo.cas.config.SamlRestConfiguration
 org.apereo.cas.config.SamlConfiguration

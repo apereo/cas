@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;

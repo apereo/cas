@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.web;
 
+import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import org.junit.jupiter.api.Tag;

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
+import org.apereo.cas.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;

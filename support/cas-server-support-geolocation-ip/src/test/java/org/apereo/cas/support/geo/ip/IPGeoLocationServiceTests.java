@@ -2,7 +2,7 @@ package org.apereo.cas.support.geo.ip;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationConfiguration;
-import org.apereo.cas.support.geo.config.IPGeoLocationConfiguration;
+import org.apereo.cas.config.IPGeoLocationConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
