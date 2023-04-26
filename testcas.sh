@@ -181,6 +181,10 @@ while (( "$#" )); do
             cipher)
                 task+="testCipher "
                 ;;
+            elastic)
+                isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh
+                task+="testElastic "
+                ;;
             gcp)
                 isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
                 task+="testGCP "

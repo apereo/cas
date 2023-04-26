@@ -1,5 +1,6 @@
 package org.apereo.cas.services.mgmt;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Monitorable
 public class DefaultServicesManager extends AbstractServicesManager {
 
     public DefaultServicesManager(final ServicesManagerConfigurationContext context) {
