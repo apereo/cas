@@ -35,6 +35,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -219,7 +220,9 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((NameIDFormat) child).getURI()).collect(Collectors.toList()));
+                .map(child -> ((NameIDFormat) child).getURI())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
         }
         return nameIdFormats;
     }
