@@ -92,6 +92,15 @@ exports.innerText = async (page, selector) => {
     return text;
 };
 
+exports.innerTexts = async (page, selector) => {
+    return await page.evaluate((button) => {
+        let results = [];
+        let elements = document.querySelectorAll(button);
+        elements.forEach(entry => results.push(entry.innerText.trim()));
+        return results;
+    }, selector);
+};
+
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);

@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -29,6 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@Monitorable
 public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private static final int INITIAL_CACHE_SIZE = 50;

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
+@Monitorable
 public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     private final DynamoDbTicketRegistryFacilitator dbTableService;

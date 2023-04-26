@@ -44,7 +44,7 @@ public class AggregateCasThemeSource extends ResourceBundleThemeSource {
                     properties.load(is);
                     properties.forEach((key, value) -> {
                         LOGGER.trace("Loading theme property [{}] from [{}]", key, path);
-                        source.addMessage(key.toString(), Locale.getDefault(), value.toString());
+                        source.addMessage(key.toString(), Locale.ENGLISH, value.toString());
                     });
                 } catch (final IOException e) {
                     LOGGER.warn("Error loading resources from bundle: [{}] - [{}]", path, e.getMessage());

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.ResourceUtils;
@@ -25,6 +26,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Getter
+@Monitorable
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 

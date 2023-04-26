@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
  * @since 3.5.0
  */
 @Slf4j
+@Monitorable
 public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
     private final Clients clients;

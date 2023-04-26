@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
@@ -17,7 +16,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Monitorable
 public interface SamlRegisteredServiceCachingMetadataResolver {
 
     /**
