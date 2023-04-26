@@ -1,7 +1,6 @@
 package org.apereo.cas.services.mgmt;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -50,7 +49,6 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-@Monitorable
 public abstract class AbstractServicesManager implements ServicesManager {
     protected final ServicesManagerConfigurationContext configurationContext;
 

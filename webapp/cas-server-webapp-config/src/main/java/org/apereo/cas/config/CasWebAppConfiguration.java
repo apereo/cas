@@ -15,13 +15,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
@@ -102,7 +102,8 @@ public class CasWebAppConfiguration {
 
     @Bean
     public WebMvcConfigurer casWebAppWebMvcConfigurer(
-        @Qualifier("localeChangeInterceptor") final ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor) {
+        @Qualifier("localeChangeInterceptor")
+        final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(
