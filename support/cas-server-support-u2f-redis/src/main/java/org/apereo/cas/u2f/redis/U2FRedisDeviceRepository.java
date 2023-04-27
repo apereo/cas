@@ -55,17 +55,19 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         val expirationDate = getDeviceExpiration();
-        val keys = redisTemplate.scan(getPatternRedisKey(),
-            casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
-        return queryDeviceRegistrations(expirationDate, keys);
+        try (val keys = redisTemplate.scan(getPatternRedisKey(),
+            casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount())) {
+            return queryDeviceRegistrations(expirationDate, keys);
+        }
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val expirationDate = getDeviceExpiration();
-        val keys = redisTemplate.scan(buildRedisKeyForUser(username),
-            casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
-        return queryDeviceRegistrations(expirationDate, keys);
+        try (val keys = redisTemplate.scan(buildRedisKeyForUser(username),
+            casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount())) {
+            return queryDeviceRegistrations(expirationDate, keys);
+        }
     }
 
     @Override
@@ -84,19 +86,24 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     public void clean() {
         val expirationDate = getDeviceExpiration();
         LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
-        val expiredKeys = getRedisKeys()
-            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(U2FDeviceRegistration.class::cast)
-            .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) <= 0)
-            .map(U2FRedisDeviceRepository::buildRedisKeyForRecord)
-            .collect(Collectors.toList());
-        this.redisTemplate.delete(expiredKeys);
+
+        try (val keys = getRedisKeys()) {
+            val expiredKeys = keys
+                .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(U2FDeviceRegistration.class::cast)
+                .filter(audit -> audit.getCreatedDate().compareTo(expirationDate) <= 0)
+                .map(U2FRedisDeviceRepository::buildRedisKeyForRecord)
+                .collect(Collectors.toList());
+            this.redisTemplate.delete(expiredKeys);
+        }
     }
 
     @Override
     public void removeAll() {
-        this.redisTemplate.delete(getRedisKeys().collect(Collectors.toSet()));
+        try (val keys = getRedisKeys()) {
+            this.redisTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Override

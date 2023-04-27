@@ -52,47 +52,54 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
-        val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id)).collect(Collectors.toSet());
-        if (keys.size() == 1) {
-            val r = this.template.boundValueOps(keys.iterator().next()).get();
-            if (r != null && !r.isEmpty()) {
-                return decode(r.get(0));
+        try (val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id))) {
+            val keySet = keys.collect(Collectors.toSet());
+            if (keySet.size() == 1) {
+                val r = this.template.boundValueOps(keySet.iterator().next()).get();
+                if (r != null && !r.isEmpty()) {
+                    return decode(r.get(0));
+                }
             }
+            return null;
         }
-        return null;
     }
 
     @Override
     public OneTimeTokenAccount get(final long id) {
-        val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id)).collect(Collectors.toSet());
-        if (keys.size() == 1) {
-            val r = this.template.boundValueOps(keys.iterator().next()).get();
-            if (r != null && !r.isEmpty()) {
-                return decode(r.get(0));
+        try (val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id))) {
+            val keySet = keys.collect(Collectors.toSet());
+            if (keySet.size() == 1) {
+                val r = this.template.boundValueOps(keySet.iterator().next()).get();
+                if (r != null && !r.isEmpty()) {
+                    return decode(r.get(0));
+                }
             }
+            return null;
         }
-        return null;
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        val keys = getGoogleAuthenticatorTokenKeys(username, "*");
-        return keys
-            .map(key -> this.template.boundValueOps(key).get())
-            .filter(Objects::nonNull)
-            .map(this::decode)
-            .filter(Objects::nonNull)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+        try (val keys = getGoogleAuthenticatorTokenKeys(username, "*")) {
+            return keys
+                .map(key -> this.template.boundValueOps(key).get())
+                .filter(Objects::nonNull)
+                .map(this::decode)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return (Collection) getGoogleAuthenticatorTokenKeys()
-            .map(redisKey -> this.template.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(this::decode)
-            .collect(Collectors.toList());
+        try (val keys = getGoogleAuthenticatorTokenKeys()) {
+            return (Collection) keys
+                .map(redisKey -> this.template.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(this::decode)
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
@@ -112,39 +119,46 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     @Override
     public void deleteAll() {
-        val redisKey = getGoogleAuthenticatorTokenKeys().collect(Collectors.toSet());
-        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens");
+        try (val keys = getGoogleAuthenticatorTokenKeys()) {
+            val redisKey = keys.collect(Collectors.toSet());
+            LOGGER.trace("Deleting tokens using key [{}]", redisKey);
+            this.template.delete(redisKey);
+            LOGGER.trace("Deleted tokens");
+        }
     }
 
     @Override
     public void delete(final String username) {
-        val redisKey = getGoogleAuthenticatorTokenKeys(username, "*").collect(Collectors.toSet());
-        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens");
+        try (val keys = getGoogleAuthenticatorTokenKeys(username, "*")) {
+            val redisKey = keys.collect(Collectors.toSet());
+            LOGGER.trace("Deleting tokens using key [{}]", redisKey);
+            this.template.delete(redisKey);
+            LOGGER.trace("Deleted tokens");
+        }
     }
 
     @Override
     public void delete(final long id) {
-        val redisKey = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id))
-            .collect(Collectors.toSet());
-        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens");
+        try (val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id))) {
+            val redisKey = keys.collect(Collectors.toSet());
+            LOGGER.trace("Deleting tokens using key [{}]", redisKey);
+            this.template.delete(redisKey);
+            LOGGER.trace("Deleted tokens");
+        }
     }
 
     @Override
     public long count() {
-        val keys = getGoogleAuthenticatorTokenKeys();
-        return keys.count();
+        try (val keys = getGoogleAuthenticatorTokenKeys()) {
+            return keys.count();
+        }
     }
 
     @Override
     public long count(final String username) {
-        val keys = getGoogleAuthenticatorTokenKeys(username, "*");
-        return keys.count();
+        try (val keys = getGoogleAuthenticatorTokenKeys(username, "*")) {
+            return keys.count();
+        }
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {

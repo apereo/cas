@@ -41,23 +41,24 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
-        val keys = redisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount);
-        val username = getUsernameParameterFromRequest(request);
-        val failures = keys
-            .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
-            .map(BoundValueOperations::get)
-            .map(AuditActionContext.class::cast)
-            .filter(audit ->
-                audit.getPrincipal().equalsIgnoreCase(username)
-                && audit.getClientIpAddress().equalsIgnoreCase(remoteAddress)
-                && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
-                && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
-                && audit.getWhenActionWasPerformed().compareTo(getFailureInRangeCutOffDate()) >= 0)
-            .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
-            .limit(2)
-            .map(this::toThrottledSubmission)
-            .collect(Collectors.toList());
-        return calculateFailureThresholdRateAndCompare(failures);
+        try (val keys = redisTemplate.scan(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount)) {
+            val username = getUsernameParameterFromRequest(request);
+            val failures = keys
+                .map((Function<String, BoundValueOperations>) redisTemplate::boundValueOps)
+                .map(BoundValueOperations::get)
+                .map(AuditActionContext.class::cast)
+                .filter(audit ->
+                    audit.getPrincipal().equalsIgnoreCase(username)
+                    && audit.getClientIpAddress().equalsIgnoreCase(remoteAddress)
+                    && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
+                    && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
+                    && audit.getWhenActionWasPerformed().compareTo(getFailureInRangeCutOffDate()) >= 0)
+                .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
+                .limit(2)
+                .map(this::toThrottledSubmission)
+                .collect(Collectors.toList());
+            return calculateFailureThresholdRateAndCompare(failures);
+        }
     }
 
     @Override
