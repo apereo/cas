@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -23,10 +24,15 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
         if (count > 0) {
             scanOptions = scanOptions.count(count);
         }
-        val cursor = getConnectionFactory().getConnection().scan(scanOptions.build());
+
+        val connection = Objects.requireNonNull(getConnectionFactory()).getConnection();
+        val cursor = connection.keyCommands().scan(scanOptions.build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
-            .onClose(() -> IOUtils.closeQuietly(cursor))
+            .onClose(() -> {
+                IOUtils.closeQuietly(cursor);
+                connection.close();
+            })
             .map(key -> (String) getKeySerializer().deserialize(key))
             .distinct();
     }
