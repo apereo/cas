@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.inwebo.service.InweboConsoleAdmin;
 import org.apereo.cas.support.inwebo.service.InweboService;
+import org.apereo.cas.support.inwebo.service.soap.generated.LoginQuery;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.ssl.SSLUtils;
 
@@ -47,8 +48,7 @@ public class InweboServiceConfiguration {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
 
         val marshaller = new Jaxb2Marshaller();
-        val marshallerContext = getClass().getPackageName().replaceAll("config", "service.soap.generated");
-        marshaller.setContextPath(marshallerContext);
+        marshaller.setContextPath(LoginQuery.class.getPackageName());
 
         val client = new InweboConsoleAdmin(casProperties);
         client.setDefaultUri(inwebo.getConsoleAdminUrl());

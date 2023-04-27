@@ -35,7 +35,7 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-##########################################################################
+  ##########################################################################
 
   initialize:
     runs-on: ubuntu-latest
@@ -51,12 +51,12 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
+      #      - name: Gradle Wrapper Validation
+      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
-##########################################################################
+  ##########################################################################
 
   cache:
     runs-on: ubuntu-latest
@@ -73,8 +73,8 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
+      #      - name: Gradle Wrapper Validation
+      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
@@ -86,8 +86,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
-##########################################################################
+
+  ##########################################################################
 
   build:
     needs: [cache]
@@ -95,26 +95,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk:
-          - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
-    runs-on: ubuntu-latest
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
+      #      - name: Setup tmate session
+      #        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ matrix.jdk }}
+          java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
+      #      - name: Gradle Wrapper Validation
+      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
@@ -131,6 +129,37 @@ jobs:
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
+
+  ##########################################################################
+
+  build-latest-jdk:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JDK_LATEST }}
+          distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      #      - name: Gradle Wrapper Validation
+      #        uses: gradle/wrapper-validation-action@v1
+      - name: Initialize
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build with Gradle
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
 
   ##########################################################################
 
