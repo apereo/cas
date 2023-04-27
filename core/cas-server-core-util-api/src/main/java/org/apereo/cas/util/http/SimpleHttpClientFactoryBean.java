@@ -10,6 +10,7 @@ import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.classic.ConnectionBackoffStrategy;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultAuthenticationStrategy;
@@ -115,6 +116,9 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
 
     private long connectionTimeout = DEFAULT_TIMEOUT;
 
+    private long socketTimeout = DEFAULT_TIMEOUT;
+
+    private long responseTimeout = DEFAULT_TIMEOUT;
 
     /**
      * The redirection strategy by default, using http status codes.
@@ -255,10 +259,17 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
             .register("https", sslFactory)
             .build();
         
+        val connConfig = ConnectionConfig.custom()
+            .setConnectTimeout(Timeout.ofMilliseconds(this.connectionTimeout))
+            .setSocketTimeout(Timeout.ofMilliseconds(this.socketTimeout))
+            .setValidateAfterInactivity(Timeout.ofMilliseconds(DEFAULT_TIMEOUT))
+            .build();
+
         val connectionManager = new PoolingHttpClientConnectionManager(registry);
         connectionManager.setMaxTotal(this.maxPooledConnections);
         connectionManager.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
         connectionManager.setValidateAfterInactivity(Timeout.ofMilliseconds(DEFAULT_TIMEOUT));
+        connectionManager.setDefaultConnectionConfig(connConfig);
 
         val requestConfig = RequestConfig.custom()
             .setConnectTimeout(Timeout.ofMilliseconds(this.connectionTimeout))
@@ -266,6 +277,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
             .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
             .setRedirectsEnabled(this.redirectsEnabled)
             .setAuthenticationEnabled(this.authenticationEnabled)
+            .setResponseTimeout(Timeout.ofMilliseconds(this.responseTimeout))
             .build();
 
         val builder = HttpClients.custom()
