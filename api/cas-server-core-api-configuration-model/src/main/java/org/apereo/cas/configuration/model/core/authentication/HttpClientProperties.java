@@ -41,6 +41,16 @@ public class HttpClientProperties implements Serializable {
     private String readTimeout = "PT5S";
 
     /**
+     * Defines the socket timeout in milliseconds, which is the timeout
+     * for waiting for data or, put differently, a maximum period inactivity
+     * between two consecutive data packets).
+     * A timeout value of zero is interpreted as an infinite timeout. A negative value
+     * is interpreted as undefined (system default if applicable).
+     */
+    @DurationCapable
+    private String socketTimeout = "PT5S";
+
+    /**
      * Indicates timeout for async operations.
      */
     @DurationCapable

@@ -110,6 +110,7 @@ public class CasCoreHttpConfiguration {
             val httpClient = casProperties.getHttpClient();
             c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
             c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+            c.setSocketTimeout((int) Beans.newDuration(httpClient.getSocketTimeout()).toMillis());
 
             if (StringUtils.isNotBlank(httpClient.getProxyHost()) && httpClient.getProxyPort() > 0) {
                 c.setProxy(new HttpHost(httpClient.getProxyHost(), httpClient.getProxyPort()));
