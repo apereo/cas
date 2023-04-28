@@ -56,7 +56,7 @@ while (("$#")); do
     printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
     ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
     printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
-    exit 0
+    shift 1
     ;;
   --local)
     propFilter=$2
