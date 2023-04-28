@@ -93,8 +93,8 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     @Test
     public void verifyWildcard() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
-        assertTrue(getService().canImpersonate("anyone", CoreAuthenticationTestUtils.getPrincipal(ADMIN), service));
-        assertTrue(getService().isWildcardedAccount("anyone", CoreAuthenticationTestUtils.getPrincipal(ADMIN)));
+        assertTrue(getService().canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(ADMIN), service));
+        assertTrue(getService().isWildcardedAccount(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(ADMIN)));
     }
 
     @ImportAutoConfiguration({
