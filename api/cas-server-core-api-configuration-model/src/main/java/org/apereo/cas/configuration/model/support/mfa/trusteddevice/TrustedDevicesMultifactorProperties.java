@@ -65,7 +65,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * Settings that control the background cleaner process.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     /**
      * Store devices records inside MongoDb.
@@ -94,5 +94,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     public TrustedDevicesMultifactorProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT1M");
     }
 }

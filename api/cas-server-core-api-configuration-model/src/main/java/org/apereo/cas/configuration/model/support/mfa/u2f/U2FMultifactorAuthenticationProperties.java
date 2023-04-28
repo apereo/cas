@@ -87,7 +87,7 @@ public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthe
      * Clean up expired records via a background cleaner process.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     /**
      * Crypto settings that sign/encrypt the u2f registration records.
@@ -99,6 +99,7 @@ public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthe
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         setId(DEFAULT_IDENTIFIER);
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT1M");
     }
 
 }
