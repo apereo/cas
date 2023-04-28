@@ -7,13 +7,10 @@ import org.apereo.cas.validation.Assertion;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.servlet.resource.ResourceResolver;
 
 import javax.annotation.Nonnull;
 

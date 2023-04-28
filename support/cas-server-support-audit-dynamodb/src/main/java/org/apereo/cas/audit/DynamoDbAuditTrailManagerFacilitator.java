@@ -137,7 +137,7 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
                     val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
                     val time1 = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
                     return new AuditActionContext(principal, resource, actionPerformed,
-                        appCode, new Date(time1), clientIp, serverIp, userAgent);
+                        appCode, new Date(time1), clientIp, serverIp, userAgent, Map.of());
                 })
             .collect(Collectors.toSet());
     }
