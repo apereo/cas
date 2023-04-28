@@ -106,13 +106,15 @@ public class TicketRegistryProperties implements Serializable {
      * Ticket registry cleaner settings.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     /**
      * Ticket registry core settings.
      */
     @NestedConfigurationProperty
     private TicketRegistryCoreProperties core = new TicketRegistryCoreProperties();
-
-
+    
+    public TicketRegistryProperties() {
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT10S").setRepeatInterval("PT1M");
+    }
 }

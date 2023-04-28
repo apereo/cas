@@ -34,10 +34,4 @@ public class ScheduledJobProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
-
-    public ScheduledJobProperties(final String startDelay, final String repeatInterval) {
-        schedule.setEnabled(true);
-        schedule.setStartDelay(startDelay);
-        schedule.setRepeatInterval(repeatInterval);
-    }
 }
