@@ -47,6 +47,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         val values = new HashMap<>();
         values.put("issuer", returnValue.getIssuer().getValue());
         values.put("binding", returnValue.getProtocolBinding());
+        values.put("destination", returnValue.getDestination());
         return new String[]{auditFormat.serialize(values)};
     }
 }

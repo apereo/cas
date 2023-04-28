@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.validation.Assertion;
 
@@ -19,9 +20,11 @@ import java.util.LinkedHashMap;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Setter
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
-    private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
+
+    public TicketValidationResourceResolver(final AuditEngineProperties properties) {
+        super(properties);
+    }
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
@@ -42,6 +45,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
             results.put("attributes", attributes);
         }
 
+        val auditFormat = AuditTrailManager.AuditFormats.valueOf(properties.getAuditFormat().name());
         return results.isEmpty()
             ? ArrayUtils.EMPTY_STRING_ARRAY
             : new String[]{auditFormat.serialize(results)};

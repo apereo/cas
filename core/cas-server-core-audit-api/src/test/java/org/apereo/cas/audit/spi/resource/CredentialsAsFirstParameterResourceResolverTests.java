@@ -3,8 +3,10 @@ package org.apereo.cas.audit.spi.resource;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 
 import lombok.val;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ public class CredentialsAsFirstParameterResourceResolverTests {
 
     @Test
     public void verifyCredential() {
-        val resolver = new CredentialsAsFirstParameterResourceResolver();
+        val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()});
         assertNotNull(resolver.resolveFrom(jp, new Object()));
@@ -31,7 +33,7 @@ public class CredentialsAsFirstParameterResourceResolverTests {
 
     @Test
     public void verifyJsonCredential() {
-        val resolver = new CredentialsAsFirstParameterResourceResolver();
+        val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         val cred = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "p@ssword");
         when(jp.getArgs()).thenReturn(new Object[]{cred});
@@ -40,7 +42,7 @@ public class CredentialsAsFirstParameterResourceResolverTests {
 
     @Test
     public void verifyException() {
-        val resolver = new CredentialsAsFirstParameterResourceResolver();
+        val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()});
         assertNotNull(resolver.resolveFrom(jp, new AuthenticationException()));
@@ -48,11 +50,15 @@ public class CredentialsAsFirstParameterResourceResolverTests {
 
     @Test
     public void verifyTransaction() {
-        val resolver = new CredentialsAsFirstParameterResourceResolver();
+        val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs())
             .thenReturn(new Object[]{new DefaultAuthenticationTransactionFactory().newTransaction(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"))});
         assertNotNull(resolver.resolveFrom(jp, new Object()));
+    }
+
+    private static AuditResourceResolver getResolver() {
+        return new CredentialsAsFirstParameterResourceResolver(new AuditEngineProperties());
     }
 }
