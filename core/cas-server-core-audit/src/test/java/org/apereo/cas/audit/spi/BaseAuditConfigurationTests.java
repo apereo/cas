@@ -33,7 +33,7 @@ public abstract class BaseAuditConfigurationTests {
         auditTrailManager.removeAll();
         val ctx = new AuditActionContext(USER, "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", "GoogleChrome");
+            "1.2.3.4", "GoogleChrome", Map.of());
         auditTrailManager.record(ctx);
     }
 
