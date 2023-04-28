@@ -1,9 +1,11 @@
 package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.DigestUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -19,7 +21,10 @@ import java.util.HashMap;
  * @since 3.1.2
  */
 @Setter
+@RequiredArgsConstructor
 public class ServiceAuditResourceResolver implements AuditResourceResolver {
+    private final AuditEngineProperties properties;
+
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
@@ -27,7 +32,7 @@ public class ServiceAuditResourceResolver implements AuditResourceResolver {
         val service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
         val values = new HashMap<String, String>();
         values.put("return", retval.toString());
-        values.put("service", DigestUtils.abbreviate(service.getId()));
+        values.put("service", DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength()));
         return new String[]{this.auditFormat.serialize(values)};
     }
 
