@@ -216,6 +216,7 @@ layout: null
             *   [Groovy](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Groovy.html)
             *   [Anonymous](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Anonymous.html)
             *   [Encrypted](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Encrypted.html)
+            *   [Static](/cas/{{ version }}/integration/Attribute-Release-PrincipalId-Static.html)
         *   [Release Policies](#attrrelpolicies)
             *   [Overview](/cas/{{ version }}/integration/Attribute-Release-Policies.html)
             *   [Default Bundle](/cas/{{ version }}/integration/Attribute-Release-Policy-DefaultBundle.html)     

@@ -92,7 +92,8 @@ CAS may not be able to correctly find the appropriate service definition linked 
 
 By default and in previous releases, multiple Redis connections share a single thread-safe native connection. If you enable connection pooling,
 then native connection sharing will be disabled and the connection pool will be used for all operations. You may however explicitly control connection 
-sharing via this setting as an override.
+sharing via this setting as an override. Furthermore, Redis `SCAN` operations are reviewed across the codebase to ensure connection cursors
+are properly closed and returned back to the connection pool.
 
 ### Monitoring & Observations
 
@@ -102,6 +103,9 @@ The following operations are now *observed* using [Micrometer Observations](http
 - Service management operations and queries
 - SAML2 service provider metadata resolution
 - Authentication attempts and transactions
+
+In the same category, an integration with [Elastic APM](../monitoring/Configuring-Monitoring-ElasticAPM.html) 
+is now available to monitor CAS component execution and register execution spans and traces with Elastic APM.
 
 ### CAS Initializr
 
@@ -135,6 +139,7 @@ The following Docker images, used for integration tests, are now upgraded:
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
 - `assertionAudiences` defined for SAML2 service definition will now override the default entity id, when defined.
+- Additional settings for [Impersonation via LDAP](../authentication/Surrogate-Authentication-Storage-LDAP.html) to verify the existence of the surrogate account in the LDAP directory.
 
 ## Library Upgrades
        
