@@ -112,6 +112,14 @@ public class AuditEngineProperties implements Serializable {
     private AuditFormatTypes auditFormat = AuditFormatTypes.DEFAULT;
 
     /**
+     * Abbreviate fields and entries in the audit logs where possible
+     * by the given length. This typically is applied to long service
+     * URLs that are captured in audit logs. Negative/Zero values
+     * disable the abbreviation altogether.
+     */
+    private int abbreviationLength = 125;
+
+    /**
      * The audit format types.
      */
     public enum AuditFormatTypes {

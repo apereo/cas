@@ -105,8 +105,8 @@ public class CasCoreAuditConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "credentialsAsFirstParameterResourceResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver credentialsAsFirstParameterResourceResolver() {
-            return new CredentialsAsFirstParameterResourceResolver();
+        public AuditResourceResolver credentialsAsFirstParameterResourceResolver(final CasConfigurationProperties casProperties) {
+            return new CredentialsAsFirstParameterResourceResolver(casProperties.getAudit().getEngine());
         }
 
         @Bean
@@ -120,8 +120,8 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "ticketResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver ticketResourceResolver() {
-            return new TicketAsFirstParameterResourceResolver();
+        public AuditResourceResolver ticketResourceResolver(final CasConfigurationProperties casProperties) {
+            return new TicketAsFirstParameterResourceResolver(casProperties.getAudit().getEngine());
         }
 
         @ConditionalOnMissingBean(name = "ticketValidationResourceResolver")
@@ -131,7 +131,7 @@ public class CasCoreAuditConfiguration {
             @Qualifier("ticketResourceResolver") final AuditResourceResolver ticketResourceResolver,
             final CasConfigurationProperties casProperties) {
             if (casProperties.getAudit().getEngine().isIncludeValidationAssertion()) {
-                return new TicketValidationResourceResolver();
+                return new TicketValidationResourceResolver(casProperties.getAudit().getEngine());
             }
             return ticketResourceResolver;
         }
@@ -152,8 +152,8 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "serviceAuditResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver serviceAuditResourceResolver() {
-            return new ServiceAuditResourceResolver();
+        public AuditResourceResolver serviceAuditResourceResolver(final CasConfigurationProperties casProperties) {
+            return new ServiceAuditResourceResolver(casProperties.getAudit().getEngine());
         }
 
         @ConditionalOnMissingBean(name = "returnValueResourceResolver")
@@ -178,8 +178,8 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "serviceAccessEnforcementAuditResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditResourceResolver serviceAccessEnforcementAuditResourceResolver() {
-            return new ServiceAccessEnforcementAuditResourceResolver();
+        public AuditResourceResolver serviceAccessEnforcementAuditResourceResolver(final CasConfigurationProperties casProperties) {
+            return new ServiceAccessEnforcementAuditResourceResolver(casProperties.getAudit().getEngine());
         }
 
     }
@@ -295,7 +295,7 @@ public class CasCoreAuditConfiguration {
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val audit = casProperties.getAudit().getEngine();
-                    val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
+                    val auditFormat = AuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
                     val auditManager = new FilterAndDelegateAuditTrailManager(
                         auditTrailExecutionPlan.getAuditTrailManagers(),
                         audit.getSupportedActions(), audit.getExcludedActions());

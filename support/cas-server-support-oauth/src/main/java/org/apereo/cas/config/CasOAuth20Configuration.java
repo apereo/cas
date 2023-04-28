@@ -1537,7 +1537,7 @@ public class CasOAuth20Configuration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer() {
+        public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer(final CasConfigurationProperties casProperties) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
                     new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
@@ -1555,13 +1555,13 @@ public class CasOAuth20Configuration {
                     new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                         AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
                 plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER,
-                    new OAuth20AccessTokenResponseAuditResourceResolver());
+                    new OAuth20AccessTokenResponseAuditResourceResolver(casProperties.getAudit().getEngine()));
 
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
                     new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                         AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
                 plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER,
-                    new OAuth20AuthorizationResponseAuditResourceResolver());
+                    new OAuth20AuthorizationResponseAuditResourceResolver(casProperties.getAudit().getEngine()));
             };
         }
     }
