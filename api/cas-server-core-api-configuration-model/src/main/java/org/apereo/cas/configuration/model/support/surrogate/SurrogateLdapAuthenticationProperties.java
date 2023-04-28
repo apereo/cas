@@ -26,6 +26,12 @@ public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchPro
 
     /**
      * LDAP search filter used to locate the surrogate account.
+     * The query is expected to determine whether the primary user is authorized
+     * to impersonate the given account. These fields may be referred to in the LDAP search
+     * query via {@code {user}} and {@code {surrogate}} placeholders.
+     * If the query result yields a value that points to an LDAP entry, impersonation is authorized
+     * for the given accounts.
+     * <p>An example might be {@code (&(uid={user})(xyzMemberOf=actAs:{surrogate}))}</p>
      */
     @RequiredProperty
     private String surrogateSearchFilter;
@@ -33,6 +39,7 @@ public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchPro
     /**
      * Attribute that must be found on the LDAP entry linked to the admin user
      * that tags the account as authorized for impersonation.
+     * All attribute values are then compared against the pattern you specify in {@link #getMemberAttributeValueRegex()}.
      */
     @RequiredProperty
     private String memberAttributeName;
@@ -44,4 +51,13 @@ public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchPro
      * successful match indicates the qualified impersonated user by admin.
      */
     private String memberAttributeValueRegex;
+
+    /**
+     * An optional LDAP validation filter that attempts to look for surrogate/impersonatee
+     * account in LDAP once authorization has been granted via {@link #getSurrogateSearchFilter()}.
+     * You can use this validation filter to ensure the surrogate/impersonatee does exist in LDAP.
+     * The LDAP filter may use {@code {surrogate}} as a placeholder in the filter to locate the surrogate account.
+     * <p>An example might be: {@code (&(uid={surrogate})(authorized=TRUE))}</p>
+     */
+    private String surrogateValidationFilter;
 }
