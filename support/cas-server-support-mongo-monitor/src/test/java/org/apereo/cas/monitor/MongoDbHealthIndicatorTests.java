@@ -100,7 +100,7 @@ public class MongoDbHealthIndicatorTests {
         val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
             "action", "appcode", new Date(), "clientIp",
-            "serverIp", UUID.randomUUID().toString()), "monitor");
+            "serverIp", UUID.randomUUID().toString(), Map.of()), "monitor");
     }
 
     @Test
