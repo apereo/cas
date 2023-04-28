@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

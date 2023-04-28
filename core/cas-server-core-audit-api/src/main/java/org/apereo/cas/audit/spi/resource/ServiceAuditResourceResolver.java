@@ -5,10 +5,7 @@ import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.DigestUtils;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;

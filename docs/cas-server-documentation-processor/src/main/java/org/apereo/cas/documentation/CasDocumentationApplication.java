@@ -70,6 +70,8 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -327,8 +329,13 @@ public class CasDocumentationApplication {
         for (var i = 0; i < patterns.size(); i++) {
             var pattern = patterns.get(i);
             var matcher = Pattern.compile(pattern).matcher(description);
-            while (matcher.find()) {
-                description = description.replaceAll(pattern, "<code>" + matcher.group(1) + "</code>");
+            try {
+                while (matcher.find()) {
+                    description = description.replaceAll(pattern,
+                        "<code>" + Matcher.quoteReplacement(matcher.group(1)) + "</code>");
+                }
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
             }
         }
         return description;
