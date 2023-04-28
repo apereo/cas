@@ -78,6 +78,14 @@ public class ResourceUtilsTests {
         assertNotNull(ResourceUtils.exportClasspathResourceToFile(file, res));
     }
 
+    @Test
+    public void verifyClasspathResourceDirectory() {
+        val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
+        assertNotNull(url);
+        val file = new File(url.toExternalForm()).getParentFile();
+        assertTrue(ResourceUtils.doesResourceExist(new ClassPathResource(file.getPath())));
+    }
+
     /**
      * Check that doesResourceExist validates existence of directory.
      */
