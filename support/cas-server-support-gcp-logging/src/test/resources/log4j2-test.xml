@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable" packages="org.apereo.cas.logging">
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <JsonLayout locationInfo="true" includeStacktrace="true">
+                <KeyValuePair key="time" value="${event:Timestamp}"/>
+                <KeyValuePair key="severity" value="${event:Level}"/>
+                <KeyValuePair key="logging.googleapis.com/sourceLocation" value="${ctx:SourceLocation}"/>
+                <KeyValuePair key="logging.googleapis.com/spanId" value="${ctx:SpanId}"/>
+                <KeyValuePair key="logging.googleapis.com/trace" value="${ctx:Trace}"/>
+                <KeyValuePair key="labels" value="${ctx:Labels}"/>
+                <KeyValuePair key="httpRequest" value="${ctx:HttpRequest}"/>
+            </JsonLayout>
+        </Console>
+        <GoogleCloudAppender name="GoogleCloudAppender">
+            <AppenderRef ref="Console"/>
+        </GoogleCloudAppender>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO" includeLocation="true">
+            <AppenderRef ref="GoogleCloudAppender"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
