@@ -107,7 +107,7 @@ public class ResourceUtils {
             return false;
         }
         try {
-            if (res.isFile() && FileUtils.isDirectory(res.getFile())) {
+            if (isJarResource(res) || (res.isFile() && FileUtils.isDirectory(res.getFile()))) {
                 return true;
             }
             IOUtils.read(res.getInputStream(), new byte[1]);
@@ -308,8 +308,9 @@ public class ResourceUtils {
      */
     public static boolean isJarResource(final Resource resource) {
         try {
-            return "jar".equals(resource.getURI().getScheme());
-        } catch (final IOException e) {
+            return resource instanceof ClassPathResource cp && cp.getPath().startsWith("jar:")
+                || "jar".equals(resource.getURI().getScheme());
+        } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
         return false;
