@@ -10,6 +10,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpir
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyActivationCriteriaTests;
 import org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteriaTests;
+import org.apereo.cas.services.StaticRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServiceNoOpCipherExecutorTests;
 
@@ -26,6 +27,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServicePropertyTests.class,
     RegisteredServiceAccessStrategyAuditableEnforcerTests.class,
     CasYamlHttpMessageConverterTests.class,
+    StaticRegisteredServiceUsernameProviderTests.class,
     ChainingRegisteredServiceAccessStrategyActivationCriteriaTests.class,
     RegisteredServiceAccessStrategyActivationCriteriaTests.class,
     GroovyRegisteredServiceAccessStrategyActivationCriteriaTests.class,

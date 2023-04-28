@@ -28,10 +28,11 @@ into uppercase/lowercase. This is noted by the `canonicalizationMode` whose allo
 
 The following providers are available to produce usernames.
 
-| Provider       | Description                                                         |
-|----------------|---------------------------------------------------------------------|
-| Default        | [See this guide](Attribute-Release-PrincipalId-Default.html).       |
-| Attribute      | [See this guide](Attribute-Release-PrincipalId-Attribute.html).     |
-| Groovy         | [See this guide](Attribute-Release-PrincipalId-Groovy.html).        |
-| Anonymous      | [See this guide](Attribute-Release-PrincipalId-Anonymous.html).     |
-| Encrypted      | [See this guide](Attribute-Release-PrincipalId-Encrypted.html).     |
+| Provider  | Description                                                     |
+|-----------|-----------------------------------------------------------------|
+| Default   | [See this guide](Attribute-Release-PrincipalId-Default.html).   |
+| Attribute | [See this guide](Attribute-Release-PrincipalId-Attribute.html). |
+| Groovy    | [See this guide](Attribute-Release-PrincipalId-Groovy.html).    |
+| Anonymous | [See this guide](Attribute-Release-PrincipalId-Anonymous.html). |
+| Encrypted | [See this guide](Attribute-Release-PrincipalId-Encrypted.html). |
+| Static    | [See this guide](Attribute-Release-PrincipalId-Static.html).    |
