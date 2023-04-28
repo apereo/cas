@@ -31,7 +31,7 @@ public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchPro
      * query via {@code {user}} and {@code {surrogate}} placeholders.
      * If the query result yields a value that points to an LDAP entry, impersonation is authorized
      * for the given accounts.
-     * <p>An example might be {@code (&(uid={user})(xyzMemberOf=actAs:{surrogate}))}</p>
+     * <p>An example might be <pre>(&(uid={user})(xyzMemberOf=actAs:{surrogate}))</pre></p>
      */
     @RequiredProperty
     private String surrogateSearchFilter;
@@ -57,7 +57,7 @@ public class SurrogateLdapAuthenticationProperties extends AbstractLdapSearchPro
      * account in LDAP once authorization has been granted via {@link #getSurrogateSearchFilter()}.
      * You can use this validation filter to ensure the surrogate/impersonatee does exist in LDAP.
      * The LDAP filter may use {@code {surrogate}} as a placeholder in the filter to locate the surrogate account.
-     * <p>An example might be: {@code (&(uid={surrogate})(authorized=TRUE))}</p>
+     * <p>An example might be: <pre>(&(uid={surrogate})(authorized=TRUE))</pre></p>
      */
     private String surrogateValidationFilter;
 }
