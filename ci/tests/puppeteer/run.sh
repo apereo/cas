@@ -88,7 +88,7 @@ INITONLY="false"
 
 while (( "$#" )); do
   case "$1" in
-  --scenario)
+  --scenario|--sc)
     scenario="$2"
     shift 2
     ;;
@@ -116,17 +116,17 @@ while (( "$#" )); do
     DRYRUN="true"
     shift 1
     ;;
-  --bo)
+  --bo|-bo)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --ho)
+  --ho|-ho)
     export HEADLESS="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hr)
+  --hr|-hr)
     export HEADLESS="true"
     RERUN="true"
     shift 1;
@@ -137,7 +137,7 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hb)
+  --hb|-hb)
     export HEADLESS="true"
     REBUILD="true"
     shift 1;
@@ -155,14 +155,14 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hbod)
+  --hbod|-hbod)
     export HEADLESS="true"
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DEBUG="true"
     shift 1;
     ;;
-  --hbo)
+  --hbo|-hbo)
     export HEADLESS="true"
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -183,7 +183,7 @@ while (( "$#" )); do
     DEBUG="true"
     shift 1;
     ;;
-  --boy)
+  --boy|-boy)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DRYRUN="true"
@@ -523,7 +523,7 @@ if [[ "${RERUN}" != "true" ]]; then
       printcyan "Cleaning leftover artifacts from previous runs..."
       rm -rf "$TMPDIR/keystore.jwks"
 
-      printcyan "Launching CAS instance #${c} under port ${serverPort}"
+      printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
          -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
          --spring.profiles.active=none --server.ssl.key-store="$keystore" \

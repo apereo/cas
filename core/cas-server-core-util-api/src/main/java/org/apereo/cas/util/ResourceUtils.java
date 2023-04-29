@@ -107,7 +107,7 @@ public class ResourceUtils {
             return false;
         }
         try {
-            if (isJarResource(res) || (res.isFile() && FileUtils.isDirectory(res.getFile()))) {
+            if (res.isFile() && FileUtils.isDirectory(res.getFile())) {
                 return true;
             }
             IOUtils.read(res.getInputStream(), new byte[1]);
