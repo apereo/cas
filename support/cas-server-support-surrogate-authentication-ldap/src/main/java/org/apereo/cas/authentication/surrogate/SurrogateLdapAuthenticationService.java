@@ -9,6 +9,7 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,6 +46,12 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal) {
+        return super.isWildcardedAccount(surrogate, principal)
+            && doesSurrogateAccountExistInLdap(surrogate);
+    }
+
+    @Override
     public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<Service> service) {
         try {
             val id = principal.getId();
@@ -56,18 +63,24 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             LOGGER.debug("LDAP search response: [{}]", response);
             var entryResult = LdapUtils.containsResultEntry(response);
             if (entryResult && StringUtils.isNotBlank(ldapProperties.getSurrogateValidationFilter())) {
-                val validationFilter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateValidationFilter(),
-                    "surrogate", List.of(surrogate));
-                LOGGER.debug("Using surrogate validation filter [{}] to verify surrogate account [{}]", validationFilter, surrogate);
-                response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), validationFilter, ldapProperties.getPageSize());
-                LOGGER.debug("LDAP validation response: [{}]", response);
-                entryResult = LdapUtils.containsResultEntry(response);
+                entryResult = doesSurrogateAccountExistInLdap(surrogate);
             }
             return entryResult;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    private boolean doesSurrogateAccountExistInLdap(final String surrogate) {
+        return FunctionUtils.doUnchecked(() -> {
+            val validationFilter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateValidationFilter(),
+                "surrogate", List.of(surrogate));
+            LOGGER.debug("Using surrogate validation filter [{}] to verify surrogate account [{}]", validationFilter, surrogate);
+            val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), validationFilter, ldapProperties.getPageSize());
+            LOGGER.debug("LDAP validation response: [{}]", response);
+            return LdapUtils.containsResultEntry(response);
+        });
     }
 
     @Override
