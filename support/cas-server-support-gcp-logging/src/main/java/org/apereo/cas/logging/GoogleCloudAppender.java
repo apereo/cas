@@ -1,7 +1,6 @@
 package org.apereo.cas.logging;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -34,6 +33,15 @@ public class GoogleCloudAppender extends AbstractAppender {
         this.appenderRef = appenderRef;
     }
 
+    /**
+     * Build google cloud appender.
+     *
+     * @param name        the name
+     * @param appenderRef the appender ref
+     * @param filter      the filter
+     * @param config      the config
+     * @return the google cloud appender
+     */
     @PluginFactory
     public static GoogleCloudAppender build(
         @PluginAttribute("name")
