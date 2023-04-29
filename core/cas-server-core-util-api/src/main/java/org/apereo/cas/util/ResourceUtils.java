@@ -20,6 +20,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.ResourcePatternUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +29,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
@@ -309,7 +312,7 @@ public class ResourceUtils {
     public static boolean isJarResource(final Resource resource) {
         try {
             return (resource instanceof ClassPathResource cp && cp.getPath().startsWith("jar:"))
-                || "jar".equals(resource.getURI().getScheme());
+                   || "jar".equals(resource.getURI().getScheme());
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -337,5 +340,21 @@ public class ResourceUtils {
         FunctionUtils.throwIf(artifact.exists() && !artifact.canRead(),
             () -> new IllegalArgumentException("Resource " + canonicalPath + " is not readable."));
         return new FileSystemResource(artifact);
+    }
+
+    /**
+     * Export resources.
+     *
+     * @param resourceLoader   the resource loader
+     * @param parent           the parent
+     * @param locationPatterns the location patterns
+     */
+    public static void exportResources(final ResourceLoader resourceLoader, final File parent,
+                                       final List<String> locationPatterns) {
+        val resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
+        locationPatterns.forEach(pattern -> {
+            val resources = FunctionUtils.doUnchecked(() -> resourcePatternResolver.getResources(pattern));
+            Arrays.stream(resources).forEach(resource -> exportClasspathResourceToFile(parent, resource));
+        });
     }
 }

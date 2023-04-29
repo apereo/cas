@@ -57,7 +57,7 @@ public class GoogleCloudLoggingWebInterceptor implements WebRequestInterceptor {
      */
     public static final String MDC_FIELD_HTTP_PROTOCOL = "http.protocol";
 
-    public final TraceIdExtractor traceIdExtractor = new CloudTraceIdExtractor();
+    private final TraceIdExtractor traceIdExtractor = new CloudTraceIdExtractor();
 
     @Override
     public void preHandle(final WebRequest webRequest) {
