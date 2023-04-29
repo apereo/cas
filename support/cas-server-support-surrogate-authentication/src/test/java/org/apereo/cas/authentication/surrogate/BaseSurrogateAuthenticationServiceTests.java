@@ -93,8 +93,8 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public void verifyWildcard() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val admin = CoreAuthenticationTestUtils.getPrincipal(getAdminUser());
-        assertTrue(getService().canImpersonate("anyone", admin, service));
-        assertTrue(getService().isWildcardedAccount("anyone", admin));
+        assertTrue(getService().canImpersonate(BANDERSON, admin, service));
+        assertTrue(getService().isWildcardedAccount(BANDERSON, admin));
     }
 
     public String getAdminUser() {
