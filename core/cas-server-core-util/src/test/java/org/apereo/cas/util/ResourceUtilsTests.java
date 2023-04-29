@@ -83,7 +83,7 @@ public class ResourceUtilsTests {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val file = new File(url.toExternalForm()).getParentFile();
-        assertTrue(ResourceUtils.doesResourceExist(new ClassPathResource(file.getPath())));
+        assertTrue(ResourceUtils.isJarResource(new ClassPathResource(file.getPath())));
     }
 
     /**
