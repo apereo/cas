@@ -187,6 +187,10 @@ public interface CasFeatureModule {
          */
         Audit,
         /**
+         * Logging support for various providers and platforms.
+         */
+        Logging,
+        /**
          * Authy MFA.
          */
         Authy,
