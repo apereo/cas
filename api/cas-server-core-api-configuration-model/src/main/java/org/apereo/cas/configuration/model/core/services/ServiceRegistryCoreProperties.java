@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -30,9 +31,21 @@ public class ServiceRegistryCoreProperties implements Serializable {
      * registry implementation with a default set of service definitions included
      * with CAS by default in JSON format.
      * The initialization generally tends to find JSON service definitions
-     * from {@link org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties#getLocation()}.
+     * from {@link JsonServiceRegistryProperties#getLocation()}.
+     * <p>
+     * In cases where the location points to an embedded directory or resource inside a JAR/ZIP file,
+     * such as those that might have been packaged with the CAS application as part of the build and assembly process,
+     * embedded services are first exported out into a temporary directory and then read as file-system resources.
+     * In such scenarios, you may want to turn off the watcher via
+     * {@link JsonServiceRegistryProperties#isWatcherEnabled()}.
      */
     private boolean initFromJson;
+
+    /**
+     * Flag that indicates whether service definitions that ship with CAS by default
+     * should be included in the initialization process and imported into CAS service registry.
+     */
+    private boolean initDefaultServices = true;
 
     /**
      * Determine how services are internally managed, queried, cached and reloaded by CAS.

@@ -522,6 +522,7 @@ if [[ "${RERUN}" != "true" ]]; then
 
       printcyan "Cleaning leftover artifacts from previous runs..."
       rm -rf "$TMPDIR/keystore.jwks"
+      rm -rf "$TMPDIR/cas"
 
       printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
@@ -540,6 +541,7 @@ if [[ "${RERUN}" != "true" ]]; then
         curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
         RC=$?
       else
+        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
         until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
            echo -n '.'
            sleep 1
