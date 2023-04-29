@@ -28,7 +28,7 @@ public class ServiceRegistryCoreProperties implements Serializable {
 
     /**
      * Flag that indicates whether to initialise active service
-     * registry implementation with a default set of service definitions included
+     * registry implementation with a set of service definitions included
      * with CAS by default in JSON format.
      * The initialization generally tends to find JSON service definitions
      * from {@link JsonServiceRegistryProperties#getLocation()}.
@@ -38,12 +38,21 @@ public class ServiceRegistryCoreProperties implements Serializable {
      * embedded services are first exported out into a temporary directory and then read as file-system resources.
      * In such scenarios, you may want to turn off the watcher via
      * {@link JsonServiceRegistryProperties#isWatcherEnabled()}.
+     * <p>
+     * If the default location offered by CAS, {@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}, is used,
+     * CAS would attempt to locate JSON service files by forming the following pattern for each active spring application profile:
+     * <pre>classpath*:/{@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}/profile-id/*.json</pre>.
+     * <p>
+     * You may also control whether default services should be included and initialized
+     * via {@link #isInitDefaultServices()}.
      */
     private boolean initFromJson;
 
     /**
      * Flag that indicates whether service definitions that ship with CAS by default
      * should be included in the initialization process and imported into CAS service registry.
+     * Default service files that ship with CAS are found on the classpath
+     * inside the {@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY} directory.
      */
     private boolean initDefaultServices = true;
 

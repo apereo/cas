@@ -25,11 +25,15 @@ import java.io.Serial;
 @Accessors(chain = true)
 @JsonFilter("JsonServiceRegistryProperties")
 public class JsonServiceRegistryProperties extends SpringResourceProperties {
+    /**
+     * Default location directory name where services may be found.
+     */
+    public static final String DEFAULT_LOCATION_DIRECTORY = "services";
 
     /**
-     * Default location where services may be found.
+     * Default location where services may be found on the classpath.
      */
-    private static final Resource DEFAULT_LOCATION = new ClassPathResource("services");
+    public static final Resource DEFAULT_LOCATION = new ClassPathResource("services");
 
     @Serial
     private static final long serialVersionUID = -3022199446494732533L;
