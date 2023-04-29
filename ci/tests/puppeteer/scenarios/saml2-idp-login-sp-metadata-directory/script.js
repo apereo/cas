@@ -18,7 +18,7 @@ const path = require("path");
         await cas.screenshot(page);
         await page.waitForTimeout(2000);
         await cas.loginWith(page, "casuser", "Mellon");
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(5000);
         const content = JSON.parse(await cas.innerText(page, "body"));
         console.log(content);
         assert(content.form.SAMLResponse != null);
