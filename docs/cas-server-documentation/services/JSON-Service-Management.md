@@ -41,7 +41,7 @@ file additions, removals and updates and will auto-refresh CAS so changes do hap
 
 <div class="alert alert-info">:information_source: <strong>Escaping Characters</strong><p>
 Please make sure all field values in the JSON blob are correctly escaped, specially for the service id. If the service is defined as a 
-regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped.
+regular expression, certain regex constructs such as <code>.</code> and <code>\d</code> need to be doubly escaped.
 </p></div>
 
 ## Naming Conventions

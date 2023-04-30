@@ -58,12 +58,6 @@ public class ServiceRegistryCoreProperties implements Serializable {
 
     /**
      * Determine how services are internally managed, queried, cached and reloaded by CAS.
-     * Accepted values are the following:
-     *
-     * <ul>
-     * <li>DEFAULT: Keep all services inside a concurrent map.</li>
-     * <li>DOMAIN: Group registered services by their domain having been explicitly defined.</li>
-     * </ul>
      */
     private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
 
