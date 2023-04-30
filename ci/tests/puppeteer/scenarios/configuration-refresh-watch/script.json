@@ -1,6 +1,8 @@
 {
   "dependencies": "core,events-configuration",
   "properties": [
+    "--spring.main.lazy-initialization=false",
+    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.events.core.track-configuration-modifications=true",
 
@@ -10,6 +12,8 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.audit.slf4j.use-single-line=true",
+    
     "--management.endpoint.refresh.enabled=true",
     "--management.endpoints.web.exposure.include=refresh",
 

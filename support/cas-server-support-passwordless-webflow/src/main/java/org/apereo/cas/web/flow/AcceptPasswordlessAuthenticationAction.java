@@ -65,7 +65,8 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
         val principal = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         try {
             val token = requestContext.getRequestParameters().getRequired("token");
-            val passwordlessToken = passwordlessTokenRepository.findToken(principal.getUsername()).orElseThrow();
+            val passwordlessToken = passwordlessTokenRepository.findToken(principal.getUsername())
+                .orElseThrow(() -> new AuthenticationException("Unable to find passwordless token for " + principal.getUsername()));
             return FunctionUtils.doIf(passwordlessToken.getToken().equalsIgnoreCase(token),
                     () -> {
                         handlePasswordlessAuthenticationAttempt(requestContext, principal, passwordlessToken);

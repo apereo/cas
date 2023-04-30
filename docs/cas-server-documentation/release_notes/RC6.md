@@ -72,7 +72,11 @@ we intend to take advantage of this time window to run integration tests against
 ### Google Cloud Firestore Ticket Registry
 
 A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
-                                                                                                                               
+
+### Google Cloud Logging
+
+Logging support for [Google Cloud Logging](../logging/Logging-GoogleCloud.html) based on Apache Log4j is now available.
+
 ### Service Management & Indexing
 
 Registered service types are now internally indexed by the services management facility to assist with advanced and faster querying oeprations.

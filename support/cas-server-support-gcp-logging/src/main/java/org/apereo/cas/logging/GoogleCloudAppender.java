@@ -1,5 +1,7 @@
 package org.apereo.cas.logging;
 
+import org.apereo.cas.util.AsciiArtUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.text.MessageSanitizer;
@@ -58,14 +60,10 @@ public class GoogleCloudAppender extends AbstractAppender {
         super(name, filter, JsonLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.configuration = config;
         this.appenderRef = appenderRef;
-
-        if (StringUtils.isNotBlank(projectId)) {
-            this.projectId = projectId;
-        } else {
+        this.projectId = FunctionUtils.doIfNull(projectId, () -> {
             val projectIdProvider = new DefaultGcpProjectIdProvider();
-            this.projectId = projectIdProvider.getProjectId();
-        }
-
+            return projectIdProvider.getProjectId();
+        }, () -> projectId).get();
     }
 
     /**
@@ -96,13 +94,26 @@ public class GoogleCloudAppender extends AbstractAppender {
     @Override
     public void append(final LogEvent logEvent) {
         val contextData = new SortedArrayStringMap(logEvent.getContextData());
-        contextData.putValue("sourceLocation", Optional.ofNullable(logEvent.getSource()).map(Object::toString).orElse(StringUtils.EMPTY));
+        contextData.putValue("sourceLocation", Optional.ofNullable(logEvent.getSource())
+            .map(Object::toString).orElse(StringUtils.EMPTY));
         contextData.putValue("severity", logEvent.getLevel().name());
-        contextData.putValue("spanId", contextData.getValue(StackdriverTraceConstants.MDC_FIELD_SPAN_ID));
-        contextData.putValue("labels", StringUtils.EMPTY);
         collectTraceId(contextData);
+        collectHttpRequest(contextData);
         collectTimestamps(logEvent, contextData);
         appendLogEvent(logEvent, contextData);
+    }
+
+    protected void collectHttpRequest(final StringMap contextData) {
+        val requestUrl = StringUtils.defaultString(contextData.getValue("requestUrl"));
+        if (StringUtils.isNotBlank(requestUrl)) {
+            val httpRequest = Map.of(
+                "requestMethod", StringUtils.defaultString(contextData.getValue("method")),
+                "requestUrl", requestUrl,
+                "protocol", StringUtils.defaultString(contextData.getValue("protocol")),
+                "userAgent", StringUtils.defaultString(contextData.getValue("user-agent")),
+                "remoteIp", StringUtils.defaultString(contextData.getValue("remoteAddress")));
+            contextData.putValue("httpRequest", FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(httpRequest)));
+        }
     }
 
     protected void appendLogEvent(final LogEvent logEvent, final StringMap contextData) {
@@ -129,23 +140,32 @@ public class GoogleCloudAppender extends AbstractAppender {
     }
 
     protected void collectTraceId(final StringMap contextData) {
-        var traceId = (String) contextData.getValue(StackdriverTraceConstants.MDC_FIELD_TRACE_ID);
+        val traceId = (String) contextData.getValue(StackdriverTraceConstants.MDC_FIELD_TRACE_ID);
         if (StringUtils.isNotBlank(traceId) && StringUtils.isNotBlank(this.projectId)) {
-            contextData.putValue("traceId", StackdriverTraceConstants.composeFullTraceName(this.projectId, formatTraceId(traceId)));
+            contextData.putValue(StackdriverTraceConstants.MDC_FIELD_TRACE_ID,
+                StackdriverTraceConstants.composeFullTraceName(this.projectId, formatTraceId(traceId)));
         }
     }
 
     protected ObjectMessage buildLogMessage(final LogEvent logEvent,
                                             final Map<Object, Object> messagePayload) {
-        val messagSanitizer = ApplicationContextProvider.getMessagSanitizer()
-            .orElseThrow(() -> new IllegalArgumentException("Unable to locate message sanitizer for log messages"));
-        messagePayload.put("text", messagSanitizer.sanitize(logEvent.getMessage().getFormattedMessage()));
-        if (logEvent.getMessage() instanceof ObjectMessage objectMessage) {
-            if (objectMessage.getParameter() instanceof Map parameters) {
-                collectMessageParameters(messagePayload, messagSanitizer, parameters);
-            } else {
-                val parameters = MAPPER.convertValue(objectMessage.getParameter(), Map.class);
-                collectMessageParameters(messagePayload, messagSanitizer, parameters);
+        val buildMessage = logEvent.getMarker() == null
+                           || !logEvent.getMarker().getName().equals(AsciiArtUtils.ASCII_ART_LOGGER_MARKER.getName());
+        if (buildMessage) {
+            val messagSanitizer = ApplicationContextProvider.getMessagSanitizer().orElseGet(MessageSanitizer::disabled);
+            messagePayload.put("text", messagSanitizer.sanitize(logEvent.getMessage().getFormattedMessage()));
+            if (logEvent.getMessage() instanceof ObjectMessage objectMessage) {
+                if (objectMessage.getParameter() instanceof Map parameters) {
+                    collectMessageParameters(messagePayload, messagSanitizer, parameters);
+                } else {
+                    try {
+                        val parameters = MAPPER.convertValue(objectMessage.getParameter(), Map.class);
+                        collectMessageParameters(messagePayload, messagSanitizer, parameters);
+                    } catch (final Exception e) {
+                        val parameters = Map.of("payload", objectMessage.getParameter().toString());
+                        collectMessageParameters(messagePayload, messagSanitizer, parameters);
+                    }
+                }
             }
         }
         return new ObjectMessage(messagePayload);

@@ -21,7 +21,7 @@ const jose = require('jose');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
-    headless: process.env.CI === "true" || process.env.HEADLESS === "true",
+    headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : "false",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
     slowMo: process.env.CI === "true" ? 0 : 10,
