@@ -35,7 +35,7 @@ This is an example of the logging configuration:
             <JsonLayout locationInfo="false"
                         includeStacktrace="true"
                         objectMessageAsJsonObject="true"
-                        compact="false"
+                        compact="true"
                         properties="false"
                         eventEol="true"
                         includeTimeMillis="false">
