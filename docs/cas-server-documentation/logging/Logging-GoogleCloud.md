@@ -10,7 +10,7 @@ category: Logs & Audits
 
 [Cloud Logging](https://cloud.google.com/logging/) is the managed logging service provided by Google Cloud.
 
-The integration here provides support for associating a web request trace ID with the corresponding log entries
+The integration here also provides automatic support for associating a web request trace ID with the corresponding log entries
 by retrieving the `X-B3-TraceId` or `x-cloud-trace-context` header values.
 
 ## Configuration
@@ -21,9 +21,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 Due to the way logging is set up, the Google Cloud project ID and credentials 
-defined in CAs properties are ignored. Instead, you should set the <code>GOOGLE_CLOUD_PROJECT</code> 
+defined in CAS properties are ignored. Instead, you should set the <code>GOOGLE_CLOUD_PROJECT</code> 
 and <code>GOOGLE_APPLICATION_CREDENTIALS</code> environment variables to the project ID and credentials 
-private key location, respectively. Alterntively, the Google Cloud project ID can also be set directly
+private key location, where necessary. Alternatively, the Google Cloud project ID can also be set directly
 in the logging configuration.</p></div>
 
 This is an example of the logging configuration:
@@ -50,6 +50,7 @@ This is an example of the logging configuration:
                 <KeyValuePair key="logging.googleapis.com/trace" value="$${ctx:traceId:-}"/>
             </JsonLayout>
         </Console>
+        <!-- Update the projectId, or remove and let CAS determine the project id automatically -->
         <GoogleCloudAppender name="GoogleCloudAppender" 
                              projectId="...">
             <AppenderRef ref="Console"/>

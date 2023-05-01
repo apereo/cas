@@ -41,7 +41,8 @@ public class ServiceRegistryCoreProperties implements Serializable {
      * <p>
      * If the default location offered by CAS, {@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}, is used,
      * CAS would attempt to locate JSON service files by forming the following pattern for each active spring application profile:
-     * <pre>classpath*:/{@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}/profile-id/*.json</pre>.
+     * <br/>
+     * <pre>classpath*:/{@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}/profile-id/*.json</pre>
      * <p>
      * You may also control whether default services should be included and initialized
      * via {@link #isInitDefaultServices()}.
