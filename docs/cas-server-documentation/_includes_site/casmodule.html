@@ -132,8 +132,12 @@ dependencies {
             {% capture bom %}
 ```groovy
 dependencies {
+    /*
+    The following platform references should be included automatically and are listed here for reference only.
+            
     implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
     implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    */
 
     implementation "{{include.group}}:{{include.module}}"
 }
