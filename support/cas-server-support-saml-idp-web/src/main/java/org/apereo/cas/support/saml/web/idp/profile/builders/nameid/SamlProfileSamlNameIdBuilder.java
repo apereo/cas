@@ -230,7 +230,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     private String getNameIdValueFromNameFormat(final String nameFormat,
                                                 final SamlProfileBuilderContext context) {
         val principalId = context.getAuthenticatedAssertion().get().getName();
-        if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
+        if (NameIDType.TRANSIENT.equalsIgnoreCase(StringUtils.trim(nameFormat))) {
             val entityId = context.getAdaptor().getEntityId();
             if (context.getRegisteredService().isSkipGeneratingTransientNameId()) {
                 LOGGER.debug("Generation of transient NameID value is skipped for [{}] and [{}] will be used instead", entityId, principalId);
