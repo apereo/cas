@@ -32,5 +32,6 @@ const assert = require('assert');
             console.log('Exiting server...');
             browser.close();
         });
+        await process.exit(0);
     });
 })();

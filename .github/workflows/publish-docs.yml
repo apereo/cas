@@ -124,9 +124,10 @@ jobs:
       - name: Install Ruby gems
         run: gem install bundler
       - name: Publish Documentation
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 35
-          max_attempts: 3
-          shell: bash
-          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
+#        uses: nick-fields/retry@v2
+#        with:
+#          timeout_minutes: 35
+#          max_attempts: 3
+#          shell: bash
+#          command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
+        run: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
