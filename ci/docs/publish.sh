@@ -315,9 +315,9 @@ if [[ ${buildDocs} == "true" ]]; then
   sleeppid=$!
   
   if [[ ${serve} == "true" ]]; then
-    bundle exec jekyll serve --profile --incremental
+    bundle exec jekyll serve --profile --incremental --trace
   else
-    bundle exec jekyll build --profile
+    bundle exec jekyll build --profile --incremental --trace
   fi
   kill -9 sleeppid
   
@@ -344,7 +344,7 @@ pushd .
 cd "$PWD/gh-pages"
 
 if [[ $clone == "true" ]]; then
-  rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
+  rm -Rf "$branchVersion/build"
   printgreen "\nConfiguring git repository settings...\n"
   rm -Rf .git
   git init
