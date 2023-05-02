@@ -311,12 +311,16 @@ if [[ ${buildDocs} == "true" ]]; then
   echo -n "Starting at " && date
   jekyll --version
 
+  while sleep 1m; do echo -e '\n=====[ Build is still running ]====='; done &
+  sleeppid=$!
+  
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental
   else
-    bundle exec jekyll build --profile
+    bundle exec jekyll build --profile --verbose
   fi
-
+  kill -9 sleeppid
+  
   echo -n "Ended at " && date
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
