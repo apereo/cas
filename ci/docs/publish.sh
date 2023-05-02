@@ -53,9 +53,9 @@ dependencyVersions=true
 while (("$#")); do
   case "$1" in
   --reset)
-#    printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
-#    ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
-#    printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
+    printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
+    ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
+    printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
     shift 1
     ;;
   --local)
@@ -232,32 +232,32 @@ if [[ $cloneRepository == "true" ]]; then
   # exit 1
 fi
 
-#if [[ $generateData == "true" ]]; then
-#  docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
-#  printgreen "Generating documentation site data...\n"
-#  if [[ ! -f "$docgen" ]]; then
-#    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
-#    if [ $? -eq 1 ]; then
-#      printred "Unable to build the documentation processor. Aborting..."
-#      exit 1
-#    fi
-#  fi
-#  chmod +x ${docgen}
-#  dataDir=$(echo "$branchVersion" | sed 's/\.//g')
-#  printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter...\n"
-#  ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
-#    -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
-#    -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
-#    -aud "$audit" -ver "$dependencyVersions"
-#  if [ $? -eq 1 ]; then
-#    printred "Unable to generate documentation data. Aborting..."
-#    exit 1
-#  fi
-#  printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
-#else
-#  printgreen "Skipping documentation data generation...\n"
-#  rm -Rf "$PWD/gh-pages/_data"
-#fi
+if [[ $generateData == "true" ]]; then
+  docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
+  printgreen "Generating documentation site data...\n"
+  if [[ ! -f "$docgen" ]]; then
+    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
+    if [ $? -eq 1 ]; then
+      printred "Unable to build the documentation processor. Aborting..."
+      exit 1
+    fi
+  fi
+  chmod +x ${docgen}
+  dataDir=$(echo "$branchVersion" | sed 's/\.//g')
+  printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter...\n"
+  ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
+    -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
+    -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
+    -aud "$audit" -ver "$dependencyVersions"
+  if [ $? -eq 1 ]; then
+    printred "Unable to generate documentation data. Aborting..."
+    exit 1
+  fi
+  printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
+else
+  printgreen "Skipping documentation data generation...\n"
+  rm -Rf "$PWD/gh-pages/_data"
+fi
 
 #if [[ $proofRead == "true" ]]; then
 #  printgreen "Looking for badly named include fragments..."
