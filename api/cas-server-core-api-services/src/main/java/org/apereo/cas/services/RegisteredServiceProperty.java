@@ -225,13 +225,6 @@ public interface RegisteredServiceProperty extends Serializable {
             "Whether encryption operations should be enabled when producing JWTs."),
 
         /**
-         * Produce a signed JWT as a response when generating access tokens using the provided signing key.
-         **/
-        ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY,
-            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
-            "Produce a signed JWT as a response when generating access tokens using the provided signing key."),
-
-        /**
          * Indicate whether the client was registered with CAS using OpenID Connect client dynamic registration flow.
          */
         OIDC_DYNAMIC_CLIENT_REGISTRATION("oidcDynamicClientRegistration", "false",
@@ -266,6 +259,12 @@ public interface RegisteredServiceProperty extends Serializable {
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
             "Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided encryption key."),
 
+        /**
+         * Produce a signed JWT as a response when generating access tokens using the provided signing key.
+         **/
+        ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
+            "Produce a signed JWT as a response when generating access tokens using the provided signing key."),
         /**
          * Indicate the cipher strategy for JWTs as access tokens, to determine order of signing/encryption operations.
          */
