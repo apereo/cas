@@ -40,7 +40,7 @@ generateData=true
 audit=true
 proofRead=true
 actuators=true
-thirdParty=false
+thirdParty=true
 serviceProps=true
 publishDocs=true
 buildDocs=true
@@ -317,7 +317,7 @@ if [[ ${buildDocs} == "true" ]]; then
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental
   else
-    bundle exec jekyll build --profile
+    bundle exec jekyll build --profile --jobs 4
   fi
   kill -9 sleeppid
   

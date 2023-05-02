@@ -275,6 +275,12 @@ ext.libraries = [
                 }
         ],
         sentry                     : [
+                dependencies.create("io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
                 dependencies.create("com.getsentry.raven:raven:$sentryRavenVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
