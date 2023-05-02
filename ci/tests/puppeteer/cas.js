@@ -28,6 +28,7 @@ const BROWSER_OPTIONS = {
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
 
+
 exports.browserOptions = () => BROWSER_OPTIONS;
 exports.browserOptions = (opt) => ({
     ...BROWSER_OPTIONS,
@@ -520,6 +521,15 @@ exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
     console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
+    console.log("Verified JWT:");
+    await this.logg(decoded);
+    return decoded;
+};
+
+exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
+    console.log(`Decrypting JWT with key ${secret}`);
+    const buff = jose.base64url.decode(secret);
+    const decoded = await jose.jwtDecrypt(jwt, buff, options);
     console.log("Verified JWT:");
     await this.logg(decoded);
     return decoded;
