@@ -317,7 +317,7 @@ if [[ ${buildDocs} == "true" ]]; then
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental
   else
-    bundle exec jekyll build --profile --jobs 4
+    bundle exec jekyll build --profile
   fi
   kill -9 sleeppid
   
