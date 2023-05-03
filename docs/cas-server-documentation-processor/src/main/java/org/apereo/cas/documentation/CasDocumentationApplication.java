@@ -413,7 +413,7 @@ public class CasDocumentationApplication {
             var endpoint = clazz.getAnnotation(RestControllerEndpoint.class);
 
             var methods = findAnnotatedMethods(clazz, GetMapping.class);
-            LOGGER.info("Checking actuator endpoint (GET) for [{}]", clazz.getName());
+            LOGGER.debug("Checking actuator endpoint (GET) for [{}]", clazz.getName());
             methods.forEach(Unchecked.consumer(method -> {
                 var get = method.getAnnotation(GetMapping.class);
                 var map = new LinkedHashMap<>();
@@ -445,7 +445,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
-            LOGGER.info("Checking actuator endpoint (DELETE) for [{}]", clazz.getName());
+            LOGGER.debug("Checking actuator endpoint (DELETE) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, DeleteMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var delete = method.getAnnotation(DeleteMapping.class);
@@ -477,7 +477,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
-            LOGGER.info("Checking actuator endpoint (POST) for [{}]", clazz.getName());
+            LOGGER.debug("Checking actuator endpoint (POST) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, PostMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var post = method.getAnnotation(PostMapping.class);
@@ -509,7 +509,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
-            LOGGER.info("Checking actuator endpoint (PATCH) for [{}]", clazz.getName());
+            LOGGER.debug("Checking actuator endpoint (PATCH) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, PatchMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var patch = method.getAnnotation(PatchMapping.class);
@@ -541,7 +541,7 @@ public class CasDocumentationApplication {
                 properties.add(map);
             }));
 
-            LOGGER.info("Checking actuator endpoint (PUT) for [{}]", clazz.getName());
+            LOGGER.debug("Checking actuator endpoint (PUT) for [{}]", clazz.getName());
             methods = findAnnotatedMethods(clazz, PutMapping.class);
             methods.forEach(Unchecked.consumer(method -> {
                 var put = method.getAnnotation(PutMapping.class);
@@ -591,7 +591,7 @@ public class CasDocumentationApplication {
             var endpoint = getEndpoint(clazz);
 
             if (endpoint != null) {
-                LOGGER.info("Checking endpoints (READ) for [{}]", clazz.getName());
+                LOGGER.debug("Checking endpoints (READ) for [{}]", clazz.getName());
                 var methods = findAnnotatedMethods(clazz, ReadOperation.class);
                 methods.forEach(Unchecked.consumer(method -> {
                     var read = method.getAnnotation(ReadOperation.class);
@@ -607,7 +607,7 @@ public class CasDocumentationApplication {
                     properties.add(map);
                 }));
 
-                LOGGER.info("Checking endpoints (WRITE) for [{}]", clazz.getName());
+                LOGGER.debug("Checking endpoints (WRITE) for [{}]", clazz.getName());
                 methods = findAnnotatedMethods(clazz, WriteOperation.class);
                 methods.forEach(Unchecked.consumer(method -> {
                     var write = method.getAnnotation(WriteOperation.class);
@@ -623,7 +623,7 @@ public class CasDocumentationApplication {
                     properties.add(map);
                 }));
 
-                LOGGER.info("Checking endpoints (DELETE) for [{}]", clazz.getName());
+                LOGGER.debug("Checking endpoints (DELETE) for [{}]", clazz.getName());
                 methods = findAnnotatedMethods(clazz, DeleteOperation.class);
                 methods.forEach(Unchecked.consumer(method -> {
                     var delete = method.getAnnotation(DeleteOperation.class);
