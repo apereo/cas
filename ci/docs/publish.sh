@@ -4,6 +4,7 @@ RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
+
 function printred() {
   printf "${RED}$1${ENDCOLOR}\n"
 }
@@ -318,7 +319,7 @@ if [[ ${buildDocs} == "true" ]]; then
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
-    bundle exec jekyll build --profile --incremental --trace --verbose
+    bundle exec jekyll build --profile --incremental --trace
   fi
   kill -9 sleeppid
   
@@ -367,7 +368,7 @@ if [[ $clone == "true" ]]; then
   rm -Rf _data
 fi
 
-#if [[ "${publishDocs}" == "true" ]]; then
+if [[ "${publishDocs}" == "true" ]]; then
   printgreen "Adding changes to the git index...\n"
   git add --all -f 2>/dev/null
 
@@ -376,26 +377,27 @@ fi
   git status
 
   printgreen "Pushing changes to remote repository...\n"
-#  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-#    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
-#    popd
-#    if [[ $clone == "true" ]]; then
-#      rm -Rf "$PWD/gh-pages"
-#      exit 0
-#    fi
-#  fi
+  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
+    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
+    popd
+    if [[ $clone == "true" ]]; then
+      rm -Rf "$PWD/gh-pages"
+      exit 0
+    fi
+  fi
 
-  printgreen "Pushing upstream to origin/gh-pages...\n"
+  echo "Pushing changes to upstream..."
   git push -fq origin gh-pages
+  printgreen "Pushed upstream to origin/gh-pages...\n"
   retVal=$?
-#else
-#  printyellow "Skipping documentation push to remote repository...\n"
-#fi
+else
+  printyellow "Skipping documentation push to remote repository...\n"
+fi
 
 popd
 
 if [[ $clone == "true" ]]; then
-  rm -Rf "$PWD/gh-pages"
+  rm -Rf "$PWD/gh-pages" || true
 fi
 
 if [[ ${retVal} -eq 0 ]]; then
