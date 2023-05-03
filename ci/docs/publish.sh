@@ -31,6 +31,7 @@ clear
 
 GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
+GH_PAGES_TOKEN="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"
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 
@@ -145,10 +146,10 @@ if [[ $branchVersion == "master" ]]; then
   branchVersion="development"
 fi
 
-if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-  publishDocs=false
-  printyellow "\nNo GitHub token is defined to publish documentation."
-fi
+#if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
+#  publishDocs=false
+#  printyellow "\nNo GitHub token is defined to publish documentation."
+#fi
 
 echo "-------------------------------------------------------"
 printgreen "Branch: \t\t${branchVersion}"
@@ -366,7 +367,7 @@ if [[ $clone == "true" ]]; then
   rm -Rf _data
 fi
 
-if [[ "${publishDocs}" == "true" ]]; then
+#if [[ "${publishDocs}" == "true" ]]; then
   printgreen "Adding changes to the git index...\n"
   git add --all -f 2>/dev/null
 
@@ -375,21 +376,21 @@ if [[ "${publishDocs}" == "true" ]]; then
   git status
 
   printgreen "Pushing changes to remote repository...\n"
-  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
-    popd
-    if [[ $clone == "true" ]]; then
-      rm -Rf "$PWD/gh-pages"
-      exit 0
-    fi
-  fi
+#  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
+#    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
+#    popd
+#    if [[ $clone == "true" ]]; then
+#      rm -Rf "$PWD/gh-pages"
+#      exit 0
+#    fi
+#  fi
 
   printgreen "Pushing upstream to origin/gh-pages...\n"
   git push -fq origin gh-pages
   retVal=$?
-else
-  printyellow "Skipping documentation push to remote repository...\n"
-fi
+#else
+#  printyellow "Skipping documentation push to remote repository...\n"
+#fi
 
 popd
 

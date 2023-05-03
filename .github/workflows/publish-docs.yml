@@ -10,9 +10,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
-  RUBY_VERSION: 3.2.2
   JDK_CURRENT: 17
   DOCS_BRANCH: master
+  RUBY_VERSION: 3.2.2
+  RUBY_GC_HEAP_GROWTH_MAX_SLOTS: 104857600 # 4GB
+  RUBY_GC_HEAP_GROWTH_FACTOR: 2
 
 ##########################################################################
 
@@ -28,7 +30,7 @@ on:
 jobs:
   cancel-previous-runs:
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') && !contains(github.event.head_commit.message, 'ci:minimal') }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 1
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
@@ -39,7 +41,7 @@ jobs:
 
   initialize:
     needs: [cancel-previous-runs]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -60,7 +62,7 @@ jobs:
   ##########################################################################
 
   cache:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [initialize]
     steps:
       - uses: actions/checkout@v3
@@ -91,7 +93,7 @@ jobs:
   ##########################################################################
 
   publish-docs:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: ${{ github.event_name == 'push' }}
     needs: [cache]
     continue-on-error: false
