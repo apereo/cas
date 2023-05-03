@@ -22,7 +22,7 @@
 ```
 {% endcapture %}
 
-{% capture endpointprops %}{% include thirdpartyproperties.html
+{% capture endpointprops %}{% include_cached thirdpartyproperties.html
 disablePagination="true"
 disableSearch="true"
 id=actuatorEndpointRandomNumber
@@ -31,7 +31,7 @@ thirdPartyStartsWith="management.endpoints,management.health,management.endpoint
 {%endcapture%}
 
 
-{% capture basicauthprops %}{% include thirdpartyproperties.html
+{% capture basicauthprops %}{% include_cached thirdpartyproperties.html
 disablePagination="true"
 disableSearch="true"
 disableNotes="true"
@@ -386,7 +386,7 @@ management.endpoints.web.path-mapping.health=healthcheck
 
                                 <br/>
 
-                                {% capture healthendpointinfo %}{% include {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}
+                                {% capture healthendpointinfo %}{% include_cached {{ version }}/health-actuator-configuration.md healthIndicators=include.healthIndicators %}
                                 {% endcapture %}
 
                                 <div class="tab-pane fade" id="healthendpointinfo{{ key }}">
