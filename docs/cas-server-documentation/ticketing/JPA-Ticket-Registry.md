@@ -29,4 +29,4 @@ This ticket registry implementation automatically supports [distributed locking]
 The database schemas and tables that track locking operations should be automatically created by CAS using
 [Spring Integration](https://spring.io/projects/spring-integration) JDBC support.
 
-{% include_cached casproperties.html thirdParty="spring.integration.jdbc" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.integration.jdbc" %}

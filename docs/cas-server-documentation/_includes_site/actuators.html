@@ -40,7 +40,7 @@ forcePropertyTabsOnClick="true"
 thirdPartyStartsWith="spring.security.user" %}
 {%endcapture%}
 
-{% capture jdbcauthprops %}{% include casproperties.html
+{% capture jdbcauthprops %}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
@@ -52,7 +52,7 @@ properties="cas.monitor.endpoints.jdbc" %}
     {{ jdbcauthprops | markdownify }}
 </div>
 
-{% capture ldapauthprops %}{% include casproperties.html
+{% capture ldapauthprops %}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
@@ -64,7 +64,7 @@ properties="cas.monitor.endpoints.ldap" %}
     {{ ldapauthprops | markdownify }}
 </div>
 
-{% capture jaasauthprops %}{% include casproperties.html
+{% capture jaasauthprops %}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
@@ -76,7 +76,7 @@ properties="cas.monitor.endpoints.jaas" %}
     {{ jaasauthprops | markdownify }}
 </div>
 
-{% capture casendpointsconfigprops %}{% include casproperties.html
+{% capture casendpointsconfigprops %}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
 disablePagination="true"
@@ -89,7 +89,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
 {% if include.casModule.size > 0 %}
 {% assign casmodule = include.casModule %}
-{% capture casModuleReference %}{% include casmodule.html group="org.apereo.cas" module=casmodule id=actuatorEndpointRandomNumber %}{% endcapture %}
+{% capture casModuleReference %}{% include_cached casmodule.html group="org.apereo.cas" module=casmodule id=actuatorEndpointRandomNumber %}{% endcapture %}
 {% endif %}
 
 <div class="accordion" id="{{ actuatorEndpointRandomNumber }}">
