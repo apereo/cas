@@ -38,7 +38,7 @@
                             | append: "&#13;&#10;"
                             | append: "&#13;&#10;" %}
 
-                        {% capture renderedProperties %}{% include casproperty.html
+                        {% capture renderedProperties %}{% include_cached casproperty.html
                             name=config.name
                             owner=config.owner
                             defaultValue=config.defaultValue
@@ -73,7 +73,7 @@
                             | append: "&#13;&#10;"
                             | append: "&#13;&#10;" %}
 
-                        {% capture renderedProperties %}{% include casproperty.html
+                        {% capture renderedProperties %}{% include_cached casproperty.html
                             name=config.name
                             owner=config.owner
                             defaultValue=config.defaultValue
@@ -112,7 +112,7 @@
                             | append: config.defaultValue
                             | append: "&#13;&#10;"
                             | append: "&#13;&#10;" %}
-                        {% capture renderedProperties %}{% include casproperty.html
+                        {% capture renderedProperties %}{% include_cached casproperty.html
                             name=config.name
                             owner=config.owner
                             defaultValue=config.defaultValue
