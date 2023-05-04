@@ -380,7 +380,7 @@ elif [[ "${publishDocs}" == "true" ]]; then
   git add --all -f 2>/dev/null
 
   printgreen "Committing changes...\n"
-  git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null
+  git commit -am "Published docs to [gh-pages] from $branchVersion." --quiet 2>/dev/null
   git status
 
   echo "Pushing changes to upstream..."
