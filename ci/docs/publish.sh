@@ -368,23 +368,20 @@ if [[ $clone == "true" ]]; then
   rm -Rf _data
 fi
 
-if [[ "${publishDocs}" == "true" ]]; then
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
+  printyellow "\nNo GitHub token is defined to publish documentation. Skipping..."
+  popd
+  if [[ $clone == "true" ]]; then
+    rm -Rf "$PWD/gh-pages"
+    exit 0
+  fi
+elif [[ "${publishDocs}" == "true" ]]; then
   printgreen "Adding changes to the git index...\n"
   git add --all -f 2>/dev/null
 
   printgreen "Committing changes...\n"
   git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null
   git status
-
-  printgreen "Pushing changes to remote repository...\n"
-  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
-    popd
-    if [[ $clone == "true" ]]; then
-      rm -Rf "$PWD/gh-pages"
-      exit 0
-    fi
-  fi
 
   echo "Pushing changes to upstream..."
   git push -fq origin gh-pages

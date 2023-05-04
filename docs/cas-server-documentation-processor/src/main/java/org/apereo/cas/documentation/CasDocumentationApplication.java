@@ -244,7 +244,7 @@ public class CasDocumentationApplication {
             .forEach(it -> {
                 var event = new LinkedHashMap();
                 event.put("name", it.getName());
-                LOGGER.info("Adding audit [{}]", event);
+                LOGGER.debug("Adding audit [{}]", event);
                 properties.add(event);
             });
         if (!properties.isEmpty()) {
@@ -265,7 +265,7 @@ public class CasDocumentationApplication {
         var properties = new ArrayList<Map<?, ?>>();
 
         subTypes.forEach(clazz -> {
-            LOGGER.info("Locating shell command group for [{}]", clazz.getSimpleName());
+            LOGGER.debug("Locating shell command group for [{}]", clazz.getSimpleName());
             var group = clazz.getAnnotation(ShellCommandGroup.class);
             if (group == null) {
                 LOGGER.warn("Shell command group is missing for {}", clazz.getName());
@@ -294,7 +294,7 @@ public class CasDocumentationApplication {
                     cmd.name = String.join(",", annotInstance.key());
                     cmd.group = group == null ? "other" : group.value();
 
-                    LOGGER.info("Adding shell command [{}]", cmd.name);
+                    LOGGER.debug("Adding shell command [{}]", cmd.name);
                     methods.put(cmd.name, cmd);
                 }
             }
@@ -389,7 +389,7 @@ public class CasDocumentationApplication {
             return Pair.of(endpoint.id(), endpoint.annotationType().getSimpleName());
         }
 
-        LOGGER.info("[{}] is not an Endpoint. Checking for WebEndpoint...", clazz.getName());
+        LOGGER.debug("[{}] is not an Endpoint. Checking for WebEndpoint...", clazz.getName());
         var webEndpoint = (WebEndpoint) clazz.getAnnotation(WebEndpoint.class);
         if (webEndpoint != null) {
             return Pair.of(webEndpoint.id(), webEndpoint.annotationType().getSimpleName());
