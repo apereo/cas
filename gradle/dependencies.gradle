@@ -935,6 +935,9 @@ ext.libraries = [
                 dependencies.create("org.apache.ignite:ignite-log4j2:$apacheIgniteVersion") {
                     exclude(group: "log4j", module: "log4j")
                 },
+                dependencies.create("org.apache.ignite:ignite-indexing:$apacheIgniteVersion") {
+                    exclude(group: "log4j", module: "log4j")
+                },
                 dependencies.create("org.apache.ignite:ignite-spring:$apacheIgniteVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework", module: "spring-core")
