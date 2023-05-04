@@ -1,11 +1,9 @@
-{% assign rbrace = "}" %}
-{% assign rbrace2 = rbrace | append: rbrace %}
-{% assign lbrace = "{" %}
-
+{%- assign rbrace = "}" -%}
+{%- assign rbrace2 = rbrace | append: rbrace -%}
+{%- assign lbrace = "{" -%}
 <tr>
     <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
-
-        {% assign singlePropertyKey = include.name
+        {%- assign singlePropertyKey = include.name
             | remove: "["
             | remove: "]"
             | remove: "."
@@ -14,10 +12,8 @@
             | remove: '/'
             | remove: '$'
             | remove: rbrace
-            | remove: lbrace %}
-        
-        {% assign propertyValueFormatted = include.defaultValue | default: "..." | prepend: '"' | append: '"' %}
-
+            | remove: lbrace -%}
+        {%- assign propertyValueFormatted = include.defaultValue | default: "..." | prepend: '"' | append: '"' -%}
         <li class="property-name text-left" style="list-style: square">
             <code class="text-wrap">{{ include.name | replace: "[]", "[0]"}}={{ include.defaultValue }}</code>
         </li>
@@ -36,8 +32,7 @@
                     | replace: "&gt;", ">"
                 }}
             </p>
-
-            {% if include.duration %}
+            {%- if include.duration -%}
             <p/>
             <p class="small text-left"><i class="fas fa-clock"></i> This settings supports the 
                 <code>java.time.Duration</code> syntax <sup data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="<p class='small'>The format of the value will be <code>PTnHnMnS</code>, where <code>n</code> is the relevant hours, minutes or seconds part of the duration. Any fractional seconds are placed after a decimal point in the seconds section. If a section has a zero value, it is omitted. The hours, minutes and seconds will all have the same sign. Example values
@@ -45,27 +40,23 @@
                     If the value is set to <code>0</code> or <code>never</code>, the duration will be set to zero. If the value is blank, set to <code>-1</code>,
                     or <code>infinite</code>, the value will effectively represent an unending duration.</p>">[?]</sup>.
             </p>
-            {% endif %}
-
-            {% if include.regexPattern %}
+            {%- endif -%}
+            {%- if include.regexPattern -%}
             <p/>
             <p class="small text-left"><i class="fas fa-cogs"></i> This settings supports regular expression patterns. <sup data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="<p class='small'>
                     A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern in text. For example, the following pattern 
                     <code>^ent:.+(admin|system).+:com$</code> should match <code>ent:sys-admin-anything:com</code>. Regular expressions in CAS are handled using the JDK's <code>java.util.regex.Pattern</code> class. 
                 </p>">[?]</sup>.
             </p>
-            {% endif %}
-
-            {% if include.expressionLanguage %}
+            {%- endif -%}
+            {%- if include.expressionLanguage -%}
             <p/><p class="small text-left"><i class="fas fa-info-circle"></i> This setting supports the <a href="/cas/{{ version }}/configuration/Configuration-Spring-Expressions.html">Spring Expression Language</a>.</p>
-            {% endif %}
-
-            {% if include.owner.size > 0 %}
+            {%- endif -%}
+            {%- if include.owner.size > 0 -%}
             <p/><p class="small text-left"><i class="fas fa-code" 
                 data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>{{ include.owner }}.</code></p>
-            {% endif %}
+            {%- endif -%}
             <p/>
-
             <sub>
                 <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
                 <a data-bs-toggle="modal" href="#" data-bs-target="#{{singlePropertyKey}}PropertyConfig"><small>How can I configure this property?</small></a>
@@ -80,14 +71,12 @@
                             </div>
                             <div class="modal-body">
                                 Configuration properties can be included and activated using the following strategies.
-
                                 <div class="alert alert-info">:information_source: <strong>Note</strong> <p>
                                 When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
                                 The only possible exception to this rule is when naming actuator endpoints; The name of the
                                 actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
                                 </p>
                                 </div>
-
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
                                         <a class="nav-link active" data-bs-toggle='tab' href="#simpleproperty{{ singlePropertyKey }}">Java Property</a>
@@ -105,7 +94,6 @@
                                         <a class="nav-link" data-bs-toggle='tab' href="#cmdarg{{ singlePropertyKey }}">Commandline Argument</a>
                                     </li>
                                 </ul>
-
                                 <div class='tab-content'>
                                     <p/>
                                     <div class="tab-pane fade active show" id="simpleproperty{{singlePropertyKey}}">
@@ -120,26 +108,25 @@
                                         or cloud framework.
                                     </div>
                                     <div class="tab-pane fade" id="yamlproperty{{singlePropertyKey}}">
-                                        {% assign path = "" %}
+                                        {%- assign path = "" -%}
                                         CAS properties can be specified using the YAML syntax:<p/>
 
-                                        {% assign propertyWords = include.name | replace: "[]", "[0]" | split: "." %}
-                                        {% for word in propertyWords %}
-                                            {% assign indentCount = forloop.index | times: 2 %}
-                                            {% assign indentation = "" %}
-                                            {% for i in (1..indentCount) %}
-                                              {% assign indentation = indentation | append: "&nbsp;" %}
-                                            {% endfor %}
+                                        {%- assign propertyWords = include.name | replace: "[]", "[0]" | split: "." -%}
+                                        {%- for word in propertyWords -%}
+                                            {%- assign indentCount = forloop.index | times: 2 -%}
+                                            {%- assign indentation = "" -%}
+                                            {%- for i in (1..indentCount) -%}
+                                              {%- assign indentation = indentation | append: "&nbsp;" -%}
+                                            {%- endfor -%}
 
-                                            {% assign path = path | append: indentation | append: word | append: ":" %}
-                                            {% if forloop.index == 5 %}
-                                                {% assign path = path | append: propertyValueFormatted %}
-                                            {% else %}
-                                                {% assign path = path | append: "<br>" %}
-                                            {% endif %}
-                                        {% endfor %}
+                                            {%- assign path = path | append: indentation | append: word | append: ":" -%}
+                                            {%- if forloop.index == 5 -%}
+                                                {% assign path = path | append: propertyValueFormatted -%}
+                                            {%- else -%}
+                                                {%- assign path = path | append: "<br>" -%}
+                                            {%- endif -%}
+                                        {%- endfor -%}
                                         <code class="text-wrap">{{ path }}</code>
-
                                         <p/>
                                         Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
                                         with your YAML validator of choice.
@@ -158,12 +145,10 @@
                                     <div class="tab-pane fade" id="envvar{{singlePropertyKey}}">
                                         CAS properties can specified as system environment variables before the CAS web application is launched:
                                         <p/>
-
                                         <code class="text-wrap">
                                         export {{ include.name | replace: "[]", "[0]" | replace: ".", "_" | replace: "-", "_" | upcase }}={{ propertyValueFormatted }}</code>
                                         <p/>
                                         <code class="text-wrap">java -jar build/libs/cas.war</code>
-
                                         <p/>
                                         The above example assumes that the CAS web application is packaged as <code>cas.war</code>
                                         and can be found in the <code>build/libs</code> directory.
@@ -185,16 +170,14 @@
                 </div>
             </p>
         </div>
-
-        {% if include.deprecationLevel.size > 0 %}
+        {%- if include.deprecationLevel.size > 0 -%}
           <p/><p class="small text-left"><i class="fas fa-skull"></i> Deprecation status is <code>{{ include.deprecationLevel }}</code>
-                {% if include.deprecationReplacement.size > 0 %}
+                {%- if include.deprecationReplacement.size > 0 -%}
                     with a replacement setting: <code>{{ include.deprecationReplacement | default: "N/A" }}</code>.
-                {% else %}
+                {%- else -%}
                     without a replacement setting.
-                {% endif %}
+                {%- endif -%}
           </p>
-        {% endif %}
-
+        {%- endif -%}
     </td>
 </tr>

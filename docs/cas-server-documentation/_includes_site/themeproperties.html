@@ -8,9 +8,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for cfg in site.data[siteDataVersion]["theme-properties"] %}
-            {% assign configBlock = cfg[1] %}
-            {% for config in configBlock %}
+        {%- for cfg in site.data[siteDataVersion]["theme-properties"] -%}
+            {%- assign configBlock = cfg[1] -%}
+            {%- for config in configBlock -%}
             <tr>
                 <td>
                     <code>{{ config.name }}</code>
@@ -22,7 +22,7 @@
                     {{ config.description }}
                 </td>
             </tr>
-            {% endfor %}
-        {% endfor %}
+            {%- endfor -%}
+        {%- endfor -%}
     </tbody>
 </table>
