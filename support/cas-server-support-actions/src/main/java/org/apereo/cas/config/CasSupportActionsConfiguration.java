@@ -193,8 +193,8 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new SendTicketGrantingTicketAction(ticketRegistry,
-                    ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy))
+                .withAction(() -> new SendTicketGrantingTicketAction(ticketRegistry, ticketGrantingTicketCookieGenerator,
+                    webflowSingleSignOnParticipationStrategy, applicationContext))
                 .withId(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
                 .build()
                 .get();
