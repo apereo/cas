@@ -12,14 +12,15 @@ const cas = require('../../cas.js');
     assert(st != null);
 
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "GET", 200);
-    await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "DELETE", 200);
-    await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "DELETE", 200);
+    await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "DELETE", 200, "application/json");
+    await cas.sleep(2000)
+    await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "DELETE", 200, "application/json");
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, 'GET', 404);
 })();
 
-async function executeRequest(url, method, statusCode) {
+async function executeRequest(url, method, statusCode, contentType="application/x-www-form-urlencoded") {
     return await cas.doRequest(url, method, {
         'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': contentType
     }, statusCode);
 }

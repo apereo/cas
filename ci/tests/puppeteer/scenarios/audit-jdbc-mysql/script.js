@@ -47,7 +47,7 @@ async function callAuditLog() {
     console.log("Updating configuration...");
     let number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(6000);
 
     await cas.refreshContext();
 
@@ -64,7 +64,7 @@ async function callAuditLog() {
     await callRegisteredServices();
 
     console.log("Waiting for audit log cleaner to resume...");
-    await cas.sleep(2000);
+    await cas.sleep(4000);
     
     await browser.close();
 
