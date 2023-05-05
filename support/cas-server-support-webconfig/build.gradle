@@ -1,4 +1,11 @@
 description = "Apereo CAS Web Application Configuration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Web Application",
+            title: "Web Application Configuration & Security"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-audit")

@@ -68,6 +68,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -642,12 +643,15 @@ public class CasSupportActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action populateSpringSecurityContextAction(final CasConfigurationProperties casProperties,
-                                                          final ConfigurableApplicationContext applicationContext) {
+        public Action populateSpringSecurityContextAction(
+            @Qualifier("securityContextRepository")
+            final SecurityContextRepository securityContextRepository,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(PopulateSpringSecurityContextAction::new)
+                .withAction(() -> new PopulateSpringSecurityContextAction(securityContextRepository))
                 .withId(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
                 .build()
                 .get();
