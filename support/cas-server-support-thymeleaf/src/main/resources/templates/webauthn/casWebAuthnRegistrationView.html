@@ -4,7 +4,9 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
     <title>Web AuthN Registration View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 
@@ -15,7 +17,7 @@
 
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
-        var appId = /*[[${webauthnApplicationId}]]*/;
+        let appId = /*[[${webauthnApplicationId}]]*/;
         /*]]>*/
     </script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
@@ -153,16 +155,16 @@
             const csrfToken = $('#registerCsrfToken').val();
 
             document.getElementById("credentialNickname").value = randomWord();
-            var btn = document.getElementById('registerButton');
-            btn.addEventListener('click', function (event) {
+            let btn = document.getElementById('registerButton');
+            btn.addEventListener('click', event => {
                 const username = '[[${principal.id}]]';
                 const displayName = '[[${displayName}]]';
                 const credentialNickname = $('#credentialNickname').val();
                 register(username, displayName, credentialNickname, csrfToken);
             }, false);
 
-            var btnResident = document.getElementById('registerDiscoverableCredentialButton');
-            btnResident.addEventListener('click', function (event) {
+            let btnResident = document.getElementById('registerDiscoverableCredentialButton');
+            btnResident.addEventListener('click', event => {
                 const username = '[[${principal.id}]]';
                 const displayName = '[[${displayName}]]';
                 const credentialNickname = $('#credentialNickname').val();

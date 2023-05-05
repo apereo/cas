@@ -31,6 +31,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +60,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
     private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
+
+    private final SecurityContextRepository securityContextRepository;
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
@@ -150,7 +153,6 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         var requests = http.authorizeHttpRequests(customizer -> {
             customizer.requestMatchers(patterns.toArray(String[]::new)).permitAll();
         });
-        http.securityContext(AbstractHttpConfigurer::disable);
         http.sessionManagement(AbstractHttpConfigurer::disable);
         http.requestCache(RequestCacheConfigurer::disable);
 
@@ -178,6 +180,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         } else {
             LOGGER.trace("No LDAP url or search filter is defined to enable LDAP authentication");
         }
+
+        http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
         return http;
     }
 

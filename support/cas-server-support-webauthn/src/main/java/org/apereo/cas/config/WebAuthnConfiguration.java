@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -66,8 +67,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
@@ -91,7 +94,8 @@ public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
 
     private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE).expireAfterAccess(Duration.ofMinutes(5)).build();
+        return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE)
+            .expireAfterAccess(Duration.ofMinutes(5)).build();
     }
 
     @Configuration(value = "WebAuthnMetadataServiceConfiguration", proxyBeanMethods = false)
@@ -433,17 +437,28 @@ public class WebAuthnConfiguration {
                 final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
                     @Override
-                    public List<String> getIgnoredEndpoints() {
-                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE);
-                    }
-
-                    @Override
                     @CanIgnoreReturnValue
-                    public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                        Unchecked.consumer(sec -> http.csrf(customizer -> {
-                            val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                            webAuthnCsrfTokenRepository.ifAvailable(repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
-                        })).accept(http);
+                    @SuppressWarnings("UnnecessaryMethodReference")
+                    public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                        http.csrf(customizer -> {
+                            webAuthnCsrfTokenRepository.ifAvailable(repository -> {
+                                val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                                val delegate = new XorCsrfTokenRequestAttributeHandler();
+                                delegate.setSecureRandom(RandomUtils.getNativeInstance());
+                                customizer.requireCsrfProtectionMatcher(pattern)
+                                    .csrfTokenRequestHandler(delegate::handle)
+                                    .csrfTokenRepository(repository);
+
+                            });
+                        });
+                        http.authorizeHttpRequests(customizer -> {
+                            val patterns = new String[]{
+                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**",
+                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**"
+                            };
+                            customizer.requestMatchers(patterns)
+                                .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
+                        });
                         return this;
                     }
                 };
