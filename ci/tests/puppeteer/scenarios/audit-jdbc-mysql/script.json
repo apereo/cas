@@ -30,14 +30,14 @@
     "--cas.audit.jdbc.password=password",
     "--cas.audit.jdbc.driver-class=com.mysql.cj.jdbc.Driver",
     "--cas.audit.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "--cas.audit.jdbc.dialect=org.hibernate.dialect.MySQL8Dialect",
+    "--cas.audit.jdbc.dialect=org.hibernate.dialect.MySQLDialect",
 
     "--cas.ticket.registry.jpa.ddl-auto=create",
     "--cas.ticket.registry.jpa.user=root",
     "--cas.ticket.registry.jpa.password=password",
     "--cas.ticket.registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "--cas.ticket.registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MySQL8Dialect",
+    "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MySQLDialect",
 
     "--cas.ticket.registry.core.enable-locking=true",
 
@@ -57,14 +57,14 @@
     "--cas.service-registry.jpa.password=password",
     "--cas.service-registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "--cas.service-registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "--cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQL8Dialect",
+    "--cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQLDialect",
     
     "--cas.events.jpa.ddl-auto=create",
     "--cas.events.jpa.user=root",
     "--cas.events.jpa.password=password",
     "--cas.events.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "--cas.events.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "--cas.events.jpa.dialect=org.hibernate.dialect.MySQL8Dialect",
+    "--cas.events.jpa.dialect=org.hibernate.dialect.MySQLDialect",
 
     "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
 
