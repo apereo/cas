@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,14 +32,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class PopulateSpringSecurityContextAction extends BaseCasWebflowAction {
-    private final SecurityContextRepository securityContextRepository;
+    private final ObjectProvider<SecurityContextRepository> securityContextRepository;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = buildAuthenticationContext(requestContext, request);
-        securityContextRepository.saveContext(context, request, response);
+        securityContextRepository.ifAvailable(secContext -> secContext.saveContext(context, request, response));
         SecurityContextHolder.setContext(context);
         return null;
     }
