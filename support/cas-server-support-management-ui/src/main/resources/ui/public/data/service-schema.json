@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "number"
+        },
+        "type": {
+            "type": "string",
+            "label": "Type",
+            "description": "Type of service",
+            "enum": [
+                "CAS",
+                "WSFED"
+            ]
+        },
+        "name": {
+            "type": "string",
+            "label": "Name"
+        }
+    }
+}
