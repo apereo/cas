@@ -566,8 +566,6 @@ public class CasSupportActionsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -645,7 +643,7 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action populateSpringSecurityContextAction(
             @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository,
+            final ObjectProvider securityContextRepository,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()

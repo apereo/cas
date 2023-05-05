@@ -29,7 +29,6 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DeferredCsrfToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -65,7 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "--spring.security.user.password=p@$$W0rd",
 
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
-        "cas.monitor.endpoints.endpoint.info.access=ANONYMOUS",
+        "cas.monitor.endpoints.endpoint.info.access=ANONYMOUS"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
@@ -76,6 +75,7 @@ public class WebAuthnControllerMvcTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
+    @Qualifier("csrfTokenRepository")
     private CsrfTokenRepository csrfTokenRepository;
 
     @Autowired
@@ -106,26 +106,26 @@ public class WebAuthnControllerMvcTests {
     }
 
     private void testWebAuthnEndpoint(final String endpoint, final int expectedStatus) throws Exception {
-        // Without CSRF token, we must fail
+        /* Without CSRF token, we must fail */
         executeRequest(endpoint, new MockHttpServletRequest(), true, HttpStatus.SC_FORBIDDEN);
 
-        // With CSRF token but without authentication context we continue to fail
+        /* With CSRF token but without authentication context we continue to fail  */
         var csrfResult = mvc.perform(get("/cas/actuator/info"))
             .andExpect(status().isOk())
             .andReturn();
         val csrfToken = getCsrfToken(csrfResult.getRequest());
         csrfTokenRepository.saveToken(csrfToken, csrfResult.getRequest(), csrfResult.getResponse());
-        val result = executeRequest(endpoint, csrfResult.getRequest(), true, HttpStatus.SC_FORBIDDEN);
-
-        // Authenticated requests must fail because they do not have the right role
         executeRequest(endpoint, csrfResult.getRequest(), true, HttpStatus.SC_FORBIDDEN);
 
-        // Authorization should now pass and reach the endpoint
+        /* Authenticated requests must fail because they do not have the right role */
+        val result = executeRequest(endpoint, csrfResult.getRequest(), true, HttpStatus.SC_FORBIDDEN);
+
+        /* Authorization should now pass and reach the endpoint */
         populateSecurityContext(result);
-        // Authenticated requests with the right role should pass
+        /* Authenticated requests with the right role should pass */
         executeRequest(endpoint, csrfResult.getRequest(), false, expectedStatus);
 
-        // Ensure security conext does not intefere with actuator endpoint security
+        /* Ensure security conext does not intefere with actuator endpoint security */
         mvc.perform(get("/cas/actuator/env"))
             .andExpect(status().isUnauthorized());
         mvc.perform(get("/cas/actuator/env")
@@ -165,7 +165,7 @@ public class WebAuthnControllerMvcTests {
     }
 
     private static CsrfToken getCsrfToken(final HttpServletRequest request) {
-        final Object attribute = request.getAttribute(DeferredCsrfToken.class.getName());
+        val attribute = request.getAttribute(DeferredCsrfToken.class.getName());
         return attribute != null ? ((DeferredCsrfToken) attribute).get() : null;
     }
 }
