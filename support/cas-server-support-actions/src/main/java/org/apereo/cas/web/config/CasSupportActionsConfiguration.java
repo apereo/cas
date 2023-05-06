@@ -646,7 +646,7 @@ public class CasSupportActionsConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(PopulateSpringSecurityContextAction::new)
+                .withAction(() -> new PopulateSpringSecurityContextAction(applicationContext))
                 .withId(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
                 .build()
                 .get();

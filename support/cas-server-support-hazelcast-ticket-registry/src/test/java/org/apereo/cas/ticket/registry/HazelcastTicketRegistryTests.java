@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;

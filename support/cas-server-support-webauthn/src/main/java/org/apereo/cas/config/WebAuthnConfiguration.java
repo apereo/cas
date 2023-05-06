@@ -430,19 +430,22 @@ public class WebAuthnConfiguration {
                 @Qualifier("webAuthnCsrfTokenRepository")
                 final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
-                    @Override
-                    public List<String> getIgnoredEndpoints() {
-                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
-                    }
-
+                    
                     @Override
                     @CanIgnoreReturnValue
                     public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                        Unchecked.consumer(sec -> http.csrf(customizer -> {
+                        Unchecked.consumer(__ -> http.csrf(customizer -> {
                             val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                            webAuthnCsrfTokenRepository.ifAvailable(
-                                repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
+                            webAuthnCsrfTokenRepository.ifAvailable(repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
                         })).accept(http);
+
+                        Unchecked.consumer(__ -> {
+                            val patterns = new String[]{
+                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**",
+                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**"
+                            };
+                            http.authorizeHttpRequests().antMatchers(patterns).authenticated();
+                        }).accept(http);
                         return this;
                     }
                 };

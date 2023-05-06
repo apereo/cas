@@ -30,6 +30,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import java.util.List;
@@ -58,6 +59,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
     private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
+
+    private final SecurityContextRepository securityContextRepository;
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
@@ -114,7 +117,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .requiresChannel()
             .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
             .requiresSecure()
-            .and();
+            .and()
+            .securityContext(customizer -> customizer.securityContextRepository(securityContextRepository));
 
         var requests = http.authorizeHttpRequests();
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
@@ -135,8 +139,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         requests.antMatchers(patterns.toArray(String[]::new))
             .permitAll()
             .and()
-            .securityContext()
-            .disable()
+            .securityContext(customizer -> customizer.securityContextRepository(securityContextRepository))
             .sessionManagement()
             .disable()
             .requestCache()
