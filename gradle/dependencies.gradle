@@ -281,12 +281,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
-                dependencies.create("com.getsentry.raven:raven:$sentryRavenVersion") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("com.getsentry.raven:raven-log4j2:$sentryRavenVersion") {
+                dependencies.create("io.sentry:sentry-log4j2:$sentryVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")

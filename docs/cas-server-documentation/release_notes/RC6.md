@@ -108,8 +108,12 @@ The following operations are now *observed* using [Micrometer Observations](http
 - SAML2 service provider metadata resolution
 - Authentication attempts and transactions
 
-In the same category, an integration with [Elastic APM](../monitoring/Configuring-Monitoring-ElasticAPM.html) 
-is now available to monitor CAS component execution and register execution spans and traces with Elastic APM.
+In the same category, 
+
+- Integration with [Elastic APM](../monitoring/Configuring-Monitoring-ElasticAPM.html) is now available to monitor CAS component execution and register 
+  execution spans and traces with Elastic APM.
+- Integration with [Sentry](../logging/Logging-Sentry.html) is now available to monitor CAS component execution and register
+  execution spans and traces with Sentry.
 
 ### CAS Initializr
 
@@ -143,6 +147,7 @@ The following Docker images, used for integration tests, are now upgraded:
 - JSON and YAML service registries are able to auto-organize and store service definition files in dedicated directories identified by the service type.
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
 - `assertionAudiences` defined for SAML2 service definition will now override the default entity id, when defined.
+- Several bug fixes and enhancements to correct the [WebAuthN FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) registration and authentication flows.
 - Additional settings for [Impersonation via LDAP](../authentication/Surrogate-Authentication-Storage-LDAP.html) to verify the existence of the surrogate account in the LDAP directory.
 
 ## Library Upgrades
@@ -174,3 +179,4 @@ The following Docker images, used for integration tests, are now upgraded:
 - Spring Integration
 - Apache Tomcat
 - Kryo
+- FIDO2 WebAuthN

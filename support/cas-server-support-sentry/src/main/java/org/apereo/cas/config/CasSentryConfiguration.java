@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.apm.ElasticApmMonitoringAspect;
+
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.sentry.SentryMonitoringAspect;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -15,26 +16,26 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * This is {@link ElasticApmConfiguration}.
+ * This is {@link CasSentryConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "elastic")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "sentry")
 @AutoConfiguration
 @EnableAspectJAutoProxy
-public class ElasticApmConfiguration {
+public class CasSentryConfiguration {
 
-    @Configuration(value = "ElasticApmTracerConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "SentryTracerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class ElasticApmTracerConfiguration {
+    public static class SentryTracerConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "elasticApmMonitoringAspect")
+        @ConditionalOnMissingBean(name = "sentryMonitoringAspect")
         @Lazy(false)
-        public ElasticApmMonitoringAspect elasticApmMonitoringAspect() {
-            return new ElasticApmMonitoringAspect();
+        public SentryMonitoringAspect sentryMonitoringAspect() {
+            return new SentryMonitoringAspect();
         }
     }
 }

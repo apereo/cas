@@ -580,9 +580,10 @@ layout: null
 
 * [Monitoring & Statistics](#monitoroverview)
     *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html)
-    *   [Administration Server](/cas/{{ version }}/monitoring/Configuring-Monitoring-Administration.html)
+    *   [Spring Boot Admin](/cas/{{ version }}/monitoring/Configuring-Monitoring-Administration.html)
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Elastic APM](/cas/{{ version }}/monitoring/Configuring-Monitoring-ElasticAPM.html)
+    *   [Sentry](/cas/{{ version }}/logging/Logging-Sentry.html)
     *   [Metrics](#metricsoverview)
         *   [Overview](/cas/{{ version }}/monitoring/Configuring-Metrics.html)
         *   [Storage](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage.html)
