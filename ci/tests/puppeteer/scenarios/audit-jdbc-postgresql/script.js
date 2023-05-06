@@ -50,9 +50,10 @@ const path = require("path");
     console.log("Updating configuration...");
     let number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(6000);
 
     await cas.refreshContext();
+    await page.waitForTimeout(3000);
 
     console.log("Testing authentication after refresh...");
     page = await cas.newPage(browser);
