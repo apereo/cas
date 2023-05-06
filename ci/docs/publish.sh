@@ -30,9 +30,8 @@ function validateProjectDocumentation() {
 
 clear
 
-GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
+GRADLE_BUILD_OPTIONS="-q --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
-GH_PAGES_TOKEN="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"
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 
@@ -147,10 +146,10 @@ if [[ $branchVersion == "master" ]]; then
   branchVersion="development"
 fi
 
-#if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-#  publishDocs=false
-#  printyellow "\nNo GitHub token is defined to publish documentation."
-#fi
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
+  publishDocs=false
+  printyellow "\nNo GitHub token is defined to publish documentation."
+fi
 
 echo "-------------------------------------------------------"
 printgreen "Branch: \t\t${branchVersion}"
@@ -313,7 +312,7 @@ if [[ ${buildDocs} == "true" ]]; then
   echo -n "Starting at " && date
   jekyll --version
 
-  while sleep 1m; do echo -e '\n=====[ Build is still running ]====='; done &
+  while sleep 30; do echo -e '\n=====[ Build is still running ]====='; done &
   sleeppid=$!
   
   if [[ ${serve} == "true" ]]; then
@@ -321,10 +320,9 @@ if [[ ${buildDocs} == "true" ]]; then
   else
     bundle exec jekyll build --profile --incremental --trace
   fi
-  kill -9 sleeppid
-  
-  echo -n "Ended at " && date
   retVal=$?
+  kill -9 sleeppid
+  echo -n "Ended at " && date
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to build documentation.\n"
     exit ${retVal}
@@ -381,10 +379,20 @@ elif [[ "${publishDocs}" == "true" ]]; then
 
   printgreen "Committing changes...\n"
   git commit -am "Published docs to [gh-pages] from $branchVersion." --quiet 2>/dev/null
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    printred "Failed to push documentation.\n"
+    exit ${retVal}
+  fi
   git status
 
   echo "Pushing changes to upstream..."
   git push -fq origin gh-pages
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    printred "Failed to push documentation.\n"
+    exit ${retVal}
+  fi
   printgreen "Pushed upstream to origin/gh-pages...\n"
   retVal=$?
 else
