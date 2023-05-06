@@ -51,9 +51,14 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public void addTicketInternal(final Ticket ticket) throws Exception {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive();
-        if (ttl < 0) {
-            throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + " is set to use a negative ttl");
+        var ttl = ticket.getExpirationPolicy().getTimeToLive();
+        /*
+         * Valid values are integers between 0 and Integer.MAX VALUE. Its default value is 0,
+         * which means infinite (no expiration and eviction).
+         */
+        if (ttl < 0 || ttl >= Integer.MAX_VALUE) {
+            LOGGER.debug("The expiration policy of ticket [{}] is set to use a negative (i.e. infinite) ttl", ticket.getId());
+            ttl = 0L;
         }
 
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
