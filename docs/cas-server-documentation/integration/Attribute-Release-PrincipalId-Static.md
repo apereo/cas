@@ -19,7 +19,7 @@ the [Spring Expression Language](../configuration/Configuration-Spring-Expressio
   "id" : 100,
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.StaticRegisteredServiceUsernameProvider",
-    value": "always-static-username"
+    "value": "always-static-username"
   }
 }
 ```
