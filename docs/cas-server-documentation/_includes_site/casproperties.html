@@ -538,35 +538,35 @@
 <script>
 
     window.addEventListener('load', (event) => {
-        {%- unless optionalSettingsFound -%} 
-            $("#linkOptionalProperties{{ casPropertiesRandomNumber }}").remove()
-        {%- endunless -%} 
-        {%- unless rdbmsSettingsFound -%} 
-            $("#linkRdbms{{ casPropertiesRandomNumber }}").remove()
-        {%- endunless -%} 
-        {%- unless emailSettingsFound -%} 
-            $("#linkEmail{{ casPropertiesRandomNumber }}").remove()
-        {%- endunless -%} 
+        {%- unless optionalSettingsFound -%}
+            $("#linkOptionalProperties{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%}
+        {%- unless rdbmsSettingsFound -%}
+            $("#linkRdbms{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%}
+        {%- unless emailSettingsFound -%}
+            $("#linkEmail{{ casPropertiesRandomNumber }}").remove();
+        {%- endunless -%}
         {%- unless signingEncryptionEnabled -%} 
-            $("#linkSigningEncryption{{ casPropertiesRandomNumber }}").remove()
+            $("#linkSigningEncryption{{ casPropertiesRandomNumber }}").remove();
         {%- endunless -%} 
         {%- unless requiredSettingsFound -%} 
-            $("#linkRequiredProperties{{ casPropertiesRandomNumber }}").remove()
+            $("#linkRequiredProperties{{ casPropertiesRandomNumber }}").remove();
         {%- endunless -%} 
         {%- if textAreaPasswordPolicyProperties == blank or textAreaPasswordPolicyProperties == '' -%} 
-            $("#linkPasswordPolicy{{ casPropertiesRandomNumber }}").remove()
+            $("#linkPasswordPolicy{{ casPropertiesRandomNumber }}").remove();
         {%- endif -%} 
         {%- if textAreaPrincipalTransformationProperties == blank or textAreaPrincipalTransformationProperties == '' -%} 
-            $("#linkPrincipalTransformation{{ casPropertiesRandomNumber }}").remove()
+            $("#linkPrincipalTransformation{{ casPropertiesRandomNumber }}").remove();
         {%- endif -%} 
         {%- if textAreaPasswordEncoderProperties == blank or textAreaPasswordEncoderProperties == '' -%} 
-            $("#linkPasswordEncoder{{ casPropertiesRandomNumber }}").remove()
+            $("#linkPasswordEncoder{{ casPropertiesRandomNumber }}").remove();
         {%- endif -%} 
         {%- unless authnPredicateSettingsFound -%} 
-            $("#linkAuthnPredicate{{ casPropertiesRandomNumber }}").remove()
+            $("#linkAuthnPredicate{{ casPropertiesRandomNumber }}").remove();
         {%- endunless -%} 
         {%- unless ldapSettingsFound -%} 
-            $("#linkLdap{{ casPropertiesRandomNumber }}").remove()
+            $("#linkLdap{{ casPropertiesRandomNumber }}").remove();
         {%- endunless -%} 
 
         // console.log("Checking for visible link menu in: navPillsMenus{{ casPropertiesRandomNumber }}");

@@ -67,7 +67,7 @@ while (("$#")); do
     
     audit=false
     proofRead=false
-    actuators=false
+    actuators=false 
     thirdParty=false
     serviceProps=false
     publishDocs=false
@@ -185,6 +185,7 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages"
   [[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
   [[ -d $PWD/docs-includes ]] && rm -Rf "$PWD"/docs-includes
+  [[ -d $PWD/docs-includes-site ]] && rm -Rf "$PWD"/docs-includes-site
 
   printgreen "Copying project documentation over to $PWD/docs-latest...\n"
   chmod -R 777 docs/cas-server-documentation
@@ -312,16 +313,21 @@ if [[ ${buildDocs} == "true" ]]; then
   echo -n "Starting at " && date
   jekyll --version
 
-  while sleep 30; do echo -e '\n=====[ Build is still running ]====='; done &
-  sleeppid=$!
-  
+  if [[ "${CI}" == "true" ]]; then
+    while sleep 30; do echo -e '\n=====[ Build is still running ]====='; done &
+    sleeppid=$!
+  fi
+
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
     bundle exec jekyll build --profile --incremental --trace
   fi
   retVal=$?
-  kill -9 sleeppid
+  if [[ "${CI}" == "true" ]]; then
+    kill -9 sleeppid
+  fi
+
   echo -n "Ended at " && date
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to build documentation.\n"
