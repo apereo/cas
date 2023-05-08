@@ -32,12 +32,15 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.mfa.web-authn.core.trust-source.fido.legal-header=" + BaseWebAuthnCredentialRepositoryTests.DEFAULT_LEGAL_HEADER,
         "cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
         "cas.authn.mfa.web-authn.core.relying-party-id=example.org"
     })
 public abstract class BaseWebAuthnCredentialRepositoryTests {
+    static final String DEFAULT_LEGAL_HEADER = "Retrieval and use of this BLOB indicates acceptance of the appropriate agreement located at https://fidoalliance"
+                                               + ".org/metadata/metadata-legal-terms/";
     @Autowired
     protected CasConfigurationProperties casProperties;
 

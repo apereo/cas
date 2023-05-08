@@ -101,11 +101,11 @@
                                             <code>.properties</code> files:
                                             <p/>
 
-                                            {%- capture markdownprop %}
-                                            ```
-                                            {{ include.name | replace: "[]", "[0]"}}={{ include.defaultValue | default: "..." }}
-                                            ```
-                                            {%- endcapture %}
+{%- capture markdownprop -%}
+```
+{{ include.name | replace: "[]", "[0]"}}={{ include.defaultValue | default: "..." }}
+```
+{%- endcapture -%}
 
                                             {{ markdownprop || markdownify }}
 
@@ -137,11 +137,11 @@
                                             {%- endif -%}
                                             {%- endfor -%}
 
-                                            {% capture yamlprop %}
-                                            ```yaml
-                                            {{ path }}
-                                            ```
-                                            {% endcapture %}
+{% capture yamlprop -%}
+```yaml
+{{ path }}
+```
+{% endcapture -%}
                                             {{ yamlprop | markdownify | replace: "\n", "<br>" }}
                                             <script>
                                                 setTimeout(() => {
@@ -157,11 +157,11 @@
                                             CAS properties can be passed to the CAS web application as system properties, when the application is launched:
                                             <p/>
 
-                                            {%- capture markdownprop %}
-                                            ```bash
-                                            java -D{{ include.name | replace: "[]", "[0]"}}={{ propertyValueFormatted }} -jar build/libs/cas.war
-                                            ```
-                                            {%- endcapture %}
+{%- capture markdownprop -%}
+```bash
+java -D{{ include.name | replace: "[]", "[0]"}}={{ propertyValueFormatted }} -jar build/libs/cas.war
+```
+{%- endcapture -%}
                                             {{ markdownprop || markdownify }}
                                             <p/>
                                             The above example assumes that the CAS web application is packaged as <code>cas.war</code>
@@ -187,11 +187,11 @@
                                             CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
                                             <p/>
 
-                                            {%- capture markdownprop %}
-                                            ```bash
-                                            java -jar build/libs/cas.war --{{ include.name | replace: "[]", "[0]"}}={{ propertyValueFormatted }}
-                                            ```
-                                            {%- endcapture %}
+{%- capture markdownprop -%}
+```bash
+java -jar build/libs/cas.war --{{ include.name | replace: "[]", "[0]"}}={{ propertyValueFormatted }}
+```
+{%- endcapture -%}
                                             {{ markdownprop || markdownify }}
 
                                             <p/>
