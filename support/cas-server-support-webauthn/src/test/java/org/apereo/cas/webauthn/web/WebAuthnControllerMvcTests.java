@@ -75,7 +75,7 @@ public class WebAuthnControllerMvcTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    @Qualifier("csrfTokenRepository")
+    @Qualifier("webAuthnCsrfTokenRepository")
     private CsrfTokenRepository csrfTokenRepository;
 
     @Autowired

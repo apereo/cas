@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -78,7 +79,7 @@ public class WebAuthnStartRegistrationActionTests {
 
         val http = new HttpSecurity(mock(ObjectPostProcessor.class),
             new AuthenticationManagerBuilder(mock(ObjectPostProcessor.class)),
-            Map.of());
+            Map.of(ApplicationContext.class, applicationContext));
         assertNotNull(webAuthnProtocolEndpointConfigurer.configure(http));
         assertNotNull(http.getConfigurer(CsrfConfigurer.class));
     }
