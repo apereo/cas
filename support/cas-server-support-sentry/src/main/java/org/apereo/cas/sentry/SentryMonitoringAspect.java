@@ -3,7 +3,6 @@ package org.apereo.cas.sentry;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.function.FunctionUtils;
 
-import io.sentry.ISpan;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
 import lombok.extern.slf4j.Slf4j;

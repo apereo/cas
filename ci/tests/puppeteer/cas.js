@@ -26,7 +26,7 @@ const BROWSER_OPTIONS = {
     defaultViewport: null,
     timeout: 20000,
     slowMo: process.env.CI === "true" ? 0 : 10,
-    args: ['--start-maximized', "--window-size=1920,1080", "--single-process"]
+    args: ['--start-maximized', "--window-size=1920,1080"]
 };
 
 
