@@ -536,8 +536,8 @@
 {%- endunless -%}
 
 <script>
-
     window.addEventListener('load', (event) => {
+        
         {%- unless optionalSettingsFound -%}
             $("#linkOptionalProperties{{ casPropertiesRandomNumber }}").remove();
         {%- endunless -%}
@@ -570,25 +570,25 @@
         {%- endunless -%} 
 
         // console.log("Checking for visible link menu in: navPillsMenus{{ casPropertiesRandomNumber }}");
-        var id=$("#navPillsMenus{{ casPropertiesRandomNumber }} a:visible:first").prop('id');
+        let id=$("#navPillsMenus{{ casPropertiesRandomNumber }} a:visible:first").prop('id');
         // console.log("Attempting to select tab with id " + id);
         if (id != undefined && id != null) {
             // console.log("Selecting first tab with link id " + id);
-            var firstTabEl = document.querySelector("#" + id);
-            var firstTab = new bootstrap.Tab(firstTabEl);
+            let firstTabEl = document.querySelector(`#${id}`);
+            let firstTab = new bootstrap.Tab(firstTabEl);
             firstTab.show();
             // console.log("Selected tab with link id " + id);
         }
 
         let c = $("#tableRequiredProperties{{ casPropertiesRandomNumber }} li.property-name code").length;
         if (c <= ROWS) {
-            $("#navRequiredProperties{{ casPropertiesRandomNumber }}").closest("table").remove()
-            $("#navRequiredPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove()
+            $("#navRequiredProperties{{ casPropertiesRandomNumber }}").closest("table").remove();
+            $("#navRequiredPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove();
         }
         c = $("#tableOptionalProperties{{ casPropertiesRandomNumber }} li.property-name code").length;
         if (c <= ROWS) {
-            $("#navOptionalProperties{{ casPropertiesRandomNumber }}").closest("table").remove()
-            $("#navOptionalPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove()
+            $("#navOptionalProperties{{ casPropertiesRandomNumber }}").closest("table").remove();
+            $("#navOptionalPropertiesLeft{{ casPropertiesRandomNumber }}").closest("table").remove();
         }
         c = $("#tableThirdPartyProperties{{ casPropertiesRandomNumber }} li.property-name code").length;
         if (c <= ROWS) {
