@@ -432,16 +432,17 @@ codes.forEach((code) => {
 }); 
 new ClipboardJS('.btn-copy-code');
 
-$(document).ready( function () {
+$(document).ready(() => {
+    var pageLength = $('.cas-datatable').data('page-length');
+    if (pageLength === null || pageLength === undefined || pageLength === "") {
+      pageLength = 5;
+    }
     $('.cas-datatable').DataTable({
       "processing": true,
-      "lengthMenu": [ 5, 10, 25, 50]
+      "lengthMenu": [ 5, 10, 15, 25, 50],
+      "pageLength": pageLength
     });
-} );
-
-
-
-
+});
 
 let ROWS = 5;
 
