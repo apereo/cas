@@ -2,8 +2,8 @@ package org.apereo.cas.webauthn.metadata;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
-import com.yubico.webauthn.attestation.YubicoJsonMetadataService;
 import com.yubico.webauthn.data.ByteArray;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.security.cert.X509Certificate;
@@ -19,6 +19,7 @@ import java.util.Set;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Getter
 public class CompositeAttestationTrustSource implements AttestationTrustSource {
     private final List<AttestationTrustSource> trustSources = new ArrayList<>();
 
@@ -37,6 +38,12 @@ public class CompositeAttestationTrustSource implements AttestationTrustSource {
             .orElseGet(() -> TrustRootsResult.builder().trustRoots(Set.of()).build());
     }
 
+    /**
+     * Add attestation trust source.
+     *
+     * @param source the source
+     * @return the composite attestation trust source
+     */
     @CanIgnoreReturnValue
     public CompositeAttestationTrustSource addAttestationTrustSource(final AttestationTrustSource source) {
         this.trustSources.add(source);

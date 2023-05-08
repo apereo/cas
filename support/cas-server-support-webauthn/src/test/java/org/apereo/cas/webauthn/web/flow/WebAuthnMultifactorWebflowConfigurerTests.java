@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAttestationTrustSourceFidoProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.mfa.web-authn.core.trust-source.fido.legal-header=" + WebAuthnMultifactorAttestationTrustSourceFidoProperties.DEFAULT_LEGAL_HEADER,
         "cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
         "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",

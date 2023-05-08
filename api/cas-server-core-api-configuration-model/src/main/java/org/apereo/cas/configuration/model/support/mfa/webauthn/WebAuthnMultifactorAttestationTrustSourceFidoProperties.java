@@ -28,6 +28,11 @@ import java.util.stream.Stream;
 @Accessors(chain = true)
 @JsonFilter("WebAuthnMultifactorAttestationTrustSourceFidoProperties")
 public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements Serializable {
+    /**
+     * Default legal text header.
+     */
+    public static final String DEFAULT_LEGAL_HEADER =
+        "Retrieval and use of this BLOB indicates acceptance of the appropriate agreement located at https://fidoalliance.org/metadata/metadata-legal-terms/";
 
     @Serial
     private static final long serialVersionUID = -6224841263678287815L;

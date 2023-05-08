@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.boot.context.properties.bind.Nested;
 
 import java.io.Serial;
 import java.io.Serializable;
