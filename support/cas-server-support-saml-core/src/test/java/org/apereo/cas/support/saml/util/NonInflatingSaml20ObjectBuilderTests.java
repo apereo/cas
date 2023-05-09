@@ -142,7 +142,7 @@ public class NonInflatingSaml20ObjectBuilderTests {
         val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
         val sub = builder.newSubject(id, subjectId, "cas", ZonedDateTime.now(ZoneOffset.UTC),
-            "https://github.com", ZonedDateTime.now(ZoneOffset.UTC));
+            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
         assertNotNull(sub);
     }
 
