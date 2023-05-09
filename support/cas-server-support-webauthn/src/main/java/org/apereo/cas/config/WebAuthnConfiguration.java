@@ -82,6 +82,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -243,7 +244,7 @@ public class WebAuthnConfiguration {
             } else {
                 origins.add(serverName);
             }
-            val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase());
+            val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase(Locale.ENGLISH));
             val relyingParty = RelyingParty.builder()
                 .identity(defaultRelyingPartyId)
                 .credentialRepository(webAuthnCredentialRepository)

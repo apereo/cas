@@ -19,7 +19,7 @@ function resourceLoadedSuccessfully() {
 
         $('#password').keypress(function (e) {
             var s = String.fromCharCode(e.which);
-            if (s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) {
+            if (s.toUpperCase(Locale.ENGLISH) === s && s.toLowerCase(Locale.ENGLISH) !== s && !e.shiftKey) {
                 $('.caps-warn').show();
             } else {
                 $('.caps-warn').hide();

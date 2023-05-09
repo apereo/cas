@@ -377,7 +377,7 @@ u2f.WrappedChromeRuntimePort_.prototype.postMessage = function(message) {
  */
 u2f.WrappedChromeRuntimePort_.prototype.addEventListener =
     function(eventName, handler) {
-        var name = eventName.toLowerCase();
+        var name = eventName.toLowerCase(Locale.ENGLISH);
         if (name == 'message' || name == 'onmessage') {
             this.port_.onMessage.addListener(function(message) {
                 // Emulate a minimal MessageEvent object
@@ -425,7 +425,7 @@ u2f.WrappedAuthenticatorPort_.prototype.getPortType = function() {
  * @param {function({data: Object})} handler
  */
 u2f.WrappedAuthenticatorPort_.prototype.addEventListener = function(eventName, handler) {
-    var name = eventName.toLowerCase();
+    var name = eventName.toLowerCase(Locale.ENGLISH);
     if (name == 'message') {
         var self = this;
         /* Register a callback to that executes when
@@ -496,7 +496,7 @@ u2f.WrappedIosPort_.prototype.getPortType = function() {
  * @param {function({data: Object})} handler
  */
 u2f.WrappedIosPort_.prototype.addEventListener = function(eventName, handler) {
-    var name = eventName.toLowerCase();
+    var name = eventName.toLowerCase(Locale.ENGLISH);
     if (name !== 'message') {
         console.error('WrappedIosPort only supports message');
     }

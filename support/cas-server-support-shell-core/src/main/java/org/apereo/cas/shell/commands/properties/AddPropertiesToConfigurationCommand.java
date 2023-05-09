@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class AddPropertiesToConfigurationCommand {
         val results = findProperties(group);
         LOGGER.info("Located [{}] properties matching [{}]", results.size(), group);
 
-        switch (FilenameUtils.getExtension(filePath.getName()).toLowerCase()) {
+        switch (FilenameUtils.getExtension(filePath.getName()).toLowerCase(Locale.ENGLISH)) {
             case "properties" -> {
                 createConfigurationFileIfNeeded(filePath);
                 val props = loadPropertiesFromConfigurationFile(filePath);

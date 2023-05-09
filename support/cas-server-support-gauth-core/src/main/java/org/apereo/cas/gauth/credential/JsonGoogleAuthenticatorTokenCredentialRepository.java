@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 return new ArrayList<>(0);
             }
 
-            val account = map.get(username.trim().toLowerCase());
+            val account = map.get(username.trim().toLowerCase(Locale.ENGLISH));
             if (account != null) {
                 return decode(account);
             }
@@ -104,9 +105,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]",
                 accounts.size(), account.getUsername());
             val encoded = encode(account);
-            val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(), new ArrayList<>());
+            val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
             records.add(encoded);
-            accounts.put(account.getUsername().trim().toLowerCase(), records);
+            accounts.put(account.getUsername().trim().toLowerCase(Locale.ENGLISH), records);
             writeAccountsToJsonRepository(accounts);
             return encoded;
         } catch (final Exception e) {
@@ -119,8 +120,8 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         try {
             val accounts = readAccountsFromJsonRepository();
-            if (accounts.containsKey(account.getUsername().trim().toLowerCase())) {
-                val records = accounts.get(account.getUsername().trim().toLowerCase());
+            if (accounts.containsKey(account.getUsername().trim().toLowerCase(Locale.ENGLISH))) {
+                val records = accounts.get(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
                 return records.stream()
                     .filter(rec -> rec.getId() == account.getId())
                     .findFirst()

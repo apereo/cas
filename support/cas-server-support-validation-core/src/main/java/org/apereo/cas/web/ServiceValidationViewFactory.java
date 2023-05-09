@@ -13,6 +13,7 @@ import org.springframework.web.servlet.View;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -170,7 +171,7 @@ public class ServiceValidationViewFactory {
                                                                     final WebApplicationService service) {
         val format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
         final Function<String, ValidationResponseType> func = FunctionUtils.doIf(StringUtils::isNotBlank,
-            t -> ValidationResponseType.valueOf(t.toUpperCase()),
+            t -> ValidationResponseType.valueOf(t.toUpperCase(Locale.ENGLISH)),
             f -> service != null ? service.getFormat() : ValidationResponseType.XML);
         return func.apply(format);
     }

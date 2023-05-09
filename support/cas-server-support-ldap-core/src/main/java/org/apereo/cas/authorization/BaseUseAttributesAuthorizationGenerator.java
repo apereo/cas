@@ -16,6 +16,7 @@ import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.UserProfile;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -60,7 +61,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     protected void addProfileRolesFromAttributes(final UserProfile profile,
                                                  final LdapAttribute ldapAttribute,
                                                  final String prefix) {
-        ldapAttribute.getStringValues().forEach(value -> profile.addRole(prefix.concat(value.toUpperCase())));
+        ldapAttribute.getStringValues().forEach(value -> profile.addRole(prefix.concat(value.toUpperCase(Locale.ENGLISH))));
     }
 
     @Override

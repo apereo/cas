@@ -1,12 +1,5 @@
 package org.apereo.cas.oidc.jwks;
 
-/**
- * This is {@link JsonWebKeyUsage}.
- *
- * @author Misagh Moayyed
- * @since 6.5.0
- */
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

@@ -53,6 +53,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -118,7 +119,7 @@ public class X509AuthenticationConfiguration {
                                                         final RevocationPolicy allowRevocationPolicy,
                                                         final RevocationPolicy thresholdExpiredCRLRevocationPolicy,
                                                         final RevocationPolicy denyRevocationPolicy) {
-        return switch (policy.trim().toLowerCase()) {
+        return switch (policy.trim().toLowerCase(Locale.ENGLISH)) {
             case "allow" -> allowRevocationPolicy;
             case "threshold" -> thresholdExpiredCRLRevocationPolicy;
             default -> denyRevocationPolicy;
@@ -235,7 +236,7 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "crlFetcher")
     public CRLFetcher crlFetcher(final CasConfigurationProperties casProperties) {
         val x509 = casProperties.getAuthn().getX509();
-        return switch (x509.getCrlFetcher().toLowerCase()) {
+        return switch (x509.getCrlFetcher().toLowerCase(Locale.ENGLISH)) {
             case "ldap" -> new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
                 LdapUtils.newLdaptiveSearchOperation(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
                 x509.getLdap().getCertificateAttribute());

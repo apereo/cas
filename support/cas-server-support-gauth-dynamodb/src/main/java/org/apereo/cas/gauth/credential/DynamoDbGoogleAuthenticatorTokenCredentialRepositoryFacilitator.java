@@ -25,6 +25,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeTokenAccount record) {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.NAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getName())).build());
-        values.put(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(record.getUsername().toLowerCase()).build());
+        values.put(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(record.getUsername().toLowerCase(Locale.ENGLISH)).build());
         values.put(ColumnNames.SECRET.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getSecretKey())).build());
         values.put(ColumnNames.SCRATCH_CODES.getColumnName(), AttributeValue.builder()
             .ss(record.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList())).build());
@@ -107,7 +108,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
             List.of(
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.USERID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                    .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase(Locale.ENGLISH)).build()))
                     .operator(ComparisonOperator.EQ)
                     .build(),
                 DynamoDbQueryBuilder.builder()
@@ -130,7 +131,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
             List.of(
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.USERID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase()).build()))
+                    .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase(Locale.ENGLISH)).build()))
                     .operator(ComparisonOperator.EQ)
                     .build());
         return getRecordsByKeys(query);
@@ -174,7 +175,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase()).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(username.toLowerCase(Locale.ENGLISH)).build()))
                 .operator(ComparisonOperator.GE)
                 .build());
         val records = getRecordsByKeys(query);

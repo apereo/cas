@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -41,7 +42,7 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
                 val exec = HttpUtils.HttpExecutionRequest.builder()
                     .basicAuthPassword(restProperties.getBasicAuthPassword())
                     .basicAuthUsername(restProperties.getBasicAuthUsername())
-                    .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                    .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                     .url(restProperties.getUrl())
                     .build();
                 response = HttpUtils.execute(exec);

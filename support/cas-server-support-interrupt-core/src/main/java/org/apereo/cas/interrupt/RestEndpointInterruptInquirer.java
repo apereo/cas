@@ -26,6 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * This is {@link RestEndpointInterruptInquirer}.
@@ -72,7 +73,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .headers(headers)

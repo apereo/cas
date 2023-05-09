@@ -24,6 +24,7 @@ import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -102,7 +103,7 @@ public class CoreAuthenticationTestUtils {
     public static StubPersonAttributeDao getAttributeRepository() {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
-        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase()));
+        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase(Locale.ENGLISH)));
         attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));
         attributes.put("mail", CollectionUtils.wrap(CONST_USERNAME + "@example.org"));
         attributes.put("memberOf", CollectionUtils.wrapList("system", "admin", "cas", "staff"));

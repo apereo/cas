@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,7 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
             .stream()
             .map(scratchCodesCipher::encode)
             .collect(Collectors.toList()));
-        account.setUsername(account.getUsername().trim().toLowerCase());
+        account.setUsername(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
         return account;
     }
 

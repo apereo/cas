@@ -22,6 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -63,7 +64,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(rest.getUrl())
                 .parameters(parameters)
                 .build();
@@ -88,7 +89,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(url)
                 .parameters(CollectionUtils.wrap("username", principal.getId(),
                     "locale", request.getLocale().toString()))

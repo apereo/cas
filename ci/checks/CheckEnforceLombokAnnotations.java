@@ -36,7 +36,7 @@ public class CheckEnforceLombokAnnotations {
                                              final String text,
                                              final String type,
                                              final String variable) {
-        var capitalized = variable.substring(0, 1).toUpperCase() + variable.substring(1);
+        var capitalized = variable.substring(0, 1).toUpperCase(Locale.ENGLISH) + variable.substring(1);
         var patternAccess = Pattern.compile("(public|private|protected)\\s+"
             + type
             + "\\s+(get|set)" + capitalized

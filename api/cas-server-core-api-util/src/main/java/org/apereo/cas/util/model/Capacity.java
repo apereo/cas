@@ -6,6 +6,7 @@ import lombok.val;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -38,7 +39,7 @@ public class Capacity implements Serializable {
             throw new IllegalArgumentException("Invalid capacity definition: " + capacity);
         }
         val count = Double.parseDouble(matcher.group(1));
-        val unit = UnitOfMeasure.valueOf(matcher.group(3).toUpperCase());
+        val unit = UnitOfMeasure.valueOf(matcher.group(3).toUpperCase(Locale.ENGLISH));
         return Capacity.builder().unitOfMeasure(unit).size(count).build();
     }
 
