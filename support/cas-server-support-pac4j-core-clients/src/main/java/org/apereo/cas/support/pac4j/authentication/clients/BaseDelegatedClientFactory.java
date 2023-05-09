@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -180,7 +181,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
             val client = new Google2Client(google.getId(), google.getSecret());
             configureClient(client, google, casProperties);
             if (StringUtils.isNotBlank(google.getScope())) {
-                client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
+                client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase(Locale.ENGLISH)));
             }
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
@@ -305,7 +306,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
                 client.setProfileUrl(oauth.getProfileUrl());
-                client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
+                client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase(Locale.ENGLISH)));
                 client.setTokenUrl(oauth.getTokenUrl());
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setScope(oauth.getScope());
@@ -439,7 +440,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
         cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
         if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase(Locale.ENGLISH)));
         }
         cfg.setMaxClockSkew(Long.valueOf(Beans.newDuration(oidc.getMaxClockSkew()).toSeconds()).intValue());
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
@@ -542,7 +543,7 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
                     __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
 
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
-                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
+                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase(Locale.ENGLISH));
                     cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
 

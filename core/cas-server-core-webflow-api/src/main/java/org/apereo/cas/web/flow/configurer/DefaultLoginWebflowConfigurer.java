@@ -38,6 +38,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -335,9 +336,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createRedirectToServiceActionState(final Flow flow) {
         val redirectToView = createActionState(flow, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE);
-        createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(), CasWebflowConstants.STATE_ID_POST_VIEW);
-        createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(), CasWebflowConstants.STATE_ID_HEADER_VIEW);
-        createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(), CasWebflowConstants.STATE_ID_REDIRECT_VIEW);
+        createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(Locale.ENGLISH), CasWebflowConstants.STATE_ID_POST_VIEW);
+        createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(Locale.ENGLISH), CasWebflowConstants.STATE_ID_HEADER_VIEW);
+        createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(Locale.ENGLISH), CasWebflowConstants.STATE_ID_REDIRECT_VIEW);
         redirectToView.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
     }
 

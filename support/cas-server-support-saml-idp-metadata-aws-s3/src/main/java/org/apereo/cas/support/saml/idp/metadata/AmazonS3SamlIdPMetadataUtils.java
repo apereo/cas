@@ -7,6 +7,7 @@ import lombok.val;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -39,7 +40,7 @@ public class AmazonS3SamlIdPMetadataUtils {
     }
 
     private static String getBucketForService(final SamlRegisteredService registeredService) {
-        return registeredService.getName().toLowerCase() + registeredService.getId();
+        return registeredService.getName().toLowerCase(Locale.ENGLISH) + registeredService.getId();
     }
 
 }

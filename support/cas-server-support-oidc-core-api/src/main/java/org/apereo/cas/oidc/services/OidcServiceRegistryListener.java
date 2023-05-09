@@ -21,6 +21,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This is {@link OidcServiceRegistryListener}.
@@ -115,7 +116,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                         userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService),
                         () -> customClaims.add(givenScope.trim()));
             } else {
-                val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
+                val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase(Locale.ENGLISH));
                 switch (scope) {
                     case EMAIL, ADDRESS, PROFILE, PHONE -> {
                         val policyToAdd = attributeReleasePolicyFactory.get(scope);

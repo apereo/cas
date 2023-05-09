@@ -45,6 +45,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
@@ -276,7 +277,7 @@ public class HazelcastConfigurationFactory {
         if (StringUtils.hasText(hz.getCluster().getCore().getPartitionMemberGroupType())) {
             val partitionGroupConfig = config.getPartitionGroupConfig();
             val type = PartitionGroupConfig.MemberGroupType.valueOf(
-                hz.getCluster().getCore().getPartitionMemberGroupType().toUpperCase());
+                hz.getCluster().getCore().getPartitionMemberGroupType().toUpperCase(Locale.ENGLISH));
             LOGGER.trace("Using partition member group type [{}]", type);
             partitionGroupConfig.setEnabled(true).setGroupType(type);
         }

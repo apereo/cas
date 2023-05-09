@@ -31,6 +31,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -90,7 +91,7 @@ public class InjectResponseHeadersActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new HashMap<String, String>();
-        attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(), "true");
+        attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(Locale.ENGLISH), "true");
 
         val casResponse = mock(Response.class);
         when(casResponse.url()).thenReturn("https://google.com");

@@ -119,6 +119,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -231,7 +232,7 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean isLdapConnectionUrl(final String r) {
-        return r.toLowerCase().startsWith(LDAP_PREFIX);
+        return r.toLowerCase(Locale.ENGLISH).startsWith(LDAP_PREFIX);
     }
 
     /**
@@ -496,7 +497,7 @@ public class LdapUtils {
         pooledCf.setPruneStrategy(strategy);
 
         val validator = l.getValidator();
-        switch (validator.getType().trim().toLowerCase()) {
+        switch (validator.getType().trim().toLowerCase(Locale.ENGLISH)) {
             case "compare" -> {
                 val compareRequest = new CompareRequest(
                     validator.getDn(),
@@ -526,7 +527,7 @@ public class LdapUtils {
 
         if (StringUtils.isNotBlank(l.getPoolPassivator())) {
             val pass =
-                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
+                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase(Locale.ENGLISH));
             switch (pass) {
                 case BIND:
                     if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
@@ -624,7 +625,7 @@ public class LdapUtils {
             }
 
             if (StringUtils.isNotBlank(properties.getTrustManager())) {
-                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(properties.getTrustManager().trim().toUpperCase())) {
+                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(properties.getTrustManager().trim().toUpperCase(Locale.ENGLISH))) {
                     case ANY -> sslConfig.setTrustManagers(new AllowAnyTrustManager());
                     default -> sslConfig.setTrustManagers(new DefaultTrustManager());
                 }

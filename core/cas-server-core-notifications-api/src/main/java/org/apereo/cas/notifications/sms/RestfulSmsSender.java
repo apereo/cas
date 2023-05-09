@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * This is {@link RestfulSmsSender}.
@@ -45,7 +46,7 @@ public record RestfulSmsSender(RestfulSmsProperties restProperties) implements S
             var exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase()))
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(restProperties.getUrl())
                 .headers(headers);
 

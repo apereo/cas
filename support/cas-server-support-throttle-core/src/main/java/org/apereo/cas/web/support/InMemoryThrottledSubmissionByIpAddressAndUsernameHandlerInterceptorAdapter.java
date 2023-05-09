@@ -6,6 +6,8 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Locale;
+
 /**
  * Attempts to throttle by both IP Address and username.  Protects against instances where there is a NAT, such as
  * a local campus wireless network.
@@ -28,7 +30,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();
         }
-        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ';' + username.toLowerCase();
+        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ';' + username.toLowerCase(Locale.ENGLISH);
     }
 
 

@@ -51,6 +51,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -174,7 +175,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @Test
     public void verifyCaseSensitivity() {
-        val casuser = getUsernameUnderTest().toLowerCase();
+        val casuser = getUsernameUnderTest().toLowerCase(Locale.ENGLISH);
         val acct = getAccount("verifyCaseSensitivity", casuser);
         assertNotNull(acct);
         val repo = getRegistry("verifyCaseSensitivity");
@@ -189,13 +190,13 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         toSave = repo.save(toSave);
         assertNotNull(toSave);
         assertNotNull(repo.get(toSave.getId()));
-        assertNotNull(repo.get(toSave.getUsername().toUpperCase(), toSave.getId()));
+        assertNotNull(repo.get(toSave.getUsername().toUpperCase(Locale.ENGLISH), toSave.getId()));
         assertEquals(1, repo.count());
-        assertEquals(1, repo.count(toSave.getUsername().toUpperCase()));
-        repo.delete(acct.getUsername().toUpperCase());
+        assertEquals(1, repo.count(toSave.getUsername().toUpperCase(Locale.ENGLISH)));
+        repo.delete(acct.getUsername().toUpperCase(Locale.ENGLISH));
         assertTrue(repo.load().isEmpty());
         assertEquals(0, repo.count());
-        assertEquals(0, repo.count(toSave.getUsername().toUpperCase()));
+        assertEquals(0, repo.count(toSave.getUsername().toUpperCase(Locale.ENGLISH)));
     }
 
     @Test

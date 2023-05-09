@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -51,7 +52,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .parameters(CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()))
                 .build();
@@ -70,7 +71,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .parameters(CollectionUtils.wrap("principal", username))
                 .build();

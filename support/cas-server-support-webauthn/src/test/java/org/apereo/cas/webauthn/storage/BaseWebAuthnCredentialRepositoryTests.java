@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,15 +75,15 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         val registration = getCredentialRegistration(id.toLowerCase());
 
         assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id.toLowerCase(), registration));
-        assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase()).isEmpty());
+        assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
 
         val ba = ByteArray.fromBase64Url(id);
-        val newRegistration = webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(), ba);
+        val newRegistration = webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(Locale.ENGLISH), ba);
         assertTrue(newRegistration.isPresent());
         assertNotNull(newRegistration.get().getRegistrationTime());
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUserHandle(ba).isEmpty());
-        assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id.toUpperCase()).isEmpty());
-        assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase()).isEmpty());
+        assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
+        assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
@@ -102,8 +103,8 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
 
         webAuthnCredentialRepository.updateSignatureCount(result);
 
-        webAuthnCredentialRepository.removeAllRegistrations(id.toUpperCase());
-        webAuthnCredentialRepository.removeRegistrationByUsername(id.toUpperCase(), registration);
+        webAuthnCredentialRepository.removeAllRegistrations(id.toUpperCase(Locale.ENGLISH));
+        webAuthnCredentialRepository.removeRegistrationByUsername(id.toUpperCase(Locale.ENGLISH), registration);
         assertTrue(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
 
         assertDoesNotThrow(() -> webAuthnCredentialRepository.clean());

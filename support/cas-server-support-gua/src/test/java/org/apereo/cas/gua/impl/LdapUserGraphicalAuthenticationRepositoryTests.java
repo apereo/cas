@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,7 +64,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
 
     private static String createLdapEntry(final ConnectionFactory factory) throws Exception {
         val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
-        val cn = RandomUtils.randomAlphabetic(6).toLowerCase();
+        val cn = RandomUtils.randomAlphabetic(6).toLowerCase(Locale.ENGLISH);
         val request = AddRequest.builder()
             .attributes(List.of(
                 new LdapAttribute("objectclass", "top", "person", "inetOrgPerson"),

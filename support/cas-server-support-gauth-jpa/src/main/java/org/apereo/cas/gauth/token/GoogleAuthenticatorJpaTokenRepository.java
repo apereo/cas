@@ -16,6 +16,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 
 /**
  * This is {@link GoogleAuthenticatorJpaTokenRepository}.
@@ -51,7 +52,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
         FunctionUtils.doUnchecked(__ -> {
             val gToken = new JpaGoogleAuthenticatorToken();
             BeanUtils.copyProperties(gToken, token);
-            gToken.setUserId(gToken.getUserId().trim().toLowerCase());
+            gToken.setUserId(gToken.getUserId().trim().toLowerCase(Locale.ENGLISH));
             entityManager.merge(gToken);
         });
     }
@@ -61,7 +62,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
         try {
             return entityManager.createQuery("SELECT r FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
                                              + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
-                .setParameter("userId", uid.trim().toLowerCase())
+                .setParameter("userId", uid.trim().toLowerCase(Locale.ENGLISH))
                 .setParameter("token", otp)
                 .getSingleResult();
         } catch (final NoResultException e) {
@@ -74,7 +75,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     public void remove(final String uid, final Integer otp) {
         val count = this.entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
                                                    + " r WHERE r.userId = :userId and r.token = :token")
-            .setParameter("userId", uid.trim().toLowerCase())
+            .setParameter("userId", uid.trim().toLowerCase(Locale.ENGLISH))
             .setParameter("token", otp)
             .executeUpdate();
         LOGGER.debug("Deleted [{}] token record(s)", count);
@@ -83,7 +84,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void remove(final String uid) {
         val count = this.entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
-            .setParameter("userId", uid.trim().toLowerCase())
+            .setParameter("userId", uid.trim().toLowerCase(Locale.ENGLISH))
             .executeUpdate();
         LOGGER.debug("Deleted [{}] token record(s)", count);
     }
@@ -106,7 +107,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     public long count(final String uid) {
         val count = (Number) entityManager.createQuery("SELECT COUNT(r.userId) FROM "
                                                        + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
-            .setParameter("userId", uid.trim().toLowerCase())
+            .setParameter("userId", uid.trim().toLowerCase(Locale.ENGLISH))
             .getSingleResult();
         LOGGER.debug("Counted [{}] token record(s) for [{}]", count, uid);
         return count.longValue();
