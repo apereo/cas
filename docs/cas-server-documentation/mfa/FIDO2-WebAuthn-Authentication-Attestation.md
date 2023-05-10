@@ -68,11 +68,11 @@ information about certification status of the authenticators, and found security
 Authentication are able to use this information to select specific certification levels as required for compliance, and 
 work through the security notifications to ensure effective incident response.
 
-{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.core.trust-source" includes=".fido" %}
-
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 To activate this functionality, you will need to accept the legal terms and conditions that are put together by FIDO Alliance
 via CAS configuration by specifying the appropriate legal header.</p></div>
+
+{% include_cached casproperties.html properties="cas.authn.mfa.web-authn.core.trust-source" includes=".fido" %}
 
 {% endtab %}
 
