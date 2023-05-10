@@ -111,6 +111,7 @@ public class WebAuthnConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnMetadataService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public AttestationTrustSource webAuthnMetadataService(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
@@ -123,6 +124,7 @@ public class WebAuthnConfiguration {
 
                     val loc = trustSource.getTrustedDeviceMetadata().getLocation();
                     if (ResourceUtils.doesResourceExist(loc)) {
+                        LOGGER.debug("Loading FIDO trusted device metadata from location [{}]", loc);
                         val metadata = MetadataObject.readMetadata(loc.getInputStream());
                         val jsonService = new YubicoJsonMetadataService(List.of(metadata));
                         composite.addAttestationTrustSource(jsonService);
@@ -150,6 +152,8 @@ public class WebAuthnConfiguration {
                         LOGGER.info("You have chosen to accept the FIDO Alliance's legal terms & conditions for downloading metadata blobs");
                         LOGGER.info(fidoProperties.getLegalHeader());
 
+                        LOGGER.debug("Starting to refresh/download FIDO metadata blob from [{}] and caching it at [{}]",
+                            fidoProperties.getMetadataBlobUrl(), fidoProperties.getBlobCacheFile());
                         val blob = downloader.refreshBlob();
                         val fidoService = FidoMetadataService.builder()
                             .useBlob(blob)
@@ -496,12 +500,10 @@ public class WebAuthnConfiguration {
                             });
                         });
                         http.authorizeHttpRequests(customizer -> {
-                            val patterns = new String[]{
-                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**",
-                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**"
-                            };
-                            customizer.requestMatchers(patterns)
+                            customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**")
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
+                            customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**")
+                                .permitAll();
                         });
                         return this;
                     }

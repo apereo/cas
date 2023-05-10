@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This is {@link WebAuthnMultifactorAttestationTrustSourceFidoProperties}.
