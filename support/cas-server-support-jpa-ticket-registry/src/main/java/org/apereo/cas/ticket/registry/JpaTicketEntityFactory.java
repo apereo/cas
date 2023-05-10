@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
+import org.apereo.cas.ticket.registry.maria.MariaJpaTicketEntity;
 import org.apereo.cas.ticket.registry.mssql.MsSqlServerJpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
 import org.apereo.cas.ticket.registry.oracle.OracleJpaTicketEntity;
@@ -125,6 +126,9 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
         }
         if (isMsSqlServer()) {
             return MsSqlServerJpaTicketEntity.class;
+        }
+        if (isMariaDb()) {
+            return MariaJpaTicketEntity.class;
         }
         return JpaTicketEntity.class;
     }
