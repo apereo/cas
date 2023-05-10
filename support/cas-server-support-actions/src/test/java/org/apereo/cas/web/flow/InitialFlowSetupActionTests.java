@@ -229,7 +229,7 @@ public class InitialFlowSetupActionTests {
             val event = this.action.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
             assertTrue(WebUtils.isExistingSingleSignOnSessionAvailable(context));
-            assertNull(getTicketRegistry().getTicket(tgt.getId()));
+            assertNotNull(getTicketRegistry().getTicket(tgt.getId()));
         }
 
 

@@ -180,7 +180,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
             WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);
             WebUtils.putExistingSingleSignOnSessionPrincipal(context,
                 Optional.ofNullable(auth).map(Authentication::getPrincipal).orElseGet(NullPrincipal::getInstance));
-            clearTicketGrantingCookieFromContext(context, ticketGrantingTicketId);
+            WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         }
     }
 
