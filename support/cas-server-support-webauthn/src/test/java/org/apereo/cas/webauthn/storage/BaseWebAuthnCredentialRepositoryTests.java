@@ -72,9 +72,9 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Test
     public void verifyOperation() throws Exception {
         val id = getUsername();
-        val registration = getCredentialRegistration(id.toLowerCase());
+        val registration = getCredentialRegistration(id.toLowerCase(Locale.ENGLISH));
 
-        assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id.toLowerCase(), registration));
+        assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id.toLowerCase(Locale.ENGLISH), registration));
         assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase(Locale.ENGLISH)).isEmpty());
 
         val ba = ByteArray.fromBase64Url(id);

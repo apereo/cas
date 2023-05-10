@@ -305,7 +305,7 @@ public class HazelcastConfigurationFactory {
 
         val mergePolicyConfig = new MergePolicyConfig();
         if (StringUtils.hasText(cluster.getCore().getMapMergePolicy())) {
-            switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase()) {
+            switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase(Locale.ENGLISH)) {
                 case "discard" -> mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
                 case "pass_through" -> mergePolicyConfig.setPolicy(PassThroughMergePolicy.class.getName());
                 case "expiration_time" -> mergePolicyConfig.setPolicy(ExpirationTimeMergePolicy.class.getName());

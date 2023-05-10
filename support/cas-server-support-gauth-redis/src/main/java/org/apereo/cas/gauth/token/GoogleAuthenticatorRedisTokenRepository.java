@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.Duration;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -104,11 +105,11 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username, final Integer otp) {
-        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + otp;
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase(Locale.ENGLISH) + KEY_SEPARATOR + otp;
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + '*';
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase(Locale.ENGLISH) + KEY_SEPARATOR + '*';
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final Integer otp) {

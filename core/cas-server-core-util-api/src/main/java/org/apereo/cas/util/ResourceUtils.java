@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
@@ -68,10 +69,10 @@ public class ResourceUtils {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }
-        if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
+        if (location.toLowerCase(Locale.ENGLISH).startsWith(HTTP_URL_PREFIX)) {
             return new UrlResource(location);
         }
-        if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
+        if (location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX)) {
             return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
         return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
