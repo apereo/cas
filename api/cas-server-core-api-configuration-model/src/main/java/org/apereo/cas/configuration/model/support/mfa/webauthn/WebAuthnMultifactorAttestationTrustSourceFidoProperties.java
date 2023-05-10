@@ -83,8 +83,8 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
     private String trustRootHash = "cbb522d7b7f127ad6a0113865bdf1cd4102e7d0759af635a7cf4720dc963c53b";
 
     /**
-     * Cache the trust root certificate in the file cacheFile.
-     * If cacheFile exists, is a normal file, is readable, matches one of the SHA-256 hashes configured in
+     * Cache the trust root certificate in the file cache file.
+     * If cache file exists, is a normal file, is readable, matches one of the SHA-256 hashes configured in
      * and contains a currently valid X.509 certificate, then it will be used as the trust root for the FIDO Metadata Service blob.
      * <p>
      * Otherwise, the trust root certificate will be downloaded and written to this file.
@@ -93,8 +93,8 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
         () -> Files.createTempFile("webauthn.fido.trust.root", ".cache").toFile()).get();
 
     /**
-     * Cache metadata BLOB in the file cacheFile.
-     * If cacheFile exists, is a normal file, is readable, and is not out of date, then it will be used as the FIDO Metadata Service BLOB.
+     * Cache metadata BLOB in the file cache file.
+     * If cache file exists, is a normal file, is readable, and is not out of date, then it will be used as the FIDO Metadata Service BLOB.
      * <p>
      * Otherwise, the metadata BLOB will be downloaded and written to this file.
      */
