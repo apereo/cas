@@ -24,7 +24,8 @@ const BROWSER_OPTIONS = {
     headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : "false",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
-    timeout: 20000,
+    timeout: 60000,
+    dumpio: true,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };

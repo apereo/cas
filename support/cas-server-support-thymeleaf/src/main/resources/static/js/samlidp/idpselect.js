@@ -180,19 +180,19 @@ TypeAheadControl.prototype.getPossible = function (b) {
     var e = 0;
     var g;
     var i;
-    b = b.toLowerCase(Locale.ENGLISH);
+    b = b.toLowerCase();
     while (f <= this.maxResults && j < this.elementList.length) {
         var a = false;
         var c = this.getName(this.elementList[j]);
-        if (c.toLowerCase(Locale.ENGLISH).indexOf(b) != -1) {
+        if (c.toLowerCase().indexOf(b) != -1) {
             a = true
         }
-        if (!a && this.getEntityId(this.elementList[j]).toLowerCase(Locale.ENGLISH).indexOf(b) != -1) {
+        if (!a && this.getEntityId(this.elementList[j]).toLowerCase().indexOf(b) != -1) {
             a = true
         }
         if (!a) {
             var d = this.getKeywords(this.elementList[j]);
-            if (null != d && d.toLowerCase(Locale.ENGLISH).indexOf(b) != -1) {
+            if (null != d && d.toLowerCase().indexOf(b) != -1) {
                 a = true
             }
         }
@@ -516,7 +516,7 @@ function IdPSelectUI() {
         } else {
             a3 = navigator.language || navigator.userLanguage || aT.defaultLanguage
         }
-        a3 = a3.toLowerCase(Locale.ENGLISH);
+        a3 = a3.toLowerCase();
         if (a3.indexOf("-") > 0) {
             aB = a3.substring(0, a3.indexOf("-"))
         }
@@ -601,7 +601,7 @@ function IdPSelectUI() {
                                 aY = decodeURIComponent(aU[1])
                             } else {
                                 if (aU[0] == "isPassive") {
-                                    a2 = (aU[1].toUpperCase(Locale.ENGLISH) == "TRUE")
+                                    a2 = (aU[1].toUpperCase() == "TRUE")
                                 }
                             }
                         }
