@@ -266,7 +266,7 @@ public class CasDocumentationApplication {
             var matcher = Pattern.compile(pattern).matcher(description);
             try {
                 while (matcher.find()) {
-                    description = description.replaceAll(pattern,
+                    description = description.replaceFirst(pattern,
                         "<code>" + Matcher.quoteReplacement(matcher.group(1)) + "</code>");
                 }
             } catch (final Exception e) {
