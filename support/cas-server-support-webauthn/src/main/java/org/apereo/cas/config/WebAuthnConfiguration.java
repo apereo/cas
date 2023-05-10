@@ -133,7 +133,7 @@ public class WebAuthnConfiguration {
                         && StringUtils.isNotBlank(fidoProperties.getMetadataBlobUrl())
                         && StringUtils.isNotBlank(fidoProperties.getTrustRootUrl())) {
                         val trustRootUrl = new URL(fidoProperties.getTrustRootUrl());
-                        val trustRootUrlHashes = fidoProperties.getTrustRootHash()
+                        val trustRootUrlHashes = org.springframework.util.StringUtils.commaDelimitedListToSet(fidoProperties.getTrustRootHash())
                             .stream()
                             .map(Unchecked.function(ByteArray::fromHex))
                             .collect(Collectors.toSet());

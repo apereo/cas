@@ -149,7 +149,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @Override
     public void delete(final String username) {
         val accounts = readAccountsFromJsonRepository();
-        accounts.remove(username.trim().toLowerCase());
+        accounts.remove(username.trim().toLowerCase(Locale.ENGLISH));
         writeAccountsToJsonRepository(accounts);
     }
 
@@ -169,7 +169,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @Override
     public long count(final String username) {
         val accounts = readAccountsFromJsonRepository();
-        return accounts.containsKey(username.trim().toLowerCase()) ? accounts.get(username.trim().toLowerCase()).size() : 0;
+        return accounts.containsKey(username.trim().toLowerCase(Locale.ENGLISH)) ? accounts.get(username.trim().toLowerCase(Locale.ENGLISH)).size() : 0;
     }
 
     private static class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {

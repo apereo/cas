@@ -7,6 +7,7 @@ import lombok.val;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 
 /**
  * This is {@link FingerprintMatcher}.
@@ -25,9 +26,9 @@ public final class FingerprintMatcher implements DeviceMatcher {
         if (fingerprints.isArray()) {
             try {
                 String fingerprint =
-                    Hashing.sha1().hashBytes(attestationCertificate.getEncoded()).toString().toLowerCase();
+                    Hashing.sha1().hashBytes(attestationCertificate.getEncoded()).toString().toLowerCase(Locale.ENGLISH);
                 for (JsonNode candidate : fingerprints) {
-                    if (fingerprint.equals(candidate.asText().toLowerCase())) {
+                    if (fingerprint.equals(candidate.asText().toLowerCase(Locale.ENGLISH))) {
                         return true;
                     }
                 }

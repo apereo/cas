@@ -16,6 +16,7 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -51,7 +52,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
     public Optional<DelegatedClientIdentityProviderConfiguration> resolve() {
         val name = client.getName();
         val matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase(Locale.ENGLISH);
         val uriBuilder = UriComponentsBuilder
             .fromUriString(ENDPOINT_URL_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);

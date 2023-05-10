@@ -28,6 +28,6 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
     @Override
     public String transform(final String formUserId) {
         val result = formUserId.trim();
-        return this.toUpperCase ? result.toUpperCase(Locale.ENGLISH) : result.toLowerCase();
+        return this.toUpperCase ? result.toUpperCase(Locale.ENGLISH) : result.toLowerCase(Locale.ENGLISH);
     }
 }

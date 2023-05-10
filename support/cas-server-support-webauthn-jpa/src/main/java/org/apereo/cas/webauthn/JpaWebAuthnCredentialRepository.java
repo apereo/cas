@@ -16,6 +16,7 @@ import jakarta.persistence.PersistenceContext;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +50,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
         return transactionTemplate.execute(status -> {
             val records = entityManager.createQuery(
                     SELECT_QUERY.concat("WHERE r.username = :username"), JpaWebAuthnCredentialRegistration.class)
-                .setParameter("username", username.trim().toLowerCase())
+                .setParameter("username", username.trim().toLowerCase(Locale.ENGLISH))
                 .getResultList();
 
             return records.stream()
@@ -84,13 +85,13 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
         val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
         transactionTemplate.executeWithoutResult(status -> {
             val count = entityManager.createQuery(UPDATE_QUERY.concat("SET r.records=:records WHERE r.username = :username"))
-                .setParameter("username", username.trim().toLowerCase())
+                .setParameter("username", username.trim().toLowerCase(Locale.ENGLISH))
                 .setParameter("records", jsonRecords)
                 .executeUpdate();
 
             if (count == 0) {
                 val record = JpaWebAuthnCredentialRegistration.builder()
-                    .username(username.trim().toLowerCase())
+                    .username(username.trim().toLowerCase(Locale.ENGLISH))
                     .records(jsonRecords)
                     .build();
                 entityManager.merge(record);

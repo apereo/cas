@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -150,7 +151,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
             oauthClientAuthenticator.validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
             assertNotNull(credentials.getUserProfile());
 
-            assertEquals(credentials.getUsername().toLowerCase(), credentials.getUserProfile().getId());
+            assertEquals(credentials.getUsername().toLowerCase(Locale.ENGLISH), credentials.getUserProfile().getId());
             assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
             assertNull(credentials.getUserProfile().getAttribute("groupMembership"));
         }

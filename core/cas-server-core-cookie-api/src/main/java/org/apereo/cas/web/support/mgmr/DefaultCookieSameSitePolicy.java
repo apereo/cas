@@ -16,6 +16,7 @@ import org.jooq.lambda.Unchecked;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -45,7 +46,7 @@ public class DefaultCookieSameSitePolicy implements CookieSameSitePolicy {
                 return (CookieSameSitePolicy) clazz.getDeclaredConstructor().newInstance();
             }).get().build(request, response, cookieGenerationContext);
         }
-        val result = switch (sameSitePolicy.toLowerCase().trim()) {
+        val result = switch (sameSitePolicy.toLowerCase(Locale.ENGLISH).trim()) {
             case "strict" -> CookieSameSitePolicy.strict();
             case "lax" -> CookieSameSitePolicy.lax();
             case "off" -> CookieSameSitePolicy.off();

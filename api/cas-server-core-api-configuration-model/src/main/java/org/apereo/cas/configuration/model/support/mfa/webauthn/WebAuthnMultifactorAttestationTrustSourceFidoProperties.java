@@ -42,7 +42,7 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
      * By using the FIDO Metadata Service, you will be subject to its terms of service.
      * This setting serves two purposes:
      * <p>
-     * To remind you and any code reviewers that you need to read those terms of service before using this feature.
+     * To remind you and any  adopters/reviewers that you need to read those terms of service before using this feature.
      * To help you detect if the legal header changes, so you can take appropriate action.
      * <p>
      * If the legal header in the downloaded BLOB does not equal any of the expected headers,
@@ -51,7 +51,9 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
      * Note that CAS makes no guarantee that a change to the FIDO Metadata Service
      * terms of service will also cause a change to the legal header in the BLOB.
      * <p>
-     * At the time of this library release, the current legal header is:
+     * The current legal header is noted by:
+     * {@link #DEFAULT_LEGAL_HEADER} which is the following:
+     * <p><br>
      * {@code "Retrieval and use of this BLOB indicates acceptance of the appropriate agreement located at https://fidoalliance.org/metadata/metadata-legal-terms/"}.
      */
     @RequiredProperty
@@ -75,9 +77,10 @@ public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements 
 
     /**
      * Certificate SHA-256 hash required for PKI to verify the downloaded certificate.
+     * Separate hash values with a comma.
      */
     @RequiredProperty
-    private List<String> trustRootHash = Stream.of("cbb522d7b7f127ad6a0113865bdf1cd4102e7d0759af635a7cf4720dc963c53b").toList();
+    private String trustRootHash = "cbb522d7b7f127ad6a0113865bdf1cd4102e7d0759af635a7cf4720dc963c53b";
 
     /**
      * Cache the trust root certificate in the file cacheFile.
