@@ -63,6 +63,7 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.KeyInfoReferenceProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -416,7 +417,7 @@ public class SamlIdPObjectEncrypter {
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
-                service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+                service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;
@@ -534,7 +535,7 @@ public class SamlIdPObjectEncrypter {
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
-                service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+                service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;

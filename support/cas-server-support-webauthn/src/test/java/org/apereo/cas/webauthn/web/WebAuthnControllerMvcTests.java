@@ -38,7 +38,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.annotation.Nonnull;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
@@ -100,21 +99,14 @@ public class WebAuthnControllerMvcTests {
     }
 
     @Test
-    public void verifyAccessToEndpoints() throws Exception {
-        testWebAuthnEndpoint(WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER, HttpStatus.SC_BAD_REQUEST);
-        testWebAuthnEndpoint(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, HttpStatus.SC_OK);
-    }
-
-    private void testWebAuthnEndpoint(final String endpoint, final int expectedStatus) throws Exception {
+    public void verifyRegistrationEndpoint() throws Exception {
+        val endpoint = WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER;
+        
         /* Without CSRF token, we must fail */
         executeRequest(endpoint, new MockHttpServletRequest(), true, HttpStatus.SC_FORBIDDEN);
 
         /* With CSRF token but without authentication context we continue to fail  */
-        var csrfResult = mvc.perform(get("/cas/actuator/info"))
-            .andExpect(status().isOk())
-            .andReturn();
-        val csrfToken = getCsrfToken(csrfResult.getRequest());
-        csrfTokenRepository.saveToken(csrfToken, csrfResult.getRequest(), csrfResult.getResponse());
+        val csrfResult = fetchAndStoreCsrfToken();
         executeRequest(endpoint, csrfResult.getRequest(), true, HttpStatus.SC_FORBIDDEN);
 
         /* Authenticated requests must fail because they do not have the right role */
@@ -123,7 +115,7 @@ public class WebAuthnControllerMvcTests {
         /* Authorization should now pass and reach the endpoint */
         populateSecurityContext(result);
         /* Authenticated requests with the right role should pass */
-        executeRequest(endpoint, csrfResult.getRequest(), false, expectedStatus);
+        executeRequest(endpoint, csrfResult.getRequest(), false, HttpStatus.SC_BAD_REQUEST);
 
         /* Ensure security conext does not intefere with actuator endpoint security */
         mvc.perform(get("/cas/actuator/env"))
@@ -136,6 +128,15 @@ public class WebAuthnControllerMvcTests {
             .andExpect(status().isOk());
     }
 
+    @Test
+    public void verifyAuthenticationEndpoint() throws Exception {
+        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), false, HttpStatus.SC_FORBIDDEN);
+        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), true, HttpStatus.SC_FORBIDDEN);
+
+        val csrfResult = fetchAndStoreCsrfToken();
+        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, csrfResult.getRequest(), true, HttpStatus.SC_OK);
+    }
+
     private void populateSecurityContext(final MvcResult result) throws Exception {
         val requestContext = new MockRequestContext();
         requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), result.getRequest(), result.getResponse()));
@@ -145,7 +146,6 @@ public class WebAuthnControllerMvcTests {
         populateSecurityContextAction.execute(requestContext);
     }
 
-    @Nonnull
     private MvcResult executeRequest(final String endpoint,
                                      final HttpServletRequest request,
                                      final boolean withBasicAuth,
@@ -167,5 +167,14 @@ public class WebAuthnControllerMvcTests {
     private static CsrfToken getCsrfToken(final HttpServletRequest request) {
         val attribute = request.getAttribute(DeferredCsrfToken.class.getName());
         return attribute != null ? ((DeferredCsrfToken) attribute).get() : null;
+    }
+
+    private MvcResult fetchAndStoreCsrfToken() throws Exception {
+        var csrfResult = mvc.perform(get("/cas/actuator/info"))
+            .andExpect(status().isOk())
+            .andReturn();
+        val csrfToken = getCsrfToken(csrfResult.getRequest());
+        csrfTokenRepository.saveToken(csrfToken, csrfResult.getRequest(), csrfResult.getResponse());
+        return csrfResult;
     }
 }

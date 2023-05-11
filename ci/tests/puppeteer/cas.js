@@ -24,7 +24,8 @@ const BROWSER_OPTIONS = {
     headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : "false",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
-    timeout: 20000,
+    timeout: 60000,
+    dumpio: true,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
@@ -131,6 +132,8 @@ exports.uploadImage = async (imagePath) => {
     }
 };
 
+exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
+
 exports.loginWith = async (page, user, password,
                            usernameField = "#username",
                            passwordField = "#password") => {
@@ -221,9 +224,10 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 exports.newPage = async (browser) => {
     let page = (await browser.pages())[0];
     if (page === undefined) {
+        console.log("Opening a new page...");
         page = await browser.newPage();
     }
-    await page.setDefaultNavigationTimeout(0);
+    // await page.setDefaultNavigationTimeout(0);
     // await page.setRequestInterception(true);
     await page.bringToFront();
     page

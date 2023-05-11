@@ -47,6 +47,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -191,7 +192,7 @@ public class CasPersonDirectoryConfiguration {
             impl.setCacheNullResults(false);
             val userinfoCache = Caffeine.newBuilder()
                 .maximumSize(props.getMaximumCacheSize())
-                .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
+                .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase(Locale.ENGLISH)))
                 .build();
             impl.setUserInfoCache((Map) userinfoCache.asMap());
             impl.setCachedPersonAttributesDao(aggregatingAttributeRepository);

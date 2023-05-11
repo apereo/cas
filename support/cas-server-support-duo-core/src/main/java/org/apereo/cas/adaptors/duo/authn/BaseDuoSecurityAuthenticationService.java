@@ -32,6 +32,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -117,7 +118,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
             if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
-                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
+                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
                 account.setStatus(status);

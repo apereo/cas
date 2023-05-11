@@ -10,6 +10,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Locale;
+
 /**
  * This is {@link InjectResponseHeadersAction}.
  *
@@ -26,7 +28,7 @@ public class InjectResponseHeadersAction extends RedirectToServiceAction {
         val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         httpResponse.addHeader(CasProtocolConstants.PARAMETER_SERVICE, response.url());
         response.attributes().forEach(httpResponse::addHeader);
-        if (response.attributes().containsKey(Response.ResponseType.REDIRECT.name().toLowerCase())) {
+        if (response.attributes().containsKey(Response.ResponseType.REDIRECT.name().toLowerCase(Locale.ENGLISH))) {
             return CasWebflowConstants.TRANSITION_ID_REDIRECT;
         }
         return CasWebflowConstants.TRANSITION_ID_SUCCESS;

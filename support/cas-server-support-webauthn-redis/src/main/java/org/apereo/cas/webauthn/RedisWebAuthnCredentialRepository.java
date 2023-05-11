@@ -14,6 +14,7 @@ import org.jooq.lambda.Unchecked;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -75,7 +76,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
             val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
             val entry = RedisWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
-                .username(username.trim().toLowerCase())
+                .username(username.trim().toLowerCase(Locale.ENGLISH))
                 .build();
             redisTemplate.boundValueOps(redisKey).set(entry);
         }
@@ -99,6 +100,6 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
     }
 
     private static String buildRedisKeyForRecord(final String username) {
-        return CAS_WEB_AUTHN_PREFIX + username.trim().toLowerCase();
+        return CAS_WEB_AUTHN_PREFIX + username.trim().toLowerCase(Locale.ENGLISH);
     }
 }

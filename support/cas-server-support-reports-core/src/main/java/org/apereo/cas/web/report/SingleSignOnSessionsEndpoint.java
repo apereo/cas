@@ -228,10 +228,10 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         if (StringUtils.isNotBlank(ssoSessionsRequest.getUsername())) {
             val sessionsMap = new HashMap<String, Object>(1);
             var tickets = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername());
-            if (ssoSessionsRequest.getFrom() >= 0) {
+            if (ssoSessionsRequest.getFrom() > 0) {
                 tickets = tickets.skip(ssoSessionsRequest.getFrom());
             }
-            if (ssoSessionsRequest.getCount() >= 0) {
+            if (ssoSessionsRequest.getCount() > 0) {
                 tickets = tickets.limit(ssoSessionsRequest.getCount());
             }
             tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
@@ -375,11 +375,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        var tickets = ticketRegistryProvider.getObject().getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
-        if (from >= 0) {
+        var tickets = ticketRegistryProvider.getObject()
+            .getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
+        if (from > 0) {
             tickets = tickets.skip(from);
         }
-        if (count >= 0) {
+        if (count > 0) {
             tickets = tickets.limit(count);
         }
         return tickets;

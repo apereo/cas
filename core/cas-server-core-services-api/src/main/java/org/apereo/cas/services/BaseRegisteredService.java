@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -103,8 +104,8 @@ public abstract class BaseRegisteredService implements RegisteredService {
         return new CompareToBuilder()
             .append(getEvaluationPriority(), other.getEvaluationPriority())
             .append(getEvaluationOrder(), other.getEvaluationOrder())
-            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH),
+                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH))
             .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
             .toComparison();
     }

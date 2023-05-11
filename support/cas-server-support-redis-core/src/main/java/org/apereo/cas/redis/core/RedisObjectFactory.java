@@ -37,6 +37,7 @@ import org.springframework.util.StringUtils;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -158,7 +159,7 @@ public class RedisObjectFactory {
 
                 val nodeBuilder = new RedisNode.RedisNodeBuilder()
                     .listeningAt(nodeConfig.getHost(), nodeConfig.getPort())
-                    .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType().toUpperCase()));
+                    .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType().toUpperCase(Locale.ENGLISH)));
 
                 if (StringUtils.hasText(nodeConfig.getReplicaOf())) {
                     nodeBuilder.replicaOf(nodeConfig.getReplicaOf());

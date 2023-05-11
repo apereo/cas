@@ -19,6 +19,7 @@ import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -45,7 +46,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .build();

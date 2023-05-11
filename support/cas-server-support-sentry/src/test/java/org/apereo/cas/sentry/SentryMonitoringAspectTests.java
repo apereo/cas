@@ -4,7 +4,6 @@ import org.apereo.cas.config.CasSentryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 
-import io.sentry.spring.boot.jakarta.SentryAutoConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import io.sentry.spring.boot.jakarta.SentryAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 

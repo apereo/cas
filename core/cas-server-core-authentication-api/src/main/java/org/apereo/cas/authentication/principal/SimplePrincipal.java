@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -66,7 +67,7 @@ public class SimplePrincipal implements Principal {
     @Override
     public int hashCode() {
         val builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id.toLowerCase());
+        builder.append(id.toLowerCase(Locale.ENGLISH));
         return builder.toHashCode();
     }
 
@@ -81,6 +82,6 @@ public class SimplePrincipal implements Principal {
         if (!(obj instanceof SimplePrincipal rhs)) {
             return false;
         }
-        return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
+        return StringUtils.equalsIgnoreCase(id, rhs.getId());
     }
 }

@@ -1,12 +1,5 @@
 package org.apereo.cas.config;
 
-/**
- * This is {@link org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests}.
- *
- * @author Misagh Moayyed
- * @since 7.0.0
- */
-
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
@@ -32,6 +25,12 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is {@link org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.0.0
+ */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     ObservationAutoConfiguration.class,

@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -57,22 +58,22 @@ public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepositor
 
     @Override
     public boolean addRegistrationByUsername(final String username, final CredentialRegistration reg) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(), HashSet::new).add(reg));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), HashSet::new).add(reg));
     }
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(), HashSet::new));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), HashSet::new));
     }
 
     @Override
     public boolean removeRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(), HashSet::new).remove(credentialRegistration));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), HashSet::new).remove(credentialRegistration));
     }
 
     @Override
     public boolean removeAllRegistrations(final String username) {
-        storage.invalidate(username.toLowerCase());
+        storage.invalidate(username.toLowerCase(Locale.ENGLISH));
         return true;
     }
 
@@ -83,6 +84,6 @@ public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepositor
 
     @Override
     protected void update(final String username, final Collection<CredentialRegistration> records) {
-        storage.put(username.toLowerCase(), new LinkedHashSet<>(records));
+        storage.put(username.toLowerCase(Locale.ENGLISH), new LinkedHashSet<>(records));
     }
 }

@@ -48,7 +48,6 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
         try {
             val request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
-
             val entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 

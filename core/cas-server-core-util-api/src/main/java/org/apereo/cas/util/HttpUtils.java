@@ -47,6 +47,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -73,7 +74,7 @@ public class HttpUtils {
      */
     public HttpResponse execute(final HttpExecutionRequest execution) {
         val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
-        val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
+        val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(), execution.getEntity(), uri);
         try {
             val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
             execution.getHeaders().forEach((key, value) -> {

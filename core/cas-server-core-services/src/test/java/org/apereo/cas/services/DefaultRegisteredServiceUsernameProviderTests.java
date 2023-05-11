@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,7 +52,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
         val id = provider.resolveUsername(usernameContext);
         provider.initialize();
-        assertEquals(id, principal.getId().toUpperCase());
+        assertEquals(id, principal.getId().toUpperCase(Locale.ENGLISH));
     }
 
     @Test
@@ -66,7 +67,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
-        assertEquals(id, principal.getId().toUpperCase());
+        assertEquals(id, principal.getId().toUpperCase(Locale.ENGLISH));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
-        assertEquals(id, principal.getId().toUpperCase().concat("@EXAMPLE.ORG"));
+        assertEquals(id, principal.getId().toUpperCase(Locale.ENGLISH).concat("@EXAMPLE.ORG"));
     }
 
     @Test

@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
 
+import java.util.Locale;
+
 /**
  * This is {@link SamlAssertionRealmCodec}.
  * Parse the realm from a SAML assertion.
@@ -43,7 +45,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
         val matcher = RegexUtils.createPattern("cn=(\\w+)").matcher(name);
         if (matcher.find()) {
             val commonName = matcher.group(1);
-            return uppercase ? commonName.toUpperCase() : commonName;
+            return uppercase ? commonName.toUpperCase(Locale.ENGLISH) : commonName;
         }
         return null;
     }

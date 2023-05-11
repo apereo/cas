@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -377,7 +378,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
         val friendlyName = service.getFriendlyName();
         val candidateParentDirectories = List.of(
-            new File(defaultServicesDirectory, friendlyName.toLowerCase().replace(" ", "-")),
+            new File(defaultServicesDirectory, friendlyName.toLowerCase(Locale.ENGLISH).replace(" ", "-")),
             new File(defaultServicesDirectory, friendlyName)
         );
         return candidateParentDirectories

@@ -18,6 +18,7 @@ import org.springframework.shell.standard.ShellOption;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -72,7 +73,7 @@ public class ValidateRegisteredServiceCommand {
             val basicFileAttributes = Files.readAttributes(filePath.toPath(), BasicFileAttributes.class);
             if (basicFileAttributes.isRegularFile() && filePath.exists()
                 && filePath.canRead() && basicFileAttributes.size() > 0) {
-                val validator = switch (FilenameUtils.getExtension(filePath.getPath()).toLowerCase()) {
+                val validator = switch (FilenameUtils.getExtension(filePath.getPath()).toLowerCase(Locale.ENGLISH)) {
                     case "yml", "yaml" -> new RegisteredServiceYamlSerializer(applicationContext);
                     default -> new RegisteredServiceJsonSerializer(applicationContext);
                 };

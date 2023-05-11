@@ -34,6 +34,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -180,7 +181,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             currentValues = encryptValues(currentValues, context.getRegisteredService());
         }
         if (StringUtils.isNotBlank(this.canonicalizationMode)) {
-            val mode = CaseCanonicalizationMode.valueOf(canonicalizationMode.toUpperCase());
+            val mode = CaseCanonicalizationMode.valueOf(canonicalizationMode.toUpperCase(Locale.ENGLISH));
             currentValues = Objects.requireNonNull(currentValues)
                 .stream()
                 .map(value -> mode.canonicalize(value.toString()))

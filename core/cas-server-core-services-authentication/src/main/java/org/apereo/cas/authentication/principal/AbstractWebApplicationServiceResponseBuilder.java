@@ -16,6 +16,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -104,9 +105,9 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
             },
             __ -> methodRequest);
         val method = func.apply(methodRequest);
-        if (StringUtils.isBlank(method) || !EnumUtils.isValidEnum(Response.ResponseType.class, method.toUpperCase())) {
+        if (StringUtils.isBlank(method) || !EnumUtils.isValidEnum(Response.ResponseType.class, method.toUpperCase(Locale.ENGLISH))) {
             return Response.ResponseType.REDIRECT;
         }
-        return Response.ResponseType.valueOf(method.toUpperCase());
+        return Response.ResponseType.valueOf(method.toUpperCase(Locale.ENGLISH));
     }
 }

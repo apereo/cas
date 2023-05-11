@@ -59,6 +59,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -370,7 +371,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         LOGGER.trace("Finalized signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
-            val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+            val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;
@@ -383,7 +384,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
             val samlIdp = casProperties.getAuthn().getSamlIdp();
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                 StringUtils.defaultIfBlank(service.getSigningCredentialType(),
-                    samlIdp.getResponse().getCredentialType().name()).toUpperCase());
+                    samlIdp.getResponse().getCredentialType().name()).toUpperCase(Locale.ENGLISH));
             LOGGER.trace("Requested credential type [{}] is found for service [{}]", credType, service.getName());
 
             switch (credType) {
