@@ -385,6 +385,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(recipient)) {
             data.setRecipient(recipient);
+            val ip = InetAddressUtils.getByName(recipient);
+            if (ip != null) {
+                data.setAddress(ip.getHostName());
+            }
         }
 
         if (notOnOrAfter != null) {
@@ -393,10 +397,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
-            val ip = InetAddressUtils.getByName(inResponseTo);
-            if (ip != null) {
-                data.setAddress(ip.getHostName());
-            }
         }
 
         if (notBefore != null) {
