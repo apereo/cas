@@ -58,6 +58,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -755,7 +756,7 @@ public class WebUtils {
             flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
             flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
             flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
         }
     }
 

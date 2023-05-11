@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.ECParameterSpec;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -205,7 +206,7 @@ public class OidcJsonWebKeyStoreUtils {
      */
     public static PublicJsonWebKey generateJsonWebKey(final String jwksType, final int jwksKeySize,
                                                       final OidcJsonWebKeyUsage usage) {
-        switch (jwksType.trim().toLowerCase()) {
+        switch (jwksType.trim().toLowerCase(Locale.ENGLISH)) {
             case "ec" -> {
                 if (jwksKeySize == JWK_EC_P384_SIZE) {
                     val jwk = generateJsonWebKeyEC(EllipticCurves.P384);

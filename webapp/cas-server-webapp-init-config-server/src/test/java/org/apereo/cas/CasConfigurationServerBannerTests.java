@@ -25,7 +25,7 @@ public class CasConfigurationServerBannerTests {
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(() -> banner.printBanner(environment, CasConfigurationServerBannerTests.this.getClass(), out));
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }

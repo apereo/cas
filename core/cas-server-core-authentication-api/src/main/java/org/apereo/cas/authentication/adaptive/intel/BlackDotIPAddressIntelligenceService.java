@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -51,7 +52,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 builder.append(properties.getEmailAddress());
             }
 
-            val flags = switch (properties.getMode().toUpperCase()) {
+            val flags = switch (properties.getMode().toUpperCase(Locale.ENGLISH)) {
                 case "DYNA_LIST" -> "&flags=m";
                 case "DYNA_CHECK" -> "&flags=b";
                 default -> "&flags=f";

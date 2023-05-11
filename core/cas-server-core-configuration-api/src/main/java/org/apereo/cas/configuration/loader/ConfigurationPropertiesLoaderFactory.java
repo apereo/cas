@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +47,7 @@ public class ConfigurationPropertiesLoaderFactory {
      */
     public BaseConfigurationPropertiesLoader getLoader(final Resource resource,
                                                        final String name) {
-        val filename = StringUtils.defaultString(resource.getFilename()).toLowerCase();
+        val filename = StringUtils.defaultString(resource.getFilename()).toLowerCase(Locale.ENGLISH);
 
         if (filename.endsWith(".properties")) {
             return new SimpleConfigurationPropertiesLoader(this.configurationCipherExecutor, name, resource);

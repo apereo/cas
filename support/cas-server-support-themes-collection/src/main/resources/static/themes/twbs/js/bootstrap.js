@@ -17,8 +17,8 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        $('#password').keypress(function (e) {
-            var s = String.fromCharCode(e.which);
+        $('#password').keypress(e => {
+            let s = String.fromCharCode(e.which);
             if (s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) {
                 $('.caps-warn').show();
             } else {
@@ -26,13 +26,13 @@ function resourceLoadedSuccessfully() {
             }
         });
 
-        $('.reveal-password').click(function (ev) {
-            if ($('.pwd').attr('type') != 'text') {
-                $('.pwd').attr('type', 'text');
-                $(".reveal-password-icon").removeClass("fas fa-eye").addClass("fas fa-eye-slash");
-            } else {
+        $('.reveal-password').click(ev => {
+            if ($('.pwd').attr('type') === 'text') {
                 $('.pwd').attr('type', 'password');
                 $(".reveal-password-icon").removeClass("fas fa-eye-slash").addClass("fas fa-eye");
+            } else {
+                $('.pwd').attr('type', 'text');
+                $(".reveal-password-icon").removeClass("fas fa-eye").addClass("fas fa-eye-slash");
             }
             ev.preventDefault();
         });

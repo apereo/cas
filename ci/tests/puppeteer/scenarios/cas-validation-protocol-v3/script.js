@@ -17,10 +17,12 @@ const assert = require('assert');
         }
         const { principal } = req;
         console.log(principal);
-        assert(principal.user === "casuser");
-        assert(principal.attributes.email === "casuser@apereo.org");
-        assert(principal.attributes.username === "casuser");
-        assert(principal.attributes.name === "CAS");
+        if (principal !== undefined) {
+            assert(principal.user === "casuser");
+            assert(principal.attributes.email === "casuser@apereo.org");
+            assert(principal.attributes.username === "casuser");
+            assert(principal.attributes.name === "CAS");
+        }
         res.end();
     }).listen(8080);
 

@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,8 +48,8 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
         val storage = readFromJsonRepository();
-        return storage.containsKey(username.trim().toLowerCase())
-            ? storage.get(username.trim().toLowerCase())
+        return storage.containsKey(username.trim().toLowerCase(Locale.ENGLISH))
+            ? storage.get(username.trim().toLowerCase(Locale.ENGLISH))
             : new HashSet<>(0);
     }
 
@@ -67,7 +68,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
                 }
                 return record;
             }).toList();
-        storage.put(username.trim().toLowerCase(), new LinkedHashSet<>(records));
+        storage.put(username.trim().toLowerCase(Locale.ENGLISH), new LinkedHashSet<>(records));
         FunctionUtils.doUnchecked(__ -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
     }
 

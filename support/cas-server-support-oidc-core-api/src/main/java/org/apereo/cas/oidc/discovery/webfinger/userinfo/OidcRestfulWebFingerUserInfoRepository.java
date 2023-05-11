@@ -20,6 +20,7 @@ import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -59,7 +60,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .headers(headers)
                 .build();

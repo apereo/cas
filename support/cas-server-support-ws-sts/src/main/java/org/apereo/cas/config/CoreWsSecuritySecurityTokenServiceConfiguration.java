@@ -84,6 +84,7 @@ import javax.net.ssl.HostnameVerifier;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -185,7 +186,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
             FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(),
                 __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
-            switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
+            switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase(Locale.ENGLISH)) {
                 case "email" -> subProvider.setSubjectNameIDFormat(NameIDType.EMAIL);
                 case "entity" -> subProvider.setSubjectNameIDFormat(NameIDType.ENTITY);
                 case "transient" -> subProvider.setSubjectNameIDFormat(NameIDType.TRANSIENT);

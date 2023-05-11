@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * This is {@link WSFederationValidateRequestController}.
@@ -47,7 +48,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
             throw new UnauthorizedAuthenticationException("Unable to determine the [WA] parameter", new HashMap<>(0));
         }
 
-        switch (wa.toLowerCase()) {
+        switch (wa.toLowerCase(Locale.ENGLISH)) {
             case WSFederationConstants.WSIGNOUT10, WSFederationConstants.WSIGNOUT_CLEANUP10 -> handleLogoutRequest(fedRequest, request, response);
             case WSFederationConstants.WSIGNIN10 -> handleInitialAuthenticationRequest(fedRequest, response, request);
             default -> throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));

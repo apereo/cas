@@ -13,6 +13,7 @@ import lombok.val;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,7 +48,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
-        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername().trim().toLowerCase() + KEY_SEPARATOR + account.getId();
+        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername().trim().toLowerCase(Locale.ENGLISH) + KEY_SEPARATOR + account.getId();
     }
 
     @Override
@@ -162,7 +163,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
-        val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + id;
+        val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase(Locale.ENGLISH) + KEY_SEPARATOR + id;
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return template.scan(key, this.scanCount);
     }

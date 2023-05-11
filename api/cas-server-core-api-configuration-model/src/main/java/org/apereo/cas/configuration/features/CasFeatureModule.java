@@ -14,6 +14,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,7 +27,7 @@ import java.util.TreeSet;
 public interface CasFeatureModule {
     private static String getMethodName(final Field field, final String prefix) {
         return prefix
-               + field.getName().substring(0, 1).toUpperCase()
+               + field.getName().substring(0, 1).toUpperCase(Locale.ENGLISH)
                + field.getName().substring(1);
     }
 

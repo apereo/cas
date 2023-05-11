@@ -23,6 +23,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,7 +110,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final List<String> profiles) {
         val applicationName = casConfigurationPropertiesEnvironmentManager.getApplicationName(environment);
         val configName = casConfigurationPropertiesEnvironmentManager.getConfigurationName(environment);
-        val appNameLowerCase = applicationName.toLowerCase();
+        val appNameLowerCase = applicationName.toLowerCase(Locale.ENGLISH);
         val appConfigNames = CollectionUtils.wrapList("application", appNameLowerCase, applicationName, configName);
 
         val fileNames = appConfigNames

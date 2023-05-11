@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -122,7 +123,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
         try {
             val ldapProperties = getProperties().getAuthn().getMfa().getWebAuthn().getLdap();
             val searchFilter = '(' + ldapProperties.getSearchFilter() + ')';
-            val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal.trim().toLowerCase()));
+            val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal.trim().toLowerCase(Locale.ENGLISH)));
             LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
                 ldapProperties.getAccountAttributeName());
             val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),

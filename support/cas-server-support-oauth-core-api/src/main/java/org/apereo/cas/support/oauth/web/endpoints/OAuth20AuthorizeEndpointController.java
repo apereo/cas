@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -278,7 +279,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
         val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
@@ -288,7 +289,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .map(String::valueOf)
             .filter(challengeMethodsSupported::contains)
             .orElse(StringUtils.EMPTY)
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
         val claims = getConfigurationContext().getRequestParameterResolver().resolveRequestClaims(context);

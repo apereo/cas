@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -53,7 +54,7 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
 
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
+        if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase(Locale.ENGLISH).endsWith("/entities/")) {
             HttpResponse response = null;
             try {
                 val encodedId = EncodingUtils.urlEncode(entityId);

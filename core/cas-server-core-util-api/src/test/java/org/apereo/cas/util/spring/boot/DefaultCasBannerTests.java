@@ -31,7 +31,7 @@ public class DefaultCasBannerTests {
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(() -> banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out));
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }
@@ -43,7 +43,7 @@ public class DefaultCasBannerTests {
         val banner = new DefaultCasBanner();
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(() -> banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out));
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }
