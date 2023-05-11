@@ -440,11 +440,12 @@ public class WebAuthnConfiguration {
                         })).accept(http);
 
                         Unchecked.consumer(__ -> {
-                            val patterns = new String[]{
-                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**",
-                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**"
-                            };
-                            http.authorizeHttpRequests().antMatchers(patterns).authenticated();
+                            http.authorizeHttpRequests(customizer -> {
+                                customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**")
+                                    .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
+                                customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**")
+                                    .permitAll();
+                            });
                         }).accept(http);
                         return this;
                     }
