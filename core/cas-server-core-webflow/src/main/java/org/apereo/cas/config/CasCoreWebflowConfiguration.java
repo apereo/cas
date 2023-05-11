@@ -27,6 +27,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -60,6 +61,7 @@ import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -170,10 +172,13 @@ public class CasCoreWebflowConfiguration {
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ArgumentExtractor argumentExtractor) {
             return CasWebflowEventResolutionConfigurationContext.builder()
                 .authenticationContextValidator(authenticationContextValidator)
                 .authenticationSystemSupport(authenticationSystemSupport)
+                .argumentExtractors(CollectionUtils.wrap(argumentExtractor))
                 .centralAuthenticationService(centralAuthenticationService)
                 .servicesManager(servicesManager)
                 .ticketRegistrySupport(ticketRegistrySupport)

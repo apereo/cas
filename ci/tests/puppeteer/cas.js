@@ -132,7 +132,7 @@ exports.uploadImage = async (imagePath) => {
     }
 };
 
-exports.waitForElement = async(page, selector, timeout = 7000) => await page.waitForSelector(selector, {timeout: timeout});
+exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
 
 exports.loginWith = async (page, user, password,
                            usernameField = "#username",

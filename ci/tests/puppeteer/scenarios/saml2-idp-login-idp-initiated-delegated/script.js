@@ -13,7 +13,7 @@ async function startFlow(context, clientName) {
     await page.waitForTimeout(3000);
     await cas.loginWith(page, "casuser", "Mellon");
     console.log(await page.url());
-    await page.waitForTimeout(6000);
+    await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
     console.log(content);
     assert(content.form.SAMLResponse != null);
