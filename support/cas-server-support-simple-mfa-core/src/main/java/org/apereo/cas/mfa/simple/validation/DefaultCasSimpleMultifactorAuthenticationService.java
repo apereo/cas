@@ -28,9 +28,9 @@ import javax.security.auth.login.FailedLoginException;
 @Slf4j
 public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimpleMultifactorAuthenticationService {
 
-    private final TicketRegistry ticketRegistry;
+    protected final TicketRegistry ticketRegistry;
 
-    private final TicketFactory ticketFactory;
+    protected final TicketFactory ticketFactory;
 
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Exception {
@@ -58,44 +58,43 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
     @Override
     public Principal validate(final Principal resolvedPrincipal,
                               final CasSimpleMultifactorTokenCredential credential) throws Exception {
-        val tokenId = normalize(credential.getId());
-        LOGGER.debug("Received token [{}] and pricipal id [{}]", tokenId, resolvedPrincipal.getId());
-        val acct = ticketRegistry.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
-        val properties = acct.getProperties();
-        if (!properties.containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
-            LOGGER.warn("Unable to locate principal for token [{}]", tokenId);
-            deleteToken(acct);
-            throw new FailedLoginException("Failed to authenticate code " + tokenId);
-        }
-        val principal = (Principal) properties.get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL);
-        if (!principal.equals(resolvedPrincipal)) {
-            LOGGER.warn("Principal assigned to token [{}] is unauthorized for token [{}]", principal.getId(), tokenId);
-            deleteToken(acct);
-            throw new FailedLoginException("Failed to authenticate code " + tokenId);
-        }
+        val acct = getMultitfactorAuthenticationTicketFor(resolvedPrincipal, credential);
+        val principal = validateTokenForPrincipal(resolvedPrincipal, acct);
         deleteToken(acct);
-        LOGGER.debug("Validated token [{}] successfully for [{}].", tokenId, resolvedPrincipal.getId());
+        LOGGER.debug("Validated token [{}] successfully for [{}].", credential.getId(), resolvedPrincipal.getId());
         return principal;
     }
 
-    /**
-     * Normalize ticket.
-     *
-     * @param tokenId the token id
-     * @return the string
-     */
-    private static String normalize(final String tokenId) {
+    protected CasSimpleMultifactorAuthenticationTicket getMultitfactorAuthenticationTicketFor(final Principal resolvedPrincipal,
+                                                                                              final CasSimpleMultifactorTokenCredential credential) {
+        val tokenId = normalize(credential.getId());
+        LOGGER.debug("Received token [{}] and pricipal id [{}]", tokenId, resolvedPrincipal.getId());
+        return ticketRegistry.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
+    }
+
+    protected Principal validateTokenForPrincipal(final Principal resolvedPrincipal, final CasSimpleMultifactorAuthenticationTicket acct)
+        throws FailedLoginException {
+        if (!acct.getProperties().containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
+            LOGGER.warn("Unable to locate principal for token [{}]", acct.getId());
+            deleteToken(acct);
+            throw new FailedLoginException("Failed to authenticate code " + acct.getId());
+        }
+        val principal = (Principal) acct.getProperties().get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL);
+        if (!principal.equals(resolvedPrincipal)) {
+            LOGGER.warn("Principal assigned to token [{}] is unauthorized for token [{}]", principal.getId(), acct.getId());
+            deleteToken(acct);
+            throw new FailedLoginException("Failed to authenticate code " + acct.getId());
+        }
+        return principal;
+    }
+
+    protected static String normalize(final String tokenId) {
         if (!tokenId.startsWith(CasSimpleMultifactorAuthenticationTicket.PREFIX)) {
             return CasSimpleMultifactorAuthenticationTicket.PREFIX + UniqueTicketIdGenerator.SEPARATOR + tokenId;
         }
         return tokenId;
     }
 
-    /**
-     * Delete token.
-     *
-     * @param acct the acct
-     */
     protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
         FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(acct.getId()));
     }

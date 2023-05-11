@@ -61,7 +61,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         val credential = getCredentialFromContext(context);
-        val service = WebUtils.getService(context);
+        val service = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
         try {
             if (credential != null) {
                 val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
