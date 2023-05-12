@@ -193,13 +193,14 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
+            final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final ConfigurableApplicationContext applicationContext) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_FLOW_ID);
+            builder.addFlowBuilder(flowBuilder, casProperties.getAuthn().getMfa().getSimple().getId());
             return builder.build();
         }
 
@@ -361,7 +362,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
             @Override
             protected void doInitialize() {
-                val mfaState = getState(getLoginFlow(), CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_FLOW_ID);
+                val mfaState = getState(getLoginFlow(), casProperties.getAuthn().getMfa().getSimple().getId());
                 createTransitionForState(mfaState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
             }
