@@ -142,7 +142,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_LATEST }}
-          distribution: 'temurin'
+          distribution: 'zulu'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
