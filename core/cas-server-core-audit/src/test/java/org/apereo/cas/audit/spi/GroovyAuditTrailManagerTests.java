@@ -36,6 +36,7 @@ import java.util.UUID;
         "cas.audit.groovy.template.location=classpath:/GroovyAudit.groovy"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@SuppressWarnings("JavaUtilDate")
 public class GroovyAuditTrailManagerTests {
 
     @Autowired
