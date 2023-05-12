@@ -19,9 +19,18 @@ public interface CasMultifactorWebflowConfigurer {
      * @param subflowId  the subflow id
      * @param providerId the provider id
      */
-    void registerMultifactorProviderAuthenticationWebflow(Flow flow,
-                                                          String subflowId,
-                                                          String providerId);
+    void registerMultifactorProviderAuthenticationWebflow(Flow flow, String subflowId, String providerId);
+
+    /**
+     * Register multifactor provider authentication webflow.
+     * The provider id here is mapped to the flow id.
+     *
+     * @param flow       the flow
+     * @param providerId the provider id
+     */
+    default void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String providerId) {
+        registerMultifactorProviderAuthenticationWebflow(flow, providerId, providerId);
+    }
 
     /**
      * Determine the order of the configurer.
