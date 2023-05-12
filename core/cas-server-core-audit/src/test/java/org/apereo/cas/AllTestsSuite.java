@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.audit.spi.GroovyAuditTrailManagerTests;
 import org.apereo.cas.audit.spi.ServiceAccessEnforcementAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.ThreadLocalAuditPrincipalResolverTests;
@@ -17,6 +18,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     ShortenedReturnValueAsStringAuditResourceResolverTests.class,
     ThreadLocalAuditPrincipalResolverTests.class,
+    GroovyAuditTrailManagerTests.class,
     ServiceAccessEnforcementAuditResourceResolverTests.class,
     TicketValidationResourceResolverTests.class
 })
