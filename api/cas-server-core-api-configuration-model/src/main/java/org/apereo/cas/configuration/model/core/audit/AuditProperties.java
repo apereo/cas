@@ -71,4 +71,10 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditDynamoDbProperties dynamoDb = new AuditDynamoDbProperties();
+
+    /**
+     * Family of sub-properties pertaining to groovy-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditGroovyProperties groovy = new AuditGroovyProperties();
 }

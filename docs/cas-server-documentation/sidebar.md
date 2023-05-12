@@ -576,6 +576,7 @@ layout: null
         *   [Overview](/cas/{{ version }}/audits/Audits.html)
         *   [File](/cas/{{ version }}/audits/Audits-File.html)
         *   [JDBC](/cas/{{ version }}/audits/Audits-Database.html)
+        *   [Groovy](/cas/{{ version }}/audits/Audits-Groovy.html)
         *   [DynamoDb](/cas/{{ version }}/audits/Audits-DynamoDb.html)
         *   [MongoDb](/cas/{{ version }}/audits/Audits-MongoDb.html)
         *   [Redis](/cas/{{ version }}/audits/Audits-Redis.html)

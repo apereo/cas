@@ -21,6 +21,7 @@ import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -41,6 +42,7 @@ import org.apereo.inspektr.audit.spi.support.NullableReturnValueAuditResourceRes
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
+import org.apereo.inspektr.audit.support.GroovyAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
@@ -86,7 +88,8 @@ public class CasCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver auditablePrincipalResolver(
-            @Qualifier("auditPrincipalIdProvider") final AuditPrincipalIdProvider auditPrincipalIdProvider) {
+            @Qualifier("auditPrincipalIdProvider")
+            final AuditPrincipalIdProvider auditPrincipalIdProvider) {
             return new ThreadLocalAuditPrincipalResolver(auditPrincipalIdProvider);
         }
 
@@ -128,7 +131,8 @@ public class CasCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver ticketValidationResourceResolver(
-            @Qualifier("ticketResourceResolver") final AuditResourceResolver ticketResourceResolver,
+            @Qualifier("ticketResourceResolver")
+            final AuditResourceResolver ticketResourceResolver,
             final CasConfigurationProperties casProperties) {
             if (casProperties.getAudit().getEngine().isIncludeValidationAssertion()) {
                 return new TicketValidationResourceResolver(casProperties.getAudit().getEngine());
@@ -140,7 +144,8 @@ public class CasCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver messageBundleAwareResourceResolver(
-            @Qualifier(MessageSanitizer.BEAN_NAME) final MessageSanitizer messageSanitizer,
+            @Qualifier(MessageSanitizer.BEAN_NAME)
+            final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext) {
             val resolver = new MessageBundleAwareResourceResolver(applicationContext);
             resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
@@ -167,7 +172,8 @@ public class CasCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver nullableReturnValueResourceResolver(
-            @Qualifier(MessageSanitizer.BEAN_NAME) final MessageSanitizer messageSanitizer) {
+            @Qualifier(MessageSanitizer.BEAN_NAME)
+            final MessageSanitizer messageSanitizer) {
             val resolver = new NullableReturnValueAuditResourceResolver(new ShortenedReturnValueAsStringAuditResourceResolver());
             resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
                 .map(messageSanitizer::sanitize)
@@ -264,9 +270,12 @@ public class CasCoreAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
         public AuditTrailManagementAspect auditTrailManagementAspect(
-            @Qualifier("auditTrailRecordResolutionPlan") final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan,
-            @Qualifier("auditablePrincipalResolver") final PrincipalResolver auditablePrincipalResolver,
-            @Qualifier("filterAndDelegateAuditTrailManager") final AuditTrailManager filterAndDelegateAuditTrailManager,
+            @Qualifier("auditTrailRecordResolutionPlan")
+            final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan,
+            @Qualifier("auditablePrincipalResolver")
+            final PrincipalResolver auditablePrincipalResolver,
+            @Qualifier("filterAndDelegateAuditTrailManager")
+            final AuditTrailManager filterAndDelegateAuditTrailManager,
             final CasConfigurationProperties casProperties) {
 
             val audit = casProperties.getAudit().getEngine();
@@ -289,7 +298,8 @@ public class CasCoreAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         protected AuditTrailManager filterAndDelegateAuditTrailManager(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(AuditTrailExecutionPlan.BEAN_NAME) final AuditTrailExecutionPlan auditTrailExecutionPlan,
+            @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
+            final AuditTrailExecutionPlan auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties) throws Exception {
             return BeanSupplier.of(AuditTrailManager.class)
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
@@ -362,15 +372,24 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "casAuditResourceResolversResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer casAuditResourceResolversResolutionPlanConfigurer(
-            @Qualifier("credentialsAsFirstParameterResourceResolver") final AuditResourceResolver credentialsAsFirstParameterResourceResolver,
-            @Qualifier("nullableReturnValueResourceResolver") final AuditResourceResolver nullableReturnValueResourceResolver,
-            @Qualifier("messageBundleAwareResourceResolver") final AuditResourceResolver messageBundleAwareResourceResolver,
-            @Qualifier("returnValueResourceResolver") final AuditResourceResolver returnValueResourceResolver,
-            @Qualifier("ticketResourceResolver") final AuditResourceResolver ticketResourceResolver,
-            @Qualifier("serviceAccessEnforcementAuditResourceResolver") final AuditResourceResolver serviceAccessEnforcementAuditResourceResolver,
-            @Qualifier("serviceAuditResourceResolver") final AuditResourceResolver serviceAuditResourceResolver,
-            @Qualifier("ticketValidationResourceResolver") final AuditResourceResolver ticketValidationResourceResolver,
-            @Qualifier("protocolSpecificationValidationResourceResolver") final AuditResourceResolver protocolSpecificationValidationResourceResolver) {
+            @Qualifier("credentialsAsFirstParameterResourceResolver")
+            final AuditResourceResolver credentialsAsFirstParameterResourceResolver,
+            @Qualifier("nullableReturnValueResourceResolver")
+            final AuditResourceResolver nullableReturnValueResourceResolver,
+            @Qualifier("messageBundleAwareResourceResolver")
+            final AuditResourceResolver messageBundleAwareResourceResolver,
+            @Qualifier("returnValueResourceResolver")
+            final AuditResourceResolver returnValueResourceResolver,
+            @Qualifier("ticketResourceResolver")
+            final AuditResourceResolver ticketResourceResolver,
+            @Qualifier("serviceAccessEnforcementAuditResourceResolver")
+            final AuditResourceResolver serviceAccessEnforcementAuditResourceResolver,
+            @Qualifier("serviceAuditResourceResolver")
+            final AuditResourceResolver serviceAuditResourceResolver,
+            @Qualifier("ticketValidationResourceResolver")
+            final AuditResourceResolver ticketValidationResourceResolver,
+            @Qualifier("protocolSpecificationValidationResourceResolver")
+            final AuditResourceResolver protocolSpecificationValidationResourceResolver) {
             return plan -> {
                 plan.registerAuditResourceResolver(AuditResourceResolvers.AUTHENTICATION_RESOURCE_RESOLVER, credentialsAsFirstParameterResourceResolver);
                 plan.registerAuditResourceResolver(AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER, nullableReturnValueResourceResolver);
@@ -402,13 +421,20 @@ public class CasCoreAuditConfiguration {
         @ConditionalOnMissingBean(name = "casAuditActionResolversResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer casAuditActionResolversResolutionPlanConfigurer(
-            @Qualifier("authenticationActionResolver") final AuditActionResolver authenticationActionResolver,
-            @Qualifier("objectCreationAuditActionResolver") final AuditActionResolver objectCreationAuditActionResolver,
-            @Qualifier("defaultAuditActionResolver") final AuditActionResolver defaultAuditActionResolver,
-            @Qualifier("ticketCreationActionResolver") final AuditActionResolver ticketCreationActionResolver,
-            @Qualifier("triggeredAuditActionResolver") final AuditActionResolver triggeredAuditActionResolver,
-            @Qualifier("ticketValidationActionResolver") final AuditActionResolver ticketValidationActionResolver,
-            @Qualifier("booleanActionResolver") final AuditActionResolver booleanActionResolver) {
+            @Qualifier("authenticationActionResolver")
+            final AuditActionResolver authenticationActionResolver,
+            @Qualifier("objectCreationAuditActionResolver")
+            final AuditActionResolver objectCreationAuditActionResolver,
+            @Qualifier("defaultAuditActionResolver")
+            final AuditActionResolver defaultAuditActionResolver,
+            @Qualifier("ticketCreationActionResolver")
+            final AuditActionResolver ticketCreationActionResolver,
+            @Qualifier("triggeredAuditActionResolver")
+            final AuditActionResolver triggeredAuditActionResolver,
+            @Qualifier("ticketValidationActionResolver")
+            final AuditActionResolver ticketValidationActionResolver,
+            @Qualifier("booleanActionResolver")
+            final AuditActionResolver booleanActionResolver) {
             return plan -> {
                 plan.registerAuditActionResolvers(authenticationActionResolver,
                     AuditActionResolvers.AUTHENTICATION_RESOLVER,
@@ -448,9 +474,9 @@ public class CasCoreAuditConfiguration {
             configurers
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
-                .forEach(c -> {
-                    LOGGER.trace("Configuring audit trail execution plan via [{}]", c.getName());
-                    c.configureAuditTrailExecutionPlan(plan);
+                .forEach(cfg -> {
+                    LOGGER.trace("Configuring audit trail execution plan via [{}]", cfg.getName());
+                    cfg.configureAuditTrailExecutionPlan(plan);
                 });
             return plan;
         }
@@ -470,6 +496,25 @@ public class CasCoreAuditConfiguration {
                     slf4jManager.setEntrySeparator(slf4j.getSinglelineSeparator());
                     plan.registerAuditTrailManager(slf4jManager);
                 })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casGroovyAuditTrailExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditTrailExecutionPlanConfigurer casGroovyAuditTrailExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
+                .when(BeanCondition.on("cas.audit.groovy.template.location")
+                    .exists().given(applicationContext.getEnvironment()))
+                .supply(() -> plan ->
+                    FunctionUtils.doAndHandle(__ -> {
+                        val templateFile = casProperties.getAudit().getGroovy().getTemplate().getLocation().getFile();
+                        val mgr = new GroovyAuditTrailManager(templateFile);
+                        plan.registerAuditTrailManager(mgr);
+                    }))
                 .otherwiseProxy()
                 .get();
         }

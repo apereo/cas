@@ -92,6 +92,11 @@ OAuth and OpenID Connect service definitions are expected to be globally unique.
 If you have a client id defined as <code>abc</code> and an authorization request supplies <code>AbC</code>,
 CAS may not be able to correctly find the appropriate service definition linked to the requested client id.</p></div>
 
+### Groovy Audits
+
+[Groovy Audits](../audits/Audits-Groovy.html) are now avaiable which can, in small 
+and modest ways, control the output and format of the logged auditable record.
+
 ### Redis Connection Pooling
 
 By default and in previous releases, multiple Redis connections share a single thread-safe native connection. If you enable connection pooling,
