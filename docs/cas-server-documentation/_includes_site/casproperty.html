@@ -171,14 +171,14 @@ java -D{{ include.name | replace: "[]", "[0]"}}={{ propertyValueFormatted }} -ja
                                         <div class="tab-pane fade" id="envvar{{singlePropertyKey}}">
                                             CAS properties can specified as system environment variables before the CAS web application is launched:
                                             <p/>
-                                            {%- capture markdownprop %}
-                                            ```bash
-                                            export {{ include.name | replace: "[]", "[0]" | replace: ".", "_" | replace: "-", "_" | upcase }}={{ propertyValueFormatted }}
+{%- capture markdownprop %}
+```bash
+export {{ include.name | replace: "[]", "[0]" | replace: ".", "_" | replace: "-", "_" | upcase }}={{ propertyValueFormatted }}
 
-                                            java -jar build/libs/cas.war
-                                            ```
-                                            {%- endcapture %}
-                                            {{ markdownprop || markdownify }}
+java -jar build/libs/cas.war
+```
+{%- endcapture %}
+{{ markdownprop || markdownify }}
                                             <p/>
                                             The above example assumes that the CAS web application is packaged as <code>cas.war</code>
                                             and can be found in the <code>build/libs</code> directory.
