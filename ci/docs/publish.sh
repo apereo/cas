@@ -37,19 +37,20 @@ REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 
 branchVersion="master"
 propFilter=".+"
-generateData=false
-audit=false
-proofRead=false
-actuators=false
-thirdParty=false
-serviceProps=false
-publishDocs=false
+generateData=true
+audit=true
+proofRead=true
+actuators=true
+thirdParty=true
+serviceProps=true
+publishDocs=true
 buildDocs=true
+clone=true
+buildFeatures=true
+shellCommands=true
+dependencyVersions=true
+
 serve=false
-clone=false
-buildFeatures=false
-shellCommands=false
-dependencyVersions=false
 
 while (("$#")); do
   case "$1" in
