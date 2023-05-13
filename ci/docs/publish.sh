@@ -151,6 +151,13 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" 
   printyellow "\nNo GitHub token is defined to publish documentation."
 fi
 
+if [[ "${CI}" == "true" ]]; then
+  echo "Configuring git settings..."
+  git config --global http.postbuffer 524288000
+  git config --global credential.helper "cache --timeout=86400"
+  git config --global pack.threads "8"
+fi
+
 echo "-------------------------------------------------------"
 printgreen "Branch: \t\t${branchVersion}"
 printgreen "Build: \t\t\t${buildDocs}"
