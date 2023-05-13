@@ -351,10 +351,11 @@ if [[ ${buildDocs} == "true" ]]; then
   popd
   
   if [[ "$CI" == "true" ]]; then
-    printgreen "Moving jekyll build artifacts into $PWD/jekyll"
+    echo "Moving jekyll build artifacts into $PWD/jekyll"
     mkdir -p "$PWD/jekyll"
     mv "$PWD"/gh-pages/.jekyll-cache "$PWD"/jekyll/
     mv "$PWD"/gh-pages/.jekyll-metadata "$PWD"/jekyll/
+    printgreen "Jekyll cache is now at $PWD/jekyll/"
   else
     printyellow "Deleting jekyll build directory"
     rm -Rf "$PWD"/jekyll/
