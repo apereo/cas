@@ -125,11 +125,11 @@ jobs:
           path: |
             jekyll/.jekyll-metadata
             jekyll/.jekyll-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/.jekyll-metadata') }}
+          key: ${{ runner.os }}-${{ hashFiles('jekyll/.jekyll-metadata') }}
       - name: Publish Documentation
         uses: nick-fields/retry@v2
         with:
-          timeout_minutes: 60
+          timeout_minutes: 80
           max_attempts: 3
           shell: bash
           command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
