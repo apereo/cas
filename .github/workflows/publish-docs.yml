@@ -123,7 +123,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: jekyll
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('.jekyll-metadata') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('.jekyll-metadata') }}
       - name: Publish Documentation
         uses: nick-fields/retry@v2
         with:
