@@ -32,8 +32,8 @@ env:
   JDK_CURRENT: 17
   NODE_CURRENT: '18'
   MAX_ATTEMPTS: 3
-  RETRY_MINUTES: 20
-  SCENARIO_REGEX: "oidc-login-sonar.*"
+  RETRY_MINUTES: 15
+  SCENARIO_REGEX: ".*"
 
 on:
   push:
