@@ -118,23 +118,29 @@
                                             {%- assign path = "" -%}
                                             CAS properties can be specified using the YAML syntax:<p/>
 
-                                            {%- assign propertyWords = include.name | replace: "[]", "[0]" | split: "." -%}
+                                            {%- assign propertyWords = include.name | split: "." -%}
                                             {%- for word in propertyWords -%}
-                                            {%- assign count = 2 -%}
-                                            {%- assign indentCount = forloop.index | times: count | minus: 2 -%}
-                                            {%- assign indentation = "" -%}
+                                                {%- assign count = 2 -%}
+                                                {%- assign indentCount = forloop.index | times: count | minus: 2 -%}
+                                                {%- assign indentation = "" -%}
 
-                                            {%- for i in (1..indentCount) -%}
-                                            {%- assign indentation = indentation | append: " " -%}
-                                            {%- endfor -%}
+                                                {%- for i in (1..indentCount) -%}
+                                                    {%- assign indentation = indentation | append: " " -%}
+                                                {%- endfor -%}
 
-                                            {%- assign path = path | append: indentation | append: word | append: ": " -%}
+                                                {%- assign listIndicator = "" -%}
+                                                {%- if word contains "[]" -%}
+                                                    {%- assign listIndicator = "- " -%}
+                                                {%- endif -%}
 
-                                            {%- if forloop.index == 5 -%}
-                                            {% assign path = path | append: propertyValueFormatted -%}
-                                            {%- else -%}
-                                            {%- assign path = path | append: "\n" -%}
-                                            {%- endif -%}
+                                                {%- assign path = path | append: indentation | append: listIndicator | append: word | replace: "[]", "" | append: ": " -%}
+
+                                                {%- if forloop.index == 5 -%}
+                                                    {%- assign path = path | append: propertyValueFormatted -%}
+                                                {%- else -%}
+                                                    {%- assign path = path | append: "\n" -%}
+                                                {%- endif -%}
+
                                             {%- endfor -%}
 
 {% capture yamlprop -%}

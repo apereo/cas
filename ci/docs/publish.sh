@@ -309,10 +309,18 @@ else
   printgreen "Skipping validation of documentation links..."
 fi
 
-
 if [[ ${buildDocs} == "true" ]]; then
   pushd .
-  cd "$PWD/gh-pages"
+
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Moving jekyll artifacts into $PWD/gh-pages/ directory"
+    mv "$PWD"/jekyll/.jekyll-cache "$PWD/gh-pages/"
+    mv "$PWD"/jekyll/.jekyll-metadata "$PWD/gh-pages/"
+    rm -Rf "$PWD"/jekyll
+  fi
+
+  cd "$PWD/gh-pages" || exit
+  
   printgreen "Installing documentation dependencies...\n"
   bundle config set force_ruby_platform true
   bundle install
@@ -341,6 +349,16 @@ if [[ ${buildDocs} == "true" ]]; then
     exit ${retVal}
   fi
   popd
+  
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Moving jekyll build artifacts into $PWD/jekyll"
+    mkdir -p "$PWD/jekyll"
+    mv "$PWD"/gh-pages/.jekyll-cache "$PWD"/jekyll/
+    mv "$PWD"/gh-pages/.jekyll-metadata "$PWD"/jekyll/
+  else
+    printyellow "Deleting jekyll build directory"
+    rm -Rf "$PWD"/jekyll/
+  fi
 fi
 
 if [[ $proofRead == "true" ]]; then
@@ -354,9 +372,10 @@ if [[ $proofRead == "true" ]]; then
 fi
 
 pushd .
-cd "$PWD/gh-pages"
+cd "$PWD/gh-pages" || exit
 
 if [[ $clone == "true" ]]; then
+  rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
   rm -Rf "$branchVersion/build"
   printgreen "\nConfiguring git repository settings...\n"
   rm -Rf .git
@@ -381,7 +400,6 @@ fi
 
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
   printyellow "\nNo GitHub token is defined to publish documentation. Skipping..."
-  popd
   if [[ $clone == "true" ]]; then
     rm -Rf "$PWD/gh-pages"
     exit 0
