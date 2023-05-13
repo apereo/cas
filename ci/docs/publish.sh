@@ -356,6 +356,7 @@ if [[ ${buildDocs} == "true" ]]; then
     mv "$PWD"/gh-pages/.jekyll-cache "$PWD"/jekyll/
     mv "$PWD"/gh-pages/.jekyll-metadata "$PWD"/jekyll/
     printgreen "Jekyll cache is now at $PWD/jekyll/"
+    ls -al "$PWD/jekyll/"
   else
     printyellow "Deleting jekyll build directory"
     rm -Rf "$PWD"/jekyll/
