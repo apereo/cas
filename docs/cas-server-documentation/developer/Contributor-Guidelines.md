@@ -213,7 +213,7 @@ future changes and roadmap discussions in the absence of a time commitment, soli
 seems unnecessary and can only feel like ceremonial, premature busywork specially as due dates for such 
 plans inevitably and almost always get pushed back and continue to eat dust given the absence of tooling 
 and resources. CAS open-source development is never done in vacuums. Generally speaking, work items are 
-done when contributors propose, discuss and show up with pull requests or when funding and sponsorship 
+done when contributors propose, discuss and **show up with pull requests** or when **funding and sponsorship** 
 for a change is made available. If you would like to see a change or feature in CAS, you're most welcome 
 to discuss and contribute or fund someone else's time and make it worth their while to do that for you.
 
