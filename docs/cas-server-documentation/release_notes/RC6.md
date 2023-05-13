@@ -38,6 +38,10 @@ maintenance and release planning, especially when it comes to addressing critica
 The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
+Please note that CAS CI builds via GitHub Actions are now switched to build against latest EA releases of JDK `21`, in addition to JDK `17`.
+Given the release schedule for JDK `21` in September 2023, it is likely that CAS `v7` would switch to using JDK `21` as its baseline
+in the next few release candidates and likely for the final GA release later in the year.
+
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
@@ -130,7 +134,7 @@ Several new enhancements are now offered by the [CAS Initializr](../installation
 - Additional tasks are defined inside the generated CAS overlay to verify CAS ticket registry functionality in high-availability deployments.
 - There is an option to support relevant configuration files for deployments that are on GitHub Actions. 
 - There is an option to control the deployment type of the generated web application.
- 
+
 ### Docker Integration Tests
 
 The following Docker images, used for integration tests, are now upgraded:
