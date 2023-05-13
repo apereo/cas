@@ -122,7 +122,7 @@ jobs:
       - name: Setup Jekyll Cache
         uses: actions/cache@v3
         with:
-          path: ~/jekyll
+          path: ~/cas/jekyll
           key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/jekyll/**') }}
       - name: Publish Documentation
         uses: nick-fields/retry@v2
