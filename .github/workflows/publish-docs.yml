@@ -53,7 +53,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
         run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
@@ -73,7 +73,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
@@ -104,7 +104,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -122,8 +122,10 @@ jobs:
       - name: Setup Jekyll Cache
         uses: actions/cache@v3
         with:
-          path: jekyll
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('.jekyll-metadata') }}
+          path: |
+            jekyll/.jekyll-metadata
+            jekyll/.jekyll-cache
+          key: ${{ runner.os }}-${{ hashFiles('.jekyll-metadata') }}
       - name: Publish Documentation
         uses: nick-fields/retry@v2
         with:
