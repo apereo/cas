@@ -44,18 +44,18 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Initialize
-        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+#      - name: Set up JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: ${{ env.JDK_CURRENT }}
+#          distribution: 'temurin'
+#      - name: Setup Gradle Wrapper Cache
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.gradle/wrapper
+#          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Initialize
+#        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
   ##########################################################################
 
@@ -64,11 +64,11 @@ jobs:
     needs: [initialize]
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+#      - name: Set up JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: ${{ env.JDK_CURRENT }}
+#          distribution: 'temurin'
 #      - name: Setup Gradle Wrapper Cache
 #        uses: actions/cache@v3
 #        with:
@@ -122,7 +122,7 @@ jobs:
       - name: Setup Jekyll Cache
         uses: actions/cache@v3
         with:
-          path: ~/cas/jekyll
+          path: jekyll
           key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/.jekyll-metadata') }}
       - name: Publish Documentation
         uses: nick-fields/retry@v2
