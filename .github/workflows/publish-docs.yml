@@ -125,7 +125,7 @@ jobs:
           path: |
             jekyll/.jekyll-metadata
             jekyll/.jekyll-cache
-          key: ${{ runner.os }}-${{ hashFiles('jekyll/.jekyll-metadata') }}
+          key: ${{ runner.os }}-${{ github.repository }}
       - name: Publish Documentation
         uses: nick-fields/retry@v2
         with:
