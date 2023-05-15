@@ -441,10 +441,8 @@ public class WebAuthnConfiguration {
 
                         Unchecked.consumer(__ -> {
                             http.authorizeHttpRequests(customizer -> {
-                                customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**")
-                                    .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
-                                customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**")
-                                    .permitAll();
+                                customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**").hasRole("USER");
+                                customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**").permitAll();
                             });
                         }).accept(http);
                         return this;
