@@ -26,6 +26,9 @@ public class AuditGroovyProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 4887475246873585918L;
 
+    /**
+     * Groovy template that constructs the audit payload.
+     */
     @NestedConfigurationProperty
     private SpringResourceProperties template = new SpringResourceProperties();
 }
