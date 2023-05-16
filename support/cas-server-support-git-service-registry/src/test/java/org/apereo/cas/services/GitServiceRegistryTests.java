@@ -71,7 +71,7 @@ import static org.mockito.Mockito.*;
 @Tag("Git")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
+public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
