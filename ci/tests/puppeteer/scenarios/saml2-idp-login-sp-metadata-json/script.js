@@ -13,7 +13,7 @@ const assert = require("assert");
     await cas.screenshot(page);
     await page.waitForTimeout(4000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(6000);
+    await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
     console.log(content);
     assert(content.form.SAMLResponse != null);
