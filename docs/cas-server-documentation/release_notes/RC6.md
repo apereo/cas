@@ -73,9 +73,10 @@ CAS has switched and upgraded to Spring Boot `3.1.x`, presently in milestone/rel
 anticipated to be released around mid May 2023. It is unlikely that CAS `7.0.x` would be released prior to that date, and 
 we intend to take advantage of this time window to run integration tests against the next Spring Boot release. 
 
-### Google Cloud Firestore Ticket Registry
+### Google Cloud Firestore 
 
-A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
+- A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
+- A new service registry implementation backed by [Google Cloud's Firestore](../services/GCP-Firestore-Service-Management.html) is now available.
 
 ### Google Cloud Logging
 
