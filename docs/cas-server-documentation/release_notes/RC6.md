@@ -99,7 +99,7 @@ CAS may not be able to correctly find the appropriate service definition linked 
 
 ### Groovy Audits
 
-[Groovy Audits](../audits/Audits-Groovy.html) are now avaiable which can, in small 
+[Groovy Audits](../audits/Audits-Groovy.html) are now available which can, in small 
 and modest ways, control the output and format of the logged auditable record.
 
 ### Redis Connection Pooling
