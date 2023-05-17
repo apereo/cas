@@ -81,8 +81,9 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
             }
         }
 
-        val newLocale = request.getParameter(getParamName());
+        var newLocale = request.getParameter(getParamName());
         if (newLocale != null) {
+            newLocale = newLocale.replace('_', '-');
             val locale = Locale.forLanguageTag(newLocale);
             configureLocale(request, response, locale);
         }
