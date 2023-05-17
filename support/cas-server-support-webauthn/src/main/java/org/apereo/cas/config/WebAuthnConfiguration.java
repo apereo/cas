@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -290,6 +291,8 @@ public class WebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("webAuthnMultifactorProviderAuthenticationMetadataPopulator")
             final AuthenticationMetaDataPopulator webAuthnMultifactorProviderAuthenticationMetadataPopulator,
@@ -300,7 +303,7 @@ public class WebAuthnConfiguration {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
-                    plan.registerAuthenticationHandler(webAuthnAuthenticationHandler);
+                    plan.registerAuthenticationHandlerWithPrincipalResolver(webAuthnAuthenticationHandler, defaultPrincipalResolver);
                     plan.registerAuthenticationMetadataPopulator(webAuthnAuthenticationMetaDataPopulator);
                     plan.registerAuthenticationMetadataPopulator(webAuthnMultifactorProviderAuthenticationMetadataPopulator);
                     plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(WebAuthnCredential.class));
