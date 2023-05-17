@@ -60,7 +60,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
         try {
             val bean = getPasswordChangeRequest(requestContext);
             Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
-                    .ifPresent(credential -> bean.setCurrentPassword(bean.getCurrentPassword()));
+                    .ifPresent(credential -> bean.setCurrentPassword(bean.getPassword()));
             
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", bean.getUsername());
             if (StringUtils.isBlank(bean.getUsername()) || !passwordValidationService.isValid(bean)) {
