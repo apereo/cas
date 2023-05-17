@@ -13,6 +13,7 @@ async function startFlow(context, clientName) {
     await page.waitForTimeout(3000);
     await cas.loginWith(page, "casuser", "Mellon");
     console.log(await page.url());
+    await cas.screenshot(page);
     await cas.waitForElement(page, "body");
     const content = JSON.parse(await cas.innerText(page, "body"));
     console.log(content);
