@@ -55,7 +55,7 @@ public class AmazonCognitoAuthenticationConfiguration {
         val props = casProperties.getAuthn().getCognito();
         val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(), props.getCredentialSecretKey());
         val builder = CognitoIdentityProviderClient.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, provider, props);
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, provider, props);
         return builder.build();
     }
 

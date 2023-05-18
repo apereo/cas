@@ -38,7 +38,7 @@ public class AmazonClientConfigurationBuilderTests {
         val httpClientBuilder = mock(SampleClientBuilder.class);
         val clientBuilder = mock(AwsSyncClientBuilder.class);
         when(clientBuilder.httpClientBuilder(any())).thenReturn(httpClientBuilder);
-        assertDoesNotThrow(() -> AmazonClientConfigurationBuilder.prepareClientBuilder(clientBuilder,
+        assertDoesNotThrow(() -> AmazonClientConfigurationBuilder.prepareSyncClientBuilder(clientBuilder,
             StaticCredentialsProvider.create(AwsBasicCredentials.create("key", "secret")), properties));
     }
 

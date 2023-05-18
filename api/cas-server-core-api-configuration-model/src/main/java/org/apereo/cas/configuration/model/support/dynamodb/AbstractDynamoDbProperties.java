@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 
@@ -61,6 +62,13 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
      * and testing.
      */
     private boolean localInstance;
+
+    /**
+     * Amazon DynamoDB Accelerator (DAX) is a managed,
+     * highly available, in-memory cache for Amazon DynamoDB.
+     */
+    @NestedConfigurationProperty
+    private DynamoDbDaxProperties dax = new DynamoDbDaxProperties();
 
     public enum BillingMode {
         /**

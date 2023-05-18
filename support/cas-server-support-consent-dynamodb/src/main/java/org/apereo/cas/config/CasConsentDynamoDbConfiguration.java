@@ -54,11 +54,11 @@ public class CasConsentDynamoDbConfiguration {
         final DynamoDbClient amazonDynamoDbConsentClient,
         final CasConfigurationProperties casProperties) {
         val db = casProperties.getConsent().getDynamoDb();
-        val f = new DynamoDbConsentFacilitator(db, amazonDynamoDbConsentClient);
+        val facilitator = new DynamoDbConsentFacilitator(db, amazonDynamoDbConsentClient);
         if (!db.isPreventTableCreationOnStartup()) {
-            f.createTable(db.isDropTablesOnStartup());
+            facilitator.createTable(db.isDropTablesOnStartup());
         }
-        return f;
+        return facilitator;
     }
 
 }

@@ -36,9 +36,9 @@ public class AmazonClientConfigurationBuilder {
      * @param props               the props
      * @return the aws sync client builder
      */
-    public static AwsSyncClientBuilder prepareClientBuilder(final AwsSyncClientBuilder builder,
-                                                            final AwsCredentialsProvider credentialsProvider,
-                                                            final BaseAmazonWebServicesProperties props) {
+    public static AwsSyncClientBuilder prepareSyncClientBuilder(final AwsSyncClientBuilder builder,
+                                                                final AwsCredentialsProvider credentialsProvider,
+                                                                final BaseAmazonWebServicesProperties props) {
         val proxyConfig = ProxyConfiguration.builder();
         if (StringUtils.isNotBlank(props.getProxyHost())) {
             proxyConfig.endpoint(FunctionUtils.doUnchecked(() -> new URI(props.getProxyHost())))

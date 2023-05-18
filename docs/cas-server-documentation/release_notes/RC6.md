@@ -158,6 +158,7 @@ The following Docker images, used for integration tests, are now upgraded:
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
 - Minor fixes to encode URL fragments prior to form submission and to allow ticket validation attempts to ignore fragments in the URL.
 - `assertionAudiences` defined for SAML2 service definition will now override the default entity id, when defined.
+- All DynamoDb integrations can now be configured to take advantage of in-memory acceleration with DynamoDB Accelerator (DAX).
 - Several bug fixes and enhancements to correct the [WebAuthN FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) registration and authentication flows.
 - Additional settings for [Impersonation via LDAP](../authentication/Surrogate-Authentication-Storage-LDAP.html) to verify the existence of the surrogate account in the LDAP directory.
 

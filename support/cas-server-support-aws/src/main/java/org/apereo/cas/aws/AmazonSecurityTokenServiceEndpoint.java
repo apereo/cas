@@ -136,7 +136,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), StringUtils.defaultString(profile, amz.getProfileName()));
         val builder = StsClient.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         val client = builder.build();
 
         if (amz.isRbacEnabled()) {
