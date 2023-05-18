@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -18,6 +19,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -58,7 +60,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
      * Release principal attributes map.
      *
      * @param username the username
-     * @param password the password
+     * @param password the password; this may be optional.
      * @param service  the service
      * @return the map
      */
@@ -66,30 +68,26 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     @Operation(summary = "Get collection of released attributes for the user and application",
         parameters = {
             @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = true),
+            @Parameter(name = "password", required = false),
             @Parameter(name = "service", required = true)
         })
-    public Map<String, Object> releasePrincipalAttributes(final String username,
-                                                          final String password,
-                                                          final String service) {
-
+    public Map<String, Object> releasePrincipalAttributes(
+        final String username, final String password, final String service) {
 
         val selectedService = serviceFactory.getObject().createService(service);
         val registeredService = servicesManager.getObject().findServiceBy(selectedService);
 
-        val credential = new UsernamePasswordCredential(username, password);
-        val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
-        val authentication = result.getAuthentication();
+        val authentication = buildAuthentication(username, password, selectedService);
 
-        val principal = authentication.getPrincipal();
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(selectedService)
-            .principal(principal)
+            .principal(authentication.getPrincipal())
             .build();
+
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
-            principal,
+            authentication.getPrincipal(),
             principalFactory.getObject(),
             attributesToRelease,
             selectedService,
@@ -113,6 +111,17 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         return resValidation;
     }
 
+    private Authentication buildAuthentication(final String username, final String password,
+                                               final WebApplicationService selectedService) {
+        if (StringUtils.isNotBlank(password)) {
+            val credential = new UsernamePasswordCredential(username, password);
+            val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
+            return result.getAuthentication();
+        }
+        val principal = principalFactory.getObject().createPrincipal(username);
+        return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
+    }
+
     /**
      * Method that accepts a JSON body through a POST method to receive user credentials and only returns a
      * map of attributes released for the authenticated user.
@@ -126,12 +135,10 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     @Operation(summary = "Get collection of released attributes for the user and application",
         parameters = {
             @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = true),
+            @Parameter(name = "password", required = false),
             @Parameter(name = "service", required = true)
         })
-    public Map<String, Object> releaseAttributes(final String username,
-                                                 final String password,
-                                                 final String service) {
+    public Map<String, Object> releaseAttributes(final String username, final String password, final String service) {
         val map = releasePrincipalAttributes(username, password, service);
         val assertion = (ImmutableAssertion) map.get("assertion");
         return Map.of("uid", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
