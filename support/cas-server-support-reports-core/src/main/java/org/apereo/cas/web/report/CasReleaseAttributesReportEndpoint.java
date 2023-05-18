@@ -4,11 +4,14 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -24,9 +27,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.lang.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link CasReleaseAttributesReportEndpoint}.
@@ -44,16 +49,20 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
 
     private final ObjectProvider<PrincipalFactory> principalFactory;
 
+    private final ObjectProvider<PrincipalResolver> principalResolver;
+
     public CasReleaseAttributesReportEndpoint(final CasConfigurationProperties casProperties,
                                               final ObjectProvider<ServicesManager> servicesManager,
                                               final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
                                               final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
-                                              final ObjectProvider<PrincipalFactory> principalFactory) {
+                                              final ObjectProvider<PrincipalFactory> principalFactory,
+                                              final ObjectProvider<PrincipalResolver> principalResolver) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.serviceFactory = serviceFactory;
         this.principalFactory = principalFactory;
+        this.principalResolver = principalResolver;
     }
 
     /**
@@ -72,11 +81,15 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             @Parameter(name = "service", required = true)
         })
     public Map<String, Object> releasePrincipalAttributes(
-        final String username, final String password, final String service) {
+        final String username,
+        @Nullable
+        final String password,
+        final String service) {
 
         val selectedService = serviceFactory.getObject().createService(service);
         val registeredService = servicesManager.getObject().findServiceBy(selectedService);
-
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
+        
         val authentication = buildAuthentication(username, password, selectedService);
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -118,7 +131,10 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
             return result.getAuthentication();
         }
-        val principal = principalFactory.getObject().createPrincipal(username);
+        val principal = principalResolver.getObject()
+            .resolve(new BasicIdentifiableCredential(username),
+                Optional.of(principalFactory.getObject().createPrincipal(username)),
+                Optional.empty(), Optional.of(selectedService));
         return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
     }
 
@@ -127,7 +143,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
      * map of attributes released for the authenticated user.
      *
      * @param username - the username
-     * @param password - the password
+     * @param password - the password; this may be optional.
      * @param service  - the service id
      * @return - the map
      */
@@ -138,9 +154,9 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             @Parameter(name = "password", required = false),
             @Parameter(name = "service", required = true)
         })
-    public Map<String, Object> releaseAttributes(final String username, final String password, final String service) {
+    public Map<String, Object> releaseAttributes(final String username, @Nullable final String password, final String service) {
         val map = releasePrincipalAttributes(username, password, service);
         val assertion = (ImmutableAssertion) map.get("assertion");
-        return Map.of("uid", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
+        return Map.of("username", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
     }
 }

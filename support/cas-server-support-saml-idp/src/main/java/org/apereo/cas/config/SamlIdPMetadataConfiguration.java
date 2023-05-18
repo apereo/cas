@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -161,6 +162,8 @@ public class SamlIdPMetadataConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlIdPServiceFactory")
@@ -169,7 +172,8 @@ public class SamlIdPMetadataConfiguration {
                 authenticationSystemSupport, samlIdPServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
                 samlProfileSamlResponseBuilder,
                 defaultSamlRegisteredServiceCachingMetadataResolver,
-                new NonInflatingSaml20ObjectBuilder(openSamlConfigBean));
+                new NonInflatingSaml20ObjectBuilder(openSamlConfigBean),
+                defaultPrincipalResolver);
         }
 
     }
