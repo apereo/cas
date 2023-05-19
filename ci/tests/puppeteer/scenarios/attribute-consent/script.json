@@ -1,10 +1,16 @@
 {
   "dependencies": "consent-webflow",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
     "--cas.audit.engine.enabled=false",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.consent.core.crypto.encryption.key=J1UI2iqIRrzm_QiiM-N0axFLjqUds3FdyarSl1bZMFk",
+    "--cas.consent.core.crypto.signing.key=Culo3HdCFJIZCCNdg6SYD5Id1Ef-5bB0cvhcimbCj9k_gNXsTflTj1njpp92XISHZxDH4Qhla7mFFBb70ZcMLg",
 
     "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",

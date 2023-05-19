@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.TokenAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

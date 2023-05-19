@@ -45,7 +45,6 @@ in order to allow for a successful authentication event.
 | REST        | [See this guide](YubiKey-Authentication-Registration-Rest.html).       |
 | Permissive  | [See this guide](YubiKey-Authentication-Registration-Permissive.html). |
 | JPA         | [See this guide](YubiKey-Authentication-Registration-JPA.html).        |
-| ~~CouchDb~~ | [See this guide](YubiKey-Authentication-Registration-CouchDb.html).    |
 | Redis       | [See this guide](YubiKey-Authentication-Registration-Redis.html).      |
 | DynamoDb    | [See this guide](YubiKey-Authentication-Registration-DynamoDb.html).   |
 | MongoDb     | [See this guide](YubiKey-Authentication-Registration-MongoDb.html).    |

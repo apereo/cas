@@ -23,7 +23,7 @@
     "--cas.authn.passwordless.tokens.jpa.password=password",
     "--cas.authn.passwordless.tokens.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "--cas.authn.passwordless.tokens.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "--cas.authn.passwordless.tokens.jpa.dialect=org.hibernate.dialect.MySQL8Dialect",
+    "--cas.authn.passwordless.tokens.jpa.dialect=org.hibernate.dialect.MySQLDialect",
     "--cas.authn.passwordless.tokens.jpa.ddl-auto=create-drop",
 
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"

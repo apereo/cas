@@ -15,6 +15,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
+import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.PlainJWT;
@@ -111,7 +112,7 @@ public class JwtBuilder {
             });
 
             val jwt = JWTParser.parse(jwtJson);
-            if (jwt instanceof SignedJWT) {
+            if (jwt instanceof SignedJWT || jwt instanceof EncryptedJWT) {
                 if (service.isPresent()) {
                     val registeredService = service.get();
                     LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());

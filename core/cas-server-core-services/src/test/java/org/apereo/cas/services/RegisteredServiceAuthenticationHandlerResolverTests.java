@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;

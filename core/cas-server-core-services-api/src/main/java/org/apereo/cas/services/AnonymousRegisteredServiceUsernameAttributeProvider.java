@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 
@@ -44,8 +42,8 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator(RandomUtils.randomAlphanumeric(16));
 
     @Override
-    protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        val id = this.persistentIdGenerator.generate(principal, service);
+    protected String resolveUsernameInternal(final RegisteredServiceUsernameProviderContext context) {
+        val id = this.persistentIdGenerator.generate(context.getPrincipal(), context.getService());
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }

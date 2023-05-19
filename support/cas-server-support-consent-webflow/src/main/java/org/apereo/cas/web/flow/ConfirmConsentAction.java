@@ -16,6 +16,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 /**
  * This is {@link ConfirmConsentAction}.
@@ -47,7 +48,7 @@ public class ConfirmConsentAction extends AbstractConsentAction {
 
         val reminder = Long.parseLong(request.getParameter("reminder"));
         val reminderTimeUnit = request.getParameter("reminderTimeUnit");
-        val unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase());
+        val unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase(Locale.ENGLISH));
 
         LOGGER.debug("Storing consent decision for service [{}]", service);
         consentEngine.storeConsentDecision(service, registeredService, authentication, reminder, unit, option);

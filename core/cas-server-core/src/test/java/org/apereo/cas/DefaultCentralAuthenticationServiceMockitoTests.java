@@ -226,11 +226,11 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val assertion = this.cas.validateServiceTicket(st.getId(), svc);
         assertNotNull(assertion);
 
-        assertEquals(assertion.service(), svc);
-        assertEquals(PRINCIPAL, assertion.primaryAuthentication().getPrincipal().getId());
-        assertSame(2, assertion.chainedAuthentications().size());
-        IntStream.range(0, assertion.chainedAuthentications().size())
-            .forEach(i -> assertEquals(assertion.chainedAuthentications().get(i), authentication));
+        assertEquals(assertion.getService(), svc);
+        assertEquals(PRINCIPAL, assertion.getPrimaryAuthentication().getPrincipal().getId());
+        assertSame(2, assertion.getChainedAuthentications().size());
+        IntStream.range(0, assertion.getChainedAuthentications().size())
+            .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }
 
     private TicketFactory getTicketFactory() {

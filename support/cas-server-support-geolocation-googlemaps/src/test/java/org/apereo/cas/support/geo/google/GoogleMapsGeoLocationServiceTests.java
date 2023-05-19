@@ -2,7 +2,7 @@ package org.apereo.cas.support.geo.google;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationConfiguration;
-import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.config.GoogleMapsGeoCodingConfiguration;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.GeocodingResult;

@@ -1,14 +1,13 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * This is {@link org.apereo.cas.ticket.RenewableServiceTicket}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RenewableServiceTicket extends Ticket {
     /**

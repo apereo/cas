@@ -14,6 +14,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -25,6 +27,7 @@ import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
+import org.apereo.cas.webauthn.metadata.CompositeAttestationTrustSource;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
@@ -37,12 +40,14 @@ import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
 import com.yubico.core.SessionManager;
 import com.yubico.core.WebAuthnServer;
+import com.yubico.fido.metadata.FidoMetadataDownloader;
+import com.yubico.fido.metadata.FidoMetadataService;
 import com.yubico.webauthn.RelyingParty;
-import com.yubico.webauthn.attestation.AttestationMetadataSource;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
 import com.yubico.webauthn.attestation.MetadataObject;
 import com.yubico.webauthn.attestation.YubicoJsonMetadataService;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
+import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
 import lombok.RequiredArgsConstructor;
@@ -66,14 +71,19 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
+import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link WebAuthnConfiguration}.
@@ -91,7 +101,8 @@ public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
 
     private static <K, V> Cache<K, V> newCache() {
-        return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE).expireAfterAccess(Duration.ofMinutes(5)).build();
+        return CacheBuilder.newBuilder().maximumSize(CACHE_MAX_SIZE)
+            .expireAfterAccess(Duration.ofMinutes(5)).build();
     }
 
     @Configuration(value = "WebAuthnMetadataServiceConfiguration", proxyBeanMethods = false)
@@ -100,15 +111,56 @@ public class WebAuthnConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnMetadataService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AttestationMetadataSource webAuthnMetadataService(
+        @Lazy(false)
+        public AttestationTrustSource webAuthnMetadataService(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(AttestationMetadataSource.class)
+            return BeanSupplier.of(AttestationTrustSource.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
-                    val loc = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getTrustedDeviceMetadata().getLocation();
-                    val metadata = MetadataObject.readMetadata(loc.getInputStream());
-                    return new YubicoJsonMetadataService(List.of(metadata));
+                    val composite = new CompositeAttestationTrustSource();
+
+                    val trustSource = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getTrustSource();
+
+                    val loc = trustSource.getTrustedDeviceMetadata().getLocation();
+                    if (ResourceUtils.doesResourceExist(loc)) {
+                        LOGGER.debug("Loading FIDO trusted device metadata from location [{}]", loc);
+                        val metadata = MetadataObject.readMetadata(loc.getInputStream());
+                        val jsonService = new YubicoJsonMetadataService(List.of(metadata));
+                        composite.addAttestationTrustSource(jsonService);
+                    }
+
+                    val fidoProperties = trustSource.getFido();
+                    if (StringUtils.isNotBlank(fidoProperties.getLegalHeader())
+                        && StringUtils.isNotBlank(fidoProperties.getMetadataBlobUrl())
+                        && StringUtils.isNotBlank(fidoProperties.getTrustRootUrl())) {
+                        val trustRootUrl = new URL(fidoProperties.getTrustRootUrl());
+                        val trustRootUrlHashes = org.springframework.util.StringUtils.commaDelimitedListToSet(fidoProperties.getTrustRootHash())
+                            .stream()
+                            .map(Unchecked.function(ByteArray::fromHex))
+                            .collect(Collectors.toSet());
+
+                        val downloader = FidoMetadataDownloader.builder()
+                            .expectLegalHeader(fidoProperties.getLegalHeader())
+                            .downloadTrustRoot(trustRootUrl, trustRootUrlHashes)
+                            .useTrustRootCacheFile(fidoProperties.getTrustRootCacheFile())
+                            .downloadBlob(new URL(fidoProperties.getMetadataBlobUrl()))
+                            .useBlobCacheFile(fidoProperties.getBlobCacheFile())
+                            .clock(Clock.systemUTC())
+                            .build();
+
+                        LOGGER.info("You have chosen to accept the FIDO Alliance's legal terms & conditions for downloading metadata blobs");
+                        LOGGER.info(fidoProperties.getLegalHeader());
+
+                        LOGGER.debug("Starting to refresh/download FIDO metadata blob from [{}] and caching it at [{}]",
+                            fidoProperties.getMetadataBlobUrl(), fidoProperties.getBlobCacheFile());
+                        val blob = downloader.refreshBlob();
+                        val fidoService = FidoMetadataService.builder()
+                            .useBlob(blob)
+                            .build();
+                        composite.addAttestationTrustSource(fidoService);
+                    }
+                    return composite;
                 }))
                 .otherwiseProxy()
                 .get();
@@ -196,7 +248,7 @@ public class WebAuthnConfiguration {
             } else {
                 origins.add(serverName);
             }
-            val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase());
+            val conveyance = AttestationConveyancePreference.valueOf(webAuthn.getAttestationConveyancePreference().toUpperCase(Locale.ENGLISH));
             val relyingParty = RelyingParty.builder()
                 .identity(defaultRelyingPartyId)
                 .credentialRepository(webAuthnCredentialRepository)
@@ -229,7 +281,7 @@ public class WebAuthnConfiguration {
             @Qualifier("webAuthnSessionManager")
             final SessionManager webAuthnSessionManager,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -270,7 +322,7 @@ public class WebAuthnConfiguration {
             @Qualifier("webAuthnAuthenticationHandler")
             final AuthenticationHandler webAuthnAuthenticationHandler,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) throws Exception {
+            final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
             return BeanSupplier.of(AuthenticationMetaDataPopulator.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -296,7 +348,7 @@ public class WebAuthnConfiguration {
             @Qualifier("webAuthnAuthenticationHandler")
             final AuthenticationHandler webAuthnAuthenticationHandler,
             @Qualifier("webAuthnAuthenticationMetaDataPopulator")
-            final AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator) throws Exception {
+            final AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator) {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
@@ -433,17 +485,26 @@ public class WebAuthnConfiguration {
                 final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
                     @Override
-                    public List<String> getIgnoredEndpoints() {
-                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE);
-                    }
-
-                    @Override
                     @CanIgnoreReturnValue
-                    public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                        Unchecked.consumer(sec -> http.csrf(customizer -> {
-                            val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                            webAuthnCsrfTokenRepository.ifAvailable(repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
-                        })).accept(http);
+                    @SuppressWarnings("UnnecessaryMethodReference")
+                    public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                        http.csrf(customizer -> {
+                            webAuthnCsrfTokenRepository.ifAvailable(repository -> {
+                                val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                                val delegate = new XorCsrfTokenRequestAttributeHandler();
+                                delegate.setSecureRandom(RandomUtils.getNativeInstance());
+                                customizer.requireCsrfProtectionMatcher(pattern)
+                                    .csrfTokenRequestHandler(delegate::handle)
+                                    .csrfTokenRepository(repository);
+
+                            });
+                        });
+                        http.authorizeHttpRequests(customizer -> {
+                            customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**")
+                                .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
+                            customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**")
+                                .permitAll();
+                        });
                         return this;
                     }
                 };

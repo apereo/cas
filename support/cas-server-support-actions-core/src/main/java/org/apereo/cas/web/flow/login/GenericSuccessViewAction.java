@@ -82,7 +82,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                                     registeredService, authn.getPrincipal().getId(),
                                     (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
                             } catch (final Exception e) {
-                                LOGGER.error(e.getMessage(), e);
+                                LOGGER.info(e.getMessage(), e);
                                 return false;
                             }
                         })

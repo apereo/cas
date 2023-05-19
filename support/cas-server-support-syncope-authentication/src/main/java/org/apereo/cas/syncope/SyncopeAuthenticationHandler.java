@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -36,6 +37,7 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
+@Monitorable
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

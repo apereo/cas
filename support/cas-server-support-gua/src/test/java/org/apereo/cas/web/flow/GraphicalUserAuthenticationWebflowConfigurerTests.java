@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.gua.config.GraphicalUserAuthenticationConfiguration;
+import org.apereo.cas.config.GraphicalUserAuthenticationConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

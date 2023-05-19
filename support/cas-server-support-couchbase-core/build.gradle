@@ -1,8 +1,0 @@
-description = "Apereo CAS Couchbase Support Core"
-dependencies {
-    api libraries.couchbase
-    implementation project(":core:cas-server-core-util-api")
-
-    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
-}

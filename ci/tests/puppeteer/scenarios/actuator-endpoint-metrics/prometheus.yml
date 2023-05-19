@@ -1,0 +1,8 @@
+scrape_configs:
+  - job_name: 'Apereo CAS Metrics'
+    metrics_path: '/cas/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          application: 'Apereo CAS'

@@ -1,11 +1,11 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.BaseCasCoreTests;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v1.LegacyValidateController;
 
 import lombok.Getter;

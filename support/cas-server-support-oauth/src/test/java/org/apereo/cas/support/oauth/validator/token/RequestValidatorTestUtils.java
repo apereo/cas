@@ -19,11 +19,6 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class RequestValidatorTestUtils {
-    public static final String SUPPORTING_CLIENT_ID = "supporting";
-
-    public static final String NON_SUPPORTING_CLIENT_ID = "nonsupporting";
-
-    public static final String PROMISCUOUS_CLIENT_ID = "promiscuous";
 
     public static final String SHARED_SECRET = "secret";
 

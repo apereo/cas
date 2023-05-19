@@ -43,6 +43,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -69,7 +70,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     private OAuth20AuthorizeEndpointController oAuth20AuthorizeEndpointController;
 
     @Test
-    public void verifyNoClientId() throws Exception {
+    public void verifyNoClientId() {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
@@ -78,27 +79,29 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
     @Test
     public void verifyNoRedirectUri() {
+        val registeredService = addRegisteredService();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         val mockResponse = new MockHttpServletResponse();
-
         assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
     public void verifyNoResponseType() {
+        val registeredService = addRegisteredService();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
-
         assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
     public void verifyBadResponseType() throws Exception {
+        val registeredService = addRegisteredService();
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, "badvalue");
         mockRequest.setAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
@@ -118,10 +121,9 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyNoCasService() {
         clearAllServices();
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, UUID.randomUUID().toString());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
-
         assertThrows(UnauthorizedServiceException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
@@ -129,8 +131,11 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyCasClientCanValidate() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val mockResponse = new MockHttpServletResponse();
@@ -143,8 +148,6 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val callback = RegisteredServiceTestUtils.getRegisteredService(callbackUrl);
         servicesManager.save(callback);
 
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        servicesManager.save(service);
 
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
@@ -172,12 +175,14 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     @Test
     public void verifyRedirectUriDoesNotStartWithServiceId() {
         clearAllServices();
+        val registeredService = getRegisteredService(OTHER_REDIRECT_URI, UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
 
-        servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
         assertThrows(IllegalArgumentException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
@@ -185,18 +190,18 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyCodeNoProfile() {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         val mockResponse = new MockHttpServletResponse();
-
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        servicesManager.save(service);
 
         val session = new MockHttpSession();
         mockRequest.setSession(session);
@@ -208,20 +213,20 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyMissingTicketGrantingTicket() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
-
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
 
         val profile = new CasProfile();
         profile.setId(ID);
@@ -240,21 +245,21 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyServiceAccessDenied() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of("required", Set.of("value1"))));
+        oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
-
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(Map.of("required", Set.of("value1"))));
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
 
         val profile = new CasProfile();
         profile.setId(ID);
@@ -274,12 +279,15 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     @Test
     public void verifyCodeRedirectToClient() throws Exception {
         clearAllServices();
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -291,13 +299,8 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         properties.getAuthn().getOauth().getSessionReplication().setReplicateSessions(true);
         oAuth20AuthorizeEndpointController.getConfigurationContext()
             .getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
-
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        oAuth20AuthorizeEndpointController.getConfigurationContext().getServicesManager().save(service);
-
+        
         val profile = buildCasProfile();
-
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
@@ -329,11 +332,15 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyTokenRedirectToClient() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
@@ -344,12 +351,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
         oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        servicesManager.save(service);
-
         val profile = buildCasProfile();
-
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
 
@@ -381,16 +383,6 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyPerServiceExpiration() throws Exception {
         clearAllServices();
 
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
-        mockRequest.setServerName(CAS_SERVER);
-        mockRequest.setServerPort(CAS_PORT);
-        mockRequest.setScheme(CAS_SCHEME);
-        val mockResponse = new MockHttpServletResponse();
-
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
         val expirationPolicy = new DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy();
@@ -399,6 +391,16 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         service.setAccessTokenExpirationPolicy(expirationPolicy);
         service.setJwtAccessToken(true);
         servicesManager.save(service);
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
+        mockRequest.setServerName(CAS_SERVER);
+        mockRequest.setServerPort(CAS_PORT);
+        mockRequest.setScheme(CAS_SCHEME);
+        val mockResponse = new MockHttpServletResponse();
 
         val profile = buildCasProfile();
 
@@ -435,23 +437,22 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyCodeRedirectToClientWithState() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         mockRequest.setParameter(OAuth20Constants.STATE, STATE);
         val mockResponse = new MockHttpServletResponse();
 
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        servicesManager.save(service);
-
         val profile = buildCasProfile();
-
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
@@ -482,23 +483,22 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyTokenRedirectToClientWithState() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         mockRequest.setParameter(OAuth20Constants.STATE, STATE);
         val mockResponse = new MockHttpServletResponse();
 
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(true);
-        servicesManager.save(service);
-
         val profile = buildCasProfile();
-
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
@@ -531,22 +531,21 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyCodeRedirectToClientApproved() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(false);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         val mockResponse = new MockHttpServletResponse();
 
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(false);
-        servicesManager.save(service);
-
         val profile = buildCasProfile();
-
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getConfigurationContext().getSessionStore();
@@ -576,19 +575,19 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyTokenRedirectToClientApproved() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(false);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         val mockResponse = new MockHttpServletResponse();
-
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(false);
-        servicesManager.save(service);
 
         val profile = buildCasProfile();
 
@@ -622,19 +621,20 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyRedirectToApproval() throws Exception {
         clearAllServices();
 
+        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(false);
+        servicesManager.save(service);
+
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
         mockRequest.setServerPort(CAS_PORT);
         mockRequest.setScheme(CAS_SCHEME);
         val mockResponse = new MockHttpServletResponse();
 
-        val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
-        service.setBypassApprovalPrompt(false);
-        servicesManager.save(service);
 
         val profile = buildCasProfile();
 
@@ -656,21 +656,21 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
     public void verifyTokenRedirectToClientApprovedWithJwtToken() throws Exception {
         clearAllServices();
 
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
-        mockRequest.setServerName(CAS_SERVER);
-        mockRequest.setServerPort(CAS_PORT);
-        mockRequest.setScheme(CAS_SCHEME);
-        val mockResponse = new MockHttpServletResponse();
-
         val service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
         service.setJwtAccessToken(true);
         servicesManager.save(service);
 
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
+        mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
+        mockRequest.setServerName(CAS_SERVER);
+        mockRequest.setServerPort(CAS_PORT);
+        mockRequest.setScheme(CAS_SCHEME);
+        val mockResponse = new MockHttpServletResponse();
+        
         val profile = buildCasProfile();
 
         val session = new MockHttpSession();
@@ -730,7 +730,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val service = new OAuthRegisteredService();
         service.setName(name);
         service.setServiceId(serviceId);
-        service.setClientId(CLIENT_ID);
+        service.setClientId(UUID.randomUUID().toString());
         service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of(FIRST_NAME_ATTRIBUTE)));
         return service;
     }

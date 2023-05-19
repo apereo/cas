@@ -34,7 +34,7 @@ public class X509SubjectDNPrincipalResolverAggregateTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;
 
     @Test

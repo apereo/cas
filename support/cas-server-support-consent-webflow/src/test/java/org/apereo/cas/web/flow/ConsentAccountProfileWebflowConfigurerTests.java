@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

@@ -7,7 +7,9 @@ import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 
@@ -41,7 +43,8 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
     private static TicketRegistry getTicketRegistryInstance() {
         return new CachingTicketRegistry(CipherExecutor.noOp(),
             mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
-            new DirectObjectProvider<>(mock(LogoutManager.class)));
+            new DirectObjectProvider<>(mock(LogoutManager.class)),
+            QueueableTicketRegistryMessagePublisher.noOp(), new PublisherIdentifier());
     }
 
     @RepeatedTest(1)

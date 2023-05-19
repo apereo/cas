@@ -23,7 +23,3 @@
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }
-
-
-
-

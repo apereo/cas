@@ -2,7 +2,7 @@ package org.apereo.cas.support.geo.maxmind.config;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationConfiguration;
-import org.apereo.cas.support.geo.config.CasGeoLocationMaxmindConfiguration;
+import org.apereo.cas.config.CasGeoLocationMaxmindConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

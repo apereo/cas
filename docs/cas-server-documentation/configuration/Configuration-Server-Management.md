@@ -19,9 +19,9 @@ though at the cost of losing features and capabilities relevant for a cloud depl
 
 The CAS server web application responds to the following strategies that dictate how settings should be consumed.
 
-| Strategy                                   | Description                                                                  |
-|--------------------------------------------|------------------------------------------------------------------------------|
-| [Standalone](Configuration-Server-Management-Standalone.html) | Default strategy.                                              |
+| Strategy                                                         | Description                                                    |
+|------------------------------------------------------------------|----------------------------------------------------------------|
+| [Standalone](Configuration-Server-Management-Standalone.html)    | Default strategy.                                              |
 | [Spring Cloud](Configuration-Server-Management-SpringCloud.html) | Externalized strategy using Spring Cloud configuration server. |
 
 ## Configuration Security

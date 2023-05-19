@@ -10,11 +10,11 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v4.1.0
+      - uses: actions/stale@v8
         id: stale
         with:
-          stale-pr-message: 'This pull request has been open and inactive for 7 days. It will be closed shortly.'
-          days-before-stale: 10
+          stale-pr-message: 'This pull request has been open and inactive. It will be closed shortly.'
+          days-before-stale: 7
           days-before-close: 0
           exempt-draft-pr: true
           exempt-pr-labels: 'Pending: Work in Progress,WIP'

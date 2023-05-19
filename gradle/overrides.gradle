@@ -99,9 +99,6 @@ configurations.all {
                 if (requested.group == "net.sourceforge.jtds")  {
                     details.useVersion("${jtdsVersion}")
                 }
-                if (requested.group == "com.couchbase.client" && requested.name == "java-client")  {
-                    details.useVersion("${couchbaseVersion}")
-                }
                 if (requested.group == "com.github.ben-manes.caffeine")  {
                     details.useVersion("${caffeineVersion}")
                 }
@@ -147,7 +144,11 @@ configurations.all {
                     details.useVersion("${jacksonVersion}")
                 }
                 if (requested.group == "io.micrometer" && requested.name.startsWith("micrometer-"))  {
-                    details.useVersion("${micrometerVersion}")
+                    if (requested.name.contains("tracing")) {
+                        details.useVersion("${micrometerOtelVersion}")
+                    } else {
+                        details.useVersion("${micrometerVersion}")
+                    }
                 }
                 if (requested.group == "org.apache.wss4j")  {
                     details.useVersion("${wss4jVersion}")

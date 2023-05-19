@@ -1,12 +1,12 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -28,8 +29,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -55,6 +55,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,7 +70,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     protected static final String IP_ADDRESS = "192.0.0.1";
 
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     protected AuthenticationManager authenticationManager;
 
     private static UsernamePasswordCredential credentials(final String username,

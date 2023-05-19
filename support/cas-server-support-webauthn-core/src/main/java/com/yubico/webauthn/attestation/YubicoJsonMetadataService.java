@@ -91,38 +91,36 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
     @Override
     public Optional<Attestation> findMetadata(final X509Certificate attestationCertificate) {
         return metadataObjects.stream()
-            .map(
-                metadata -> {
-                    Map<String, String> vendorProperties;
-                    Map<String, String> deviceProperties = null;
-                    String identifier;
+            .map(metadata -> {
+                Map<String, String> vendorProperties;
+                Map<String, String> deviceProperties = null;
+                String identifier;
 
-                    identifier = metadata.getIdentifier();
-                    vendorProperties = Maps.filterValues(metadata.getVendorInfo(), Objects::nonNull);
-                    for (val device : metadata.getDevices()) {
-                        if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
-                            ImmutableMap.Builder<String, String> devicePropertiesBuilder =
-                                ImmutableMap.builder();
-                            for (Map.Entry<String, JsonNode> deviceEntry : Lists.newArrayList(device.fields())) {
-                                val value = deviceEntry.getValue();
-                                if (value.isTextual()) {
-                                    devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());
-                                }
+                identifier = metadata.getIdentifier();
+                vendorProperties = Maps.filterValues(metadata.getVendorInfo(), Objects::nonNull);
+                for (val device : metadata.getDevices()) {
+                    if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
+                        ImmutableMap.Builder<String, String> devicePropertiesBuilder = ImmutableMap.builder();
+                        for (Map.Entry<String, JsonNode> deviceEntry : Lists.newArrayList(device.fields())) {
+                            val value = deviceEntry.getValue();
+                            if (value.isTextual()) {
+                                devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());
                             }
-                            deviceProperties = devicePropertiesBuilder.build();
-                            break;
                         }
+                        deviceProperties = devicePropertiesBuilder.build();
+                        break;
                     }
+                }
 
-                    return Optional.ofNullable(deviceProperties)
-                        .map(
-                            deviceProps ->
-                                Attestation.builder()
-                                    .metadataIdentifier(Optional.ofNullable(identifier))
-                                    .vendorProperties(Optional.of(vendorProperties))
-                                    .deviceProperties(deviceProps)
-                                    .build());
-                })
+                return Optional.ofNullable(deviceProperties)
+                    .map(
+                        deviceProps ->
+                            Attestation.builder()
+                                .metadataIdentifier(Optional.ofNullable(identifier))
+                                .vendorProperties(Optional.of(vendorProperties))
+                                .deviceProperties(deviceProps)
+                                .build());
+            })
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findAny();

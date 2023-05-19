@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -61,7 +62,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         jwtService.setLoggedOutAlready(service.isLoggedOutAlready());
 
         parameters.put(CasProtocolConstants.PARAMETER_TICKET, jwt);
-        parameters.put(Response.ResponseType.REDIRECT.name().toLowerCase(), Boolean.TRUE.toString());
+        parameters.put(Response.ResponseType.REDIRECT.name().toLowerCase(Locale.ENGLISH), Boolean.TRUE.toString());
 
         return jwtService;
     }

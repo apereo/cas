@@ -393,6 +393,7 @@ public class ConfigurationMetadataGenerator {
 
         LOGGER.info("Final results is written to [{}]", jsonFile.getAbsolutePath());
         MAPPER.writeValue(jsonFile, jsonMap);
+
         val copy = new File(buildDir, jsonFile.getName());
         LOGGER.info("A copy of the results is written to [{}]", copy.getAbsolutePath());
         MAPPER.writeValue(copy, jsonMap);
@@ -400,8 +401,16 @@ public class ConfigurationMetadataGenerator {
 
     private void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
         for (val property : properties) {
-            val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
-            val typeFile = new File(typePath);
+            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
+            var typeFile = new File(typePath);
+            if (!typeFile.exists() && !property.getType().contains(".")) {
+                val clazz = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
+                if (clazz.isPresent()) {
+                    typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clazz.get().getName());
+                    typeFile = new File(typePath);
+                }
+            }
+
             if (typeFile.exists()) {
                 val cu = StaticJavaParser.parse(new File(typePath));
                 for (val type : cu.getTypes()) {

@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -8,6 +7,8 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -17,6 +18,8 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasCoreMonitorConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
@@ -27,20 +30,24 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
+import org.apereo.cas.config.CasCoreValidationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.SamlIdPComponentSerializationConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
-import org.apereo.cas.config.SamlIdpComponentSerializationConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
@@ -58,13 +65,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObj
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
-import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -84,6 +86,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -97,12 +100,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseSamlIdPConfigurationTests}.
@@ -152,7 +154,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPObjectEncrypter samlIdPObjectEncrypter;
 
     @Autowired
-    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
@@ -187,7 +189,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
@@ -239,16 +241,17 @@ public abstract class BaseSamlIdPConfigurationTests {
             .build();
     }
 
-    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+    protected AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
         return getAuthnRequestFor(service.getServiceId());
     }
 
-    protected static AuthnRequest getAuthnRequestFor(final String service) {
-        val authnRequest = mock(AuthnRequest.class);
-        when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn(service);
-        when(authnRequest.getIssuer()).thenReturn(issuer);
+    protected AuthnRequest getAuthnRequestFor(final String service) {
+        val authnRequest = samlProfileSamlResponseBuilder.newSamlObject(AuthnRequest.class);
+        authnRequest.setID("23hgbcehfgeb7843jdv1");
+        val issuer = samlProfileSamlResponseBuilder.newSamlObject(Issuer.class);
+        issuer.setValue(service);
+        authnRequest.setIssuer(issuer);
+        authnRequest.setIssueInstant(Instant.now(Clock.systemUTC()));
         return authnRequest;
     }
 
@@ -332,6 +335,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        ObservationAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -351,10 +355,12 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
+        CasCoreMonitorConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         SamlIdPConfiguration.class,
-        SamlIdpComponentSerializationConfiguration.class,
+        SamlIdPMonitoringConfiguration.class,
+        SamlIdPComponentSerializationConfiguration.class,
         SamlIdPTicketCatalogConfiguration.class,
         SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
         SamlIdPEndpointsConfiguration.class,

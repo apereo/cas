@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalResolvedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
+@Monitorable
 public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;

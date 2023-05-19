@@ -76,7 +76,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     @Override
     public String encode(final String value, final Object[] parameters) {
-        if (this.registeredService instanceof OAuthRegisteredService oAuthRegisteredService
+        if (registeredService instanceof OAuthRegisteredService oAuthRegisteredService
             && shouldEncodeAsJwt(oAuthRegisteredService, accessToken)) {
             val request = getJwtRequestBuilder(oAuthRegisteredService, accessToken);
             return accessTokenJwtBuilder.build(request);

@@ -1,16 +1,16 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;

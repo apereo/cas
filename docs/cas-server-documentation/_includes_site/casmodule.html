@@ -1,7 +1,7 @@
-{% assign min = 1 %}
-{% assign max = 999999 %}
-{% assign diff = max | minus: min %}
-{% assign casModuleRandomNumber = include.group | append: include.module | remove: "-" | remove: "." | truncate: 50, '' %}
+{%- assign min = 1 -%}
+{%- assign max = 999999 -%}
+{%- assign diff = max | minus: min -%}
+{%- assign casModuleRandomNumber = include.group | append: include.module | remove: "-" | remove: "." | truncate: 50, '' -%}
 
 <script type="text/javascript">
 
@@ -32,11 +32,11 @@
 
 </script>
 
-{% assign displayClass = "block" %}
+{%- assign displayClass = "block" -%}
 
-{% if include.hide == "true" %}
-{% assign displayClass="none" %}
-{% endif %}
+{%- if include.hide == "true" -%}
+{%- assign displayClass="none" -%}
+{%- endif -%}
 
 <div style="display: {{ displayClass }}">
 
@@ -44,13 +44,13 @@
         <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(0)" data-bs-toggle='tab' href='#maven{{ casModuleRandomNumber }}'>Maven</a></li>
         <li class='nav-item'><a class='nav-link active' onclick="javascript:tabClicked(1)" data-bs-toggle='tab' href='#gradle{{ casModuleRandomNumber }}'>Gradle</a></li>
 
-        {% unless include.ignoreBOM == "true" %}
+        {%- unless include.ignoreBOM == "true" -%}
         <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
             href='#bom{{ casModuleRandomNumber }}'>BOM - Spring</a></li>
 
         <li class='nav-item'><a class='nav-link' onclick="javascript:tabClicked(2)" data-bs-toggle='tab' 
             href='#bomGradle{{ casModuleRandomNumber }}'>BOM - Gradle</a></li>
-        {% endunless %}
+        {%- endunless -%}
 
         <li role='presentation' class='nav-item dropdown'>
             <a class='nav-link dropdown-toggle' onclick="javascript:tabClicked(3)" data-bs-toggle='dropdown' href='#' role='button'>Resources
@@ -69,7 +69,7 @@
 
     <div class='cas-module-tabs tab-content clearfix'>
         <div class='tab-pane fade in' id='maven{{ casModuleRandomNumber }}'>
-            {% capture maven %}
+            {%- capture maven -%}
 ```xml
 <dependency>
     <groupId>{{include.group}}</groupId>
@@ -77,7 +77,7 @@
     <version>${cas.version}</version>
 </dependency>
 ```
-            {% endcapture %}
+            {%- endcapture -%}
 
             <span>
       {{ maven | markdownify }}
@@ -87,8 +87,8 @@
 
 
         <div class='tab-pane fade in active show' id='gradle{{ casModuleRandomNumber }}'>
-            {% if include.module contains "-bom" %}
-{% capture gradle %}
+            {%- if include.module contains "-bom" -%}
+{%- capture gradle -%}
 ```groovy
 implementation enforcedPlatform("{{include.group}}:{{include.module}}:${project.'cas.version'}")
 ```
@@ -100,8 +100,8 @@ implementation enforcedPlatform("{{include.group}}:{{include.module}}:${project.
 ```groovy
 implementation "{{include.group}}:{{include.module}}:${project.'cas.version'}"
 ```
-            {% endcapture %}
-            {% endunless %}
+            {%- endcapture -%}
+            {%- endunless -%}
             <span>
     {{ gradle | markdownify }}
   </span>
@@ -109,7 +109,7 @@ implementation "{{include.group}}:{{include.module}}:${project.'cas.version'}"
         </div>
 
         <div class='tab-pane fade in' id='bom{{ casModuleRandomNumber }}'>
-            {% capture bom %}
+            {%- capture bom -%}
 ```groovy
 dependencyManagement {
     imports {
@@ -121,7 +121,7 @@ dependencies {
     implementation "{{include.group}}:{{include.module}}"
 }
 ```
-            {% endcapture %}
+            {%- endcapture -%}
             <span>
     {{ bom | markdownify }}
   </span>
@@ -129,16 +129,20 @@ dependencies {
         </div>
 
         <div class='tab-pane fade in' id='bomGradle{{ casModuleRandomNumber }}'>
-            {% capture bom %}
+            {%- capture bom -%}
 ```groovy
 dependencies {
+    /*
+    The following platform references should be included automatically and are listed here for reference only.
+            
     implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
     implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    */
 
     implementation "{{include.group}}:{{include.module}}"
 }
 ```
-            {% endcapture %}
+            {%- endcapture -%}
             <span>
     {{ bom | markdownify }}
   </span>

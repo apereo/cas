@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -19,11 +20,10 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.HazelcastMonitorConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
 
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
@@ -94,14 +94,15 @@ public class HazelcastHealthIndicatorTests {
         val details = health.getDetails();
         assertTrue(details.containsKey("name"));
 
-        details.values().forEach(value -> {
-            if (value instanceof Map map) {
+        details.values().stream()
+            .filter(value -> value instanceof Map)
+            .map(value -> (Map) value)
+            .forEach(map -> {
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
-            }
-        });
+            });
         assertNotNull(hazelcastHealthIndicator.toString());
     }
 

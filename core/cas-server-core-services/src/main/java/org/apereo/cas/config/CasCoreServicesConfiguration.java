@@ -16,11 +16,9 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
-import org.apereo.cas.services.DefaultChainingServicesManager;
 import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
 import org.apereo.cas.services.DefaultRegisteredServicesTemplatesManager;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
-import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.ImmutableServiceRegistry;
@@ -43,6 +41,8 @@ import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
+import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -309,7 +309,7 @@ public class CasCoreServicesConfiguration {
         public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("servicesManagerConfigurationContext")
-            final ServicesManagerConfigurationContext configurationContext) throws Exception {
+            final ServicesManagerConfigurationContext configurationContext) {
             return BeanSupplier.of(ServicesManagerExecutionPlanConfigurer.class)
                 .alwaysMatch()
                 .supply(() -> {
@@ -352,7 +352,7 @@ public class CasCoreServicesConfiguration {
         public ChainingServicesManager servicesManager(final List<ServicesManagerExecutionPlanConfigurer> configurers) {
             val chain = new DefaultChainingServicesManager();
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
-            configurers.forEach(c -> chain.registerServiceManager(c.configureServicesManager()));
+            configurers.forEach(cfg -> chain.registerServiceManager(cfg.configureServicesManager()));
             return chain;
         }
 

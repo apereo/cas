@@ -2,7 +2,14 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.DeleteTicketMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.DeleteTicketsMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.UpdateTicketMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +27,25 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
-public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
+public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry implements QueueableTicketRegistry {
+
+    protected final QueueableTicketRegistryMessagePublisher ticketPublisher;
+
+    protected final PublisherIdentifier publisherIdentifier;
 
     public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor,
                                           final TicketSerializationManager ticketSerializationManager,
-                                          final TicketCatalog ticketCatalog) {
+                                          final TicketCatalog ticketCatalog,
+                                          final QueueableTicketRegistryMessagePublisher ticketPublisher,
+                                          final PublisherIdentifier publisherIdentifier) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        this.ticketPublisher = ticketPublisher;
+        this.publisherIdentifier = publisherIdentifier;
     }
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = digest(ticketId);
+        val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
@@ -50,9 +65,11 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public long deleteAll() {
-        val size = getMapInstance().size();
-        getMapInstance().clear();
-        return size;
+        val result = deleteAllFromQueue();
+        if (ticketPublisher.isEnabled()) {
+            ticketPublisher.publishMessageToQueue(new DeleteTicketsMessageQueueCommand(publisherIdentifier));
+        }
+        return result;
     }
 
     @Override
@@ -62,22 +79,62 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
+        val result = updateTicketInQueue(ticket);
+
+        if (ticketPublisher.isEnabled()) {
+            LOGGER.trace("Publishing update command for id [{}] and ticket [{}]", publisherIdentifier, ticket.getId());
+            val command = new UpdateTicketMessageQueueCommand(publisherIdentifier, ticket);
+            ticketPublisher.publishMessageToQueue(command);
+        }
+        return result;
+    }
+
+    @Override
+    public long deleteSingleTicket(final Ticket ticket) {
+        val result = ticket != null ? deleteTicketFromQueue(ticket.getId()): 0;
+        if (ticketPublisher.isEnabled()) {
+            LOGGER.trace("Publishing delete command for id [{}] and ticket [{}]", publisherIdentifier, ticket.getId());
+            ticketPublisher.publishMessageToQueue(new DeleteTicketMessageQueueCommand(publisherIdentifier, ticket.getId()));
+        }
+        return result;
+    }
+
+    @Override
+    public void addTicketInternal(final Ticket ticket) throws Exception {
+        addTicketToQueue(ticket);
+
+        if (ticketPublisher.isEnabled()) {
+            LOGGER.trace("Publishing add command for id [{}] and ticket [{}]", publisherIdentifier, ticket.getId());
+            val command = new AddTicketMessageQueueCommand(publisherIdentifier, ticket);
+            ticketPublisher.publishMessageToQueue(command);
+        }
+    }
+
+    @Override
+    public void addTicketToQueue(final Ticket ticket) throws Exception {
+        val encTicket = encodeTicket(ticket);
+        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
+        getMapInstance().put(encTicket.getId(), encTicket);
+    }
+
+    @Override
+    public Ticket updateTicketInQueue(final Ticket ticket) throws Exception {
         LOGGER.trace("Updating ticket [{}] in registry...", ticket.getId());
         addTicket(ticket);
         return ticket;
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketId) {
-        val encTicketId = digest(ticketId);
+    public long deleteTicketFromQueue(final String ticketId) {
+        val encTicketId = digestIdentifier(ticketId);
         return !StringUtils.isBlank(encTicketId) && getMapInstance().remove(encTicketId) != null ? 1 : 0;
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) throws Exception {
-        val encTicket = encodeTicket(ticket);
-        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
-        getMapInstance().put(encTicket.getId(), encTicket);
+    public long deleteAllFromQueue() {
+        val size = getMapInstance().size();
+        getMapInstance().clear();
+        return size;
     }
 
     /**

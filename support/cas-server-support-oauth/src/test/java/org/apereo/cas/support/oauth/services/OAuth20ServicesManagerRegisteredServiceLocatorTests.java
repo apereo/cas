@@ -56,6 +56,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
             String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, service.getClientId()));
         val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
         assertNotNull(result);
+        assertFalse(oauthServicesManagerRegisteredServiceLocator.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test

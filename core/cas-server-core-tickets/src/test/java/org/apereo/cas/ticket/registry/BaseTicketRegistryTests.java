@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -10,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -21,9 +23,8 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
@@ -54,7 +55,6 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -68,6 +68,7 @@ import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -356,13 +357,13 @@ public abstract class BaseTicketRegistryTests {
         var services = ((AuthenticatedServicesAwareTicketGrantingTicket) found).getServices();
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
-        tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
+        tgt.grantServiceTicket("ST-1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
             NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         ticketRegistry.updateTicket(tgt);
         val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertTrue(tgtResult instanceof AuthenticatedServicesAwareTicketGrantingTicket);
         services = ((AuthenticatedServicesAwareTicketGrantingTicket) tgtResult).getServices();
-        assertEquals(Collections.singleton("ST1"), services.keySet());
+        assertEquals(Collections.singleton("ST-1"), services.keySet());
     }
 
     @RepeatedTest(2)
@@ -642,7 +643,10 @@ public abstract class BaseTicketRegistryTests {
         }
     }
 
-    @ImportAutoConfiguration(RefreshAutoConfiguration.class)
+    @ImportAutoConfiguration({
+        ObservationAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    })
     @SpringBootConfiguration
     @Import({
         CasCoreHttpConfiguration.class,
@@ -669,6 +673,6 @@ public abstract class BaseTicketRegistryTests {
         CasCoreNotificationsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class
     })
-    static class SharedTestConfiguration {
+    public static class SharedTestConfiguration {
     }
 }

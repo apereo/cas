@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -174,7 +176,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val fileName = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(fileName.toPath())) {
             invokeServiceRegistryListenerPreSave(service);
-            val result = this.registeredServiceSerializers.stream().anyMatch(s -> {
+            val result = registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);
                     return true;
@@ -189,7 +191,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             if (this.services.containsKey(service.getId())) {
                 LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());
             }
-            this.services.put(service.getId(), service);
+            services.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", fileName.getCanonicalPath());
         } catch (final IOException e) {
             throw new IllegalArgumentException("IO error opening file stream.", e);
@@ -362,19 +364,28 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         return null;
     }
 
-    /**
-     * Creates a file for a registered service.
-     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #getExtensions()}}
-     *
-     * @param service Registered service.
-     * @return file in service registry directory.
-     * @throws IllegalArgumentException if file name is invalid
-     */
     protected File getRegisteredServiceFileName(final RegisteredService service) {
         val fileName = resourceNamingStrategy.build(service, getExtensions()[0]);
-        val svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
+
+        val parentDirectory = determineParentDirectoryFor(service);
+        val svcFile = new File(parentDirectory, fileName);
         LOGGER.debug("Using [{}] as the service definition file", svcFile.getAbsolutePath());
         return svcFile;
+    }
+
+    private File determineParentDirectoryFor(final RegisteredService service) {
+        val defaultServicesDirectory = serviceRegistryDirectory.toFile();
+
+        val friendlyName = service.getFriendlyName();
+        val candidateParentDirectories = List.of(
+            new File(defaultServicesDirectory, friendlyName.toLowerCase(Locale.ENGLISH).replace(" ", "-")),
+            new File(defaultServicesDirectory, friendlyName)
+        );
+        return candidateParentDirectories
+            .stream()
+            .filter(dir -> dir.exists() && dir.isDirectory())
+            .findFirst()
+            .orElse(defaultServicesDirectory);
     }
 
     /**

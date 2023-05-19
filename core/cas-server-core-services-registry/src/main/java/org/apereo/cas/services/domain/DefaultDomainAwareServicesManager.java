@@ -1,9 +1,10 @@
 package org.apereo.cas.services.domain;
 
-import org.apereo.cas.services.AbstractServicesManager;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.AbstractServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
+@Monitorable
 public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
     private final Map<String, TreeSet<RegisteredService>> domains = new ConcurrentHashMap<>();
 

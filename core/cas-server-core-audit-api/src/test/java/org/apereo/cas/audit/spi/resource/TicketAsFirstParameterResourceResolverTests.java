@@ -1,9 +1,9 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class TicketAsFirstParameterResourceResolverTests {
     public void verifyOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ST-123434"});
-        val resolver = new TicketAsFirstParameterResourceResolver();
+        val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties());
         val input = resolver.resolveFrom(jp, null);
         assertTrue(input.length > 0);
     }
@@ -32,7 +32,7 @@ public class TicketAsFirstParameterResourceResolverTests {
     public void verifyTicketWithService() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
-        val resolver = new TicketAsFirstParameterResourceResolver();
+        val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val input = resolver.resolveFrom(jp, null);
         assertTrue(input.length > 0);
     }
@@ -41,8 +41,7 @@ public class TicketAsFirstParameterResourceResolverTests {
     public void verifyTicketWithServiceAsJson() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
-        val resolver = new TicketAsFirstParameterResourceResolver();
-        resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
+        val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val input = resolver.resolveFrom(jp, null);
         assertTrue(input.length > 0);
     }
@@ -50,7 +49,7 @@ public class TicketAsFirstParameterResourceResolverTests {
     @Test
     public void verifyNullOperation() {
         val jp = mock(JoinPoint.class);
-        val resolver = new TicketAsFirstParameterResourceResolver();
+        val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties());
         val input = resolver.resolveFrom(jp, null);
         assertEquals(0, input.length);
     }

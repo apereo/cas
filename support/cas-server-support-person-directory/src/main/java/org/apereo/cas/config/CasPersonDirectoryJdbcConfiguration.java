@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -66,8 +67,8 @@ public class CasPersonDirectoryJdbcConfiguration {
                 .stream()
                 .map(entry -> Pair.of(entry.getKey(),
                     StringUtils.isBlank(entry.getValue())
-                        ? CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase())
-                        : CaseCanonicalizationMode.valueOf(entry.getValue().toUpperCase())))
+                        ? CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase(Locale.ENGLISH))
+                        : CaseCanonicalizationMode.valueOf(entry.getValue().toUpperCase(Locale.ENGLISH))))
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue)));
             return dao;
         }
@@ -121,10 +122,10 @@ public class CasPersonDirectoryJdbcConfiguration {
                             }
                             jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
 
-                            val caseMode = CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase());
+                            val caseMode = CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase(Locale.ENGLISH));
                             jdbcDao.setUsernameCaseCanonicalizationMode(caseMode);
                             jdbcDao.setDefaultCaseCanonicalizationMode(caseMode);
-                            jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase()));
+                            jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase(Locale.ENGLISH)));
                             jdbcDao.setOrder(jdbc.getOrder());
                             jdbcDao.setEnabled(jdbc.getState() != AttributeRepositoryStates.DISABLED);
                             jdbcDao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),

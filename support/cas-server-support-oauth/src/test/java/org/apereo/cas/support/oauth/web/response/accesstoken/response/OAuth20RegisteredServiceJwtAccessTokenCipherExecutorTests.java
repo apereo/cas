@@ -20,9 +20,8 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests extends A
 
     @Test
     public void verifyOperation() {
-        val c = new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor();
-        assertTrue(c.getSigningKey(RegisteredServiceTestUtils.getRegisteredService()).isEmpty());
-        assertTrue(c.getEncryptionKey(RegisteredServiceTestUtils.getRegisteredService()).isEmpty());
-
+        val cipher = new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor();
+        assertTrue(cipher.getSigningKey(RegisteredServiceTestUtils.getRegisteredService()).isEmpty());
+        assertTrue(cipher.getEncryptionKey(RegisteredServiceTestUtils.getRegisteredService()).isEmpty());
     }
 }

@@ -28,8 +28,7 @@ Support is enabled by including the following dependency in the overlay:
 
 ## CAS Configuration
 
-{% include_cached casproperties.html properties="cas.ticket.registry.amqp"
-thirdPartyStartsWith="spring.rabbitmq" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.in-memory" thirdPartyStartsWith="spring.rabbitmq" %}
 
 ## Actuator Endpoints
 

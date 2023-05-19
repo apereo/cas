@@ -75,7 +75,7 @@ public interface RegisteredServiceDelegatedAuthenticationPolicy extends Serializ
      * Is exclusive to provider?.
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     default boolean isExclusiveToProvider(final String name) {

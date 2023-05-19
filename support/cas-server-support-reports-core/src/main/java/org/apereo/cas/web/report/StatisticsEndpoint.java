@@ -57,9 +57,8 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
 
         val validTickets = new AtomicInteger();
         val expiredTickets = new AtomicInteger();
-        ticketRegistry.getObject()
-            .stream()
-            .forEach(Unchecked.consumer(ticket -> {
+        try (val stream = ticketRegistry.getObject().stream()) {
+            stream.forEach(Unchecked.consumer(ticket -> {
                 if (ticket.isExpired()) {
                     ticketRegistry.getObject().deleteTicket(ticket.getId());
                     expiredTickets.incrementAndGet();
@@ -67,6 +66,8 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
                     validTickets.incrementAndGet();
                 }
             }));
+        }
+        
         model.put("expiredTickets", expiredTickets);
         model.put("validTickets", validTickets);
         return model;

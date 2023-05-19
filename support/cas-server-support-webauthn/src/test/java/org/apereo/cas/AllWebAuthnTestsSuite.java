@@ -1,7 +1,9 @@
 package org.apereo.cas;
 
+import org.apereo.cas.webauthn.metadata.CompositeAttestationTrustSourceTests;
 import org.apereo.cas.webauthn.storage.InMemoryWebAuthnCredentialRepositoryTests;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepositoryTests;
+import org.apereo.cas.webauthn.web.WebAuthnControllerMvcTests;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpointTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationActionTests;
@@ -23,6 +25,8 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    WebAuthnControllerMvcTests.class,
+    CompositeAttestationTrustSourceTests.class,
     WebAuthnMultifactorWebflowConfigurerTests.class,
     WebAuthnAccountCheckRegistrationActionTests.class,
     WebAuthnAccountSaveRegistrationActionTests.class,

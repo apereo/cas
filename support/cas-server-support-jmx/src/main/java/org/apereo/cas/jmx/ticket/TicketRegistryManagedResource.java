@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -21,11 +22,15 @@ import java.util.stream.Collectors;
 public class TicketRegistryManagedResource {
     private final TicketRegistry ticketRegistry;
 
+    /**
+     * Gets tickets.
+     *
+     * @return the tickets
+     */
     @ManagedOperation
     public Collection<String> getTickets() {
-        return ticketRegistry
-            .stream()
-            .map(Ticket::getId)
-            .collect(Collectors.toSet());
+        try (val stream = ticketRegistry.stream()) {
+            return stream.map(Ticket::getId).collect(Collectors.toSet());
+        }
     }
 }

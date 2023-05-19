@@ -45,7 +45,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;
 
     @Autowired

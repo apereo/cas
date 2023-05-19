@@ -9,6 +9,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link PasswordChangeRequest}.
@@ -47,7 +48,7 @@ public class PasswordChangeRequest implements Serializable {
      * @return the string
      */
     public String toPassword() {
-        return this.password == null ? null : new String(this.password);
+        return Optional.ofNullable(this.password).map(String::new).orElse(null);
     }
 
     /**

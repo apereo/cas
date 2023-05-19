@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
+@Monitorable
 public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     private final DynamoDbTicketRegistryFacilitator dbTableService;
@@ -44,7 +46,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        return dbTableService.getSessionsFor(digest(principalId));
+        return dbTableService.getSessionsFor(digestIdentifier(principalId));
     }
 
     @Override
@@ -56,7 +58,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         filterExpressions.add("prefix=:prefix");
         queryAttributes.forEach((key, queryValues) -> {
             val expressionParameter = isCipherExecutorEnabled()
-                ? digest(key)
+                ? digestIdentifier(key)
                 : key.replace('.', '_').replace('-', '_');
             val expressionAttrName = '#' + expressionParameter;
 
@@ -64,11 +66,11 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             for (var i = 0; i < queryValues.size(); i++) {
                 criteriaValues.add("contains(attributes." + expressionAttrName + ", :" + expressionParameter + i + ')');
 
-                val attributeValue = digest(queryValues.get(i).toString());
+                val attributeValue = digestIdentifier(queryValues.get(i).toString());
                 expressionValues.put(':' + expressionParameter + i, AttributeValue.builder().s(attributeValue).build());
             }
             filterExpressions.add('(' + String.join(" OR ", criteriaValues) + ')');
-            expressionAttrNames.put(expressionAttrName, digest(key));
+            expressionAttrNames.put(expressionAttrName, digestIdentifier(key));
         });
         val expression = String.join(" AND ", filterExpressions);
         val prefix = dbTableService.getTicketCatalog().findTicketDefinition(TicketGrantingTicket.class)
@@ -99,7 +101,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     private DynamoDbTicketRegistryFacilitator.TicketPayload toTicketPayload(final Ticket ticket) throws Exception {
         val encTicket = encodeTicket(ticket);
-        val principal = digest(getPrincipalIdFrom(ticket));
+        val principal = digestIdentifier(getPrincipalIdFrom(ticket));
         return DynamoDbTicketRegistryFacilitator.TicketPayload
             .builder()
             .originalTicket(ticket)
@@ -111,7 +113,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        val encTicketId = digest(ticketId);
+        val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
@@ -146,9 +148,9 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = digest(ticketIdToDelete);
-        return dbTableService.delete(ticketIdToDelete, ticketId) ? 1 : 0;
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
+        val ticketId = digestIdentifier(ticketToDelete.getId());
+        return dbTableService.delete(ticketToDelete.getId(), ticketId) ? 1 : 0;
     }
 
     @Override

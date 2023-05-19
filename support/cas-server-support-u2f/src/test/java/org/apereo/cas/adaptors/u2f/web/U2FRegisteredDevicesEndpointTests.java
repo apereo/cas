@@ -2,11 +2,11 @@ package org.apereo.cas.adaptors.u2f.web;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.config.U2FAuthenticationComponentSerializationConfiguration;
+import org.apereo.cas.config.U2FAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FWebflowConfiguration;
-import org.apereo.cas.config.support.authentication.U2FAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.config.support.authentication.U2FAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.support.authentication.U2FAuthenticationMultifactorProviderBypassConfiguration;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 

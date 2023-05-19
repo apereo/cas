@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLAttributes")
 public class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyNoSamlService() {
@@ -107,7 +107,7 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             new CasConfigurationProperties(), "CasConfigurationProperties");
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            resolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
+            resolver, SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME);
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setServiceId("https://sp.cas.org");
@@ -136,7 +136,7 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, new CasConfigurationProperties(), "CasConfigurationProperties");
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, cachingMetadataResolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, cachingMetadataResolver, SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME);
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 

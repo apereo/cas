@@ -26,6 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,7 +102,7 @@ public class OidcAuthorizeEndpointControllerTests {
             mockRequest.setMethod(HttpMethod.GET.name());
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
             mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
-            mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+            mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setContextPath(StringUtils.EMPTY);
             val mockResponse = new MockHttpServletResponse();
 

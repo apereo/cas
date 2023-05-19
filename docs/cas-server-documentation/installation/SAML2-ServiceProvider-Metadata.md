@@ -194,6 +194,5 @@ Service provider metadata can also be managed using any one of the following str
 | MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  |
 | Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).    |
 | JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
-| ~~CouchDb~~             | [See this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html).  |
 | Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
 | Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |

@@ -87,6 +87,6 @@ public class YubiKeyAccountRegistryEndpointTests {
         val request = new MockHttpServletRequest();
         val content = MAPPER.writeValueAsString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request).getStatusCode());
     }
 }

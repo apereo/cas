@@ -16,4 +16,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
 public @interface Monitorable {
+    /**
+     * Type identifier.
+     *
+     * @return the string
+     */
+    String type() default "CAS";
 }

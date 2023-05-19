@@ -83,13 +83,14 @@ public class CoreAuthenticationUtils {
      * @param attributes the attributes
      * @return the map
      */
-    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, List<Object>> attributes) {
+    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, ? extends Object> attributes) {
         val entries = attributes.entrySet();
         return entries
             .stream()
+            .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                val value = entry.getValue();
-                return value.size() == 1 ? value.get(0) : value;
+                val value = CollectionUtils.toCollection(entry.getValue());
+                return value.size() == 1 ? value.iterator().next() : value;
             }));
     }
 
@@ -145,7 +146,7 @@ public class CoreAuthenticationUtils {
     public static boolean isRememberMeAuthentication(final Authentication model, final Assertion assertion) {
         val authnAttributes = model.getAttributes();
         val authnMethod = authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.fromNewLogin();
+        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.isFromNewLogin();
     }
 
     /**

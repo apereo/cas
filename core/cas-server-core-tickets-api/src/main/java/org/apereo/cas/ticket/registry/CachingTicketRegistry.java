@@ -2,10 +2,13 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -27,6 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@Monitorable
 public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private static final int INITIAL_CACHE_SIZE = 50;
@@ -42,15 +46,20 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
     public CachingTicketRegistry(
         final TicketSerializationManager ticketSerializationManager,
         final TicketCatalog ticketCatalog,
-        final ObjectProvider<LogoutManager> logoutManager) {
-        this(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, logoutManager);
+        final ObjectProvider<LogoutManager> logoutManager,
+        final QueueableTicketRegistryMessagePublisher ticketPublisher,
+        final PublisherIdentifier publisherIdentifier) {
+        this(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
+            logoutManager, ticketPublisher, publisherIdentifier);
     }
 
     public CachingTicketRegistry(final CipherExecutor cipherExecutor,
                                  final TicketSerializationManager ticketSerializationManager,
                                  final TicketCatalog ticketCatalog,
-                                 final ObjectProvider<LogoutManager> logoutManager) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                 final ObjectProvider<LogoutManager> logoutManager,
+                                 final QueueableTicketRegistryMessagePublisher ticketPublisher,
+                                 final PublisherIdentifier publisherIdentifier) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, ticketPublisher, publisherIdentifier);
         this.storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)

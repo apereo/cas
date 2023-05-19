@@ -1,6 +1,6 @@
 {
   "identifier": "2fb54029-7613-4f1d-94f1-fb876c14a6fe",
-  "version": 17,
+  "version": 19,
   "vendorInfo": {
     "url": "https://yubico.com",
     "imageUrl": "https://developers.yubico.com/U2F/Images/yubico.png",
@@ -34,6 +34,46 @@
             "value": {
               "type": "hex",
               "value": "149a20218ef6413396b881f8d5b7f1f5"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.1",
+      "displayName": "Security Key NFC by Yubico",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000019469-security-key-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5NFC-CNFC.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "a4e9fc6d4cbe4758b8ba37598bb5bbaa"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.1",
+      "displayName": "Security Key NFC by Yubico - Enterprise Edition",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000019469-security-key-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5NFC-CNFC.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "0bb43545fd2c418587ddfeb0b2916ace"
             }
           }
         }
@@ -178,7 +218,7 @@
       "displayName": "YubiKey 5/5C NFC",
       "transports": 12,
       "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000014174--yubikey-5-nfc",
-      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5.png",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5NFC-CNFC.png",
       "selectors": [
         {
           "type": "x509Extension",
@@ -308,6 +348,8 @@
       "deviceId": "1.3.6.1.4.1.41482.1.9",
       "displayName": "YubiKey Bio - FIDO Edition",
       "transports": 4,
+      "deviceUrl": "https://support.yubico.com/hc/en-us/articles/4407743521810-YubiKey-Bio-FIDO-Edition",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/BIO.png",
       "selectors": [
         {
           "type": "x509Extension",

@@ -1,2 +1,2 @@
-org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration
-org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration
+org.apereo.cas.config.SamlMetadataUIConfiguration
+org.apereo.cas.config.SamlMetadataUIWebflowConfiguration

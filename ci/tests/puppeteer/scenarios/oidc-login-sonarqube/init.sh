@@ -6,8 +6,7 @@ set -e
 SCENARIO_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 time ${PWD}/ci/tests/k3d/setup.sh
-
-helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+helm repo add sonarqube https://sonarsource.github.io/helm-chart-sonarqube || true
 kubectl create namespace sonarqube || true
 kubectl delete secret -n sonarqube cas-cert || true
 sleep 2
@@ -22,8 +21,9 @@ sleep 5
 # we don't want to stop after this point so if it times out coming up, we can see status and logs
 set +e
 echo "Waiting for sonarqube pods to be ready"
-kubectl wait --namespace sonarqube --for condition=ready pod --selector=app=sonarqube --timeout=180s
+kubectl wait --namespace sonarqube --for condition=ready pod --selector=statefulset.kubernetes.io/pod-name=sonarqube-sonarqube-0 --timeout=600s
 echo "Showing sonarqube pods status"
 kubectl get pods -n sonarqube
 kubectl logs -n sonarqube sonarqube-sonarqube-0
-
+kubectl get pods -A
+curl -ksv -o /dev/null "https://host.k3d.internal"

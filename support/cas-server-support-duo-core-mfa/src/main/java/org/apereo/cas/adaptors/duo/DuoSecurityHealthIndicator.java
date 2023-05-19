@@ -30,16 +30,16 @@ public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
-            .forEach(p -> {
-                val duoService = p.getDuoAuthenticationService();
+            .map(DuoSecurityMultifactorAuthenticationProvider::getDuoAuthenticationService)
+            .forEach(duoService -> {
                 val result = duoService.ping();
-                val b = builder.withDetail("duoApiHost", duoService.getProperties().getDuoApiHost());
+                val builderResult = builder.withDetail("duoApiHost", duoService.getProperties().getDuoApiHost());
                 if (result) {
-                    b.up();
+                    builderResult.up();
                 } else {
-                    b.down();
+                    builderResult.down();
                 }
-                b.build();
+                builderResult.build();
             });
     }
 }

@@ -25,12 +25,13 @@ public class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends Abstract
 
     @Test
     public void verifySupports() {
+        val service = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val validator = new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager, serviceFactory, oauthRequestParameterResolver);
         val context = new JEEContext(request, response);
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertTrue(validator.supports(context));
         assertNotNull(validator.getServicesManager());
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
@@ -50,8 +51,8 @@ public class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends Abstract
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
         assertFalse(validator.validate(context));
 
-        addRegisteredService();
-        request.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        val service = addRegisteredService();
+        request.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         assertTrue(validator.validate(context));
     }
 

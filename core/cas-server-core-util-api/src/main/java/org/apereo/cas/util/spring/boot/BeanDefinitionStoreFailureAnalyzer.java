@@ -28,18 +28,18 @@ public class BeanDefinitionStoreFailureAnalyzer extends AbstractFailureAnalyzer<
     private static String getDescription(final BeanDefinitionStoreException ex) {
         val causedMsg = ExceptionUtils.getRootCauseMessage(ex);
         val description = new StringWriter();
-        val printer = new PrintWriter(description);
-
-        printer.printf("Error creating bean");
-        if (ex.getBeanName() != null) {
-            printer.printf(" named %s", ex.getBeanName());
-        }
-        if (ex.getResourceDescription() != null) {
-            printer.printf(", with resource description %s,", ex.getResourceDescription());
-        }
-        printer.printf(" due to: %s ", ex.getMessage());
-        if (StringUtils.isNotBlank(causedMsg)) {
-            printer.printf(" caused by %s ", causedMsg);
+        try (val printer = new PrintWriter(description)) {
+            printer.printf("Error creating bean");
+            if (ex.getBeanName() != null) {
+                printer.printf(" named %s", ex.getBeanName());
+            }
+            if (ex.getResourceDescription() != null) {
+                printer.printf(", with resource description %s,", ex.getResourceDescription());
+            }
+            printer.printf(" due to: %s ", ex.getMessage());
+            if (StringUtils.isNotBlank(causedMsg)) {
+                printer.printf(" caused by %s ", causedMsg);
+            }
         }
         return description.toString();
     }

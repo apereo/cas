@@ -20,6 +20,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.ResourcePatternUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +29,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
@@ -65,10 +69,10 @@ public class ResourceUtils {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }
-        if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
+        if (location.toLowerCase(Locale.ENGLISH).startsWith(HTTP_URL_PREFIX)) {
             return new UrlResource(location);
         }
-        if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
+        if (location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX)) {
             return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
         return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
@@ -308,8 +312,9 @@ public class ResourceUtils {
      */
     public static boolean isJarResource(final Resource resource) {
         try {
-            return "jar".equals(resource.getURI().getScheme());
-        } catch (final IOException e) {
+            return (resource instanceof ClassPathResource cp && cp.getPath().startsWith("jar:"))
+                   || "jar".equals(resource.getURI().getScheme());
+        } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
         return false;
@@ -323,5 +328,34 @@ public class ResourceUtils {
      */
     public static boolean isUrl(final String resource) {
         return StringUtils.isNotBlank(resource) && resource.startsWith("http");
+    }
+
+    /**
+     * To file system resource.
+     *
+     * @param artifact the artifact
+     * @return the resource
+     */
+    public static Resource toFileSystemResource(final File artifact) {
+        val canonicalPath = FunctionUtils.doUnchecked(artifact::getCanonicalPath);
+        FunctionUtils.throwIf(artifact.exists() && !artifact.canRead(),
+            () -> new IllegalArgumentException("Resource " + canonicalPath + " is not readable."));
+        return new FileSystemResource(artifact);
+    }
+
+    /**
+     * Export resources.
+     *
+     * @param resourceLoader   the resource loader
+     * @param parent           the parent
+     * @param locationPatterns the location patterns
+     */
+    public static void exportResources(final ResourceLoader resourceLoader, final File parent,
+                                       final List<String> locationPatterns) {
+        val resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
+        locationPatterns.forEach(pattern -> {
+            val resources = FunctionUtils.doUnchecked(() -> resourcePatternResolver.getResources(pattern));
+            Arrays.stream(resources).forEach(resource -> exportClasspathResourceToFile(parent, resource));
+        });
     }
 }

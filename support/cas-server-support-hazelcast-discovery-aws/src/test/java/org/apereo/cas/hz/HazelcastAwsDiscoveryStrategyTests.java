@@ -27,6 +27,9 @@ public class HazelcastAwsDiscoveryStrategyTests {
         val properties = new HazelcastClusterProperties();
         val aws = properties.getDiscovery().getAws();
 
+        aws.setFamily("Family");
+        aws.setCluster("Cluster");
+        aws.setServiceName("MyService");
         aws.setAccessKey("AccessKey");
         aws.setSecretKey("Secret");
         aws.setIamRole("Role");

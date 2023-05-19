@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowServiceActions")
 public class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GATEWAY_SERVICES_MANAGEMENT)

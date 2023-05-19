@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,13 +34,13 @@ public class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth
 
     @Test
     public void verifyNoProfile() throws Exception {
+        val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
+        servicesManager.save(service);
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.getType());
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-
-        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
-        servicesManager.save(service);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);

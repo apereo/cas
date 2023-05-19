@@ -18,7 +18,7 @@ public class Log4jInitializationTests {
     public void verifyOperation() {
         assertDoesNotThrow(() -> {
             val init = new Log4jInitialization();
-            init.setMainArguments(new String[]{"--logging.level.org.apereo.cas=debug"});
+            init.initialize(new String[]{"--logging.level.org.apereo.cas=debug"});
         });
     }
 }

@@ -1,0 +1,10 @@
+{
+    "id": "1",
+    "principal": "casuser",
+    "service": "https://apereo.github.io",
+    "createdDate": "2023-04-19T10:59:48.325412",
+    "options": "ATTRIBUTE_NAME",
+    "reminder": 30,
+    "reminderTimeUnit": "DAYS",
+    "attributes": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6ImRkY2I1NjhiLWFlODctNDgwMS1iOGEyLTQxYTFlYWEyZDNjNSJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySWl3aVkzUjVJam9pU2xkVUlpd2lkSGx3SWpvaVNsZFVJaXdpYTJsa0lqb2lNamMzTURWaU5qWXRZMlF6TnkwME5HSmxMV0ZsWm1RdFpUVXpaRGMxWXpVNE1UYzNJbjAuLjQwSmR1MjAzX3NabEdyMEM3THRKWmcubi01SnVhWVhvTGppWHd3SlAxNXJ0aE5QOEt1UktVZm85bG84YmFkWEU1bjg2ZGlrYUFJTlQzNDFETkpvRS1iRGpDaEtJU0NENW5UM3VlWjY3QnBhNm1wT3FhaVpVUi1lMlVIeXhJR0l5OUFUMFoxQm9wMVR5WTBMWi1kN3dPQmY2VkZ6VkNLSGdqUXlxaGxSUENnTVh1ZXJTb1NjdmhSV1hnRGJ2aDVqaWtVLkhSWGJtdDVLZVQySXZuV2l0Zm8tQVE.MWssIIs11KuTnL3N-ndoozPkKPMXF2otw4zAiTjzaZwaA1dfeiWi-1JmaCO9YO_GxlFowOa3RHnM4BzZiumpnw"
+}

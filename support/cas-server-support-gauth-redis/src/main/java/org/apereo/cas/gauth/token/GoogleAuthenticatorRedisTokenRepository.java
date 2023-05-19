@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.Duration;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,9 +51,11 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public void removeAll() {
-        val redisKey = getGoogleAuthenticatorTokenKeys().collect(Collectors.toSet());
-        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-        this.template.delete(redisKey);
+        try (val keys = getGoogleAuthenticatorTokenKeys()) {
+            val redisKey = keys.collect(Collectors.toSet());
+            LOGGER.trace("Deleting tokens using key [{}]", redisKey);
+            this.template.delete(redisKey);
+        }
     }
 
     @Override
@@ -65,30 +68,36 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public void remove(final String uid) {
-        val redisKey = getGoogleAuthenticatorTokenKeys(uid).collect(Collectors.toSet());
-        LOGGER.trace("Deleting tokens for [{}] using key [{}]", uid, redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens [{}]", redisKey);
+        try (val keys = getGoogleAuthenticatorTokenKeys(uid)) {
+            val redisKey = keys.collect(Collectors.toSet());
+            LOGGER.trace("Deleting tokens for [{}] using key [{}]", uid, redisKey);
+            this.template.delete(redisKey);
+            LOGGER.trace("Deleted tokens [{}]", redisKey);
+        }
     }
 
     @Override
     public void remove(final Integer otp) {
-        val redisKey = getGoogleAuthenticatorTokenKeys(otp).collect(Collectors.toSet());
-        LOGGER.trace("Deleting token for [{}] using key [{}]", otp, redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens [{}]", redisKey);
+        try (val keys = getGoogleAuthenticatorTokenKeys(otp)) {
+            val redisKey = keys.collect(Collectors.toSet());
+            LOGGER.trace("Deleting token for [{}] using key [{}]", otp, redisKey);
+            this.template.delete(redisKey);
+            LOGGER.trace("Deleted tokens [{}]", redisKey);
+        }
     }
 
     @Override
     public long count(final String uid) {
-        val keys = getGoogleAuthenticatorTokenKeys(uid);
-        return keys.count();
+        try (val keys = getGoogleAuthenticatorTokenKeys(uid)) {
+            return keys.count();
+        }
     }
 
     @Override
     public long count() {
-        val keys = getGoogleAuthenticatorTokenKeys();
-        return keys.count();
+        try (val keys = getGoogleAuthenticatorTokenKeys()) {
+            return keys.count();
+        }
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final GoogleAuthenticatorToken token) {
@@ -96,11 +105,11 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username, final Integer otp) {
-        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + otp;
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase(Locale.ENGLISH) + KEY_SEPARATOR + otp;
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + '*';
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase(Locale.ENGLISH) + KEY_SEPARATOR + '*';
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final Integer otp) {

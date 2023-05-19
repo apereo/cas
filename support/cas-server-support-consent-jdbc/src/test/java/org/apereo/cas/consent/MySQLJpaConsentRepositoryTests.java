@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.jpa.password=password",
     "cas.consent.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.consent.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.consent.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
+    "cas.consent.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
 public class MySQLJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
 }

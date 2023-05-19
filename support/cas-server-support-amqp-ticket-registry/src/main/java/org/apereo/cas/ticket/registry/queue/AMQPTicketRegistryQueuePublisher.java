@@ -1,7 +1,9 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import org.apereo.cas.ticket.registry.queue.commands.BaseMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitOperations;
@@ -13,11 +15,14 @@ import org.springframework.amqp.rabbit.core.RabbitOperations;
  * @since 6.1.0
  */
 @Slf4j
-public record AMQPTicketRegistryQueuePublisher(RabbitOperations rabbitTemplate) implements TicketRegistryQueuePublisher {
+@RequiredArgsConstructor
+public class AMQPTicketRegistryQueuePublisher implements QueueableTicketRegistryMessagePublisher {
     /**
      * Queue destination name.
      */
     public static final String QUEUE_DESTINATION = "CasTicketRegistryQueue";
+
+    private final RabbitOperations rabbitTemplate;
 
     @Override
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {

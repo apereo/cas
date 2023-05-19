@@ -59,10 +59,9 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
             
             principals.removeIf(SurrogatePrincipal.class::isInstance);
             val primaryAttributes = new LinkedHashMap<>(surrogate.getPrimary().getAttributes());
-            principals.forEach(principal -> {
-                val merged = CoreAuthenticationUtils.mergeAttributes(primaryAttributes, principal.getAttributes(), getAttributeMerger());
-                primaryAttributes.putAll(merged);
-            });
+            principals.stream()
+                .map(principal -> CoreAuthenticationUtils.mergeAttributes(primaryAttributes, principal.getAttributes(), getAttributeMerger()))
+                .forEach(primaryAttributes::putAll);
             surrogate.getPrimary().getAttributes().putAll(primaryAttributes);
             LOGGER.debug("Found surrogate principal [{}]", surrogate);
             return surrogate;

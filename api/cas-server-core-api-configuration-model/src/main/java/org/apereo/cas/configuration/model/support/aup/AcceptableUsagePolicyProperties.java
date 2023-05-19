@@ -47,18 +47,6 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private RestAcceptableUsagePolicyProperties rest = new RestAcceptableUsagePolicyProperties();
 
     /**
-     * Control AUP via CouchDb.
-     */
-    @NestedConfigurationProperty
-    private CouchDbAcceptableUsagePolicyProperties couchDb = new CouchDbAcceptableUsagePolicyProperties();
-
-    /**
-     * Control AUP via Couchbase.
-     */
-    @NestedConfigurationProperty
-    private CouchbaseAcceptableUsagePolicyProperties couchbase = new CouchbaseAcceptableUsagePolicyProperties();
-
-    /**
      * Control AUP via a MongoDb database resource.
      */
     @NestedConfigurationProperty

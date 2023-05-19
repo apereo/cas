@@ -21,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -68,8 +69,8 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                     .stream()
                     .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
                     .filter(handler -> handler.supports(r.getExecutionRequest(), r.getService()))
-                    .forEach(handler -> {
-                        val logoutMessage = handler.createSingleLogoutMessage(r);
+                    .map(handler -> handler.createSingleLogoutMessage(r))
+                    .forEach(logoutMessage -> {
                         LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", r.getLogoutUrl(), logoutMessage);
                         val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage.getPayload(), true);
                         logoutUrls.put(r, msg);

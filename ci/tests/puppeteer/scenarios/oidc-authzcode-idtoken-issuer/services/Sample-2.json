@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "oauth-clientid",
+  "clientSecret": "secret",
+  "serviceId" : "^https://apereo.github.io.*",
+  "name": "Sample",
+  "id": 2
+}

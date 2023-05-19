@@ -77,6 +77,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
 
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName(service.getServiceId());
         servicesManager.save(service);
 
         request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());

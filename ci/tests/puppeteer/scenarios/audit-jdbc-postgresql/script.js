@@ -10,7 +10,7 @@ const path = require("path");
     const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
     
-    const browser = await puppeteer.launch(cas.browserOptions());
+    let browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
@@ -19,6 +19,7 @@ const path = require("path");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.close();
+    await browser.close();
 
     await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
         'Content-Type': 'application/json'
@@ -50,16 +51,17 @@ const path = require("path");
     console.log("Updating configuration...");
     let number = await cas.randomNumber();
     await updateConfig(configFile, configFilePath, number);
-    await page.waitForTimeout(3000);
-
+    await cas.sleep(6000);
     await cas.refreshContext();
+    await cas.sleep(3000);
 
     console.log("Testing authentication after refresh...");
+    browser = await puppeteer.launch(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertCookie(page);
-
+    await page.close();
     await browser.close();
 
 })();

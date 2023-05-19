@@ -12,7 +12,6 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;

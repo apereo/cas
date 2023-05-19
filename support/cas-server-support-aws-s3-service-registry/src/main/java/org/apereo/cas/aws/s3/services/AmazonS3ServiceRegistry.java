@@ -26,6 +26,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -181,6 +182,6 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     }
 
     private static String determineBucketName(final RegisteredService registeredService) {
-        return (BUCKET_NAME_PREFIX + '-' + registeredService.getName() + '-' + registeredService.getId()).toLowerCase();
+        return (BUCKET_NAME_PREFIX + '-' + registeredService.getName() + '-' + registeredService.getId()).toLowerCase(Locale.ENGLISH);
     }
 }

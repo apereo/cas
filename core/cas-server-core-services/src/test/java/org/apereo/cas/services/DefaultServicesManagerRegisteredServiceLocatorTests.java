@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -51,9 +51,11 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     public void verifyDefaultOperation() {
         val input = mock(ServicesManagerRegisteredServiceLocator.class);
         when(input.getOrder()).thenCallRealMethod();
+        when(input.getRegisteredServiceIndexes()).thenCallRealMethod();
         when(input.getName()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
         assertNotNull(input.getName());
+        assertTrue(input.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test
@@ -64,6 +66,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
             webApplicationServiceFactory.createService("https://example.org/test"));
         assertNotNull(result);
+        assertFalse(defaultServicesManagerRegisteredServiceLocator.getRegisteredServiceIndexes().isEmpty());
     }
 
     @Test

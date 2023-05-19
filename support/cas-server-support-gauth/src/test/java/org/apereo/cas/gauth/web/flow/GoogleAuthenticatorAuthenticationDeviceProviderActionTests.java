@@ -1,11 +1,11 @@
 package org.apereo.cas.gauth.web.flow;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;

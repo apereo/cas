@@ -1,0 +1,25 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret",
+  "serviceId" : "https://apereo.github.io.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 2,
+  "jwtAccessToken": true,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "accessTokenAsJwtEncryptionKey" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "${#env['OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY']}" ] ]
+    },
+    "accessTokenAsJwtSigningEnabled" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
+    },
+    "accessTokenAsJwtEncryptionEnabled" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}

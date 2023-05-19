@@ -5,9 +5,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
-import org.apereo.cas.ticket.TicketValidator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 
 /**

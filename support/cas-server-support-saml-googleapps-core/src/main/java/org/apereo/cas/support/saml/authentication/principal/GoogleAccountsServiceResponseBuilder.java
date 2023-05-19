@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResp
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -127,8 +128,13 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         }
 
         val principal = authentication.getPrincipal();
-        val userId = registeredService.getUsernameAttributeProvider()
-            .resolveUsername(principal, service, registeredService);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(principal)
+            .build();
+        val userId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 
         val response = this.samlObjectBuilder.newResponse(
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);

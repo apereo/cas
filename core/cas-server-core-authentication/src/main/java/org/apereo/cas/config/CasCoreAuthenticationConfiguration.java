@@ -91,18 +91,20 @@ public class CasCoreAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authenticationTransactionManager")
         public AuthenticationTransactionManager authenticationTransactionManager(
-            @Qualifier("casAuthenticationManager") final AuthenticationManager casAuthenticationManager,
+            @Qualifier(AuthenticationManager.BEAN_NAME)
+            final AuthenticationManager casAuthenticationManager,
             final ConfigurableApplicationContext applicationContext) {
             return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
         }
 
-        @ConditionalOnMissingBean(name = "casAuthenticationManager")
+        @ConditionalOnMissingBean(name = AuthenticationManager.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationManager casAuthenticationManager(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME) final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
+            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             val isFatal = casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE;
             return new DefaultAuthenticationManager(authenticationEventExecutionPlan, isFatal, applicationContext);
         }

@@ -51,6 +51,7 @@ public class RedisObjectFactoryTests {
         props.getPool().setMinEvictableIdleTimeMillis(2000);
         props.getPool().setNumTestsPerEvictionRun(1);
         props.getPool().setSoftMinEvictableIdleTimeMillis(1);
+        props.getPool().setEnabled(true);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
     }

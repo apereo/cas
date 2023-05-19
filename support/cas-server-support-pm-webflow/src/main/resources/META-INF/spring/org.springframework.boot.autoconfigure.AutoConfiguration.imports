@@ -1,2 +1,2 @@
-org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration
-org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration
+org.apereo.cas.config.PasswordManagementWebflowConfiguration
+org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration

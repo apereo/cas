@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -55,7 +56,7 @@ public class HazelcastTicketRegistryTests {
         private TicketRegistry newTicketRegistry;
     }
 
-    
+
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Getter
@@ -76,18 +77,23 @@ public class HazelcastTicketRegistryTests {
         private TicketRegistry newTicketRegistry;
 
         @Autowired
+        @Qualifier(TicketCatalog.BEAN_NAME)
+        private TicketCatalog ticketCatlog;
+
+        @Autowired
         private CasConfigurationProperties casProperties;
 
         @RepeatedTest(1)
         public void verifyBadExpPolicyValue() {
+            val ticket = new MockTicketGrantingTicket("casuser");
+
             val instance = mock(HazelcastInstance.class);
-            val catalog = mock(TicketCatalog.class);
-            try (val registry = new HazelcastTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog,
+            val myMap = mock(IMap.class);
+            when(instance.getMap(anyString())).thenReturn(myMap);
+            try (val registry = new HazelcastTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatlog,
                 instance, casProperties.getTicket().getRegistry().getHazelcast())) {
-                val ticket = new MockTicketGrantingTicket("casuser");
                 ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
-                assertThrows(IllegalArgumentException.class,
-                    () -> registry.addTicket(ticket));
+                assertDoesNotThrow(() -> registry.addTicket(ticket));
                 assertDoesNotThrow(registry::shutdown);
             }
         }

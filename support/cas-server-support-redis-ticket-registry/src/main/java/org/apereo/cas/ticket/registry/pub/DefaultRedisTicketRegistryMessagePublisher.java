@@ -30,21 +30,27 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
     }
 
     @Override
-    public void delete(final String id) {
-        val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE).withTicket(id);
-        sendPayload(payload);
+    public void delete(final Ticket ticket) {
+        if (ticket != null) {
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.DELETE).withTicket(ticket);
+            sendPayload(payload);
+        }
     }
 
     @Override
-    public void add(final Ticket id) {
-        val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(id);
-        sendPayload(payload);
+    public void add(final Ticket ticket) {
+        if (ticket != null) {
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.ADD).withTicket(ticket);
+            sendPayload(payload);
+        }
     }
 
     @Override
-    public void update(final Ticket id) {
-        val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(id);
-        sendPayload(payload);
+    public void update(final Ticket ticket) {
+        if (ticket != null) {
+            val payload = getRedisMessagePayload(RedisMessagePayload.RedisMessageTypes.UPDATE).withTicket(ticket);
+            sendPayload(payload);
+        }
     }
 
     private void sendPayload(final RedisMessagePayload payload) {

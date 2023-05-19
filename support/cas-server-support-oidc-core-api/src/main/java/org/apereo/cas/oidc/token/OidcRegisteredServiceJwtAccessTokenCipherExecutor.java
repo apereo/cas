@@ -6,7 +6,6 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.util.InternalJwtAccessTokenCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20RegisteredServiceJwtAccessTokenCipherExecutor;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 
@@ -56,8 +55,11 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             return result;
         }
 
-        val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForSigning(registeredService, this, true);
-        return jwks.map(keys -> keys.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+        if (registeredService instanceof OidcRegisteredService) {
+            val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForSigning(registeredService, this, true);
+            return jwks.map(keys -> keys.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -65,13 +67,12 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         if (!isEncryptionEnabledForRegisteredService(registeredService)) {
             return Optional.empty();
         }
-        val svc = (OAuthRegisteredService) registeredService;
         val result = super.getEncryptionKey(registeredService);
-        if (result.isPresent()) {
+        if (result.isPresent()) {     
             return result;
         }
 
-        if (svc instanceof OidcRegisteredService) {
+        if (registeredService instanceof OidcRegisteredService) {
             val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForEncryption(registeredService, this);
             return jwks.map(JsonWebKeySet::toJson);
         }

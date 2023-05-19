@@ -131,7 +131,7 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
          * is the one that satisfies security policy
          */
         val assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
-        val authn = assertion.primaryAuthentication();
+        val authn = assertion.getPrimaryAuthentication();
         assertEquals(2, authn.getSuccesses().size());
         assertTrue(authn.getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(authn.getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));

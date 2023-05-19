@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 
 import java.util.Set;
 
@@ -34,6 +35,6 @@ public class DefaultServiceRegistryInitializerEventListenerTests {
             }
         });
         assertDoesNotThrow(() -> listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of())));
-        assertDoesNotThrow(() -> listener.handleRefreshEvent(new EnvironmentChangeEvent(Set.of())));
+        assertDoesNotThrow(() -> listener.handleRefreshScopeRefreshedEvent(new RefreshScopeRefreshedEvent()));
     }
 }

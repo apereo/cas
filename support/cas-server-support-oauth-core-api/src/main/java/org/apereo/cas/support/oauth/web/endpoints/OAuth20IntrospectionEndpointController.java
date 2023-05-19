@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -179,7 +180,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
 
             val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, new ArrayList<>(0));
             if (!grant.isEmpty()) {
-                introspect.setGrantType(grant.get(0).toString().toLowerCase());
+                introspect.setGrantType(grant.get(0).toString().toLowerCase(Locale.ENGLISH));
             }
         } else {
             introspect.setActive(false);

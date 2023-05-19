@@ -27,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.consent.redis.host=localhost",
-        "cas.consent.redis.port=6379"
+        "cas.consent.redis.port=6379",
+        "cas.consent.redis.pool.max-active=20",
+        "cas.consent.redis.pool.enabled=true"
     })
 @Tag("Redis")
 @Getter
