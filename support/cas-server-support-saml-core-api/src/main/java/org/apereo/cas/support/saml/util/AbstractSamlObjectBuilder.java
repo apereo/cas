@@ -63,6 +63,7 @@ import java.security.PublicKey;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -288,7 +289,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSBoolean.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSBooleanBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBoolean.TYPE_NAME);
-            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase()));
+            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase(Locale.ENGLISH)));
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }

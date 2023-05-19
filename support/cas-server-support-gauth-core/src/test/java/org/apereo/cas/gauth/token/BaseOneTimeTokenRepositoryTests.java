@@ -13,6 +13,7 @@ import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.awaitility.Awaitility.*;
@@ -62,10 +63,10 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @RetryingTest(3)
     public void verifyCaseInsensitiveUser() {
         val otp = getRandomOtp();
-        val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
+        val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase(Locale.ENGLISH));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp)));
-        await().untilAsserted(() -> assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp)));
+        await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(Locale.ENGLISH), otp)));
+        await().untilAsserted(() -> assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(Locale.ENGLISH), otp)));
     }
 
     @Test

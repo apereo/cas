@@ -60,6 +60,7 @@ import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +82,7 @@ import java.util.concurrent.ExecutionException;
 
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public class WebAuthnServer {
     private static final SecureRandom random = RandomUtils.getNativeInstance();
 
@@ -88,28 +90,14 @@ public class WebAuthnServer {
 
     private final ObjectMapper jsonMapper = JacksonCodecs.json();
 
-    private final RelyingParty rp;
-
-    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
-
-    private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
-
     private final RegistrationStorage userStorage;
-
+    private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
+    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
+    private final RelyingParty rp;
     private final SessionManager sessions;
 
-    public WebAuthnServer(final RegistrationStorage userStorage, final Cache<ByteArray, RegistrationRequest> registerRequestStorage,
-                          final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage, final RelyingParty rpId,
-                          final SessionManager sessionManager) {
-        this.userStorage = userStorage;
-        this.registerRequestStorage = registerRequestStorage;
-        this.assertRequestStorage = assertRequestStorage;
-        this.rp = rpId;
-        this.sessions = sessionManager;
-    }
-
-    private static ByteArray generateRandom(final int length) {
-        var bytes = new byte[length];
+    private static ByteArray generateRandom() {
+        var bytes = new byte[32];
         random.nextBytes(bytes);
         return new ByteArray(bytes);
     }
@@ -135,14 +123,14 @@ public class WebAuthnServer {
                 UserIdentity.builder()
                     .name(username)
                     .displayName(displayName.get())
-                    .id(generateRandom(32))
+                    .id(generateRandom())
                     .build()
             );
 
             val request = new RegistrationRequest(
                 username,
                 credentialNickname,
-                generateRandom(32),
+                generateRandom(),
                 rp.startRegistration(
                     StartRegistrationOptions.builder()
                         .user(registrationUserId)
@@ -220,7 +208,7 @@ public class WebAuthnServer {
                             request.credentialNickname(),
                             registration
                         ),
-                        registration.isAttestationTrusted(),
+                        registration.isAttestationTrusted() || rp.isAllowUntrustedAttestation(),
                         sessions.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );
@@ -241,7 +229,7 @@ public class WebAuthnServer {
             return Either.left(Collections.singletonList("The username \"" + username.get() + "\" is not registered."));
         } else {
             var request = new AssertionRequestWrapper(
-                generateRandom(32),
+                generateRandom(),
                 rp.startAssertion(
                     StartAssertionOptions.builder()
                         .username(username)
@@ -451,7 +439,6 @@ public class WebAuthnServer {
         final Optional<String> nickname,
         final RegistrationResult result) {
 
-        val source = (AttestationMetadataSource) rp.getAttestationTrustSource().get();
         return addRegistration(
             userIdentity,
             nickname,
@@ -465,16 +452,21 @@ public class WebAuthnServer {
             result
                 .getAttestationTrustPath()
                 .flatMap(x5c -> x5c.stream().findFirst())
-                .flatMap(source::findMetadata));
+                .flatMap(cert -> {
+                    if (rp.getAttestationTrustSource().get() instanceof AttestationMetadataSource source) {
+                        return source.findMetadata(cert);
+                    }
+                    return Optional.empty();
+                }));
     }
 
 
     private CredentialRegistration addRegistration(
-        UserIdentity userIdentity,
-        Optional<String> nickname,
-        RegisteredCredential credential,
-        SortedSet<AuthenticatorTransport> transports,
-        Optional<Attestation> attestationMetadata) {
+        final UserIdentity userIdentity,
+        final Optional<String> nickname,
+        final RegisteredCredential credential,
+        final SortedSet<AuthenticatorTransport> transports,
+        final Optional<Attestation> attestationMetadata) {
         val reg = CredentialRegistration.builder()
             .userIdentity(userIdentity)
             .credentialNickname(nickname.orElse(null))

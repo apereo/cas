@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenFailureResponse;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenSuccessResponse;
@@ -45,26 +46,27 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
 
     @Test
     public void verifyBadCredentialsOperation() {
-        val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation("---");
+        val registeredService = addRegisteredService();
+        val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation("---", registeredService);
         assertNotNull(body.getError());
     }
 
     @Test
     public void verifyOperation() {
-        val auth = CLIENT_ID + ':' + CLIENT_SECRET;
-        addRegisteredService();
-        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth);
+        val service = addRegisteredService();
+        val auth = service.getClientId() + ':' + CLIENT_SECRET;
+        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth, service);
 
         assertNotNull(body);
-        assertEquals(CLIENT_ID, body.getClientId());
+        assertEquals(service.getClientId(), body.getClientId());
         assertEquals(SERVICE_URL, body.getAud());
     }
 
     @Test
     public void verifyBadSecret() {
-        val auth = CLIENT_ID + ':' + CLIENT_SECRET;
-        addRegisteredService(SERVICE_URL, UUID.randomUUID().toString());
-        val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation(auth);
+        val service = addRegisteredService(SERVICE_URL, UUID.randomUUID().toString());
+        val auth = service.getClientId() + ':' + CLIENT_SECRET;
+        val body = (OAuth20IntrospectionAccessTokenFailureResponse) internalVerifyOperation(auth, service);
         assertNotNull(body.getError());
     }
 
@@ -72,12 +74,12 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
     public void verifyOperationFromOtherClient() {
         val registeredService2 = getRegisteredService(REDIRECT_URI, CLIENT_ID2, CLIENT_SECRET);
         servicesManager.save(registeredService2);
+        val registeredService = addRegisteredService();
 
         val auth2 = CLIENT_ID2 + ':' + CLIENT_SECRET;
-        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth2);
-
+        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) internalVerifyOperation(auth2, registeredService);
         assertNotNull(body);
-        assertEquals(CLIENT_ID, body.getClientId());
+        assertEquals(registeredService.getClientId(), body.getClientId());
         assertEquals(SERVICE_URL, body.getAud());
     }
 
@@ -110,24 +112,24 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
 
     @Test
     public void verifyBadOperation() {
-        addRegisteredService();
+        val service = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val auth = CLIENT_ID + ':' + CLIENT_SECRET;
+        val auth = service.getClientId() + ':' + CLIENT_SECRET;
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
         request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
         val result = introspectionEndpoint.handleRequest(request, response);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
-    protected BaseOAuth20IntrospectionAccessTokenResponse internalVerifyOperation(final String auth) {
+    protected BaseOAuth20IntrospectionAccessTokenResponse internalVerifyOperation(final String auth,
+                                                                                  final OAuthRegisteredService registeredService) {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
         val value = EncodingUtils.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
         request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
 
-        val registeredService = addRegisteredService();
         val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 

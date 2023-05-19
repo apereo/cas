@@ -46,7 +46,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -68,7 +68,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -112,4 +112,4 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Report Dependency Updates
         run: |
-          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8
+          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates --no-configuration-cache -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8

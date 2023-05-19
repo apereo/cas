@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @Import(CasConsentCoreConfiguration.class)
 @TestPropertySource(properties =
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")

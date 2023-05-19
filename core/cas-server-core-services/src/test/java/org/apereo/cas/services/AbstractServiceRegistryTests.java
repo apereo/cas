@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -488,11 +489,10 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifyServiceRemovals(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
-        val list = new ArrayList<RegisteredService>(5);
-        IntStream.range(1, 5).forEach(i -> {
-            val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-            list.add(serviceRegistry.save(r));
-        });
+        val list = IntStream.range(1, 5)
+            .mapToObj(i -> buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass))
+            .map(r -> serviceRegistry.save(r))
+            .collect(Collectors.toCollection(() -> new ArrayList<>(5)));
 
         list.forEach(Unchecked.consumer(r2 -> {
             Thread.sleep(500);

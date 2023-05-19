@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "spring.main.allow-bean-definition-overriding=true",
+    "spring.cloud.compatibility-verifier.enabled=false",
     "server.port=9988",
     "cas.consent.rest.url=http://localhost:9988"
 },

@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
+import org.apereo.cas.config.CasSupportJdbcAuditConfiguration;
 
 import lombok.Getter;
 import lombok.val;

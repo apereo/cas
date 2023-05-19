@@ -1,9 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -111,8 +109,9 @@ public class CasCoreWebConfiguration {
         @ConditionalOnMissingBean(name = ArgumentExtractor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
-            val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
-            configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
+            val serviceFactoryList = configurers.stream()
+                .flatMap(c -> c.buildServiceFactories().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             return new DefaultArgumentExtractor(serviceFactoryList);
         }

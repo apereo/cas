@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,8 +53,8 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final OneTimeToken record) {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
-        values.put(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(record.getUserId().toLowerCase()).build());
-        values.put(ColumnNames.TOKEN.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getToken()).toLowerCase()).build());
+        values.put(ColumnNames.USERID.getColumnName(), AttributeValue.builder().s(record.getUserId().toLowerCase(Locale.ENGLISH)).build());
+        values.put(ColumnNames.TOKEN.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getToken()).toLowerCase(Locale.ENGLISH)).build());
         val time = record.getIssuedDateTime().toEpochSecond(ZoneOffset.UTC);
         values.put(ColumnNames.CREATION_TIME.getColumnName(), AttributeValue.builder().n(String.valueOf(time)).build());
         values.put(ColumnNames.BODY.getColumnName(),
@@ -95,7 +96,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase(Locale.ENGLISH)).build()))
                 .operator(ComparisonOperator.EQ)
                 .build(),
             DynamoDbQueryBuilder.builder()
@@ -143,7 +144,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase(Locale.ENGLISH)).build()))
                 .operator(ComparisonOperator.EQ)
                 .build());
         return getRecordsByKeys(query).size();
@@ -191,7 +192,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase(Locale.ENGLISH)).build()))
                 .operator(ComparisonOperator.EQ)
                 .build());
         val records = getRecordsByKeys(query);
@@ -218,7 +219,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase(Locale.ENGLISH)).build()))
                 .operator(ComparisonOperator.EQ)
                 .build(),
             DynamoDbQueryBuilder.builder()
@@ -256,16 +257,18 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
                     .build());
         val records = getRecordsByKeys(query);
 
-        records.forEach(record -> {
-            val del = DeleteItemRequest.builder()
+        records
+            .stream()
+            .map(record -> DeleteItemRequest.builder()
                 .tableName(dynamoDbProperties.getTokenTableName())
                 .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
                     AttributeValue.builder().n(String.valueOf(record.getId())).build()))
-                .build();
-            LOGGER.debug("Submitting delete request [{}] since [{}]", del, epoch);
-            val res = amazonDynamoDBClient.deleteItem(del);
-            LOGGER.debug("Delete request came back with result [{}]", res);
-        });
+                .build())
+            .forEach(del -> {
+                LOGGER.debug("Submitting delete request [{}] since [{}]", del, epoch);
+                val res = amazonDynamoDBClient.deleteItem(del);
+                LOGGER.debug("Delete request came back with result [{}]", res);
+            });
     }
 
     /**

@@ -4,11 +4,12 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
@@ -17,7 +18,6 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +57,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     protected static CasProtocolValidationSpecification getValidationSpecification() {
         return new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class),
-            input -> input.chainedAuthentications().size() == 1);
+            input -> input.getChainedAuthentications().size() == 1);
     }
 
     protected static ProxyHandler getProxyHandler() {

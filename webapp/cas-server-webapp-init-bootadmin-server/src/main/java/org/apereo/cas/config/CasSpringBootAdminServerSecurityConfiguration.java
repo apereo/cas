@@ -33,19 +33,20 @@ public class CasSpringBootAdminServerSecurityConfiguration {
         val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + '/');
-        http.authorizeHttpRequests()
-            .requestMatchers(adminContextPath + "/assets/**", adminContextPath + "/login").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin().loginPage(adminContextPath + "/login").successHandler(successHandler).and()
-            .logout().logoutUrl(adminContextPath + "/logout").and()
-            .httpBasic().and()
-            .csrf()
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .ignoringRequestMatchers(
-                adminContextPath + "/instances",
-                adminContextPath + "/actuator/**"
-            );
+
+        http.authorizeHttpRequests(customizer -> customizer
+                .requestMatchers(adminContextPath + "/assets/**", adminContextPath + "/login").permitAll()
+                .anyRequest().authenticated())
+            .formLogin(customizer -> customizer.loginPage(adminContextPath + "/login").successHandler(successHandler))
+            .logout(customizer -> customizer.logoutUrl(adminContextPath + "/logout"))
+            .httpBasic(customizer -> {
+            })
+            .csrf(customizer -> customizer.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                    adminContextPath + "/instances",
+                    adminContextPath + "/actuator/**"
+                ));
+
         return http.build();
     }
 }

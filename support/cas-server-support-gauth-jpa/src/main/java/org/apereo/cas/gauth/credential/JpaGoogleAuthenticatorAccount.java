@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.io.Serial;
 import java.math.BigInteger;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +52,7 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
     public static JpaGoogleAuthenticatorAccount from(final OneTimeTokenAccount acct) {
         return JpaGoogleAuthenticatorAccount.builder()
             .id(acct.getId())
-            .username(acct.getUsername().trim().toLowerCase())
+            .username(acct.getUsername().trim().toLowerCase(Locale.ENGLISH))
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
             .scratchCodes(acct.getScratchCodes()

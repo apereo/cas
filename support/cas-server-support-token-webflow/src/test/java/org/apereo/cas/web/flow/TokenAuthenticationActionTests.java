@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
+import org.apereo.cas.config.TokenAuthenticationWebflowConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -12,7 +13,6 @@ import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.nimbusds.jose.EncryptionMethod;

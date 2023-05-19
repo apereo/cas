@@ -5,8 +5,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")
-    
-    provided project(":webapp:cas-server-webapp-config")
+    implementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")

@@ -46,7 +46,7 @@ The parameters passed are as follows:
 | `logger`         | The object responsible for issuing log messages such as `logger.info(...)`. |
 
     
-## Preprocesing Authentication
+## Preprocessing Authentication
 
 You may also opt into preprocessing the delegated authentication event prior to the final step in the process and before an SSO session is created. 
 Preprocessing the authentication here allows one to manipulate and update the final authenticated principal before it's fully baked into the SSO session.

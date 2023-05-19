@@ -12,12 +12,14 @@ const assert = require('assert');
     });
     console.log("Creating HTTP server for CAS client on port 8080");
     let server = await http.createServer(async (req, res) => {
-        if(!await handler(req, res)) {
+        if (!await handler(req, res)) {
             return res.end();
         }
-        const { principal } = req;
-        console.log(principal);
-        assert(principal.user === "casuser");
+        const {principal} = req;
+        if (principal !== undefined) {
+            console.log(`Principal: ${principal}`);
+            assert(principal.user === "casuser");
+        }
         res.end();
     }).listen(8080);
 

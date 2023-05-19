@@ -7,6 +7,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
+import java.util.EnumSet;
+
 
 /**
  * This is {@link OAuth20IdTokenResponseTypeAuthorizationRequestValidator}.
@@ -25,7 +27,7 @@ public class OAuth20IdTokenResponseTypeAuthorizationRequestValidator extends OAu
     }
 
     @Override
-    public OAuth20ResponseTypes getResponseType() {
-        return OAuth20ResponseTypes.ID_TOKEN;
+    public EnumSet<OAuth20ResponseTypes> getSupportedResponseTypes() {
+        return EnumSet.of(OAuth20ResponseTypes.ID_TOKEN);
     }
 }

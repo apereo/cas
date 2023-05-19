@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -103,7 +104,14 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
             .principal(principal)
             .build();
         val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
-        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
+
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(selectedService)
+            .principal(principal)
+            .build();
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 
         val modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
 

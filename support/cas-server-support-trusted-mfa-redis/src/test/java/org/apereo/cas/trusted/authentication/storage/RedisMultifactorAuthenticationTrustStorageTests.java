@@ -1,10 +1,10 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 
+import org.apereo.cas.config.RedisMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.RedisMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
@@ -49,8 +49,9 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
     @BeforeEach
     public void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
-        val keys = redisMfaTrustedAuthnTemplate.scan(key, 0).collect(Collectors.toSet());
-        redisMfaTrustedAuthnTemplate.delete(keys);
+        try (val keys = redisMfaTrustedAuthnTemplate.scan(key, 0)) {
+            redisMfaTrustedAuthnTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Test

@@ -79,6 +79,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WsFederationHelper {
 
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     private final OpenSamlConfigBean openSamlConfigBean;
 
     private final ServicesManager servicesManager;
@@ -89,7 +93,6 @@ public class WsFederationHelper {
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
         val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
-        Security.addProvider(new BouncyCastleProvider());
         LOGGER.debug("Parsing credential private key");
         try (val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();

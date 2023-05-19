@@ -19,6 +19,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
                     .service(d.getService())
                     .createdDateTime(d.getCreatedDate())
                     .attributes(consentEngine.resolveConsentableAttributesFrom(d))
-                    .options("screen.account.consent." + d.getOptions().name().toLowerCase())
+                    .options("screen.account.consent." + d.getOptions().name().toLowerCase(Locale.ENGLISH))
                     .reminder(String.format("%s - %s", d.getReminder(), d.getReminderTimeUnit()))
                     .build();
                 decision.setJson(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(decision));

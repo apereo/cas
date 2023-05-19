@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
-import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
-import org.apereo.cas.adaptors.x509.config.X509CertificateExtractorConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.X509AuthenticationWebflowConfiguration;
+import org.apereo.cas.config.X509CertificateExtractorConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import lombok.val;

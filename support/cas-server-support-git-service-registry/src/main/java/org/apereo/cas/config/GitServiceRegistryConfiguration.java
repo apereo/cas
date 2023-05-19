@@ -50,7 +50,6 @@ public class GitServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistryRepositoryInstance")
     public GitRepository gitServiceRegistryRepositoryInstance(
-        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val registry = casProperties.getServiceRegistry().getGit();
         return GitRepositoryBuilder.newInstance(registry).build();

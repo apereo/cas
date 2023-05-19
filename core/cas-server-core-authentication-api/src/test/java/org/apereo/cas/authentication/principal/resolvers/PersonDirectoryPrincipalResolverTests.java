@@ -397,15 +397,13 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyPrincipalIdViaCurrentPrincipal() {
         Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE, PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
-            .forEach(merger -> {
-                val context = getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
-                    .returnNullIfNoAttributes(true)
-                    .principalAttributeNames("custom:attribute")
-                    .useCurrentPrincipalId(true)
-                    .resolveAttributes(true)
-                    .build();
-
-                val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context);
+            .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
+                .returnNullIfNoAttributes(true)
+                .principalAttributeNames("custom:attribute")
+                .useCurrentPrincipalId(true)
+                .resolveAttributes(true)
+                .build())
+            .map(context -> CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PersonDirectoryPrincipalResolver.class, context)).forEach(resolver -> {
                 val credential = mock(Credential.class);
                 val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
                 val p = resolver.resolve(credential, Optional.of(principal),

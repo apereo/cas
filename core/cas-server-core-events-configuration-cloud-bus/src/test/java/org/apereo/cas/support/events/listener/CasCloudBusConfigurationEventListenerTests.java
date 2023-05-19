@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.config.CasCloudBusEventsConfigEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

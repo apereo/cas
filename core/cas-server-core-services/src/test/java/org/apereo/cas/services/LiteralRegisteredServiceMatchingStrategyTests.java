@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +42,7 @@ public class LiteralRegisteredServiceMatchingStrategyTests {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(true);
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
-        assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase()));
+        assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase(Locale.ENGLISH)));
         assertFalse(strategy.matches(service, "https://.*"));
     }
 
@@ -49,7 +50,7 @@ public class LiteralRegisteredServiceMatchingStrategyTests {
     public void verifyOperationCaseSensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(false);
-        assertFalse(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase()));
+        assertFalse(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase(Locale.ENGLISH)));
     }
 
 

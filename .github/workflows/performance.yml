@@ -9,7 +9,7 @@ env:
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
-  PYTHON_VERSION: 3.10.2
+  PYTHON_VERSION: 3.11
   JDK_CURRENT: 17
 
 ##########################################################################
@@ -32,7 +32,6 @@ on:
 
 jobs:
   cancel-previous-runs:
-    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') && !contains(github.event.head_commit.message, 'ci:minimal') }}
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
@@ -54,7 +53,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -75,7 +74,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -109,14 +108,14 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -157,7 +156,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - uses: actions/cache@v3

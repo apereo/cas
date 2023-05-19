@@ -53,5 +53,46 @@ const cas = require('../../cas.js');
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
         }, 200);
     }
+
+    const ticketMetrics = [
+        "addTicket",
+        "getTicket",
+        "getTickets"
+    ];
+    for (let i = 0; i < ticketMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.apereo.cas.ticket.registry.TicketRegistry.${ticketMetrics[i]}`;
+        console.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
+
+    const servicesMetrics = [
+        "load",
+        "count",
+        "findServiceBy"
+    ];
+    for (let i = 0; i < servicesMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.apereo.cas.services.ServicesManager.${servicesMetrics[i]}`;
+        console.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
+
+    const authnMetrics = [
+        "authenticate"
+    ];
+    
+    for (let i = 0; i < authnMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.apereo.cas.authentication.AuthenticationManager.${authnMetrics[i]}`;
+        console.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
 })();
 

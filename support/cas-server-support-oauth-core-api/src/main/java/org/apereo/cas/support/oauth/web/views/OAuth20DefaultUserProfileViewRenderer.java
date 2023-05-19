@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -70,7 +71,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
         var type = oauthProperties.getCore().getUserProfileViewType();
         if (registeredService != null && StringUtils.isNotBlank(registeredService.getUserProfileViewType())) {
-            type = OAuthCoreProperties.UserProfileViewTypes.valueOf(registeredService.getUserProfileViewType().toUpperCase());
+            type = OAuthCoreProperties.UserProfileViewTypes.valueOf(registeredService.getUserProfileViewType().toUpperCase(Locale.ENGLISH));
         }
         LOGGER.debug("User profile view type for client [{}] is set to [{}]", accessToken.getClientId(), type);
 

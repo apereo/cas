@@ -112,14 +112,14 @@ plugins or features, we recommend that you consider a better alternative or prep
  
 The following deprecated features and settings are now removed from the CAS codebase:
 
-- Custom components used to provide or validate SAML2 tokens when CAS is configured to support [the WS Federation Protocol](../protocol/WS-Federation-Protocol.html). These components where only supplied to support OpenSAML v4 APIs and were deprecated in CAS `6.6.0`.
+- Custom components used to provide or validate SAML2 tokens when CAS is configured to support [the WS Federation Protocol](../protocol/WS-Federation-Protocol.html). These components were only supplied to support OpenSAML v4 APIs and were deprecated in CAS `6.6.0`.
 - The *Legacy* strategy used to generate device record keys for trusted devices in a multifactor authentication flow. This strategy was deprecated in CAS `6.2.0`
 - The `requiredHandlers` setting assigned to a registered service definition. This setting was deprecated in CAS `6.2.0`.
 
 ### Google Cloud (GCP) Secret Manager
 
 [Google Cloud Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-GCP-SecretManager.html) can 
-now be used as configuration source for CAS properties and settings. 
+now be used as a configuration source for CAS properties and settings. 
 
 ### Attribute Definition Enhancements
 

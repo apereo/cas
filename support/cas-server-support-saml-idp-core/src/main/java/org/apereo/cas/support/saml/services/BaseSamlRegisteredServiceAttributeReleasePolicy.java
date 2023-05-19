@@ -73,7 +73,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         if (samlRequest != null && !samlRequest.isEmpty()) {
             val applicationContext = ApplicationContextProvider.getApplicationContext();
-            val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
+            val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val attributeValue = CollectionUtils.firstElement(samlRequest).map(Object::toString).orElseThrow();
             val openSamlConfigBean = resolver.getOpenSamlConfigBean();
@@ -136,7 +136,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
     protected static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> determineServiceProviderMetadataFacade(
         final SamlRegisteredService registeredService, final String entityId) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
+        val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME,
             SamlRegisteredServiceCachingMetadataResolver.class);
         return SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, registeredService, entityId);
     }
@@ -147,7 +147,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         if (context.getRegisteredService() instanceof SamlRegisteredService samlRegisteredService) {
 
             val applicationContext = ApplicationContextProvider.getApplicationContext();
-            val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
+            val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val entityId = getEntityIdFromRequest(context.getService());
             val facade = StringUtils.isBlank(entityId)

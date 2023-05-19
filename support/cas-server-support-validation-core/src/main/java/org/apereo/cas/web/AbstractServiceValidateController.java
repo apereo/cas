@@ -238,7 +238,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator()
             .validateAuthenticationContext(assertion, request, response);
         if (!ctxResult.isSuccess()) {
-            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.service());
+            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
         var proxyIou = StringUtils.EMPTY;

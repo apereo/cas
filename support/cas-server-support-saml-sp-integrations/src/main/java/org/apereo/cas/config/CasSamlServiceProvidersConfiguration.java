@@ -69,7 +69,7 @@ public class CasSamlServiceProvidersConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
-        @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
+        @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
         final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
         return () -> {
             val preloadMetadata = (Function<SamlRegisteredService, Void>) service -> {

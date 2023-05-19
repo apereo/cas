@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,21 +28,37 @@ public class ServiceRegistryCoreProperties implements Serializable {
 
     /**
      * Flag that indicates whether to initialise active service
-     * registry implementation with a default set of service definitions included
+     * registry implementation with a set of service definitions included
      * with CAS by default in JSON format.
      * The initialization generally tends to find JSON service definitions
-     * from {@link org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties#getLocation()}.
+     * from {@link JsonServiceRegistryProperties#getLocation()}.
+     * <p>
+     * In cases where the location points to an embedded directory or resource inside a JAR/ZIP file,
+     * such as those that might have been packaged with the CAS application as part of the build and assembly process,
+     * embedded services are first exported out into a temporary directory and then read as file-system resources.
+     * In such scenarios, you may want to turn off the watcher via
+     * {@link JsonServiceRegistryProperties#isWatcherEnabled()}.
+     * <p>
+     * If the default location offered by CAS, {@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}, is used,
+     * CAS would attempt to locate JSON service files by forming the following pattern for each active spring application profile:
+     * <br/>
+     * <pre>classpath*:/{@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY}/profile-id/*.json</pre>
+     * <p>
+     * You may also control whether default services should be included and initialized
+     * via {@link #isInitDefaultServices()}.
      */
     private boolean initFromJson;
 
     /**
+     * Flag that indicates whether service definitions that ship with CAS by default
+     * should be included in the initialization process and imported into CAS service registry.
+     * Default service files that ship with CAS are found on the classpath
+     * inside the {@value JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY} directory.
+     */
+    private boolean initDefaultServices = true;
+
+    /**
      * Determine how services are internally managed, queried, cached and reloaded by CAS.
-     * Accepted values are the following:
-     *
-     * <ul>
-     * <li>DEFAULT: Keep all services inside a concurrent map.</li>
-     * <li>DOMAIN: Group registered services by their domain having been explicitly defined.</li>
-     * </ul>
      */
     private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
 

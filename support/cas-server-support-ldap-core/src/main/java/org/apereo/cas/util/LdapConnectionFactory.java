@@ -32,6 +32,7 @@ import org.ldaptive.referral.FollowSearchReferralHandler;
 
 import java.io.Closeable;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -207,7 +208,7 @@ public class LdapConnectionFactory implements Closeable {
         try {
             val oldPasswordAvailable = oldPassword != null && oldPassword.length > 0;
             val connConfig = connectionFactory.getConnectionConfig();
-            val secureLdap = connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://");
+            val secureLdap = connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase(Locale.ENGLISH).contains("ldaps://");
             if (connConfig.getUseStartTLS() || secureLdap) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                             + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",

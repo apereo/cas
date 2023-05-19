@@ -20,4 +20,13 @@ public interface MessageSanitizer {
      * @return the string
      */
     String sanitize(String msg);
+
+    /**
+     * None message sanitizer.
+     *
+     * @return the message sanitizer
+     */
+    static MessageSanitizer disabled() {
+        return msg -> msg;
+    }
 }

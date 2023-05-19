@@ -84,12 +84,6 @@ public class ConsentProperties implements Serializable {
     private MongoDbConsentProperties mongo = new MongoDbConsentProperties();
 
     /**
-     * Keep consent decisions stored via a CouchDb database resource.
-     */
-    @NestedConfigurationProperty
-    private CouchDbConsentProperties couchDb = new CouchDbConsentProperties();
-
-    /**
      * Keep consent decisions stored via a DynamoDb database resource.
      */
     @NestedConfigurationProperty

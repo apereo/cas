@@ -4,6 +4,7 @@ RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
+
 function printred() {
   printf "${RED}$1${ENDCOLOR}\n"
 }
@@ -29,7 +30,7 @@ function validateProjectDocumentation() {
 
 clear
 
-GRADLE_BUILD_OPTIONS="--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
+GRADLE_BUILD_OPTIONS="-q --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
@@ -44,11 +45,12 @@ thirdParty=true
 serviceProps=true
 publishDocs=true
 buildDocs=true
-serve=false
 clone=true
 buildFeatures=true
 shellCommands=true
 dependencyVersions=true
+
+serve=false
 
 while (("$#")); do
   case "$1" in
@@ -56,7 +58,7 @@ while (("$#")); do
     printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
     ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
     printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
-    exit 0
+    shift 1
     ;;
   --local)
     propFilter=$2
@@ -66,7 +68,7 @@ while (("$#")); do
     
     audit=false
     proofRead=false
-    actuators=false
+    actuators=false 
     thirdParty=false
     serviceProps=false
     publishDocs=false
@@ -150,6 +152,13 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" 
   printyellow "\nNo GitHub token is defined to publish documentation."
 fi
 
+if [[ "${CI}" == "true" ]]; then
+  echo "Configuring git settings..."
+  git config --global http.postbuffer 524288000
+  git config --global credential.helper "cache --timeout=86400"
+  git config --global pack.threads "8"
+fi
+
 echo "-------------------------------------------------------"
 printgreen "Branch: \t\t${branchVersion}"
 printgreen "Build: \t\t\t${buildDocs}"
@@ -184,6 +193,7 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages"
   [[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
   [[ -d $PWD/docs-includes ]] && rm -Rf "$PWD"/docs-includes
+  [[ -d $PWD/docs-includes-site ]] && rm -Rf "$PWD"/docs-includes-site
 
   printgreen "Copying project documentation over to $PWD/docs-latest...\n"
   chmod -R 777 docs/cas-server-documentation
@@ -300,10 +310,18 @@ else
   printgreen "Skipping validation of documentation links..."
 fi
 
-
 if [[ ${buildDocs} == "true" ]]; then
   pushd .
-  cd "$PWD/gh-pages"
+
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Moving jekyll artifacts into $PWD/gh-pages/ directory"
+    mv "$PWD"/jekyll/.jekyll-cache "$PWD/gh-pages/"
+    mv "$PWD"/jekyll/.jekyll-metadata "$PWD/gh-pages/"
+    rm -Rf "$PWD"/jekyll
+  fi
+
+  cd "$PWD/gh-pages" || exit
+  
   printgreen "Installing documentation dependencies...\n"
   bundle config set force_ruby_platform true
   bundle install
@@ -311,19 +329,39 @@ if [[ ${buildDocs} == "true" ]]; then
   echo -n "Starting at " && date
   jekyll --version
 
+  if [[ "${CI}" == "true" ]]; then
+    while sleep 30; do echo -e '\n=====[ Build is still running ]====='; done &
+    sleeppid=$!
+  fi
+
   if [[ ${serve} == "true" ]]; then
-    bundle exec jekyll serve --profile --incremental
+    bundle exec jekyll serve --profile --incremental --trace
   else
-    bundle exec jekyll build --profile
+    bundle exec jekyll build --profile --incremental --trace
+  fi
+  retVal=$?
+  if [[ "${CI}" == "true" ]]; then
+    kill -9 sleeppid
   fi
 
   echo -n "Ended at " && date
-  retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to build documentation.\n"
     exit ${retVal}
   fi
   popd
+  
+  if [[ "$CI" == "true" ]]; then
+    echo "Moving jekyll build artifacts into $PWD/jekyll"
+    mkdir -p "$PWD/jekyll"
+    mv "$PWD"/gh-pages/.jekyll-cache "$PWD"/jekyll/
+    mv "$PWD"/gh-pages/.jekyll-metadata "$PWD"/jekyll/
+    printgreen "Jekyll cache is now at $PWD/jekyll/"
+    ls -al "$PWD/jekyll/"
+  else
+    printyellow "Deleting jekyll build directory"
+    rm -Rf "$PWD"/jekyll/
+  fi
 fi
 
 if [[ $proofRead == "true" ]]; then
@@ -337,10 +375,11 @@ if [[ $proofRead == "true" ]]; then
 fi
 
 pushd .
-cd "$PWD/gh-pages"
+cd "$PWD/gh-pages" || exit
 
 if [[ $clone == "true" ]]; then
   rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
+  rm -Rf "$branchVersion/build"
   printgreen "\nConfiguring git repository settings...\n"
   rm -Rf .git
   git init
@@ -360,28 +399,35 @@ if [[ $clone == "true" ]]; then
   touch "$branchVersion/.nojekyll"
   rm -Rf _site
   rm -Rf _data
-fi 
+fi
 
-if [[ "${publishDocs}" == "true" ]]; then
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
+  printyellow "\nNo GitHub token is defined to publish documentation. Skipping..."
+  if [[ $clone == "true" ]]; then
+    rm -Rf "$PWD/gh-pages"
+    exit 0
+  fi
+elif [[ "${publishDocs}" == "true" ]]; then
   printgreen "Adding changes to the git index...\n"
   git add --all -f 2>/dev/null
 
   printgreen "Committing changes...\n"
-  git commit -am "Published docs to [gh-pages] from $branchVersion." 2>/dev/null
+  git commit -am "Published docs to [gh-pages] from $branchVersion." --quiet 2>/dev/null
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    printred "Failed to push documentation.\n"
+    exit ${retVal}
+  fi
   git status
 
-  printgreen "Pushing changes to remote repository...\n"
-  if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
-    printyellow "\nNo GitHub token is defined to publish documentation. Skipping"
-    popd
-    if [[ $clone == "true" ]]; then
-      rm -Rf "$PWD/gh-pages"
-      exit 0
-    fi
-  fi
-
-  printgreen "Pushing upstream to origin/gh-pages...\n"
+  echo "Pushing changes to upstream..."
   git push -fq origin gh-pages
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    printred "Failed to push documentation.\n"
+    exit ${retVal}
+  fi
+  printgreen "Pushed upstream to origin/gh-pages...\n"
   retVal=$?
 else
   printyellow "Skipping documentation push to remote repository...\n"
@@ -390,7 +436,7 @@ fi
 popd
 
 if [[ $clone == "true" ]]; then
-  rm -Rf "$PWD/gh-pages"
+  rm -Rf "$PWD/gh-pages" || true
 fi
 
 if [[ ${retVal} -eq 0 ]]; then

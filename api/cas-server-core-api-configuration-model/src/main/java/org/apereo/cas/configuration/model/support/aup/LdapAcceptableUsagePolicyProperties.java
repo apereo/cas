@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
+import java.util.Locale;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyProperties}.
@@ -29,5 +30,5 @@ public class LdapAcceptableUsagePolicyProperties extends AbstractLdapSearchPrope
      * Attribute value that indicates whether AUP has been accepted
      * for the LDAP record.
      */
-    private String aupAcceptedAttributeValue = Boolean.TRUE.toString().toUpperCase();
+    private String aupAcceptedAttributeValue = Boolean.TRUE.toString().toUpperCase(Locale.ENGLISH);
 }

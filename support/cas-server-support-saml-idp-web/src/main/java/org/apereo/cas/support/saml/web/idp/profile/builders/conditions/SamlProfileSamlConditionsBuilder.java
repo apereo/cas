@@ -17,6 +17,7 @@ import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link SamlProfileSamlConditionsBuilder}.
@@ -57,14 +58,20 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
             skewAllowance = Beans.newDuration(casProperties.getSamlCore().getSkewAllowance()).toSeconds();
         }
 
-        val audienceUrls = new ArrayList<String>(2);
-        audienceUrls.add(context.getAdaptor().getEntityId());
-        if (StringUtils.isNotBlank(context.getRegisteredService().getAssertionAudiences())) {
-            val audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(context.getRegisteredService().getAssertionAudiences());
-            audienceUrls.addAll(audiences);
-        }
+        val audienceUrls = buildConditionsAudiences(context);
         return newConditions(currentDateTime.minusSeconds(skewAllowance),
             currentDateTime.plusSeconds(skewAllowance),
             audienceUrls.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+    }
+
+    protected List<String> buildConditionsAudiences(final SamlProfileBuilderContext context) {
+        val audienceUrls = new ArrayList<String>(2);
+        if (StringUtils.isNotBlank(context.getRegisteredService().getAssertionAudiences())) {
+            val audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(context.getRegisteredService().getAssertionAudiences());
+            audienceUrls.addAll(audiences);
+        } else {
+            audienceUrls.add(context.getAdaptor().getEntityId());
+        }
+        return audienceUrls;
     }
 }

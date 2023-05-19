@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowServiceActions")
 public class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
     @BeforeEach
     public void setup() {

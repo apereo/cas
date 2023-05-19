@@ -32,7 +32,7 @@ public class ImmutableAssertionTests {
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getAuthentication(), list, true,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(), Map.of());
-        assertEquals(list.toArray(Authentication[]::new).length, assertion.chainedAuthentications().size());
+        assertEquals(list.toArray(Authentication[]::new).length, assertion.getChainedAuthentications().size());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ImmutableAssertionTests {
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getAuthentication(), list, false,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(), Map.of());
-        assertFalse(assertion.fromNewLogin());
+        assertFalse(assertion.isFromNewLogin());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ImmutableAssertionTests {
             CoreAuthenticationTestUtils.getAuthentication(), list, true,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(), Map.of());
 
-        assertTrue(assertion.fromNewLogin());
+        assertTrue(assertion.isFromNewLogin());
     }
 
     @Test
@@ -109,6 +109,6 @@ public class ImmutableAssertionTests {
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getAuthentication(), list, false,
             service, RegisteredServiceTestUtils.getRegisteredService(), Map.of());
-        assertEquals(service, assertion.service());
+        assertEquals(service, assertion.getService());
     }
 }

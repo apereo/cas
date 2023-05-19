@@ -120,4 +120,13 @@ public class DefaultAuthenticationBuilderTests {
         assertTrue(authn.getAttributes().containsKey("authn2"));
         assertTrue(authn.containsAttribute("authn2"));
     }
+
+    @Test
+    public void verifyMergeAttributes() {
+        val authn = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication(Map.of("cn", List.of("cn1"))))
+            .mergeAttributes(Map.of("cn", List.of("cn2")))
+            .build();
+        assertTrue(authn.getAttributes().containsKey("cn"));
+        assertEquals(List.of("cn1", "cn2"), authn.getAttributes().get("cn"));
+    }
 }

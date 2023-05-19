@@ -73,6 +73,9 @@ set -e
 if [[ $cluster_found -ne 0 ]]; then
   echo "Creating cas k3d cluster"
   k3d cluster create cas  -p "$HTTP_PORT:80@loadbalancer" -p "$HTTPS_PORT:443@loadbalancer" --k3s-arg "--disable=traefik,metrics-server@server:0" --k3s-arg "--disable-cloud-controller@server:0"
+else
+  echo "Setting k8s context to k3d-cas"
+  kubectl config use-context k3d-cas
 fi
 
 echo "kubectl version"

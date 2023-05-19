@@ -1,2 +1,1 @@
-#Sun Apr 24 19:11:22 GST 2022
-org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration,org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.CasCoreBootstrapStandaloneConfiguration,org.apereo.cas.config.CasCoreEnvironmentConfiguration

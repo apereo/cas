@@ -20,7 +20,9 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +68,7 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
             } catch (final Exception e) {
                 result = null;
             }
@@ -74,7 +76,7 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
             } catch (final Exception e) {
                 result = null;
             }
@@ -171,7 +173,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return time != null ? time.atZone(ZoneOffset.UTC) : null;
+        return Optional.ofNullable(time).map(instant -> instant.atZone(ZoneOffset.UTC)).orElse(null);
     }
 
     /**
@@ -202,7 +204,7 @@ public class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final Date time) {
-        return time != null ? zonedDateTimeOf(Instant.ofEpochMilli(time.getTime())) : null;
+        return Optional.ofNullable(time).map(date -> zonedDateTimeOf(Instant.ofEpochMilli(date.getTime()))).orElse(null);
     }
 
     /**

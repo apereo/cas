@@ -21,12 +21,15 @@ const jose = require('jose');
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
-    headless: process.env.CI === "true" || process.env.HEADLESS === "true",
+    headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : "false",
     devtools: process.env.CI !== "true",
     defaultViewport: null,
+    timeout: 60000,
+    dumpio: true,
     slowMo: process.env.CI === "true" ? 0 : 10,
     args: ['--start-maximized', "--window-size=1920,1080"]
 };
+
 
 exports.browserOptions = () => BROWSER_OPTIONS;
 exports.browserOptions = (opt) => ({
@@ -92,6 +95,15 @@ exports.innerText = async (page, selector) => {
     return text;
 };
 
+exports.innerTexts = async (page, selector) => {
+    return await page.evaluate((button) => {
+        let results = [];
+        let elements = document.querySelectorAll(button);
+        elements.forEach(entry => results.push(entry.innerText.trim()));
+        return results;
+    }, selector);
+};
+
 exports.textContent = async (page, selector) => {
     let element = await page.$(selector);
     let text = await page.evaluate(element => element.textContent.trim(), element);
@@ -119,6 +131,8 @@ exports.uploadImage = async (imagePath) => {
         console.log(`Uploaded image is at ${colors.green(response.data.link)}`);
     }
 };
+
+exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
 
 exports.loginWith = async (page, user, password,
                            usernameField = "#username",
@@ -210,9 +224,10 @@ exports.type = async (page, selector, value, obfuscate = false) => {
 exports.newPage = async (browser) => {
     let page = (await browser.pages())[0];
     if (page === undefined) {
+        console.log("Opening a new page...");
         page = await browser.newPage();
     }
-    await page.setDefaultNavigationTimeout(0);
+    // await page.setDefaultNavigationTimeout(0);
     // await page.setRequestInterception(true);
     await page.bringToFront();
     page
@@ -511,6 +526,15 @@ exports.decryptJwtWithJwk = async(ticket, keyContent, alg = "RS256") => {
     const secretKey = await jose.importJWK(keyContent, alg);
     console.log(`Decrypting JWT with key ${JSON.stringify(keyContent)}`);
     const decoded = await jose.jwtDecrypt(ticket, secretKey);
+    console.log("Verified JWT:");
+    await this.logg(decoded);
+    return decoded;
+};
+
+exports.decryptJwtWithSecret = async(jwt, secret, options = {}) => {
+    console.log(`Decrypting JWT with key ${secret}`);
+    const buff = jose.base64url.decode(secret);
+    const decoded = await jose.jwtDecrypt(jwt, buff, options);
     console.log("Verified JWT:");
     await this.logg(decoded);
     return decoded;

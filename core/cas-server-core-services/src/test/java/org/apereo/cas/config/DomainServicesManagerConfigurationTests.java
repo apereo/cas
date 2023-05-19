@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 
 import org.junit.jupiter.api.Tag;

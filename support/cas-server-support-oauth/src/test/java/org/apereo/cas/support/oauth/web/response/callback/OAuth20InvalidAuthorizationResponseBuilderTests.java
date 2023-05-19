@@ -53,8 +53,9 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
 
     @Test
     public void verifyRequestWithCallbackAndDescription() throws Exception {
+        val service = addRegisteredService();
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
 
         val response = new MockHttpServletResponse();
@@ -82,8 +83,9 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
 
     @Test
     public void verifyRequestWithCallbackWithoutDescription() throws Exception {
+        val service = addRegisteredService();
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
         request.addParameter(OAuth20Constants.STATE, "abcdefgh");
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());

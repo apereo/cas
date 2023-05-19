@@ -35,6 +35,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -212,8 +213,11 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
         val nameIdFormats = new ArrayList<String>();
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
-            nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((XSURI) child).getURI()).toList());
+            nameIdFormats.addAll(children.stream()
+                .filter(NameIDFormat.class::isInstance)
+                .map(child -> ((XSURI) child).getURI())
+                .filter(Objects::nonNull)
+                .toList());
         }
         return nameIdFormats;
     }
@@ -243,8 +247,11 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
      * @return the assertion consumer service
      */
     public AssertionConsumerService getAssertionConsumerService(final String binding) {
-        val acsList = getAssertionConsumerServices().stream()
-            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).collect(Collectors.toList());
+        val acsList = getAssertionConsumerServices()
+            .stream()
+            .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
+            .collect(Collectors.toList());
         return SAML2MetadataSupport.getDefaultIndexedEndpoint(acsList);
     }
 
@@ -269,6 +276,7 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
     public List<String> getAssertionConsumerServiceLocations(final String binding) {
         return getAssertionConsumerServices()
             .stream()
+            .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
             .collect(Collectors.toList());
@@ -284,6 +292,7 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
     public Optional<String> getAssertionConsumerServiceFor(final String binding, final Integer index) {
         return getAssertionConsumerServices()
             .stream()
+            .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding) && index != null && index.equals(acs.getIndex()))
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
             .findFirst();

@@ -9,11 +9,17 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -29,11 +35,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
+@Import(PopulateSpringSecurityContextActionTests.PopulateSpringSecurityContextActionTestConfiguration.class)
 public class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
     private Action populateSpringSecurityContextAction;
+
+    @Autowired
+    @Qualifier("securityContextRepository")
+    private SecurityContextRepository securityContextRepository;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -53,5 +64,17 @@ public class PopulateSpringSecurityContextActionTests extends AbstractWebflowAct
             .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
         assertNotNull(sec);
         assertNotNull(sec.getAuthentication());
+        assertTrue(securityContextRepository.containsContext(request));
+    }
+
+    @TestConfiguration(proxyBeanMethods = false)
+    public static class PopulateSpringSecurityContextActionTestConfiguration {
+        @Bean
+        public SecurityContextRepository securityContextRepository() {
+            return new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()
+            );
+        }
     }
 }

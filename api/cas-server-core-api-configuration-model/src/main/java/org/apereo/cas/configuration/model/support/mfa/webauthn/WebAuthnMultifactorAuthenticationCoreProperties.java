@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.mfa.webauthn;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -46,7 +45,7 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      * to pre-seed the metadata service.
      */
     @NestedConfigurationProperty
-    private SpringResourceProperties trustedDeviceMetadata = new SpringResourceProperties();
+    private WebAuthnMultifactorAttestationTrustSourceProperties trustSource = new WebAuthnMultifactorAttestationTrustSourceProperties();
 
     /**
      * The extension input to set for the {@code appid} extension when initiating authentication operations.
@@ -133,6 +132,6 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
     private boolean allowPrimaryAuthentication;
 
     public WebAuthnMultifactorAuthenticationCoreProperties() {
-        trustedDeviceMetadata.setLocation(new ClassPathResource("webauthn-metadata.json"));
+        trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));
     }
 }

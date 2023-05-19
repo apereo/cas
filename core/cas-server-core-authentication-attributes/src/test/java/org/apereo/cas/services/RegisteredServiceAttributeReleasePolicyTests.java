@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
@@ -32,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -229,8 +229,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             private static final long serialVersionUID = 771643288929352964L;
 
             @Override
-            public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-                return principal.getId();
+            public String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+                return context.getPrincipal().getId();
             }
         });
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -307,7 +307,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
 
-        repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase()));
+        repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase(Locale.ENGLISH)));
         policy.setPrincipalAttributesRepository(repository);
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAttributesTestUtils.getRegisteredService())

@@ -36,6 +36,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -144,7 +145,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
                 LOGGER.warn("Caching for the global principal attribute repository is disabled");
                 return new DefaultPrincipalAttributesRepository();
             }
-            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
+            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(Locale.ENGLISH), cacheTime);
         }
 
     }

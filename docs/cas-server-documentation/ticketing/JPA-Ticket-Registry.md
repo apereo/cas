@@ -23,22 +23,10 @@ Support is enabled by adding the following module into the overlay:
 
 {% include_cached casproperties.html properties="cas.ticket.registry.jpa" %}
 
-## JPA Ticket Cleaner
-
-A background *cleaner* process is also automatically scheduled to scan the chosen 
-database periodically and remove expired records based on configured threshold parameters.
-
-{% include_cached casproperties.html properties="cas.ticket.registry.cleaner" %}
-
-<div class="alert alert-warning">:warning: <strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is 
-best to keep the cleaner running on one designated CAS node only and turn it off on all others 
-via CAS settings. Keeping the cleaner running on all nodes may likely lead to 
-severe performance and locking issues.</p></div>
-
 ## Ticket Registry Locking
 
 This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html).
 The database schemas and tables that track locking operations should be automatically created by CAS using
 [Spring Integration](https://spring.io/projects/spring-integration) JDBC support.
 
-{% include_cached casproperties.html thirdParty="spring.integration.jdbc" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.integration.jdbc" %}

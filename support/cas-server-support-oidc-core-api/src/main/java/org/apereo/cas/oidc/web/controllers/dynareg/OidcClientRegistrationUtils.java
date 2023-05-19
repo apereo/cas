@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -68,12 +69,12 @@ public class OidcClientRegistrationUtils {
         );
         clientResponse.setGrantTypes(
             Arrays.stream(OAuth20GrantTypes.values())
-                .map(type -> type.getType().toLowerCase())
+                .map(type -> type.getType().toLowerCase(Locale.ENGLISH))
                 .collect(Collectors.toList()));
 
         clientResponse.setResponseTypes(
             Arrays.stream(OAuth20ResponseTypes.values())
-                .map(type -> type.getType().toLowerCase())
+                .map(type -> type.getType().toLowerCase(Locale.ENGLISH))
                 .collect(Collectors.toList()));
 
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();

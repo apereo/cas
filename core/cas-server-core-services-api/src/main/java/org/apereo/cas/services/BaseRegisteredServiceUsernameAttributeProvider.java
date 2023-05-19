@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -49,21 +47,23 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     private String removePattern;
 
     @Override
-    public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-        val resolvedUsername = resolveUsernameInternal(principal, service, registeredService);
+    public final String resolveUsername(final RegisteredServiceUsernameProviderContext context) {
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(context.getRegisteredService());
+            
+        val resolvedUsername = resolveUsernameInternal(context);
         if (canonicalizationMode == null) {
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
         val removedUsername = removePatternFromUsernameIfNecessary(resolvedUsername);
         val finalUsername = scopeUsernameIfNecessary(removedUsername);
         val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(finalUsername.trim(), Locale.getDefault());
-        LOGGER.debug("Resolved username for [{}] is [{}]", service, uid);
+        LOGGER.debug("Resolved username for [{}] is [{}]", context.getService(), uid);
         if (!this.encryptUsername) {
             return uid;
         }
-        val encryptedId = encryptResolvedUsername(principal, service, registeredService, uid);
+        val encryptedId = encryptResolvedUsername(context, uid);
         if (StringUtils.isBlank(encryptedId)) {
-            throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + service);
+            throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + context.getService());
         }
         return encryptedId;
     }
@@ -88,26 +88,22 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     /**
      * Encrypt resolved username.
      *
-     * @param principal         the principal
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param username          the username
+     * @param context  the context
+     * @param username the username
      * @return the encrypted username or null
      */
-    protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
+    protected String encryptResolvedUsername(final RegisteredServiceUsernameProviderContext context, final String username) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
-        return cipher.encode(username, Optional.of(registeredService));
+        return cipher.encode(username, Optional.of(context.getRegisteredService()));
     }
 
     /**
      * Resolve username internal string.
      *
-     * @param principal         the principal
-     * @param service           the service
-     * @param registeredService the registered service
+     * @param context the context
      * @return the string
      */
-    protected abstract String resolveUsernameInternal(Principal principal, Service service, RegisteredService registeredService);
+    protected abstract String resolveUsernameInternal(RegisteredServiceUsernameProviderContext context);
 
 }

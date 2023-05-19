@@ -1,10 +1,9 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
-import org.apereo.cas.configuration.model.support.amqp.AMQPTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
@@ -44,12 +43,6 @@ public class TicketRegistryProperties implements Serializable {
     private CosmosDbTicketRegistryProperties cosmosDb = new CosmosDbTicketRegistryProperties();
 
     /**
-     * AMQP registry settings.
-     */
-    @NestedConfigurationProperty
-    private AMQPTicketRegistryProperties amqp = new AMQPTicketRegistryProperties();
-
-    /**
      * DynamoDb registry settings.
      */
     @NestedConfigurationProperty
@@ -60,6 +53,12 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbTicketRegistryProperties mongo = new MongoDbTicketRegistryProperties();
+
+    /**
+     * GoogleCloud Firestore registry settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleCloudFirestoreTicketRegistryProperties googleCloudFirestore = new GoogleCloudFirestoreTicketRegistryProperties();
 
     /**
      * Hazelcast registry settings.
@@ -104,22 +103,18 @@ public class TicketRegistryProperties implements Serializable {
     private InMemoryTicketRegistryProperties inMemory = new InMemoryTicketRegistryProperties();
 
     /**
-     * CouchDb registry settings.
-     */
-    @NestedConfigurationProperty
-    private CouchDbTicketRegistryProperties couchDb = new CouchDbTicketRegistryProperties();
-
-    /**
      * Ticket registry cleaner settings.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     /**
      * Ticket registry core settings.
      */
     @NestedConfigurationProperty
     private TicketRegistryCoreProperties core = new TicketRegistryCoreProperties();
-
-
+    
+    public TicketRegistryProperties() {
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT10S").setRepeatInterval("PT1M");
+    }
 }

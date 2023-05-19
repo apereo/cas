@@ -1,9 +1,9 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.config.CasCoreBootstrapStandaloneConfiguration;
+import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentConfiguration;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.configuration.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
-import org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
 import lombok.val;

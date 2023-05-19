@@ -22,6 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -63,12 +64,12 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(rest.getUrl())
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
-            val statusCode = response == null ? HttpStatus.SERVICE_UNAVAILABLE.value() : response.getCode();
+            val statusCode = Optional.ofNullable(response).map(HttpResponse::getCode).orElseGet(HttpStatus.SERVICE_UNAVAILABLE::value);
             LOGGER.debug("AUP submit policy request returned with response code [{}]", statusCode);
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } finally {
@@ -88,7 +89,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(url)
                 .parameters(CollectionUtils.wrap("username", principal.getId(),
                     "locale", request.getLocale().toString()))

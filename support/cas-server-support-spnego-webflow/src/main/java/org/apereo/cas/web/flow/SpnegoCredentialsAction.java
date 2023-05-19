@@ -18,6 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
@@ -58,7 +59,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         LOGGER.debug("Available request headers are [{}]", Collections.list(request.getHeaderNames()));
         val authorizationHeader = StringUtils.defaultString(
             request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION),
-            request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION.toLowerCase()));
+            request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION.toLowerCase(Locale.ENGLISH)));
         LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);
         if (StringUtils.isBlank(authorizationHeader)) {
             LOGGER.warn("SPNEGO Authorization header is not found under [{}]", SpnegoConstants.HEADER_AUTHORIZATION);

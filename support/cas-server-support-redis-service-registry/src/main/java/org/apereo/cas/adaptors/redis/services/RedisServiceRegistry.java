@@ -91,8 +91,9 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public void deleteAll() {
-        getRegisteredServiceKeys().forEach(this.template::delete);
-
+        try (val keys = getRegisteredServiceKeys()) {
+            keys.forEach(this.template::delete);
+        }
     }
 
     @Override
@@ -103,15 +104,18 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         val clientInfo = ClientInfoHolder.getClientInfo();
-        val list = getRegisteredServiceKeys()
-            .map(redisKey -> this.template.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(this::invokeServiceRegistryListenerPostLoad)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-        LOGGER.trace("Loaded registered services [{}]", list);
-        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
-        return list;
+
+        try (val keys = getRegisteredServiceKeys()) {
+            val list = keys
+                .map(redisKey -> this.template.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            LOGGER.trace("Loaded registered services [{}]", list);
+            list.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service, clientInfo)));
+            return list;
+        }
     }
 
     @Override

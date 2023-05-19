@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,16 +29,18 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
     @Qualifier("callbackAuthorizeController")
     private OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController;
 
+    private OAuthRegisteredService registeredService;
+
     @BeforeEach
     public void initialize() {
         clearAllServices();
-        addRegisteredService();
+        registeredService = addRegisteredService();
     }
 
     @Test
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
@@ -48,7 +51,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
     @Test
     public void verifyOperationWithoutRedirectUri() {
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);
         assertNotNull(view);
@@ -79,7 +82,7 @@ public class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAu
     @Test
     public void verifyOperationBadRedirectUri() {
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "http://badredirecturi");
         val response = new MockHttpServletResponse();
         val view = callbackAuthorizeController.handleRequest(request, response);

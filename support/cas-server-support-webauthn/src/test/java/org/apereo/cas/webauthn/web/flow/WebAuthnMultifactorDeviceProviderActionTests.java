@@ -1,9 +1,9 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 

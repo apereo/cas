@@ -103,11 +103,14 @@ public class MetadataUIUtils {
             LOGGER.trace("No extensions in the SP SSO descriptor are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
-        spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
-            val uiInfo = (UIInfo) obj;
-            LOGGER.trace("Found MDUI info for [{}]", entityId);
-            mdui.setUiInfo(uiInfo);
-        });
+        spExtensions
+            .stream()
+            .filter(UIInfo.class::isInstance)
+            .map(obj -> (UIInfo) obj)
+            .forEach(uiInfo -> {
+                LOGGER.trace("Found MDUI info for [{}]", entityId);
+                mdui.setUiInfo(uiInfo);
+            });
         return mdui;
     }
 }

@@ -87,7 +87,7 @@ public class WebAuthnMultifactorAuthenticationProperties extends BaseMultifactor
      * Clean up expired records via a background cleaner process.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     /**
      * Properties and settings related to device registration records and encryption.
@@ -99,5 +99,6 @@ public class WebAuthnMultifactorAuthenticationProperties extends BaseMultifactor
         setId(DEFAULT_IDENTIFIER);
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT2M");
     }
 }

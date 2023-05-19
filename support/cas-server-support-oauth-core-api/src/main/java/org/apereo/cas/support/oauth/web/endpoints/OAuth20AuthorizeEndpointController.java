@@ -3,9 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -35,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -156,15 +154,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
-
-    /**
-     * Redirect to callback redirect url model and view.
-     *
-     * @param manager           the manager
-     * @param registeredService the registered service
-     * @param context           the context
-     * @return the model and view
-     */
+    
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context) {
@@ -179,20 +169,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
 
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-
-            val originalAttributes = Optional.ofNullable(profile.getAttribute(Authentication.class.getName()))
-                .map(Authentication.class::cast)
-                .map(Authentication::getPrincipal)
-                .map(Principal::getAttributes)
-                .orElseGet(HashMap::new);
-            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalAttributes,
-                authentication.getPrincipal().getAttributes());
-            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
-                .createPrincipal(authentication.getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
-                .principal(accessStrategyPrincipal)
+                .principal(authentication.getPrincipal())
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
@@ -247,7 +227,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
-            .filter(b -> b.supports(authzRequest))
+            .filter(bldr -> bldr.supports(authzRequest))
             .findFirst()
             .map(Unchecked.function(builder -> {
                 if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null) {
@@ -299,7 +279,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
         val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
@@ -309,7 +289,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .map(String::valueOf)
             .filter(challengeMethodsSupported::contains)
             .orElse(StringUtils.EMPTY)
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
         val claims = getConfigurationContext().getRequestParameterResolver().resolveRequestClaims(context);

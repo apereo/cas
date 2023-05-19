@@ -58,7 +58,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -80,7 +80,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -112,7 +112,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - id: print-categories
@@ -142,7 +142,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-{{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize

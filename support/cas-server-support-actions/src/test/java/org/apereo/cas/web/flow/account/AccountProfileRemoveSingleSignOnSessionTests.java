@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow.account;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.AbstractWebflowActionsTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Import({
     CasWebflowAccountProfileConfiguration.class,

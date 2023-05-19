@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -10,7 +12,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Getter
+@Monitorable
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
@@ -87,13 +89,6 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         });
     }
 
-    /**
-     * Gets metadata artifact.
-     *
-     * @param result       the result
-     * @param artifactName the artifact name
-     * @return the metadata artifact
-     */
     protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
         if (result.isPresent()) {
             val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
@@ -103,13 +98,15 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
                 LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, result.get().getName(), artifact);
                 if (artifact.exists()) {
                     LOGGER.debug("Using metadata artifact [{}] at [{}]", artifactName, artifact);
-                    return new FileSystemResource(artifact);
+                    return ResourceUtils.toFileSystemResource(artifact);
                 }
             }
         }
         initializeMetadataDirectory();
-        return new FileSystemResource(new File(this.metadataLocation, artifactName));
+        return ResourceUtils.toFileSystemResource(new File(this.metadataLocation, artifactName));
     }
+
+    
 
     private void initializeMetadataDirectory() {
         if (!this.metadataLocation.exists()) {

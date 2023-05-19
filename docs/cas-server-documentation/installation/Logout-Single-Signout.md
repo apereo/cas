@@ -70,7 +70,7 @@ A sample back channel SLO message:
     ID="[RANDOM ID]"
     Version="2.0"
     IssueInstant="[CURRENT DATE/TIME]">
-    <saml:NameID>@NOT_USED@</saml:NameID>
+    <saml:NameID>[PRINCIPAL IDENTIFIER]</saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
 </samlp:LogoutRequest>
 ```

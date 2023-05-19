@@ -56,7 +56,7 @@ servlet container may need to downgrade the version of the Servlet specification
 be sorted out prior to the final GA release by the time Jetty `12` is released.
 - A handful of dependencies and libraries (i.e. OpenSAML, Pac4j, Spring Retry,) have yet to provide a final release version compatible with Spring Boot `3` 
   and/or Jakarta APIs. These should hopefully finalize and publish a GA release in the next few release candidates.  
-- Apache BVal has been replaced with Hibernate Validator as the primary libary for bean validation. The former provides no support for Jakarta APIs, yet.
+- Apache BVal has been replaced with Hibernate Validator as the primary library for bean validation. The former provides no support for Jakarta APIs, yet.
 - Support for Spring Cloud Sleuth has been removed, and will later on be replaced with Micrometer Tracing.
 - The [SCIM 2](https://github.com/pingidentity/scim2) library is replaced with an alternative that supports Jakarta APIs.  
 

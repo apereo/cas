@@ -132,13 +132,13 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Import a Yubikey account as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
+    public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
         val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyAccount>() {
         });
         LOGGER.trace("Storing account: [{}]", account);
         registry.getObject().save(account);
-        return HttpStatus.CREATED;
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

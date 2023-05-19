@@ -123,7 +123,7 @@ Token type may be configured on a per-service basis:
 
 ## Configuration
 
-{% include_cached casproperties.html modules="cas-server-support-ws-idp,cas-server-support-ws-sts" %}
+{% include_cached casproperties.html properties="cas.authn.wsfed-idp" %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

@@ -6,10 +6,10 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.v2.ProxyValidateController;
 
 import lombok.Getter;

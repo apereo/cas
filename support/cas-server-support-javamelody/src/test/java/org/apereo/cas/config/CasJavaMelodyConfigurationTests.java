@@ -2,18 +2,20 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import org.junit.jupiter.api.Disabled;
+import net.bull.javamelody.MonitoringSpringAdvisor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * This is {@link CasJavaMelodyConfigurationTests}.
- * TODO: JavaMelody as of this commit is not compatible with Spring Boot 3.
- * The test here is disabled until support is available.
- * See <a href="https://github.com/javamelody/javamelody/issues/1143">this issue</a>.
+ *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
@@ -23,11 +25,19 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasJavaMelodyConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Disabled
 public class CasJavaMelodyConfigurationTests {
+
+    @Autowired
+    @Qualifier("monitoringSpringServiceAdvisor")
+    private MonitoringSpringAdvisor monitoringSpringServiceAdvisor;
+
+    @Autowired
+    @Qualifier("monitorableComponentsAdvisor")
+    private MonitoringSpringAdvisor monitorableComponentsAdvisor;
 
     @Test
     public void verifyOperation() {
-        throw new UnsupportedOperationException("JavaMelody is not compatible with Spring Boot 3, yet.");
+        assertNotNull(monitoringSpringServiceAdvisor);
+        assertNotNull(monitorableComponentsAdvisor);
     }
 }

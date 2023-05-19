@@ -83,6 +83,22 @@ async function staleAuthenticationFlow(context) {
         await context.close();
         console.log(`=======================================`);
     }
+
+
+    const samlMetrics = [
+        "resolve"
+    ];
+
+    const baseUrl = "https://localhost:8443/cas/actuator/";
+    for (let i = 0; i < samlMetrics.length; i++) {
+        let url = `${baseUrl}metrics/org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver.${samlMetrics[i]}`;
+        console.log(`Trying ${url}`);
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }, 200);
+    }
+    
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

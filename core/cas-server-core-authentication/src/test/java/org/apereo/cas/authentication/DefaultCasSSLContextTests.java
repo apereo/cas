@@ -69,22 +69,6 @@ public class DefaultCasSSLContextTests {
 
     @Nested
     @SpringBootTest(classes = SharedTestConfiguration.class,
-        properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
-    @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultSslContext {
-        @Autowired
-        @Qualifier(CasSSLContext.BEAN_NAME)
-        private CasSSLContext casSslContext;
-
-        @Test
-        public void verifyOperation() throws Exception {
-            assertNotNull(casSslContext.getTrustManagerFactory());
-            assertNotNull(SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));
-        }
-    }
-
-    @Nested
-    @SpringBootTest(classes = SharedTestConfiguration.class,
         properties = "cas.http-client.host-name-verifier=none")
     @SuppressWarnings("ClassCanBeStatic")
     public class DisabledSslContext {

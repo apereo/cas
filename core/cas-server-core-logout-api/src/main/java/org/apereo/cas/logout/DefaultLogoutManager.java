@@ -63,7 +63,6 @@ public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, Logout
             .entrySet()
             .stream()
             .filter(entry -> entry.getValue() instanceof WebApplicationService)
-            .filter(Objects::nonNull)
             .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue())).toList();
 
         val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();

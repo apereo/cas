@@ -83,7 +83,6 @@ Device registrations can also be managed using any one of the following strategi
 |-------------|-----------------------------------------------------------------------------------|
 | JSON        | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).     |
 | JDBC        | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).     |
-| ~~CouchDb~~ | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html).  |
 | MongoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  |
 | DynamoDb    | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html). |
 | Redis       | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).    |

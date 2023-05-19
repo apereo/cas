@@ -30,7 +30,7 @@ prometheusExporter:
 
 image:
   repository: sonarqube
-  tag: 9.7.1-community
+  tag: lts-community
   pullPolicy: IfNotPresent
   
 plugins:
@@ -50,3 +50,4 @@ sonarProperties:
   sonar.log.level.app: "info"
   sonar.auth.oidc.allowUsersToSignUp: "true"
   sonar.auth.oidc.loginButtonText: "CAS OpenID Connect"
+  sonar.plugins.risk.consent: "ACCEPTED"

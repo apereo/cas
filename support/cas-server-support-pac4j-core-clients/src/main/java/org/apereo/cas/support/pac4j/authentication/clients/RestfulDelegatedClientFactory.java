@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ public class RestfulDelegatedClientFactory extends BaseDelegatedClientFactory {
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword(restProperties.getBasicAuthPassword())
             .basicAuthUsername(restProperties.getBasicAuthUsername())
-            .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+            .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
             .url(restProperties.getUrl())
             .parameters(Map.of("type", restProperties.getType()))
             .headers(restProperties.getHeaders())

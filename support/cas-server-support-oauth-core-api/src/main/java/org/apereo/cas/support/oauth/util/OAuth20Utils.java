@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
@@ -30,9 +31,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -102,10 +105,12 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
                                                                              final String clientId) {
-        if (StringUtils.isBlank(clientId)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equalsIgnoreCase(clientId));
+        return FunctionUtils.doIfNotBlank(clientId,
+            () -> {
+                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
+                return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
+            },
+            () -> null);
     }
 
     /**
@@ -117,16 +122,16 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
                                                                                 final String redirectUri) {
-        if (StringUtils.isBlank(redirectUri)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
+        return FunctionUtils.doIfNotBlank(redirectUri,
+            () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
+            () -> null);
     }
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
         val services = servicesManager.getAllServicesOfType(OAuthRegisteredService.class);
-        return services.stream()
+        return services
+            .stream()
             .filter(predicate)
             .findFirst()
             .orElse(null);
@@ -196,7 +201,6 @@ public class OAuth20Utils {
         return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
     }
 
-
     /**
      * Check the grant type against an expected grant type.
      *
@@ -230,7 +234,6 @@ public class OAuth20Utils {
         return expectedType.getType().equalsIgnoreCase(type);
     }
 
-
     /**
      * Gets service request header if any.
      *
@@ -252,7 +255,7 @@ public class OAuth20Utils {
      */
     public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
                                              final String redirectUri) {
-        val matchingStrategy = registeredService != null ? registeredService.getMatchingStrategy() : null;
+        val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                          + "Service is considered unauthorized. Verify the service matching strategy used in the service "

@@ -46,6 +46,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -70,7 +71,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return;
         }
 
-        val compareFormat = nameFormat.trim().toLowerCase();
+        val compareFormat = nameFormat.trim().toLowerCase(Locale.ENGLISH);
         switch (compareFormat) {
             case "basic", Attribute.BASIC -> attribute.setNameFormat(Attribute.BASIC);
             case "uri", Attribute.URI_REFERENCE -> attribute.setNameFormat(Attribute.URI_REFERENCE);
@@ -384,6 +385,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(recipient)) {
             data.setRecipient(recipient);
+            val ip = InetAddressUtils.getByName(recipient);
+            if (ip != null) {
+                data.setAddress(ip.getHostName());
+            }
         }
 
         if (notOnOrAfter != null) {
@@ -392,10 +397,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
-            val ip = InetAddressUtils.getByName(inResponseTo);
-            if (ip != null) {
-                data.setAddress(ip.getHostName());
-            }
         }
 
         if (notBefore != null) {

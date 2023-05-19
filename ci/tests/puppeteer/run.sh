@@ -88,7 +88,7 @@ INITONLY="false"
 
 while (( "$#" )); do
   case "$1" in
-  --scenario)
+  --scenario|--sc)
     scenario="$2"
     shift 2
     ;;
@@ -116,17 +116,17 @@ while (( "$#" )); do
     DRYRUN="true"
     shift 1
     ;;
-  --bo)
+  --bo|-bo)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --ho)
+  --ho|-ho)
     export HEADLESS="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hr)
+  --hr|-hr)
     export HEADLESS="true"
     RERUN="true"
     shift 1;
@@ -137,7 +137,7 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hb)
+  --hb|-hb)
     export HEADLESS="true"
     REBUILD="true"
     shift 1;
@@ -155,14 +155,14 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hbod)
+  --hbod|-hbod)
     export HEADLESS="true"
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DEBUG="true"
     shift 1;
     ;;
-  --hbo)
+  --hbo|-hbo)
     export HEADLESS="true"
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -183,7 +183,7 @@ while (( "$#" )); do
     DEBUG="true"
     shift 1;
     ;;
-  --boy)
+  --boy|-boy)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DRYRUN="true"
@@ -197,7 +197,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --noclear|--nc)
+  --noclear|--nc|--ncl|--no-clear)
     CLEAR=""
     shift 1;
     ;;
@@ -519,22 +519,36 @@ if [[ "${RERUN}" != "true" ]]; then
 
       springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
       [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
-      
-      printcyan "Launching CAS instance #${c} under port ${serverPort}"
+
+      printcyan "Cleaning leftover artifacts from previous runs..."
+      rm -rf "$TMPDIR/keystore.jwks"
+      rm -rf "$TMPDIR/cas"
+
+      printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
       java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-         -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
+         -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
          --spring.profiles.active=none --server.ssl.key-store="$keystore" \
          ${properties} &
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-
-      timeout=$(jq -j '.timeout // 60' "${config}")
-      sleepfor $timeout
-      
       casLogin="https://localhost:${serverPort}/cas/login"
-      printcyan "Checking CAS server's status @ ${casLogin}"
-      curl -k -L --output /dev/null --silent --fail $casLogin
-      RC=$?
+
+      if [[ "${CI}" == "true" ]]; then
+        timeout=$(jq -j '.timeout // 80' "${config}")
+        sleepfor $timeout
+
+        printcyan "Checking CAS server's status @ ${casLogin}"
+        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
+        RC=$?
+      else
+        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
+        until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+           echo -n '.'
+           sleep 1
+        done
+        RC=0
+      fi
+
       if [[ $RC -ne 0 ]]; then
         printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
         printred "Killing process id $pid and exiting"

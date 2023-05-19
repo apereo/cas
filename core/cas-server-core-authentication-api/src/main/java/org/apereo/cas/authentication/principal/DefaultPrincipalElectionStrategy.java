@@ -17,6 +17,7 @@ import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
         val principalIds = principals.stream()
             .filter(Objects::nonNull)
-            .map(p -> p.getId().trim().toLowerCase())
+            .map(p -> p.getId().trim().toLowerCase(Locale.ENGLISH))
             .collect(Collectors.toCollection(LinkedHashSet::new));
         val count = principalIds.size();
         if (count > 1) {

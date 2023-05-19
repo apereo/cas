@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ResponseTests;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGeneratorTests;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
+import org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests;
 import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
 import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
@@ -112,6 +113,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
     RegisteredServiceTests.class,
+    CasCoreServicesMonitoringConfigurationTests.class,
     DefaultRegisteredServicesTemplatesManagerTests.class,
     OpenFGARegisteredServiceAccessStrategyTests.class,
     LiteralRegisteredServiceMatchingStrategyTests.class,

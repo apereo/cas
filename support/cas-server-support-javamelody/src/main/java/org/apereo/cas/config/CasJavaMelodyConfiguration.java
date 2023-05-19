@@ -34,8 +34,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 public class CasJavaMelodyConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "monitoringTicketRegistryAdvisor")
-    public MonitoringSpringAdvisor monitoringTicketRegistryAdvisor() {
+    @ConditionalOnMissingBean(name = "monitorableComponentsAdvisor")
+    public MonitoringSpringAdvisor monitorableComponentsAdvisor() {
         return new MonitoringSpringAdvisor(new AnnotationMatchingPointcut(Monitorable.class, null));
     }
 
@@ -46,7 +46,9 @@ public class CasJavaMelodyConfiguration {
             @Override
             @CanIgnoreReturnValue
             public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
-                http.authorizeHttpRequests().requestMatchers("/monitoring").authenticated();
+                http.authorizeHttpRequests(customizer -> customizer.requestMatchers("/monitoring").authenticated()).httpBasic(customizer -> {
+                    customizer.init(http);
+                });
                 return this;
             }
         };

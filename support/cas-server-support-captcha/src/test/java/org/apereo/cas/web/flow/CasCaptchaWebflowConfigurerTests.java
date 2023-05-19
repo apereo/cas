@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.web.flow.config.CasCaptchaConfiguration;
+import org.apereo.cas.config.CasCaptchaConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

@@ -34,6 +34,8 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 
+import java.util.Locale;
+
 /**
  * A {@link CasTomcatServletWebServerFactory} that will configure Tomcat with clustering support based on the
  * provided {@link CasEmbeddedApacheTomcatClusteringProperties}.
@@ -166,7 +168,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private ClusterManagerBase getClusteringManagerInstance() {
         val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
-        val type = clusteringProperties.getManagerType().toUpperCase();
+        val type = clusteringProperties.getManagerType().toUpperCase(Locale.ENGLISH);
         if ("DELTA".equalsIgnoreCase(type)) {
             val manager = new DeltaManager();
             manager.setExpireSessionsOnShutdown(clusteringProperties.isExpireSessionsOnShutdown());

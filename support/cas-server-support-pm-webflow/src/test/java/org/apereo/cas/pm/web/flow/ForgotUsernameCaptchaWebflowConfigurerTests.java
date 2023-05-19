@@ -1,9 +1,9 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.config.CasSupportActionsConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
+import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;

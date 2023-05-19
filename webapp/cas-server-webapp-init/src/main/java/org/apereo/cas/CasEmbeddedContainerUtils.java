@@ -1,8 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.util.ReflectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.logging.LoggingInitialization;
+import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import org.apereo.cas.util.spring.boot.CasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
@@ -11,11 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasEmbeddedContainerUtils}.
@@ -29,19 +30,17 @@ public class CasEmbeddedContainerUtils {
     private static final int APPLICATION_EVENTS_CAPACITY = 5_000;
 
     /**
-     * Gets logging initialization.
+     * Gets application initialization components.
      *
-     * @return the logging initialization
+     * @return the initialization components
      */
-    public static Optional<LoggingInitialization> getLoggingInitialization() {
-        return FunctionUtils.doUnchecked(() -> {
-            val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-
-            val subTypes = ReflectionUtils.findSubclassesInPackage(LoggingInitialization.class, packageName);
-            return subTypes.isEmpty()
-                ? Optional.empty()
-                : Optional.of(subTypes.iterator().next().getDeclaredConstructor().newInstance());
-        });
+    public static List<ApplicationEntrypointInitializer> getApplicationEntrypointInitializers() {
+        return ServiceLoader.load(ApplicationEntrypointInitializer.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .filter(Objects::nonNull)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .collect(Collectors.toList());
     }
 
     /**

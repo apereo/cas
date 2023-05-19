@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -43,6 +44,7 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 @Slf4j
+@Monitorable
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final int PAGE_SIZE = 500;
 
@@ -95,7 +97,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
-            val encTicketId = digest(ticketId);
+            val encTicketId = digestIdentifier(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
@@ -127,7 +129,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).exists(true));
-        return ticketCatalog.findAll().stream()
+        return ticketCatalog.findAll()
+            .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .filter(StringUtils::isNotBlank)
             .mapToLong(collectionName -> {
@@ -175,7 +178,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Stream<Ticket> stream() {
-        return ticketCatalog.findAll().stream()
+        return ticketCatalog
+            .findAll()
+            .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
             .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
@@ -199,7 +204,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {
                 val query = isCipherExecutorEnabled()
-                    ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digest(principalId)))
+                    ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digestIdentifier(principalId)))
                     : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, PAGE_SIZE));
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
@@ -220,8 +225,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                         val criteriaValues = entry.getValue()
                             .stream()
                             .map(queryValue -> {
-                                val key = MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + '.' + digest(entry.getKey());
-                                return Criteria.where(key).is(digest(queryValue.toString()));
+                                val key = MongoDbTicketDocument.FIELD_NAME_ATTRIBUTES + '.' + digestIdentifier(entry.getKey());
+                                return Criteria.where(key).is(digestIdentifier(queryValue.toString()));
                             })
                             .toList();
                         return new Criteria().orOperator(criteriaValues);
@@ -242,14 +247,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public long deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = digest(ticketIdToDelete);
+    public long deleteSingleTicket(final Ticket ticketToDelete) {
+        val ticketId = digestIdentifier(ticketToDelete.getId());
         LOGGER.debug("Deleting ticket [{}]", ticketId);
-        val metadata = ticketCatalog.find(ticketIdToDelete);
+        val metadata = ticketCatalog.find(ticketToDelete);
         val collectionName = getTicketCollectionInstanceByMetadata(metadata);
         val query = new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(ticketId));
         val res = mongoTemplate.remove(query, collectionName);
-        LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
+        LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketToDelete.getId(), res);
         return res.getDeletedCount();
     }
 
@@ -279,7 +284,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .type(encTicket.getClass().getName())
             .ticketId(encTicket.getId())
             .json(json)
-            .principal(digest(principal))
+            .principal(digestIdentifier(principal))
             .attributes(collectAndDigestTicketAttributes(ticket))
             .build();
     }

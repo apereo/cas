@@ -12,6 +12,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Locale;
+
 /**
  * This is {@link RedirectToServiceAction}.
  *
@@ -51,7 +53,7 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
     }
 
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {
-        val eventId = response.responseType().name().toLowerCase();
+        val eventId = response.responseType().name().toLowerCase(Locale.ENGLISH);
         LOGGER.debug("Signaling flow to redirect to service [{}] via event [{}]", service, eventId);
         return eventId;
     }

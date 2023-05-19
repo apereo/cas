@@ -20,7 +20,6 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -63,8 +62,8 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.KeyInfoReferenceProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 
-import java.security.Security;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,11 +76,6 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class SamlIdPObjectEncrypter {
-
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
-
     private final SamlIdPProperties samlIdPProperties;
 
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
@@ -176,7 +170,6 @@ public class SamlIdPObjectEncrypter {
                          final SamlRegisteredService service,
                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         try {
-            Security.addProvider(new BouncyCastleProvider());
             val config = configureDecryptionSecurityConfiguration(service);
             configureKeyDecryptionCredential(adaptor.getEntityId(), adaptor, service, config);
             val parameters = resolveDecryptionParameters(service, config);
@@ -424,7 +417,7 @@ public class SamlIdPObjectEncrypter {
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
-                service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+                service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;
@@ -542,7 +535,7 @@ public class SamlIdPObjectEncrypter {
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
-                service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+                service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;

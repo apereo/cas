@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -75,7 +76,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             val client = clientResult.get();
             LOGGER.trace("Located client [{}]", client);
             val service = WebUtils.getService(requestContext);
-            val targetUrl = service != null ? service.getId() : null;
+            val targetUrl = Optional.ofNullable(service).map(Principal::getId).orElse(null);
             LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
 
             val callContext = new CallContext(context, sessionStore);

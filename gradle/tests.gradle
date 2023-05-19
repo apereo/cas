@@ -19,14 +19,14 @@ enum TestCategories {
     Cipher,
     Consent,
     Cookie,
-    Couchbase,
-    CouchDb,
     Delegation,
     DuoSecurity,
     DynamoDb,
+    Elastic,
     ExpirationPolicy,
     Events,
     FileSystem,
+    GCP,
     GeoLocation,
     Git,
     Groovy,
@@ -81,6 +81,8 @@ enum TestCategories {
     SAMLMetadata,
     SAMLServiceProvider,
     SAMLLogout,
+    SAMLAttributes,
+    SAMLResponse,
     SCIM,
     SHELL,
     Simple,
@@ -94,6 +96,8 @@ enum TestCategories {
     WebApp,
     Webflow,
     WebflowActions,
+    WebflowAccountActions,
+    WebflowServiceActions,
     WebflowAuthenticationActions,
     WebflowConfig,
     WebflowMfaConfig,
@@ -115,7 +119,7 @@ if (rootProject.tasks.findByName("testCategories") == null) {
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
-                    .collect { it.name().toLowerCase() }
+                    .collect { it.name().toLowerCase(Locale.ENGLISH) }
             println(groovy.json.JsonOutput.toJson(result))
         }
     }

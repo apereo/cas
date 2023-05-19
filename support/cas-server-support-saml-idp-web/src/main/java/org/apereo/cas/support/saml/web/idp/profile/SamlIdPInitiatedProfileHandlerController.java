@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPInitiatedProfileHandlerController}.
@@ -132,9 +133,10 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
             LOGGER.info("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
-            shire = acs != null
-                ? StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation()
-                : null;
+            shire = Optional.ofNullable(acs)
+                .map(assertionConsumerService -> StringUtils.isBlank(assertionConsumerService.getResponseLocation())
+                    ? assertionConsumerService.getLocation()
+                    : assertionConsumerService.getResponseLocation()).orElse(null);
         }
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Unable to resolve service provider assertion consumer service URL for AuthnRequest construction for entityID: [{}]", providerId);

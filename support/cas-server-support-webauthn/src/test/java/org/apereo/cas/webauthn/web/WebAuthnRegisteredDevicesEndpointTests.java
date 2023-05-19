@@ -102,7 +102,7 @@ public class WebAuthnRegisteredDevicesEndpointTests {
         val toSave = getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()));
         val content = WebAuthnUtils.getObjectMapper().writeValueAsString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, webAuthnRegisteredDevicesEndpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, webAuthnRegisteredDevicesEndpoint.importAccount(request).getStatusCode());
     }
 
     private CredentialRegistration register(final Authentication authn) throws Exception {
