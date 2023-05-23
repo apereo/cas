@@ -818,22 +818,23 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
-        return getAuthenticatorViaDnFormat(l);
+        return getAuthenticatorViaDnFormat(l, null);
     }
 
     private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties l) {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
         }
-        return getAuthenticatorViaDnFormat(l);
+        return getAuthenticatorViaDnFormat(l, newLdaptiveConnectionFactory(l));
     }
 
-    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l) {
+    private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties l,
+                                                             final ConnectionFactory factory) {
         val resolver = new FormatDnResolver(l.getDnFormat());
         val authenticator = new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
-            authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptiveConnectionFactory(l)));
+            authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, factory));
         }
         return authenticator;
     }
