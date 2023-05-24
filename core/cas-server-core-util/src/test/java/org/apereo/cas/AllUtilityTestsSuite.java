@@ -1,7 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.nativex.CasNativeImageFeatureTests;
-import org.apereo.cas.nativex.features.BouncyCastleProviderFeatureTests;
 import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
@@ -46,8 +44,6 @@ import org.junit.platform.suite.api.Suite;
     WebflowConversationStateCipherExecutorTests.class,
     RsaKeyPairCipherExecutorTests.class,
     HttpMessageTests.class,
-    BouncyCastleProviderFeatureTests.class,
-    CasNativeImageFeatureTests.class,
     SimpleHttpClientTests.class,
     RandomStringGeneratorTests.class,
     ChainingPrincipalNameTransformerTests.class,

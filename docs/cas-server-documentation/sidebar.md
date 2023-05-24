@@ -24,6 +24,7 @@ layout: null
         *   [CAS Initializr](/cas/{{ version }}/installation/WAR-Overlay-Initializr.html)
     *   [Command-line Shell](/cas/{{ version }}/installation/Configuring-Commandline-Shell.html)
     *   [Docker Deployment](/cas/{{ version }}/installation/Docker-Installation.html)
+    *   [GraalVM Native Image](/cas/{{ version }}/installation/GraalVM-NativeImage-Installation.html)
     *   [Kubernetes Helm Deployment](/cas/{{ version }}/installation/Kubernetes-Helm-Deployment.html)
     *   [Servlet Containers](#servletsoverview)
         *   [Overview](/cas/{{ version }}/installation/Configuring-Servlet-Container.html)
