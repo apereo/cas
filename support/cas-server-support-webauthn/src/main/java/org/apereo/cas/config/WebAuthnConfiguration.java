@@ -201,7 +201,7 @@ public class WebAuthnConfiguration {
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) throws Exception {
             return BeanSupplier.of(Cleanable.class)
-                .when(BeanCondition.on("cas.authn.mfa.web-authn.cleaner.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+                .when(BeanCondition.on("cas.authn.mfa.web-authn.cleaner.schedule.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository))
                 .otherwiseProxy()
                 .get();
