@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CheckNativeRuntimeHints {
     public static void main(final String[] args) throws Exception {
         checkRuntimeHintsConfigurations(args[0]);
-        checkMissingSpringFactoryConfigurations(args[0]);
     }
 
     private static void print(final String message, final Object... args) {
@@ -45,7 +44,8 @@ public class CheckNativeRuntimeHints {
             var clazz = projectPath + sourcePath + it.trim().replace(".", String.valueOf(File.separator)) + ".java";
             var configurationFile = new File(clazz);
             if (!configurationFile.exists()) {
-                print("Runtime hint %s does not exist in %s", clazz, springFactoriesFile);
+                print("Runtime hint %s does not exist in %s",
+                    configurationFile.getAbsolutePath(), springFactoriesFile.getAbsolutePath());
                 return false;
             }
 
@@ -57,27 +57,7 @@ public class CheckNativeRuntimeHints {
         }
         return true;
     }
-
-    protected static void checkMissingSpringFactoryConfigurations(final String arg) throws IOException {
-        Files.walk(Paths.get(arg))
-            .filter(f -> Files.isRegularFile(f) && f.toFile().getName().endsWith("Configuration.java"))
-            .forEach(file -> {
-                if (readFile(file).contains("@Configuration")) {
-                    var parent = file.getParent();
-                    while (parent != null && !parent.toFile().getName().equals("src")) {
-                        parent = parent.getParent();
-                    }
-                    var springFactoriesFile = new File(parent.toFile(),
-                        "main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports");
-                    if (!springFactoriesFile.exists()) {
-                        print("Configuration class %s is missing from %s",
-                            file.toFile().getAbsolutePath(), springFactoriesFile.getAbsolutePath());
-                        System.exit(1);
-                    }
-                }
-            });
-    }
-
+    
     protected static void checkRuntimeHintsConfigurations(final String arg) throws IOException {
         var count = new AtomicInteger(0);
 

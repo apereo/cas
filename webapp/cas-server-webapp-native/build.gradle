@@ -22,11 +22,12 @@ configurations.configureEach {
 }
 
 dependencies {
+    compileOnly libraries.graalvmsdk
+    
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
 
-    implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core")
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-authentication")
