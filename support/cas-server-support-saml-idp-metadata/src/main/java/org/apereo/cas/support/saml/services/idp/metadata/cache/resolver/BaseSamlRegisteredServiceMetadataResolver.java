@@ -51,7 +51,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected final OpenSamlConfigBean configBean;
 
-    private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+    private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
             val roles = new ArrayList<QName>();
             val rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
@@ -68,7 +68,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             val filter = new EntityRoleFilter(roles);
             filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
-
+            filter.initialize();
             metadataFilterList.add(filter);
             LOGGER.debug("Added entity role filter with roles [{}]", roles);
         }
