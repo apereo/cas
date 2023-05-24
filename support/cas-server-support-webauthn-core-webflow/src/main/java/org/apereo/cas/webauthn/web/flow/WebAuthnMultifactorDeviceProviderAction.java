@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.internal.util.JacksonCodecs;
+import com.yubico.webauthn.attestation.Attestation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
@@ -16,6 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
