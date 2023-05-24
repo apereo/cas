@@ -893,6 +893,12 @@ ext.libraries = [
                     transitive = false
                 }
         ],
+        graalvmsdk                 : [
+                dependencies.create("org.graalvm.sdk:graal-sdk:${graalVmVersion}") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                }
+        ],
         zxingbarcode               : [
                 dependencies.create("com.google.zxing:core:$googleZxingVersion") {
                     exclude(group: "com.google.zxing", module: "android-core")

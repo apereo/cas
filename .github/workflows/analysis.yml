@@ -183,6 +183,7 @@ jobs:
           - CheckMissingConditionalOnFeature
           - CheckPuppeteerScenarioScriptConfiguration
           - CheckMissingConditionalOnMissingBean
+          - CheckNativeRuntimeHints
     name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v3
