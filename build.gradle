@@ -65,6 +65,7 @@ ext {
         '**/net/jradius/**',
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
+        '**/nativex/**',
         '**/**ConfigurationMetadata**',
         '**/**NimbusOAuthJacksonModule**',
         '**/**Application**',
