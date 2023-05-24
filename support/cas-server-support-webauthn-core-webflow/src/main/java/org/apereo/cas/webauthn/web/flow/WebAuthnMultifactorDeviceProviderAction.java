@@ -47,8 +47,8 @@ public class WebAuthnMultifactorDeviceProviderAction extends BaseCasWebflowActio
 
     protected MultifactorAuthenticationRegisteredDevice mapWebAuthnAccount(
         final CredentialRegistration acct) {
-        val vendor = acct.getAttestationMetadata().getVendorProperties().orElseGet(Map::of);
-        val device = acct.getAttestationMetadata().getDeviceProperties().orElseGet(Map::of);
+        val vendor = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty).getVendorProperties().orElseGet(Map::of);
+        val device = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty).getDeviceProperties().orElseGet(Map::of);
         return FunctionUtils.doUnchecked(() -> MultifactorAuthenticationRegisteredDevice.builder()
             .id(acct.getCredential().getCredentialId().getBase64Url())
             .name(acct.getCredentialNickname())
