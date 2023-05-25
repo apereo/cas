@@ -4,6 +4,7 @@ package org.apereo.cas.git;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -112,7 +113,7 @@ public class GitRepositoryBuilderTests {
             val gitRepository = builder.build();
             assertTrue(new File(gitRepository.getRepositoryDirectory(), "README.md").exists());
             gitRepository.destroy();
-            PathUtils.deleteDirectory(gitRepository.getRepositoryDirectory().toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(__ -> PathUtils.deleteDirectory(gitRepository.getRepositoryDirectory().toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 
