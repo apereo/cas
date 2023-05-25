@@ -21,6 +21,11 @@ public interface CasConfigurationPropertiesSourceLocator {
     String PROFILE_STANDALONE = "standalone";
 
     /**
+     * Native configuration profile.
+     */
+    String PROFILE_NATIVE = "native";
+
+    /**
      * Embedded configuration profile.
      * This is mainly an alias for {@link #PROFILE_STANDALONE}
      * and functionality should be identical.

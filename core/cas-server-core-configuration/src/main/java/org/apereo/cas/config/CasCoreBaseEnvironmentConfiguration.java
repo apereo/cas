@@ -26,14 +26,13 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 
 /**
- * This is {@link CasCoreEnvironmentConfiguration}.
+ * This is {@link CasCoreBaseEnvironmentConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration)
-@AutoConfiguration
-public class CasCoreEnvironmentConfiguration {
+@Configuration(proxyBeanMethods = false)
+public class CasCoreBaseEnvironmentConfiguration {
 
     @Configuration(value = "CasCoreEnvironmentManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -64,10 +63,11 @@ public class CasCoreEnvironmentConfiguration {
             return new CasConfigurationJasyptCipherExecutor(environment);
         }
 
-        @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
+        @ConditionalOnMissingBean(name = ConfigurationPropertiesLoaderFactory.BEAN_NAME)
         @Bean
         public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
-            @Qualifier("casConfigurationCipherExecutor") final CipherExecutor<String, String> casConfigurationCipherExecutor,
+            @Qualifier("casConfigurationCipherExecutor")
+            final CipherExecutor<String, String> casConfigurationCipherExecutor,
             final Environment environment) {
             return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor, environment);
         }
@@ -80,8 +80,10 @@ public class CasCoreEnvironmentConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME) final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
-            @Qualifier("configurationPropertiesLoaderFactory") final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
+            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
+            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+            @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
+            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
             return new StandaloneConfigurationFilePropertiesSourceLocator(
                 configurationPropertiesEnvironmentManager, configurationPropertiesLoaderFactory);
         }
