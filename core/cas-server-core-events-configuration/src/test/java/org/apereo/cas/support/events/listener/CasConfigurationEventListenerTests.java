@@ -1,10 +1,10 @@
 package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.config.CasConfigurationModifiedEvent;
-import org.apereo.cas.config.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.config.CasCoreEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
 import org.apereo.cas.config.CasCoreEventsConfigEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreStandaloneBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.junit.jupiter.api.Tag;
@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasCoreEventsConfigEnvironmentConfiguration.class,
     CasCoreConfigurationWatchConfiguration.class,
-    CasCoreBootstrapStandaloneConfiguration.class,
-    CasCoreEnvironmentConfiguration.class,
+    CasCoreStandaloneBootstrapConfiguration.class,
+    CasCoreEnvironmentBootstrapConfiguration.class,
 
     DispatcherServletAutoConfiguration.class,
     RefreshAutoConfiguration.class

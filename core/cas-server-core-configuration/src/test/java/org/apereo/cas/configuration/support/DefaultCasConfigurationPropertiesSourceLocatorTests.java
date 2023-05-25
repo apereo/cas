@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.support;
 
-import org.apereo.cas.config.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.config.CasCoreEnvironmentConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapConfiguration;
+import org.apereo.cas.config.CasCoreStandaloneBootstrapConfiguration;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreEnvironmentConfiguration.class,
+    CasCoreEnvironmentBootstrapConfiguration.class,
     CasCoreConfigurationWatchConfiguration.class,
-    CasCoreBootstrapStandaloneConfiguration.class
+    CasCoreStandaloneBootstrapConfiguration.class
 },
     properties = {
         "spring.cloud.config.enabled=false",

@@ -22,6 +22,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConfigurationPropertiesLoaderFactory {
     /**
+     * Implementation bean name.
+     */
+    public static final String BEAN_NAME = "configurationPropertiesLoaderFactory";
+
+    /**
      * The Configuration cipher executor.
      */
     private final CipherExecutor<String, String> configurationCipherExecutor;

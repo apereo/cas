@@ -1,5 +1,16 @@
 [
   {
+    "name":"java.util.TreeMap",
+    "allDeclaredFields":true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true,
+    "queryAllDeclaredConstructors":true
+  },
+  {
     "name":"java.util.LinkedHashMap",
     "allDeclaredFields":true,
     "allPublicMethods": true,
@@ -23,35 +34,14 @@
   },
   {
     "name":"java.util.HashMap",
-    "allDeclaredFields":true,
     "queryAllDeclaredMethods":true,
     "queryAllPublicMethods":true,
     "queryAllDeclaredConstructors":true,
-    "methods":[
-      {"name":"clear","parameterTypes":[] },
-      {"name":"compute","parameterTypes":["java.lang.Object","java.util.function.BiFunction"] },
-      {"name":"computeIfAbsent","parameterTypes":["java.lang.Object","java.util.function.Function"] },
-      {"name":"computeIfPresent","parameterTypes":["java.lang.Object","java.util.function.BiFunction"] },
-      {"name":"containsKey","parameterTypes":["java.lang.Object"] },
-      {"name":"containsValue","parameterTypes":["java.lang.Object"] },
-      {"name":"entrySet","parameterTypes":[] },
-      {"name":"forEach","parameterTypes":["java.util.function.BiConsumer"] },
-      {"name":"get","parameterTypes":["java.lang.Object"] },
-      {"name":"getOrDefault","parameterTypes":["java.lang.Object","java.lang.Object"] },
-      {"name":"isEmpty","parameterTypes":[] },
-      {"name":"keySet","parameterTypes":[] },
-      {"name":"merge","parameterTypes":["java.lang.Object","java.lang.Object","java.util.function.BiFunction"] },
-      {"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] },
-      {"name":"putAll","parameterTypes":["java.util.Map"] },
-      {"name":"putIfAbsent","parameterTypes":["java.lang.Object","java.lang.Object"] },
-      {"name":"remove","parameterTypes":["java.lang.Object"] },
-      {"name":"remove","parameterTypes":["java.lang.Object","java.lang.Object"] },
-      {"name":"replace","parameterTypes":["java.lang.Object","java.lang.Object"] },
-      {"name":"replace","parameterTypes":["java.lang.Object","java.lang.Object","java.lang.Object"] },
-      {"name":"replaceAll","parameterTypes":["java.util.function.BiFunction"] },
-      {"name":"size","parameterTypes":[] },
-      {"name":"values","parameterTypes":[] }
-    ]
+    "allDeclaredFields":true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true
   },
   {
     "name":"java.util.HashMap$Node",
@@ -64,9 +54,15 @@
     "queryAllPublicMethods":true
   },
   {
-    "name":"java.util.HashMap$TreeNode"
+    "name":"java.util.HashMap$TreeNode",
+    "allDeclaredFields":true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredMethods":true,
+    "queryAllPublicMethods":true
   },
-
   {
     "name": "boolean[]",
     "unsafeAllocated": true

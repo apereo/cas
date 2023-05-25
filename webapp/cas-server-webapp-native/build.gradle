@@ -15,8 +15,9 @@ configurations.configureEach {
     exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
     exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
     exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+
     exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
-    
+
     exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
     exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-bootstrap")
 }
@@ -32,8 +33,8 @@ dependencies {
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-cookie")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-logout")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
