@@ -12,7 +12,7 @@ processing compiled Java applications ahead-of-time. Native Images generally hav
 
 A CAS server installation and deployment process can be tuned to build and run as a GraalVM native image. Compared to the Java Virtual Machine, CAS server 
 native images can run with a smaller memory footprint and with much faster startup times. A CAS GraalVM Native Image is a complete, platform-specific 
-executable. You do not need to ship a Java Virtual Machine in order to run a CAS native image. It requires and uses ahead-of-time processing in order to 
+executable. You do not need to ship a Java Virtual Machine in order to run a CAS native image. It requires and uses ahead-of-time (AOT) processing in order to 
 create an executable. This ahead-of-time processing involves statically analyzing CAS application code from its main entry point.
 
 <div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
@@ -25,9 +25,48 @@ There are some key differences between native and JVM-based CAS deployments. The
 - GraalVM is not directly aware of dynamic elements in CAS code and must be told about reflection, resources, serialization, and dynamic proxies.
 - The CAS server application classpath is fixed at build time and cannot change.
 - There is no lazy class loading and everything shipped in the executables will be loaded in memory on startup.
-   
+
+During the AOT processing phase, the CAS web application is started up to the point that bean definitions 
+are available. Bean instances are not created during the AOT processing phase. The AOT process will typically generate the following artifacts:
+
+A Spring AOT processed application will typically generate:
+
+- Java source code
+- Bytecode (for dynamic proxies etc)
+- GraalVM JSON hint files
+  - Resource hints (`resource-config.json`)
+  - Reflection hints (`reflect-config.json`)
+  - Serialization hints (`serialization-config.json`)
+  - Java Proxy Hints (`proxy-config.json`)
+  - JNI Hints (`jni-config.json`)
+      
+Note that Hhnt files which put under `src/main/resources/META-INF/native-image` are automatically picked up by GraalVM.
+
 ## System Requirements
 
 A GraalVM distribution compatible with the overall [CAS requirements](../planning/Installation-Requirements.html) must be present on the build machine.
-Presently and at a minimum, you will need to have `GraalVM 22.3.1` installed with 
-the [native image tool](https://www.graalvm.org/latest/reference-manual/native-image/) in place. 
+Presently and at a minimum, you will need to have GraalVM `22.3.1` installed with 
+the [native image tool](https://www.graalvm.org/latest/reference-manual/native-image/) in place.
+
+## Installation
+
+The ability to build GraalVM native images is built directly into the CAS installation process. The installation script
+can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
+
+<div class="alert alert-info">:warning: <strong>Build Time</strong><p>
+Building CAS GraalVM native images can be quite resource intensive and time consuming. Depending on the number of modules
+included in the build, CAS configuration options and the horsepower of the build machine, the build time can vary greatly
+and typically is in the neighborhood of <code>5~15</code> minutes and perhaps longer.</p></div>
+
+## Known Limitations
+
+CAS GraalVM native images are an evolving technology. Not all libraries used by CAS and not all modules offered by CAS
+provide support for native images. Additionally, the following scenarios are unsupported or do require a lot of finesse
+and maneuvering to function:
+         
+- All capabilities and features that load, parse and execute Groovy scripts, or load dynamic code constructs.
+- Libraries and dependencies written in Groovy or other dynamic languages will be extremely challenging to support.
+- All capabilities and features that load CAS configuration properties from external sources that backed by Spring Cloud.
+
+If you find a library which doesn’t work with GraalVM, please discuss that issue
+on the [reachability metadata project](https://github.com/oracle/graalvm-reachability-metadata).

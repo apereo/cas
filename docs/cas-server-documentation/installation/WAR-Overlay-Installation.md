@@ -6,7 +6,7 @@ category: Installation
 {% include variables.html %}
 
 
-# WAR Overlay Installation
+# Installation
 
 CAS installation is a fundamentally source-oriented process, and we recommend a WAR overlay (1) 
 project to organize customizations such as component configuration and UI design.
@@ -62,27 +62,12 @@ the build. Attempt to keep changes and customizations to a
 minimum and only grab what you actually need. Make sure the deployment environment 
 is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
 
-## CAS WAR Overlays
+## CAS Overlay Initializr
 
-CAS WAR overlay projects described below are provided for reference and study.
-
-### CAS Overlay Initializr
-
-Apereo CAS Initializr is a relatively new addition to the Apereo CAS ecosystem that allows you 
+Apereo CAS Initializr is a service provided by the Apereo CAS project that allows you 
 as the deployer to generate CAS WAR Overlay projects on the fly with just what you need to start quickly.
 
 To learn more about the initializr, please [review this guide](WAR-Overlay-Initializr.html).
-
-### CAS Overlay Template
-                 
-The CAS WAR overlay template project can be bootstrapped and generated via the [CAS Initializr](WAR-Overlay-Initializr.html).
-
-The WAR overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
-You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
-
-Note: Do **NOT** ever make changes in the `build` directory. The changeset will be cleaned out and 
-set back to defaults every time you do a build. Put overlaid components inside the `src` directory
-and/or other instructed locations to avoid surprises.
 
 ## Dockerized Deployment
 
@@ -95,7 +80,8 @@ CAS can be deployed to a number of servlet containers. See [this guide](Configur
 ## Dependency Management
 
 Each release of CAS provides a curated list of dependencies it supports. In practice, you do not need to provide a version for any of
-these dependencies in your build configuration as the CAS distribution is managing that for you. When you upgrade CAS itself, these dependencies will be upgraded as well in a consistent way.
+these dependencies in your build configuration as the CAS distribution is managing that for you. When you 
+upgrade CAS itself, these dependencies will be upgraded as well in a consistent way.
 
 The curated list of dependencies contains a refined list of third party libraries. The list is 
 available as a standard Bills of Materials (BOM). Not everyone likes inheriting from the BOM.

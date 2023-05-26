@@ -18,7 +18,6 @@ import org.apereo.cas.util.text.DefaultMessageSanitizer;
 import org.apereo.cas.util.text.MessageSanitationContributor;
 import org.apereo.cas.util.text.MessageSanitizer;
 import org.apereo.cas.util.text.TicketCatalogMessageSanitationContributor;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,6 +30,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -40,12 +40,10 @@ import org.springframework.core.Ordered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.util.Assert;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
-
 import jakarta.validation.MessageInterpolator;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -80,13 +78,14 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public InitializingBean casCoreUtilInitialization(
-            @Qualifier("casApplicationContextProvider") final ApplicationContextProvider casApplicationContextProvider,
-            @Qualifier("zonedDateTimeToStringConverter") final Converter<ZonedDateTime, String> zonedDateTimeToStringConverter) {
+                final ConfigurableApplicationContext applicationContext,
+                final List<Converter> allConveters) {
             return () -> {
-                Assert.notNull(casApplicationContextProvider, "Application context cannot be initialized");
-                Assert.notNull(ApplicationContextProvider.getConfigurableApplicationContext(), "Application context cannot be initialized");
                 val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
-                registry.addConverter(zonedDateTimeToStringConverter);
+                allConveters.forEach(converter -> {
+                    registry.addConverter(converter);
+                    applicationContext.getEnvironment().getConversionService().addConverter(converter);
+                });
             };
         }
     }
@@ -96,20 +95,22 @@ public class CasCoreUtilConfiguration {
     @Lazy(false)
     public static class CasCoreUtilConverterConfiguration {
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public MessageInterpolator messageInterpolator() {
+        public static MessageInterpolator messageInterpolator() {
             return new SpringAwareMessageMessageInterpolator();
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
+        public static Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
             return new Converters.ZonedDateTimeToStringConverter();
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ObjectMapper objectMapper() {
+        public static Converter<String, Resource> stringToResourceConverter() {
+            return new Converters.StringToResourceConverter();
+        }
+
+        @Bean
+        public static ObjectMapper objectMapper() {
             return JacksonObjectMapperFactory.builder().build().toObjectMapper();
         }
 
@@ -153,7 +154,7 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
-            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
+                @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
 
@@ -169,11 +170,11 @@ public class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MessageSanitizer messageSanitizer(final List<MessageSanitationContributor> contributors) {
             val prefixes = contributors
-                .stream()
-                .map(MessageSanitationContributor::getTicketIdentifierPrefixes)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.joining("|"));
+                    .stream()
+                    .map(MessageSanitationContributor::getTicketIdentifierPrefixes)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream)
+                    .collect(Collectors.joining("|"));
             val pattern = Pattern.compile("(?:(?:" + prefixes + ")-\\d+-)([\\w.-]+)");
             return new DefaultMessageSanitizer(pattern);
         }
