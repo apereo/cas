@@ -117,7 +117,7 @@ configurations.all {
                 if (requested.group == "org.thymeleaf")  {
                     details.useVersion("${thymeleafVersion}")
                 }
-                if (requested.group == "nz.net.ultraq.thymeleaf" && requested.name == "thymeleaf-layout-dialect")  {
+                if (requested.group == "com.github.zhanhb" && requested.name == "thymeleaf-layout-dialect")  {
                     details.useVersion("${thymeleafDialectVersion}")
                 }
                 if (requested.group == "commons-beanutils" && requested.name == "commons-beanutils")  {

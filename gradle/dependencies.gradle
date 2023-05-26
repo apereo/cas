@@ -1043,7 +1043,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "javax.servlet", module: "servlet-api")
                 },
-                dependencies.create("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion") {
+                dependencies.create("com.github.zhanhb:thymeleaf-layout-dialect:$thymeleafDialectVersion") {
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy")

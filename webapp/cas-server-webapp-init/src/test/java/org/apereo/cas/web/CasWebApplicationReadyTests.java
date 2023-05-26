@@ -1,25 +1,26 @@
-package org.apereo.cas.context;
+package org.apereo.cas.web;
 
+import org.apereo.cas.config.CasWebApplicationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasApplicationContextInitializerTests}.
+ * This is {@link CasWebApplicationReadyTests}.
  *
  * @author Misagh Moayyed
- * @since 6.5.0
+ * @since 7.0.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasWebApplicationConfiguration.class
+},
     properties = {
         "server.port=8588",
         "server.ssl.enabled=false",
@@ -27,15 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ContextConfiguration(initializers = CasApplicationContextInitializer.class)
 @Tag("WebApp")
-public class CasApplicationContextInitializerTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+public class CasWebApplicationReadyTests {
     @Test
     public void verifyOperation() {
-        assertNotNull(applicationContext);
-        assertEquals(Boolean.FALSE.toString(), System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));
+        assertEquals(Boolean.FALSE.toString(), System.getProperty(CasWebApplicationReady.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));
     }
 }
+

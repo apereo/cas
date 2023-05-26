@@ -69,7 +69,7 @@ public class CasConfigurationPropertiesValidator {
     private void validateConfiguration(final Class clazz, final List<String> validationResults) {
         val beans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext.getBeanFactory(), clazz);
         beans.values().forEach(bean -> {
-            val configBean = ConfigurationPropertiesBean.get(this.applicationContext, bean, UUID.randomUUID().toString());
+            val configBean = ConfigurationPropertiesBean.get(applicationContext, bean, UUID.randomUUID().toString());
             val target = configBean.asBindTarget();
             val annotation = configBean.getAnnotation();
 
@@ -77,9 +77,9 @@ public class CasConfigurationPropertiesValidator {
                 new IgnoreTopLevelConverterNotFoundBindHandler(),
                 new UnboundElementsSourceFilter());
 
-
-            val configBinder = new Binder(ConfigurationPropertySources.from(applicationContext.getEnvironment().getPropertySources()),
-                new PropertySourcesPlaceholdersResolver(applicationContext.getEnvironment().getPropertySources()),
+            val propertySources = applicationContext.getEnvironment().getPropertySources();
+            val configBinder = new Binder(ConfigurationPropertySources.from(propertySources),
+                new PropertySourcesPlaceholdersResolver(propertySources),
                 applicationContext.getEnvironment().getConversionService(),
                 null, null,
                 null);
@@ -87,14 +87,13 @@ public class CasConfigurationPropertiesValidator {
                 configBinder.bind(annotation.prefix(), target, handler);
             } catch (final BindException e) {
                 var message = "\n".concat(e.getMessage()).concat("\n");
-                if (e.getCause() != null) {
-                    val cause = (UnboundConfigurationPropertiesException) e.getCause();
-                    if (cause != null) {
-                        message += cause.getUnboundProperties()
-                            .stream()
-                            .map(property -> String.format("%n\t%s = %s (Origin: %s)", property.getName(), property.getValue(), property.getOrigin()))
-                            .collect(Collectors.joining("\n"));
-                    }
+                if (e.getCause() instanceof UnboundConfigurationPropertiesException ucpe) {
+                    message += ucpe.getUnboundProperties()
+                        .stream()
+                        .map(property -> String.format("%n\t%s = %s (Origin: %s)", property.getName(), property.getValue(), property.getOrigin()))
+                        .collect(Collectors.joining("\n"));
+                } else {
+                    LoggingUtils.error(LOGGER, e);
                 }
                 validationResults.add(message);
             }

@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
+
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -32,27 +34,23 @@ public class CasConfigurationWatchServiceTests {
 
     @Test
     public void verifyOperationByDirectory() {
-        val manager = mock(CasConfigurationPropertiesEnvironmentManager.class);
-        when(manager.getStandaloneProfileConfigurationDirectory(any())).thenReturn(FileUtils.getTempDirectory());
-        val service = new CasConfigurationWatchService(manager, applicationContext);
+        val service = new CasConfigurationWatchService(applicationContext);
         service.initialize();
         service.close();
     }
 
     @Test
     public void verifyOperationByFile() throws Exception {
-        val manager = mock(CasConfigurationPropertiesEnvironmentManager.class);
         val cas = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(cas, "server.port=0", StandardCharsets.UTF_8);
-        when(manager.getStandaloneProfileConfigurationFile(any())).thenReturn(cas);
-        val service = new CasConfigurationWatchService(manager, applicationContext);
+        when(CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(any())).thenReturn(cas);
+        val service = new CasConfigurationWatchService(applicationContext);
         service.initialize();
 
         val newFile = new File(cas.getParentFile(), "something");
         FileUtils.writeStringToFile(newFile, "helloworld", StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(newFile, "helloworld-update", StandardCharsets.UTF_8, true);
         FileUtils.deleteQuietly(newFile);
-
         service.close();
     }
 }

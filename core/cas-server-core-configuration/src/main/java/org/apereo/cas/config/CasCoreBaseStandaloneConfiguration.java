@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -42,7 +41,7 @@ public class CasCoreBaseStandaloneConfiguration {
     public static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
 
         @Bean
-        public PropertySourceLocator casCoreBootstrapPropertySourceLocator(
+        public static PropertySourceLocator casCoreBootstrapPropertySourceLocator(
             final List<CasConfigurationPropertiesSourceLocator> locatorList,
             final ResourceLoader resourceLoader) {
             AnnotationAwareOrderComparator.sortIfNecessary(locatorList);
@@ -75,13 +74,10 @@ public class CasCoreBaseStandaloneConfiguration {
     public static class CasCoreBootstrapStandaloneLocatorConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean
-        public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
+        public static CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
             @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
-            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory,
-            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
-            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
+            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
             return new DefaultCasConfigurationPropertiesSourceLocator(
-                configurationPropertiesEnvironmentManager,
                 configurationPropertiesLoaderFactory);
         }
     }
