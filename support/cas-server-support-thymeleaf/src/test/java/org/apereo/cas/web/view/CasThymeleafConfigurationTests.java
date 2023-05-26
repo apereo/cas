@@ -1,7 +1,6 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.BaseThymeleafTests;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasThymeleafConfigurationTests}.

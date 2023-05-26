@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.

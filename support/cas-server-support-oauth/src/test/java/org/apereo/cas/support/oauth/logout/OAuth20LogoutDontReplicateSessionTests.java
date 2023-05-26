@@ -2,14 +2,13 @@ package org.apereo.cas.support.oauth.logout;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.logout.LogoutExecutionPlan;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20LogoutDontReplicateSessionTests}.
