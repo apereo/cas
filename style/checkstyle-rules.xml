@@ -412,6 +412,13 @@
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="import static (org\.mockito\.Mockito|org\.junit\.jupiter\.api\.Assertions)\.[a-zA-Z]+"/>
+            <property name="message"
+                      value="Do not import individual methods for Mockito or JUnit assertions; use star imports instead"/>
+        </module>
+        <module name="RegexpSinglelineJava">
             <property name="id" value="logParameters"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Log parameters must be enclosed between brackets"/>
             <property name="severity" value="error"/>
