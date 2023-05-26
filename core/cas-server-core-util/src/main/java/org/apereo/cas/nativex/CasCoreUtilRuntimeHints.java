@@ -19,6 +19,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.lang.module.Configuration;
 import java.lang.module.ResolvedModule;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +34,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.IntStream;
 
 /**
@@ -52,14 +58,25 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerJdkProxy(CorsConfigurationSource.class);
 
         hints.serialization()
+            .registerType(ZonedDateTime.class)
+            .registerType(LocalDateTime.class)
+            .registerType(LocalDate.class)
+            
             .registerType(ArrayList.class)
+            .registerType(CopyOnWriteArrayList.class)
             .registerType(LinkedList.class)
+
             .registerType(HashMap.class)
+            .registerType(LinkedHashMap.class)
             .registerType(ConcurrentHashMap.class)
             .registerType(TreeMap.class)
+
+            .registerType(ConcurrentSkipListSet.class)
             .registerType(HashSet.class)
+            .registerType(CopyOnWriteArraySet.class)
             .registerType(TreeSet.class)
-            .registerType(LinkedHashMap.class);
+
+            .registerType(TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
 
         hints.reflection()
             .registerType(CasVersion.class, MemberCategory.INVOKE_DECLARED_METHODS)

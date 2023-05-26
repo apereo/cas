@@ -2,6 +2,7 @@ package org.apereo.cas.configuration;
 
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +43,8 @@ public class CasConfigurationPropertiesValidator {
      * @return the list
      */
     public List<String> validate() {
-        val validationResults = new ArrayList<String>(0);
-        validateCasConfiguration(validationResults);
+        LOGGER.info("Validating CAS property sources and configuration. Please wait...");
+        val validationResults = validateCasConfiguration();
         if (validationResults.isEmpty()) {
             LOGGER.info("Validated CAS property sources and configuration successfully.");
         } else {
@@ -58,32 +59,28 @@ public class CasConfigurationPropertiesValidator {
         return validationResults;
     }
 
-    private void validateCasConfiguration(final List<String> validationResults) {
-        try {
-            validateConfiguration(CasConfigurationProperties.class, validationResults);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+    private List<String> validateCasConfiguration() {
+        return FunctionUtils.doAndHandle(() -> validateConfiguration(CasConfigurationProperties.class));
     }
 
-    private void validateConfiguration(final Class clazz, final List<String> validationResults) {
+    private List<String> validateConfiguration(final Class clazz) {
         val beans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext.getBeanFactory(), clazz);
+        val propertySources = applicationContext.getEnvironment().getPropertySources();
+        val conversionService = applicationContext.getEnvironment().getConversionService();
+        val handler = new NoUnboundElementsBindHandler(
+            new IgnoreTopLevelConverterNotFoundBindHandler(),
+            new UnboundElementsSourceFilter());
+
+        val configBinder = new Binder(ConfigurationPropertySources.from(propertySources),
+            new PropertySourcesPlaceholdersResolver(propertySources),
+            conversionService, null, null, null);
+
+        val validationResults = new ArrayList<String>(0);
         beans.values().forEach(bean -> {
-            val configBean = ConfigurationPropertiesBean.get(applicationContext, bean, UUID.randomUUID().toString());
-            val target = configBean.asBindTarget();
-            val annotation = configBean.getAnnotation();
-
-            val handler = new NoUnboundElementsBindHandler(
-                new IgnoreTopLevelConverterNotFoundBindHandler(),
-                new UnboundElementsSourceFilter());
-
-            val propertySources = applicationContext.getEnvironment().getPropertySources();
-            val configBinder = new Binder(ConfigurationPropertySources.from(propertySources),
-                new PropertySourcesPlaceholdersResolver(propertySources),
-                applicationContext.getEnvironment().getConversionService(),
-                null, null,
-                null);
             try {
+                val configBean = ConfigurationPropertiesBean.get(applicationContext, bean, UUID.randomUUID().toString());
+                val target = configBean.asBindTarget();
+                val annotation = configBean.getAnnotation();
                 configBinder.bind(annotation.prefix(), target, handler);
             } catch (final BindException e) {
                 var message = "\n".concat(e.getMessage()).concat("\n");
@@ -98,5 +95,6 @@ public class CasConfigurationPropertiesValidator {
                 validationResults.add(message);
             }
         });
+        return validationResults;
     }
 }

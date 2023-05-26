@@ -14,7 +14,7 @@ user interface so they can manage and modify policies associated with their appl
 of the CAS server itself is not in any way tied to the deployment status of the management web application; you may 
 decide to take the application offline for maintenance or completely remove it from your deployment scenario at any given time.
 
-## Overlay Installation
+## Installation
 
 The management web application server is not part of the CAS server and 
 is a standalone web application which can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
