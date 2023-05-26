@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
@@ -23,7 +24,7 @@ public class ServiceAuditResourceResolverTests {
     public void verifyOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
-        val resolver = new ServiceAuditResourceResolver();
+        val resolver = new ServiceAuditResourceResolver(new AuditEngineProperties());
         var input = resolver.resolveFrom(jp, new Object());
         assertTrue(input.length > 0);
 
@@ -35,7 +36,7 @@ public class ServiceAuditResourceResolverTests {
     public void verifyJsonOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
-        val resolver = new ServiceAuditResourceResolver();
+        val resolver = new ServiceAuditResourceResolver(new AuditEngineProperties());
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
         var input = resolver.resolveFrom(jp, new Object());
         assertTrue(input.length > 0);

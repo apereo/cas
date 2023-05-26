@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -288,6 +289,8 @@ public class WebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("webAuthnMultifactorProviderAuthenticationMetadataPopulator")
             final AuthenticationMetaDataPopulator webAuthnMultifactorProviderAuthenticationMetadataPopulator,
@@ -298,7 +301,7 @@ public class WebAuthnConfiguration {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
-                    plan.registerAuthenticationHandler(webAuthnAuthenticationHandler);
+                    plan.registerAuthenticationHandlerWithPrincipalResolver(webAuthnAuthenticationHandler, defaultPrincipalResolver);
                     plan.registerAuthenticationMetadataPopulator(webAuthnAuthenticationMetaDataPopulator);
                     plan.registerAuthenticationMetadataPopulator(webAuthnMultifactorProviderAuthenticationMetadataPopulator);
                     plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(WebAuthnCredential.class));
@@ -430,19 +433,21 @@ public class WebAuthnConfiguration {
                 @Qualifier("webAuthnCsrfTokenRepository")
                 final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new ProtocolEndpointWebSecurityConfigurer<>() {
-                    @Override
-                    public List<String> getIgnoredEndpoints() {
-                        return List.of(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
-                    }
-
+                    
                     @Override
                     @CanIgnoreReturnValue
                     public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                        Unchecked.consumer(sec -> http.csrf(customizer -> {
+                        Unchecked.consumer(__ -> http.csrf(customizer -> {
                             val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                            webAuthnCsrfTokenRepository.ifAvailable(
-                                repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
+                            webAuthnCsrfTokenRepository.ifAvailable(repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
                         })).accept(http);
+
+                        Unchecked.consumer(__ -> {
+                            http.authorizeHttpRequests().antMatchers(
+                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**").authenticated();
+                            http.authorizeHttpRequests().antMatchers(
+                                WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**").permitAll();
+                        }).accept(http);
                         return this;
                     }
                 };

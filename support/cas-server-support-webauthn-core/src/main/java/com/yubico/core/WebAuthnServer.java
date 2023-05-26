@@ -220,7 +220,7 @@ public class WebAuthnServer {
                             request.getCredentialNickname(),
                             registration
                         ),
-                        registration.isAttestationTrusted(),
+                        registration.isAttestationTrusted() || rp.isAllowUntrustedAttestation(),
                         sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );

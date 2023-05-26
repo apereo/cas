@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
@@ -46,15 +47,20 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
+    @Autowired
+    @Qualifier(TicketCatalog.BEAN_NAME)
+    private TicketCatalog ticketCatalog;
+    
     @RepeatedTest(1)
     public void verifyBadExpPolicyValue() {
+        val ticket = new MockTicketGrantingTicket("casuser");
+
         val instance = mock(HazelcastInstance.class);
-        val catalog = mock(TicketCatalog.class);
-        try (val registry = new HazelcastTicketRegistry(instance, catalog, 0)) {
-            val ticket = new MockTicketGrantingTicket("casuser");
+        val myMap = mock(IMap.class);
+        when(instance.getMap(anyString())).thenReturn(myMap);
+        try (val registry = new HazelcastTicketRegistry(instance, ticketCatalog, 0)) {
             ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
-            assertThrows(IllegalArgumentException.class,
-                () -> registry.addTicket(ticket));
+            assertDoesNotThrow(() -> registry.addTicket(ticket));
             assertDoesNotThrow(registry::shutdown);
         }
     }

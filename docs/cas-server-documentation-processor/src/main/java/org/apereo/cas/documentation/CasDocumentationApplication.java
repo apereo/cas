@@ -65,6 +65,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -254,13 +255,25 @@ public class CasDocumentationApplication {
     }
 
     private static String cleanDescription(final CasReferenceProperty property) {
-        return property.getDescription()
-            .replace("{@code ", "<code>")
-            .replace("{@value ", "<code>")
-            .replace("{@link ", "<code>")
-            .replace("}}", "[%s]</code>")
-            .replace("}", "</code>")
-            .replace("[%s]", "}");
+        var description = property.getDescription();
+        var patterns = new ArrayList<String>();
+        patterns.add("\\{@link (.+?)\\}");
+        patterns.add("\\{@value (\\{*.+?\\}*)\\}");
+        patterns.add("\\{@code (\\{*.+?\\}*)\\}");
+
+        for (var i = 0; i < patterns.size(); i++) {
+            var pattern = patterns.get(i);
+            var matcher = Pattern.compile(pattern).matcher(description);
+            try {
+                while (matcher.find()) {
+                    description = description.replaceFirst(pattern,
+                        "<code>" + Matcher.quoteReplacement(matcher.group(1)) + "</code>");
+                }
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return description;
     }
 
     private static void exportFeatureToggles(final File dataPath) throws Exception {

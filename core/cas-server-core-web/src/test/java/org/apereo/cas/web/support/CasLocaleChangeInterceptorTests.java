@@ -93,6 +93,28 @@ public class CasLocaleChangeInterceptorTests {
     }
 
     @Test
+    public void verifyRequestParamWithRegion() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter("locale", "pt-BR");
+        val response = new MockHttpServletResponse();
+        val resolver = new SessionLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
+        getInterceptor(false).preHandle(request, response, new Object());
+        assertEquals(new Locale("pt", "BR"), resolver.resolveLocale(request));
+    }
+
+    @Test
+    public void verifyRequestParamWithRegionUnderscore() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter("locale", "pt_BR");
+        val response = new MockHttpServletResponse();
+        val resolver = new SessionLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
+        getInterceptor(false).preHandle(request, response, new Object());
+        assertEquals(new Locale("pt", "BR"), resolver.resolveLocale(request));
+    }
+
+    @Test
     public void verifyForcedCasDefaultBeatsAll() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "it");

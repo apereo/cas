@@ -2,6 +2,7 @@ package org.apereo.cas.logout;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -22,8 +23,10 @@ public class SingleLogoutExecutionRequest {
     private final TicketGrantingTicket ticketGrantingTicket;
 
     @Builder.Default
+    @JsonIgnore
     private final Optional<HttpServletRequest> httpServletRequest = Optional.empty();
 
     @Builder.Default
+    @JsonIgnore
     private final Optional<HttpServletResponse> httpServletResponse = Optional.empty();
 }

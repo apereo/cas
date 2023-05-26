@@ -115,6 +115,8 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     private List<Integer> acceptableCodes = IntStream.of(DEFAULT_ACCEPTABLE_CODES).boxed().collect(Collectors.toList());
 
     private long connectionTimeout = DEFAULT_TIMEOUT;
+    
+    private int socketTimeout = DEFAULT_TIMEOUT;
 
     private int readTimeout = DEFAULT_TIMEOUT;
 
@@ -261,6 +263,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
             .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
             .setRedirectsEnabled(this.redirectsEnabled)
             .setAuthenticationEnabled(this.authenticationEnabled)
+            .setSocketTimeout(this.socketTimeout)
             .build();
 
         val builder = HttpClients.custom()

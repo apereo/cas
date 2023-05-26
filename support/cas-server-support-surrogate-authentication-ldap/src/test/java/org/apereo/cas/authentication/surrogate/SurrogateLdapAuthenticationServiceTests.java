@@ -41,8 +41,11 @@ import static org.mockito.Mockito.*;
     "cas.authn.surrogate.ldap.base-dn=ou=surrogates,dc=example,dc=org",
     "cas.authn.surrogate.ldap.bind-dn=cn=Directory Manager",
     "cas.authn.surrogate.ldap.bind-credential=password",
-    "cas.authn.surrogate.ldap.search-filter=cn={user}",
+
     "cas.authn.surrogate.ldap.surrogate-search-filter=employeeType={surrogate}",
+    "cas.authn.surrogate.ldap.surrogate-validation-filter=cn={surrogate}",
+
+    "cas.authn.surrogate.ldap.search-filter=cn={user}",
     "cas.authn.surrogate.ldap.member-attribute-name=mail",
     "cas.authn.surrogate.ldap.member-attribute-value-regex=\\\\w+@example.org|\\\\*"
 })

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -246,7 +247,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 .defaultTypingEnabled(isDefaultTypingEnabled())
                 .jsonFactory(getJsonFactory())
                 .build()
-                .toObjectMapper();
+                .toObjectMapper()
+                .registerModule(new ParameterNamesModule());
             configureObjectMapper(objectMapper);
         }
         return this.objectMapper;

@@ -96,6 +96,17 @@ public class BaseRedisProperties implements Serializable {
     private boolean useSsl;
 
     /**
+     * The shared native connection is never closed by Lettuce connection, therefore it is not validated by default when connections are retrieved.
+     * If this setting is {@code true}, a shared connection will be used for regular operations and
+     * a connection provider will be used to select a connection for blocking and tx operations only, which
+     * should not share a connection. If native connection sharing is disabled, new (or pooled) connections will be used for all operations.
+     * By default, multiple connections share a single thread-safe native connection. If you enable connection pooling,
+     * then native connection sharing will be disabled and the connection pool will be used for all operations.
+     * You may however explicitly control connection sharing via this setting as an override.
+     */
+    private Boolean shareNativeConnections;
+
+    /**
      * Redis protocol version.
      */
     private String protocolVersion = "RESP3";

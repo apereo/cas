@@ -30,6 +30,7 @@ public class RedisObjectFactoryTests {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
+        props.getPool().setEnabled(true);
         props.getPool().setMinEvictableIdleTimeMillis(2000);
         props.getPool().setNumTestsPerEvictionRun(1);
         props.getPool().setSoftMinEvictableIdleTimeMillis(1);

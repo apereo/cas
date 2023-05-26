@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -22,9 +24,10 @@ import java.util.Map;
  * @since 3.0.0
  */
 @ToString
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@JsonCreator})
 @EqualsAndHashCode
 @Getter
+@NoArgsConstructor(force = true)
 public class ImmutableAssertion implements Assertion {
 
     private static final long serialVersionUID = -3348826049921010423L;
@@ -32,31 +35,32 @@ public class ImmutableAssertion implements Assertion {
     /**
      * Primary authentication.
      */
-    private final @NonNull Authentication primaryAuthentication;
+    @JsonProperty
+    private final Authentication primaryAuthentication;
 
+    @JsonProperty
     private final Authentication originalAuthentication;
 
     /**
      * Chained authentications.
      */
-    private final @NonNull List<Authentication> chainedAuthentications;
+    @JsonProperty
+    private final List<Authentication> chainedAuthentications;
 
     /**
      * Was this the result of a new login.
      */
+    @JsonProperty
     private final boolean fromNewLogin;
 
     /**
      * The service we are asserting this ticket for.
      */
-    private final @NonNull WebApplicationService service;
+    @JsonProperty
+    private final WebApplicationService service;
 
-    private final @NonNull RegisteredService registeredService;
+    private final RegisteredService registeredService;
 
-    /**
-     * Context map.
-     *
-     * @return the map
-     */
+    @JsonProperty
     private final Map<String, Serializable> context;
 }

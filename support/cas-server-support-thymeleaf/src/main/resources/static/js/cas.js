@@ -79,7 +79,7 @@ function preserveAnchorTagOnForm() {
         if (action === undefined) {
             action = location.href;
         } else {
-            action += location.search + location.hash;
+            action += location.search + encodeURIComponent(location.hash);
         }
         $('#fm1').attr('action', action);
 

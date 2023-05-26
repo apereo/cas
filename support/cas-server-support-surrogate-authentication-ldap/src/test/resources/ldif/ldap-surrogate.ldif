@@ -21,3 +21,15 @@ mail: *
 sn: CAS
 uid: casuser
 employeeType: *
+
+dn: cn=banderson,ou=surrogates,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: banderson
+userPassword: 123456
+mail: banderson@example.org
+sn: CAS
+uid: banderson
+employeeType: nothing

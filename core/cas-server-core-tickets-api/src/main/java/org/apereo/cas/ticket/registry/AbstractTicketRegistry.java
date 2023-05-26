@@ -259,7 +259,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
-            LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled. ", ticketToProcess.getId());
+            LOGGER.warn("Found removable encoded ticket [{}]; cipher operations are disabled.", ticketToProcess.getId());
             deleteSingleTicket(ticketToProcess.getId());
             return null;
         }
@@ -277,6 +277,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 ticketToProcess.getClass().getSimpleName());
             return ticketToProcess;
         }
+        return decodeInternal(ticketToProcess);
+    }
+
+    protected Ticket decodeInternal(final Ticket ticketToProcess) {
         LOGGER.debug("Attempting to decode [{}]", ticketToProcess);
         val encodedTicket = (EncodedTicket) ticketToProcess;
         val ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncodedTicket(), this.cipherExecutor, Ticket.class);
