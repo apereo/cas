@@ -7,6 +7,7 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.TypeReference;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
@@ -106,6 +107,22 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 MemberCategory.DECLARED_FIELDS,
                 MemberCategory.PUBLIC_FIELDS);
         });
+
+        hints.reflection().registerType(TypeReference.of("groovy.lang.Script"),
+            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+
+        hints.reflection().registerType(TypeReference.of("groovy.lang.GroovyClassLoader"),
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+        
+        hints.reflection().registerType(TypeReference.of("java.util.Stack"),
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
 
         List.of(
                 "org.slf4j.LoggerFactory",

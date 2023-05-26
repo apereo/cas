@@ -50,7 +50,6 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 }, properties = {
     "server.port=9190",
-    "spring.cloud.compatibility-verifier.enabled=false",
     "cas.authn.mfa.u2f.rest.url=http://localhost:9190"
 }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter

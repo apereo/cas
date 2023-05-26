@@ -40,7 +40,7 @@ public class CasCoreBaseEnvironmentConfiguration {
     public static class CasCoreEnvironmentManagerConfiguration {
         @ConditionalOnMissingBean(name = CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
         @Bean
-        public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
+        public static CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
             final ConfigurationPropertiesBindingPostProcessor binder) {
             return new CasConfigurationPropertiesEnvironmentManager(binder);
         }
@@ -58,14 +58,14 @@ public class CasCoreBaseEnvironmentConfiguration {
 
         @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
         @Bean
-        public CipherExecutor<String, String> casConfigurationCipherExecutor(
+        public static CipherExecutor<String, String> casConfigurationCipherExecutor(
             final Environment environment) {
             return new CasConfigurationJasyptCipherExecutor(environment);
         }
 
         @ConditionalOnMissingBean(name = ConfigurationPropertiesLoaderFactory.BEAN_NAME)
         @Bean
-        public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
+        public static ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
             @Qualifier("casConfigurationCipherExecutor")
             final CipherExecutor<String, String> casConfigurationCipherExecutor,
             final Environment environment) {
@@ -79,13 +79,10 @@ public class CasCoreBaseEnvironmentConfiguration {
     public static class CasCoreEnvironmentLocatorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
-        public CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier(CasConfigurationPropertiesEnvironmentManager.BEAN_NAME)
-            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
+        public static CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
             @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
             final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
-            return new StandaloneConfigurationFilePropertiesSourceLocator(
-                configurationPropertiesEnvironmentManager, configurationPropertiesLoaderFactory);
+            return new StandaloneConfigurationFilePropertiesSourceLocator(configurationPropertiesLoaderFactory);
         }
     }
 }

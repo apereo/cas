@@ -43,8 +43,6 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 
-    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
-
     private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
     /**
@@ -77,7 +75,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource("casCompositePropertySource");
         compositePropertySource.addPropertySource(loadEnvironmentAndSystemProperties());
-        val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory(environment);
+        val config = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(environment);
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config != null && config.isDirectory() && config.exists()) {
             val sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
@@ -108,8 +106,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final Environment environment,
         final File configDirectory,
         final List<String> profiles) {
-        val applicationName = casConfigurationPropertiesEnvironmentManager.getApplicationName(environment);
-        val configName = casConfigurationPropertiesEnvironmentManager.getConfigurationName(environment);
+        val applicationName = CasConfigurationPropertiesSourceLocator.getApplicationName(environment);
+        val configName = CasConfigurationPropertiesSourceLocator.getConfigurationName(environment);
         val appNameLowerCase = applicationName.toLowerCase(Locale.ENGLISH);
         val appConfigNames = CollectionUtils.wrapList("application", appNameLowerCase, applicationName, configName);
 

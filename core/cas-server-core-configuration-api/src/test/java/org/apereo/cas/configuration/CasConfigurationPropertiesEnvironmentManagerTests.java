@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
+
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -30,18 +31,16 @@ public class CasConfigurationPropertiesEnvironmentManagerTests {
         val env = new MockEnvironment();
         val file = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(file, "server.port=8899", StandardCharsets.UTF_8);
-        env.setProperty(CasConfigurationPropertiesEnvironmentManager.PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE, file.getCanonicalPath());
-        val mgr = new CasConfigurationPropertiesEnvironmentManager(new ConfigurationPropertiesBindingPostProcessor());
-        assertEquals(file.getCanonicalPath(), mgr.getStandaloneProfileConfigurationFile(env).getCanonicalPath());
+        env.setProperty(CasConfigurationPropertiesSourceLocator.PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE, file.getCanonicalPath());
+        assertEquals(file.getCanonicalPath(), CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(env).getCanonicalPath());
     }
 
     @Test
     public void verifyOperationByDir() throws Exception {
         val env = new MockEnvironment();
         val dir = FileUtils.getTempDirectory();
-        env.setProperty(CasConfigurationPropertiesEnvironmentManager.PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY, dir.getCanonicalPath());
-        val mgr = new CasConfigurationPropertiesEnvironmentManager(new ConfigurationPropertiesBindingPostProcessor());
-        assertEquals(dir.getCanonicalPath(), mgr.getStandaloneProfileConfigurationDirectory(env).getCanonicalPath());
+        env.setProperty(CasConfigurationPropertiesSourceLocator.PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY, dir.getCanonicalPath());
+        assertEquals(dir.getCanonicalPath(), CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(env).getCanonicalPath());
     }
 
 }
