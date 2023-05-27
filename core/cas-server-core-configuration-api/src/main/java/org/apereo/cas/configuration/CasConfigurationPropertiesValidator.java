@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.source.UnboundElementsSourceF
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,7 +44,8 @@ public class CasConfigurationPropertiesValidator {
      * @return the list
      */
     public List<String> validate() {
-        LOGGER.info("Validating CAS property sources and configuration. Please wait...");
+        LOGGER.info("Validating CAS property sources and configuration for active profiles [{}]. Please wait...",
+            Arrays.toString(applicationContext.getEnvironment().getActiveProfiles()));
         val validationResults = validateCasConfiguration();
         if (validationResults.isEmpty()) {
             LOGGER.info("Validated CAS property sources and configuration successfully.");

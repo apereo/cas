@@ -42,8 +42,7 @@ way you intend.
 #### Validation
 
 Configuration properties are automatically validated on CAS startup to report issues with configuration binding, specially if defined CAS settings cannot be
-recognized or validated by the configuration schema. The validation process is on by default and can be skipped on startup using a special system
-property `SKIP_CONFIG_VALIDATION` that should be set to `true`. Additional validation processes are also handled
+recognized or validated by the configuration schema. Additional validation processes are also handled
 via <a href="/{{version}}/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
 startup by Spring Boot and family.
 

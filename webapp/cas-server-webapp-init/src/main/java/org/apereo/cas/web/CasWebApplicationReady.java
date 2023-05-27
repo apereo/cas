@@ -32,12 +32,10 @@ public class CasWebApplicationReady implements CasWebApplicationReadyListener {
     @Override
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
         AsciiArtUtils.printAsciiArtReady(LOGGER, StringUtils.EMPTY);
+        
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));
-
-        if (!Boolean.getBoolean("SKIP_CONFIG_VALIDATION")) {
-            val validator = new CasConfigurationPropertiesValidator(applicationContext);
-            val results = validator.validate();
-            System.setProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS, Boolean.toString(results.isEmpty()));
-        }
+        val validator = new CasConfigurationPropertiesValidator(applicationContext);
+        val results = validator.validate();
+        System.setProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS, Boolean.toString(results.isEmpty()));
     }
 }
