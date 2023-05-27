@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 import org.apereo.cas.support.saml.BaseGitSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,7 +44,8 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
         try {
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
-                PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
@@ -64,7 +66,8 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     public static void cleanUp() throws Exception {
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 

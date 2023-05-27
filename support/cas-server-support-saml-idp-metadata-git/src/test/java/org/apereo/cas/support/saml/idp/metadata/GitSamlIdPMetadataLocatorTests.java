@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseGitSamlMetadataTests;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystemException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,17 +62,14 @@ public class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
     public static void cleanUp() throws Exception {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-idp");
         if (gitRepoDir.exists()) {
-            PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
         val cloneDirectory = "cas-saml-metadata-gsimlt";
         val gitCloneRepoDir = new File(FileUtils.getTempDirectory(), cloneDirectory);
-        val cloneRepoPath = gitCloneRepoDir.toPath();
         if (gitCloneRepoDir.exists()) {
-            try {
-                PathUtils.deleteDirectory(cloneRepoPath, StandardDeleteOption.OVERRIDE_READ_ONLY);
-            } catch (final FileSystemException e) {
-                LOGGER.warn("Can't cleanup [{}] until bean closed: [{}]", cloneRepoPath, e.getMessage());
-            }
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitCloneRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 

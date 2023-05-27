@@ -12,6 +12,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -64,7 +65,8 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     public static void prepTests() throws Exception {
         val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
         if (jsonFolder.isDirectory()) {
-            PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             jsonFolder.delete();
         }
         if (!jsonFolder.mkdir()) {
