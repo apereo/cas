@@ -81,6 +81,7 @@ public class SamlMetadataUIConfiguration {
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
                 val filter = new RequiredValidUntilFilter();
                 filter.setMaxValidityInterval(Duration.ofSeconds(casProperties.getSamlMetadataUi().getMaxValidity()));
+                filter.initialize();
                 filters.add(filter);
             }
             var addResource = true;
