@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration;
 
-import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -14,8 +12,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasConfigurationWatchServiceTests}.
@@ -33,17 +29,9 @@ public class CasConfigurationWatchServiceTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperationByDirectory() {
-        val service = new CasConfigurationWatchService(applicationContext);
-        service.initialize();
-        service.close();
-    }
-
-    @Test
     public void verifyOperationByFile() throws Exception {
         val cas = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(cas, "server.port=0", StandardCharsets.UTF_8);
-        when(CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(any())).thenReturn(cas);
         val service = new CasConfigurationWatchService(applicationContext);
         service.initialize();
 

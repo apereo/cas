@@ -14,6 +14,7 @@ import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -89,11 +90,13 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         try {
             val gitRepoSampleDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
             if (gitRepoSampleDir.exists()) {
-                PathUtils.delete(gitRepoSampleDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitRepoSampleDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
-                PathUtils.delete(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
             try (val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call()) {
                 FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
@@ -116,10 +119,12 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     public static void cleanUp() {
         try {
             val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
-            PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
-                PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
