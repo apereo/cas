@@ -1,4 +1,4 @@
-configurations.all {
+configurations.configureEach {
     resolutionStrategy {
         if (!providers.systemProperty("skipVersionConflict").present) {
             failOnVersionConflict()

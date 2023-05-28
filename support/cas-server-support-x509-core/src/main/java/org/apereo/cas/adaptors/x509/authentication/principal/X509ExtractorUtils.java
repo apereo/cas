@@ -33,7 +33,7 @@ public class X509ExtractorUtils {
     /**
      * Subject Alternative Name field id for RFC822 Email Type.
      */
-    private static int SAN_RFC822_EMAIL_TYPE = 1;
+    private static final int SAN_RFC822_EMAIL_TYPE = 1;
 
     /**
      * Extract common name (CN) from subject DN.
