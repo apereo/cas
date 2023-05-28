@@ -1,12 +1,14 @@
 package org.apereo.cas.context;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesValidator;
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * This is {@link CasApplicationContextInitializer}.
@@ -23,9 +25,13 @@ public class CasApplicationContextInitializer implements ApplicationContextIniti
 
     @Override
     public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
-        LOGGER.info("Initializing application context [{}]", applicationContext.getDisplayName());
-        val validator = new CasConfigurationPropertiesValidator(applicationContext);
-        val results = validator.validate();
-        System.setProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS, Boolean.toString(results.isEmpty()));
+        val activeProfiles = List.of(applicationContext.getEnvironment().getActiveProfiles());
+        if (!activeProfiles.contains(CasConfigurationPropertiesSourceLocator.PROFILE_NATIVE)) {
+            LOGGER.debug("Initializing application context [{}] for active profiles [{}]",
+                applicationContext.getDisplayName(), activeProfiles);
+            val validator = new CasConfigurationPropertiesValidator(applicationContext);
+            val results = validator.validate();
+            System.setProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS, Boolean.toString(results.isEmpty()));
+        }
     }
 }
