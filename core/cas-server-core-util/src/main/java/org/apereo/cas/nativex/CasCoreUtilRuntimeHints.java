@@ -3,8 +3,6 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-
-import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
@@ -21,6 +19,8 @@ import java.lang.module.Configuration;
 import java.lang.module.ResolvedModule;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,8 +61,11 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(ZonedDateTime.class)
             .registerType(LocalDateTime.class)
             .registerType(LocalDate.class)
-            
+            .registerType(ZoneId.class)
+            .registerType(ZoneOffset.class)
+
             .registerType(ArrayList.class)
+            .registerType(Vector.class)
             .registerType(CopyOnWriteArrayList.class)
             .registerType(LinkedList.class)
 
@@ -76,10 +79,39 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(CopyOnWriteArraySet.class)
             .registerType(TreeSet.class)
 
+            .registerType(TypeReference.of("java.time.Clock$SystemClock"))
+            .registerType(TypeReference.of("java.time.Clock$OffsetClock"))
+            .registerType(TypeReference.of("java.time.Clock$FixedClock"))
             .registerType(TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
 
+        registerDeclaredMethod(hints, Map.Entry.class, "getKey");
+        registerDeclaredMethod(hints, Map.Entry.class, "getValue");
+
         hints.reflection()
-            .registerType(TypeReference.of("java.time.Ser"), MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_METHODS)
+            .registerType(Map.Entry.class,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS)
+            
+            .registerType(TypeReference.of("java.util.LinkedHashMap$Entry"), MemberCategory.INTROSPECT_PUBLIC_METHODS)
+            .registerType(TypeReference.of("java.util.TreeMap$Entry"), MemberCategory.INTROSPECT_PUBLIC_METHODS)
+            .registerType(LinkedHashMap.class, MemberCategory.INTROSPECT_DECLARED_METHODS, MemberCategory.DECLARED_FIELDS)
+            .registerType(TypeReference.of("java.util.HashMap$Node"))
+            .registerType(TypeReference.of("java.util.HashMap$TreeNode"))
+            .registerType(HashMap.class,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+                MemberCategory.DECLARED_FIELDS)
+            .registerType(Map.class,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+                MemberCategory.DECLARED_FIELDS)
+
+            .registerType(TypeReference.of("java.time.Ser"),
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS)
+
             .registerType(TypeReference.of("java.time.Clock$SystemClock"),
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
@@ -88,15 +120,6 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS)
 
             .registerType(CasVersion.class, MemberCategory.INVOKE_DECLARED_METHODS)
-            .registerType(Map.class, MemberCategory.INVOKE_DECLARED_METHODS)
-
-            .registerType(LinkedList.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
-            .registerType(ArrayList.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
-            .registerType(Vector.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
-            .registerType(HashMap.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
-            .registerType(HashSet.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
-            .registerType(TreeSet.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
-            .registerType(TreeMap.class, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
 
             .registerType(Module.class, MemberCategory.INVOKE_DECLARED_METHODS)
             .registerType(Class.class, MemberCategory.INVOKE_DECLARED_METHODS)
@@ -121,35 +144,25 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSLMSA", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMSW", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS);
 
-
-        IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx -> {
-            val el = "org.codehaus.groovy.runtime.dgm$" + idx;
-            hints.reflection().registerTypeIfPresent(classLoader, el,
+        IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx ->
+            hints.reflection().registerTypeIfPresent(classLoader, "org.codehaus.groovy.runtime.dgm$" + idx,
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
                 MemberCategory.INVOKE_DECLARED_METHODS,
                 MemberCategory.INVOKE_PUBLIC_METHODS,
                 MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS);
-        });
+                MemberCategory.PUBLIC_FIELDS));
 
-        hints.reflection().registerType(TypeReference.of("groovy.lang.Script"),
-            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
-            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-
-        hints.reflection().registerType(TypeReference.of("groovy.lang.GroovyClassLoader"),
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-        
-        hints.reflection().registerType(TypeReference.of("java.util.Stack"),
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+        hints.reflection()
+            .registerType(TypeReference.of("groovy.lang.GroovyClassLoader"),
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS)
+            .registerType(TypeReference.of("java.util.Stack"),
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
 
         List.of(
+                "groovy.lang.Script",
                 "org.slf4j.LoggerFactory",
                 "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",
                 "nonapi.io.github.classgraph.classloaderhandler.ClassGraphClassLoaderHandler",
