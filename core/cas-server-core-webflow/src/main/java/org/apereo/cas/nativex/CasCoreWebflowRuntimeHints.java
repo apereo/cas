@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
 
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.Action;
@@ -39,6 +40,7 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
         List.of(
                 "org.springframework.webflow.engine.impl.RequestControlContextImpl",
                 "org.springframework.webflow.engine.impl.FlowSessionImpl",
+                DefaultMessageContext.class.getName(),
                 FlowExecutionImpl.class.getName(),
                 WebflowConversationStateCipherExecutor.class.getName()
             )

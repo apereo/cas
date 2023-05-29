@@ -79,6 +79,14 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(TypeReference.of("java.lang.String$CaseInsensitiveComparator"));
 
         hints.reflection()
+            .registerType(TypeReference.of("java.time.Ser"), MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_METHODS)
+            .registerType(TypeReference.of("java.time.Clock$SystemClock"),
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS)
+
             .registerType(CasVersion.class, MemberCategory.INVOKE_DECLARED_METHODS)
             .registerType(Map.class, MemberCategory.INVOKE_DECLARED_METHODS)
 
