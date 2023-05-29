@@ -15,13 +15,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.opensaml.saml.common.xml.SAMLSchemaBuilder;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
-import org.opensaml.saml.metadata.resolver.filter.impl.SchemaValidationFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
@@ -196,21 +194,12 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                         final List<MetadataFilter> metadataFilterList) throws Exception {
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
-        buildSchemaValidationFilter(metadataFilterList);
         buildEntityRoleFilterIfNeeded(service, metadataFilterList);
         buildPredicateFilterIfNeeded(service, metadataFilterList);
 
         if (!metadataFilterList.isEmpty()) {
             addMetadataFiltersToMetadataResolver(metadataProvider, metadataFilterList);
         }
-    }
-
-    private static void buildSchemaValidationFilter(final List<MetadataFilter> metadataFilterList) throws Exception {
-
-        val filter = new SchemaValidationFilter(new SAMLSchemaBuilder(SAMLSchemaBuilder.SAML1Version.SAML_11));
-        filter.initialize();
-        metadataFilterList.add(filter);
-        LOGGER.trace("Added schema validation filter");
     }
 
     protected void addMetadataFiltersToMetadataResolver(final AbstractMetadataResolver metadataProvider,
