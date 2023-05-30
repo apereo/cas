@@ -96,9 +96,12 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                              final SignatureValidationFilter signatureValidationFilter,
-                                                             final List<MetadataFilter> metadataFilterList) {
+                                                             final List<MetadataFilter> metadataFilterList) throws Exception {
         if (signatureValidationFilter != null) {
-            signatureValidationFilter.setRequireSignedRoot(false);
+            if (!signatureValidationFilter.isInitialized()) {
+                signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
+                signatureValidationFilter.initialize();
+            }
             metadataFilterList.add(signatureValidationFilter);
             LOGGER.debug("Added metadata SignatureValidationFilter for [{}]", service.getServiceId());
         } else {
@@ -138,7 +141,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                                                  final String metadataSignatureResource) throws Exception {
         LOGGER.debug("Building SAML2 signature validation filter based on [{}]", metadataSignatureResource);
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
-        signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 

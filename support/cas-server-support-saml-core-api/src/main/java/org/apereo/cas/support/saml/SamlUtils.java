@@ -313,7 +313,6 @@ public class SamlUtils {
         LOGGER.debug("Adding signature validation filter based on the configured trust engine");
         val signatureValidationFilter = new SignatureValidationFilter(trustEngine);
         signatureValidationFilter.setDefaultCriteria(buildSignatureValidationFilterCriteria());
-        signatureValidationFilter.initialize();
         LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
         return signatureValidationFilter;
     }

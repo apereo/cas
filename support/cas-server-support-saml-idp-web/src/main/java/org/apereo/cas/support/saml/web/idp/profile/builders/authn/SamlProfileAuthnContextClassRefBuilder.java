@@ -39,7 +39,6 @@ import java.util.Objects;
  * @since 5.0.0
  */
 @Slf4j
-
 public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnContext> {
 
     @Serial
