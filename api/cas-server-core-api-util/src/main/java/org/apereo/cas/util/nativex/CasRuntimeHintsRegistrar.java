@@ -29,7 +29,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerSpringProxy(final RuntimeHints hints, final Class clazz) {
+    default CasRuntimeHintsRegistrar registerSerializableSpringProxy(final RuntimeHints hints, final Class clazz) {
         hints.proxies()
             .registerJdkProxy(clazz)
             .registerJdkProxy(clazz, Serializable.class, SpringProxy.class, Advised.class, DecoratingProxy.class);

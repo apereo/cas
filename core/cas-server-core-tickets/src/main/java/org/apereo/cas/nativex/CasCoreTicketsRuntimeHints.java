@@ -16,11 +16,16 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.springframework.aop.SpringProxy;
+import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.core.DecoratingProxy;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -33,8 +38,10 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.proxies()
             .registerJdkProxy(TicketSerializationExecutionPlanConfigurer.class)
-            .registerJdkProxy(TicketFactoryExecutionPlanConfigurer.class);
-
+            .registerJdkProxy(TicketFactoryExecutionPlanConfigurer.class)
+            .registerJdkProxy(QueueableTicketRegistry.class, TicketRegistry.class,
+                SpringProxy.class, Advised.class, DecoratingProxy.class);
+        
         hints.reflection()
             .registerType(TicketGrantingCookieCipherExecutor.class,
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,

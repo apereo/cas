@@ -11,11 +11,15 @@ import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceRespons
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
+import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.TypeReference;
+
+import java.util.List;
 
 /**
  * This is {@link CasCoreAuthenticationRuntimeHints}.
@@ -57,5 +61,15 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             .registerType(DefaultAuthentication.class,
                 MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.INVOKE_PUBLIC_METHODS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS);
+
+        List.of(CacheCredentialsCipherExecutor.class).forEach(el ->
+            hints.reflection().registerType(TypeReference.of(el),
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.DECLARED_FIELDS,
+                MemberCategory.PUBLIC_FIELDS));
     }
+
 }
