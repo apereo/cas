@@ -89,6 +89,7 @@ public class SamlMetadataUIConfiguration {
                 val sigFilter = SamlUtils.buildSignatureValidationFilter(applicationContext, signingKey);
                 if (sigFilter != null) {
                     sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
+                    sigFilter.initialize();
                     filters.add(sigFilter);
                 } else {
                     LOGGER.warn("Failed to locate the signing key [{}] for [{}]", signingKey, metadataFile);

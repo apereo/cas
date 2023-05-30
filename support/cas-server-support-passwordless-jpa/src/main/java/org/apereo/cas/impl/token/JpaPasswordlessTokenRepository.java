@@ -43,6 +43,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<PasswordlessAuthenticationToken> findToken(final String username) {
         val query = SELECT_QUERY.concat(" WHERE t.username = :username");
         val results = entityManager.createQuery(query, JpaPasswordlessAuthenticationEntity.class)

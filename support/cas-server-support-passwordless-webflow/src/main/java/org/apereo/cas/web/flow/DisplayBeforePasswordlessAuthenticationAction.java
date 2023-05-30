@@ -104,6 +104,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
                 .to(user.getPhone()).text(text).build();
             communicationsManager.sms(smsRequest);
         }
+        LOGGER.info("Storing passwordless token for [{}]", user.getUsername());
         passwordlessTokenRepository.deleteTokens(user.getUsername());
         passwordlessTokenRepository.saveToken(user, passwordlessRequest, token);
         return success();
