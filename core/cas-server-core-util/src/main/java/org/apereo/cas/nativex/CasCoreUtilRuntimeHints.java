@@ -1,6 +1,8 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
+import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.springframework.aot.hint.MemberCategory;
@@ -37,6 +39,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 /**
@@ -55,6 +60,10 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         hints.proxies()
             .registerJdkProxy(ComponentSerializationPlanConfigurer.class)
             .registerJdkProxy(InitializingBean.class)
+            .registerJdkProxy(Supplier.class)
+            .registerJdkProxy(Runnable.class)
+            .registerJdkProxy(Function.class)
+            .registerJdkProxy(Consumer.class)
             .registerJdkProxy(CorsConfigurationSource.class);
 
         hints.serialization()
@@ -92,7 +101,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 MemberCategory.INTROSPECT_PUBLIC_METHODS,
                 MemberCategory.INTROSPECT_DECLARED_METHODS,
                 MemberCategory.INTROSPECT_PUBLIC_METHODS)
-            
+
             .registerType(TypeReference.of("java.util.LinkedHashMap$Entry"), MemberCategory.INTROSPECT_PUBLIC_METHODS)
             .registerType(TypeReference.of("java.util.TreeMap$Entry"), MemberCategory.INTROSPECT_PUBLIC_METHODS)
             .registerType(LinkedHashMap.class, MemberCategory.INTROSPECT_DECLARED_METHODS, MemberCategory.DECLARED_FIELDS)
@@ -140,8 +149,15 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.PSWMS", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.PSAMS", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSLA", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSA", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSS", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSLMSW", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMS", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMW", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMSA", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSLMSA", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMSA", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMSR", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
             .registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.SSMSW", MemberCategory.INVOKE_DECLARED_CONSTRUCTORS);
 
         IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx ->
@@ -160,8 +176,10 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(TypeReference.of("java.util.Stack"),
                 MemberCategory.INVOKE_PUBLIC_METHODS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-
+        
         List.of(
+                RsaKeyPairCipherExecutor.class.getName(),
+                JsonWebKeySetStringCipherExecutor.class.getName(),
                 "groovy.lang.Script",
                 "org.slf4j.LoggerFactory",
                 "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",

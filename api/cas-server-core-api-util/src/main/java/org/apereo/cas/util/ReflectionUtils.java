@@ -36,7 +36,6 @@ public class ReflectionUtils {
             .acceptPackages(packageName)
             .enableClassInfo()
             .scan()) {
-
             if (superclass.isInterface()) {
                 return new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass));
             }

@@ -7,7 +7,6 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
@@ -29,16 +28,15 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerJdkProxy(ServiceRegistry.class)
             .registerJdkProxy(ServiceRegistryExecutionPlanConfigurer.class);
 
-        registerSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
+        registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
 
-        List.of(CasRegisteredService.class)
-            .forEach(el ->
-                hints.reflection().registerType(TypeReference.of(el),
-                    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                    MemberCategory.INVOKE_DECLARED_METHODS,
-                    MemberCategory.INVOKE_PUBLIC_METHODS,
-                    MemberCategory.DECLARED_FIELDS,
-                    MemberCategory.PUBLIC_FIELDS));
+        List.of(CasRegisteredService.class).forEach(el ->
+            hints.reflection().registerType(TypeReference.of(el),
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.DECLARED_FIELDS,
+                MemberCategory.PUBLIC_FIELDS));
     }
 }
