@@ -7,7 +7,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -28,7 +27,6 @@ import java.util.Set;
  * @since 6.0.0
  */
 @Slf4j
-@Getter
 public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEncryptionService {
     private final PublicJsonWebKey jsonWebKeySigningKey;
 
@@ -60,6 +58,11 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     @Override
     public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
         return JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE;
+    }
+
+    @Override
+    protected PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> serviceResult) {
+        return jsonWebKeySigningKey;
     }
 
     @Override
