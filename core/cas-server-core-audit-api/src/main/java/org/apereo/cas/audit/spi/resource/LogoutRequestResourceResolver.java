@@ -17,7 +17,7 @@ public class LogoutRequestResourceResolver implements AuditResourceResolver {
 
     private String[] toResources(final Object[] args) {
         val object = args[0];
-        val request  = SingleLogoutExecutionRequest.class.cast(object);
+        val request = SingleLogoutExecutionRequest.class.cast(object);
         return new String[]{request.getTicketGrantingTicket().getId()};
     }
 
