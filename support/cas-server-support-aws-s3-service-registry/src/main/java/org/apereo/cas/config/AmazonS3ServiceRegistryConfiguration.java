@@ -43,7 +43,7 @@ public class AmazonS3ServiceRegistryConfiguration {
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
         val builder = S3Client.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         return builder.build();
     }
 

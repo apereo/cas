@@ -4,10 +4,55 @@ ext {
     casNativeWebApplication = true
 }
 
+configurations.configureEach {
+    /*
+    Log4j does not support GraalVM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
+    Defining hidden classes at runtime is not supported.
+     */
+    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+    exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+    
+    exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
+    exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-bootstrap")
+}
+
 dependencies {
-    implementation project(":core:cas-server-core-util")
-    implementation project(":support:cas-server-support-webconfig")
+    compileOnly libraries.graalvmsdk
+    
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
+
+    implementation project(":core:cas-server-core")
+    implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-cookie")
+    implementation project(":core:cas-server-core-logout")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-validation")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-notifications")
+
+    implementation project(":support:cas-server-support-webconfig")
+    implementation project(":support:cas-server-support-logback")
+    implementation project(":support:cas-server-support-person-directory")
+    implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-thymeleaf")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
+    implementation project(":support:cas-server-support-pm-webflow")
 }

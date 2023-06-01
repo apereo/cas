@@ -84,6 +84,8 @@ public class CasReportsConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
@@ -95,7 +97,7 @@ public class CasReportsConfiguration {
             final CasConfigurationProperties casProperties) {
             return new CasReleaseAttributesReportEndpoint(casProperties,
                 servicesManager, authenticationSystemSupport,
-                webApplicationServiceFactory, principalFactory);
+                webApplicationServiceFactory, principalFactory, defaultPrincipalResolver);
         }
     }
 

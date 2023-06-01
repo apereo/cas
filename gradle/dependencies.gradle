@@ -861,6 +861,14 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                },
+                dependencies.create("software.amazon.dax:amazon-dax-client:$amazonDaxVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         awssqs                     : [
@@ -883,6 +891,12 @@ ext.libraries = [
         googleauth                 : [
                 dependencies.create("com.warrenstrange:googleauth:$googleAuthVersion") {
                     transitive = false
+                }
+        ],
+        graalvmsdk                 : [
+                dependencies.create("org.graalvm.sdk:graal-sdk:${graalVmVersion}") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                 }
         ],
         zxingbarcode               : [

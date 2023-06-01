@@ -81,7 +81,7 @@ public class CloudDirectoryAuthenticationConfiguration {
     public CloudDirectoryClient amazonCloudDirectory(final CasConfigurationProperties casProperties) {
         val cloud = casProperties.getAuthn().getCloudDirectory();
         val builder = CloudDirectoryClient.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder,
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder,
             ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
                 cloud.getCredentialSecretKey(), cloud.getProfilePath(), cloud.getProfileName()), cloud);
         return builder.build();

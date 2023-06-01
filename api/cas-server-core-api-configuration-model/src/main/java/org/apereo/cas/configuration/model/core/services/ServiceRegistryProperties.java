@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.Cass
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
@@ -114,6 +115,12 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonS3ServiceRegistryProperties amazonS3 = new AmazonS3ServiceRegistryProperties();
+
+    /**
+     * Properties pertaining to GCP firestore service registry.
+     */
+    @NestedConfigurationProperty
+    private GoogleCloudFirestoreServiceRegistryProperties googleCloudFirestore = new GoogleCloudFirestoreServiceRegistryProperties();
 
     /**
      * Properties pertaining to streaming service registry content over the wire.

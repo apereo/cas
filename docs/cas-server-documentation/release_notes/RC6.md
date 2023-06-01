@@ -73,9 +73,10 @@ CAS has switched and upgraded to Spring Boot `3.1.x`, presently in milestone/rel
 anticipated to be released around mid May 2023. It is unlikely that CAS `7.0.x` would be released prior to that date, and 
 we intend to take advantage of this time window to run integration tests against the next Spring Boot release. 
 
-### Google Cloud Firestore Ticket Registry
+### Google Cloud Firestore 
 
-A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
+- A new ticket registry implementation backed by [Google Cloud's Firestore](../ticketing/GCP-Firestore-Ticket-Registry.html) is now available.
+- A new service registry implementation backed by [Google Cloud's Firestore](../services/GCP-Firestore-Service-Management.html) is now available.
 
 ### Google Cloud Logging
 
@@ -98,7 +99,7 @@ CAS may not be able to correctly find the appropriate service definition linked 
 
 ### Groovy Audits
 
-[Groovy Audits](../audits/Audits-Groovy.html) are now avaiable which can, in small 
+[Groovy Audits](../audits/Audits-Groovy.html) are now available which can, in small 
 and modest ways, control the output and format of the logged auditable record.
 
 ### Redis Connection Pooling
@@ -157,6 +158,7 @@ The following Docker images, used for integration tests, are now upgraded:
 - Support for additional settings such as `cluster`, `family`, etc to assist with Hazelcast discovery when CAS is deployed in AWS.
 - Minor fixes to encode URL fragments prior to form submission and to allow ticket validation attempts to ignore fragments in the URL.
 - `assertionAudiences` defined for SAML2 service definition will now override the default entity id, when defined.
+- All DynamoDb integrations can now be configured to take advantage of in-memory acceleration with DynamoDB Accelerator (DAX).
 - Several bug fixes and enhancements to correct the [WebAuthN FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) registration and authentication flows.
 - Additional settings for [Impersonation via LDAP](../authentication/Surrogate-Authentication-Storage-LDAP.html) to verify the existence of the surrogate account in the LDAP directory.
 
