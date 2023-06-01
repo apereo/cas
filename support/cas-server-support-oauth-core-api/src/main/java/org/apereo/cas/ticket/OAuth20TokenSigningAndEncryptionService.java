@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
-import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
 import java.util.Optional;
@@ -35,12 +35,22 @@ public interface OAuth20TokenSigningAndEncryptionService {
     /**
      * Gets json web key signing algorithm.
      *
-     * @param svc the svc
+     * @param svc        the svc
+     * @param signingKey the signing key
      * @return the json web key signing algorithm
      */
-    default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
-        return AlgorithmIdentifiers.RSA_USING_SHA256;
+    default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
+                                                 final JsonWebKey signingKey) {
+        return signingKey.getAlgorithm();
     }
+
+    /**
+     * Gets json web key used as the signing key.
+     *
+     * @param serviceResult the service result
+     * @return the json web key signing key
+     */
+    PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> serviceResult);
 
     /**
      * Should sign token for service?

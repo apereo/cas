@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.OidcRuntimeHintsTests;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticatorTests;
 import org.apereo.cas.oidc.authn.OidcDPoPAuthenticatorTests;
@@ -203,6 +204,7 @@ import org.junit.platform.suite.api.Suite;
     OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
+    OidcRuntimeHintsTests.class,
     OidcPushedAuthorizationRequestValidatorTests.class,
     OidcPushedAuthorizeEndpointControllerTests.class,
     OidcDefaultJsonWebKeystoreRotationServiceTests.class,

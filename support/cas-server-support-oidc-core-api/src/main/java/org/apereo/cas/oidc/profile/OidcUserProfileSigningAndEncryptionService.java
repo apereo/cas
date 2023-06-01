@@ -12,6 +12,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
@@ -43,11 +44,12 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     }
 
     @Override
-    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
+    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
+                                                final JsonWebKey jsonWebKey) {
         if (svc instanceof OidcRegisteredService) {
             return OidcRegisteredService.class.cast(svc).getUserInfoSigningAlg();
         }
-        return super.getJsonWebKeySigningAlgorithm(svc);
+        return super.getJsonWebKeySigningAlgorithm(svc, jsonWebKey);
     }
 
     @Override

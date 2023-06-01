@@ -6,15 +6,12 @@ import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
-
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
-import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
@@ -28,20 +25,17 @@ import java.util.Set;
  * @since 6.0.0
  */
 @Slf4j
-@Getter
 public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEncryptionService {
-    private final PublicJsonWebKey jsonWebKeySigningKey;
+    private final JsonWebKeySet jsonWebKeySet;
 
     private final CasConfigurationProperties casProperties;
 
     public UmaRequestingPartyTokenSigningService(final CasConfigurationProperties properties) {
         val jwksFile = properties.getAuthn().getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();
-        jsonWebKeySigningKey = FunctionUtils.doIf(ResourceUtils.doesResourceExist(jwksFile),
+        this.jsonWebKeySet = FunctionUtils.doIf(ResourceUtils.doesResourceExist(jwksFile),
                 Unchecked.supplier(() -> {
                     val json = IOUtils.toString(jwksFile.getInputStream(), StandardCharsets.UTF_8);
-                    val jsonWebKeySet = new JsonWebKeySet(json);
-                    val keys = jsonWebKeySet.getJsonWebKeys();
-                    return RsaJsonWebKey.class.cast(keys.get(0));
+                    return new JsonWebKeySet(json);
                 }),
                 () -> {
                     LOGGER.warn("JWKS file for UMA RPT tokens cannot be located. Tokens will not be signed");
@@ -54,12 +48,20 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     @Override
     public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
-        return signToken(service, claims, jsonWebKeySigningKey);
+        return signTokenIfNecessary(claims, service);
     }
 
     @Override
     public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
         return JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE;
+    }
+
+    @Override
+    public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> serviceResult) {
+        val jwks = jsonWebKeySet.getJsonWebKeys();
+        FunctionUtils.throwIf(jwks.isEmpty(),
+            () -> new IllegalArgumentException("Json web keystore is empty and contains no keys"));
+        return PublicJsonWebKey.class.cast(jwks.get(0));
     }
 
     @Override
