@@ -1,5 +1,8 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -9,6 +12,7 @@ import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +39,10 @@ public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, Logout
     }
 
     @Override
+    @Audit(
+            action = AuditableActions.LOGOUT,
+            actionResolverName = AuditActionResolvers.LOGOUT_ACTION_RESOLVER,
+            resourceResolverName = AuditResourceResolvers.LOGOUT_RESOURCE_RESOLVER)
     public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
         val ticket = context.getTicketGrantingTicket();
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
