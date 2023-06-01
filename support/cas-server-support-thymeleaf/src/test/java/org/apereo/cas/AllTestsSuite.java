@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.CasThymeleafRuntimeHintsTests;
 import org.apereo.cas.services.web.CasThymeleafTemplatesDirectorTests;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurerTests;
 import org.apereo.cas.services.web.ThemeBasedViewResolverTests;
@@ -28,6 +29,7 @@ import org.junit.platform.suite.api.Suite;
     ThemeFileTemplateResolverTests.class,
     ThemeBasedViewResolverTests.class,
     CasMustacheViewTests.class,
+    CasThymeleafRuntimeHintsTests.class,
     ThemeClassLoaderTemplateResolverTests.class,
     RestfulUrlTemplateResolverTests.class,
     CasThymeleafConfigurationTests.class

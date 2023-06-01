@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.SamlRuntimeHintsTests;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.authentication.Saml20ObjectBuilderTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulatorTests;
@@ -27,6 +28,7 @@ import org.junit.platform.suite.api.Suite;
     SamlAuthenticationRequestTests.class,
     SamlCompliantUniqueTicketIdGeneratorTests.class,
     WebUtilTests.class,
+    SamlRuntimeHintsTests.class,
     InMemoryResourceMetadataResolverTests.class,
     SamlValidateEndpointTests.class,
     SamlServiceFactoryTests.class,

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.CasCoreUtilRuntimeHintsTests;
 import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
@@ -62,6 +63,7 @@ import org.junit.platform.suite.api.Suite;
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
     ScriptingUtilsTests.class,
+    CasCoreUtilRuntimeHintsTests.class,
     RandomUtilsTests.class,
     SystemUtilsTests.class,
     JsonUtilsTests.class

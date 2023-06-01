@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.CasCoreWebflowRuntimeHintsTests;
 import org.apereo.cas.web.flow.AccountProfileWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasFlowHandlerMappingTests;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategyTests;
@@ -48,6 +49,7 @@ import org.junit.platform.suite.api.Suite;
     ClearWebflowCredentialActionTests.class,
     CasWebflowConfigurerTests.class,
     WebflowCipherBeanTests.class,
+    CasCoreWebflowRuntimeHintsTests.class,
     FlowBuilderConversionServiceTests.class,
     AccountProfileWebflowConfigurerTests.class,
     GroovyCasWebflowAuthenticationExceptionHandlerTests.class,

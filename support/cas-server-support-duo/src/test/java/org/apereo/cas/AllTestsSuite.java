@@ -13,6 +13,7 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticati
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFormActionTests;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPrepareLoginActionTests;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginActionTests;
+import org.apereo.cas.nativex.DuoSecurityRuntimeHintsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -24,6 +25,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    DuoSecurityRuntimeHintsTests.class,
     DuoSecuritySurrogateWebflowConfigurerTests.class,
     DuoSecurityAuthenticationWebflowEventResolverTests.class,
     DuoSecurityMultifactorAuthenticationProviderFactoryTests.class,

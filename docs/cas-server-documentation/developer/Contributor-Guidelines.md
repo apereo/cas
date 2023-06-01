@@ -175,14 +175,14 @@ maintenance mode <b>MUST</b> be ported forward to the master branch as well, via
 
 ## What if the change is too big?
 
-Start by reviewing the [release policy](https://apereo.github.io/cas/developer/Release-Policy.html). The change 
+Start by reviewing the [release policy](Release-Policy.html). The change 
 you have in mind should fit the scope of the release that is planned. If 
 needed, [please discuss](https://apereo.github.io/cas/Mailing-Lists.html) the release schedule and policy with other 
 community members to find alternative solutions and strategies for delivery.
 
 ## Is it worth it?
 
-The CAS project generally operates based on its own [maintenance policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html). Before 
+The CAS project generally operates based on its own [maintenance policy](Maintenance-Policy.html). Before 
 making changes, you want to cross-check the CAS deployment you have today and ensure it is still and to what extent considered viable and 
 maintained by the project.
 

@@ -2,6 +2,13 @@ description = "Apereo CAS Native GraalVM Web Application"
 
 ext {
     casNativeWebApplication = true
+    publishMetadata = true
+    projectMetadata = [
+            facets: ["web"],
+            category: "Web Application",
+            title: "GraalVM Native Image Web Application",
+            aliases: ["graalvmwebapp"]
+    ]
 }
 
 configurations.configureEach {
@@ -15,9 +22,8 @@ configurations.configureEach {
     exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
     exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
     exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
-
     exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
-
+    
     exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
     exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-bootstrap")
 }
@@ -47,6 +53,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-notifications")
 
+    implementation project(":support:cas-server-support-native")
     implementation project(":support:cas-server-support-webconfig")
     implementation project(":support:cas-server-support-logback")
     implementation project(":support:cas-server-support-person-directory")
@@ -56,4 +63,6 @@ dependencies {
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm-webflow")
+
+    testImplementation libraries.graalvmsdk
 }

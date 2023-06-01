@@ -29,6 +29,9 @@ public class CasConfigurationPropertiesEnvironmentManagerTests {
     @Test
     public void verifyOperationByFile() throws Exception {
         val env = new MockEnvironment();
+        val sources = CasConfigurationPropertiesEnvironmentManager.configureEnvironmentPropertySources(env);
+        env.getPropertySources().addFirst(sources);
+
         val file = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(file, "server.port=8899", StandardCharsets.UTF_8);
         env.setProperty(CasConfigurationPropertiesSourceLocator.PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE, file.getCanonicalPath());
@@ -38,6 +41,8 @@ public class CasConfigurationPropertiesEnvironmentManagerTests {
     @Test
     public void verifyOperationByDir() throws Exception {
         val env = new MockEnvironment();
+        val sources = CasConfigurationPropertiesEnvironmentManager.configureEnvironmentPropertySources(env);
+        env.getPropertySources().addFirst(sources);
         val dir = FileUtils.getTempDirectory();
         env.setProperty(CasConfigurationPropertiesSourceLocator.PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY, dir.getCanonicalPath());
         assertEquals(dir.getCanonicalPath(), CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(env).getCanonicalPath());

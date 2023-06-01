@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcherTests;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilderTests;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfigurationTests;
+import org.apereo.cas.nativex.CoreWsSecurityIdentityProviderRuntimeHintsTests;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataControllerTests;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataWriterTests;
@@ -34,6 +35,7 @@ import org.junit.platform.suite.api.Suite;
     WsFederationServicesManagerRegisteredServiceLocatorTests.class,
     DefaultRelyingPartyTokenProducerTests.class,
     WSFederationMetadataControllerTests.class,
+    CoreWsSecurityIdentityProviderRuntimeHintsTests.class,
     WSFederationMetadataWriterTests.class,
     WSFederationMetadataUIActionTests.class,
     DefaultSecurityTokenServiceTokenFetcherTests.class

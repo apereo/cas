@@ -4,6 +4,7 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationCachingAttributeRepositoryTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationCascadeAggregationTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationMergeAggregationTests;
+import org.apereo.cas.nativex.CasPersonDirectoryRuntimeHintsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    CasPersonDirectoryRuntimeHintsTests.class,
     JdbcMultiRowAttributeRepositoryTests.class,
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,

@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
@@ -21,11 +22,10 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.springframework.aop.SpringProxy;
-import org.springframework.aop.framework.Advised;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.core.DecoratingProxy;
+
+import java.util.List;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -38,16 +38,21 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.proxies()
             .registerJdkProxy(TicketSerializationExecutionPlanConfigurer.class)
-            .registerJdkProxy(TicketFactoryExecutionPlanConfigurer.class)
-            .registerJdkProxy(QueueableTicketRegistry.class, TicketRegistry.class,
-                SpringProxy.class, Advised.class, DecoratingProxy.class);
-        
-        hints.reflection()
-            .registerType(TicketGrantingCookieCipherExecutor.class,
+            .registerJdkProxy(TicketFactoryExecutionPlanConfigurer.class);
+
+        registerSpringProxy(hints, QueueableTicketRegistry.class, TicketRegistry.class);
+
+        List.of(
+                TicketGrantingCookieCipherExecutor.class,
+                MultiTimeUseOrTimeoutExpirationPolicy.class,
+                MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy.class,
+                MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class,
+                MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class)
+            .forEach(el -> hints.reflection().registerType(el,
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
                 MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS);
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS));
 
         hints.serialization()
             .registerType(AbstractTicket.class)
@@ -56,15 +61,18 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(ProxyGrantingTicketImpl.class)
             .registerType(ProxyTicketImpl.class)
             .registerType(TransientSessionTicketImpl.class)
-            
             .registerType(AbstractCasExpirationPolicy.class)
             .registerType(AlwaysExpiresExpirationPolicy.class)
+            .registerType(RememberMeDelegatingExpirationPolicy.class)
             .registerType(NeverExpiresExpirationPolicy.class)
             .registerType(ThrottledUseAndTimeoutExpirationPolicy.class)
             .registerType(TicketGrantingTicketExpirationPolicy.class)
             .registerType(TimeoutExpirationPolicy.class)
             .registerType(BaseDelegatingExpirationPolicy.class)
             .registerType(HardTimeoutExpirationPolicy.class)
-            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.class);
+            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.class)
+            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class)
+            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class)
+            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy.class);
     }
 }

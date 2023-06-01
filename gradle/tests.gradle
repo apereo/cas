@@ -62,6 +62,7 @@ enum TestCategories {
     MongoDbMFA,
     MsSqlServer,
     MySQL,
+    Native,
     OAuth,
     OAuthToken,
     OAuthWeb,

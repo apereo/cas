@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.SamlIdPRuntimeHintsTests;
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContextTests;
@@ -161,6 +162,7 @@ import org.junit.platform.suite.api.Suite;
     SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests.class,
     SamlIdPProfileHandlerControllerTests.class,
     SamlIdPAttributeDefinitionTests.class,
+    SamlIdPRuntimeHintsTests.class,
     SamlRegisteredServiceSerializationCustomizerTests.class,
     MetadataEntityAttributesAttributeReleasePolicyTests.class,
     DefaultSamlIdPCasEventListenerTests.class,

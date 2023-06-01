@@ -1,6 +1,8 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -17,6 +19,11 @@ import java.util.List;
 public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        hints.serialization()
+            .registerType(SamlRegisteredService.class)
+            .registerType(SamlArtifactTicketImpl.class)
+            .registerType(SamlAttributeQueryTicketImpl.class);
+
         List.of(SamlRegisteredService.class).forEach(el ->
             hints.reflection().registerType(TypeReference.of(el),
                 MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,

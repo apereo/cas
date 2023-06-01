@@ -226,8 +226,11 @@ if [[ $cloneRepository == "true" ]]; then
   rm -f "$PWD/gh-pages/Gemfile.lock"
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
-  mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"  
-  mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"  
+  if [[ $branchVersion == "development" ]]; then
+    echo "Moving developer documentation into project documentation"
+    mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"
+  fi
+  mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"
   mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"  
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"

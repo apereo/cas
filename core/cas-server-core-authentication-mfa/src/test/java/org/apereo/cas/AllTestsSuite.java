@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationP
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests;
+import org.apereo.cas.nativex.CasCoreMultifactorAuthenticationRuntimeHintsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -22,6 +23,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     DefaultMultifactorAuthenticationProviderResolverTests.class,
+    CasCoreMultifactorAuthenticationRuntimeHintsTests.class,
     DefaultMultifactorAuthenticationFailureModeEvaluatorTests.class,
     RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests.class,

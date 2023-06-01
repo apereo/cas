@@ -23,6 +23,12 @@ import java.util.Optional;
  */
 @FunctionalInterface
 public interface CasConfigurationPropertiesSourceLocator {
+
+    /**
+     * Implementation bean name for the property source locator.
+     */
+    String BOOTSTRAP_PROPERTY_LOCATOR_BEAN_NAME = "casCoreBootstrapPropertySourceLocator";
+
     Logger LOGGER = LoggerFactory.getLogger(CasConfigurationPropertiesSourceLocator.class);
 
     /**

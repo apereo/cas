@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateP
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessorTests;
 import org.apereo.cas.integration.pac4j.BrowserWebStorageSessionStoreTests;
 import org.apereo.cas.integration.pac4j.DistributedJEESessionStoreTests;
+import org.apereo.cas.nativex.Pac4jCoreRuntimeHintsTests;
 import org.apereo.cas.pac4j.serialization.NimbusOAuthJacksonModuleTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,6 +17,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    Pac4jCoreRuntimeHintsTests.class,
     DelegatedAuthenticationCandidateProfileTests.class,
     DelegatedAuthenticationPreProcessorTests.class,
     BrowserWebStorageSessionStoreTests.class,
