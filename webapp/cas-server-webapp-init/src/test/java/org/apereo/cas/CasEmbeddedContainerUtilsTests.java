@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+import org.apereo.cas.util.spring.boot.CasBanner;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +30,7 @@ public class CasEmbeddedContainerUtilsTests {
 
     @Test
     public void verifyCasBanner() {
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
@@ -48,7 +49,7 @@ public class CasEmbeddedContainerUtilsTests {
 
     @Test
     public void verifyCustomBanner() {
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));

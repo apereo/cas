@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.boot.CasBanner;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.springframework.boot.WebApplicationType;
@@ -44,7 +45,7 @@ public class CasNativeWebApplication {
      * @param args the input arguments
      */
     public static void main(final String[] args) {
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        val banner = CasBanner.getInstance();
         new SpringApplicationBuilder(CasNativeWebApplication.class)
             .banner(banner)
             .web(WebApplicationType.SERVLET)

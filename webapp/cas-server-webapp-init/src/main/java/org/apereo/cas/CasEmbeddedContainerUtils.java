@@ -1,9 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
-import org.apereo.cas.util.spring.boot.CasBanner;
-import org.apereo.cas.util.spring.boot.DefaultCasBanner;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,17 +38,6 @@ public class CasEmbeddedContainerUtils {
             .filter(Objects::nonNull)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets cas banner instance.
-     *
-     * @return the cas banner instance
-     */
-    public static CasBanner getCasBannerInstance() {
-        val subTypes = ServiceLoader.load(CasBanner.class).stream()
-            .map(ServiceLoader.Provider::get).toList();
-        return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.get(0);
     }
 
     /**
