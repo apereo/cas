@@ -52,6 +52,11 @@ The collection of end-to-end browser [tests based on Puppeteer](../developer/Tes
 and scenarios. At the moment, total number of jobs stands at approximately `403` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
+### GraalVM Native Images
+
+A CAS server installation and deployment process can be tuned to build and run 
+as a [GraalVM native image](../installation/GraalVM-NativeImage-Installation.html).
+
 ## Other Stuff
 
 - LDAP direct binds are now able to resolve person attributes.
@@ -60,4 +65,6 @@ test coverage of the CAS codebase is approximately `94%`.
 
 - Twilio
 - Hazelcast
+- Gradle
+- Spring Boot
 - Apache Tomcat

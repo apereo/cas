@@ -24,10 +24,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.AbstractCollection;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +88,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
             .registerType(ConcurrentSkipListSet.class)
             .registerType(HashSet.class)
+            .registerType(LinkedHashSet.class)
             .registerType(CopyOnWriteArraySet.class)
             .registerType(TreeSet.class)
 
@@ -95,6 +99,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerDeclaredMethod(hints, Map.Entry.class, "getKey");
         registerDeclaredMethod(hints, Map.Entry.class, "getValue");
+        registerDeclaredMethod(hints, Map.class, "isEmpty");
 
         hints.reflection()
             .registerType(Map.Entry.class,
@@ -111,6 +116,18 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 MemberCategory.INTROSPECT_DECLARED_METHODS,
                 MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
                 MemberCategory.DECLARED_FIELDS)
+            .registerType(AbstractCollection.class,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+                MemberCategory.DECLARED_FIELDS,
+                MemberCategory.INVOKE_DECLARED_METHODS)
+            .registerType(AbstractMap.class,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+                MemberCategory.DECLARED_FIELDS,
+                MemberCategory.INVOKE_DECLARED_METHODS)
             .registerType(Map.class,
                 MemberCategory.INTROSPECT_DECLARED_METHODS,
                 MemberCategory.INTROSPECT_PUBLIC_METHODS,
@@ -180,6 +197,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         List.of(
                 RsaKeyPairCipherExecutor.class.getName(),
                 JsonWebKeySetStringCipherExecutor.class.getName(),
+                "org.codehaus.groovy.transform.StaticTypesTransformation",
                 "groovy.lang.Script",
                 "org.slf4j.LoggerFactory",
                 "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",

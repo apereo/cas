@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequest;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.web.response.OidcJwtResponseModeCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -19,6 +20,10 @@ import java.util.List;
 public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        hints.serialization()
+            .registerType(OidcRegisteredService.class)
+            .registerType(OidcDefaultPushedAuthorizationRequest.class);
+
         List.of(
             OidcRegisteredService.class,
             OidcJwtAccessTokenCipherExecutor.class,

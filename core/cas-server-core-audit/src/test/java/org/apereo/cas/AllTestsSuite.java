@@ -5,7 +5,7 @@ import org.apereo.cas.audit.spi.ServiceAccessEnforcementAuditResourceResolverTes
 import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.ThreadLocalAuditPrincipalResolverTests;
 import org.apereo.cas.audit.spi.TicketValidationResourceResolverTests;
-
+import org.apereo.cas.nativex.CasCoreAuditRuntimeHintsTests;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -19,6 +19,7 @@ import org.junit.platform.suite.api.Suite;
     ShortenedReturnValueAsStringAuditResourceResolverTests.class,
     ThreadLocalAuditPrincipalResolverTests.class,
     GroovyAuditTrailManagerTests.class,
+    CasCoreAuditRuntimeHintsTests.class,
     ServiceAccessEnforcementAuditResourceResolverTests.class,
     TicketValidationResourceResolverTests.class
 })

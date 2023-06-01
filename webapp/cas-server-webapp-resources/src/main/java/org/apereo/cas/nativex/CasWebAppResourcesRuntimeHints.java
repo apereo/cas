@@ -14,6 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 public class CasWebAppResourcesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        hints.resources().registerResource(new ClassPathResource("application.properties"));
         hints.resources().registerResource(new ClassPathResource("application.yml"));
         hints.resources().registerResource(new ClassPathResource("spring.properties"));
     }

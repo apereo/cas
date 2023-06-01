@@ -153,6 +153,9 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh
                 task+="testSyncope "
                 ;;
+            native)
+                task+="testNative "
+                ;;
             delegation)
                 task+="testDelegation "
                 ;;

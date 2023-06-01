@@ -50,7 +50,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Autowired
-    @Qualifier("casCoreBootstrapPropertySourceLocator")
+    @Qualifier(CasConfigurationPropertiesSourceLocator.BOOTSTRAP_PROPERTY_LOCATOR_BEAN_NAME)
     private PropertySourceLocator casCoreBootstrapPropertySourceLocator;
 
     @Autowired

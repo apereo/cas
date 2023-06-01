@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.CasPasswordManagementRuntimeHintsTests;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurerTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementAccountProfileWebflowConfigurerTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurerTests;
@@ -40,6 +41,7 @@ import org.junit.platform.suite.api.Suite;
     PasswordManagementWebflowUtilsTests.class,
     SendForgotUsernameInstructionsActionTests.class,
     PasswordChangeActionTests.class,
+    CasPasswordManagementRuntimeHintsTests.class,
     AccountUnlockStatusActionTests.class,
     AccountUnlockStatusPrepareActionTests.class,
     AccountProfileUpdateSecurityQuestionsActionTests.class,

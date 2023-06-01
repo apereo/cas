@@ -46,7 +46,7 @@ public class CasCoreBaseStandaloneConfiguration {
             final ResourceLoader resourceLoader) {
             AnnotationAwareOrderComparator.sortIfNecessary(locatorList);
             return environment -> {
-                val composite = new CompositePropertySource("casCoreBootstrapPropertySourceLocator");
+                val composite = new CompositePropertySource(CasConfigurationPropertiesSourceLocator.BOOTSTRAP_PROPERTY_LOCATOR_BEAN_NAME);
                 locatorList
                     .stream()
                     .map(locator -> locator.locate(environment, resourceLoader))
