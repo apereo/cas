@@ -316,7 +316,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .build()
             .encode(accessToken.getId());
 
-        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService().getJsonWebKeySigningAlgorithm(registeredService);
+        val jsonWebKey = getConfigurationContext().getIdTokenSigningAndEncryptionService()
+            .getJsonWebKeySigningKey(Optional.of(registeredService));
+
+        val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService()
+            .getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
         val hash = OAuth20AccessTokenAtHashGenerator.builder()
             .encodedAccessToken(encodedAccessToken)
             .algorithm(alg)

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ public class UmaRequestingPartyTokenSigningServiceTests extends BaseUmaEndpointC
         val jwks = new ClassPathResource("nothing.jwks");
         props.getAuthn().getOauth().getUma().getRequestingPartyToken().getJwksFile().setLocation(jwks);
         val signingService = new UmaRequestingPartyTokenSigningService(props);
-        assertNull(signingService.getJsonWebKeySigningKey());
+        assertNull(signingService.getJsonWebKeySigningKey(Optional.empty()));
         val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         assertEquals(JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE, signingService.getAllowedSigningAlgorithms(service));
     }

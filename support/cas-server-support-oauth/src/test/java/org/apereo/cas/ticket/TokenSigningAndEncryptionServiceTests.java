@@ -29,7 +29,7 @@ public class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests 
 
         val service = mock(BaseTokenSigningAndEncryptionService.class);
         when(service.decode(anyString(), any())).thenCallRealMethod();
-        when(service.getJsonWebKeySigningKey()).thenReturn(publicKey);
+        when(service.getJsonWebKeySigningKey(Optional.empty())).thenReturn(publicKey);
 
         assertThrows(IllegalArgumentException.class,
             () -> service.decode(UUID.randomUUID().toString(), Optional.empty()));
@@ -41,7 +41,7 @@ public class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests 
         when(publicKey.getPublicKey()).thenReturn(mock(PublicKey.class));
 
         val service = mock(BaseTokenSigningAndEncryptionService.class);
-        when(service.getJsonWebKeySigningKey()).thenReturn(publicKey);
+        when(service.getJsonWebKeySigningKey(Optional.empty())).thenReturn(publicKey);
         when(service.decode(anyString(), any())).thenCallRealMethod();
         when(service.verifySignature(anyString(), any())).thenReturn(null);
 
