@@ -2,13 +2,13 @@ package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.util.AopUtils;
-import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 
 import lombok.val;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
 /**
- * Audit resources resolver for logout request.
+ * Audit resource resolver for logout requests.
  *
  * @author Jerome LELEU
  * @since 7.0.0
