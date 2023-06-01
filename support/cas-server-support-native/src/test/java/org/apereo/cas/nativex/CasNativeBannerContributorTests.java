@@ -1,7 +1,7 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.config.CasNativeSupportConfiguration;
+import org.apereo.cas.util.spring.boot.CasBanner;
 import lombok.val;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ public class CasNativeBannerContributorTests {
     @Test
     public void verifyOperation() throws Exception {
         val environment = new MockEnvironment();
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        val banner = CasBanner.getInstance();
         try (val out = new ByteArrayOutputStream();
              val printStream = new PrintStream(out, true, StandardCharsets.UTF_8)) {
             banner.printBanner(environment, getClass(), printStream);

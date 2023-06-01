@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.nativex.CasNativeApplicationRunListenerTests;
+import org.apereo.cas.nativex.CasNativeBannerContributorTests;
 import org.apereo.cas.nativex.CasNativeInfoContributorTests;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -12,6 +13,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 4.2.0
  */
 @SelectClasses({
+    CasNativeBannerContributorTests.class,
     CasNativeInfoContributorTests.class,
     CasNativeApplicationRunListenerTests.class
 })
