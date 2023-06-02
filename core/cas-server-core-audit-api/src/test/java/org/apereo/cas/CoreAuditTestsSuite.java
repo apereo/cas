@@ -5,6 +5,7 @@ import org.apereo.cas.audit.spi.FilterAndDelegateAuditTrailManagerTests;
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlanTests;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProviderTests;
 import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolverTests;
+import org.apereo.cas.audit.spi.resource.LogoutRequestResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.MessageBundleAwareResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.ProtocolSpecificationValidationAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolverTests;
@@ -28,7 +29,8 @@ import org.junit.platform.suite.api.Suite;
     ChainingAuditPrincipalIdProviderTests.class,
     CredentialsAsFirstParameterResourceResolverTests.class,
     FilterAndDelegateAuditTrailManagerTests.class,
-    MessageBundleAwareResourceResolverTests.class
+    MessageBundleAwareResourceResolverTests.class,
+    LogoutRequestResourceResolverTests.class
 })
 @Suite
 public class CoreAuditTestsSuite {
