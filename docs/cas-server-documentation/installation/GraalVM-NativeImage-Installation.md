@@ -51,7 +51,7 @@ Generated hint files can typicallt be found in `build/generated/aotResources`.
 ## System Requirements
 
 A GraalVM distribution compatible with the overall [CAS requirements](../planning/Installation-Requirements.html) must be present on the build machine.
-Presently and at a minimum, you will need to have GraalVM `22.3.1` installed with 
+Presently and at a minimum, you will need to have GraalVM installed with 
 the [native image tool](https://www.graalvm.org/latest/reference-manual/native-image/) in place.
      
 Needless to say, the ability to work with GraalVM native image is and will only be available in CAS deployments
