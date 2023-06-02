@@ -3,16 +3,14 @@ package org.apereo.cas.audit.spi.resource;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link LogoutRequestResourceResolverTests}.
