@@ -13,8 +13,8 @@ import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.principal.ThreadLocalAuditPrincipalResolver;
 import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolver;
-import org.apereo.cas.audit.spi.resource.ProtocolSpecificationValidationAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.LogoutRequestResourceResolver;
+import org.apereo.cas.audit.spi.resource.ProtocolSpecificationValidationAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
@@ -27,7 +27,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
