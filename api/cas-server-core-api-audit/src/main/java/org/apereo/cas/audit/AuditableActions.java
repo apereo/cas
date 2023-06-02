@@ -158,4 +158,9 @@ public interface AuditableActions {
      * Auditable action {@code ACCOUNT_REGISTRATION}.
      */
     String ACCOUNT_REGISTRATION = "ACCOUNT_REGISTRATION";
+
+    /**
+     * Auditable action {@code LOGOUT}.
+     */
+    String LOGOUT = "LOGOUT";
 }
