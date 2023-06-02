@@ -39,7 +39,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
                 }),
                 () -> {
                     LOGGER.warn("JWKS file for UMA RPT tokens cannot be located. Tokens will not be signed");
-                    return null;
+                    return new JsonWebKeySet();
                 })
             .get();
         this.casProperties = properties;
