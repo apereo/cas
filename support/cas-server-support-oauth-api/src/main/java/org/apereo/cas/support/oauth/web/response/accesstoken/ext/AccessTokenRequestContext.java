@@ -11,16 +11,19 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
 import org.pac4j.core.profile.UserProfile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -37,8 +40,11 @@ import java.util.Set;
 @Getter
 @SuperBuilder
 @Jacksonized
+@With
+@AllArgsConstructor
 public class AccessTokenRequestContext implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1428887534614525042L;
 
     private final Service service;
@@ -52,11 +58,9 @@ public class AccessTokenRequestContext implements Serializable {
 
     private final boolean expireOldRefreshToken;
 
-    @Nonnull
     private final OAuthRegisteredService registeredService;
 
-    @Setter
-    private TicketGrantingTicket ticketGrantingTicket;
+    private final TicketGrantingTicket ticketGrantingTicket;
 
     @Builder.Default
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
@@ -90,6 +94,12 @@ public class AccessTokenRequestContext implements Serializable {
     private final String redirectUri;
 
     private final UserProfile userProfile;
+
+    @Setter
+    private String dpopConfirmation;
+
+    @Setter
+    private String dpop;
 
     @JsonIgnore
     public boolean isCodeToken() {

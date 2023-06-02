@@ -8,15 +8,15 @@ const path = require('path');
 
     await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
-    await cas.click(page, "li #SAML2Client")
+    await cas.click(page, "li #SAML2Client");
     await page.waitForNavigation();
 
     await cas.loginWith(page, "user1", "password");
-    await page.waitForTimeout(3000)
-    await cas.screenshot(page)
+    await page.waitForTimeout(3000);
+    await cas.screenshot(page);
     await cas.assertInnerText(page, '#content h2', "Multifactor Authentication Provider Selection");
-    await cas.assertVisibility(page, '#mfa-gauth')
-    await cas.assertVisibility(page, '#mfa-yubikey')
+    await cas.assertVisibility(page, '#mfa-gauth');
+    await cas.assertVisibility(page, '#mfa-yubikey');
 
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

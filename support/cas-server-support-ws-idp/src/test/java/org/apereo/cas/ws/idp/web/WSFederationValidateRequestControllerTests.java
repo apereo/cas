@@ -15,8 +15,8 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +112,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         assertThrows(UnauthorizedServiceException.class,
             () -> federationValidateRequestController.findAndValidateFederationRequestForRegisteredService(service, wsFedRequest));
     }
-    
+
 
     @Test
     public void verifyLogoutWithoutReply() {
@@ -218,17 +218,17 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
         when(token.isExpired()).thenReturn(Boolean.FALSE);
         when(token.getCreated()).thenReturn(Instant.now(Clock.systemUTC()).minusSeconds(300));
 
-        val id = UUID.randomUUID().toString();
+        val id = SecurityTokenTicket.PREFIX + '-' + UUID.randomUUID();
         val sts = mock(SecurityTokenTicket.class);
         when(sts.getPrefix()).thenReturn(SecurityTokenTicket.PREFIX);
-        when(sts.getId()).thenReturn(SecurityTokenTicket.PREFIX + '-' + id);
+        when(sts.getId()).thenReturn(id);
         when(sts.isExpired()).thenReturn(Boolean.FALSE);
         when(sts.getSecurityToken()).thenReturn(token);
 
         ticketRegistry.addTicket(sts);
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.getDescendantTickets().add(sts.getId());
+        tgt.getDescendantTickets().add(id);
         ticketRegistry.addTicket(tgt);
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());

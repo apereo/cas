@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link JsonResourceAuthenticationProperties}.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class JsonResourceAuthenticationProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 1079027841236526083L;
 
     /**

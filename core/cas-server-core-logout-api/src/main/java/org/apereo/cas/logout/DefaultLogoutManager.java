@@ -1,27 +1,29 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -30,14 +32,17 @@ import java.util.stream.Stream;
  * @since 4.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class DefaultLogoutManager implements LogoutManager {
-    private final boolean singleLogoutCallbacksDisabled;
-
-    private final LogoutExecutionPlan logoutExecutionPlan;
+public record DefaultLogoutManager(boolean singleLogoutCallbacksDisabled, LogoutExecutionPlan logoutExecutionPlan) implements LogoutManager {
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, Object> keyExtractor) {
+        val seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
 
     @Override
+    @Audit(
+            action = AuditableActions.LOGOUT,
+            actionResolverName = AuditActionResolvers.LOGOUT_ACTION_RESOLVER,
+            resourceResolverName = AuditResourceResolvers.LOGOUT_RESOURCE_RESOLVER)
     public List<SingleLogoutRequestContext> performLogout(final SingleLogoutExecutionRequest context) {
         val ticket = context.getTicketGrantingTicket();
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
@@ -56,17 +61,18 @@ public class DefaultLogoutManager implements LogoutManager {
 
     private List<SingleLogoutRequestContext> performLogoutForTicket(final SingleLogoutExecutionRequest context) {
         val ticketToBeLoggedOut = context.getTicketGrantingTicket();
-        val streamServices = Stream.concat(
-            Stream.of(ticketToBeLoggedOut.getServices()),
-            Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
+        val streamServices = new LinkedHashMap<String, Service>();
+        if (ticketToBeLoggedOut instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
+            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticketToBeLoggedOut).getServices();
+            streamServices.putAll(services);
+        }
+        streamServices.putAll(ticketToBeLoggedOut.getProxyGrantingTickets());
         val logoutServices = streamServices
-            .map(Map::entrySet)
-            .flatMap(Set::stream)
+            .entrySet()
+            .stream()
             .filter(entry -> entry.getValue() instanceof WebApplicationService)
-            .filter(Objects::nonNull)
-            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue()))
-            .collect(Collectors.toList());
-        
+            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue())).toList();
+
         val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();
         return logoutServices
             .stream()
@@ -85,10 +91,5 @@ public class DefaultLogoutManager implements LogoutManager {
             .flatMap(Collection::stream)
             .filter(distinctByKey(SingleLogoutRequestContext::getService))
             .collect(Collectors.toList());
-    }
-
-    private static <T> Predicate<T> distinctByKey(final Function<? super T, Object> keyExtractor) {
-        val seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

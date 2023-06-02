@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("CookieProperties")
 public class CookieProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6804770601645126835L;
 
     /**
@@ -54,11 +56,6 @@ public class CookieProperties implements Serializable {
      * By default, cookies are only returned to the server that sent them.
      */
     private String domain = StringUtils.EMPTY;
-
-    /**
-     * CAS Cookie comment, describes the cookie's usage and purpose.
-     */
-    private String comment = "CAS Cookie";
 
     /**
      * True if sending this cookie should be restricted to a secure protocol, or
@@ -99,7 +96,8 @@ public class CookieProperties implements Serializable {
      *     <li>{@code Lax}</li>
      *     <li>{@code Strict}</li>
      *     <li>{@code None}</li>
-     *     <li>{@code Off}: Disable the generation of the SamSite cookie attribute altogether.</li>
+     *     <li>{@code Off}: Disable the generation of the SameSite cookie attribute altogether.</li>
+     *     <li>Path to a Groovy script that is able to generate the SameSite cookie attribute dynamically.</li>
      *     <li>Fully qualified name of a class that implements {@code org.apereo.cas.web.cookie.CookieSameSitePolicy}</li>
      * </ul>
      */

@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.logout;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -14,8 +14,8 @@ import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -35,7 +35,7 @@ public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
     /**
      * The cas service.
      */
-    protected final CentralAuthenticationService centralAuthenticationService;
+    protected final TicketRegistry ticketRegistry;
 
     /**
      * The TGT cookie generator.

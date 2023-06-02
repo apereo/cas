@@ -47,7 +47,7 @@ public interface PrincipalResolver extends Ordered {
      * @return the principal
      */
     default Principal resolve(final Credential credential) {
-        return resolve(credential, Optional.empty(), Optional.empty());
+        return resolve(credential, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     /**
@@ -59,7 +59,7 @@ public interface PrincipalResolver extends Ordered {
      * @return the principal
      */
     default Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) {
-        return resolve(credential, Optional.empty(), handler);
+        return resolve(credential, Optional.empty(), handler, Optional.empty());
     }
 
     /**
@@ -68,13 +68,16 @@ public interface PrincipalResolver extends Ordered {
      * @param credential Source credential.
      * @param principal  A principal that may have been produced during the authentication process. May be null.
      * @param handler    the authentication handler linked to the resolver. May be null.
+     * @param service    the service
      * @return Resolved principal, or null if the principal could not be resolved.
      */
-    Principal resolve(Credential credential, Optional<Principal> principal, Optional<AuthenticationHandler> handler);
+    Principal resolve(Credential credential, Optional<Principal> principal,
+                      Optional<AuthenticationHandler> handler,
+                      Optional<Service> service);
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD
-     * be called prior to {@link #resolve(Credential, Optional, Optional)})}.
+     * be called prior to {@link #resolve(Credential, Optional, Optional, Optional)})}.
      *
      * @param credential The credential to check for support.
      * @return True if credential is supported, false otherwise.

@@ -9,7 +9,7 @@
 
     "--logging.level.org.apereo.cas=debug",
 
-    "--cas.authn.pac4j.core.replicate-sessions=true",
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
 
     "--cas.service-registry.core.init-from-json=true",
 

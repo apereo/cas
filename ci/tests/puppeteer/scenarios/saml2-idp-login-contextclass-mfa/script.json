@@ -17,6 +17,9 @@
     "--cas.audit.engine.enabled=false",
     "--cas.authn.accept.name=STATIC",
 
+    "--logging.level.org.apereo.cas=debug",
+    "--cas.http-client.host-name-verifier=none",
+
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
 
@@ -25,7 +28,9 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--spring.main.lazy-initialization=false"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"

@@ -5,6 +5,7 @@ import org.apereo.cas.util.RegexUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -19,11 +20,12 @@ public class DefaultRegisteredServiceDomainExtractor implements RegisteredServic
      * the Service and also passed as the service parameter to the login endpoint.
      */
     private final Pattern domainExtractor = RegexUtils.createPattern("^\\^?https?\\??://(.*?)(?:[(]?[:/]|$)");
+
     private final Pattern domainPattern = RegexUtils.createPattern("^[a-z0-9-.]*$");
 
     @Override
     public String extract(final String service) {
-        var value = StringUtils.remove(service.toLowerCase(), ".+");
+        var value = StringUtils.remove(service.toLowerCase(Locale.ENGLISH), ".+");
         value = StringUtils.remove(value, ".*");
         val extractor = this.domainExtractor.matcher(value);
         return extractor.lookingAt() ? validate(extractor.group(1)) : DOMAIN_DEFAULT;

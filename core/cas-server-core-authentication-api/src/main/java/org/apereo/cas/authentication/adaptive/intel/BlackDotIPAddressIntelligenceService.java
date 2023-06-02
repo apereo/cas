@@ -10,13 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -50,17 +52,12 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 builder.append(properties.getEmailAddress());
             }
 
-            switch (properties.getMode().toUpperCase()) {
-                case "DYNA_LIST":
-                    builder.append("&flags=m");
-                    break;
-                case "DYNA_CHECK":
-                    builder.append("&flags=b");
-                    break;
-                default:
-                    builder.append("&flags=f");
-                    break;
-            }
+            val flags = switch (properties.getMode().toUpperCase(Locale.ENGLISH)) {
+                case "DYNA_LIST" -> "&flags=m";
+                case "DYNA_CHECK" -> "&flags=b";
+                default -> "&flags=f";
+            };
+            builder.append(flags);
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
 
@@ -69,11 +66,11 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+            if (response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;
             }
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("Received payload result after examining IP address [{}] as [{}]", clientIpAddress, result);
 
             val json = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);

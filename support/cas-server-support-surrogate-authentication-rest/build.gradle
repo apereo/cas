@@ -1,7 +1,15 @@
 description = "Apereo CAS Surrogate Authentication REST Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation via REST"
+    ]
+}
 dependencies {
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-surrogate-core")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
@@ -22,6 +30,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-rest")
+
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":support:cas-server-support-surrogate-authentication", configuration: "tests")

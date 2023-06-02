@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -16,6 +18,7 @@ import java.util.regex.Pattern;
 @Getter
 @SuperBuilder
 public class Capacity implements Serializable {
+    @Serial
     private static final long serialVersionUID = -331719796564884951L;
 
     private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+(\\.\\d+)*)\\s*(\\S+)");
@@ -36,7 +39,7 @@ public class Capacity implements Serializable {
             throw new IllegalArgumentException("Invalid capacity definition: " + capacity);
         }
         val count = Double.parseDouble(matcher.group(1));
-        val unit = UnitOfMeasure.valueOf(matcher.group(3).toUpperCase());
+        val unit = UnitOfMeasure.valueOf(matcher.group(3).toUpperCase(Locale.ENGLISH));
         return Capacity.builder().unitOfMeasure(unit).size(count).build();
     }
 

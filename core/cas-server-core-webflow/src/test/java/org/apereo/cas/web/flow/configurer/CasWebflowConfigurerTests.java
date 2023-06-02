@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -104,8 +103,8 @@ public class CasWebflowConfigurerTests {
         assertNotNull(transition2);
 
         val flow = mock(Flow.class);
-        assertNull(cfg.getTransitionableState(flow, state.getId(), ActionState.class));
-        assertNull(cfg.getTransitionableState(flow, state.getId()));
+        assertNull(cfg.getTransitionableState(flow, "example", ActionState.class));
+        assertNull(cfg.getTransitionableState(flow, "example"));
     }
 
     @Test
@@ -216,18 +215,8 @@ public class CasWebflowConfigurerTests {
         };
         val state = mock(TransitionableState.class);
         when(state.getId()).thenReturn("example");
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                cfg.createStateDefaultTransition(null, "target");
-            }
-        });
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                cfg.createStateDefaultTransition(null, state);
-            }
-        });
+        assertDoesNotThrow(() -> cfg.createStateDefaultTransition(null, "target"));
+        assertDoesNotThrow(() -> cfg.createStateDefaultTransition(null, state));
     }
 
     @Test
@@ -314,12 +303,7 @@ public class CasWebflowConfigurerTests {
         val state = mock(TransitionableState.class);
         when(flow.containsState("endStateId")).thenReturn(Boolean.TRUE);
         when(flow.getState("endStateId")).thenReturn(state);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                cfg.createTransitionsForState(flow, "endStateId", Map.of());
-            }
-        });
+        assertDoesNotThrow(() -> cfg.createTransitionsForState(flow, "endStateId", Map.of()));
     }
 }
 

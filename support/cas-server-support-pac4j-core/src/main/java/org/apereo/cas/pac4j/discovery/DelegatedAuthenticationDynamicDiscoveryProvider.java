@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class DelegatedAuthenticationDynamicDiscoveryProvider implements Serializable, Ordered {
+    @Serial
     private static final long serialVersionUID = -4732358356149712715L;
 
     private String clientName;

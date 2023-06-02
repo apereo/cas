@@ -60,6 +60,7 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
      * @param requestContext the request context
      * @return the error event
      */
+    @Override
     protected Event getErrorEvent(final RequestContext requestContext) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

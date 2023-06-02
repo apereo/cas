@@ -24,7 +24,7 @@ public interface CloseableDataSource extends DataSource, DisposableBean {
      *
      * @return the target data source
      */
-    DataSource getTargetDataSource();
+    DataSource targetDataSource();
 
     @Override
     default void destroy() throws Exception {

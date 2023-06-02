@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
+
 /**
  * Represents the duo credential.
  *
@@ -25,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 @EqualsAndHashCode(of = "username", callSuper = true)
 public class DuoSecurityCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
 
+    @Serial
     private static final long serialVersionUID = -7570600733132111037L;
 
     private String username;

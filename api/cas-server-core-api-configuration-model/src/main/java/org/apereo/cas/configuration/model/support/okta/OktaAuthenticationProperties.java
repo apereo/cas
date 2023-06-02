@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.okta;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -10,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serial;
 
 /**
  * This is {@link OktaAuthenticationProperties}.
@@ -23,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 @JsonFilter("OktaAuthenticationProperties")
 public class OktaAuthenticationProperties extends BaseOktaProperties {
+    @Serial
     private static final long serialVersionUID = -13245764438426360L;
 
     /**
@@ -51,6 +55,7 @@ public class OktaAuthenticationProperties extends BaseOktaProperties {
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**

@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +74,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         throws GeneralSecurityException, PreventedException {
 
         val username = credential.getUsername();
-        val password = credential.getPassword();
+        val password = credential.toPassword();
 
         val exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
@@ -96,9 +96,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
             && (username.equals(password) || password.equals(StringUtils.reverse(username)))) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this,
-                new BasicCredentialMetaData(credential),
-                this.principalFactory.createPrincipal(username),
-                this.warnings);
+                credential, principalFactory.createPrincipal(username), this.warnings);
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

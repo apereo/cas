@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcPushedAuthorizeEndpointController}.
@@ -27,14 +27,14 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
     }
 
     @Override
-    @GetMapping(value = "/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+    @GetMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) {
         return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Override
-    @PostMapping(value = "/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+    @PostMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {

@@ -2,17 +2,17 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.RegexUtils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.net.URL;
 
 /**
@@ -25,32 +25,21 @@ import java.net.URL;
 @Slf4j
 @ToString
 @Getter
+@Setter
 @Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
+    @Serial
     private static final long serialVersionUID = -211069319543047324L;
 
     private String pattern;
 
-    /**
-     * Init the policy with the pgt url regex pattern that
-     * will determine the urls allowed to receive the pgt.
-     * The matching by default is done in a case insensitive manner.
-     *
-     * @param pgtUrlPattern the pgt url pattern
-     */
-    @JsonCreator
-    public RegexMatchingRegisteredServiceProxyPolicy(@JsonProperty("pattern") final String pgtUrlPattern) {
-        if (RegexUtils.isValidRegex(pgtUrlPattern)) {
-            this.pattern = pgtUrlPattern;
-        } else {
-            LOGGER.warn("Pattern specified [{}] is not a valid regular expression", pgtUrlPattern);
-            this.pattern = RegexUtils.MATCH_NOTHING_PATTERN.pattern();
-        }
-    }
+    private boolean useServiceId;
+
+    private boolean exactMatch;
 
     @JsonIgnore
     @Override
@@ -59,7 +48,17 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
     }
 
     @Override
-    public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
-        return RegexUtils.find(this.pattern, pgtUrl.toExternalForm());
+    public boolean isAllowedProxyCallbackUrl(final RegisteredService registeredService, final URL pgtUrl) {
+        var patternToUse = this.useServiceId ? registeredService.getServiceId() : this.pattern;
+        if (!RegexUtils.isValidRegex(patternToUse)) {
+            LOGGER.warn("Pattern specified [{}] is not a valid regular expression", patternToUse);
+            return false;
+        }
+        if (exactMatch) {
+            LOGGER.debug("Pattern [{}] is compared against URL [{}] for exact equality", patternToUse, pgtUrl.toExternalForm());
+            return patternToUse.equals(pgtUrl.toExternalForm());
+        }
+        LOGGER.debug("Using pattern [{}] to authorize proxy policy for URL [{}]", patternToUse, pgtUrl.toExternalForm());
+        return RegexUtils.find(patternToUse, pgtUrl.toExternalForm());
     }
 }

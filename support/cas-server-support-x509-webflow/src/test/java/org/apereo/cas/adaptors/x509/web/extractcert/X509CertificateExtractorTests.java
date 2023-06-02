@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 public class X509CertificateExtractorTests {
 
-    private static final String[] CERTIFICATE_LINES = new String[]{
+    private static final String[] CERTIFICATE_LINES = {
         "-----BEGIN CERTIFICATE-----",
         "MIIFXTCCA0WgAwIBAgIJANFf3YTJgYifMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV",
         "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX",
@@ -76,14 +76,14 @@ public class X509CertificateExtractorTests {
     @Test
     public void verifyExtractX509FromHeaderSpaceSeperator() {
         val request = new MockHttpServletRequest();
-        request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine(" "));
+        request.addHeader(extractX509CertificateFromHeader.sslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoSeparator() {
         val request = new MockHttpServletRequest();
-        request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine("\t"));
+        request.addHeader(extractX509CertificateFromHeader.sslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 

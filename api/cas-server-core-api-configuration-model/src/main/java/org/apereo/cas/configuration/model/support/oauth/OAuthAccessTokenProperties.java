@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,20 +27,21 @@ import java.io.Serializable;
 @JsonFilter("OAuthAccessTokenProperties")
 public class OAuthAccessTokenProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6832081675586528350L;
 
     /**
      * Hard timeout to kill the access token and expire it.
      */
     @DurationCapable
-    private String maxTimeToLiveInSeconds = "PT28800S";
+    private String maxTimeToLiveInSeconds = "PT8H";
 
     /**
      * Sliding window for the access token expiration policy.
      * Essentially, this is an idle time out.
      */
     @DurationCapable
-    private String timeToKillInSeconds = "PT7200S";
+    private String timeToKillInSeconds = "PT2H";
 
     /**
      * Create access token as JWTs.

@@ -12,8 +12,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -28,8 +30,10 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Slf4j
 public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -7144233906843566234L;
 
     /**
@@ -43,7 +47,9 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public OAuth20RefreshTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public OAuth20RefreshTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
@@ -75,8 +81,21 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
         if (ticketState == null) {
             return true;
         }
-        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        return expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        val expiringTime = getMaximumExpirationTime(ticketState);
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val result = expiringTime.isBefore(now);
+        if (result) {
+            LOGGER.trace("Ticket [{}] is expired because its expiration time [{}] is before [{}]",
+                ticketState.getId(), expiringTime, now);
+        }
+        return result;
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 
     /**
@@ -90,10 +109,13 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)
     public static class OAuthRefreshTokenStandaloneExpirationPolicy extends OAuth20RefreshTokenExpirationPolicy {
+        @Serial
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator
-        public OAuthRefreshTokenStandaloneExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public OAuthRefreshTokenStandaloneExpirationPolicy(
+            @JsonProperty("timeToLive")
+            final long timeToKillInSeconds) {
             super(timeToKillInSeconds);
         }
 

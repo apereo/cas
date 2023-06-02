@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +27,7 @@ import java.io.Serializable;
 @JsonFilter("PasswordManagementCoreProperties")
 public class PasswordManagementCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -261644582798411176L;
 
     /**
@@ -44,5 +47,16 @@ public class PasswordManagementCoreProperties implements Serializable {
      * Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String passwordPolicyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
+
+    /**
+     * The character set that CAS may use to generate and suggest new passwords.
+     */
+    private String passwordPolicyCharacterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789![]{}()%&*$#^<>~@|";
+
+    /**
+     * The password length used by CAS when suggesting generated passwords.
+     */
+    private long passwordPolicyPasswordLength = 10;
 }

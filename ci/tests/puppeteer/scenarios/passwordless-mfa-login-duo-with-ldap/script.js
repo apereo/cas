@@ -8,15 +8,15 @@ const cas = require('../../cas.js');
     await cas.type(page, '#username', "duobypass");
     await page.keyboard.press('Enter');
     await cas.screenshot(page);
-    console.log("Waiting for Duo MFA to complete...")
-    await page.waitForTimeout(12000)
+    console.log("Waiting for Duo MFA to complete...");
+    await page.waitForTimeout(12000);
     await cas.screenshot(page);
-    console.log("Checking for service ticket...")
+    console.log("Checking for service ticket...");
     await cas.assertTicketParameter(page);
 
-    console.log("Checking for SSO Session cookie...")
+    console.log("Checking for SSO Session cookie...");
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.assertCookie(page);
 
     await browser.close();

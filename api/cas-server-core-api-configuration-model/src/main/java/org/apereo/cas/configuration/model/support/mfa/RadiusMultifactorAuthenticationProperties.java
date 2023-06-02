@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link RadiusMultifactorAuthenticationProperties}.
  *
@@ -28,6 +30,7 @@ public class RadiusMultifactorAuthenticationProperties extends BaseMultifactorAu
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-radius";
 
+    @Serial
     private static final long serialVersionUID = 7021301814775348087L;
 
     /**
@@ -61,7 +64,7 @@ public class RadiusMultifactorAuthenticationProperties extends BaseMultifactorAu
      * that no limit is enforced.
      */
     private long allowedAuthenticationAttempts = -1;
-    
+
     /**
      * Indicates whether this provider should support trusted devices.
      */

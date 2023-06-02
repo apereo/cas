@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 public class RegexMatchingRegisteredServiceProxyPolicyTests {
-
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexMatchingRegisteredServiceProxyPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -27,15 +26,37 @@ public class RegexMatchingRegisteredServiceProxyPolicyTests {
 
     @Test
     public void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws Exception {
-        val policyWritten = new RegexMatchingRegisteredServiceProxyPolicy("pattern");
-        MAPPER.writeValue(JSON_FILE, policyWritten);
+        val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+        policy.setPattern("pattern");
+        policy.setExactMatch(true);
+        policy.setUseServiceId(true);
+        MAPPER.writeValue(JSON_FILE, policy);
         val policyRead = MAPPER.readValue(JSON_FILE, RegexMatchingRegisteredServiceProxyPolicy.class);
-        assertEquals(policyWritten, policyRead);
+        assertEquals(policy, policyRead);
     }
 
     @Test
     public void verifyBadPattern() throws Exception {
-        val policy = new RegexMatchingRegisteredServiceProxyPolicy("***");
-        assertFalse(policy.isAllowedProxyCallbackUrl(new URL("https://github.com/apereo/cas")));
+        val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+        policy.setPattern("***");
+        assertFalse(policy.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
+            new URL("https://github.com/apereo/cas")));
+    }
+
+    @Test
+    public void verifyExactMatch() throws Exception {
+        val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+        policy.setPattern("https://github.com/apereo/cas");
+        policy.setExactMatch(true);
+        assertTrue(policy.isAllowedProxyCallbackUrl(RegisteredServiceTestUtils.getRegisteredService(),
+            new URL("https://github.com/apereo/cas")));
+    }
+
+    @Test
+    public void verifyServiceIdPattern() throws Exception {
+        val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+        policy.setUseServiceId(true);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("^https:.+/apereo/cas");
+        assertTrue(policy.isAllowedProxyCallbackUrl(registeredService, new URL("https://github.com/apereo/cas")));
     }
 }

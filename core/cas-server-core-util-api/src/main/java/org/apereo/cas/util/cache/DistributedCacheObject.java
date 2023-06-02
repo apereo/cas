@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
@@ -32,6 +33,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode
 @Accessors(chain = true)
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6776499291439952013L;
 
     @Builder.Default
@@ -60,7 +62,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
             }
             if (!clazz.isAssignableFrom(item.getClass())) {
                 throw new ClassCastException("Object [" + item + " is of type "
-                    + item.getClass() + " when we were expecting " + clazz);
+                                             + item.getClass() + " when we were expecting " + clazz);
             }
             return (T) item;
         }

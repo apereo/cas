@@ -1,16 +1,18 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.DefaultCommunicationsManager;
+import org.apereo.cas.notifications.mail.DefaultEmailSender;
+import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.notifications.push.DefaultNotificationSender;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
 import org.apereo.cas.notifications.sms.GroovySmsSender;
 import org.apereo.cas.notifications.sms.RestfulSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,6 +23,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -41,20 +44,26 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Notifications)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Notifications)
 @AutoConfiguration
 public class CasCoreNotificationsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = CommunicationsManager.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CommunicationsManager communicationsManager(
-        @Qualifier("mailSender")
-        final ObjectProvider<JavaMailSender> mailSender,
-        @Qualifier(SmsSender.BEAN_NAME)
-        final SmsSender smsSender,
-        @Qualifier("notificationSender")
-        final NotificationSender notificationSender) {
-        return new DefaultCommunicationsManager(smsSender, mailSender.getIfAvailable(), notificationSender);
+        @Qualifier(SmsSender.BEAN_NAME) final SmsSender smsSender,
+        @Qualifier(EmailSender.BEAN_NAME) final EmailSender emailSender,
+        @Qualifier("notificationSender") final NotificationSender notificationSender) {
+        return new DefaultCommunicationsManager(smsSender, emailSender, notificationSender);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = EmailSender.BEAN_NAME)
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public EmailSender emailSender(
+        @Qualifier("messageSource") final HierarchicalMessageSource messageSource,
+        @Qualifier("mailSender") final ObjectProvider<JavaMailSender> mailSender) {
+        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource);
     }
 
     @Bean

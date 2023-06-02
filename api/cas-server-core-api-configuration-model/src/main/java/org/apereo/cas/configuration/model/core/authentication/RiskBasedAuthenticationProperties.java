@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +25,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class RiskBasedAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3826749727400569308L;
 
     /**
@@ -52,16 +55,32 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     private Response response = new Response();
 
     /**
-     * The risk threshold factor beyond which the authentication
-     * event may be considered risky.
+     * Core configuration settings for assessing risky authentication attempts.
      */
-    private double threshold = 0.6;
+    private Core core = new Core();
+    
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-electrofence")
+    public static class Core implements Serializable {
 
-    /**
-     * Indicates how far back the search in authentication history must go
-     * in order to locate authentication events.
-     */
-    private long daysInRecentHistory = 30;
+        @Serial
+        private static final long serialVersionUID = 511801361041617794L;
+
+        /**
+         * The risk threshold factor beyond which the authentication
+         * event may be considered risky.
+         */
+        @RequiredProperty
+        private double threshold = 0.6;
+
+        /**
+         * Indicates how far back the search in authentication history must go
+         * in order to locate authentication events.
+         */
+        private long daysInRecentHistory = 30;
+    }
 
     @Getter
     @Setter
@@ -69,6 +88,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class IpAddress implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 577801361041617794L;
 
         /**
@@ -84,6 +104,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class Agent implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 7766080681971729400L;
 
         /**
@@ -99,6 +120,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class GeoLocation implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 4115333388680538358L;
 
         /**
@@ -114,6 +136,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class DateTime implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = -3776875583039922050L;
 
         /**
@@ -135,6 +158,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-electrofence")
     public static class Response implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 8254082561120701582L;
 
         /**

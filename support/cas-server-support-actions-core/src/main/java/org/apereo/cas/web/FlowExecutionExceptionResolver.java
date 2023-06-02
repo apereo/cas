@@ -11,8 +11,10 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 
 /**
@@ -42,9 +44,13 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
      * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
      */
     @Override
-    public ModelAndView resolveException(final HttpServletRequest request,
-                                         final HttpServletResponse response, final Object handler,
-                                         final Exception exception) {
+    public ModelAndView resolveException(
+        @Nonnull
+        final HttpServletRequest request,
+        @Nonnull
+        final HttpServletResponse response, final Object handler,
+        @Nonnull
+        final Exception exception) {
 
         if (!(exception instanceof FlowExecutionRepositoryException) || exception instanceof BadlyFormattedFlowExecutionKeyException) {
             LOGGER.debug("Ignoring the received exception [{}] due to a type mismatch with handler [{}]", exception, handler);

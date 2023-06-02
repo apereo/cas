@@ -11,7 +11,7 @@ import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 
-import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
@@ -41,18 +41,12 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
     private final byte[] sourceIdDigest;
 
     /**
-     * Random generator to construct the AssertionHandle.
-     */
-    private final SecureRandom random;
-
-    /**
      * Flag to indicate SAML2 compliance. Default is SAML1.1.
      */
     private boolean saml2compliant;
 
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
-        this.sourceIdDigest = FunctionUtils.doUnchecked(() -> DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1")));
-        this.random = RandomUtils.getNativeInstance();
+        this.sourceIdDigest = FunctionUtils.doUnchecked(() -> DigestUtils.rawDigest("SHA", sourceId.getBytes(StandardCharsets.ISO_8859_1)));
     }
 
     /**
@@ -74,14 +68,9 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
         return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle());
     }
 
-    /**
-     * New assertion handle.
-     *
-     * @return the byte[] array of size {@link #ASSERTION_HANDLE_SIZE}
-     */
-    private byte[] newAssertionHandle() {
+    private static byte[] newAssertionHandle() {
         val handle = new byte[ASSERTION_HANDLE_SIZE];
-        this.random.nextBytes(handle);
+        RandomUtils.getNativeInstance().nextBytes(handle);
         return handle;
     }
 }

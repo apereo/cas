@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jose4j.jwk.JsonWebKeySet;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OidcClientRegistrationRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1832102135613155844L;
 
     @JsonProperty("redirect_uris")

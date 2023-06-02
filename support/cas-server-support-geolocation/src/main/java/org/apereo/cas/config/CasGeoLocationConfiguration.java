@@ -2,13 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.geo.GeoLocationServiceConfigurer;
 import org.apereo.cas.support.geo.GroovyGeoLocationService;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +23,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasGeoLocationConfiguration}.
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
  * @since 6.6.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
 @AutoConfiguration
 public class CasGeoLocationConfiguration {
     @Bean
@@ -42,8 +41,7 @@ public class CasGeoLocationConfiguration {
         val services = providers.stream()
             .map(GeoLocationServiceConfigurer::configure)
             .filter(BeanSupplier::isNotProxy)
-            .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .collect(Collectors.toList());
+            .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
         return BeanSupplier.of(GeoLocationService.class)
             .when(!services.isEmpty())
             .supply(() -> services.get(0))
@@ -53,7 +51,7 @@ public class CasGeoLocationConfiguration {
 
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Configuration(value = "GroovyGeoLocationConfiguration", proxyBeanMethods = false)
-    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.GeoLocation)
     public static class GroovyGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "groovyGeoLocationService")
         @Bean

@@ -82,7 +82,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
         }
-        return true;
+        return properties.isSsoEnabled();
     }
 
     @Override

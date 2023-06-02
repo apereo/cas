@@ -67,12 +67,10 @@ Available drivers are:
 
 1. `oracle.jdbc.driver.OracleDriver`
 
-| Dialects                                 |
-|------------------------------------------|
-| `org.hibernate.dialect.Oracle8iDialect`  |
-| `org.hibernate.dialect.Oracle9iDialect`  |
-| `org.hibernate.dialect.Oracle10gDialect` |
-| `org.hibernate.dialect.Oracle12cDialect` |
+| Dialects                              |
+|---------------------------------------|
+| `org.hibernate.dialect.OracleDialect` |
+
 
 ### MYSQL
 
@@ -84,12 +82,6 @@ Available drivers are:
 | Dialects                                     |
 |----------------------------------------------|
 | `org.hibernate.dialect.MySQLDialect`         |
-| `org.hibernate.dialect.MySQL5Dialect`        |
-| `org.hibernate.dialect.MySQLInnoDBDialect`   |
-| `org.hibernate.dialect.MySQLMyISAMDialect`   |
-| `org.hibernate.dialect.MySQL5InnoDBDialect`  |
-| `org.hibernate.dialect.MySQL57InnoDBDialect` |
-| `org.hibernate.dialect.MySQL8Dialect`        |
 
 ### PostgreSQL
 
@@ -97,18 +89,9 @@ Available drivers are:
 
 1. `org.postgresql.Driver`
 
-| Dialects                                    |
-|---------------------------------------------|
-| `org.hibernate.dialect.PostgreSQL81Dialect` |
-| `org.hibernate.dialect.PostgreSQL82Dialect` |
-| `org.hibernate.dialect.PostgreSQL9Dialect`  |
-| `org.hibernate.dialect.PostgreSQL91Dialect` |
-| `org.hibernate.dialect.PostgreSQL92Dialect` |
-| `org.hibernate.dialect.PostgreSQL93Dialect` |
-| `org.hibernate.dialect.PostgreSQL94Dialect` |
-| `org.hibernate.dialect.PostgreSQL95Dialect` |
-| `org.hibernate.dialect.PostgreSQL10Dialect` |
-| `org.hibernate.dialect.PostgresPlusDialect` |
+| Dialects                                  |
+|-------------------------------------------|
+| `org.hibernate.dialect.PostgreSQLDialect` |
 
 ### MariaDB
 
@@ -119,11 +102,6 @@ Available drivers are:
 | Dialects                                  |
 |-------------------------------------------|
 | `org.hibernate.dialect.MariaDBDialect`    |
-| `org.hibernate.dialect.MariaDB53Dialect`  |
-| `org.hibernate.dialect.MariaDB10Dialect`  |
-| `org.hibernate.dialect.MariaDB102Dialect` |
-| `org.hibernate.dialect.MariaDB103Dialect` |
-| `org.hibernate.dialect.MariaDB106Dialect` |
 
 ### Microsoft SQL Server 
 
@@ -135,6 +113,3 @@ Available drivers are:
 | Dialects                                     |
 |----------------------------------------------|
 | `org.hibernate.dialect.SQLServerDialect`     |
-| `org.hibernate.dialect.SQLServer2005Dialect` |
-| `org.hibernate.dialect.SQLServer2008Dialect` |
-| `org.hibernate.dialect.SQLServer2012Dialect` |

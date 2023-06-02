@@ -1,8 +1,10 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -14,11 +16,9 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.apache.coyote.ajp.AjpNio2Protocol;
 import org.apache.coyote.ajp.AjpNioProtocol;
-import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11Nio2Protocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http2.Http2Protocol;
@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -44,6 +43,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServerFactoryCustomizer {
+    private static final int PORT_RANGE_MIN = 4000;
+    private static final int PORT_RANGE_MAX = 9000;
+
     private final CasConfigurationProperties casProperties;
 
     private final ServerProperties serverProperties;
@@ -63,30 +65,16 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             if ("HTTP/2".equalsIgnoreCase(proxy.getProtocol())) {
                 connector.addUpgradeProtocol(new Http2Protocol());
             } else {
-                var protocolHandlerInstance = (AbstractProtocol) null;
-                switch (proxy.getProtocol()) {
-                    case "AJP/2":
-                        protocolHandlerInstance = new AjpNio2Protocol();
-                        val ajp1 = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
-                        ajp1.setSecretRequired(proxy.isSecure());
-                        ajp1.setSecret(proxy.getSecret());
-                        break;
-                    case "AJP/1.3":
-                        protocolHandlerInstance = new AjpNioProtocol();
-                        val ajp2 = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
-                        ajp2.setSecretRequired(proxy.isSecure());
-                        ajp2.setSecret(proxy.getSecret());
-                        break;
-                    case "APR":
-                        protocolHandlerInstance = new Http11AprProtocol();
-                        break;
-                    case "HTTP/1.2":
-                        protocolHandlerInstance = new Http11Nio2Protocol();
-                        break;
-                    case "HTTP/1.1":
-                    default:
-                        protocolHandlerInstance = new Http11NioProtocol();
-                        break;
+                val protocolHandlerInstance = switch (proxy.getProtocol()) {
+                    case "AJP/2" -> new AjpNio2Protocol();
+                    case "HTTP/1.2" -> new Http11Nio2Protocol();
+                    case "HTTP/1.1" -> new Http11NioProtocol();
+                    default -> new AjpNioProtocol();
+                };
+                if (protocolHandlerInstance instanceof AbstractAjpProtocol) {
+                    val ajp = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
+                    ajp.setSecretRequired(proxy.isSecure());
+                    ajp.setSecret(proxy.getSecret());
                 }
                 protocolHandlerInstance.setPort(connector.getPort());
                 ReflectionUtils.setField(handler, connector, protocolHandlerInstance);
@@ -101,8 +89,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
     @Override
     public void customize(final ConfigurableServletWebServerFactory factory) {
-        if (factory instanceof TomcatServletWebServerFactory) {
-            val tomcat = (TomcatServletWebServerFactory) factory;
+        if (factory instanceof TomcatServletWebServerFactory tomcat) {
             configureAjp(tomcat);
             configureHttp(tomcat);
             configureHttpProxy(tomcat);
@@ -188,27 +175,31 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
     }
 
     private void configureHttp(final TomcatServletWebServerFactory tomcat) {
-        val http = casProperties.getServer().getTomcat().getHttp();
-        if (http.isEnabled()) {
-            LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
-            val connector = new Connector(http.getProtocol());
-            var port = http.getPort();
-            if (port <= 0) {
-                LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
-                port = SocketUtils.findAvailableTcpPort();
-            }
-            LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
-            connector.setPort(port);
-            if (http.getRedirectPort() > 0) {
-                connector.setRedirectPort(http.getRedirectPort());
-            }
-            connector.setScheme("http");
-            LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
-            connector.addUpgradeProtocol(new Http2Protocol());
+        casProperties.getServer().getTomcat().getHttp()
+            .stream()
+            .filter(CasEmbeddedApacheTomcatHttpProperties::isEnabled)
+            .forEach(http -> {
+                LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
+                val connector = new Connector(http.getProtocol());
+                var port = http.getPort();
+                if (port <= 0) {
+                    port = RandomUtils.nextInt(PORT_RANGE_MIN, PORT_RANGE_MAX);
+                    LOGGER.warn("No explicit port configuration is provided to CAS. Using random port [{}]", port);
+                }
+                LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
+                connector.setPort(port);
+                if (http.getRedirectPort() > 0) {
+                    connector.setRedirectPort(http.getRedirectPort());
+                }
+                connector.setScheme(http.getScheme());
+                connector.setSecure(http.isSecure());
 
-            http.getAttributes().forEach(connector::setProperty);
-            tomcat.addAdditionalTomcatConnectors(connector);
-        }
+                LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");
+                connector.addUpgradeProtocol(new Http2Protocol());
+
+                http.getAttributes().forEach(connector::setProperty);
+                tomcat.addAdditionalTomcatConnectors(connector);
+            });
     }
 
     private void configureHttpProxy(final TomcatServletWebServerFactory tomcat) {
@@ -298,7 +289,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             val valve = new RewriteValve() {
                 @Override
                 public synchronized void startInternal() {
-                    FunctionUtils.doUnchecked(u -> {
+                    FunctionUtils.doUnchecked(__ -> {
                         super.startInternal();
                         try (val is = res.getInputStream();
                              val isr = new InputStreamReader(is, StandardCharsets.UTF_8);

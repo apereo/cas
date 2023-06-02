@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -62,6 +63,7 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
 
         val id = UUID.randomUUID().toString();
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
         servicesManager.save(registeredService);
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword(id));

@@ -1,9 +1,10 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.core.web.LocaleProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.val;
@@ -15,7 +16,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -92,6 +94,28 @@ public class CasLocaleChangeInterceptorTests {
     }
 
     @Test
+    public void verifyRequestParamWithRegion() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter("locale", "pt-BR");
+        val response = new MockHttpServletResponse();
+        val resolver = new SessionLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
+        getInterceptor(false).preHandle(request, response, new Object());
+        assertEquals(new Locale("pt", "BR"), resolver.resolveLocale(request));
+    }
+
+    @Test
+    public void verifyRequestParamWithRegionUnderscore() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter("locale", "pt_BR");
+        val response = new MockHttpServletResponse();
+        val resolver = new SessionLocaleResolver();
+        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
+        getInterceptor(false).preHandle(request, response, new Object());
+        assertEquals(new Locale("pt", "BR"), resolver.resolveLocale(request));
+    }
+
+    @Test
     public void verifyForcedCasDefaultBeatsAll() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "it");
@@ -104,8 +128,10 @@ public class CasLocaleChangeInterceptorTests {
     }
 
     private CasLocaleChangeInterceptor getInterceptor(final boolean force) {
-        val props = new LocaleProperties().setDefaultValue("fr").setForceDefaultLocale(force);
-        return new CasLocaleChangeInterceptor(props, argumentExtractor, servicesManager);
+        val props = new CasConfigurationProperties();
+        props.getLocale().setDefaultValue("fr").setForceDefaultLocale(force);
+        return new CasLocaleChangeInterceptor(new DirectObjectProvider<>(props),
+            new DirectObjectProvider<>(argumentExtractor), new DirectObjectProvider<>(servicesManager));
     }
 
 }

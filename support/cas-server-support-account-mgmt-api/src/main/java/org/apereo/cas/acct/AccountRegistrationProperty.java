@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 public class AccountRegistrationProperty implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7637969227639901358L;
 
     private int order;

@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -14,10 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,11 +39,13 @@ import java.util.Set;
 @Slf4j
 public abstract class BaseRegisteredService implements RegisteredService {
 
+    @Serial
     private static final long serialVersionUID = 7645279151115635245L;
 
     /**
      * The unique identifier for this service.
      */
+    @RegularExpressionCapable
     protected String serviceId;
 
     private String name;
@@ -54,7 +58,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private String privacyUrl;
 
-    private String responseType;
+    private String templateName;
 
     @Id
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
@@ -72,7 +76,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
-    private HashSet<String> environments = new HashSet<>(0);
+    private Set<String> environments = new LinkedHashSet<>(0);
 
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
@@ -100,38 +104,10 @@ public abstract class BaseRegisteredService implements RegisteredService {
         return new CompareToBuilder()
             .append(getEvaluationPriority(), other.getEvaluationPriority())
             .append(getEvaluationOrder(), other.getEvaluationOrder())
-            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH),
+                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH))
             .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
             .toComparison();
-    }
-
-    @Override
-    @Deprecated(since = "6.2.0")
-    @JsonIgnore
-    public Set<String> getRequiredHandlers() {
-        LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
-                     + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
-                     + "for the registered service instead to specify required authentication handlers");
-        return getAuthenticationPolicy().getRequiredAuthenticationHandlers();
-    }
-
-    /**
-     * Sets required handlers.
-     *
-     * @param requiredHandlers the required handlers
-     * @deprecated Since 6.2
-     */
-    @Deprecated(since = "6.2.0")
-    @JsonIgnore
-    public void setRequiredHandlers(final Set<String> requiredHandlers) {
-        if (requiredHandlers != null) {
-            LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
-                         + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
-                         + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
-            initialize();
-            getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(requiredHandlers);
-        }
     }
 
     @Override

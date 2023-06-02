@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link GoogleAuthenticatorMultifactorProperties}.
  *
@@ -30,6 +32,7 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorAut
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-gauth";
 
+    @Serial
     private static final long serialVersionUID = -7401748853833491119L;
 
     /**
@@ -75,12 +78,6 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorAut
     private RestfulGoogleAuthenticatorMultifactorProperties rest = new RestfulGoogleAuthenticatorMultifactorProperties();
 
     /**
-     * Store google authenticator devices via CouchDb.
-     */
-    @NestedConfigurationProperty
-    private CouchDbGoogleAuthenticatorMultifactorProperties couchDb = new CouchDbGoogleAuthenticatorMultifactorProperties();
-
-    /**
      * Store google authenticator devices via Redis.
      */
     @NestedConfigurationProperty
@@ -96,12 +93,13 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorAut
      * Control how stale expired tokens should be cleared from the underlying store.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     public GoogleAuthenticatorMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT1M");
     }
 
 }

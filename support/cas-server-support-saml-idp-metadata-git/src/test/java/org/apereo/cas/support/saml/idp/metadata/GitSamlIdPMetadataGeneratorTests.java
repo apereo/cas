@@ -29,11 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
+
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-saml-metadata"
 })
-@Tag("FileSystem")
+@Tag("Git")
 @Slf4j
 public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     @BeforeAll
@@ -46,10 +48,11 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
             }
-            val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            git.add().addFilepattern("*.*").call();
-            git.commit().setSign(false).setMessage("Initial commit").call();
+            try (val git = Git.init().setDirectory(gitDir).setBare(false).call()) {
+                FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                git.add().addFilepattern("*.*").call();
+                git.commit().setSign(false).setMessage("Initial commit").call();
+            }
             assertTrue(gitDir.exists());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

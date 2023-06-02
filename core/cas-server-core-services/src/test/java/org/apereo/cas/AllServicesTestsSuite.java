@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ResponseTests;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGeneratorTests;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
+import org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests;
 import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
 import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
@@ -20,18 +21,21 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
+import org.apereo.cas.services.DefaultRegisteredServicesTemplatesManagerTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerCachingTests;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategyTests;
 import org.apereo.cas.services.GroovyAuthenticationHandlerResolverTests;
+import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyEnforcerTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
-import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.InMemoryServiceRegistryTests;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategyTests;
+import org.apereo.cas.services.OpenFGARegisteredServiceAccessStrategyTests;
+import org.apereo.cas.services.OpenPolicyAgentRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategyTests;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicyTests;
@@ -43,8 +47,8 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImplTests;
 import org.apereo.cas.services.RegisteredServiceTests;
 import org.apereo.cas.services.RegisteredServicesEventListenerTests;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategyTests;
+import org.apereo.cas.services.RestfulRegisteredServiceProxyPolicyTests;
 import org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicyTests;
-import org.apereo.cas.services.ScriptedRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.SimpleServiceTests;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.UnauthorizedProxyingExceptionTests;
@@ -101,7 +105,6 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceProxyTicketExpirationPolicyTests.class,
     DefaultRegisteredServiceServiceTicketExpirationPolicyTests.class,
     DefaultServicesManagerByEnvironmentTests.class,
-    ScriptedRegisteredServiceUsernameProviderTests.class,
     RemoteEndpointServiceAccessStrategyTests.class,
     ShibbolethCompatiblePersistentIdGeneratorTests.class,
     SimpleWebApplicationServiceImplTests.class,
@@ -110,20 +113,25 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
     RegisteredServiceTests.class,
+    CasCoreServicesMonitoringConfigurationTests.class,
+    DefaultRegisteredServicesTemplatesManagerTests.class,
+    OpenFGARegisteredServiceAccessStrategyTests.class,
     LiteralRegisteredServiceMatchingStrategyTests.class,
     PartialRegexRegisteredServiceMatchingStrategyTests.class,
     FullRegexRegisteredServiceMatchingStrategyTests.class,
     RegisteredServiceReverseMappedRegexAttributeFilterTests.class,
     ReturnEncryptedAttributeReleasePolicyTests.class,
     UnauthorizedServiceExceptionTests.class,
+    GroovyRegisteredServiceAccessStrategyEnforcerTests.class,
+    OpenPolicyAgentRegisteredServiceAccessStrategyTests.class,
     DefaultServicesManagerRegisteredServiceLocatorTests.class,
     RegisteredServiceChainingAttributeFilterTests.class,
     RegisteredServiceAccessStrategyUtilsTests.class,
     RegisteredServiceYamlSerializerTests.class,
     RegisteredServiceAuthenticationPolicyResolverTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
+    RestfulRegisteredServiceProxyPolicyTests.class,
     HttpRequestRegisteredServiceAccessStrategyTests.class,
-    GroovyRegisteredServiceMultifactorPolicyTests.class,
     RegisteredServiceMutantRegexAttributeFilterTests.class,
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,

@@ -9,6 +9,10 @@ import org.apereo.cas.ticket.Ticket;
  * @since 6.1.0
  */
 public interface TicketSerializationManager {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "ticketSerializationManager";
 
     /**
      * Serialize ticket.

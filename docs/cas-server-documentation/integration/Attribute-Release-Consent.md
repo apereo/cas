@@ -32,6 +32,11 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="attributeConsent" %}
 
+## Account Profile Management
+
+The attribute consent feature is able to provide consent decision records and information 
+to the account profile management feature in CAS. [See this guide](../registration/Account-Management-Overview.html) for better details.
+
 ## Attribute Selection
 
 By default, all attributes that are marked for release do qualify for consent. To control this process, you 
@@ -40,7 +45,7 @@ may define a consent policy that indicates a criteria by which attribute selecti
 The policy assigned to each service includes the following features:
 
 | Field                   | Description                                                                                                                                                                                                                                               |
-|-------------------------|--------------------------------------------------------------------------|
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `excludedAttributes`    | Optional. Exclude the indicated attributes from consent.                                                                                                                                                                                                  |
 | `includeOnlyAttributes` | Optional. Force-include the indicated attributes in consent, provided attributes are resolved.                                                                                                                                                            |
 | `excludedServices`      | Optional. Set of service identifiers, defined as a regular expression, for which consent should be skipped. Particularly useful if the service definition is treated as an aggregate of many other applications, allowing this to act as an inner filter. |
@@ -76,15 +81,14 @@ See [this guide](Attribute-Release-Consent-Activation.html) for more details.
 
 User consent decisions may be stored and remembered using one of the following options.
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------
-| CouchDb          | [See this guide](Attribute-Release-Consent-Storage-CouchDb.html).
-| DynamoDb         | [See this guide](Attribute-Release-Consent-Storage-DynamoDb.html).
-| Groovy           | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).
-| JDBC             | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).
-| JSON             | [See this guide](Attribute-Release-Consent-Storage-JSON.html).
-| LDAP             | [See this guide](Attribute-Release-Consent-Storage-LDAP.html).
-| MongoDb          | [See this guide](Attribute-Release-Consent-Storage-MongoDb.html).
-| Redis            | [See this guide](Attribute-Release-Consent-Storage-Redis.html).
-| REST             | [See this guide](Attribute-Release-Consent-Storage-REST.html).
-| Custom           | [See this guide](Attribute-Release-Consent-Storage-Custom.html).
+| Storage     | Description                                                        |
+|-------------|--------------------------------------------------------------------|
+| DynamoDb    | [See this guide](Attribute-Release-Consent-Storage-DynamoDb.html). |
+| Groovy      | [See this guide](Attribute-Release-Consent-Storage-Groovy.html).   |
+| JDBC        | [See this guide](Attribute-Release-Consent-Storage-JDBC.html).     |
+| JSON        | [See this guide](Attribute-Release-Consent-Storage-JSON.html).     |
+| LDAP        | [See this guide](Attribute-Release-Consent-Storage-LDAP.html).     |
+| MongoDb     | [See this guide](Attribute-Release-Consent-Storage-MongoDb.html).  |
+| Redis       | [See this guide](Attribute-Release-Consent-Storage-Redis.html).    |
+| REST        | [See this guide](Attribute-Release-Consent-Storage-REST.html).     |
+| Custom      | [See this guide](Attribute-Release-Consent-Storage-Custom.html).   |

@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AcmeWellKnownChallengeController}.
@@ -31,8 +31,10 @@ public class AcmeWellKnownChallengeController {
      * @return the string
      */
     @GetMapping(value = "/.well-known/acme-challenge/{token}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String handleRequest(@PathVariable(value = "token") final String token,
-                              final HttpServletRequest request, final HttpServletResponse response) {
+    public String handleRequest(
+        @PathVariable("token")
+        final String token,
+        final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Handling ACME challenge...");
         return acmeChallengeRepository.get(token);
     }

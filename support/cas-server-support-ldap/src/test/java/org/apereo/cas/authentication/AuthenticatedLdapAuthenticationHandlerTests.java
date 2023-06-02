@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.jooq.lambda.Unchecked;
@@ -15,6 +16,7 @@ import javax.security.auth.login.LoginException;
 
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.ldap[0].principal-attribute-list=description,cn"
 })
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -43,14 +45,16 @@ public class AuthenticatedLdapAuthenticationHandlerTests {
         public void verifyAuthenticateNotFound() {
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
-                    .forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
+                    .forEach(Unchecked.consumer(h -> h.authenticate(
+                        new UsernamePasswordCredential("notfound", "badpassword"), mock(Service.class)))));
         }
 
         @Test
         public void verifyAuthenticateFailureNotFound() {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-                () -> ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
+                () -> ldapAuthenticationHandlers.toList().forEach(
+                    Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"), mock(Service.class)))));
         }
     }
 

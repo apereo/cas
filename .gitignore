@@ -68,3 +68,7 @@ ci/tests/puppeteer/**/*.jwks
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/shibcasauthn
 ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/saml-md
 ci/tests/puppeteer/scenarios/wsfed-idp-login/wsfed-sp/
+ci/tests/perf/saml/md/*
+ci/tests/cassandra/security/**
+ci/tests/k3d/install.sh
+ci/tests/k3d/get_helm.sh

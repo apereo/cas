@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +41,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = -6690808348975271382L;
 
     public BasicDuoSecurityAuthenticationService(
@@ -71,13 +73,13 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
             val msg = httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
-                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
+                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8);
                 LOGGER.debug("Received Duo ping response [{}]", response);
 
                 val result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                    && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
-                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+                    && "pong".equalsIgnoreCase(result.get(RESULT_KEY_RESPONSE).asText())
+                    && "OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                     return true;
                 }
                 LOGGER.warn("Could not reach/ping Duo. Response returned is [{}]", result);

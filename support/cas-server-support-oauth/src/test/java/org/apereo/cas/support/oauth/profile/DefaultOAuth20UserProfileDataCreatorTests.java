@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,6 +29,8 @@ public class DefaultOAuth20UserProfileDataCreatorTests extends AbstractOAuth20Te
     @Test
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val map = oAuth2UserProfileDataCreator.createFrom(getAccessToken(), context);

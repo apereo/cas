@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
+
     @Test
     public void verifyOperation() {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
@@ -50,7 +51,7 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
         appCtx.refresh();
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
-        chain.addPolicy(policy);
+        chain.addPolicies(policy);
         val service = getOidcRegisteredService();
         service.setAttributeReleasePolicy(chain);
         val serializer = new RegisteredServiceJsonSerializer(appCtx);

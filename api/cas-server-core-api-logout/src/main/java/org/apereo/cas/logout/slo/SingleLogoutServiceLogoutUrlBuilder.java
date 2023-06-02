@@ -5,8 +5,9 @@ import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -61,7 +62,7 @@ public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered {
      * @param registeredService   the registered service
      * @param singleLogoutService the single logout service
      * @param httpRequest         the http request
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(RegisteredService registeredService,
                      WebApplicationService singleLogoutService,

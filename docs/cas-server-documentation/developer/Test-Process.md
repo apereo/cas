@@ -12,7 +12,7 @@ This page documents the steps that a CAS developer/contributor should take for t
 server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
-<div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
+<div class="alert alert-info">:information_source: <strong>Contributions</strong><p>Patches submitted to the CAS codebase 
 in form of pull requests must pass all automated unit or integration tests, and/or 
 provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
 the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
@@ -21,7 +21,7 @@ the contribution most likely will not be accepted into the codebase and ultimate
 
 The following types of test cases in the project are those that CAS developers/contributors need to review,
 
-<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+<div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are about to describe a problem, please try to put together a test case that concretely demonstrates
 the issue in an automated fashion in an environment that is fairly 
 isolated, <strong>WITHOUT</strong> manual instructions and guidance 
@@ -41,13 +41,13 @@ with the `@Test` annotation and then executed by the test framework.
 
 For example, a `src/main/java/Extractor.java` type of component would have 
 its test cases inside a `src/test/java/ExtractorTests.java` test class.
+   
+### Integration Tests
 
 In some scenarios unit tests also run a series of tests against databases, external systems or APIs to verify functionality
 and correctness of integration. For example, a `MongoDbTicketRegistry` type of component would 
-require a MongoDb running instance and special markup
-and annotations to run tests when that external instance is up 
-and running. Structurally speaking, such tests are
-almost identical to plain vanilla unit tests and may only contain additional 
+require a MongoDb running instance and special markup and annotations to run tests when that external instance is up 
+and running. Structurally speaking, such tests are almost identical to plain vanilla unit tests and may only contain additional 
 decorations and annotations,depending on the test system.
 
 ### Functional Tests
@@ -61,7 +61,7 @@ at reproducing scenarios related to an issue or possible defect, and can be very
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-- For the tomcat, undertow or jetty webapp, add the module reference to the `webapp.gradle` build script of web application you intend to run:
+- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp-dependencies.gradle` build script of web application you intend to run:
 
 ```gradle
 implementation project(":support:cas-server-support-modulename")
@@ -98,19 +98,19 @@ All unit and integration tests are executed by the [continuous integration syste
 
 Code coverage metrics are collected and reported by the following platforms:
 
-| System                            | Badge
-|-----------------------------------+---------------------------------------------------------+
-| Codacy           | [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&utm_medium=referral&utm_content=apereo/cas&utm_campaign=Badge_Coverage)
-| SonarCloud           | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=coverage)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
-| CodeCov           | [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
+| System     | Badge                                                                                                                                                                                                                                          |
+|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Codacy     | [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&utm_medium=referral&utm_content=apereo/cas&utm_campaign=Badge_Coverage) |
+| SonarCloud | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=coverage)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                                            |
+| CodeCov    | [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)                                                                                                                                 |
 
 Quality metrics are collected and reported by the following platforms:
 
-| System                            | Badge
-|-----------------------------------+---------------------------------------------------------------------------+
-| Codacy           | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=apereo/cas&amp;utm_campaign=Badge_Grade)
-| SonarCloud Quality Gate           | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
-| SonarCloud Maintainability            | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server) 
+| System                     | Badge                                                                                                                                                                                                                                                |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Codacy                     | [![Codacy Badge](https://app.codacy.com/project/badge/Grade/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=apereo/cas&amp;utm_campaign=Badge_Grade) |
+| SonarCloud Quality Gate    | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                                     |
+| SonarCloud Maintainability | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)                                                     |
 
 ## Browser & Functional Testing
 
@@ -158,27 +158,36 @@ you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
    
 The following command-line options are supported for test execution:
 
-| Flag                              | Description
-|-----------------------------------+---------------------------------------------------------+
-| `--scenario`                      | The scenario name, typically modeled after the folder name that contains the test
-| `--install-puppeteer`, `--install`, `--i` | Install or update Puppeteer node modules.
-| `--debug`, `--d`                  | Launch the CAS web application with remote debugging enabled.
-| `--debug-port`, `--port`          | Specify the remote debugging port, typically `5000`.
-| `--debug-suspend`, `--suspend`, `--s` | Suspend the CAS web application on startup until a debugger session connects.
-| `--rebuild`, `--r`, `--build`     | Rebuild the CAS web application, and disregard previously-built WAR artifacts.
-| `--dry-run`, `--y`                | Launch the CAS web application configured in the test without actually running the test.
-| `--headless`, `--h`               | Launch the test scenario with a headless browser.
-| `--rerun`, `--resume`, `--z`      | Launch and assume the CAS is already running from a previous attempt.
-| `--hbo`                           | A combination of `--headless` and `--build` and Gradle's `--offline`.
-| `--bo`                            | Run with `--build` where the build is then run using an `--offline` Gradle flag.
-| `--hr`                            | A combination of `--headless` and `--resume`.
-   
+| Flag                                      | Description                                                                              |
+|-------------------------------------------|------------------------------------------------------------------------------------------|
+| `--scenario`                              | The scenario name, typically modeled after the folder name that contains the test        |
+| `--install-puppeteer`, `--install`, `--i` | Install or update Puppeteer node modules.                                                |
+| `--debug`, `--d`                          | Launch the CAS web application with remote debugging enabled.                            |
+| `--debug-port`, `--port`                  | Specify the remote debugging port, typically `5000`.                                     |
+| `--debug-suspend`, `--suspend`, `--s`     | Suspend the CAS web application on startup until a debugger session connects.            |
+| `--rebuild`, `--build`                    | Rebuild the CAS web application, and disregard previously-built WAR artifacts.           |
+| `--dry-run`, `--y`                        | Launch the CAS web application configured in the test without actually running the test. |
+| `--headless`, `--h`                       | Launch the test scenario with a headless browser.                                        |
+| `--rerun`, `--resume`, `--r`              | Launch and assume CAS is already running from a previous attempt.                        |
+| `--hbo`                                   | A combination of `--headless` and `--build` and Gradle's `--offline` flag.               |
+| `--hbod`                                  | A combination of `--hbo` and Gradle's `--offline` flag.                                  |
+| `--bo`                                    | A combination of `--build` and Gradle's `--offline` flag.                                |
+| `--hr`                                    | A combination of `--headless` and `--resume`.                                            |
+| `--ho`                                    | A combination of `--headless` and Gradle's `--offline` flag.                             |
+| `--hd`                                    | A combination of `--headless` and `--debug`.                                             |
+| `--hb`                                    | A combination of `--headless` and `--build`.                                             |
+| `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
+| `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
+| `--io`, `initonly`                        | Initialize the execution of the test scenario, but do not run it.                        |
+
 For example, the `login-success` test scenario may be run using: 
 
 ```bash
 pupcas login-success --hbo
 ```
-  
+         
+All other build related options and flags (i.e. `--info`) may be passed directly to the script. 
+
 ### Test Scenario Anatomy
 
 Each test scenario is composed of the following files:
@@ -206,11 +215,24 @@ A basic modest outline of the test configuration may be:
 ```json
 {
   "dependencies": "module1,module2,module3,...",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.something=something"
   ],
+  "jvmArgs": "...",
+  "SPRING_APPLICATION_JSON": {},
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
-  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [ ]
+  },
+  "instance2": {
+    "properties": [ ]
+  }
 }
 ```
   

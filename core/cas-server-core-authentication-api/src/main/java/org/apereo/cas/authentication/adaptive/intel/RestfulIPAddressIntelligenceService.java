@@ -8,7 +8,8 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,7 +35,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
         try {
             val rest = adaptiveAuthenticationProperties.getIpIntel().getRest();
 
-            val parameters = new HashMap<String, Object>();
+            val parameters = new HashMap<String, String>();
             parameters.put("clientIpAddress", clientIpAddress);
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -47,14 +48,14 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
 
             response = HttpUtils.execute(exec);
             if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                val status = HttpStatus.valueOf(response.getCode());
                 if (status.equals(HttpStatus.FORBIDDEN) || status.equals(HttpStatus.UNAUTHORIZED)) {
                     throw new AuthenticationException("Unable to accept response status " + status);
                 }
                 if (status.equals(HttpStatus.OK) || status.equals(HttpStatus.ACCEPTED)) {
                     return IPAddressIntelligenceResponse.allowed();
                 }
-                val score = Double.parseDouble(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                val score = Double.parseDouble(IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8));
                 return IPAddressIntelligenceResponse.builder()
                     .score(score)
                     .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)

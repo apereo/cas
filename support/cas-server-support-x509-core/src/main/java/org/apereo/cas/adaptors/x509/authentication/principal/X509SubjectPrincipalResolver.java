@@ -51,7 +51,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * create from X.509 subject DN attributes.  The descriptor is made up of
      * common X.509 attribute names prefixed by "$", which are replaced by
      * attribute values extracted from DN attribute values. (i.e. $UID@$DC.$DC)
-     *
+     * <p>
      * The resolver when applied to a certificate with the DN
      * <p>
      * <b>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</b></p>

@@ -37,11 +37,6 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.socket.performance-connection-time=1000",
         "cas.server.tomcat.socket.performance-latency=10",
 
-        "cas.server.tomcat.apr.enabled=true",
-        "cas.server.tomcat.apr.ssl-protocol=true",
-        "cas.server.tomcat.apr.ssl-password=changeit",
-        "cas.server.tomcat.apr.ssl-cipher-suite=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-
         "cas.server.tomcat.ssl-valve.enabled=true",
 
         "cas.server.tomcat.http-proxy.enabled=true",
@@ -51,16 +46,16 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.http-proxy.redirect-port=1234",
         "cas.server.tomcat.http-proxy.proxy-port=1212",
 
-        "cas.server.tomcat.http.enabled=true",
-        "cas.server.tomcat.http.port=0",
-        "cas.server.tomcat.http.redirect-port=9890",
+        "cas.server.tomcat.http[0].enabled=true",
+        "cas.server.tomcat.http[0].port=0",
+        "cas.server.tomcat.http[0].redirect-port=9890",
 
         "cas.server.tomcat.ajp.enabled=true",
         "cas.server.tomcat.ajp.port=9944",
         "cas.server.tomcat.ajp.secret=s3cr3t",
         "cas.server.tomcat.ajp.redirect-port=1234",
         "cas.server.tomcat.ajp.proxy-port=1212",
-        
+
         "cas.server.tomcat.basic-authn.enabled=true",
         "cas.server.tomcat.ext-access-log.enabled=true",
         "cas.server.tomcat.rewrite-valve.location=classpath:/container/tomcat/rewrite.config"
@@ -79,7 +74,7 @@ public class CasTomcatServletWebServerFactoryTests {
     @Autowired
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
-    
+
     @Test
     public void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);

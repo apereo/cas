@@ -40,6 +40,27 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
+    @Override
+    public Set<Event> resolve(final RequestContext context) {
+        LOGGER.trace("Attempting to resolve authentication event using resolver [{}]", getName());
+        WebUtils.putWarnCookieIfRequestParameterPresent(configurationContext.getWarnCookieGenerator(), context);
+        WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
+        return resolveInternal(context);
+    }
+
+    @Override
+    public Event resolveSingle(final RequestContext context) {
+        val events = resolve(context);
+        if (events == null || events.isEmpty()) {
+            LOGGER.trace("No event could be determined");
+            return null;
+        }
+        val event = events.iterator().next();
+        LOGGER.debug("Resolved single event [{}] via [{}] for this context",
+            event.getId(), event.getSource().getClass().getName());
+        return event;
+    }
+
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
      *
@@ -96,27 +117,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, context);
         WebUtils.putServiceIntoFlowScope(context, service);
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-    }
-
-
-    @Override
-    public Set<Event> resolve(final RequestContext context) {
-        LOGGER.trace("Attempting to resolve authentication event using resolver [{}]", getName());
-        WebUtils.putWarnCookieIfRequestParameterPresent(configurationContext.getWarnCookieGenerator(), context);
-        WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
-        return resolveInternal(context);
-    }
-
-    @Override
-    public Event resolveSingle(final RequestContext context) {
-        val events = resolve(context);
-        if (events == null || events.isEmpty()) {
-            LOGGER.trace("No event could be determined");
-            return null;
-        }
-        val event = events.iterator().next();
-        LOGGER.debug("Resolved single event [{}] via [{}] for this context", event.getId(), event.getSource().getClass().getName());
-        return event;
     }
 
     /**

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 public class ConnectionPoolingProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5307463292890944799L;
 
     /**

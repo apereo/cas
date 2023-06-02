@@ -12,8 +12,11 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
+
+import java.util.Objects;
 
 /**
  * This is {@link AccessTokenPasswordGrantRequestExtractor}.
@@ -28,12 +31,12 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     }
 
     @Override
-    public AccessTokenRequestContext extract(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) {
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getKey();
-        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
-        LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
+            .resolveClientIdAndClientSecret(callContext).getKey();
 
+        LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
@@ -62,6 +65,9 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = getConfigurationContext().getCentralAuthenticationService().createTicketGrantingTicket(result);
 
+        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
+        scopes.retainAll(Objects.requireNonNull(registeredService).getScopes());
+
         return AccessTokenRequestContext.builder()
             .scopes(scopes)
             .service(service)
@@ -69,7 +75,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
             .registeredService(registeredService)
             .grantType(getGrantType())
             .ticketGrantingTicket(ticketGrantingTicket)
-            .generateRefreshToken(registeredService != null && registeredService.isGenerateRefreshToken())
+            .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .build();
     }
 

@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.hazelcast.config.AttributeConfig;
 import com.hazelcast.config.IndexConfig;
@@ -13,6 +13,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.session.HazelcastSessionProperties;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
@@ -20,9 +21,10 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.session.MapSession;
-import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
+import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
 import org.springframework.session.hazelcast.HazelcastSessionSerializer;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
@@ -37,7 +39,7 @@ import java.time.Duration;
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties({CasConfigurationProperties.class,
     SessionProperties.class, HazelcastSessionProperties.class, ServerProperties.class})
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
 @AutoConfiguration
 public class HazelcastSessionConfiguration {
 
@@ -54,11 +56,12 @@ public class HazelcastSessionConfiguration {
      */
     @Bean(destroyMethod = "shutdown")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HazelcastInstance hazelcastInstance(final CasConfigurationProperties casProperties,
                                                final HazelcastSessionProperties hazelcastSessionProperties,
                                                final SessionProperties sessionProperties,
                                                final ServerProperties serverProperties) {
-        val hz = casProperties.getWebflow().getSession().getHazelcast();
+        val hz = casProperties.getWebflow().getSession().getServer().getHazelcast();
         val config = HazelcastConfigurationFactory.build(hz);
         val serializerConfig = new SerializerConfig();
         serializerConfig.setImplementation(new HazelcastSessionSerializer()).setTypeClass(MapSession.class);
@@ -70,14 +73,13 @@ public class HazelcastSessionConfiguration {
         val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
         val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz,
             hazelcastSessionProperties.getMapName(), duration.toSeconds());
-        if (mapConfig instanceof MapConfig) {
-            val finalConfig = (MapConfig) mapConfig;
+        if (mapConfig instanceof MapConfig finalConfig) {
             val attributeConfig = new AttributeConfig();
-            attributeConfig.setName(Hazelcast4IndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
+            attributeConfig.setName(HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
             attributeConfig.setExtractorClassName(HazelcastSessionPrincipalNameExtractor.class.getName());
             finalConfig.addAttributeConfig(attributeConfig);
             val indexConfig = new IndexConfig();
-            indexConfig.addAttribute(Hazelcast4IndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
+            indexConfig.addAttribute(HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);
             finalConfig.addIndexConfig(indexConfig);
         }
         HazelcastConfigurationFactory.setConfigMap(mapConfig, hazelcastInstance.getConfig());

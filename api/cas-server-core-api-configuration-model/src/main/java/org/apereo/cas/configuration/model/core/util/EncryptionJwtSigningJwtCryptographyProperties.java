@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3015641631298039059L;
 
     /**

@@ -5,7 +5,6 @@ import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.binding.expression.Expression;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -98,11 +97,6 @@ public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTes
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, new RuntimeException());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                stopState.enter(context);
-            }
-        });
+        assertDoesNotThrow(() -> stopState.enter(context));
     }
 }

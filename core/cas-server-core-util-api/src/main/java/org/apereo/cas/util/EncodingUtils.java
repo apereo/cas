@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
+import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
@@ -254,7 +255,7 @@ public class EncodingUtils {
     public static String urlDecode(final String value) {
         return StringUtils.isBlank(value)
             ? value
-            : Unchecked.supplier(() -> URLDecoder.decode(value, StandardCharsets.UTF_8.name())).get();
+            : Unchecked.supplier(() -> URLDecoder.decode(value, StandardCharsets.UTF_8)).get();
     }
 
     /**
@@ -464,14 +465,15 @@ public class EncodingUtils {
     /**
      * Decrypt value based on the key created.
      *
-     * @param secretKeyEncryptionKey the secret key encryption key
-     * @param value                  the value
+     * @param givenKey the secret key encryption key
+     * @param value    the value
      * @return the decrypted value
      */
-    public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
+    public static String decryptJwtValue(final Key givenKey, final String value) {
         try {
+            val realKey = givenKey instanceof IdentifiableKey idk ? idk.getKey() : givenKey;
             val jwe = new JsonWebEncryption();
-            jwe.setKey(secretKeyEncryptionKey);
+            jwe.setKey(realKey);
             jwe.setCompactSerialization(value);
             LOGGER.trace("Decrypting value...");
             return jwe.getPayload();

@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.apereo.cas.throttle.ConcurrentThrottledSubmissionsStore;
@@ -11,7 +11,7 @@ import org.apereo.cas.throttle.DefaultThrottledRequestResponseHandler;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
@@ -33,6 +33,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
@@ -45,7 +46,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Throttling)
 @AutoConfiguration
 public class CasThrottlingConfiguration {
 
@@ -53,14 +54,12 @@ public class CasThrottlingConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasThrottlingInterceptorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "authenticationThrottle")
+        @ConditionalOnMissingBean(name = ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
         @Bean
         public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
             final CasConfigurationProperties casProperties,
             @Qualifier("authenticationThrottlingConfigurationContext")
-            final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
-            @Qualifier("throttleSubmissionMap")
-            final ThrottledSubmissionsStore throttleSubmissionMap) {
+            final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext) {
             val throttle = casProperties.getAuthn().getThrottle();
             if (throttle.getFailure().getRangeSeconds() <= 0 && throttle.getFailure().getThreshold() <= 0) {
                 LOGGER.trace("Authentication throttling is disabled since no range-seconds or failure-threshold is defined");
@@ -69,11 +68,11 @@ public class CasThrottlingConfiguration {
             if (StringUtils.isNotBlank(throttle.getCore().getUsernameParameter())) {
                 LOGGER.trace("Activating authentication throttling based on IP address and username...");
                 return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
-                    authenticationThrottlingConfigurationContext, throttleSubmissionMap);
+                    authenticationThrottlingConfigurationContext);
             }
             LOGGER.trace("Activating authentication throttling based on IP address...");
             return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
-                authenticationThrottlingConfigurationContext, throttleSubmissionMap);
+                authenticationThrottlingConfigurationContext);
         }
     }
 
@@ -89,18 +88,16 @@ public class CasThrottlingConfiguration {
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties,
-            @Qualifier("throttledRequestResponseHandler")
+            @Qualifier(ThrottledRequestResponseHandler.BEAN_NAME)
             final ThrottledRequestResponseHandler throttledRequestResponseHandler,
             @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
-            final ThrottledRequestExecutor throttledRequestExecutor) {
-            val throttle = casProperties.getAuthn().getThrottle();
+            final ThrottledRequestExecutor throttledRequestExecutor,
+            @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
+            final ThrottledSubmissionsStore throttledSubmissionStore) {
             return ThrottledSubmissionHandlerConfigurationContext.builder()
-                .failureThreshold(throttle.getFailure().getThreshold())
-                .failureRangeInSeconds(throttle.getFailure().getRangeSeconds())
-                .usernameParameter(throttle.getCore().getUsernameParameter())
-                .authenticationFailureCode(throttle.getFailure().getCode())
+                .casProperties(casProperties)
+                .throttledSubmissionStore(throttledSubmissionStore)
                 .auditTrailExecutionPlan(auditTrailExecutionPlan)
-                .applicationCode(throttle.getCore().getAppCode())
                 .throttledRequestResponseHandler(throttledRequestResponseHandler)
                 .throttledRequestExecutor(throttledRequestExecutor)
                 .applicationContext(applicationContext)
@@ -127,10 +124,10 @@ public class CasThrottlingConfiguration {
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "throttleSubmissionMap")
+        @ConditionalOnMissingBean(name = ThrottledSubmissionsStore.BEAN_NAME)
         @Bean
-        public ThrottledSubmissionsStore throttleSubmissionMap() {
-            return new ConcurrentThrottledSubmissionsStore();
+        public ThrottledSubmissionsStore throttleSubmissionMap(final CasConfigurationProperties casProperties) {
+            return new ConcurrentThrottledSubmissionsStore(casProperties);
         }
 
         @Bean
@@ -168,7 +165,7 @@ public class CasThrottlingConfiguration {
         public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer(
             @Qualifier("httpPostMethodThrottlingRequestFilter")
             final ThrottledRequestFilter httpPostMethodThrottlingRequestFilter,
-            @Qualifier("authenticationThrottle")
+            @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
             final ThrottledSubmissionHandlerInterceptor authenticationThrottle) {
             return plan -> {
                 plan.registerAuthenticationThrottleFilter(httpPostMethodThrottlingRequestFilter);
@@ -195,6 +192,7 @@ public class CasThrottlingConfiguration {
     public static class CasThrottlingSchedulerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable throttleSubmissionCleaner(
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan plan) {

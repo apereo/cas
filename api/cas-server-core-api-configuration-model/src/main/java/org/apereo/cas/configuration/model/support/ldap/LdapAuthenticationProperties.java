@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import java.util.List;
 @JsonFilter("LdapAuthenticationProperties")
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
+    @Serial
     private static final long serialVersionUID = -5357843463521189892L;
 
     /**
@@ -56,6 +59,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**
@@ -72,7 +76,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * List of attributes to retrieve from LDAP.
      * Attributes can be virtually remapped to multiple names.
      * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}.
-     *
+     * <p>
      * To fetch and resolve attributes that carry tags/options,
      * consider tagging the mapped attribute as such: {@code homePostalAddress:homePostalAddress;}.
      */

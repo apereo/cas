@@ -89,7 +89,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationPolicies(final Collection<AuthenticationPolicy> authenticationPolicy) {
-        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()));
+        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).toList());
     }
 
     @Override
@@ -119,11 +119,10 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
                 handler.getName(), Optional.ofNullable(principalResolver).map(PrincipalResolver::getName).orElse("no"));
 
             if (authenticationHandlerPrincipalResolverMap.containsKey(handler)) {
-                val result = authenticationHandlerPrincipalResolverMap.get(handler);
                 LOGGER.error("Authentication execution plan has found an existing handler [{}]. "
-                             + "Attempts to register a new authentication handler [{}] may lead to unpredictable results. "
-                             + "Please make sure all authentication handlers are uniquely defined in the CAS configuration.",
-                    result, handler);
+                             + "Attempts to register a new authentication handler with the same name may lead to unpredictable results. "
+                             + "Please make sure all authentication handlers are uniquely defined/named in the CAS configuration.",
+                    handler.getName());
                 return false;
             }
             authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
@@ -132,14 +131,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
+    public void registerAuthenticationHandlersWithPrincipalResolver(final Collection<AuthenticationHandler> handlers,
                                                                     final PrincipalResolver principalResolver) {
         handlers.stream().filter(BeanSupplier::isNotProxy)
             .forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final List<AuthenticationHandler> handlers,
+    public void registerAuthenticationHandlersWithPrincipalResolver(final List<AuthenticationHandler> handlers,
                                                                     final List<PrincipalResolver> principalResolver) {
         if (handlers.size() != principalResolver.size()) {
             LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");
@@ -216,14 +215,6 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public Collection<AuthenticationPolicy> getAuthenticationPolicies() {
-        val list = new ArrayList<>(this.authenticationPolicies);
-        AnnotationAwareOrderComparator.sort(list);
-        LOGGER.trace("Candidate authentication policies for this transaction are [{}]", list);
-        return list;
-    }
-
-    @Override
     public Collection<AuthenticationPolicy> getAuthenticationPolicies(final AuthenticationTransaction transaction) {
         val handlerResolvers = getAuthenticationPolicyResolvers(transaction);
         LOGGER.debug("Authentication policy resolvers for this transaction are [{}]", handlerResolvers);
@@ -248,6 +239,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         val list = new ArrayList<>(this.authenticationPolicies);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication policies for this assertion are [{}]", list);
+        return list;
+    }
+
+    @Override
+    public Collection<AuthenticationPolicy> getAuthenticationPolicies() {
+        val list = new ArrayList<>(this.authenticationPolicies);
+        AnnotationAwareOrderComparator.sort(list);
+        LOGGER.trace("Candidate authentication policies for this transaction are [{}]", list);
         return list;
     }
 

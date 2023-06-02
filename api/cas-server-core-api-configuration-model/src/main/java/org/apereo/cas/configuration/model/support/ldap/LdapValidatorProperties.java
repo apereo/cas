@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,11 +24,12 @@ import java.io.Serializable;
 @JsonFilter("LdapValidatorProperties")
 public class LdapValidatorProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1150417354213235193L;
 
     /**
      * Determine the LDAP validator type.
-     * 
+     * <p>
      * The following LDAP validators can be used to test connection health status:
      * <ul>
      * <li>{@code search}: Validates a connection is healthy by performing a search operation.

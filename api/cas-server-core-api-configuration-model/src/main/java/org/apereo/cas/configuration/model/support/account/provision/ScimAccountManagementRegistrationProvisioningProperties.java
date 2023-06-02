@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,8 +22,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("ScimAccountManagementRegistrationProvisioningProperties")
 public class ScimAccountManagementRegistrationProvisioningProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6833936824474022021L;
-    
+
     /**
      * Whether provisioning to SCIM targets should be enabled
      * for delegated authentication attempts.

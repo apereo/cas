@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
-import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
+import org.apereo.cas.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 

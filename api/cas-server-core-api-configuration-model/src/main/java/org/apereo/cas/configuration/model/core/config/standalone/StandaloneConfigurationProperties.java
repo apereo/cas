@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.File;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-configuration", automated = true)
 @Accessors(chain = true)
 public class StandaloneConfigurationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7749293768878152908L;
 
     /**

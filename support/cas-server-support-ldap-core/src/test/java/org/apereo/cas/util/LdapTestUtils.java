@@ -73,7 +73,7 @@ public class LdapTestUtils {
                 .collect(Collectors.joining(NEWLINE));
             LOGGER.debug("LDIF to process is [{}]", ldapString);
             val entries = new LdifReader(new StringReader(ldapString)).read().getEntries();
-            LOGGER.debug("Total entries read from LDAP are [{}] with baseDn [{}]", entries.size(), baseDn);
+            LOGGER.debug("Total entries read from LDIF are [{}] with baseDn [{}]", entries.size(), baseDn);
             return entries;
         }
     }
@@ -100,13 +100,14 @@ public class LdapTestUtils {
         for (val entry : entries) {
             val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
             attrs.addAll(entry.getAttributes().stream()
-                .map(a -> new Attribute(a.getName(), a.getStringValues()))
-                .collect(Collectors.toList()));
+                .map(a -> new Attribute(a.getName(), a.getStringValues())).toList());
 
             val ad = new AddRequest(entry.getDn(), attrs);
             LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
             try {
-                connection.add(ad);
+                val result = connection.add(ad);
+                LOGGER.debug("Added entry [{}]: result code [{}] on matched DN [{}]",
+                    entry, result.getResultString(), result.getMatchedDN());
             } catch (final LDAPException e) {
                 LOGGER.debug(e.getMessage(), e);
                 if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {

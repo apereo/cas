@@ -29,7 +29,7 @@ public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
     @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
-        FunctionUtils.doUnchecked(o -> {
+        FunctionUtils.doUnchecked(__ -> {
             LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
             storage.remove();
         });

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.net.URL;
 
 /**
@@ -16,6 +17,7 @@ import java.net.URL;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
+    @Serial
     private static final long serialVersionUID = -5718445151129901484L;
 
     @JsonIgnore
@@ -26,7 +28,7 @@ public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProx
 
     @JsonIgnore
     @Override
-    public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
+    public boolean isAllowedProxyCallbackUrl(final RegisteredService registeredService, final URL pgtUrl) {
         return false;
     }
 

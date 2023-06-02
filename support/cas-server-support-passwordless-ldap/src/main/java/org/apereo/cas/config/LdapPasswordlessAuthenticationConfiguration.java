@@ -2,12 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.account.LdapPasswordlessUserAccountStore;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -24,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "ldap")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "ldap")
 @AutoConfiguration
 public class LdapPasswordlessAuthenticationConfiguration {
 
@@ -39,7 +40,7 @@ public class LdapPasswordlessAuthenticationConfiguration {
                 val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
                 val ldap = accounts.getLdap();
                 val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-                return new LdapPasswordlessUserAccountStore(connectionFactory, ldap);
+                return new LdapPasswordlessUserAccountStore(new LdapConnectionFactory(connectionFactory), ldap);
             })
             .otherwiseProxy()
             .get();

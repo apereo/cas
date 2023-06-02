@@ -3,6 +3,7 @@ package org.apereo.cas.okta;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.OktaAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -63,7 +64,7 @@ public class OktaAuthenticationStateHandlerTests {
     public void verifyOperation() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
-        assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class OktaAuthenticationStateHandlerTests {
             });
         val handler = new OktaAuthenticationHandler(null, servicesManager,
             oktaPrincipalFactory, casProperties.getAuthn().getOkta(), client);
-        assertNotNull(handler.authenticate(c));
+        assertNotNull(handler.authenticate(c, mock(Service.class)));
         assertNotNull(handler.getOktaAuthenticationClient());
         assertNotNull(handler.getProperties());
     }

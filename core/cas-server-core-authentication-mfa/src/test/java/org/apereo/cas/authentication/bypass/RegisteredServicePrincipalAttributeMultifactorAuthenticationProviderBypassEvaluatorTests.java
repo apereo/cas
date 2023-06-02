@@ -25,9 +25,33 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-
 @Tag("MFATrigger")
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests {
+
+    @Test
+    public void verifyMissingPrincipalAttribute() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID));
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("givenName", List.of("nothing")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setBypassIfMissingPrincipalAttribute(true);
+        policy.setBypassPrincipalAttributeName("cn");
+        policy.setBypassPrincipalAttributeValue("^e[x]am.*");
+        when(registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
+        assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+    }
 
     @Test
     public void verifyNoMatchOperation() {

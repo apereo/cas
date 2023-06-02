@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataCipherExecutor;
@@ -19,7 +19,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
@@ -53,7 +53,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProviderMetadata, module = "jpa")
 @AutoConfiguration
 public class SamlIdPJpaIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled").isTrue();
@@ -114,8 +114,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
                         .persistenceUnitName("jpaSamlMetadataIdPContext")
                         .dataSource(dataSourceSamlMetadataIdP)
                         .packagesToScan(jpaSamlMetadataIdPPackagesToScan.toSet()).build();
-                    val factory = jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
-                    return factory.getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa()).getObject();
                 }))
                 .otherwiseProxy()
                 .get();
@@ -134,11 +133,11 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final EntityManagerFactory emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
+                .supply(Unchecked.supplier(() -> {
                     val mgmr = new JpaTransactionManager();
                     mgmr.setEntityManagerFactory(emf);
                     return mgmr;
-                })
+                }))
                 .otherwise(PseudoTransactionManager::new)
                 .get();
         }

@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,10 +26,11 @@ import java.io.Serializable;
 @ToString
 @JsonFilter("SpringResourceProperties")
 public class SpringResourceProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 4142130961445546358L;
 
     /**
-     * The location of the resource. Resources can be URLS, or
+     * The location of the resource. Resources can be URLs, or
      * files found either on the classpath or outside somewhere
      * in the file system.
      * <p>

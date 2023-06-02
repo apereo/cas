@@ -23,7 +23,7 @@ public class BasicResourceCredentialFactoryBeanTests {
     @Test
     public void verifyKeys() throws Exception {
         val factory = new BasicResourceCredentialFactoryBean();
-        assertEquals(BasicCredential.class, factory.getObjectType());
+        assertSame(BasicCredential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
         factory.setUsageType("UNSPECIFIED");
         factory.setPrivateKeyInfo(new ClassPathResource("keys/private.pem"));
@@ -71,7 +71,7 @@ public class BasicResourceCredentialFactoryBeanTests {
     @Test
     public void verifyPublicKeys() throws Exception {
         val factory = new BasicResourceCredentialFactoryBean();
-        assertEquals(BasicCredential.class, factory.getObjectType());
+        assertSame(BasicCredential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
         factory.setUsageType("UNSPECIFIED");
         factory.setPublicKeyInfo(new ClassPathResource("keys/public.pem"));

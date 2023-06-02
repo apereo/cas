@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link CasSimpleMultifactorAuthenticationProperties}.
  *
@@ -28,23 +30,21 @@ public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifacto
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-simple";
 
+    @Serial
     private static final long serialVersionUID = -9211748853833491119L;
-
-    /**
-     * Time in seconds that CAS tokens should be considered live in CAS server.
-     */
-    private long timeToKillInSeconds = 30;
-
-    /**
-     * The length of the generated token.
-     */
-    private int tokenLength = 6;
 
     /**
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
-    
+
+    /**
+     * Properties related to token management and policy.
+     */
+    @NestedConfigurationProperty
+    private CasSimpleMultifactorAuthenticationTokenProperties token =
+        new CasSimpleMultifactorAuthenticationTokenProperties();
+
     /**
      * Email settings for notifications.
      */

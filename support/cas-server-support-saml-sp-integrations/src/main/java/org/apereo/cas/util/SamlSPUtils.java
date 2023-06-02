@@ -9,11 +9,13 @@ import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -22,6 +24,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.Ordered;
 
@@ -44,6 +47,7 @@ public class SamlSPUtils {
     /**
      * New saml service provider registration.
      * Precedence of services is lowest so generated service can be overridden by non-generated version.
+     *
      * @param sp       the properties
      * @param resolver the resolver
      * @return the saml registered service
@@ -65,22 +69,20 @@ public class SamlSPUtils {
             attributesToRelease.add(sp.getNameIdAttribute());
             service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
         }
-        if (StringUtils.isNotBlank(sp.getNameIdFormat())) {
-            service.setRequiredNameIdFormat(sp.getNameIdFormat());
-        }
+
+        FunctionUtils.doIfNotBlank(sp.getNameIdFormat(), __ -> service.setRequiredNameIdFormat(sp.getNameIdFormat()));
 
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
         val policy = new ChainingAttributeReleasePolicy();
-        policy.addPolicy(new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(attributes)));
+        policy.addPolicies(new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(attributes)));
         service.setAttributeReleasePolicy(policy);
 
         service.setMetadataCriteriaRoles(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart());
         service.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         service.setMetadataCriteriaRemoveRolelessEntityDescriptors(true);
 
-        if (StringUtils.isNotBlank(sp.getSignatureLocation())) {
-            service.setMetadataSignatureLocation(sp.getSignatureLocation());
-        }
+
+        FunctionUtils.doIfNotBlank(sp.getSignatureLocation(), __ -> service.setMetadataSignatureLocation(sp.getSignatureLocation()));
 
         val entityIDList = determineEntityIdList(sp, resolver, service);
 
@@ -96,7 +98,7 @@ public class SamlSPUtils {
         service.setServiceId(entityIds);
 
         service.setSignAssertions(sp.getSignAssertions());
-        service.setSignResponses(sp.isSignResponses());
+        service.setSignResponses(TriStateBoolean.fromBoolean(sp.isSignResponses()));
 
         return service;
     }
@@ -110,7 +112,7 @@ public class SamlSPUtils {
             val criteriaSet = new CriteriaSet();
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
             criteriaSet.add(new SatisfyAnyCriterion());
-            val metadataResolver = resolver.resolve(service, criteriaSet);
+            val metadataResolver = resolver.resolve(service, criteriaSet).getMetadataResolver();
 
             val resolvers = new ArrayList<MetadataResolver>();
             if (metadataResolver instanceof ChainingMetadataResolver) {
@@ -119,20 +121,19 @@ public class SamlSPUtils {
                 resolvers.add(metadataResolver);
             }
 
-            resolvers.forEach(r -> {
-                if (r instanceof AbstractBatchMetadataResolver) {
-                    val it = ((AbstractBatchMetadataResolver) r).iterator();
-                    val descriptor =
-                        StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                            .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
-                            .findFirst();
+            resolvers.stream()
+                .filter(r -> r instanceof AbstractBatchMetadataResolver)
+                .map(r -> ((Iterable<EntityDescriptor>) r).iterator())
+                .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                    .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
+                    .findFirst())
+                .forEach(descriptor -> {
                     if (descriptor.isPresent()) {
                         entityIDList.add(descriptor.get().getEntityID());
                     } else {
                         LOGGER.warn("Skipped registration of [{}] since no entity id could be found", sp.getName());
                     }
-                }
-            });
+                });
         }
         return entityIDList;
     }
@@ -148,7 +149,7 @@ public class SamlSPUtils {
         servicesManager.load();
 
         if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService
-            && registeredService.getServiceId().equals(service.getServiceId())).isEmpty()) {
+                                                               && registeredService.getServiceId().equals(service.getServiceId())).isEmpty()) {
             LOGGER.info("Service [{}] does not exist in the registry and will be added.", service.getServiceId());
             servicesManager.save(service);
             servicesManager.load();

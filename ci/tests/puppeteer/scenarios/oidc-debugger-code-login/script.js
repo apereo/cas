@@ -2,10 +2,7 @@ const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 
 (async () => {
-
-    console.log("Refreshing application context...")
-    let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
-    console.log(response)
+    await cas.refreshContext();
     
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -19,11 +16,11 @@ const cas = require('../../cas.js');
     await cas.goto(page, url);
 
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     await cas.click(page, "#allow");
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     await browser.close();

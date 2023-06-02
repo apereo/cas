@@ -7,10 +7,11 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +27,10 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth10Configuration;
@@ -67,7 +70,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.pac4j.cookie.enabled=true")
+    properties = {
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw",
+        "cas.authn.pac4j.cookie.enabled=true"
+    })
 @Tag("Webflow")
 public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
@@ -96,6 +103,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void setup() {
         val service = RegisteredServiceTestUtils.getService();
         httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
         httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
 
@@ -113,7 +121,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OidcClient(config);
         client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -127,7 +135,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth20Client();
         client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -141,7 +149,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth10Client();
         client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -157,7 +165,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val client = new CasClient();
         client.setConfiguration(config);
         httpServletRequest.addParameter("locale", "de");
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
@@ -169,7 +177,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     public void verifySamlStoreOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
@@ -189,7 +197,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, pair.getLeft());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
@@ -213,7 +221,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, pair.getLeft());
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
@@ -228,10 +236,21 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
+    public void verifyNoTransientSessionTicketStored() throws Exception {
+        val config = new SAML2Configuration();
+        val client = new SAML2Client(config);
+        delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
+
+        httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
+        assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, service.getId());
+    }
+
+    @Test
     public void verifyExpiredTicketOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context,
             SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
@@ -255,16 +274,17 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
-        val saml2MessageContext = new SAML2MessageContext();
+        val webContext = new JEEContext(this.httpServletRequest, new MockHttpServletResponse());
+        val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
+        val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        saml2MessageContext.setWebContext(context);
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 
         peer.setEntityId("https://cas.example.org/idp");
         val md = peer.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(md);
-        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(saml2Client.getIdpMetadataResolver().resolve());
+        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(saml2Client.getIdentityProviderMetadataResolver().resolve());
         roleDescriptorResolver.initialize();
 
         md.setRoleDescriptor(roleDescriptorResolver.resolveSingle(new CriteriaSet(
@@ -277,7 +297,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
         val sp = self.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(sp);
-        val spResolver = new PredicateRoleDescriptorResolver(saml2Client.getSpMetadataResolver().resolve());
+        val spResolver = new PredicateRoleDescriptorResolver(saml2Client.getServiceProviderMetadataResolver().resolve());
         spResolver.initialize();
         sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
             new EntityIdCriterion(Objects.requireNonNull(self.getEntityId())),

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -24,239 +25,299 @@ import java.util.List;
 @Accessors(chain = true)
 public class SamlServiceProviderProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 8602328179113963081L;
+
     /**
      * Settings related to ConcurSolutions acting as a SAML service provider.
      */
     private ConcurSolutions concurSolutions = new ConcurSolutions();
+
     /**
      * Settings related to Qualtrics acting as a SAML service provider.
      */
     private Qualtrics qualtrics = new Qualtrics();
+
     /**
      * Settings related to Emma acting as a SAML service provider.
      */
     private Emma emma = new Emma();
+
     /**
      * Settings related to CrashPlan acting as a SAML service provider.
      */
     private CrashPlan crashPlan = new CrashPlan();
+
     /**
      * Settings related to SafariOnline acting as a SAML service provider.
      */
     private SafariOnline safariOnline = new SafariOnline();
+
     /**
      * Settings related to TopHat acting as a SAML service provider.
      */
     private TopHat topHat = new TopHat();
+
     /**
      * Settings related to DocuSign acting as a SAML service provider.
      */
     private DocuSign docuSign = new DocuSign();
+
     /**
      * Settings related to PagerDuty acting as a SAML service provider.
      */
     private PagerDuty pagerDuty = new PagerDuty();
+
     /**
      * Settings related to JIRA acting as a SAML service provider.
      */
     private Jira jira = new Jira();
+
     /**
      * Settings related to PollEverywhere acting as a SAML service provider.
      */
     private PollEverywhere pollEverywhere = new PollEverywhere();
+
     /**
      * Settings related to Gitlab acting as a SAML service provider.
      */
     private Gitlab gitlab = new Gitlab();
+
     /**
      * Settings related to Dropbox acting as a SAML service provider.
      */
     private Dropbox dropbox = new Dropbox();
+
     /**
      * Settings related to Workday acting as a SAML service provider.
      */
     private Workday workday = new Workday();
+
     /**
      * Settings related to SA Manage acting as a SAML service provider.
      */
     private SAManage saManage = new SAManage();
+
     /**
      * Settings related to Salesforce acting as a SAML service provider.
      */
     private Salesforce salesforce = new Salesforce();
+
     /**
      * Settings related to ServiceNow acting as a SAML service provider.
      */
     private ServiceNow serviceNow = new ServiceNow();
+
     /**
      * Settings related to Box acting as a SAML service provider.
      */
     private Box box = new Box();
+
     /**
      * Settings related to NetPartner acting as a SAML service provider.
      */
     private NetPartner netPartner = new NetPartner();
+
     /**
      * Settings related to Webex acting as a SAML service provider.
      */
     private Webex webex = new Webex();
+
     /**
      * Settings related to Office365 acting as a SAML service provider.
      */
     private Office365 office365 = new Office365();
+
     /**
      * Settings related to InCommon acting as a SAML service provider.
      */
     private InCommon inCommon = new InCommon();
+
     /**
      * Settings related to ZOOM acting as a SAML service provider.
      */
     private Zoom zoom = new Zoom();
+
     /**
      * Settings related to Evernote acting as a SAML service provider.
      */
     private Evernote evernote = new Evernote();
+
     /**
      * Settings related to Asana acting as a SAML service provider.
      */
     private Asana asana = new Asana();
+
     /**
      * Settings related to Gartner acting as a SAML service provider.
      */
     private Gartner gartner = new Gartner();
+
     /**
      * Settings related to Tableu acting as a SAML service provider.
      */
     private Tableau tableau = new Tableau();
+
     /**
      * Settings related to WebAdvisor acting as a SAML service provider.
      */
     private WebAdvisor webAdvisor = new WebAdvisor();
+
     /**
      * Settings related to OpenAthens acting as a SAML service provider.
      */
     private OpenAthens openAthens = new OpenAthens();
+
     /**
      * Settings related to ArcGIS acting as a SAML service provider.
      */
     private ArcGIS arcGIS = new ArcGIS();
+
     /**
      * Settings related to BenefitFocus acting as a SAML service provider.
      */
     private BenefitFocus benefitFocus = new BenefitFocus();
+
     /**
      * Settings related to Adobe Cloud acting as a SAML service provider.
      */
     private AdobeCloud adobeCloud = new AdobeCloud();
+
     /**
      * Settings related to Academic Works acting as a SAML service provider.
      */
     private AcademicWorks academicWorks = new AcademicWorks();
+
     /**
      * Settings related to Easy IEP acting as a SAML service provider.
      */
     private EasyIep easyIep = new EasyIep();
+
     /**
      * Settings related to InfiniteCampus acting as a SAML service provider.
      */
     private InfiniteCampus infiniteCampus = new InfiniteCampus();
+
     /**
      * Settings related to SecuringTheHuman acting as a SAML service provider.
      */
     private SecuringTheHuman sansSth = new SecuringTheHuman();
+
     /**
      * Settings related to Slack acting as a SAML service provider.
      */
     private Slack slack = new Slack();
+
     /**
      * Settings related to Zendesk acting as a SAML service provider.
      */
     private Zendesk zendesk = new Zendesk();
+
     /**
      * Settings related to Bynder acting as a SAML service provider.
      */
     private Bynder bynder = new Bynder();
+
     /**
      * Settings related to Famis acting as a SAML service provider.
      */
     private Famis famis = new Famis();
+
     /**
      * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
      */
     private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
+
     /**
      * Settings related to EverBridge acting as a SAML service provider.
      */
     private EverBridge everBridge = new EverBridge();
+
     /**
      * Settings related to CherWell acting as a SAML service provider.
      */
     private CherWell cherWell = new CherWell();
+
     /**
      * Settings related to CherWell acting as a SAML service provider.
      */
     private Egnyte egnyte = new Egnyte();
+
     /**
      * Settings related to CherWell acting as a SAML service provider.
      */
     private NewRelic newRelic = new NewRelic();
+
     /**
      * Settings related to Yuja acting as a SAML service provider.
      */
     private Yuja yuja = new Yuja();
+
     /**
      * Settings related to Confluence acting as a SAML service provider.
      */
     private Confluence confluence = new Confluence();
+
     /**
      * Settings related to Zimbra acting as a SAML service provider.
      */
     private Zimbra zimbra = new Zimbra();
+
     /**
      * Settings related to Symplicity acting as a SAML service provider.
      */
     private Symplicity symplicity = new Symplicity();
+
     /**
      * Settings related to AppDynamics acting as a SAML service provider.
      */
     private AppDynamics appDynamics = new AppDynamics();
+
     /**
      * Settings related to Amazon acting as a SAML service provider.
      */
     private Amazon amazon = new Amazon();
+
     /**
      * Settings related to BlackBaud acting as a SAML service provider.
      */
     private BlackBaud blackBaud = new BlackBaud();
+
     /**
      * Settings related to GiveCampus acting as a SAML service provider.
      */
     private GiveCampus giveCampus = new GiveCampus();
+
     /**
      * Settings related to WarpWire acting as a SAML service provider.
      */
     private WarpWire warpWire = new WarpWire();
+
     /**
      * Settings related to RocketChat acting as a SAML service provider.
      */
     private RocketChat rocketChat = new RocketChat();
+
     /**
      * Settings related to ArmsSoftware acting as a SAML service provider.
      */
     private ArmsSoftware armsSoftware = new ArmsSoftware();
+
     /**
      * Settings related to Academic HealthPlans acting as a SAML service provider.
      */
     private AcademicHealthPlans academicHealthPlans = new AcademicHealthPlans();
+
     /**
      * Settings related to NeoGov acting as a SAML service provider.
      */
     private NeoGov neoGov = new NeoGov();
+
     /**
      * Settings related to Cranium Cafe acting as a SAML service provider.
      */
     private CraniumCafe craniumCafe = new CraniumCafe();
+
     /**
      * Settings related to CCC acting as a SAML service provider.
      */
@@ -358,6 +419,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Dropbox extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -8275173711355379058L;
 
         public Dropbox() {
@@ -371,6 +433,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Box extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -5320292115253509284L;
 
         public Box() {
@@ -386,6 +449,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class SAManage extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -8695176237527302883L;
 
         public SAManage() {
@@ -399,6 +463,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Workday extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 3484810792914261584L;
 
         public Workday() {
@@ -413,6 +478,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Famis extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 4685484530782109454L;
     }
 
@@ -421,9 +487,8 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Salesforce extends AbstractSamlSPProperties {
-
+        @Serial
         private static final long serialVersionUID = 4685484530782109454L;
-
         public Salesforce() {
             addAttributes(CommonAttributeNames.MAIL.getAttributeName(), CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
@@ -435,6 +500,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class ServiceNow extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 4329681021653966734L;
 
         public ServiceNow() {
@@ -448,6 +514,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class NetPartner extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 5262806306575955633L;
 
         public NetPartner() {
@@ -461,6 +528,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Office365 extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 5878458463269060163L;
 
         public Office365() {
@@ -477,6 +545,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class WebAdvisor extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 8449304623099588610L;
 
         public WebAdvisor() {
@@ -490,6 +559,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Webex extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 1957066095836617091L;
 
         public Webex() {
@@ -506,6 +576,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Tableau extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -2426590644028989950L;
 
         public Tableau() {
@@ -519,6 +590,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Zoom extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -4877129302021248398L;
 
         public Zoom() {
@@ -534,6 +606,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class ArcGIS extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 2976006720801066953L;
 
         public ArcGIS() {
@@ -548,6 +621,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class InCommon extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6336757169059216490L;
 
         /**
@@ -565,6 +639,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Evernote extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -1333379518527897627L;
 
         public Evernote() {
@@ -579,6 +654,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Asana extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 6392492484052314295L;
 
         public Asana() {
@@ -593,6 +669,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class OpenAthens extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 7295249577313928465L;
 
         public OpenAthens() {
@@ -606,6 +683,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class BenefitFocus extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6518570556068267724L;
 
         public BenefitFocus() {
@@ -619,6 +697,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class AdobeCloud extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -5466434234795577247L;
 
         public AdobeCloud() {
@@ -633,6 +712,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class AcademicWorks extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 5855725238963607605L;
 
         public AcademicWorks() {
@@ -646,6 +726,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class EasyIep extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = 6177866628049579956L;
 
         public EasyIep() {
@@ -659,6 +740,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class InfiniteCampus extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -9023417844664430533L;
 
         public InfiniteCampus() {
@@ -672,6 +754,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class SecuringTheHuman extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -1688194227471468248L;
 
         public SecuringTheHuman() {
@@ -686,6 +769,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Slack extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -1996859011579246804L;
 
         public Slack() {
@@ -701,6 +785,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Zendesk extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -4668960591734555087L;
 
         public Zendesk() {
@@ -715,6 +800,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Bynder extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -3168960591734555088L;
     }
 
@@ -723,6 +809,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class CherWell extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -3168960591734555088L;
     }
 
@@ -732,6 +819,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class NewRelic extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -3268960591734555088L;
     }
 
@@ -741,6 +829,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Yuja extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -1168960591734555088L;
     }
 
@@ -750,6 +839,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Symplicity extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -3178960591734555088L;
     }
 
@@ -759,6 +849,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Egnyte extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -3168760591734555088L;
     }
 
@@ -768,6 +859,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class EverBridge extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -5168960591734555088L;
     }
 
@@ -777,6 +869,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class SunshineStateEdResearchAlliance extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -5558960591734555088L;
     }
 
@@ -786,6 +879,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Gartner extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Gartner() {
@@ -799,6 +893,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Gitlab extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Gitlab() {
@@ -812,6 +907,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class AppDynamics extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public AppDynamics() {
@@ -825,6 +921,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class Amazon extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Amazon() {
@@ -840,6 +937,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class PollEverywhere extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public PollEverywhere() {
@@ -855,6 +953,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class ConcurSolutions extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public ConcurSolutions() {
@@ -870,6 +969,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class BlackBaud extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public BlackBaud() {
@@ -885,6 +985,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class GiveCampus extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public GiveCampus() {
@@ -903,6 +1004,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class RocketChat extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public RocketChat() {
@@ -920,6 +1022,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class WarpWire extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public WarpWire() {
@@ -940,6 +1043,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Accessors(chain = true)
     public static class ArmsSoftware extends AbstractSamlSPProperties {
 
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public ArmsSoftware() {
@@ -956,6 +1060,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class AcademicHealthPlans extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public AcademicHealthPlans() {
@@ -971,6 +1076,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class NeoGov extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public NeoGov() {
@@ -985,6 +1091,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class CraniumCafe extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public CraniumCafe() {
@@ -1002,6 +1109,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class CaliforniaCommunityColleges extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public CaliforniaCommunityColleges() {
@@ -1022,6 +1130,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Confluence extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Confluence() {
@@ -1038,6 +1147,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Jira extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Jira() {
@@ -1054,6 +1164,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class CrashPlan extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public CrashPlan() {
@@ -1068,6 +1179,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class DocuSign extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public DocuSign() {
@@ -1083,6 +1195,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class SafariOnline extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public SafariOnline() {
@@ -1100,6 +1213,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class PagerDuty extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public PagerDuty() {
@@ -1112,6 +1226,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Zimbra extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Zimbra() {
@@ -1124,6 +1239,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class TopHat extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public TopHat() {
@@ -1137,6 +1253,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Emma extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Emma() {
@@ -1151,6 +1268,7 @@ public class SamlServiceProviderProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Qualtrics extends AbstractSamlSPProperties {
+        @Serial
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Qualtrics() {

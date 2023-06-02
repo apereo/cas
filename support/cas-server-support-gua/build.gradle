@@ -1,4 +1,11 @@
 description = "Apereo CAS Graphical User Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Graphical User Authentication"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
     

@@ -10,7 +10,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
@@ -26,7 +26,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -53,7 +53,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Electrofence)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Electrofence)
 @AutoConfiguration
 public class ElectronicFenceConfiguration {
 
@@ -93,18 +93,18 @@ public class ElectronicFenceConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ElectronicFenceContingencyConfiguration {
 
-        private static void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b,
+        private static void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan plan,
                                                      final CasConfigurationProperties casProperties,
                                                      final AuthenticationRiskNotifier authenticationRiskEmailNotifier,
                                                      final AuthenticationRiskNotifier authenticationRiskSmsNotifier) {
             val response = casProperties.getAuthn().getAdaptive().getRisk().getResponse();
             val mail = response.getMail();
             if (mail.isDefined()) {
-                b.getNotifiers().add(authenticationRiskEmailNotifier);
+                plan.getNotifiers().add(authenticationRiskEmailNotifier);
             }
             val sms = response.getSms();
             if (sms.isDefined()) {
-                b.getNotifiers().add(authenticationRiskSmsNotifier);
+                plan.getNotifiers().add(authenticationRiskSmsNotifier);
             }
         }
 
@@ -118,9 +118,9 @@ public class ElectronicFenceConfiguration {
             final AuthenticationRiskNotifier authenticationRiskEmailNotifier,
             @Qualifier("authenticationRiskSmsNotifier")
             final AuthenticationRiskNotifier authenticationRiskSmsNotifier) {
-            val b = new BlockAuthenticationContingencyPlan(casProperties, applicationContext);
-            configureContingencyPlan(b, casProperties, authenticationRiskEmailNotifier, authenticationRiskSmsNotifier);
-            return b;
+            val plan = new BlockAuthenticationContingencyPlan(casProperties, applicationContext);
+            configureContingencyPlan(plan, casProperties, authenticationRiskEmailNotifier, authenticationRiskSmsNotifier);
+            return plan;
         }
 
         @ConditionalOnMissingBean(name = "multifactorAuthenticationContingencyPlan")
@@ -133,11 +133,10 @@ public class ElectronicFenceConfiguration {
             final AuthenticationRiskNotifier authenticationRiskEmailNotifier,
             @Qualifier("authenticationRiskSmsNotifier")
             final AuthenticationRiskNotifier authenticationRiskSmsNotifier) {
-            val b = new MultifactorAuthenticationContingencyPlan(casProperties, applicationContext);
-            configureContingencyPlan(b, casProperties, authenticationRiskEmailNotifier, authenticationRiskSmsNotifier);
-            return b;
+            val plan = new MultifactorAuthenticationContingencyPlan(casProperties, applicationContext);
+            configureContingencyPlan(plan, casProperties, authenticationRiskEmailNotifier, authenticationRiskSmsNotifier);
+            return plan;
         }
-
     }
 
     @Configuration(value = "ElectronicFenceNotifierConfiguration", proxyBeanMethods = false)

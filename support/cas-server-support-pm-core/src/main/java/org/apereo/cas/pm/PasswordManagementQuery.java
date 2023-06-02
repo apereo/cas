@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +22,7 @@ import java.io.Serializable;
 @ToString(exclude = {"record", "securityQuestions"})
 @EqualsAndHashCode(of = "username")
 public class PasswordManagementQuery implements Serializable {
+    @Serial
     private static final long serialVersionUID = -769463174930246283L;
 
     private final String email;
@@ -53,6 +56,7 @@ public class PasswordManagementQuery implements Serializable {
      * @param value         the value
      * @return the user record context
      */
+    @CanIgnoreReturnValue
     public PasswordManagementQuery attribute(final String attributeName, final Object value) {
         record.add(attributeName, value);
         return this;
@@ -65,6 +69,7 @@ public class PasswordManagementQuery implements Serializable {
      * @param answer   the answer
      * @return the password management query
      */
+    @CanIgnoreReturnValue
     public PasswordManagementQuery securityQuestion(final String question, final String answer) {
         this.securityQuestions.add(question, answer);
         return this;

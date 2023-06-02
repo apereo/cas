@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import org.apereo.cas.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -37,15 +37,15 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     private final ApplicationContext applicationContext;
 
     @Override
-    public void onEnvironmentChangedEvent(final EnvironmentChangeEvent event) {
-        LOGGER.trace("Received event [{}]", event);
-        rebind();
-    }
-
-    @Override
     public void onRefreshScopeRefreshed(final RefreshScopeRefreshedEvent event) {
         LOGGER.info("Refreshing application context beans eagerly...");
         initializeBeansEagerly();
+    }
+
+    @Override
+    public void onEnvironmentChangedEvent(final EnvironmentChangeEvent event) {
+        LOGGER.trace("Received event [{}]", event);
+        rebind();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     }
 
     private void initializeBeansEagerly() {
-        FunctionUtils.doAndHandle(unused -> {
+        FunctionUtils.doAndHandle(__ -> {
             for (val beanName : applicationContext.getBeanDefinitionNames()) {
                 Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
             }
@@ -71,7 +71,6 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
                 servlet.init();
             }
         });
-
     }
 
     private void rebind() {

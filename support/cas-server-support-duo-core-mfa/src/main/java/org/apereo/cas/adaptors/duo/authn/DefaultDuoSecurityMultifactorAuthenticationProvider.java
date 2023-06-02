@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationRegistrationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
@@ -13,6 +14,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.ScopedProxyMode;
+
+import java.io.Serial;
 
 /**
  * This is {@link DefaultDuoSecurityMultifactorAuthenticationProvider}.
@@ -29,9 +32,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
     implements DuoSecurityMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private String registrationUrl;
+    private DuoSecurityMultifactorAuthenticationRegistrationProperties registration;
 
     private @NonNull DuoSecurityAuthenticationService duoAuthenticationService;
 

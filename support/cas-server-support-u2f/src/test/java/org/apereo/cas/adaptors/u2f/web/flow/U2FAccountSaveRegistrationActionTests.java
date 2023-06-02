@@ -49,7 +49,7 @@ public class U2FAccountSaveRegistrationActionTests extends BaseU2FWebflowActionT
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, u2fStartRegistrationAction.execute(context).getId());
 
         val u2fReg = context.getFlowScope().get("u2fReg", U2FRegistration.class);
-        deviceRepository.requestDeviceRegistration("fb36YebRZyTcR_p4SWrSI7UIJvB6FP82tkcg5AGHhJM", id, u2fReg.getJsonData());
+        deviceRepository.requestDeviceRegistration("fb36YebRZyTcR_p4SWrSI7UIJvB6FP82tkcg5AGHhJM", id, u2fReg.jsonData());
 
         val tokenResponse = "{\"registrationData\":\"BQQkG0HfMv4hzlfHpaWySCKdvio0-w1zi6s"
             + "uSu0_QJiL4vE-DwggXFWxuWn7rkae1ZAasYl_YnQny7ldxYoGA9riQL2ast4dMon"

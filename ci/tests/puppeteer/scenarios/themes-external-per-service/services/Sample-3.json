@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://httpbin.org/anything/default.*",
+  "id": 3,
+  "name": "Sample",
+  "evaluationOrder": 1,
+  "theme": "cas-theme-default"
+}

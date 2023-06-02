@@ -26,6 +26,7 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
@@ -62,8 +63,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         if (action instanceof EvaluateAction) {
             return convertEvaluateActionToString(action);
         }
-        if (action instanceof AnnotatedAction) {
-            val eval = (AnnotatedAction) action;
+        if (action instanceof AnnotatedAction eval) {
             if (eval.getTargetAction() instanceof EvaluateAction) {
                 return convertEvaluateActionToString(eval.getTargetAction());
             }
@@ -98,8 +98,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             .collect(Collectors.joining(", "));
     }
 
-    private static Map<String, Object> getStateDetails(final Flow flowDefinition, final String st) {
-        val state = (State) flowDefinition.getState(st);
+    private static Map<String, Object> getStateDetails(final Flow flowDefinition, final String stateId) {
+        val state = (State) flowDefinition.getState(stateId);
         val stateMap = new LinkedHashMap<String, Object>();
 
         if (!state.getAttributes().asMap().isEmpty()) {
@@ -129,18 +129,30 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
         if (state instanceof EndState) {
             stateMap.put("isEndState", Boolean.TRUE);
         }
+
+        if (state instanceof SubflowState subflowState) {
+            var field = ReflectionUtils.findField(subflowState.getClass(), "subflow");
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
+            val subflowExpr = (Expression) ReflectionUtils.getField(field, subflowState);
+            field = ReflectionUtils.findField(subflowExpr.getClass(), "subflowId");
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
+            val subflowId = (String) ReflectionUtils.getField(field, subflowExpr);
+            stateMap.put("subflowId", subflowId);
+            stateMap.put("isSubflowState", Boolean.TRUE);
+        }
+
         if (state.isViewState()) {
             val viewState = (ViewState) state;
 
             stateMap.put("isViewState", state.isViewState());
             stateMap.put("isRedirect", viewState.getRedirect());
 
-            acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
+            acts = StreamSupport.stream(viewState.getRenderActionList().spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
             if (!acts.isEmpty()) {
-                stateMap.put("renderActions", viewState.getRenderActionList());
+                stateMap.put("renderActions", acts);
             }
 
             acts = Arrays.stream(viewState.getVariables())
@@ -155,17 +167,13 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             if (field != null) {
                 ReflectionUtils.makeAccessible(field);
                 val exp = (Expression) ReflectionUtils.getField(field, viewState.getViewFactory());
-                stateMap.put("viewId",
-                    StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
-            } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory) {
-                val factory = (ActionExecutingViewFactory) viewState.getViewFactory();
-                if (factory.getAction() instanceof ExternalRedirectAction) {
-                    val redirect = (ExternalRedirectAction) factory.getAction();
+                stateMap.put("viewId", StringUtils.defaultIfBlank(Objects.requireNonNull(exp).getExpressionString(), exp.getValue(null).toString()));
+            } else if (viewState.getViewFactory() instanceof ActionExecutingViewFactory factory) {
+                if (factory.getAction() instanceof ExternalRedirectAction redirect) {
                     val uri = ReflectionUtils.findField(redirect.getClass(), "resourceUri");
                     ReflectionUtils.makeAccessible(Objects.requireNonNull(uri));
                     val exp = (Expression) ReflectionUtils.getField(uri, redirect);
-                    stateMap.put("viewId",
-                        "externalRedirect -> #{" + Objects.requireNonNull(exp).getExpressionString() + '}');
+                    stateMap.put("viewId", "externalRedirect -> #{" + Objects.requireNonNull(exp).getExpressionString() + '}');
                 } else {
                     stateMap.put("viewId", factory.getAction().toString());
                 }
@@ -174,9 +182,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             }
         }
 
-        if (state instanceof TransitionableState) {
-            val stDef = (TransitionableState) state;
-
+        if (state instanceof TransitionableState stDef) {
             acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.toList());
@@ -193,6 +199,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
                 stateMap.put("transitions", acts);
             }
         }
+
         return stateMap;
     }
 
@@ -213,10 +220,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
         val executionPlan = applicationContext.getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
         executionPlan.execute();
-        
         val map = applicationContext.getBeansOfType(FlowDefinitionRegistry.class);
-
-        map.forEach((k, value) -> Arrays.stream(value.getFlowDefinitionIds())
+        map.forEach((key, value) -> Arrays.stream(value.getFlowDefinitionIds())
             .filter(currentId -> StringUtils.isBlank(flowId) || flowId.equalsIgnoreCase(currentId))
             .forEach(id -> {
                 val flowDefinition = (Flow) value.getFlowDefinition(id);

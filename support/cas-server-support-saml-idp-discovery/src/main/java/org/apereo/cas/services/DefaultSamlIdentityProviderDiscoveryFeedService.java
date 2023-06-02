@@ -3,9 +3,9 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
-import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ import org.pac4j.core.util.InitializableObject;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -38,9 +38,9 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
 
     private final Clients clients;
 
-    private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
-
     private final ArgumentExtractor argumentExtractor;
+
+    private final List<DelegatedClientIdentityProviderAuthorizer> authorizers;
 
     @Override
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed() {
@@ -81,8 +81,13 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
             .orElseThrow();
 
         val webContext = new JEEContext(httpServletRequest, httpServletResponse);
-        val service = this.argumentExtractor.extractService(httpServletRequest);
-        if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest)) {
+        val service = argumentExtractor.extractService(httpServletRequest);
+
+        val authorized = authorizers
+            .stream()
+            .allMatch(authz -> authz.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest));
+
+        if (authorized) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
                 .service(service)
                 .client(samlClient)

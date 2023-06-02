@@ -4,6 +4,7 @@ import org.apereo.cas.grouper.DefaultGrouperFacade;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 
 import edu.internet2.middleware.grouperClient.util.GrouperClientConfig;
@@ -15,6 +16,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +46,7 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
      */
     public static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
 
+    @Serial
     private static final long serialVersionUID = -3557247044344135788L;
 
     private GrouperGroupField groupField = GrouperGroupField.NAME;
@@ -57,14 +60,14 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
     private Map<String, String> configProperties = new TreeMap<>();
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        val allAttributes = new HashMap<>(principalAttributes);
-        val results = fetchWsGetGroupsResults(principal);
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+        val allAttributes = new HashMap<>(request.getAttributes());
+        val results = fetchWsGetGroupsResults(request.getPrincipalId());
         if (results.isEmpty()) {
-            LOGGER.warn("No groups could be found for [{}]", principal);
+            LOGGER.warn("No groups could be found for [{}]", request.getPrincipalId());
             return false;
         }
-        val grouperGroups = new ArrayList<String>(results.size());
+        val grouperGroups = new ArrayList<>(results.size());
         results
             .stream()
             .filter(groupsResult -> groupsResult.getWsGroups() != null && groupsResult.getWsGroups().length > 0)
@@ -77,15 +80,9 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
         return RegisteredServiceAccessStrategyEvaluator.builder()
             .requiredAttributes(this.requiredAttributes)
             .build()
-            .evaluate(principal, allAttributes);
+            .apply(request.withAttributes(allAttributes));
     }
 
-    /**
-     * Fetch ws get groups results.
-     *
-     * @param principal the principal
-     * @return the collection
-     */
     @Synchronized
     protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
         if (!this.configProperties.isEmpty()) {

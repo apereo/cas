@@ -1,4 +1,5 @@
 {
   "casuser": ["jsmith", "banderson"],
+  "casadmin": ["*"],
   "adminuser": ["jsmith", "tomhanks"]
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 
-
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy extends BaseDateTimeRegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -5923946898337761319L;
 
     public LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(final TimeUnit timeUnit, final long timeValue, final int order) {

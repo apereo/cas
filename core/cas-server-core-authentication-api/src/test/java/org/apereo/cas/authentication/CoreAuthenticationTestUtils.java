@@ -4,7 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -24,8 +24,10 @@ import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -59,8 +61,7 @@ public class CoreAuthenticationTestUtils {
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
         val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
-        usernamePasswordCredentials.setPassword(password);
-
+        usernamePasswordCredentials.assignPassword(password);
         return usernamePasswordCredentials;
     }
 
@@ -102,7 +103,7 @@ public class CoreAuthenticationTestUtils {
     public static StubPersonAttributeDao getAttributeRepository() {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
-        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase()));
+        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase(Locale.ENGLISH)));
         attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));
         attributes.put("mail", CollectionUtils.wrap(CONST_USERNAME + "@example.org"));
         attributes.put("memberOf", CollectionUtils.wrapList("system", "admin", "cas", "staff"));
@@ -160,11 +161,12 @@ public class CoreAuthenticationTestUtils {
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes, final ZonedDateTime authnDate) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credential = new UsernamePasswordCredential("casuser", UUID.randomUUID().toString());
+        credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
         return new DefaultAuthenticationBuilder(principal)
-            .addCredential(meta)
+            .addCredential(credential)
             .setAuthenticationDate(authnDate)
-            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, meta))
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential))
             .setAttributes(attributes)
             .build();
     }
@@ -175,6 +177,7 @@ public class CoreAuthenticationTestUtils {
 
     public static CasModelRegisteredService getRegisteredService(final String url) {
         val service = mock(CasModelRegisteredService.class);
+        when(service.getFriendlyName()).thenCallRealMethod();
         when(service.getServiceId()).thenReturn(url);
         when(service.getName()).thenReturn("service name");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
@@ -234,11 +237,11 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal) {
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credential = new UsernamePasswordCredential();
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new DefaultAuthenticationBuilder(principal)
-            .addCredential(meta)
-            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+            .addCredential(credential)
+            .addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential));
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal,
@@ -246,8 +249,8 @@ public class CoreAuthenticationTestUtils {
                                                                  final Map<String, List<Object>> attributes) {
         val builder = new DefaultAuthenticationBuilder(principal).setAttributes(attributes);
         handlers.forEach((credential, handler) -> {
-            builder.addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, new BasicCredentialMetaData(credential)));
-            builder.addCredential(new BasicCredentialMetaData(credential));
+            builder.addSuccess(handler.getName(), new DefaultAuthenticationHandlerExecutionResult(handler, credential));
+            builder.addCredential(credential);
         });
         return builder;
     }

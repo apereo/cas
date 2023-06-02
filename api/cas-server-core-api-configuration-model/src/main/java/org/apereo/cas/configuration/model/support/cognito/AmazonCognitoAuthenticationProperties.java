@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,7 +27,9 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 public class AmazonCognitoAuthenticationProperties extends BaseAmazonWebServicesProperties {
+    @Serial
     private static final long serialVersionUID = -4748558614314096213L;
+
     /**
      * The name of the authentication handler.
      */

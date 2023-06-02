@@ -1,12 +1,9 @@
 package org.apereo.cas.util;
 
 import lombok.val;
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -64,6 +61,7 @@ public class DateTimeUtilsTests {
         assertNull(DateTimeUtils.zonedDateTimeOf(UUID.randomUUID().toString()));
         assertNull(DateTimeUtils.localDateTimeOf(UUID.randomUUID().toString()));
     }
+
     @Test
     public void verifyParsingCalendar() {
         val calendar = Calendar.getInstance();
@@ -75,12 +73,9 @@ public class DateTimeUtilsTests {
     public void verifyConvert() {
         assertNotNull(DateTimeUtils.convertToZonedDateTime(LocalDateTime.now().toString()));
         assertNotNull(DateTimeUtils.convertToZonedDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString()));
-        assertNotNull(DateTimeUtils.zonedDateTimeOf(DateTime.now().toInstant()));
         assertNotNull(DateTimeUtils.zonedDateTimeOf(System.currentTimeMillis()));
         assertNotNull(DateTimeUtils.localDateTimeOf(new Date()));
         assertNotNull(DateTimeUtils.localDateTimeOf(System.currentTimeMillis()));
-        assertNotNull(DateTimeUtils.dateTimeOf(Instant.now(Clock.systemUTC())));
-        assertNotNull(DateTimeUtils.dateTimeOf(ZonedDateTime.now(ZoneOffset.UTC)));
     }
 
     @Test

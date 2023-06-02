@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasEmbeddedContainerUtilsTests {
     @Test
     public void verifyMainArgs() {
-        assertTrue(CasEmbeddedContainerUtils.getLoggingInitialization().isPresent());
+        assertFalse(CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().isEmpty());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class CasEmbeddedContainerUtilsTests {
         }
 
         @Override
-        protected String getTitle() {
+        public String getTitle() {
             return "Custom";
         }
     }

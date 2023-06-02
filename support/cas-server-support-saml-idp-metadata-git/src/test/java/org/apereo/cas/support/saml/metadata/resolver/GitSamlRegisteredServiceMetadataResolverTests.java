@@ -16,7 +16,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -33,6 +34,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
+
+    "cas.authn.saml-idp.metadata.git.schedule.enabled=true",
+    
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
@@ -41,8 +46,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.git.clone-directory.location=file://${java.io.tmpdir}/cas-saml-metadata-gsrsmrt"
 })
 @Slf4j
-@Tag("FileSystem")
+@Tag("Git")
 public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
+    @Autowired
+    @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
+    private Runnable gitSamlRegisteredServiceRepositoryScheduler;
+    
     @BeforeAll
     public static void setup() {
         try {
@@ -100,12 +109,12 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         service.setMetadataLocation("https://example.com/endswith.git");
         assertTrue(resolver.supports(service));
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                resolver.resolve(null, null);
-                resolver.saveOrUpdate(null);
-            }
+        assertDoesNotThrow(() -> {
+            gitSamlRegisteredServiceRepositoryScheduler.run();
+            
+            resolver.resolve(null, null);
+            resolver.saveOrUpdate(null);
+
         });
     }
 }

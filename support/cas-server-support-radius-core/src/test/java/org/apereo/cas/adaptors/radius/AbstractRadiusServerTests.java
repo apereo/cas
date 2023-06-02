@@ -42,9 +42,9 @@ public abstract class AbstractRadiusServerTests {
     public void verifyAuthenticationSuccess() throws Exception {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "Mellon");
-        assertEquals(2, response.getCode());
-        assertFalse(response.getAttributes().isEmpty());
-        assertTrue(response.getAttributes().stream()
+        assertEquals(2, response.code());
+        assertFalse(response.attributes().isEmpty());
+        assertTrue(response.attributes().stream()
             .anyMatch(a -> a.getAttributeName().equals(Attr_MSCHAP2Success.NAME)));
     }
 

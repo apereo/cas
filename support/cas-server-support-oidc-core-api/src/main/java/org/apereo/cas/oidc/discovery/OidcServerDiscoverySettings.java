@@ -52,6 +52,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("id_token_signing_alg_values_supported")
     private Set<String> idTokenSigningAlgValuesSupported;
 
+    @JsonProperty("dpop_signing_alg_values_supported")
+    private Set<String> dPopSigningAlgValuesSupported;
+
     @JsonProperty("id_token_encryption_alg_values_supported")
     private Set<String> idTokenEncryptionAlgValuesSupported;
 
@@ -120,6 +123,11 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("token_endpoint")
     public String getTokenEndpoint() {
         return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.ACCESS_TOKEN_URL);
+    }
+
+    @JsonProperty("device_authorization_endpoint")
+    public String getDeviceAuthorizationEndpoint() {
+        return getTokenEndpoint();
     }
 
     @JsonProperty("userinfo_endpoint")

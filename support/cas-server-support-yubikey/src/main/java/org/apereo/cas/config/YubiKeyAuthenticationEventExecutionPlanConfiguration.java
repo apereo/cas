@@ -25,11 +25,11 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.YubiKey)
 @AutoConfiguration
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
@@ -74,7 +74,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("yubikeyMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> yubikeyMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
             yubikeyMultifactorAuthenticationProvider, servicesManager);
@@ -125,11 +125,14 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         final YubicoClient yubicoClient,
         @Qualifier("yubiKeyAccountRegistry")
         final YubiKeyAccountRegistry yubiKeyAccountRegistry,
+        @Qualifier("yubikeyMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new YubiKeyAuthenticationHandler(yubi.getName(), servicesManager,
-            yubikeyPrincipalFactory, yubicoClient, yubiKeyAccountRegistry, yubi.getOrder());
+            yubikeyPrincipalFactory, yubicoClient, yubiKeyAccountRegistry,
+            yubi.getOrder(), multifactorAuthenticationProvider);
     }
 
     @Bean

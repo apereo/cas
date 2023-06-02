@@ -13,7 +13,10 @@ import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
+import java.util.Locale;
 
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.
@@ -24,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
 
+    @Serial
     private static final long serialVersionUID = -7553888418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
@@ -43,10 +47,10 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
             val principal = resolvePrincipal(authentication.getPrincipal());
             val rest = bypassProperties.getRest();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                    + "service [{}] and provider [{}] via REST endpoint [{}]",
+                         + "service [{}] and provider [{}] via REST endpoint [{}]",
                 principal.getId(), registeredService, provider, rest.getUrl());
 
-            val parameters = CollectionUtils.wrap("principal", principal.getId(), "provider", provider.getId());
+            val parameters = CollectionUtils.<String, String>wrap("principal", principal.getId(), "provider", provider.getId());
             if (registeredService != null) {
                 parameters.put("service", registeredService.getServiceId());
             }
@@ -54,12 +58,13 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
+                .parameters(parameters)
                 .build();
 
             val response = HttpUtils.execute(exec);
-            return response != null && response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return true;

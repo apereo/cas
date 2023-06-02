@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,10 +24,13 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("FileSystemOidcJsonWebKeystoreProperties")
 public class FileSystemOidcJsonWebKeystoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1659099897056632658L;
 
     /**
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
+     * Contents of the keystore may be encrpted using encryption mechanism available
+     * for CAS configuration security.
      */
     @RequiredProperty
     @ExpressionLanguageCapable

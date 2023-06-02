@@ -9,7 +9,7 @@ category: Protocols
 
 Allow CAS to act as an [OpenId Connect Provider (OP)](http://openid.net/connect/).
 
-<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>OpenId Connect is a continuation of 
 the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If 
 you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and 
 behaviors that are documented for the <a href="OAuth-Authentication.html">OAuth protocol</a> 
@@ -47,9 +47,10 @@ The current implementation provides support for:
 | `/oidc/accessToken`, `/oidc/token`       | Produces authorized access tokens.                                                                                                                                                                                                                                                                      |
 | `/oidc/revoke`                           | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.                                                                                          |
 | `/oidc/register`                         | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.                                                                                                                                                                    |
+| `/oidc/initToken`                        | Obtain an initial *master* access token required for dynamic client registration when operating in `PROTECTED` mode.                                                                                                                                                                                    |
 | `/oidc/clientConfig`                     | [Update or retrieve client](OIDC-Authentication-Dynamic-Registration.html) application definitions, registered with the server.                                                                                                                                                                         |
 
-<div class="alert alert-warning"><strong>Use Discovery</strong><p>The above endpoints
+<div class="alert alert-warning">:warning: <strong>Use Discovery</strong><p>The above endpoints
 are not strictly defined in the OpenID Connect specification. The CAS software may choose to change URL endpoints
 at any point in time. Do <strong>NOT</strong> hardcode these endpoints in your application configuration.
 Instead, use the Dynamic Discovery endpoint and parse the discovery document to discover the endpoints.</p></div>
@@ -61,12 +62,8 @@ Instead, use the Dynamic Discovery endpoint and parse the discovery document to 
 ## Server Configuration
 
 Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
+by default as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
 You will need to configure your deployment environment and load-balancers accordingly.
-
-## Session Replication
-
-{% include_cached casproperties.html properties="cas.session-replication" %}
 
 ## Sample Client Applications
 
@@ -78,3 +75,20 @@ Support for authentication context class references is implemented in form of `a
 authorization request, which is mostly taken into account by 
 the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="org.apereo.cas.oidc" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```

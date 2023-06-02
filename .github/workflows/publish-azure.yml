@@ -3,10 +3,11 @@ env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   REPOSITORY_USER: ${{ secrets.ARTIFACTS_REPOSITORY_USER }}
   REPOSITORY_PWD: ${{ secrets.ARTIFACTS_REPOSITORY_PWD }}
   REPOSITORY_URL: ${{ secrets.ARTIFACTS_REPOSITORY_URL }}
-  JDK_CURRENT: 11
+  JDK_CURRENT: 17
   TIMEOUT: 640000
 
 ##########################################################################

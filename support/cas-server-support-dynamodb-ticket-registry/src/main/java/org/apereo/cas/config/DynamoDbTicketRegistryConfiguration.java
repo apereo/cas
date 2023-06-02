@@ -1,14 +1,15 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistry;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "dynamodb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "dynamodb")
 @AutoConfiguration
 public class DynamoDbTicketRegistryConfiguration {
 
@@ -39,14 +40,17 @@ public class DynamoDbTicketRegistryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public TicketRegistry ticketRegistry(
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final TicketCatalog ticketCatalog,
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             @Qualifier("dynamoDbTicketRegistryFacilitator")
             final DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator,
             final CasConfigurationProperties casProperties) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
             val crypto = db.getCrypto();
-            val registry = new DynamoDbTicketRegistry(dynamoDbTicketRegistryFacilitator);
-            registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db"));
-            return registry;
+            val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db");
+            return new DynamoDbTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, dynamoDbTicketRegistryFacilitator);
         }
     }
 
@@ -62,11 +66,11 @@ public class DynamoDbTicketRegistryConfiguration {
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
-            val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient);
+            val facilitator = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient);
             if (!db.isPreventTableCreationOnStartup()) {
-                f.createTicketTables(db.isDropTablesOnStartup());
+                facilitator.createTicketTables(db.isDropTablesOnStartup());
             }
-            return f;
+            return facilitator;
         }
 
     }

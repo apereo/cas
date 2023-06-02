@@ -15,7 +15,6 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -87,11 +86,8 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
 
         when(tomcat.getHost()).thenReturn(host);
         when(tomcat.getService()).thenReturn(service);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                factory.getTomcatWebServer(tomcat);
-            }
+        assertDoesNotThrow(() -> {
+            factory.getTomcatWebServer(tomcat);
         });
     }
 
@@ -117,11 +113,8 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
 
         when(tc.getHost()).thenReturn(host);
         when(tc.getService()).thenReturn(service);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                factory.getTomcatWebServer(tc);
-            }
+        assertDoesNotThrow(() -> {
+            factory.getTomcatWebServer(tc);
         });
     }
 }

@@ -42,9 +42,16 @@ public class DefaultGitRepository implements GitRepository {
 
     private final boolean signCommits;
 
+    private final boolean rebase;
+
+    @Override
+    public String getRepositoryRemote(final String name) {
+        return gitInstance.getRepository().getRemoteName(name);
+    }
+
     @Override
     public File getRepositoryDirectory() {
-        return this.gitInstance.getRepository().getDirectory().getParentFile();
+        return gitInstance.getRepository().getDirectory().getParentFile();
     }
 
     @Override
@@ -54,7 +61,7 @@ public class DefaultGitRepository implements GitRepository {
 
     @Override
     public Collection<GitObject> getObjectsInRepository(final TreeFilter filter) throws Exception {
-        val repository = this.gitInstance.getRepository();
+        val repository = gitInstance.getRepository();
         val head = repository.resolve(Constants.HEAD);
 
         LOGGER.debug("Head object id is [{}]", head.toObjectId().toString());
@@ -80,7 +87,7 @@ public class DefaultGitRepository implements GitRepository {
     public GitRepository.GitObject readObject(final TreeWalk treeWalk) throws Exception {
         try (val out = new ByteArrayOutputStream()) {
             val objectId = treeWalk.getObjectId(0);
-            val repository = this.gitInstance.getRepository();
+            val repository = gitInstance.getRepository();
             val loader = repository.open(objectId);
             loader.copyTo(out);
             return GitRepository.GitObject.builder()
@@ -93,14 +100,14 @@ public class DefaultGitRepository implements GitRepository {
 
     @Override
     public void commitAll(final String message) throws Exception {
-        this.gitInstance.add().addFilepattern(".").call();
-        val config = this.gitInstance.getRepository().getConfig();
+        gitInstance.add().addFilepattern(".").call();
+        val config = gitInstance.getRepository().getConfig();
         val name = StringUtils.defaultIfBlank(config.getString("user", null, "name"), "CAS");
         val email = StringUtils.defaultIfBlank(config.getString("user", null, "email"), "cas@apereo.org");
-        this.gitInstance.commit()
+        gitInstance.commit()
             .setMessage(message)
             .setAll(true)
-            .setSign(this.signCommits)
+            .setSign(signCommits)
             .setAuthor(name, email)
             .call();
     }
@@ -109,10 +116,10 @@ public class DefaultGitRepository implements GitRepository {
     public void push() throws Exception {
         val remotes = gitInstance.remoteList().call();
         if (!remotes.isEmpty()) {
-            val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
+            val providers = credentialsProvider.toArray(CredentialsProvider[]::new);
             gitInstance.push()
                 .setTimeout((int) timeoutInSeconds)
-                .setTransportConfigCallback(this.transportConfigCallback)
+                .setTransportConfigCallback(transportConfigCallback)
                 .setPushAll()
                 .setCredentialsProvider(new ChainingCredentialsProvider(providers))
                 .call();
@@ -121,19 +128,19 @@ public class DefaultGitRepository implements GitRepository {
 
     @Override
     public boolean pull() throws Exception {
-        val providers = this.credentialsProvider.toArray(CredentialsProvider[]::new);
-        val remotes = this.gitInstance.getRepository().getRemoteNames();
+        val providers = credentialsProvider.toArray(CredentialsProvider[]::new);
+        val remotes = gitInstance.getRepository().getRemoteNames();
 
         if (remotes.isEmpty()) {
             LOGGER.debug("No remote repositories are specified to pull changes");
             return false;
         }
 
-        return this.gitInstance.pull()
+        return gitInstance.pull()
             .setTimeout((int) timeoutInSeconds)
-            .setFastForward(MergeCommand.FastForwardMode.FF_ONLY)
-            .setRebase(false)
-            .setTransportConfigCallback(this.transportConfigCallback)
+            .setFastForward(MergeCommand.FastForwardMode.FF)
+            .setRebase(rebase)
+            .setTransportConfigCallback(transportConfigCallback)
             .setProgressMonitor(new LoggingGitProgressMonitor())
             .setCredentialsProvider(new ChainingCredentialsProvider(providers))
             .call()
@@ -142,8 +149,8 @@ public class DefaultGitRepository implements GitRepository {
 
     @Override
     public void destroy() {
-        if (this.gitInstance != null) {
-            this.gitInstance.close();
+        if (gitInstance != null) {
+            gitInstance.close();
         }
     }
 }

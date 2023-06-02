@@ -27,7 +27,9 @@ import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResp
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.AuthenticationContextValidationResult;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
@@ -48,8 +50,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
+import jakarta.servlet.http.HttpServletRequest;
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +87,9 @@ public class TicketGrantingTicketResourceTests {
 
     @Mock
     private CentralAuthenticationService casMock;
+
+    @Mock
+    private TicketRegistry ticketRegistry;
 
     @Mock
     private TicketRegistrySupport ticketSupport;
@@ -138,9 +144,10 @@ public class TicketGrantingTicketResourceTests {
         val logoutManager = new DefaultLogoutManager(false, new DefaultLogoutExecutionPlan());
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(api,
+        val singleLogoutRequestExecutor = new DefaultSingleLogoutRequestExecutor(ticketRegistry, logoutManager, applicationContext);
+        ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(api,
             casMock, new DefaultTicketGrantingTicketResourceEntityResponseFactory(),
-            new GenericWebApplicationContext(), new DefaultSingleLogoutRequestExecutor(casMock, logoutManager, applicationContext));
+            new GenericWebApplicationContext(), singleLogoutRequestExecutor);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)
             .defaultRequest(get("/")
@@ -275,7 +282,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void deletionOfTGT() throws Exception {
-        when(this.casMock.getTicket(anyString(), any()))
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any()))
             .thenReturn(new MockTicketGrantingTicket("casuser"));
         this.mockMvc.perform(delete(TICKETS_RESOURCE_URL + "/TGT-1")).andExpect(status().isOk());
     }

@@ -33,7 +33,7 @@ public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKey
         val args = new Object[]{LOGGER};
         val result = watchableScript.execute("find", JsonWebKeySet.class, args);
         LOGGER.debug("Received JWKS resource from [{}] as [{}]", watchableScript, result);
-        return result != null ? Optional.of(OidcJsonWebKeystoreGeneratorService.toResource(result)) : Optional.empty();
+        return Optional.ofNullable(result).map(OidcJsonWebKeystoreGeneratorService::toResource);
     }
 
     @Override

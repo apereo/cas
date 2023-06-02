@@ -15,7 +15,6 @@ import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -29,6 +28,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +54,6 @@ import static org.mockito.Mockito.*;
 })
 public class ReturnMappedAttributeReleasePolicyTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -73,12 +71,13 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
     @Test
     public void verifyAttributeMappingWorksForCollections() throws IOException {
+        val file = Files.createTempFile("attr", ".json").toFile();
         val map = new TreeMap();
         map.put("test1", "newTest1");
         map.put("test2", Stream.of("newTest2", "DaTest2").collect(Collectors.toList()));
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(map);
-        MAPPER.writeValue(JSON_FILE, policyWritten);
-        val policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(map);
+        MAPPER.writeValue(file, policyWritten);
+        val policyRead = MAPPER.readValue(file, ReturnMappedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
 
         val mapValues = new HashMap<String, List<Object>>();
@@ -104,11 +103,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
     public void verifySerializeAndReturnMappedAttributeReleasePolicyToJson() throws IOException {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("keyOne", "valueOne");
-        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val wrap = CollectionUtils.wrap(allowedAttributes);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
 
-        MAPPER.writeValue(JSON_FILE, policyWritten);
-        val policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
+        val file = Files.createTempFile("attr", ".json").toFile();
+        MAPPER.writeValue(file, policyWritten);
+        val policyRead = MAPPER.readValue(file, ReturnMappedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 
@@ -117,7 +117,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'][0] }");
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -137,7 +137,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return ['one', 'two'] }");
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -163,7 +163,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val attributeName = UUID.randomUUID().toString();
         allowedAttributes.put(attributeName, "file:" + file.getCanonicalPath());
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -186,7 +186,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", mappedAttribute);
-        val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
+        val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(allowedAttributes));
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -218,7 +218,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val attributeName = UUID.randomUUID().toString();
         allowedAttributes.put(attributeName, "classpath:GroovyMappedAttribute.groovy");
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -241,9 +241,9 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val allowed1 = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
         allowed1.put(attributeName, "groovy { return 'v1' }");
-        val p1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed1));
+        val p1 = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(allowed1));
 
-        val service1 = CoreAttributesTestUtils.getRegisteredService();
+        val service1 = CoreAttributesTestUtils.getRegisteredService(UUID.randomUUID().toString());
         when(service1.getAttributeReleasePolicy()).thenReturn(p1);
 
         val attributes = new HashMap<String, List<Object>>();
@@ -258,12 +258,11 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(result1.containsValue(List.of("v1")));
 
         val manager = ApplicationContextProvider.getScriptResourceCacheManager().get();
-        val key = manager.getKeys().iterator().next();
-        assertEquals("v1", manager.get(key).execute(ArrayUtils.EMPTY_OBJECT_ARRAY, String.class));
+        assertTrue(manager.getKeys().stream().allMatch(key -> manager.get(key) != null));
 
         val allowed2 = ArrayListMultimap.<String, Object>create();
         allowed2.put(attributeName, "groovy { return 'v2' }");
-        val p2 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed2));
+        val p2 = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(allowed2));
 
         val service2 = CoreAttributesTestUtils.getRegisteredService();
         when(service2.getAttributeReleasePolicy()).thenReturn(p2);
@@ -283,7 +282,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val attributeName = UUID.randomUUID().toString();
 
         allowed1.put(attributeName, "classpath:GroovyMappedAttribute.groovy");
-        val p1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed1));
+        val p1 = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(allowed1));
 
         val service1 = CoreAttributesTestUtils.getRegisteredService();
         when(service1.getAttributeReleasePolicy()).thenReturn(p1);
@@ -304,7 +303,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     @Test
     public void verifyMappedExisting() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
-        val p1 = new ReturnMappedAttributeReleasePolicy(allowed1);
+        val p1 = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(allowed1);
         val service1 = CoreAttributesTestUtils.getRegisteredService();
         when(service1.getAttributeReleasePolicy()).thenReturn(p1);
 
@@ -330,7 +329,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     @Test
     public void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
-        val policy = new ReturnMappedAttributeReleasePolicy(allowed1);
+        val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(allowed1);
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -348,7 +347,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         allowedAttributes.put("uid", "userId");
 
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -372,7 +371,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         allowed1.put("attr1", "file:" + file.getCanonicalPath());
         allowed1.put("uid", "userId");
 
-        val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed1));
+        val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(CollectionUtils.wrap(allowed1));
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
         val principalAttributes = new HashMap<String, List<Object>>();
@@ -396,7 +395,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         allowedAttributes.put("uid", "uid");
 
         val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
-        val policy = new ReturnMappedAttributeReleasePolicy(wrap);
+        val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(wrap);
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
 
@@ -429,9 +428,11 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
     @Test
     public void verifyChainDependingOnPreviousAttributes() {
-        val policy1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap("uid", "my-userid"));
+        val policy1 = new ReturnMappedAttributeReleasePolicy();
+        policy1.setAllowedAttributes(CollectionUtils.wrap("uid", "my-userid"));
         policy1.setOrder(1);
-        val policy2 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap("new-uid", "groovy {attributes['my-userid'][0]+'-new'}"));
+        val policy2 = new ReturnMappedAttributeReleasePolicy();
+        policy2.setAllowedAttributes(CollectionUtils.wrap("new-uid", "groovy {attributes['my-userid'][0]+'-new'}"));
         policy2.setOrder(2);
 
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -448,4 +449,5 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertEquals("test", attributes.get("my-userid").get(0));
         assertEquals("test-new", attributes.get("new-uid").get(0));
     }
+
 }

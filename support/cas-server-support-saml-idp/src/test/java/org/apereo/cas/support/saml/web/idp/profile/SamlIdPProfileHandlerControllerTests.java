@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
-import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallbackHandlerControllerTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -19,7 +18,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -34,8 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML2")
-@Import(SSOSamlIdPProfileCallbackHandlerControllerTests.SamlIdPTestConfiguration.class)
+@Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
@@ -47,6 +44,7 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     public void verifyNoMetadataForRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName("SAML2Service");
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
@@ -58,9 +56,10 @@ public class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifyNoSignAuthnRequest() throws Exception {
+    public void verifyNoSignAuthnRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName("SAML2Service");
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();

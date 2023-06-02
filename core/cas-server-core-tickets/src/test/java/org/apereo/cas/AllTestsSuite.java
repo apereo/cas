@@ -26,14 +26,15 @@ import org.apereo.cas.ticket.factory.DefaultProxyTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultServiceTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactoryTests;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactoryTests;
+import org.apereo.cas.ticket.monitoring.CasCoreTicketsMonitoringConfigurationTests;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandlerTests;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandlerTests;
 import org.apereo.cas.ticket.registry.CachingTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupportTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryTests;
-import org.apereo.cas.ticket.registry.DistributedTicketRegistryTests;
 import org.apereo.cas.ticket.serialization.DefaultTicketStringSerializationManagerTests;
+import org.apereo.cas.util.DefaultMessageSanitizerTests;
 import org.apereo.cas.util.DefaultUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.GroovyUniqueTicketIdGeneratorTests;
 import org.apereo.cas.util.InternalTicketValidatorTests;
@@ -64,10 +65,10 @@ import org.junit.platform.suite.api.Suite;
     TimeoutExpirationPolicyTests.class,
     DefaultTicketRegistryTests.class,
     CachingTicketRegistryTests.class,
-    DistributedTicketRegistryTests.class,
     Cas10ProxyHandlerTests.class,
     DefaultTicketGrantingTicketFactoryTests.class,
     DefaultEncodedTicketTests.class,
+    CasCoreTicketsMonitoringConfigurationTests.class,
     TransientSessionTicketExpirationPolicyBuilderTests.class,
     ProxyGrantingTicketExpirationPolicyBuilderTests.class,
     TicketValidationExceptionTests.class,
@@ -83,6 +84,7 @@ import org.junit.platform.suite.api.Suite;
     NeverExpiresExpirationPolicyTests.class,
     DefaultTicketRegistryCleanerTests.class,
     TicketSerializersTests.class,
+    DefaultMessageSanitizerTests.class,
     InternalTicketValidatorTests.class,
     Cas20ProxyHandlerTests.class,
     GroovyUniqueTicketIdGeneratorTests.class,

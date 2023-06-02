@@ -45,6 +45,12 @@ public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy
                 HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_PORT,
                 Integer.toString(aws.getPort()));
         }
+        if (aws.getConnectionTimeoutSeconds() > 0) {
+            val timeout = Integer.toString(aws.getConnectionTimeoutSeconds());
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_CONNECTION_TIMEOUT, timeout);
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_READ_TIMEOUT, timeout);
+        }
+
         if (StringUtils.hasText(aws.getRegion())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_REGION, aws.getRegion());
         }
@@ -57,7 +63,15 @@ public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy
         if (StringUtils.hasText(aws.getTagValue())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_TAG_VALUE, aws.getTagValue());
         }
-
+        if (StringUtils.hasText(aws.getCluster())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_CLUSTER, aws.getCluster());
+        }
+        if (StringUtils.hasText(aws.getServiceName())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_SERVCE_NAME, aws.getServiceName());
+        }
+        if (StringUtils.hasText(aws.getFamily())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_FAMILY, aws.getFamily());
+        }
         return Optional.of(new DiscoveryStrategyConfig(new AwsDiscoveryStrategyFactory(), properties));
     }
 

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Setter;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,7 @@ import java.util.Map;
  */
 @Slf4j
 @Setter
+@Monitorable
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /**
@@ -49,15 +52,15 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory, final Integer order,
-        final Map<String, String> users) {
+                                            final PrincipalFactory principalFactory, final Integer order,
+                                            final Map<String, String> users) {
         super(name, servicesManager, principalFactory, order);
         this.users = users;
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-        final String originalPassword) throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws GeneralSecurityException {
 
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
@@ -68,7 +71,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
-        if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
+        if (!StringUtils.equals(credential.toPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         val strategy = getPasswordPolicyHandlingStrategy();

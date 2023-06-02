@@ -13,9 +13,11 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,20 +35,21 @@ import java.util.stream.Collectors;
 @Getter
 public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
 
+    @Serial
     private static final long serialVersionUID = 6704726217030836315L;
 
-    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
-    
     private final PrincipalFactory principalFactory;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
     private final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver;
+
+    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     public DefaultPrincipalElectionStrategy() {
         this(PrincipalFactoryUtils.newPrincipalFactory(), PrincipalElectionStrategyConflictResolver.last());
     }
-    
+
     public DefaultPrincipalElectionStrategy(final PrincipalElectionStrategyConflictResolver principalElectionConflictResolver) {
         this(PrincipalFactoryUtils.newPrincipalFactory(), principalElectionConflictResolver);
     }
@@ -65,7 +68,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
         val principalIds = principals.stream()
             .filter(Objects::nonNull)
-            .map(p -> p.getId().trim().toLowerCase())
+            .map(p -> p.getId().trim().toLowerCase(Locale.ENGLISH))
             .collect(Collectors.toCollection(LinkedHashSet::new));
         val count = principalIds.size();
         if (count > 1) {

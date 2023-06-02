@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -33,5 +33,5 @@ public interface DeviceFingerprintStrategy {
      *
      * @return the device fingerprint component extractors
      */
-    List<DeviceFingerprintComponentManager> getDeviceFingerprintComponentManagers();
+    List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers();
 }

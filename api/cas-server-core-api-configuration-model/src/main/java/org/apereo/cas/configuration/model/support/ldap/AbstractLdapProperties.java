@@ -11,9 +11,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 @JsonFilter("AbstractLdapProperties")
 public abstract class AbstractLdapProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2682743362616979324L;
 
     /**
@@ -310,7 +311,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Indicate the collection of attributes that are to be tagged and processed as binary
      * attributes by the underlying search resolver.
      */
-    private List<String> binaryAttributes = Stream.of("objectGUID", "objectSid").collect(Collectors.toList());
+    private List<String> binaryAttributes = Stream.of("objectGUID", "objectSid").toList();
 
     /**
      * The ldap type used to handle specific ops.

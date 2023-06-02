@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAML2Web")
 public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("idpInitiatedSamlProfileHandlerController")
@@ -41,6 +41,20 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
         this.samlRegisteredService = getSamlRegisteredServiceForTestShib();
         this.samlRegisteredService.setSignUnsolicitedAuthnRequest(true);
         servicesManager.save(samlRegisteredService);
+    }
+    
+    @Test
+    public void verifySignedAuthnRequest() throws Exception {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setServiceId("signed:authn:service");
+        servicesManager.save(service);
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());
+        request.addParameter(SamlIdPConstants.TARGET, "relay-state");
+        val response = new MockHttpServletResponse();
+        val mv = idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
     @Test
@@ -63,6 +77,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
 
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
+        service.setName(service.getServiceId());
         servicesManager.save(service);
 
         request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());

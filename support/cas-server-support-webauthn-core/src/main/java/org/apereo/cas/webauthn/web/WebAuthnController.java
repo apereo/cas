@@ -7,6 +7,7 @@ import com.yubico.data.RegistrationRequest;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.data.ByteArray;
+import com.yubico.webauthn.data.ResidentKeyRequirement;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,7 +102,6 @@ public class WebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> startRegistration(
         @NonNull
         @RequestParam("username")
@@ -123,7 +123,9 @@ public class WebAuthnController {
             username,
             Optional.of(displayName),
             Optional.ofNullable(credentialNickname),
-            requireResidentKey,
+            requireResidentKey
+                ? ResidentKeyRequirement.REQUIRED
+                : ResidentKeyRequirement.DISCOURAGED,
             Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
 
         if (result.isRight()) {
@@ -140,7 +142,6 @@ public class WebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Object> finishRegistration(
         @RequestBody
         final String responseJson) throws Exception {

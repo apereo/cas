@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.factory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
@@ -24,6 +25,11 @@ public class DefaultTicketFactory implements TicketFactory {
         return (TicketFactory) this.factoryMap.get(clazz.getCanonicalName());
     }
 
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return Ticket.class;
+    }
+
     /**
      * Add ticket factory.
      *
@@ -31,14 +37,10 @@ public class DefaultTicketFactory implements TicketFactory {
      * @param factory     the factory
      * @return the default ticket factory
      */
+    @CanIgnoreReturnValue
     public DefaultTicketFactory addTicketFactory(final @NonNull Class<? extends Ticket> ticketClass,
                                                  final @NonNull TicketFactory factory) {
         this.factoryMap.put(ticketClass.getCanonicalName(), factory);
         return this;
-    }
-
-    @Override
-    public Class<? extends Ticket> getTicketType() {
-        return Ticket.class;
     }
 }

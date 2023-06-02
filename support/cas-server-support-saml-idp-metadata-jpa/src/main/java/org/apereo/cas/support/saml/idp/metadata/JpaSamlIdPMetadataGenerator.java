@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.jpa.JpaSamlIdPMetadataDocumentFactory;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -16,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import java.util.Optional;
 
 /**
@@ -31,8 +32,8 @@ import java.util.Optional;
 public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
     private final TransactionOperations transactionTemplate;
 
-    @PersistenceContext(unitName = "samlMetadataIdPEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaSamlMetadataIdPContext")
+    private EntityManager entityManager;
 
     public JpaSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
                                        final TransactionOperations transactionTemplate) {
@@ -43,7 +44,9 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
         this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus status) {
+            protected void doInTransactionWithoutResult(
+                @Nonnull
+                final TransactionStatus status) {
                 entityManager.merge(doc);
             }
         });
@@ -63,7 +66,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
-        doc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
+        doc.setAppliesTo(getAppliesToFor(registeredService));
         saveSamlIdPMetadataDocument(doc);
         return doc;
     }

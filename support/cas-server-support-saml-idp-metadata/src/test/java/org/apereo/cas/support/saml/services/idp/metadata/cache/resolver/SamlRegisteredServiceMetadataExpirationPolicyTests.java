@@ -5,11 +5,12 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCacheKey;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataExpirationPolicy;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -45,18 +46,20 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
         val cacheKey = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
-        val resolver = mock(MetadataResolver.class);
 
+        val resolver = mock(MetadataResolver.class);
         val entity = mock(EntityDescriptor.class);
         val entityCacheDuration = Duration.ofSeconds(10);
         when(entity.getCacheDuration()).thenReturn(entityCacheDuration);
         when(resolver.resolveSingle(any())).thenReturn(entity);
-        assertEquals(entityCacheDuration.toNanos(), policy.expireAfterCreate(cacheKey, resolver, System.currentTimeMillis()));
+
+        val result = CachedMetadataResolverResult.builder().metadataResolver(resolver).build();
+        assertEquals(entityCacheDuration.toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
 
         when(resolver.resolveSingle(any())).thenThrow(new IllegalArgumentException());
-        assertEquals(policy.getDefaultExpiration(), policy.expireAfterCreate(cacheKey, resolver, System.currentTimeMillis()));
-
-        assertEquals(policy.getDefaultExpiration(), policy.expireAfterUpdate(cacheKey, resolver, 1000, policy.getDefaultExpiration()));
+        assertEquals(policy.defaultExpiration().toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
+        assertEquals(policy.defaultExpiration().toNanos(),
+            policy.expireAfterUpdate(cacheKey, result, 1000, policy.defaultExpiration().toNanos()));
     }
 
     @Test
@@ -77,7 +80,9 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         when(entity.getCacheDuration()).thenReturn(spCacheDuration);
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() == 1))).thenReturn(entity);
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() > 1))).thenReturn(null);
-        assertEquals(spCacheDuration.toNanos(), policy.expireAfterCreate(cacheKey, resolver, System.currentTimeMillis()));
+
+        val result = CachedMetadataResolverResult.builder().metadataResolver(resolver).build();
+        assertEquals(spCacheDuration.toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
     }
 
     @Test
@@ -90,7 +95,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         val service = new SamlRegisteredService();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy()
             .setExpirationDate(LocalDate.now(Clock.systemDefaultZone()).plusDays(1).toString()));
-        
+
         service.setMetadataExpirationDuration(StringUtils.EMPTY);
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
@@ -102,6 +107,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() == 1))).thenReturn(entity);
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() > 1))).thenReturn(null);
 
-        assertNotEquals(policy.getDefaultExpiration(), policy.expireAfterCreate(cacheKey, resolver, System.currentTimeMillis()));
+        val result = CachedMetadataResolverResult.builder().metadataResolver(resolver).build();
+        assertNotEquals(policy.defaultExpiration().toNanos(), policy.expireAfterCreate(cacheKey, result, System.currentTimeMillis()));
     }
 }

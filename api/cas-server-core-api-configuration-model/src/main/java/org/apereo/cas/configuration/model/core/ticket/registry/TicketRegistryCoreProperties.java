@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 public class TicketRegistryCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6927362599655259000L;
 
     /**
@@ -31,4 +33,13 @@ public class TicketRegistryCoreProperties implements Serializable {
      * separate from the registry technology itself.
      */
     private boolean enableLocking = true;
+
+    /**
+     * Identifier for this CAS server node
+     * that tags the sender/receiver in the queue
+     * and avoid processing of inbound calls.
+     * If left blank, an identifier is generated automatically
+     * and kept in memory.
+     */
+    private String queueIdentifier;
 }

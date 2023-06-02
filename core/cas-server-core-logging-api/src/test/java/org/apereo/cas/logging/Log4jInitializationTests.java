@@ -3,7 +3,6 @@ package org.apereo.cas.logging;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,12 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Log4jInitializationTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                val init = new Log4jInitialization();
-                init.setMainArguments(new String[]{"--logging.level.org.apereo.cas=debug"});
-            }
+        assertDoesNotThrow(() -> {
+            val init = new Log4jInitialization();
+            init.initialize(new String[]{"--logging.level.org.apereo.cas=debug"});
         });
     }
 }

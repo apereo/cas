@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.sso.allow-missing-service-parameter=false")
+    properties = "cas.sso.services.allow-missing-service-parameter=false")
 @Tag("Webflow")
 public class DelegatedAuthenticationErrorViewResolverTests {
     @Autowired
@@ -43,7 +43,7 @@ public class DelegatedAuthenticationErrorViewResolverTests {
         
         val request = new MockHttpServletRequest();
         request.addParameter("templates/error", "failure");
-        request.setAttribute("javax.servlet.error.exception", new RuntimeException(new UnauthorizedServiceException("templates/error")));
+        request.setAttribute("jakarta.servlet.error.exception", new RuntimeException(new UnauthorizedServiceException("templates/error")));
         val mv = resolver.resolveErrorView(request, HttpStatus.FORBIDDEN, Map.of());
         assertEquals(HttpStatus.FORBIDDEN, mv.getStatus());
         assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW, mv.getViewName());
@@ -53,6 +53,6 @@ public class DelegatedAuthenticationErrorViewResolverTests {
     public void verifyOperationWithoutEx() {
         val request = new MockHttpServletRequest();
         val mv = resolver.resolveErrorView(request, HttpStatus.INTERNAL_SERVER_ERROR, Map.of());
-        assertEquals("error/500", mv.getViewName());
+        assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, mv.getViewName());
     }
 }

@@ -25,8 +25,8 @@ public class RenewAuthenticationRequestCheckAction extends BaseCasWebflowAction 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .requestContext(requestContext)
             .build();
-        val ssoParticipation = this.singleSignOnParticipationStrategy.supports(ssoRequest)
-            && this.singleSignOnParticipationStrategy.isParticipating(ssoRequest);
+        val ssoParticipation = singleSignOnParticipationStrategy.supports(ssoRequest)
+                               && singleSignOnParticipationStrategy.isParticipating(ssoRequest);
         if (ssoParticipation) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
         }

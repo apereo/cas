@@ -5,6 +5,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link RadiusUtils}.
@@ -46,8 +48,9 @@ public class RadiusUtils {
             try {
                 val response = radiusServer.authenticate(username, password, state);
                 if (response != null) {
-                    val attributes = new HashMap<String, Object>();
-                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue()));
+                    val attributes = response.attributes()
+                        .stream()
+                        .collect(Collectors.toMap(RadiusAttribute::getAttributeName, RadiusAttribute::getValue, (__, b) -> b, () -> new HashMap<String, Object>()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 

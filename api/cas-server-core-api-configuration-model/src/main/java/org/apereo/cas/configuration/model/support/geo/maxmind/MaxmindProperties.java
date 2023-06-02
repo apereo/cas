@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
+
 /**
  * This is {@link MaxmindProperties}.
  *
@@ -21,8 +23,23 @@ import org.springframework.core.io.Resource;
 @Accessors(chain = true)
 public class MaxmindProperties extends BaseGeoLocationProperties {
 
+    @Serial
     private static final long serialVersionUID = 7883029275219817797L;
 
+    /**
+     * Geolocating an IP address using Maxmind web services
+     * will need your MaxMind account ID and license key.
+     * A zero or negative value will deactivate the web services integration.
+     */
+    private int accountId;
+
+    /**
+     * Geolocating an IP address using Maxmind web services
+     * will need your MaxMind account ID and license key.
+     * A blank, undefined value will deactivate the web services integration.
+     */
+    private String licenseKey;
+    
     /**
      * Path to the location of the database file containing cities.
      */

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -22,6 +23,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -34,7 +36,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Setter
 @Getter
+@Monitorable
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 
     /**
@@ -188,8 +190,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (attributeNames.size() == 1 && attributeNames.stream().allMatch(s -> s.toString().endsWith(";"))) {
                 val attrs = ldapEntry.getAttributes()
                     .stream()
-                    .filter(attr -> attr.getName().startsWith(key.concat(";")))
-                    .collect(Collectors.toList());
+                    .filter(attr -> attr.getName().startsWith(key.concat(";"))).toList();
                 attrs.forEach(attr -> attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, attr.getName(), List.of())));
             } else {
                 attributeMap.putAll(collectAttributeValueForEntry(ldapEntry, key, attributeNames));
@@ -249,6 +250,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 authenticatedEntryAttributes);
             var ldaptiveCred = new Credential(upc.getPassword());
             val request = new AuthenticationRequest(upc.getUsername(), ldaptiveCred, authenticatedEntryAttributes);
+            request.setControls(new PasswordPolicyControl());
             return authenticator.authenticate(request);
         } catch (final LdapException e) {
             LOGGER.trace(e.getMessage(), e);

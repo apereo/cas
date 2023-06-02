@@ -1,0 +1,1 @@
+Dear <%= firstName %> $lastName,Here is your token->$token

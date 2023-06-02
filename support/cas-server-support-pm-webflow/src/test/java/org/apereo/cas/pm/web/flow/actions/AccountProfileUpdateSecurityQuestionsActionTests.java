@@ -1,8 +1,8 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @TestPropertySource(properties = {
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.core.enabled=true",
@@ -78,7 +78,7 @@ public class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswo
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putTicketGrantingTicket(context, tgt);
-        centralAuthenticationService.addTicket(tgt);
+        ticketRegistry.addTicket(tgt);
     }
 
     @Test

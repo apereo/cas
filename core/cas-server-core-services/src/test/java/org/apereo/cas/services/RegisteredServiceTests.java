@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ public class RegisteredServiceTests {
     private static final String ATTR_3 = "attr3";
 
     private final BaseRegisteredService baseService = new BaseRegisteredService() {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -99,17 +101,6 @@ public class RegisteredServiceTests {
         assertEquals(THEME, baseService.getTheme());
         assertNotNull(baseService);
         assertEquals(baseService, baseService);
-    }
-
-    private void prepareService() {
-        baseService.setUsernameAttributeProvider(
-            new AnonymousRegisteredServiceUsernameAttributeProvider(new ShibbolethCompatiblePersistentIdGenerator("casrox")));
-        baseService.setDescription(DESCRIPTION);
-        baseService.setId(ID);
-        baseService.setName(NAME);
-        baseService.setServiceId(SERVICEID);
-        baseService.setTheme(THEME);
-        baseService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
     }
 
     @Test
@@ -199,9 +190,14 @@ public class RegisteredServiceTests {
         assertEquals(invalidId, service.getServiceId());
     }
 
-    @Test
-    public void verifySetRequiredHandlersDoesNotThrowNPEWhenNullHandlersRefIsPassedIn() {
-        val service = new CasRegisteredService();
-        assertDoesNotThrow(() -> service.setRequiredHandlers(null));
+    private void prepareService() {
+        baseService.setUsernameAttributeProvider(
+            new AnonymousRegisteredServiceUsernameAttributeProvider(new ShibbolethCompatiblePersistentIdGenerator("casrox")));
+        baseService.setDescription(DESCRIPTION);
+        baseService.setId(ID);
+        baseService.setName(NAME);
+        baseService.setServiceId(SERVICEID);
+        baseService.setTheme(THEME);
+        baseService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(ENABLED, SSO_ENABLED));
     }
 }

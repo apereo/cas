@@ -5,8 +5,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
@@ -23,13 +23,13 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,7 +51,9 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.service-registry.cassandra.local-dc=datacenter1",
-        "cas.service-registry.cassandra.keyspace=cas"
+        "cas.service-registry.cassandra.keyspace=cas",
+        "cas.service-registry.cassandra.ssl-protocols=TLSv1.2",
+        "cas.http-client.host-name-verifier=none"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
@@ -59,8 +61,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnabledIfListeningOnPort(port = 9042)
 @Getter
-@TestExecutionListeners(value = {
-    SpringBootDependencyInjectionTestExecutionListener.class,
+@TestExecutionListeners({
+    DependencyInjectionTestExecutionListener.class,
     CassandraServiceRegistryTests.DisposingTestExecutionListener.class
 })
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {

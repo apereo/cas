@@ -18,7 +18,6 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAccountActions")
 @Import({
     CasAccountManagementWebflowConfiguration.class,
     FinalizeAccountRegistrationActionTests.FinalizeAccountRegistrationActionTestConfiguration.class
@@ -57,7 +56,6 @@ public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigure
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
     }
 
     @Test

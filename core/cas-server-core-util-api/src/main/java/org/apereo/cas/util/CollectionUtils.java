@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +41,18 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CollectionUtils {
+    /**
+     * Distinct by key predicate.
+     *
+     * @param <T>          the type parameter
+     * @param keyExtractor the key extractor
+     * @return the predicate
+     */
+    public static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+        val seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
     /**
      * Converts the provided object into a collection
      * and return the first element, or empty.
@@ -102,8 +117,7 @@ public class CollectionUtils {
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued element [{}]", obj);
-        } else if (obj instanceof Map) {
-            val map = (Map) obj;
+        } else if (obj instanceof Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
@@ -113,13 +127,11 @@ public class CollectionUtils {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
             LOGGER.trace("Converting array element [{}]", obj);
-        } else if (obj instanceof Iterator) {
-            val it = (Iterator) obj;
+        } else if (obj instanceof Iterator it) {
             while (it.hasNext()) {
                 c.add(it.next());
             }
-        } else if (obj instanceof Enumeration) {
-            val it = (Enumeration) obj;
+        } else if (obj instanceof Enumeration it) {
             while (it.hasMoreElements()) {
                 c.add(it.nextElement());
             }
@@ -191,8 +203,8 @@ public class CollectionUtils {
      * @param value2 the value 2
      * @return the map
      */
-    public static <K extends String, V extends Object> Map<K, V> wrap(final String key, final Object value,
-                                                                      final String key2, final Object value2) {
+    public static <K extends String, V> Map<K, V> wrap(final String key, final Object value,
+                                                       final String key2, final Object value2) {
         val m = wrap(key, value);
         m.put(key2, value2);
         return (Map) m;
@@ -421,7 +433,7 @@ public class CollectionUtils {
         val list = new ArrayList<T>();
         if (source != null) {
             if (source instanceof Collection) {
-                val it = ((Collection) source).iterator();
+                val it = ((Iterable) source).iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
@@ -429,8 +441,8 @@ public class CollectionUtils {
                 if (source.getClass().isAssignableFrom(byte[].class)) {
                     list.add(source);
                 } else {
-                    val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
-                    list.addAll((List) elements);
+                    val elements = Arrays.stream((Object[]) source).toList();
+                    list.addAll((Collection<? extends T>) elements);
                 }
             } else {
                 list.add(source);

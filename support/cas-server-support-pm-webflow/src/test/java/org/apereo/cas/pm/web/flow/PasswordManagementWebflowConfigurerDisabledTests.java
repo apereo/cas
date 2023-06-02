@@ -1,8 +1,8 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementForgotUsernameConfiguration;
+import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -75,7 +75,7 @@ public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflo
         assertNotNull(state);
 
         val handler = mock(FlowHandler.class);
-        when(handler.getFlowId()).thenReturn(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+        when(handler.getFlowId()).thenReturn(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
         assertTrue(passwordResetHandlerAdapter.supports(handler));
 
         val context = new MockRequestContext();

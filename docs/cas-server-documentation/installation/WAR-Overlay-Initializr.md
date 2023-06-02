@@ -7,7 +7,7 @@ category: Installation
 
 # WAR Overlay Initializr
 
-[Apereo CAS Initializr][initializr] is a relatively new addition to the Apereo CAS ecosystem that allows
+[Apereo CAS Initializr][initializr] is a components in the Apereo CAS ecosystem that allows
 you as the deployer to generate CAS WAR Overlay projects on the fly with just what you need to start quickly.
 
 To get started with a CAS deployment, adopters typically
@@ -21,7 +21,7 @@ and automation without affecting the baseline template.
 
 To address such scenarios, the [CAS WAR Overlay Initializr][initializr] offers a fast way to pull
 in all the dependencies and modules needed for a CAS deployment and
-provides friendly and programmatic curl-friendly API to generate
+provides friendly and programmatic curl-friendly APIs to generate
 an overlay structure and required build files.
 
 The underlying framework that handles the project generation
@@ -35,23 +35,13 @@ can be tailored to the user’s experience based on that input and the
 conditions that follow to generate additional references, files, starting
 templates, and more in the same project to make the deployment process more comfortable.
 
-CAS Initializr at this point is mainly a backend service and a few APIs.
-However, one could imagine that a graphical and modern user interface
-could be built on top of available APIs to help with the project
-generation task, especially for project newcomers.
-
-Managing and maintaining a separate overlay projects and keeping them
-in sync with various CAS versions can be a costly maintenance task.
-CAS Initializr allows the project developers to automate the
-maintenance task, keep everything in the same repository
+Managing and maintaining separate overlay projects and keeping them in sync with various CAS versions can be a costly maintenance task.
+CAS Initializr allows the project developers to automate the maintenance task, keep everything in the same repository
 for faster and more accurate upgrades.
 
-CAS Initializr is used internally by the CAS project itself in a
-very *Eat What You Kill* type of way to dynamically generate
-overlay projects. These generated projects are used as CAS base
-Docker images published to Docker Hub, and as a baseline for
-browser/UI tests run by the CAS CI for each relevant feature.
-CAS Initializr uses itself to test itself!
+CAS Initializr is used internally by the CAS project itself in a very *Eat What You Kill* type of way to dynamically generate
+overlay projects. These generated projects are used as CAS base Docker images published to Docker Hub, and as a baseline for
+browser/UI tests run by the CAS CI for each relevant feature. CAS Initializr uses itself to test itself!
 
 To properly initialize and generate a CAS overlay, you may want to make
 sure you have `curl`, `http` and/or [jq](https://stedolan.github.io/jq/) installed.
@@ -61,42 +51,44 @@ sure you have `curl`, `http` and/or [jq](https://stedolan.github.io/jq/) install
 The [CAS Initializr][initializr] can be invoked using curl to generate different types of overlay projects.
 The project selection is indicated using a `type` parameter. The following types are supported:
 
-| Type                           | Description                                                                                                                 |
-|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `cas-overlay`                  | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).                                      |
-| `cas-bootadmin-server-overlay` | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).       |
-| `cas-config-server-overlay`    | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html). |
-| `cas-discovery-server-overlay` | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).            |
-| `cas-management-overlay`       | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).          |
+| Type                           | Description                                                                                                     | Template Repository                                                        |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| `cas-overlay`                  | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).                          | [See this repository](https://github.com/apereo/cas-overlay-template).     |
+| `cas-bootadmin-server-overlay` | WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).       | Not available yet.                                                         |
+| `cas-config-server-overlay`    | WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html). | [See this repository](https://github.com/apereo/cas-configserver-overlay). |
+| `cas-discovery-server-overlay` | WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).            | Not available yet.                                                         |
+| `cas-management-overlay`       | WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).          | [See this repository](https://github.com/apereo/cas-management-overlay).   |
 
 ## Project Versions
 
 The [CAS Initializr][initializr] can be instructed to prepare an overlay project for a specific version.
 The following request parameters control the version selection:
 
-| Type          | Description                                      |
-|---------------|--------------------------------------------------|
-| `casVersion`  | Specify the CAS version for the overlay.         |
-| `bootVersion` | Specify the Spring Boot version for the overlay. |
+| Type          | Description                                                     |
+|---------------|-----------------------------------------------------------------|
+| `casVersion`  | Specify the CAS version for the overlay.                        |
+| `bootVersion` | **(Optional)** Specify the Spring Boot version for the overlay. |
 
-Note that mixing and matching different versions generally will lead to 
-unstable projects builds. Do so at your own risk! The specification
+Note that mixing and matching different versions generally will lead to unstable projects builds. Do so at your own risk! The specification
 of version numbers in the project generation request is unnecessary, and [CAS Initializr][initializr] will always
 use trusted defaults to handle the generation task.
+
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>The only version you <i>might</i> need to specify is the CAS server version. Overriding 
+other aspects of the build or component versions such as Spring Boot often leads to an unstable build and deployment environment.</p></div>
 
 To review the list of supported versions for the CAS Initializr on [Heroku][initializr], you may use:
 
 ```bash
-curl https://casinit.herokuapp.com/actuator/supportedVersions | jq
+curl <cas-initializr-url>/actuator/supportedVersions | jq
 ```
 
 ## Source Code
 
 [CAS Initializr][initializr] is available at:
 
-| Source Repository                          | Location                              |
-|--------------------------------------------|---------------------------------------|
-| `https://github.com/apereo/cas-initializr` | [Link](https://casinit.herokuapp.com) |
+| Source Repository                          | Location           |
+|--------------------------------------------|--------------------|
+| `https://github.com/apereo/cas-initializr` | [Link][initializr] |
 
 ## Project Generation
 
@@ -105,11 +97,11 @@ the CAS Initializr, the following strategies can be used.
 
 ### Heroku
 
-The CAS projects provides a public **free** instance of the CAS Initializr on [Heroku][initializr], paid for by the
+The CAS projects provides a public **paid-for-by-Apereo-members** instance of the CAS Initializr on [Heroku][initializr], paid for by the
 Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
 
 ```bash
-function getcas(){
+function getcas() {
   url="https://casinit.herokuapp.com/starter.tgz"
   projectType="cas-overlay"
   dependencies=""
@@ -154,7 +146,7 @@ function getcas(){
 }
 ```
 
-<div class="alert alert-info"><strong>Note</strong><p>
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
 If you prefer, you could invoke the <code>/starter.zip</code> endpoint to get back a ZIP file instead.
 </p></div>
 
@@ -168,7 +160,7 @@ getcas --modules duo,oidc
 by [Duo Security](../mfa/DuoSecurity-Authentication.html) and
 support for [OpenID Connect](../authentication/OAuth-Authentication.html).
 
-<div class="alert alert-info"><strong>Note</strong>
+<div class="alert alert-info">:information_source: <strong>Note</strong>
 <p>To help keep the deployment costs down, the Heroku instance has turned on support for
 rate-limiting requests. Be aware that frequent requests may be throttled for access.</p></div>
 
@@ -181,8 +173,7 @@ docker run --rm -p 8080:8080 apereo/cas-initializr:${tag}
 ```
 
 The CAS Initializr should become available at `http://localhost:8080` and will respond to API
-requests using curl. Published images and tags of
-the CAS Initializr [can be found here](https://hub.docker.com/r/apereo/cas-initializr/tags).
+requests using curl. Published images and tags of the CAS Initializr [can be found here](https://hub.docker.com/r/apereo/cas-initializr/tags).
 
 ## CAS Modules
 
@@ -191,7 +182,7 @@ their identifier. To see a full list of all dependencies supported and
 available by this service, you can invoke the following command:
 
 ```bash
-curl https://casinit.herokuapp.com/dependencies
+curl <cas-initializr-url>/dependencies
 ```
 
 Typically, dependency identifiers match CAS server dependency/module artifact names without
@@ -199,31 +190,27 @@ the `cas-server-` prefix. Furthermore, certain dependencies are assigned aliases
 shortcuts to simplify requests. To see the full list of dependencies and their aliases, you may use:
 
 ```bash
-curl https://casinit.herokuapp.com/actuator/info | jq
+curl <cas-initializr-url>/actuator/info | jq
 ```
 
 Furthermore, CAS Initializr publishes metadata about its capabilities, that is the
-available options for all request parameters (dependencies, type, etc.) A client to the
-service uses that information to initialize the select options and the tree of available dependencies.
+available options for all request parameters (dependencies, type, etc.) A client of this
+service may use this information to initialize the select options and the range of available dependencies.
 
 You can grab the metadata on the root endpoint with the appropriate `Accept` header:
 
 ```bash
-curl -H 'Accept: application/json' https://casinit.herokuapp.com | jq
+curl -H 'Accept: application/json' <cas-initializr-url> | jq
 ```
 
 Or using HTTPie:
 
 ```bash
-http https://casinit.herokuapp.com Accept:application/json | jq
+http <cas-initializr-url> Accept:application/json | jq
 ```
 
 ### Dependency Management
 
 CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for dependency management.
 
-## Contributions
-
-Please see [this guide](../developer/Build-Process.html) for more details.
-
-[initializr]: https://casinit.herokuapp.com/
+[initializr]: https://casinit.herokuapp.com/ui

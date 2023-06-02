@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,6 +33,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class DefaultAuthentication implements Authentication {
+    @Serial
     private static final long serialVersionUID = 3206127526058061391L;
 
     /**
@@ -52,7 +54,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * List of metadata about credentials presented at authentication.
      */
-    private List<CredentialMetaData> credentials = new ArrayList<>();
+    private List<Credential> credentials = new ArrayList<>();
 
     /**
      * Authentication metadata attributes.
@@ -70,6 +72,16 @@ public class DefaultAuthentication implements Authentication {
     private Map<String, Throwable> failures = new LinkedHashMap<>();
 
     @Override
+    public void addAttribute(final String name, final Object value) {
+        this.attributes.put(name, CollectionUtils.toCollection(value, ArrayList.class));
+    }
+
+    @Override
+    public boolean containsAttribute(final String name) {
+        return this.attributes.containsKey(name);
+    }
+
+    @Override
     public void update(final Authentication authn) {
         this.attributes.putAll(authn.getAttributes());
         this.authenticationDate = authn.getAuthenticationDate();
@@ -79,11 +91,6 @@ public class DefaultAuthentication implements Authentication {
     public void updateAll(final Authentication authn) {
         this.attributes.clear();
         update(authn);
-    }
-
-    @Override
-    public void addAttribute(final String name, final Object value) {
-        this.attributes.put(name, CollectionUtils.toCollection(value, ArrayList.class));
     }
 
     @Override

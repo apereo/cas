@@ -54,20 +54,20 @@ public class SomethingConfiguration {
 - `@AutoConfiguration` classes can be assigned an order with `@Order(1984)` which would place 
   them in an ordered queue waiting to be loaded in that sequence.
 
-<div class="alert alert-info"><strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
+<div class="alert alert-info">:information_source: <strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
 piece of Java code that is put into the CAS Overlay may require additional CAS modules and dependencies on the classpath. You will need
 to study the CAS codebase and find the correct modules that contain the components you need, such 
 as <code>CasConfigurationProperties</code> and others.</p></div>
 
 ### Register
 
-How are `@Configuration` components picked up? Each CAS module declares its set of configuration components as such, 
+How are `@AutoConfiguration` components picked up? Each CAS module declares its set of configuration components as such, 
 per guidelines [laid out by Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/):
 
 - Create a `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` file
 - Add the following into the file:
 
-```properties
+```
 org.apereo.cas.custom.config.SomethingConfiguration
 ```
 
@@ -81,7 +81,7 @@ creation, if *a bean definition with the same id* is already defined. This means
 your own configuration class, register it and the design a `@Bean` definition only to have the 
 context utilize yours rather than what ships with CAS by default.
 
-<div class="alert alert-info"><strong>Bean Names</strong><p>To correctly define a conditional <code>Bean</code>, 
+<div class="alert alert-info">:information_source: <strong>Bean Names</strong><p>To correctly define a conditional <code>Bean</code>, 
 you generally need to make sure your own bean definition is created using the same name or identifier as its original equivalent. 
 It is impractical and certainly overwhelming to document all runtime bean definitions and their identifiers. So, you will
 need to study the CAS codebase to find the correct configuration classes and bean definitions to note their name.</p></div>
@@ -92,9 +92,12 @@ need to study the CAS codebase to find the correct configuration classes and bea
 
 ## CAS Properties
 
-The collection of CAS-provided settings are all encapsulated inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
+The collection of CAS-provided settings are all encapsulated inside a `CasConfigurationProperties` component. This 
+is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant 
+fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is 
+typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
 
-<div class="alert alert-info"><strong>Prefix Notation</strong><p>Note that all CAS-provided settings 
+<div class="alert alert-info">:information_source: <strong>Prefix Notation</strong><p>Note that all CAS-provided settings 
 exclusively begin with the prefix <code>cas</code>. Other frameworks and packages upon which CAS
 depends may present their own configuration naming scheme. Note the difference.</p></div>
 

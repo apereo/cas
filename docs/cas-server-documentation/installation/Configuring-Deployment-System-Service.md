@@ -11,7 +11,7 @@ CAS can be easily started as Unix/Linux services using either `init.d` or `syste
 via an external daemon. Note that most if not all of the below strategies attempt to run CAS via an embedded
 servlet container whose configuration is [explained here](Configuring-Servlet-Container.html#embedded).
 
-## `init.d` Service
+## init.d Service
 
 If CAS is built and run as [a fully executable web application](Configuring-Servlet-Container.html), 
 then it can be used as an `init.d` service. `symlink` the web application file to `init.d` 
@@ -64,7 +64,7 @@ sudo chattr +i /path/to/cas.war
 
 This will prevent any user, including `root`, from modifying the file.
 
-## `systemd` Service
+## systemd Service
 
 To install CAS as a `systemd` service create a script named `cas.service` using the following example and place it in `/etc/systemd/system` directory:
 
@@ -82,9 +82,11 @@ SuccessExitStatus=143
 WantedBy=multi-user.target
 ```
 
-<div class="alert alert-info"><strong>Not So Fast</strong><p>Remember to change the <code>Description</code>, <code>User</code> and <code>ExecStart</code> fields for your deployment.</p></div>
+<div class="alert alert-info">:information_source: <strong>Not So Fast</strong><p>Remember to change the <code>Description</code>, 
+<code>User</code> and <code>ExecStart</code> fields for your deployment.</p></div>
 
-The user that runs the CAS web application, PID file and console log file are managed by `systemd` itself and therefore must be configured using appropriate fields in `service` script. Consult [the service unit configuration man page](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for more details.
+The user that runs the CAS web application, PID file and console log file are managed by `systemd` itself and therefore must be 
+configured using appropriate fields in `service` script. Consult [the service unit configuration man page](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for more details.
 
 To flag the application to start automatically on system boot use the following command:
 
@@ -96,7 +98,8 @@ Refer to `man systemctl` for more details.
 
 ## Upstart
 
-[Upstart](http://upstart.ubuntu.com/) is an event-based service manager, a potential replacement for the System V init that offers more control on the behavior of the different daemons. When using Ubuntu you probably have it installed and configured already (check if there are any jobs with a name starting with `cas` in `/etc/init`).
+[Upstart](https://upstart.ubuntu.com/) is an event-based service manager, a potential replacement for the System V init that offers more control on the behavior of the 
+different daemons. When using Ubuntu you probably have it installed and configured already (check if there are any jobs with a name starting with `cas` in `/etc/init`).
 
 We create a job `cas.conf` to start the CAS web application:
 
@@ -108,11 +111,10 @@ respawn
 exec java -jar /path/to/cas.war
 ```
 
-Now run `start cas` and your service will start. Upstart offers many job configuration options and you can find [most of them here](http://upstart.ubuntu.com/cookbook/).
+Now run `start cas` and your service will start. Upstart offers many job configuration options 
+and you can find [most of them here](https://upstart.ubuntu.com/cookbook/).
 
 ## Windows Service
-
-### Windows Service Wrapper
 
 CAS may be started as Windows service using [winsw](https://github.com/kohsuke/winsw). 
 
@@ -141,6 +143,8 @@ Similarly, you may use `uninstall`, `start`, `stop`, etc.
 
 Refer to [this example](https://github.com/snicoll-scratches/spring-boot-daemon) to learn more.
 
-### Others
 
-CAS web applications may also be started as Windows service using [Procrun](http://commons.apache.org/proper/commons-daemon/procrun.html) of the [Apache Commons Daemon project](http://commons.apache.org/daemon/index.html). Procrun is a set of applications that allow Windows users to wrap Java applications as Windows services. Such a service may be set to start automatically when the machine boots and will continue to run without any user being logged on.
+CAS web applications may also be started as Windows service using [Procrun](http://commons.apache.org/proper/commons-daemon/procrun.html) 
+of the [Apache Commons Daemon project](http://commons.apache.org/daemon/index.html). Procrun is a set of 
+applications that allow Windows users to wrap Java applications as Windows services. Such a service may be set 
+to start automatically when the machine boots and will continue to run without any user being logged on.

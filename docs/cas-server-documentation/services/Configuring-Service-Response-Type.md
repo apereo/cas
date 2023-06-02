@@ -12,6 +12,9 @@ By default, authentication requests are handled with a browser redirect (i.e. `3
 with the relevant parameters built into the url. This behavior can be optionally adjusted on a per-service basis
 to dictate other options when responding to services.
 
+<div class="alert alert-info">:information_source: <strong>Usage</strong>
+<p>This feature specifically applies to applications that understand and use the CAS protocol.</p></div>
+
 A sample JSON file follows:
 
 ```json

@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ChainingRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
+    @Serial
     private static final long serialVersionUID = -2949244688986345692L;
 
     private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>(0);
@@ -44,7 +46,7 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
      * @param policy the policy
      */
     public void addPolicies(final Collection<RegisteredServiceConsentPolicy> policy) {
-        if (policies.addAll(policy.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()))) {
+        if (policies.addAll(policy.stream().filter(BeanSupplier::isNotProxy).toList())) {
             AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
         }
     }
@@ -73,6 +75,17 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
         return TriStateBoolean.UNDEFINED;
     }
 
+    @Override
+    @JsonIgnore
+    public Set<String> getExcludedServices() {
+        return this.policies
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(RegisteredServiceConsentPolicy::getExcludedServices)
+            .flatMap(Set::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     @JsonIgnore
     @Override
     public Set<String> getExcludedAttributes() {
@@ -84,17 +97,6 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    }
-
-    @Override
-    @JsonIgnore
-    public Set<String> getExcludedServices() {
-        return this.policies
-            .stream()
-            .filter(BeanSupplier::isNotProxy)
-            .map(RegisteredServiceConsentPolicy::getExcludedServices)
-            .flatMap(Set::stream)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -10,7 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -31,10 +31,9 @@ import org.springframework.core.Ordered;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20ServicesConfiguration {
-
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")
@@ -62,8 +61,8 @@ public class CasOAuth20ServicesConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthServicesManagerRegisteredServiceLocator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator() {
-            return new OAuth20ServicesManagerRegisteredServiceLocator();
+        public ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
+            return new OAuth20ServicesManagerRegisteredServiceLocator(casProperties);
         }
     }
 }

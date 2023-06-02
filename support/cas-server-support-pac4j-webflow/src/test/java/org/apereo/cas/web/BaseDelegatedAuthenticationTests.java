@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
+import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -20,41 +21,23 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
+import org.apereo.cas.config.DelegatedAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticationClientsTestConfiguration;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.web.flow.DelegatedClientWebflowCustomizer;
 
-import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.exception.http.OkAction;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.oauth.client.FacebookClient;
-import org.pac4j.oauth.credentials.OAuth20Credentials;
-import org.pac4j.oidc.client.OidcClient;
-import org.pac4j.oidc.config.OidcConfiguration;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.config.SAML2Configuration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -67,12 +50,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseDelegatedAuthenticationTests}.
@@ -94,6 +71,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     @EnableWebMvc
     @Import({
         DelegatedAuthenticationWebflowTestConfiguration.class,
+        DelegatedAuthenticationClientsTestConfiguration.class,
         Pac4jDelegatedAuthenticationConfiguration.class,
         Pac4jAuthenticationEventExecutionPlanConfiguration.class,
         Pac4jDelegatedAuthenticationSerializationConfiguration.class,
@@ -132,66 +110,19 @@ public abstract class BaseDelegatedAuthenticationTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration(value = "Saml2ClientMetadataControllerTestConfiguration", proxyBeanMethods = false)
+    @TestConfiguration(value = "DelegatedAuthenticationWebflowTestConfiguration", proxyBeanMethods = false)
     public static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
-        public Clients builtClients() throws Exception {
-            val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
-            val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
-            val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
-
-            val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
-            saml2Config.setServiceProviderEntityId("cas:example:sp");
-            saml2Config.setServiceProviderMetadataPath(spMetadataPath);
-            saml2Config.setAuthnRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
-            saml2Config.init();
-
-            val saml2Client = new SAML2Client(saml2Config);
-            saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);
-            saml2Client.setCallbackUrl("http://callback.example.org");
-            saml2Client.init();
-
-            val casClient = new CasClient(new CasConfiguration("https://sso.example.org/cas/login"));
-            casClient.setCallbackUrl("http://callback.example.org");
-            casClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.SERVER);
-            casClient.init();
-
-            val oidcCfg = new OidcConfiguration();
-            oidcCfg.setClientId("client_id");
-            oidcCfg.setSecret("client_secret");
-            oidcCfg.setDiscoveryURI("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
-            val oidcClient = new OidcClient(oidcCfg);
-            oidcClient.setCallbackUrl("http://callback.example.org");
-            oidcClient.init();
-
-            val facebookClient = new FacebookClient() {
-                @Override
-                public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore) {
-                    return Optional.of(new OAuth20Credentials("fakeVerifier"));
-                }
-            };
-            facebookClient.setProfileCreator((credentials, context, store) -> {
-                val profile = new CommonProfile();
-                profile.setClientName(facebookClient.getName());
-                profile.setId("casuser");
-                profile.addAttribute("uid", "casuser");
-                profile.addAttribute("givenName", "ApereoCAS");
-                profile.addAttribute("memberOf", "admin");
-                return Optional.of(profile);
-            });
-            facebookClient.setName(FacebookClient.class.getSimpleName());
-
-            val mockClientNoCredentials = mock(BaseClient.class);
-            when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
-            when(mockClientNoCredentials.getCredentials(any(), any())).thenThrow(new OkAction(StringUtils.EMPTY));
-            when(mockClientNoCredentials.isInitialized()).thenReturn(true);
-
-            val failingClient = mock(IndirectClient.class);
-            when(failingClient.getName()).thenReturn("FailingIndirectClient");
-            doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
-
-            return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
-                facebookClient, oidcClient, mockClientNoCredentials, failingClient));
+        public DelegatedClientWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
+            return BeanSupplier.of(DelegatedClientWebflowCustomizer.class)
+                .otherwiseProxy().get();
+        }
+        
+        @Bean
+        public DelegatedClientAuthenticationRequestCustomizer testDelegatedClientAuthenticationRequestCustomizer() {
+            return BeanSupplier.of(DelegatedClientAuthenticationRequestCustomizer.class)
+                .otherwiseProxy()
+                .get();
         }
     }
 }

@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,6 +30,9 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor(force = true)
 public class MultifactorAuthenticationRegisteredDevice implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1040948239519297651L;
+
     /**
      * The device name as chosen/managed by the mfa provider.
      */
@@ -55,8 +59,6 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
     private final String model;
 
     private final String lastUsedDateTime;
-    @Builder.Default
-    private Map<String, Object> details = new LinkedHashMap<>();
 
     /**
      * The actual device record produced by the provider
@@ -65,4 +67,7 @@ public class MultifactorAuthenticationRegisteredDevice implements Serializable {
     private final String payload;
 
     private final String source;
+
+    @Builder.Default
+    private Map<String, Object> details = new LinkedHashMap<>();
 }

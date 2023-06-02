@@ -3,12 +3,14 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -32,8 +34,9 @@ import java.util.Set;
 @Getter
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
+    @Serial
     private static final long serialVersionUID = 6180465589526463843L;
-    
+
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
 
     private final List<Credential> providedCredentials = new ArrayList<>(0);
@@ -61,33 +64,32 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
-    public AuthenticationResultBuilder collect(final Authentication authentication) {
-        if (authentication != null) {
-            this.authentications.add(authentication);
+    public Optional<Credential> getInitialCredential() {
+        if (this.providedCredentials.isEmpty()) {
+            LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
         }
+        return this.providedCredentials.stream().findFirst();
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AuthenticationResultBuilder collect(final Authentication authentication) {
+        Optional.ofNullable(authentication).ifPresent(authentications::add);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Collection<Authentication> authentications) {
         this.authentications.addAll(authentications);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Credential credential) {
-        if (credential != null) {
-            this.providedCredentials.add(credential);
-        }
+        Optional.ofNullable(credential).ifPresent(providedCredentials::add);
         return this;
-    }
-
-    @Override
-    public Optional<Credential> getInitialCredential() {
-        if (this.providedCredentials.isEmpty()) {
-            LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
-        }
-        return this.providedCredentials.stream().findFirst();
     }
 
     @Override
@@ -179,8 +181,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         synchronized (this.authentications) {
             val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
             authenticationBuilder.setPrincipal(primaryPrincipal);
-            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
         }
+        LOGGER.debug("Determined primary authentication principal to be [{}]", authenticationBuilder.getPrincipal());
 
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);

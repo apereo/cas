@@ -1,13 +1,19 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ScopedProxyMode;
+
+import java.util.function.Function;
 
 /**
  * This is {@link JpaTicketRegistryTicketCatalogConfiguration}.
@@ -16,18 +22,24 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jpa")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "jpa")
 @AutoConfiguration
-public class JpaTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
-    @Override
-    protected void buildAndRegisterTicketGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCascadeRemovals(true);
-        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
-    }
+public class JpaTicketRegistryTicketCatalogConfiguration {
 
-    @Override
-    protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setCascadeRemovals(true);
-        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
+    @ConditionalOnMissingBean(name = "jpaTicketCatalogConfigurationValuesProvider")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasTicketCatalogConfigurationValuesProvider jpaTicketCatalogConfigurationValuesProvider() {
+        return new CasTicketCatalogConfigurationValuesProvider() {
+            @Override
+            public Function<ConfigurableApplicationContext, Boolean> getProxyGrantingTicketCascadeRemovals() {
+                return __ -> Boolean.TRUE;
+            }
+
+            @Override
+            public Function<ConfigurableApplicationContext, Boolean> getTicketGrantingTicketCascadeRemovals() {
+                return __ -> Boolean.TRUE;
+            }
+        };
     }
 }

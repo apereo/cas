@@ -7,7 +7,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,
-            controller.handleUpdates(clientId, null, request, response).getStatusCodeValue());
+            controller.handleUpdates(clientId, null, request, response).getStatusCode().value());
     }
 
     @Test
@@ -62,11 +62,12 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(clientId);
+        service.markAsDynamicallyRegistered();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(
             ZonedDateTime.now(Clock.systemUTC()).toString()));
         servicesManager.save(service);
         assertEquals(HttpStatus.SC_OK,
-            controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+            controller.handleRequestInternal(clientId, request, response).getStatusCode().value());
     }
 
     @Test
@@ -79,14 +80,14 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         service.setClientSecretExpiration(clientSecretExpiration);
         servicesManager.save(service);
 
-        val jsonBody = '{'
-                       + "\"redirect_uris\": [\"https://apereo.github.io\"],\n"
-                       + "\"client_name\": \"Apereo Blog\",\n"
-                       + "\"contacts\": [\"cas@example.org\"],\n"
-                       + "\"grant_types\": [\"client_credentials\"],\n"
-                       + '}';
+        val jsonBody = """
+            {"redirect_uris": ["https://apereo.github.io"],
+            "client_name": "Apereo Blog",
+            "contacts": ["cas@example.org"],
+            "grant_types": ["client_credentials"],
+            }""";
         val responseEntity = controller.handleUpdates(clientId, jsonBody, request, response);
-        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCodeValue());
+        assertEquals(HttpStatus.SC_OK, responseEntity.getStatusCode().value());
         assertNotNull(responseEntity.getBody());
         service = servicesManager.findServiceBy(service.getId(), OidcRegisteredService.class);
         assertNotEquals(service.getClientSecretExpiration(), clientSecretExpiration);
@@ -98,6 +99,6 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,
-            controller.handleRequestInternal(clientId, request, response).getStatusCodeValue());
+            controller.handleRequestInternal(clientId, request, response).getStatusCode().value());
     }
 }

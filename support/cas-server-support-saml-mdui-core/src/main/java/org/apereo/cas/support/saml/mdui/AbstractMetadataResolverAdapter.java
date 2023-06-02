@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -98,7 +98,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             LOGGER.debug("Loading [{}]", resource.getFilename());
             resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
         });
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
             this.metadataResolver.setResolvers(resolvers);
             LOGGER.debug("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
@@ -167,7 +167,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             metadataProvider.setMetadataFilter(metadataFilterChain);
         }
         LOGGER.debug("Initializing metadata resolver for [{}]", resource);
-        FunctionUtils.doUnchecked(u -> metadataProvider.initialize());
+        FunctionUtils.doUnchecked(__ -> metadataProvider.initialize());
         val resolvers = new ArrayList<MetadataResolver>(1);
         resolvers.add(metadataProvider);
         return resolvers;

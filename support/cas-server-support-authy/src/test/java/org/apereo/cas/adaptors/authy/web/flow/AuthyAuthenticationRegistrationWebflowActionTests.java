@@ -37,13 +37,14 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);
-        when(authyInstance.getAuthyClient()).thenReturn(mock(AuthyApiClient.class));
+        val apiClient = mock(AuthyApiClient.class);
+        when(authyInstance.authyClient()).thenReturn(apiClient);
         
         val tokens = mock(Tokens.class);
         val token = new Token(200, "OK", "Token is valid.");
         when(tokens.verify(eq(123456), eq("token"), anyMap())).thenReturn(token);
 
-        when(authyInstance.getAuthyClient().getTokens()).thenReturn(tokens);
+        when(apiClient.getTokens()).thenReturn(tokens);
         val user = new User(200, "token");
         user.setId(123456);
         when(authyInstance.getOrCreateUser(any(Principal.class))).thenReturn(user);
@@ -54,7 +55,7 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
 
         val users = mock(Users.class);
         when(users.requestSms(anyInt())).thenReturn(hash);
-        when(authyInstance.getAuthyClient().getUsers()).thenReturn(users);
+        when(apiClient.getUsers()).thenReturn(users);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

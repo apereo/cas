@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -8,8 +11,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.Collection;
@@ -46,14 +50,19 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
         return CAS_PREFIX + '*';
     }
 
+    @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
+        actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return redisTemplate.keys(getPatternRedisKey(), this.scanCount)
-            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(doc -> buildMetadataResolverFrom(service, doc))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+            return results
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(doc -> buildMetadataResolverFrom(service, doc))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        }
     }
 
     @Override

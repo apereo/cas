@@ -11,6 +11,8 @@
     "--logging.level.org.apereo.cas=info",
     "--cas.audit.engine.enabled=false",
 
+    "--cas.slo.disabled=true",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=health,samlIdPRegisteredServiceMetadataCache",
     "--management.endpoint.health.show-details=always",

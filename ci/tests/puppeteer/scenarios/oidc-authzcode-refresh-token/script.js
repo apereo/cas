@@ -7,9 +7,9 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -42,10 +42,10 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
         },
         () => {
             throw `Operation failed to obtain access token: ${error}`;
-        })
+        });
 
-    assert(accessToken != null, "Access Token cannot be null")
-    assert(refreshToken != null, "Refresh Token cannot be null")
+    assert(accessToken != null, "Access Token cannot be null");
+    assert(refreshToken != null, "Refresh Token cannot be null");
     return refreshToken;
 }
 
@@ -71,38 +71,38 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.logg("Fetching first refresh token")
+    await cas.logg("Fetching first refresh token");
     const redirectUrl1 = "https://github.com/apereo/cas";
     let refreshToken1 = await fetchRefreshToken(page, "client", redirectUrl1);
 
-    console.log("**********************************************")
+    console.log("**********************************************");
     
-    await cas.logg("Fetching second refresh token")
+    await cas.logg("Fetching second refresh token");
     const redirectUrl2 = "https://apereo.github.io";
     let refreshToken2 = await fetchRefreshToken(page, "client2", redirectUrl2);
 
     await cas.logg(`Refresh Token 1: ${refreshToken1}`);
     await cas.logg(`Refresh Token 2: ${refreshToken2}`);
 
-    // await exchangeToken(refreshToken2, "client",
-    //     res => {
-    //         throw `Operation should fail but instead produced: ${res.data}`;
-    //     }, error => {
-    //         console.log(`Status: ${error.response.status}`);
-    //         assert(error.response.status === 400)
-    //         console.log(error.response.data);
-    //         assert(error.response.data.error === "invalid_grant");
-    //     });
-    //
-    // await exchangeToken(refreshToken1, "client2",
-    //     res => {
-    //         throw `Operation should fail but instead produced: ${res.data}`;
-    //     }, error => {
-    //         console.log(`Status: ${error.response.status}`);
-    //         assert(error.response.status === 400)
-    //         console.log(error.response.data);
-    //         assert(error.response.data.error === "invalid_grant");
-    //     });
+    await exchangeToken(refreshToken2, "client",
+        res => {
+            throw `Operation should fail but instead produced: ${res.data}`;
+        }, error => {
+            console.log(`Status: ${error.response.status}`);
+            assert(error.response.status === 400);
+            console.log(error.response.data);
+            assert(error.response.data.error === "invalid_grant");
+        });
+
+    await exchangeToken(refreshToken1, "client2",
+        res => {
+            throw `Operation should fail but instead produced: ${res.data}`;
+        }, error => {
+            console.log(`Status: ${error.response.status}`);
+            assert(error.response.status === 400);
+            console.log(error.response.data);
+            assert(error.response.data.error === "invalid_grant");
+        });
 
     await exchangeToken(refreshToken1, "client",
         res => {

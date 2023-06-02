@@ -2,19 +2,17 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
-import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,7 +34,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @AutoConfiguration
 public class CasOAuth20WebflowConfiguration {
 
@@ -53,15 +51,6 @@ public class CasOAuth20WebflowConfiguration {
             final ServicesManager servicesManager) {
             return new OAuth20RegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
         }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET)
-        public Action oauth20SessionStoreTicketGrantingTicketAction(
-            @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore) {
-            return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore);
-        }
     }
 
     @Configuration(value = "CasOAuth20ViewsConfiguration", proxyBeanMethods = false)
@@ -70,7 +59,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthConfirmView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/confirm");
@@ -79,7 +68,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthDeviceCodeApprovalView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/deviceCodeApproval");
@@ -88,7 +77,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthDeviceCodeApprovedView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/deviceCodeApproved");
@@ -97,7 +86,7 @@ public class CasOAuth20WebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthSessionStaleMismatchErrorView(
-            @Qualifier("casProtocolViewFactory")
+            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oauth/sessionStaleMismatchError");

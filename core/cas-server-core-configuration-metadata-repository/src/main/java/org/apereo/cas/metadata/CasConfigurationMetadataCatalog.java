@@ -3,6 +3,7 @@ package org.apereo.cas.metadata;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +40,10 @@ public class CasConfigurationMetadataCatalog {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    public static ObjectMapper getObjectMapper() {
+        return MAPPER;
+    }
+
     /**
      * Export.
      *
@@ -47,7 +51,7 @@ public class CasConfigurationMetadataCatalog {
      * @param data        the data
      */
     public static void export(final File destination, final Object data) {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             val mapper = new ObjectMapper(new YAMLFactory())
                 .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
@@ -78,8 +82,7 @@ public class CasConfigurationMetadataCatalog {
                 }
                 return true;
             })
-            .filter(entry -> query.getQueryFilter().test(entry.getValue()))
-            .collect(Collectors.toList());
+            .filter(entry -> query.getQueryFilter().test(entry.getValue())).toList();
 
         val properties = allProperties
             .stream()
@@ -144,6 +147,9 @@ public class CasConfigurationMetadataCatalog {
                 if (description.equals(ExpressionLanguageCapable.class.getName())) {
                     builder.expressionLanguage(true);
                 }
+                if (description.equals(RegularExpressionCapable.class.getName())) {
+                    builder.regexPattern(true);
+                }
             }
         }));
         builder.type(property.getType());
@@ -180,17 +186,6 @@ public class CasConfigurationMetadataCatalog {
     /**
      * The type Cas properties container.
      */
-    @RequiredArgsConstructor
-    public static class CasPropertiesContainer {
-        private final TreeSet<CasReferenceProperty> properties;
-
-        /**
-         * Properties list.
-         *
-         * @return the list
-         */
-        public TreeSet<CasReferenceProperty> properties() {
-            return this.properties;
-        }
+    public record CasPropertiesContainer(TreeSet<CasReferenceProperty> properties) {
     }
 }

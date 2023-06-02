@@ -38,14 +38,13 @@ deployments. Components for the following caching technologies are provided:
 
 * [Default](Default-Ticket-Registry.html)
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
-* [Ehcache](Ehcache-Ticket-Registry.html)
 * [Ignite](Ignite-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
-* [Infinispan](Infinispan-Ticket-Registry.html)
 
 ### Message-based Ticket Registries
 
-* [JMS](Messaging-JMS-Ticket-Registry.html)
+* [AMQP](Messaging-AMQP-Ticket-Registry.html)
+* [Google Cloud PubSub](GCP-PubSub-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 
@@ -59,12 +58,10 @@ Components for the following caching technologies are provided:
 CAS also provides support for a variety of other databases, including Redis, MongoDb and Apache
 Cassandra, for ticket storage and persistence:
 
-* [Infinispan](Infinispan-Ticket-Registry.html)
-* [Couchbase](Couchbase-Ticket-Registry.html)
 * [Redis](Redis-Ticket-Registry.html)
-* [CouchDb](CouchDb-Ticket-Registry.html)
 * [MongoDb](MongoDb-Ticket-Registry.html)
 * [DynamoDb](DynamoDb-Ticket-Registry.html)
+* [Google Cloud Firestore](GCP-Firestore-Ticket-Registry.html)
 
 ### Secure Cache Replication
 

@@ -44,7 +44,7 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
     private ConsentRepository consentRepository;
 
     @Autowired
-    @Qualifier("consentDecisionBuilder")
+    @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test
@@ -75,6 +75,6 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
         val request = new MockHttpServletRequest();
         val content = MAPPER.writeValueAsString(toSave);
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, attributeConsentReportEndpoint.importAccount(request));
+        assertEquals(HttpStatus.CREATED, attributeConsentReportEndpoint.importAccount(request).getStatusCode());
     }
 }

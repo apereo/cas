@@ -1,4 +1,14 @@
 description = "Apereo CAS WS-Federation Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Delegated Authentication",
+            title: "Delegated (Proxy) Authentication to ADFS",
+            aliases: ["wsfed"]
+    ]
+}
+
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     
@@ -6,6 +16,7 @@ dependencies {
     implementation libraries.dropwizard
     implementation libraries.shibutiljavasupport
 
+    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-wsfederation")

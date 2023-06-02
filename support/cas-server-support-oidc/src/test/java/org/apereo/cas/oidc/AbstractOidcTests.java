@@ -1,12 +1,13 @@
 package org.apereo.cas.oidc;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCookieConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,6 +17,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
@@ -25,29 +27,34 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasOAuth20AuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuth20Configuration;
 import org.apereo.cas.config.CasOAuth20EndpointsConfiguration;
+import org.apereo.cas.config.CasOAuth20ProtocolTicketCatalogConfiguration;
 import org.apereo.cas.config.CasOAuth20ThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
+import org.apereo.cas.config.OidcComponentSerializationConfiguration;
+import org.apereo.cas.config.OidcConfiguration;
+import org.apereo.cas.config.OidcEndpointsConfiguration;
+import org.apereo.cas.config.OidcJwksConfiguration;
+import org.apereo.cas.config.OidcLogoutConfiguration;
+import org.apereo.cas.config.OidcResponseConfiguration;
+import org.apereo.cas.config.OidcThrottleConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
-import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
-import org.apereo.cas.oidc.config.OidcConfiguration;
-import org.apereo.cas.oidc.config.OidcEndpointsConfiguration;
-import org.apereo.cas.oidc.config.OidcJwksConfiguration;
-import org.apereo.cas.oidc.config.OidcLogoutConfiguration;
-import org.apereo.cas.oidc.config.OidcResponseConfiguration;
-import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
+import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -60,7 +67,6 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -71,6 +77,7 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -88,16 +95,13 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.CasEventListener;
-import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
@@ -108,6 +112,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -152,13 +157,14 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
-
     protected static final String TGT_ID = "TGT-0";
 
     @Autowired
+    @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
+    protected OAuth20ResponseModeFactory oauthResponseModeFactory;
+    @Autowired
     @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
     protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
-
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
@@ -174,7 +180,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJsonWebKeystoreRotationService")
     protected OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService;
-    
+
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     protected SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
@@ -184,6 +190,9 @@ public abstract class AbstractOidcTests {
     @Autowired
     protected ResourceLoader resourceLoader;
 
+    @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    protected SessionStore oauthDistributedSessionStore;
     @Autowired
     @Qualifier("oauthInterceptor")
     protected HandlerInterceptor oauthInterceptor;
@@ -207,6 +216,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAccessTokenJwtCipherExecutor")
     protected CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor;
+
+    @Autowired
+    @Qualifier("oidcResponseModeJwtCipherExecutor")
+    protected CipherExecutor<Serializable, String> oidcResponseModeJwtCipherExecutor;
 
     @Autowired
     @Qualifier("oidcUserProfileViewRenderer")
@@ -280,7 +293,7 @@ public abstract class AbstractOidcTests {
     protected OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 
     @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
     protected AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired
@@ -401,6 +414,7 @@ public abstract class AbstractOidcTests {
         request.setServerName("sso.example.org");
         request.setServerPort(443);
         request.setRequestURI("/cas/oidc/" + endpoint);
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         return request;
     }
 
@@ -425,7 +439,7 @@ public abstract class AbstractOidcTests {
     protected JwtClaims getClaims(final String clientId) {
         return getClaims("casuser", casProperties.getAuthn().getOidc().getCore().getIssuer(), clientId, clientId);
     }
-    
+
     protected JwtClaims getClaims(final String subject, final String issuer,
                                   final String clientId, final String audience) {
         val claims = new JwtClaims();
@@ -443,8 +457,12 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
+    protected OAuth20AccessToken getAccessToken(final Principal principal) throws Exception {
+        return getAccessToken(principal, StringUtils.EMPTY, "clientid");
+    }
+
     protected OAuth20AccessToken getAccessToken() throws Exception {
-        return getAccessToken(StringUtils.EMPTY, "clientId");
+        return getAccessToken(StringUtils.EMPTY, "clientid");
     }
 
     protected OAuth20AccessToken getAccessToken(final String clientId) throws Exception {
@@ -453,6 +471,13 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Exception {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        return getAccessToken(principal, idToken, clientId);
+    }
+
+    protected OAuth20AccessToken getAccessToken(
+        final Principal principal,
+        final String idToken,
+        final String clientId) throws Exception {
         val code = addCode(principal, getOidcRegisteredService());
 
         val accessToken = mock(OAuth20AccessToken.class);
@@ -470,6 +495,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getIdToken()).thenReturn(idToken);
         return accessToken;
     }
+
 
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Exception {
@@ -495,6 +521,7 @@ public abstract class AbstractOidcTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasCoreUtilSerializationConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreConfiguration.class,
@@ -520,13 +547,9 @@ public abstract class AbstractOidcTests {
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
-        CasOAuth20Configuration.class,
-        CasOAuth20EndpointsConfiguration.class,
         CasThrottlingConfiguration.class,
-        CasOAuth20ThrottleConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
-        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         OidcConfiguration.class,
         OidcJwksConfiguration.class,
@@ -534,7 +557,12 @@ public abstract class AbstractOidcTests {
         OidcResponseConfiguration.class,
         OidcLogoutConfiguration.class,
         OidcThrottleConfiguration.class,
-        OidcComponentSerializationConfiguration.class
+        OidcComponentSerializationConfiguration.class,
+        CasOAuth20Configuration.class,
+        CasOAuth20ProtocolTicketCatalogConfiguration.class,
+        CasOAuth20EndpointsConfiguration.class,
+        CasOAuth20ThrottleConfiguration.class,
+        CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

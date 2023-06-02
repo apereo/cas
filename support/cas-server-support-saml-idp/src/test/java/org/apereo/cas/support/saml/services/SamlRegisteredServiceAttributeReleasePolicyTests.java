@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLAttributes")
 public class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyNoSamlService() {
@@ -99,14 +100,14 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyBadServiceProvider() {
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
-        when(resolver.resolve(any(), any())).thenReturn(mock(MetadataResolver.class));
-
+        when(resolver.resolve(any(), any()))
+            .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mock(MetadataResolver.class)).build());
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             new CasConfigurationProperties(), "CasConfigurationProperties");
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            resolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
+            resolver, SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME);
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setServiceId("https://sp.cas.org");
@@ -124,7 +125,8 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
     private static void setupApplicationContext() throws Exception {
         val cachingMetadataResolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
         val mdResolver = mock(MetadataResolver.class);
-        when(cachingMetadataResolver.resolve(any(), any())).thenReturn(mdResolver);
+        when(cachingMetadataResolver.resolve(any(), any()))
+            .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mdResolver).build());
 
         val entity = mock(EntityDescriptor.class);
         val sp = mock(SPSSODescriptor.class);
@@ -134,7 +136,7 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, new CasConfigurationProperties(), "CasConfigurationProperties");
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, cachingMetadataResolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, cachingMetadataResolver, SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME);
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 

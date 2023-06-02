@@ -58,6 +58,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
     @Qualifier("globalAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver;
 
+    @Override
     @BeforeEach
     public void setup() {
         super.setup();
@@ -74,7 +75,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
         val transition = new Transition(new DefaultTransitionCriteria(
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
-        
+
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
@@ -107,7 +108,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         WebUtils.putServiceIntoFlowScope(context, service);
-        
+
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(Map.of());
         registeredService.setServiceId(service.getId());
         registeredService.setMultifactorAuthenticationPolicy(new DefaultRegisteredServiceMultifactorPolicy().setBypassEnabled(true));

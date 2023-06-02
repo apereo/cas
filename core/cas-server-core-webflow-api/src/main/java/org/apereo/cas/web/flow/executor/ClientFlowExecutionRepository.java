@@ -16,6 +16,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -113,7 +114,8 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
     }
 
     @Getter
-    private static class SerializedFlowExecutionState implements Serializable {
+    public static class SerializedFlowExecutionState implements Serializable {
+        @Serial
         private static final long serialVersionUID = -4020991769174829876L;
 
         private final String flowId;

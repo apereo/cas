@@ -10,9 +10,10 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -32,6 +33,7 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      */
     static final String KEY_SEPARATOR = "|";
 
+    @Serial
     private static final long serialVersionUID = -7238573226470492601L;
     
     private final String id;
@@ -60,10 +62,12 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
 
     private static String getCacheKeyForRegisteredService(final SamlRegisteredService service,
                                                           final CriteriaSet criteriaSet) {
-        val entityId = criteriaSet.contains(EntityIdCriterion.class)
-            ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
-            : service.getServiceId();
         if (SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())) {
+            val entityId = criteriaSet.contains(EntityIdCriterion.class)
+                ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
+                : service.getServiceId();
+            LOGGER.trace("Located entity id [{}] for service metadata location [{}]",
+                entityId, service.getMetadataLocation());
             return entityId;
         }
         return service.getMetadataLocation();

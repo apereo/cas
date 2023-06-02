@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
 import org.apereo.cas.token.JwtBuilder;
@@ -12,7 +13,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jwt.EncryptedJWT;
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -82,8 +82,13 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     }
 
     @Override
-    protected String determineIssuer(final JWTClaimsSet claims) {
-        return this.issuerService.determineIssuer(Optional.empty());
+    public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
+        val filter = service
+            .filter(svc -> svc instanceof OidcRegisteredService)
+            .map(OidcRegisteredService.class::cast)
+            .stream()
+            .findFirst();
+        return issuerService.determineIssuer(filter);
     }
 
     /**

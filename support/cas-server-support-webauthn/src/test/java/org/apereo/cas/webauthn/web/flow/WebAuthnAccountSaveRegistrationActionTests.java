@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasWebflowAccountProfileConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -38,7 +40,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-@SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
+@Import(CasWebflowAccountProfileConfiguration.class)
+@SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
+    properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class WebAuthnAccountSaveRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION)
@@ -82,7 +86,7 @@ public class WebAuthnAccountSaveRegistrationActionTests {
                 .build());
         val token = EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8));
         val sessionId = webAuthnSessionManager.createSession(ByteArray.fromBase64(token));
-        request.setParameter("sessionToken", sessionId.toJsonString());
+        request.setParameter("sessionToken", sessionId.getBase64Url());
 
         result = webAuthnSaveAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

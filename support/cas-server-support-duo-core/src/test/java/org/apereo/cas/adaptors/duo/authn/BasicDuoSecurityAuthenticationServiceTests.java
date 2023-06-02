@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +118,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
         props.setDuoApiHost("localhost:6342");
         val service = new BasicDuoSecurityAuthenticationService(props,
             httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build()) {
+            @Serial
             private static final long serialVersionUID = 1756840642345094968L;
 
             @Override
@@ -149,6 +151,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         val service = new BasicDuoSecurityAuthenticationService(props, httpClient,
             List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build()) {
+            @Serial
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -166,6 +169,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
         val service = new BasicDuoSecurityAuthenticationService(props, httpClient,
             List.of(MultifactorAuthenticationPrincipalResolver.identical()),
             Caffeine.newBuilder().build()) {
+            @Serial
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -185,6 +189,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
         val service = new BasicDuoSecurityAuthenticationService(props, httpClient,
             List.of(MultifactorAuthenticationPrincipalResolver.identical()),
             Caffeine.newBuilder().build()) {
+            @Serial
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -203,6 +208,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
         val service = new BasicDuoSecurityAuthenticationService(props, httpClient,
             List.of(MultifactorAuthenticationPrincipalResolver.identical()),
             Caffeine.newBuilder().build()) {
+            @Serial
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override

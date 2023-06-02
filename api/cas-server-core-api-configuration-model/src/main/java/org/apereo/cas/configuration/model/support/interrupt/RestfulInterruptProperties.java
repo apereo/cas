@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulInterruptProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("RestfulInterruptProperties")
 public class RestfulInterruptProperties extends RestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = 1833594332973137011L;
 }

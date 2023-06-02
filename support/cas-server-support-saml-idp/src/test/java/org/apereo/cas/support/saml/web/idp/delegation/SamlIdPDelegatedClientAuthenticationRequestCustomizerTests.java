@@ -12,12 +12,14 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
+import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Scoping;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.jee.context.JEEContext;
@@ -56,12 +58,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         val webContext = new JEEContext(request, response);
         val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService();
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                customizer.customize(saml2Client, webContext);
-            }
-        });
+        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
         
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
 
@@ -75,7 +72,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         when(saml2Client.getIdentityProviderResolvedEntityId()).thenReturn(providerId);
         setAuthnRequestFor(webContext, providerId);
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
-
+        assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
         assertTrue(customizer.isAuthorized(webContext, new CasClient(), webApplicationService));
     }
 
@@ -109,6 +106,22 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         });
         scoping.setIDPList(idpList);
         authnRequest.setScoping(scoping);
+
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        val authnContext = (RequestedAuthnContext) builder.buildObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        authnContext.setComparison(AuthnContextComparisonTypeEnumeration.EXACT);
+
+        builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        val classRef = (AuthnContextClassRef) builder.buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        classRef.setURI(UUID.randomUUID().toString());
+        authnContext.getAuthnContextClassRefs().add(classRef);
+
+        authnRequest.setRequestedAuthnContext(authnContext);
+
+        authnRequest.setIsPassive(Boolean.TRUE);
+        authnRequest.setForceAuthn(Boolean.TRUE);
         storeRequest(authnRequest, webContext);
     }
 }

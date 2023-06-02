@@ -24,11 +24,6 @@ import java.util.Optional;
  */
 public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
-    /**
-     * Webflow event id.
-     */
-    public static final String MFA_SIMPLE_EVENT_ID = "mfa-simple";
-
     public CasSimpleMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                  final FlowDefinitionRegistry flowDefinitionRegistry,
@@ -41,8 +36,9 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
 
     @Override
     protected void doInitialize() {
+        val providerId = casProperties.getAuthn().getMfa().getSimple().getId();
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            val flow = getFlow(registry, MFA_SIMPLE_EVENT_ID);
+            val flow = getFlow(registry, providerId);
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, CasSimpleMultifactorTokenCredential.class);
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
 
@@ -78,8 +74,6 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         });
-
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_SIMPLE_EVENT_ID,
-            casProperties.getAuthn().getMfa().getSimple().getId());
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), providerId);
     }
 }

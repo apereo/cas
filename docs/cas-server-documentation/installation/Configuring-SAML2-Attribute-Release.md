@@ -11,103 +11,10 @@ category: Attributes
 Attribute filtering and release policies are defined per 
 SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
-## Attribute Definitions
-
-Attribute definitions that specifically apply to the release of attributes as part of SAML response can be 
-defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
-prevent it from being released by other protocols.
-
-```json
-{
-  "@class": "java.util.TreeMap",
-  "eduPersonPrincipalName": {
-    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
-    "key": "eduPersonPrincipalName",
-    "name": "eduPersonPrincipalName",
-    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-    "scoped": true,
-    "encrypted": false,
-    "attribute": "uid",
-    "friendlyName": "eduPersonPrincipalName"
-  }
-}
-```
-
-The following additional settings can be specified for a Saml IdP attribute definition:
-
-| Name           | Description                                                                                            |
-|----------------|--------------------------------------------------------------------------------------------------------|
-| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release. |
-| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`). |
-
-To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
-
-## Attribute Value Types
-
-[See this guide](Configuring-SAML2-Attribute-ValueTypes.html).
-
-## Attribute Name Formats
-
-Attribute name formats can be specified per relying party in the service registry.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
-  "attributeNameFormats": {
-    "@class": "java.util.HashMap",
-    "attributeName": "basic|uri|unspecified|custom-format-etc"
-  }
-}
-```
-
-Name formats for an individual attribute can be mapped to a
-number of pre-defined formats, or a custom format of your own choosing.
-A given attribute that is to be encoded in the final SAML response
-may contain any of the following name formats:
-
-| Type                | Description                                                               |
-|---------------------|---------------------------------------------------------------------------|
-| `basic`             | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`. |
-| `uri`               | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.   |
-| `unspecified`       | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`. |
-| `urn:my:own:format` | Map the attribute to `urn:my:own:format`.                                 |
-
-You may also have the option to define attributes and their relevant name format globally
-via CAS properties. 
-
-{% include_cached casproperties.html properties="cas.authn.saml-idp.core" %}
-
-## Attribute Friendly Names
-
-Attribute friendly names can be specified per relying party in the service registry, as well as globally via CAS settings. 
-If there is no friendly name defined for the attribute, the 
-attribute name will be used instead in its place. Note that the name of the 
-attribute is one that is designed to be released to the service provider,
-specially if the original attribute is *mapped* to a different name.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 100001,
-  "attributeFriendlyNames": {
-    "@class": "java.util.HashMap",
-    "urn:oid:2.5.4.42": "friendly-name-to-use"
-  }
-}
-```
-
 ## InCommon Research and Scholarship
 
 A specific attribute release policy is available to release 
-the [attribute bundles](https://spaces.at.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
-needed for InCommon Research and Scholarship service providers using the entity 
+the attribute bundles needed for InCommon Research and Scholarship service providers using the entity 
 attribute value `http://id.incommon.org/category/research-and-scholarship`:
 
 ```json
@@ -182,7 +89,8 @@ you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at rel
 ```
 
 The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, 
-the authenticated principal id is used.
+the authenticated principal id is used. You can also control whether the final generated attribute should be named 
+`urn:oid:1.3.6.1.4.1.5923.1.1.1.10` or `eduPersonTargetedID` via the `useUniformResourceName` setting.
 
 ## Groovy Script
 

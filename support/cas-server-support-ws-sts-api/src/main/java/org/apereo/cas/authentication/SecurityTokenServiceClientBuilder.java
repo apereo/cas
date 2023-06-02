@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
@@ -49,9 +50,8 @@ public class SecurityTokenServiceClientBuilder {
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSS4JConstants.WSS_SAML2_TOKEN_TYPE));
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
         sts.setWsdlLocation(prepareWsdlLocation(service));
-        if (StringUtils.isNotBlank(service.getPolicyNamespace())) {
-            sts.setWspNamespace(service.getPolicyNamespace());
-        }
+
+        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));
         val namespace = StringUtils.defaultIfBlank(service.getNamespace(),
             WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(service.getWsdlService(),
@@ -61,9 +61,8 @@ public class SecurityTokenServiceClientBuilder {
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
         sts.getProperties().putAll(new HashMap<>(0));
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSS4JConstants.WSS_SAML2_TOKEN_TYPE));
-        if (StringUtils.isNotBlank(service.getPolicyNamespace())) {
-            sts.setWspNamespace(service.getPolicyNamespace());
-        }
+
+        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));
         val tlsClientParams = getTlsClientParameters();
         sts.setTlsClientParameters(tlsClientParams);
         val configurer = new CasHTTPConduitConfigurer(tlsClientParams);
@@ -85,10 +84,8 @@ public class SecurityTokenServiceClientBuilder {
         return sts;
     }
 
-    @RequiredArgsConstructor
-    private static class CasHTTPConduitConfigurer implements HTTPConduitConfigurer {
-        private final TLSClientParameters tlsClientParameters;
-
+    @SuppressWarnings("UnusedVariable")
+    private record CasHTTPConduitConfigurer(TLSClientParameters tlsClientParameters) implements HTTPConduitConfigurer {
         @Override
         public void configure(final String name, final String addr, final HTTPConduit httpConduit) {
             httpConduit.setTlsClientParameters(tlsClientParameters);

@@ -6,6 +6,6 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "locked", "locked");
-    await cas.assertInnerText(page, "#content h2", "This account has been locked.")
+    await cas.assertInnerText(page, "#content h2", "This account has been locked.");
     await browser.close();
 })();

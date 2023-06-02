@@ -18,10 +18,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.jasig.cas.client.util.CommonUtils;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
+import java.io.Serial;
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -33,14 +35,15 @@ import java.util.Optional;
 @Slf4j
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnStatement> {
 
+    @Serial
     private static final long serialVersionUID = 8761566449790497226L;
 
-    private final transient SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder;
+    private final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder;
 
     private final CasConfigurationProperties casProperties;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
-                                                final SamlProfileAuthnContextClassRefBuilder authnContextClassRefBuilder,
+                                                final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder,
                                                 final CasConfigurationProperties casProperties) {
         super(configBean);
         this.authnContextClassRefBuilder = authnContextClassRefBuilder;
@@ -64,28 +67,42 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         return subjectLocality;
     }
 
-    private AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
-        val authenticationMethod = authnContextClassRefBuilder.build(context);
-        var id = context.getHttpRequest() != null ? CommonUtils.safeGetParameter(context.getHttpRequest(),
-            CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
-        if (StringUtils.isBlank(id)) {
-            LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
-            id = '_' + String.valueOf(RandomUtils.nextLong());
-        }
-        val statement = newAuthnStatement(authenticationMethod,
-            DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getAuthenticationDate()), id);
-        if (context.getAuthenticatedAssertion().getValidUntilDate() != null) {
-            val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().getValidUntilDate());
+    protected AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
+        
+        val id = buildAuthnStatementSessionIdex(context);
+        val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate());
 
-            val skewAllowance = context.getRegisteredService().getSkewAllowance() > 0
-                ? context.getRegisteredService().getSkewAllowance()
-                : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
-            statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
+        val authnContextClass = authnContextClassRefBuilder.build(context);
+        val statement = newAuthnStatement(authnContextClass, authnInstant, id);
+
+        if (!context.getRegisteredService().isSkipGeneratingSessionNotOnOrAfter()) {
+            statement.setSessionNotOnOrAfter(buildSessionNotOnOrAfter(context));
         }
+
         val subjectLocality = buildSubjectLocality(context);
         if (subjectLocality != null) {
             statement.setSubjectLocality(subjectLocality);
         }
         return statement;
+    }
+
+    private static String buildAuthnStatementSessionIdex(final SamlProfileBuilderContext context) {
+        var id = Optional.ofNullable(context.getHttpRequest())
+            .map(request -> request.getParameter(CasProtocolConstants.PARAMETER_TICKET))
+            .filter(StringUtils::isNotBlank)
+            .orElse(StringUtils.EMPTY);
+        if (StringUtils.isBlank(id)) {
+            LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
+            id = '_' + String.valueOf(RandomUtils.nextLong());
+        }
+        return id;
+    }
+
+    protected Instant buildSessionNotOnOrAfter(final SamlProfileBuilderContext context) {
+        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getValidUntilDate());
+        val skewAllowance = context.getRegisteredService().getSkewAllowance() != 0
+            ? context.getRegisteredService().getSkewAllowance()
+            : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
+        return dt.plusSeconds(skewAllowance).toInstant();
     }
 }

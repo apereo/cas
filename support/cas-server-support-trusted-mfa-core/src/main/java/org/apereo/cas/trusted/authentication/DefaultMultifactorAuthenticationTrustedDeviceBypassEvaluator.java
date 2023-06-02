@@ -9,6 +9,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.util.Optional;
+
 /**
  * This is {@link DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator}.
  *
@@ -35,7 +37,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        val mfaPolicy = registeredService != null ? registeredService.getMultifactorAuthenticationPolicy() : null;
+        val mfaPolicy = Optional.ofNullable(registeredService).map(RegisteredService::getMultifactorAuthenticationPolicy).orElse(null);
         return mfaPolicy != null && mfaPolicy.isBypassTrustedDeviceEnabled();
     }
 }

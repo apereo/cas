@@ -6,9 +6,14 @@ env:
   TERM: xterm-256color
   REPOSITORY_USER: ${{ secrets.REPOSITORY_USER }}
   REPOSITORY_PWD: ${{ secrets.REPOSITORY_PWD }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
-  JDK_CURRENT: 11
+  GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
+  GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
+  CAS_PROJECT_DB_URL_ENDPOINT: ${{ secrets.CAS_PROJECT_DB_URL_ENDPOINT }}
+  CAS_PROJECT_DB_API_KEY: ${{ secrets.CAS_PROJECT_DB_API_KEY }}
+  JDK_CURRENT: 17
 
 ##########################################################################
 
@@ -27,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.9.1
+      - uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
 
@@ -47,7 +52,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
@@ -69,9 +74,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
@@ -102,9 +107,9 @@ jobs:
          uses: actions/cache@v3
          with:
            path: ~/.gradle/wrapper
-           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-       - name: Gradle Wrapper Validation
-         uses: gradle/wrapper-validation-action@v1
+           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+#       - name: Gradle Wrapper Validation
+#         uses: gradle/wrapper-validation-action@v1
        - name: Initialize
          run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
        - uses: actions/cache@v3
@@ -115,7 +120,40 @@ jobs:
              ${{ runner.os }}-gradle-
        - name: Publish SNAPSHOTs
          if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
-         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
-
-
+         run: ./gradlew -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
+         
   ##########################################################################
+
+  publish-modules-metadata:
+    runs-on: ubuntu-latest
+    needs: [cache]
+    continue-on-error: false
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      #       - name: Gradle Wrapper Validation
+      #         uses: gradle/wrapper-validation-action@v1
+      - uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Initialize
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+      - name: Publish Modules Metadata
+        if: ${{ env.CAS_PROJECT_DB_URL_ENDPOINT != null && env.CAS_PROJECT_DB_API_KEY != null }}
+        run: |
+          python -m pip install --upgrade pip wheel
+          python -m pip install httpie
+          ./ci/metadata/publish-project-metadata.sh

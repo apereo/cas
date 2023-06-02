@@ -25,6 +25,6 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
             .stream()
             .filter(handler -> handler instanceof ThrottledSubmissionHandlerInterceptor)
             .map(handler -> (ThrottledSubmissionHandlerInterceptor) handler)
-            .forEach(ThrottledSubmissionHandlerInterceptor::decrement);
+            .forEach(ThrottledSubmissionHandlerInterceptor::release);
     }
 }

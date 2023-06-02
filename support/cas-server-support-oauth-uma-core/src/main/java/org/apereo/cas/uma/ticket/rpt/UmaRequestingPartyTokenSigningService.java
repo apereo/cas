@@ -18,6 +18,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -34,7 +35,6 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     private final CasConfigurationProperties casProperties;
 
     public UmaRequestingPartyTokenSigningService(final CasConfigurationProperties properties) {
-        super(properties.getAuthn().getOauth().getUma().getCore().getIssuer());
         val jwksFile = properties.getAuthn().getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();
         jsonWebKeySigningKey = FunctionUtils.doIf(ResourceUtils.doesResourceExist(jwksFile),
                 Unchecked.supplier(() -> {
@@ -60,5 +60,10 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     @Override
     public Set<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
         return JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE;
+    }
+
+    @Override
+    public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
+        return casProperties.getAuthn().getOauth().getUma().getCore().getIssuer();
     }
 }

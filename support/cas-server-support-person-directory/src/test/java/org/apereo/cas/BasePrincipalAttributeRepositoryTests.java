@@ -1,13 +1,15 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryLdapConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryRestConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryScriptedConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -36,8 +38,10 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasPersonDirectoryGroovyConfiguration.class,
         CasPersonDirectoryRestConfiguration.class,
         CasPersonDirectoryJsonConfiguration.class,
-        CasPersonDirectoryScriptedConfiguration.class,
-        CasCoreUtilConfiguration.class
+        CasCoreUtilConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreServicesConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

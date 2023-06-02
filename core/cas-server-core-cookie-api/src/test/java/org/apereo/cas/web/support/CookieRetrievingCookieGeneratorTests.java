@@ -2,9 +2,13 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -32,11 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CookieRetrievingCookieGeneratorTests {
 
     private static CookieGenerationContext getCookieGenerationContext(final String path) {
-        return CookieGenerationContext.builder()
+        return CookieGenerationContext
+            .builder()
             .name("cas")
             .path(path)
             .maxAge(1000)
-            .comment("CAS Cookie")
             .domain("example.org")
             .secure(true)
             .httpOnly(true)
@@ -51,11 +55,11 @@ public class CookieRetrievingCookieGeneratorTests {
     public void verifyCookiePathNotModified() {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
-        var gen1 = new CookieRetrievingCookieGenerator(getCookieGenerationContext("/custom/path/"));
+        var gen1 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext("/custom/path/"));
         var cookie1 = gen1.addCookie(request, response, "some-value");
         assertEquals("/custom/path/", cookie1.getPath());
 
-        gen1 = new CookieRetrievingCookieGenerator(getCookieGenerationContext(StringUtils.EMPTY));
+        gen1 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext(StringUtils.EMPTY));
         cookie1 = gen1.addCookie(request, response, "some-value");
         assertEquals("/", cookie1.getPath());
     }
@@ -65,20 +69,20 @@ public class CookieRetrievingCookieGeneratorTests {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
 
-        val gen1 = new CookieRetrievingCookieGenerator(getCookieGenerationContext());
+        val gen1 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext());
         val cookie1 = gen1.addCookie(request, response, "some-value");
 
-        val gen2 = new CookieRetrievingCookieGenerator(getCookieGenerationContext("/cas"));
+        val gen2 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext("/cas"));
         val cookie2 = gen2.addCookie(request, response, "some-value");
 
-        val gen3 = new CookieRetrievingCookieGenerator(getCookieGenerationContext("/cas/"));
+        val gen3 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext("/cas/"));
         val cookie3 = gen3.addCookie(request, response, "some-value");
 
         request.setCookies(cookie1, cookie2, cookie3);
         response = new MockHttpServletResponse();
         gen1.removeAll(request, response);
-        assertEquals(9, response.getCookies().length);
-        assertTrue(Arrays.stream(response.getCookies()).allMatch(c -> c.getMaxAge() == 0));
+        assertEquals(6, response.getCookies().length);
+        assertTrue(Arrays.stream(response.getCookies()).allMatch(cookie -> cookie.getMaxAge() == 0));
     }
 
     @Test
@@ -86,7 +90,7 @@ public class CookieRetrievingCookieGeneratorTests {
         val context = getCookieGenerationContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val gen = new CookieRetrievingCookieGenerator(context);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(context);
 
         var cookie = gen.addCookie(request, response, "some-value");
         assertNotNull(cookie);
@@ -105,7 +109,7 @@ public class CookieRetrievingCookieGeneratorTests {
     public void verifyOtherSetCookieHeaderIsNotDiscarded() {
         val context = getCookieGenerationContext();
 
-        val gen = new CookieRetrievingCookieGenerator(context);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(context);
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         response.addHeader("Set-Cookie", gen.getCookieName() + "=some-cookie-value");
@@ -129,7 +133,7 @@ public class CookieRetrievingCookieGeneratorTests {
         val context = getCookieGenerationContext();
         context.setName(StringUtils.EMPTY);
 
-        val gen = new CookieRetrievingCookieGenerator(context);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(context);
         val request = new MockHttpServletRequest();
         request.addHeader(context.getName(), "CAS-Cookie-Value");
         val cookie = gen.retrieveCookieValue(request);
@@ -141,7 +145,8 @@ public class CookieRetrievingCookieGeneratorTests {
         val ctx = getCookieGenerationContext();
         ctx.setSameSitePolicy("lax");
 
-        val gen = new CookieRetrievingCookieGenerator(ctx);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+            DefaultCookieSameSitePolicy.INSTANCE, new PinnableCookieProperties().setPinToSession(false)), ctx);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -157,7 +162,7 @@ public class CookieRetrievingCookieGeneratorTests {
     public void verifyCookieValueByHeader() {
         val context = getCookieGenerationContext();
 
-        val gen = new CookieRetrievingCookieGenerator(context);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(context);
         val request = new MockHttpServletRequest();
         request.addHeader(context.getName(), "CAS-Cookie-Value");
         val cookie = gen.retrieveCookieValue(request);
@@ -169,7 +174,7 @@ public class CookieRetrievingCookieGeneratorTests {
     public void verifyCookieForRememberMeByAuthnRequest() {
         val ctx = getCookieGenerationContext();
 
-        val gen = new CookieRetrievingCookieGenerator(ctx);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
@@ -186,7 +191,7 @@ public class CookieRetrievingCookieGeneratorTests {
     public void verifyCookieForRememberMeByRequestContext() {
         val ctx = getCookieGenerationContext();
 
-        val gen = new CookieRetrievingCookieGenerator(ctx);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val authn = CoreAuthenticationTestUtils.getAuthentication("casuser",

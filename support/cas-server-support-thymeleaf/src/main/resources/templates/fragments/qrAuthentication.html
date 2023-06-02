@@ -34,7 +34,7 @@
                 </div>
                 <div class="card-text">
                     <div class="d-flex justify-content-center flex-column">
-                        <img th:src="@{'data:image/jpeg;base64,' + ${qrCode}}"/>
+                        <img id="qrcode" th:src="@{'data:image/jpeg;base64,' + ${qrCode}}"/>
                         <p>Your mobile device must communicate with CAS using the following channel id.</p>
 
                         <section class="cas-field form-group my-3 mdc-input-group d-flex">
@@ -72,16 +72,16 @@
         
         <script th:inline="javascript">
             /*<![CDATA[*/
-            var endpoint = /*[[@{/qr-websocket}]]*/  ;
-            var topic = /*[[${qrChannel}]]*/  ;
-            var prefix = /*[[${qrPrefix}]]*/  ;
+            let endpoint = /*[[@{/qr-websocket}]]*/  ;
+            let topic = /*[[${qrChannel}]]*/  ;
+            let prefix = /*[[${qrPrefix}]]*/  ;
 
-            var stompClient = null;
-            $(function () {
-                var socket = new SockJS(endpoint);
+            let stompClient = null;
+            $(() => {
+                let socket = new SockJS(endpoint);
                 stompClient = Stomp.over(socket);
-                stompClient.connect({}, function (frame) {
-                    stompClient.subscribe(prefix + '/' + topic + '/verify', function (result) {
+                stompClient.connect({}, frame => {
+                    stompClient.subscribe(`${prefix}/${topic}/verify`, result => {
                         console.log(result.body);
                         let body = JSON.parse(result.body);
                         if (body.error) {

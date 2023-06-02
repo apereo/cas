@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,22 +34,18 @@ public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionId() throws Exception {
         val user = UUID.randomUUID().toString();
-        val repo = getRepository("verifyConsentDecisionId");
+        val repo = getRepository();
         val decision = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
         assertNotNull(decision);
         assertTrue(decision.getId() > 0);
-        await().untilAsserted(() -> assertTrue(repo.findConsentDecisions(user).stream().anyMatch(c -> c.getId() == decision.getId())));
+        await().untilAsserted(() -> assertTrue(repo.findConsentDecisions(user)
+            .stream().anyMatch(desc -> desc.getId() == decision.getId())));
     }
 
     @Test
     public void verifyDisposedRepository() throws Exception {
         val repo = new JsonConsentRepository(new FileSystemResource(File.createTempFile("records", ".json")));
         assertNotNull(repo.getWatcherService());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                repo.destroy();
-            }
-        });
+        assertDoesNotThrow(repo::destroy);
     }
 }

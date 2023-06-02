@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.support.password;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link PasswordExpiringWarningMessageDescriptorTests}.
@@ -41,7 +43,7 @@ public class PasswordExpiringWarningMessageDescriptorTests {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         handler.addMessageDescriptor(d);
         val credential = new UsernamePasswordCredential("casuser", "resusac");
-        val result = handler.authenticate(credential);
+        val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
         assertNotNull(result.getWarnings());

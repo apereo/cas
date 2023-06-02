@@ -14,16 +14,16 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import com.google.common.base.Supplier;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
@@ -32,9 +32,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This controller returns an access token according to the given
@@ -77,8 +79,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     private static ModelAndView handleAccessTokenException(final Exception exception, final HttpServletResponse response) {
         val data = ACCESS_TOKEN_RESPONSE_EXCEPTIONS.getOrDefault(exception.getClass().getName(),
             new AccessTokenExceptionResponses(OAuth20Constants.INVALID_GRANT, "Invalid or unauthorized grant"));
-        LoggingUtils.error(LOGGER, data.getMessage(), exception);
-        return OAuth20Utils.writeError(response, data.getCode());
+        LoggingUtils.error(LOGGER, data.message().concat(':' + exception.getMessage()), exception);
+        return OAuth20Utils.writeError(response, data.code());
     }
 
     /**
@@ -107,6 +109,15 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+            LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
+                Map.of("Token", Optional.ofNullable(requestHolder.getToken()).map(OAuth20Token::getId).orElse("none"),
+                    "Device Code", StringUtils.defaultString(requestHolder.getDeviceCode()),
+                    "Scopes", String.join(",", requestHolder.getScopes()),
+                    "Registered Service", requestHolder.getRegisteredService().getName(),
+                    "Service", requestHolder.getService().getId(),
+                    "Principal", requestHolder.getAuthentication().getPrincipal().getId(),
+                    "Grant Type", requestHolder.getGrantType().getType(),
+                    "Response Type", requestHolder.getResponseType().getType()));
             LOGGER.debug("Creating access token for [{}]", requestHolder);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
@@ -157,15 +168,18 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .userProfile(requestHolder.getUserProfile())
             .build();
-        return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
+        val generatedTokenResult = getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
+
+        val context = new LinkedHashMap<>(generatedTokenResult.getModel());
+        if (generatedTokenResult.getStatus() != null) {
+            context.put("status", generatedTokenResult.getStatus());
+        }
+        LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Response", context);
+        return generatedTokenResult;
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    private static class AccessTokenExceptionResponses {
-        private final String code;
-
-        private final String message;
+    @SuppressWarnings("UnusedVariable")
+    private record AccessTokenExceptionResponses(String code, String message) {
     }
 
     private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,

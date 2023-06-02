@@ -23,11 +23,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,8 +51,8 @@ public class DefaultAuthenticationManagerTests {
 
     private final AuthenticationTransaction transaction = new DefaultAuthenticationTransactionFactory()
         .newTransaction(CoreAuthenticationTestUtils.getService(),
-            mock(Credential.class, withSettings().serializable()),
-            mock(Credential.class, withSettings().serializable()));
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser1"),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser2"));
 
     private ConfigurableApplicationContext applicationContext;
 
@@ -83,7 +85,7 @@ public class DefaultAuthenticationManagerTests {
      * @return New mock authentication handler instance.
      */
     private static AuthenticationHandler newMockHandler(final boolean success, final boolean error) {
-        val name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
+        val name = "MockAuthenticationHandler" + UUID.randomUUID();
         return newMockHandler(name, success, error);
     }
 
@@ -116,13 +118,13 @@ public class DefaultAuthenticationManagerTests {
         when(mock.getState()).thenCallRealMethod();
         if (success) {
             val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
-
-            val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
-            when(mock.authenticate(any(Credential.class))).thenReturn(result);
+            val metadata = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("nobody");
+            val result = new DefaultAuthenticationHandlerExecutionResult(mock, metadata, p);
+            when(mock.authenticate(any(Credential.class), any(Service.class))).thenReturn(result);
         } else if (!error) {
-            when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
+            when(mock.authenticate(any(Credential.class), any(Service.class))).thenThrow(new FailedLoginException());
         } else {
-            when(mock.authenticate(any(Credential.class))).thenThrow(new PreventedException("failure"));
+            when(mock.authenticate(any(Credential.class), any(Service.class))).thenThrow(new PreventedException("failure"));
         }
         return mock;
     }
@@ -221,7 +223,7 @@ public class DefaultAuthenticationManagerTests {
         assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
 
         when(resolver.supports(any())).thenReturn(Boolean.TRUE);
-        when(resolver.resolve(any(), any(), any())).thenThrow(new RuntimeException("Fails"));
+        when(resolver.resolve(any(), any(), any(), any(Optional.class))).thenThrow(new RuntimeException("Fails"));
         assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
     }
 
@@ -273,11 +275,7 @@ public class DefaultAuthenticationManagerTests {
         authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(true));
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, applicationContext);
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(1, auth.getSuccesses().size());
-        assertEquals(1, auth.getFailures().size());
-        assertEquals(2, map.size());
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
     }
 
     @Test

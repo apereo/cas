@@ -7,6 +7,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -40,7 +41,9 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     public ExecutableCompiledGroovyScript get(final String key) {
-        return this.cache.getIfPresent(key);
+        synchronized (cache) {
+            return this.cache.getIfPresent(key);
+        }
     }
 
     @Override
@@ -49,26 +52,43 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
-    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(final String key,
-                                                                                  final ExecutableCompiledGroovyScript value) {
-        this.cache.put(key, value);
-        return this;
+    @CanIgnoreReturnValue
+    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(
+        final String key, final ExecutableCompiledGroovyScript value) {
+        synchronized (cache) {
+            this.cache.put(key, value);
+            return this;
+        }
     }
 
     @Override
+    @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> remove(final String key) {
-        this.cache.invalidate(key);
-        return this;
+        synchronized (cache) {
+            this.cache.invalidate(key);
+            return this;
+        }
+    }
+
+    @Override
+    public Set<String> getKeys() {
+        synchronized (cache) {
+            return this.cache.asMap().keySet();
+        }
     }
 
     @Override
     public void close() {
-        cache.invalidateAll();
+        synchronized (cache) {
+            cache.invalidateAll();
+        }
     }
 
     @Override
     public boolean isEmpty() {
-        return cache.asMap().isEmpty();
+        synchronized (cache) {
+            return cache.asMap().isEmpty();
+        }
     }
 
     @Override
@@ -106,10 +126,5 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
             }
         }
         return script;
-    }
-
-    @Override
-    public Set<String> getKeys() {
-        return this.cache.asMap().keySet();
     }
 }

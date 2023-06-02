@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -9,7 +10,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +29,8 @@ public class SingleSignOnParticipationRequest {
 
     private final HttpServletRequest httpServletRequest;
 
+    private final HttpServletResponse httpServletResponse;
+
     @Builder.Default
     @Getter
     private final Map<String, Object> attributes = new LinkedHashMap<>();
@@ -39,13 +44,12 @@ public class SingleSignOnParticipationRequest {
         return Optional.ofNullable(requestContext);
     }
 
-    /**
-     * Gets http servlet request.
-     *
-     * @return the http servlet request
-     */
     public Optional<HttpServletRequest> getHttpServletRequest() {
         return Optional.ofNullable(httpServletRequest);
+    }
+
+    public Optional<HttpServletResponse> getHttpServletResponse() {
+        return Optional.ofNullable(httpServletResponse);
     }
 
     /**
@@ -64,7 +68,7 @@ public class SingleSignOnParticipationRequest {
      * Contains attribute.
      *
      * @param key the key
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsAttribute(final String key) {
         return attributes.containsKey(key);
@@ -77,6 +81,7 @@ public class SingleSignOnParticipationRequest {
      * @param value the value
      * @return the single sign on participation request
      */
+    @CanIgnoreReturnValue
     public SingleSignOnParticipationRequest attribute(final String key, final Object value) {
         this.attributes.put(key, value);
         return this;

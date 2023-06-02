@@ -1,62 +1,92 @@
 version: "3"
 
 services:
-  master:
-    image: redis:6.2.6-alpine
+  redis-master:
+    build:
+      context: .
+      args:
+        redisVersion: ${REDIS_VERSION}
     container_name: redis_server_master
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_REPLICA_IP=127.0.0.1
+      - REDIS_REPLICA_PORT=6379
+      - REDIS_MASTER_HOST=localhost
+      - REDIS_MASTER_PORT_NUMBER=6379
     ports:
-      - 6379:6379
+      - "6379:6379"
 
   replica_1:
-    image: redis:6.2.6-alpine
+    build:
+      context: .
+      args:
+        redisVersion: ${REDIS_VERSION}
     container_name: redis_server_replica_1
-    command: redis-server --slaveof master 6379
+    command: redis-server --slaveof redis-master 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_REPLICA_IP=127.0.0.1
+      - REDIS_REPLICA_PORT=6380
+      - REDIS_MASTER_HOST=localhost
+      - REDIS_MASTER_PORT_NUMBER=6379
     ports:
-      - 6380:6379
+      - "6380:6379"
     depends_on:
-      - master
+      - redis-master
 
   replica_2:
-    image: redis:6.2.6-alpine
+    build:
+      context: .
+      args:
+        redisVersion: ${REDIS_VERSION}
     container_name: redis_server_replica_2
-    command: redis-server --slaveof master 6379
+    command: redis-server --slaveof redis-master 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_REPLICA_IP=127.0.0.1
+      - REDIS_REPLICA_PORT=6381
+      - REDIS_MASTER_HOST=localhost
+      - REDIS_MASTER_PORT_NUMBER=6379
     ports:
-      - 6381:6379
+      - "6381:6379"
     depends_on:
-      - master
+      - redis-master
 
   sentinel_1:
-    image: s7anley/redis-sentinel-docker:4.0.10
+    image: bitnami/redis-sentinel:${REDIS_VERSION}
     container_name: redis_sentinel_1
     ports:
-      - 26379:26379
+      - "26379:26379"
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=2
-      - MASTER=master
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_HOST=localhost
     depends_on:
-      - master
+      - redis-master
 
   sentinel_2:
-    image: s7anley/redis-sentinel-docker:4.0.10
+    image: bitnami/redis-sentinel:${REDIS_VERSION}
     container_name: redis_sentinel_2
     ports:
-      - 26380:26379
+      - "26380:26379"
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=2
-      - MASTER=master
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_HOST=localhost
     depends_on:
-      - master
+      - redis-master
 
   sentinel_3:
-    image: s7anley/redis-sentinel-docker:4.0.10
+    image: bitnami/redis-sentinel:${REDIS_VERSION}
     container_name: redis_sentinel_3
     ports:
-      - 26381:26379
+      - "26381:26379"
     environment:
-      - MASTER_NAME=mymaster
-      - QUORUM=2
-      - MASTER=master
+      - REDIS_MASTER_SET=mymaster
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_HOST=localhost
     depends_on:
-      - master
+      - redis-master

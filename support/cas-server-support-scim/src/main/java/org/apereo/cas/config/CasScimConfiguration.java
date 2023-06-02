@@ -1,24 +1,21 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.api.PrincipalProvisioner;
+import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.scim.v1.ScimV1PrincipalAttributeMapper;
-import org.apereo.cas.scim.v1.ScimV1PrincipalProvisioner;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.scim.v2.DefaultScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
+import org.apereo.cas.web.flow.PrincipalProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,10 +38,9 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SCIM)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SCIM)
 @AutoConfiguration
 public class CasScimConfiguration {
-
     private static final BeanCondition CONDITION = BeanCondition.on("cas.scim.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasScimWebflowConfiguration", proxyBeanMethods = false)
@@ -56,14 +52,13 @@ public class CasScimConfiguration {
         public Action principalScimProvisionerAction(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final PrincipalProvisioner scimProvisioner) {
+            final PrincipalProvisioner principalProvisioner) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new PrincipalScimProvisionerAction(scimProvisioner))
+                .supply(() -> new PrincipalProvisionerAction(principalProvisioner))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
@@ -77,7 +72,6 @@ public class CasScimConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-
         @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -96,43 +90,24 @@ public class CasScimConfiguration {
                 .get();
         }
     }
-
+    
     @Configuration(value = "CasScimCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasScimCoreConfiguration {
-        private static final BeanCondition CONDITION = BeanCondition.on("cas.scim.version").havingValue("2").evenIfMissing();
-
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")
-        public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper(
-            final ConfigurableApplicationContext applicationContext) {
-            return BeanSupplier.of(ScimV2PrincipalAttributeMapper.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(DefaultScimV2PrincipalAttributeMapper::new)
-                .otherwiseProxy()
-                .get();
+        public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
+            return new DefaultScimV2PrincipalAttributeMapper();
         }
-
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = PrincipalProvisioner.BEAN_NAME)
-        public PrincipalProvisioner scimProvisioner(
-            final ConfigurableApplicationContext applicationContext,
+        public PrincipalProvisioner principalProvisioner(
             final CasConfigurationProperties casProperties,
             @Qualifier("scim2PrincipalAttributeMapper")
             final ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper) {
-            return BeanSupplier.of(PrincipalProvisioner.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    val scim = casProperties.getScim();
-                    return new ScimV2PrincipalProvisioner(scim, scim2PrincipalAttributeMapper);
-                })
-                .otherwise(() -> {
-                    val scim = casProperties.getScim();
-                    return new ScimV1PrincipalProvisioner(scim, new ScimV1PrincipalAttributeMapper());
-                })
-                .get();
+            return new ScimV2PrincipalProvisioner(casProperties.getScim(), scim2PrincipalAttributeMapper);
         }
     }
 }

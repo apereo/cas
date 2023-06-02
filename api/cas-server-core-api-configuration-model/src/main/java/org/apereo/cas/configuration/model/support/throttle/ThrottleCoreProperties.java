@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ public class ThrottleCoreProperties implements Serializable {
      */
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
 
+    @Serial
     private static final long serialVersionUID = -1806129199319966518L;
 
     /**

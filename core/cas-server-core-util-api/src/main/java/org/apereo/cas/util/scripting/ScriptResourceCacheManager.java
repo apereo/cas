@@ -2,6 +2,7 @@ package org.apereo.cas.util.scripting;
 
 import org.apereo.cas.util.DigestUtils;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -44,7 +45,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * Contains key ?
      *
      * @param key the key
-     * @return the boolean
+     * @return true/false
      */
     boolean containsKey(K key);
 
@@ -77,6 +78,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      *
      * @return the groovy script resource cache manager
      */
+    @CanIgnoreReturnValue
     default ScriptResourceCacheManager<K, V> clear() {
         close();
         return this;

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JdbcMonitorProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class JdbcMonitorProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = -7139788158851782673L;
 
     /**

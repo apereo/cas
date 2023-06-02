@@ -37,7 +37,6 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = {
     "cas.scim.target=http://localhost:9666/scim/v2",
     "cas.scim.enabled=false",
-    "cas.scim.version=2",
     "cas.scim.username=scim-user",
     "cas.scim.password=changeit",
     "cas.authn.pac4j.provisioning.scim.enabled=true"

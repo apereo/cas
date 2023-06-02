@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("RegexInterruptProperties")
 public class RegexInterruptProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2169027840047126083L;
 
     /**
@@ -29,6 +32,7 @@ public class RegexInterruptProperties implements Serializable {
      * complete the first condition for the interrupt notifications trigger.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String attributeName;
 
     /**
@@ -36,5 +40,6 @@ public class RegexInterruptProperties implements Serializable {
      * complete the first condition for the interrupt notifications trigger.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String attributeValue;
 }

@@ -1,8 +1,8 @@
 import java.util.*
 
-def Map<String, List<Object>> run(final Object... args) {
+def run(final Object... args) {
     def uid = args[0]
-    def attributes = args[1]
+    def attributes = args[1] as Map
     def logger = args[2]
     def properties = args[3]
     def appContext = args[4]
@@ -12,7 +12,7 @@ def Map<String, List<Object>> run(final Object... args) {
         return Map.of()
     }
     
-    return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5],
+    return [username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5],
            eppn:["casuser2"], groovyOldName: attributes['oldName'],
            groovyNewName: attributes['newName']]
 }

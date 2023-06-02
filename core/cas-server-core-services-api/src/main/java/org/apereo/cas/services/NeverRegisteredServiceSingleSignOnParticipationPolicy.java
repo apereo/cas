@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serial;
 
 /**
  * This is {@link NeverRegisteredServiceSingleSignOnParticipationPolicy}.
@@ -25,6 +26,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @RequiredArgsConstructor
 public class NeverRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -1123946898337761319L;
 
     @Override

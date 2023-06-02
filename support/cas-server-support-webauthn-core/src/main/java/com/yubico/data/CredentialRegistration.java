@@ -26,32 +26,33 @@ package com.yubico.data;
 
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.attestation.Attestation;
+import com.yubico.webauthn.data.AuthenticatorTransport;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 
 import java.time.Instant;
+import java.util.SortedSet;
 
 @Value
 @Builder
 @With
 public class CredentialRegistration {
 
-    long signatureCount;
-
     UserIdentity userIdentity;
 
     String credentialNickname;
+
+    SortedSet<AuthenticatorTransport> transports;
 
     Instant registrationTime;
 
     RegisteredCredential credential;
 
     Attestation attestationMetadata;
-
+    
     public String getUsername() {
         return userIdentity.getName();
     }
-
 }

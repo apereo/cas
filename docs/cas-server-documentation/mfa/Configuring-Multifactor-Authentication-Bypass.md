@@ -81,25 +81,30 @@ with the specified value(s).
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "bypassPrincipalAttributeName": "attributeForBypass",
-    "bypassPrincipalAttributeValue": "^bypass-value-[A-Z].+",
+    "bypassPrincipalAttributeValue": "^bypass-value-[A-Z].+"
+    "bypassIfMissingPrincipalAttribute": false
   }
 }
 ```
 
 Matching and comparison operations are case insensitive.
 
-<div class="alert alert-info"><strong>Remember</strong>
+<div class="alert alert-info">:information_source: <strong>Remember</strong>
 <p>Setting the <code>bypassEnabled</code> flag here is unnecessary and may cause side-effects. Once principal attribute name and match value
 are defined, the <code>bypassEnabled</code> is expected to be <code>true</code> anyway.</p>
 </div>
 
-## Additional Bypass Providers
+## Other Bypass Providers
 
 In addition to the configurable default bypass rules, the following bypass providers 
 can be defined and executed after default bypass rules are calculated.
 
 In the case where the default rules determine that the multifactor authentication 
-should be bypassed, the chain will be short circuited and no additional bypass providers will be consulted.
+should be bypassed, 
+
+Remember that the following bypass policies are defined per multifactor authentication provider.
+You will need to instruct CAS to activate a bypass policy based on the options listed below for the multifactor authentication in question.
+Each provider should have its own dedicated settings and properties that would allow you control its own bypass rules.
 
 ### Bypass via Groovy
 
@@ -169,7 +174,7 @@ boolean run(final Object... args) {
 
 Multifactor authentication bypass may be determined using a REST API of your 
 own design. Endpoints must be designed to accept/process `application/json` via 
-`GET` requests. A returned status code `202` meaning `ACCEPTED` indicates that multifactor 
+`GET` requests. A returned status code for `2xx` indicates that multifactor 
 authentication for the requested provider should proceed. Otherwise multifactor 
 authentication for this provider should be skipped and bypassed.
 

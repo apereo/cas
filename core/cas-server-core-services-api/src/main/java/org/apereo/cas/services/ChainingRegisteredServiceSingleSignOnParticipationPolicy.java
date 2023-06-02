@@ -14,10 +14,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingRegisteredServiceSingleSignOnParticipationPolicy}.
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -2923946898337761319L;
 
     private List<RegisteredServiceSingleSignOnParticipationPolicy> policies = new ArrayList<>(0);
@@ -61,7 +62,13 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
      * @param policy the policy
      */
     public void addPolicies(final @NonNull RegisteredServiceSingleSignOnParticipationPolicy... policy) {
-        policies.addAll(Arrays.stream(policy).collect(Collectors.toList()));
+        policies.addAll(Arrays.stream(policy).toList());
+    }
+
+    @Override
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
+        return policies.stream()
+            .allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
     }
 
     @JsonIgnore
@@ -72,11 +79,5 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
             .filter(p -> p.getCreateCookieOnRenewedAuthentication() != null)
             .allMatch(p -> p.getCreateCookieOnRenewedAuthentication().isTrue() || p.getCreateCookieOnRenewedAuthentication().isUndefined());
         return TriStateBoolean.fromBoolean(result);
-    }
-
-    @Override
-    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
-        return policies.stream()
-            .allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
     }
 }

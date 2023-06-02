@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 
 /**
  * Multifactor Bypass based on Principal Attributes.
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Getter
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -6123435418344342672L;
 
 
@@ -41,6 +44,14 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
 
             if (bypassEnabled) {
                 val principal = resolvePrincipal(authentication.getPrincipal());
+
+                val matchingAttributes = locateMatchingAttributeName(principal.getAttributes(), mfaPolicy.getBypassPrincipalAttributeName());
+                if (matchingAttributes.isEmpty()) {
+                    LOGGER.debug("No matching principal attribute name from [{}] can be found for [{}]",
+                        principal.getAttributes().keySet(), mfaPolicy.getBypassPrincipalAttributeName());
+                    return !mfaPolicy.isBypassIfMissingPrincipalAttribute();
+                }
+
                 val bypass = locateMatchingAttributeValue(mfaPolicy.getBypassPrincipalAttributeName(),
                     mfaPolicy.getBypassPrincipalAttributeValue(),
                     principal.getAttributes(), true);

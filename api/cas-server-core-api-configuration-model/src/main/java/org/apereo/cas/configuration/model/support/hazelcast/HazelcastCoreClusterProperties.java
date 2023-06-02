@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("HazelcastCoreClusterProperties")
 public class HazelcastCoreClusterProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8374968308106013185L;
 
     /**
@@ -60,7 +62,7 @@ public class HazelcastCoreClusterProperties implements Serializable {
      * scale linearly as expected since it has to replicate update operations to all members in the cluster.
      * Since the replication of updates is performed in an asynchronous manner, Hazelcast recommends you
      * enable back pressure in case your system has high occurrences of updates.
-     *
+     * <p>
      * Note that Replicated Map does not guarantee eventual consistency because there are
      * some edge cases that fail to provide consistency.
      *

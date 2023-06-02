@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAML2Web")
 @SpringBootTest(classes = {
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     SamlIdentityProviderDiscoveryConfiguration.class
@@ -63,8 +63,7 @@ public class SamlIdentityProviderDiscoveryFeedControllerTests {
             val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
             service.setAccessStrategy(accessStrategy);
             servicesManager.save(service);
-            controller.redirect("https://cas.example.org/idp",
-                request, new MockHttpServletResponse());
+            controller.redirect("https://cas.example.org/idp", request, new MockHttpServletResponse());
         });
     }
 }

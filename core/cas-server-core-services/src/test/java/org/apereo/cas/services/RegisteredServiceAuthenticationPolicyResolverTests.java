@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -22,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyResolverTests}.
@@ -89,6 +91,7 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
             .applicationContext(appCtx)
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
@@ -127,15 +130,17 @@ public class RegisteredServiceAuthenticationPolicyResolverTests {
     public void checkDefaultPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-
+        val service = RegisteredServiceTestUtils.getService("serviceid2");
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(
-            RegisteredServiceTestUtils.getService("serviceid2"),
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+            service, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        assertTrue(resolver.supports(transaction));
+        assertFalse(resolver.supports(transaction));
         val policies = resolver.resolve(transaction);
-        assertFalse(policies.isEmpty());
-        assertTrue(policies.iterator().next() instanceof AtLeastOneCredentialValidatedAuthenticationPolicy);
+        assertTrue(policies.isEmpty());
+
+        val authPolicy = servicesManager.findServiceBy(service).getAuthenticationPolicy();
+        assertNotNull(authPolicy);
+        assertNull(authPolicy.getCriteria());
     }
 
     @Test

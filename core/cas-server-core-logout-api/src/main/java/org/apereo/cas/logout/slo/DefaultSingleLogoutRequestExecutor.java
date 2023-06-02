@@ -1,20 +1,22 @@
 package org.apereo.cas.logout.slo;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +30,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestExecutor {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final LogoutManager logoutManager;
 
@@ -40,12 +42,11 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
                                                     final HttpServletResponse response) {
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
-            val ticket = centralAuthenticationService.getTicket(ticketId, Ticket.class);
+            val ticket = ticketRegistry.getTicket(ticketId, Ticket.class);
             LOGGER.debug("Ticket [{}] found. Processing logout requests and then deleting the ticket...", ticket.getId());
-
+            val clientInfo = ClientInfoHolder.getClientInfo();
             val logoutRequests = new ArrayList<SingleLogoutRequestContext>();
-            if (ticket instanceof TicketGrantingTicket) {
-                val tgt = (TicketGrantingTicket) ticket;
+            if (ticket instanceof TicketGrantingTicket tgt) {
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(tgt.getAuthentication());
                 logoutRequests.addAll(logoutManager.performLogout(
                     SingleLogoutExecutionRequest.builder()
@@ -53,10 +54,10 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
                         .httpServletRequest(Optional.of(request))
                         .httpServletResponse(Optional.of(response))
                         .build()));
-                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt));
+                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
             LOGGER.trace("Removing ticket [{}] from registry...", ticketId);
-            centralAuthenticationService.deleteTicket(ticketId);
+            ticketRegistry.deleteTicket(ticketId);
             return logoutRequests;
         } catch (final Exception e) {
             val msg = String.format("Ticket-granting ticket [%s] cannot be found in the ticket registry.", ticketId);

@@ -34,7 +34,7 @@ public class RegexUtils {
      */
     public static boolean isValidRegex(final String pattern) {
         try {
-            if (pattern != null) {
+            if (StringUtils.isNotBlank(pattern)) {
                 Pattern.compile(pattern);
                 return true;
             }
@@ -95,12 +95,12 @@ public class RegexUtils {
      * Matches the entire region for the string.
      *
      * @param pattern the pattern
-     * @param string  the string
+     * @param value   the string
      * @return true/false
      * @see Matcher#matches()
      */
-    public static boolean matches(final Pattern pattern, final String string) {
-        return pattern.matcher(string).matches();
+    public static boolean matches(final Pattern pattern, final String value) {
+        return pattern.matcher(value).matches();
     }
 
     /**
@@ -124,23 +124,22 @@ public class RegexUtils {
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
-     * @param string  the string
+     * @param value   the string
      * @return true/false
      * @see Matcher#find()
      */
-    public static boolean find(final Pattern pattern, final String string) {
-        return pattern.matcher(string).find();
+    public static boolean find(final Pattern pattern, final String value) {
+        return pattern.matcher(value).find();
     }
 
     /**
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
-     * @param string  the string
+     * @param value   the string
      * @return true/false
      */
-    public static boolean find(final String pattern, final String string) {
-        return StringUtils.isNotBlank(string) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
+    public static boolean find(final String pattern, final String value) {
+        return StringUtils.isNotBlank(value) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(value).find();
     }
-
 }

@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link WsFederationDelegatedCookieProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @JsonFilter("WsFederationDelegatedCookieProperties")
 public class WsFederationDelegatedCookieProperties extends PinnableCookieProperties {
+    @Serial
     private static final long serialVersionUID = 7392972818105536350L;
 
     /**
@@ -32,7 +35,7 @@ public class WsFederationDelegatedCookieProperties extends PinnableCookiePropert
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public WsFederationDelegatedCookieProperties() {
-        super.setName("WSFEDDELSESSION");
+        setName("WSFEDDELSESSION");
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

@@ -8,8 +8,7 @@ category: Multifactor Authentication
 
 # Grouper - Multifactor Authentication Triggers
 
-MFA can be triggered by [Grouper](https://incommon.org/software/grouper/)
-groups to which the authenticated principal is assigned.
+MFA can be triggered by [Grouper](https://github.com/Internet2/grouper) groups to which the authenticated principal is assigned.
 Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
 The group's comparing factor **MUST** be defined in CAS to activate this behavior
 and it can be based on the group's name, display name, etc where
@@ -27,3 +26,25 @@ grouperClient.webService.password = password
 ```
 
 {% include_cached casproperties.html properties="cas.authn.mfa.triggers.grouper" %}
+
+You may also consider externalizing the Grouper client condfiguration file
+by modifying `/src/main/resources/grouper.client.properties` to contain the following:
+
+```properties
+grouperClient.config.hierarchy = classpath:/grouper.client.base.properties,file:/etc/cas/config/grouper.client.properties
+```
+
+...where `/etc/cas/config/grouper.client.properties` would then contain the actual Grouper related settings.
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="edu.internet2.middleware" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```

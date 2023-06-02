@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -44,8 +46,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
-    private static Map<String, Object> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
-        val headers = new HashMap<String, Object>();
+    private static Map<String, String> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
+        val headers = new HashMap<String, String>();
         headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(properties.getHeaders());
@@ -67,8 +69,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .entity(entity)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response.getCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 return this.serializer.from(result);
             }
         } catch (final Exception e) {
@@ -94,7 +96,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
-            return response.getStatusLine().getStatusCode() == HttpStatus.OK.value();
+            return response.getCode() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
@@ -123,6 +125,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Collection<RegisteredService> load() {
         HttpResponse response = null;
+        val clientInfo = ClientInfoHolder.getClientInfo();
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
@@ -132,14 +135,14 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val services = this.serializer.fromList(result);
                 services
                     .stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
-                    .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+                    .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
                 return services;
             }
         } catch (final Exception e) {
@@ -163,8 +166,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response.getCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 return serializer.from(result);
             }
         } catch (final Exception e) {

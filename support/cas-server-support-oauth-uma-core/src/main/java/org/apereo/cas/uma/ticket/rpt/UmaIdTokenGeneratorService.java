@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.rpt;
 
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -33,12 +34,13 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
 
     @Override
     public String generate(final OAuth20AccessToken accessToken,
-                           final long timeoutInSeconds,
                            final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) throws Exception {
-        LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
+        val timeoutInSeconds = Beans.newDuration(getConfigurationContext().getCasProperties()
+            .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        LOGGER.debug("Attempting to produce claims for the RPT access token [{}]", accessToken);
         val claims = buildJwtClaims(accessToken, timeoutInSeconds, userProfile, registeredService, responseType);
 
         return encodeAndFinalizeToken(claims, registeredService, accessToken);

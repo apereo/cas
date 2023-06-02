@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ClickatellSmsSender}.
@@ -39,7 +38,7 @@ public class ClickatellSmsSender implements SmsSender {
 
     private final String serverUrl;
 
-    private final transient RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
+    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
 
     @Override
     public boolean send(final String from, final String to, final String message) {
@@ -77,8 +76,7 @@ public class ClickatellSmsSender implements SmsSender {
                 val messages = (List<Map>) body.get("messages");
                 val errors = messages.stream()
                     .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
-                    .map(m -> (String) m.get("error"))
-                    .collect(Collectors.toList());
+                    .map(m -> (String) m.get("error")).toList();
                 if (errors.isEmpty()) {
                     return true;
                 }

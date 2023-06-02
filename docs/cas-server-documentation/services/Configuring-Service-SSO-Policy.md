@@ -11,6 +11,24 @@ category: Services
 Single Sign-on participation policies designed on a per-service basis should override the global SSO behavior. Such policies generally are applicable
 to participation in single sign-on sessions, creating SSO cookies, etc. 
 
+## Disable Service SSO Access
+
+Participation in existing single sign-on sessions can be disabled on a per-application basis. For example,
+the following service will be challenged to present credentials every time, thereby not using SSO:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "ssoEnabled" : false
+  }
+}
+```
+
 ## Single Sign-on Cookie
 
 CAS adopters may want to allow for a behavior where logging in to a non-SSO-participating application
@@ -37,10 +55,12 @@ Acceptable values for `createCookieOnRenewedAuthentication` are `TRUE`, `FALSE` 
 Additional policies can be assigned to each service definition to control participation of an application in an existing single sign-on session.
 If conditions hold true, CAS shall honor the existing SSO session and will not challenge the user for credentials. If conditions fail, then
 user may be asked for credentials. Such policies can be chained together and executed in order.
+        
+{% tabs ssoservicepolicy %}
 
-### Authentication Date
+{% tab ssoservicepolicy Authentication Date %}
 
-Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge 
+Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge
 the user for credentials and ignore the existing session.
 
 ```json
@@ -66,13 +86,15 @@ the user for credentials and ignore the existing session.
 }
 ```
 
-### Last Used Time
+{% endtab %}
 
-Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the 
+{% tab ssoservicepolicy Last Used Time %}
+
+Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the
 user for credentials and ignore the existing session.
 
 The policy calculation here typically includes evaluating the last-used-time of the ticket-granting ticket linked to the SSO session to check whether
-the ticket continues to actively issue service tickets, etc. 
+the ticket continues to actively issue service tickets, etc.
 
 ```json
 {
@@ -97,7 +119,9 @@ the ticket continues to actively issue service tickets, etc.
 }
 ```
 
-## Custom 
+{% endtab %}
+
+{% tab ssoservicepolicy Custom %}
 
 Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:
 
@@ -110,3 +134,6 @@ public SingleSignOnParticipationStrategyConfigurer customSsoConfigurer() {
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
+{% endtab %}
+
+{% endtabs %}

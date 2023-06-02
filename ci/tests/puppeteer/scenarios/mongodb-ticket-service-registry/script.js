@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         res => {
             assert(res.data.components.mongo !== null);
@@ -19,19 +19,19 @@ const cas = require('../../cas.js');
             assert(res.data.components.mongo.details !== null);
 
             
-            let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"]
+            let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"];
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
             assert(details.proxyGrantingTicketsCache !== null);
             assert(details.ticketGrantingTicketsCache !== null);
             assert(details.proxyTicketsCache !== null);
             assert(details.serviceTicketsCache !== null);
-            assert(details.transientSessionTicketsCache !== null)
+            assert(details.transientSessionTicketsCache !== null);
 
-            details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"]
+            details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"];
             assert(details.name === "MongoDbHealthIndicator-service-registry");
 
         }, error => {
             throw error;
-        }, { 'Content-Type': "application/json" })
+        }, { 'Content-Type': "application/json" });
     await browser.close();
 })();

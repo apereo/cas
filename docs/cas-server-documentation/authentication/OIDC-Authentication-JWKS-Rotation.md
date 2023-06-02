@@ -14,7 +14,7 @@ standard and follows cryptographic best practices.
 You can manually rotate keys periodically to change the JSON web key (JWK) key, or you can configure the appropriate schedule
 in CAS configuration so it would automatically rotate keys for you. 
 
-<div class="alert alert-info"><strong>Rotation Guidance</strong><p>
+<div class="alert alert-info">:information_source: <strong>Rotation Guidance</strong><p>
 NIST guidelines seem to recommend a rotation schedule of at least once every two years. 
 In practice, modest CAS deployments in size and scale tend to rotate keys once every six months, either 
 manually or automatically on a schedule.
@@ -26,7 +26,7 @@ the lifecycle status of the assigned key. The following values are accepted life
 | Value | Description                                                                            |
 |-------|----------------------------------------------------------------------------------------|
 | `0`   | The key is active and current, used for required operations.                           |
-| `1`   | The key is will be the next key used during key rotation.                              |
+| `1`   | The key will be the next key used during key rotation.                                 |
 | `2`   | The key is no longer used and active, and will be removed after revocation operations. |
 
 CAS always signs with only one signing key at a time, typically the *very first key* listed and loaded from the keystore,
@@ -42,7 +42,7 @@ case of an emergency, client applications should be able to use any of the keys 
 ### Custom
 
 It is possible to design and inject your own key rotation and revocation 
-strategy into CAS using the following `@Bean` that would be registered in a `@Configuration` class:
+strategy into CAS using the following `@Bean` that would be registered in a `@AutoConfiguration` class:
 
 ```java
 @Bean

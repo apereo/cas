@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +27,7 @@ import java.util.Map;
 @JsonFilter("HttpRequestProperties")
 public class HttpRequestProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5175966163542099866L;
 
     /**
@@ -56,6 +59,7 @@ public class HttpRequestProperties implements Serializable {
      * against the request URL. If a successful match is found,
      * the request would be blocked.
      */
+    @RegularExpressionCapable
     private String patternToBlock;
 
     /**

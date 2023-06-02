@@ -3,7 +3,10 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.val;
@@ -14,7 +17,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,11 +35,11 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Ignite")
-@SpringBootTest(classes = {
+@Import({
     IgniteTicketRegistryConfiguration.class,
-    IgniteTicketRegistryTicketCatalogConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+    IgniteTicketRegistryTicketCatalogConfiguration.class
+})
+@TestPropertySource(
     properties = {
         "cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_ASYNC",
         "cas.ticket.registry.ignite.tickets-cache.atomicity-mode=ATOMIC",
@@ -77,10 +81,10 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyDeleteUnknown() {
         val catalog = mock(TicketCatalog.class);
-        val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
+        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, igniteConfiguration,
             casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
-        assertTrue(registry.deleteSingleTicket("unknownticket"));
+        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication())) > 0);
         registry.destroy();
     }
 }

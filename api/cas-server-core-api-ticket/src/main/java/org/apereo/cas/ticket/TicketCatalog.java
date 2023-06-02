@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * This is {@link TicketCatalog}.
@@ -46,20 +47,28 @@ public interface TicketCatalog {
     TicketDefinition find(String ticketId);
 
     /**
-     * Find all ticket definitions that implement the given ticketClass.
-     *
-     * @param ticketClass the ticket class
-     * @return the matching ticket definitions
-     */
-    Collection<TicketDefinition> find(Class<? extends Ticket> ticketClass);
-
-    /**
      * Find ticket definition.
      *
      * @param ticket the ticket
      * @return the ticket definition
      */
     TicketDefinition find(Ticket ticket);
+
+    /**
+     * Find all ticket definitions that implement the given ticketClass.
+     *
+     * @param ticketClass the ticket class
+     * @return the matching ticket definitions
+     */
+    Collection<TicketDefinition> findTicketImplementations(Class<? extends Ticket> ticketClass);
+
+    /**
+     * Find the ticket definition that matches this exact class.
+     *
+     * @param ticketClass the ticket class
+     * @return the optional
+     */
+    Optional<TicketDefinition> findTicketDefinition(Class<? extends Ticket> ticketClass);
 
     /**
      * Find all ticket definition collection.

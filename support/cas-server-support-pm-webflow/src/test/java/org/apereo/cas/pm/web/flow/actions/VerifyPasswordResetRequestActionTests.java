@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -64,7 +66,7 @@ public class VerifyPasswordResetRequestActionTests {
             request.addParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticket.getId());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordResetRequestAction.execute(context).getId());
-            assertNotNull(centralAuthenticationService.getTicket(ticket.getId()));
+            assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         }
     }
 
@@ -109,7 +111,26 @@ public class VerifyPasswordResetRequestActionTests {
         }
 
         @Test
-        public void verifyAction() throws Exception {
+        public void verifyActionWithoutToken() throws Exception {
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+            request.setRemoteAddr("1.2.3.4");
+            request.setLocalAddr("1.2.3.4");
+            request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+            val tgt = new MockTicketGrantingTicket("casuser");
+            ticketRegistry.addTicket(tgt);
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordResetRequestAction.execute(context).getId());
+        }
+
+        @Test
+        public void verifyActionWithResetToken() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -125,7 +146,7 @@ public class VerifyPasswordResetRequestActionTests {
             val service = webApplicationServiceFactory.createService(serverPrefix);
             val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementService.PARAMETER_TOKEN, token);
             val ticket = transientFactory.create(service, properties);
-            this.ticketRegistry.addTicket(ticket);
+            ticketRegistry.addTicket(ticket);
             request.addParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, ticket.getId());
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, verifyPasswordResetRequestAction.execute(context).getId());
@@ -133,7 +154,7 @@ public class VerifyPasswordResetRequestActionTests {
             assertTrue(PasswordManagementWebflowUtils.isPasswordResetSecurityQuestionsEnabled(context));
             assertNotNull(PasswordManagementWebflowUtils.getPasswordResetUsername(context));
             assertNotNull(PasswordManagementWebflowUtils.getPasswordResetToken(context));
-            assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(ticket.getId()));
+            assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(ticket.getId(), TransientSessionTicket.class));
         }
 
         @Test

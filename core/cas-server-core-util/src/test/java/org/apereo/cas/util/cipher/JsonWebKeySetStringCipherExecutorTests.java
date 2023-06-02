@@ -57,14 +57,14 @@ public class JsonWebKeySetStringCipherExecutorTests {
         }
     }
 
-    
 
     @Test
     public void verifyEmptyFileForEncoding() throws Exception {
         val keystoreFile = File.createTempFile("keystore", ".json");
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
-        val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile);
-        assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
+        try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile)) {
+            assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
+        }
     }
 
     @Test
@@ -74,16 +74,18 @@ public class JsonWebKeySetStringCipherExecutorTests {
         val json = new JsonWebKeySet(data).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
         val keystoreFile = File.createTempFile("keystorepub", ".json");
         FileUtils.write(keystoreFile, json, StandardCharsets.UTF_8);
-        val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("cas"));
-        assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
+        try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("cas"))) {
+            assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
+        }
     }
 
     @Test
     public void verifyEmptyFileForDecoding() throws Exception {
         val keystoreFile = File.createTempFile("keystore", ".json");
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
-        val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("kid"));
-        assertThrows(IllegalArgumentException.class, () -> cipher.decode("value", EMPTY_OBJECT_ARRAY));
+        try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("kid"))) {
+            assertThrows(IllegalArgumentException.class, () -> cipher.decode("value", EMPTY_OBJECT_ARRAY));
+        }
     }
 
     @Test

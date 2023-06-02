@@ -15,8 +15,10 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileArtifactResponseBuilder}.
@@ -25,6 +27,7 @@ import java.time.ZonedDateTime;
  * @since 5.2.0
  */
 public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
+    @Serial
     private static final long serialVersionUID = -5582616946993706815L;
 
     public SamlProfileArtifactResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext ctx) {
@@ -32,8 +35,8 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
     }
 
     @Override
-    protected Envelope buildResponse(final Assertion assertion, final SamlProfileBuilderContext context) throws Exception {
-        val ticket = (SamlArtifactTicket) context.getAuthenticatedAssertion().getAttributes().get("artifact");
+    protected Envelope buildResponse(final Optional<Assertion> assertion, final SamlProfileBuilderContext context) throws Exception {
+        val ticket = (SamlArtifactTicket) context.getAuthenticatedAssertion().get().getAttributes().get("artifact");
         val artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));
@@ -52,7 +55,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
+        openSamlConfigBean.logObject(envelope);
         return envelope;
     }
 }

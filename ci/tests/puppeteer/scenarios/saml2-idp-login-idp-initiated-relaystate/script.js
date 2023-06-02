@@ -10,27 +10,32 @@ async function unsolicited(page, target) {
     url += `?providerId=${entityId}`;
     url += `&target=${target}`;
 
-    console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(3000)
-    const result = await page.url()
-    console.log(`Page url: ${result}`)
+    await page.waitForTimeout(8000);
+    const result = await page.url();
+    console.log(`Page url: ${result}`);
     assert(result.includes(target));
 }
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await browser.newPage();
+    const page = await cas.newPage(browser);
+    const response = await cas.goto(page, "https://localhost:8443/cas/idp/metadata");
+    console.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await page.waitForTimeout(2000)
-    await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(2000);
 
+    await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(5000);
+    
     await unsolicited(page, "https://apereo.github.io");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(5000);
 
     await unsolicited(page, "https://github.com/apereo/cas");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(4000);
+
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();

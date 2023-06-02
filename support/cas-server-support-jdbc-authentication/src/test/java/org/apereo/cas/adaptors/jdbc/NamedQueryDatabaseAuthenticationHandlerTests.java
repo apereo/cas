@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,11 +19,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is tests for {@link QueryDatabaseAuthenticationHandler}.
@@ -81,7 +83,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
             null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, CollectionUtils.wrap(map));
         val result = q.authenticate(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
         assertTrue(result.getPrincipal().getAttributes().containsKey("phoneNumber"));
@@ -97,7 +99,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
             null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, CollectionUtils.wrap(map));
         val result = q.authenticate(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
         assertFalse(result.getPrincipal().getAttributes().containsKey("phoneNumber"));
@@ -112,7 +114,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
             null, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource, new HashMap<>());
         assertThrows(FailedLoginException.class,
-            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0")));
+            () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0"), mock(Service.class)));
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
@@ -124,6 +126,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     }
 
     @Entity(name = "CAS_NAMED_USERS")
+    @SuppressWarnings("UnusedVariable")
     public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

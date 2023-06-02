@@ -13,6 +13,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link DefaultRegisteredServiceSingleSignOnParticipationPolicy}.
  *
@@ -28,6 +30,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode
 public class DefaultRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
+    @Serial
     private static final long serialVersionUID = -1223944598337761319L;
 
     private TriStateBoolean createCookieOnRenewedAuthentication;

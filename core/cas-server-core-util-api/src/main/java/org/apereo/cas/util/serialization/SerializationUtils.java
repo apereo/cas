@@ -49,7 +49,7 @@ public class SerializationUtils {
      * @since 5.0.0
      */
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        FunctionUtils.doUnchecked(o -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val out = new ObjectOutputStream(outputStream)) {
                 out.writeObject(object);
             }
@@ -167,6 +167,6 @@ public class SerializationUtils {
      */
     public static <T extends Serializable> T deserializeAndCheckObject(final byte[] object, final Class<T> type) {
         val result = deserialize(object, type);
-        return (T) result;
+        return result;
     }
 }

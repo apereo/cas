@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("OidcClientRegistrationProperties")
 public class OidcClientRegistrationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 123128615694269276L;
 
     /**
@@ -40,6 +42,20 @@ public class OidcClientRegistrationProperties implements Serializable {
      */
     @DurationCapable
     private String clientSecretExpiration = "0";
+
+    /**
+     * The username used in a basic-auth scheme to request an initial access token
+     * that would then be used to dynamically register clients
+     * in  {@link DynamicClientRegistrationModes#PROTECTED} mode.
+     */
+    private String initialAccessTokenUser;
+
+    /**
+     * The password used in a basic-auth scheme to request an initial access token
+     * that would then be used to dynamically register clients
+     * in  {@link DynamicClientRegistrationModes#PROTECTED} mode.
+     */
+    private String initialAccessTokenPassword;
 
     /**
      * Dynamic client registration mode.
@@ -61,7 +77,7 @@ public class OidcClientRegistrationProperties implements Serializable {
         /**
          * Is protected?
          *
-         * @return the boolean
+         * @return true/false
          */
         public boolean isProtected() {
             return this == DynamicClientRegistrationModes.PROTECTED;

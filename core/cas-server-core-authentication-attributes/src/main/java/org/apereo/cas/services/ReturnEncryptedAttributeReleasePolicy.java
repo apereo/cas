@@ -9,11 +9,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jooq.lambda.Unchecked;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.ArrayList;
@@ -34,12 +36,14 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 @Getter
 @Setter
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -5771481877391140569L;
 
     static {
@@ -54,6 +58,10 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
         return authorizeReleaseOfAllowedAttributes(context, attrs);
     }
 
+    @Override
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
+        return getAllowedAttributes();
+    }
 
     /**
      * Authorize release of allowed attributes map.
@@ -95,10 +103,5 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
                 attributesToRelease.put(attr, encodedValues);
             });
         return attributesToRelease;
-    }
-
-    @Override
-    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return getAllowedAttributes();
     }
 }

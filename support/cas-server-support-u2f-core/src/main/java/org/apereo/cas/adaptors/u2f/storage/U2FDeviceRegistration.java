@@ -15,10 +15,11 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 public class U2FDeviceRegistration implements Serializable, Cloneable {
+    @Serial
     private static final long serialVersionUID = 7258490070277856614L;
 
     @Id

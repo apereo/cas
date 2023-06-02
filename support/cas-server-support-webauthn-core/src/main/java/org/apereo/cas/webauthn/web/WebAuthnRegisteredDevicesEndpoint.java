@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -60,7 +60,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @return the collection
      */
-    @Operation(summary = "Fetch registered devices for username", parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Fetch registered devices for username", parameters = @Parameter(name = "username", required = true))
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends CredentialRegistration> fetch(
         @PathVariable
@@ -73,7 +73,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username the username
      * @param record   the record
-     * @return the boolean
+     * @return true/false
      * @throws Exception the exception
      */
     @PostMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,8 +94,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username the username
      */
-    @Operation(summary = "Remove device registrations for username",
-        parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Remove device registrations for username", parameters = @Parameter(name = "username", required = true))
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(
         @PathVariable
@@ -156,7 +155,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Import a device registration as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
+    public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
         val account = WebAuthnUtils.getObjectMapper()
@@ -164,6 +163,6 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
             });
         LOGGER.trace("Storing account: [{}]", account);
         registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
-        return HttpStatus.CREATED;
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

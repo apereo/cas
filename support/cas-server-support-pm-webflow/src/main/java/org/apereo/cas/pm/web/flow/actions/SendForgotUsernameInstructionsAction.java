@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.CollectionUtils;
@@ -26,10 +27,13 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -111,7 +115,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
                 () -> getErrorEvent("username.failed", "Cannot send the username to given email address", requestContext))
             .get();
     }
-    
+
     protected EmailCommunicationResult sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
                                                                         final RequestContext requestContext) {
         val parameters = CollectionUtils.wrap("username", query.getUsername(), "email", query.getEmail());
@@ -125,20 +129,20 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             }).accept(person);
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val body = EmailMessageBodyBuilder.builder().properties(reset)
-            .locale(Optional.ofNullable(request.getLocale()))
-            .parameters(parameters).build().produce();
-        return this.communicationsManager.email(reset, query.getEmail(), body);
+        val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+            .map(resolver -> resolver.resolveLocale(request));
+        val body = EmailMessageBodyBuilder.builder()
+            .properties(reset)
+            .locale(locale)
+            .parameters(parameters)
+            .build()
+            .get();
+        val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+            .locale(locale.orElseGet(Locale::getDefault))
+            .to(List.of(query.getEmail())).body(body).build();
+        return communicationsManager.email(emailRequest);
     }
 
-    /**
-     * Locate and return the error event.
-     *
-     * @param code           the error code
-     * @param defaultMessage the default message
-     * @param requestContext the request context
-     * @return the event
-     */
     protected Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         WebUtils.addErrorMessageToContext(requestContext, "screen.pm.forgotusername." + code, defaultMessage);
         LOGGER.error(defaultMessage);

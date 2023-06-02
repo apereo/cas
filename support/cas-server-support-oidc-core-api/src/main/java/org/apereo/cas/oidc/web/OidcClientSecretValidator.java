@@ -8,9 +8,9 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.joda.time.Instant;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -33,8 +33,7 @@ public class OidcClientSecretValidator extends DefaultOAuth20ClientSecretValidat
 
     @Override
     public boolean isClientSecretExpired(final OAuthRegisteredService registeredService) {
-        if (registeredService instanceof OidcRegisteredService) {
-            val oidcService = (OidcRegisteredService) registeredService;
+        if (registeredService instanceof OidcRegisteredService oidcService) {
             if (oidcService.getClientSecretExpiration() > 0) {
                 val expirationTime = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochSecond(oidcService.getClientSecretExpiration()));
                 val currentTime = ZonedDateTime.now(ZoneOffset.UTC);

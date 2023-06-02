@@ -1,10 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -162,4 +166,32 @@ public interface TicketRegistry {
      * @return the count
      */
     long countSessionsFor(String principalId);
+
+    /**
+     * Gets sessions for principal.
+     *
+     * @param principalId the principal id
+     * @return the sessions for
+     */
+    default Stream<? extends Ticket> getSessionsFor(final String principalId) {
+        return getTickets(ticket -> ticket instanceof TicketGrantingTicket
+                                    && !ticket.isExpired()
+                                    && ((AuthenticationAwareTicket) ticket).getAuthentication().getPrincipal().getId().equals(principalId));
+    }
+
+    /**
+     * Gets tickets with authentication attributes.
+     *
+     * @param queryAttributes the query attributes
+     * @return the tickets with authentication attributes
+     */
+    Stream<? extends Ticket> getSessionsWithAttributes(Map<String, List<Object>> queryAttributes);
+
+    /**
+     * Allows the registry to hash the given identifier, which may be the ticket id or the principdl id, etc.
+     *
+     * @param id the id
+     * @return the string
+     */
+    String digestIdentifier(String id);
 }

@@ -7,11 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JpaSamlIdPMetadataDocument}.
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 public class JpaSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    @Serial
     private static final long serialVersionUID = -7865710977205378149L;
 
     @Id

@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +22,7 @@ import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAML2Web")
 public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
 
     @Nested
@@ -111,7 +112,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getAttributeQuery(NameID.TRANSIENT, "casuser-aq");
+            val query = getAttributeQuery(NameIDType.TRANSIENT, "casuser-aq");
             query.getIssuer().setValue(UUID.randomUUID().toString());
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
@@ -152,7 +153,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getAttributeQuery(NameID.TRANSIENT, "casuser-aq");
+            val query = getAttributeQuery(NameIDType.TRANSIENT, "casuser-aq");
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
@@ -192,7 +193,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getAttributeQuery(NameID.ENCRYPTED, "casuser-aq");
+            val query = getAttributeQuery(NameIDType.ENCRYPTED, "casuser-aq");
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
@@ -232,7 +233,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getAttributeQuery(NameID.TRANSIENT, UUID.randomUUID().toString());
+            val query = getAttributeQuery(NameIDType.TRANSIENT, UUID.randomUUID().toString());
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
@@ -269,7 +270,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getAttributeQuery(NameID.TRANSIENT, UUID.randomUUID().toString());
+            val query = getAttributeQuery(NameIDType.TRANSIENT, UUID.randomUUID().toString());
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
@@ -302,7 +303,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
                 .getBuilder(Subject.DEFAULT_ELEMENT_NAME);
             val subject = (Subject) builder.buildObject();
 
-            if (nameIdFormat.equals(NameID.ENCRYPTED)) {
+            if (nameIdFormat.equals(NameIDType.ENCRYPTED)) {
                 val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(defaultSamlRegisteredServiceCachingMetadataResolver,
                     samlRegisteredService, samlRegisteredService.getServiceId()).get();
                 val encryptedId = samlIdPObjectEncrypter.encode(nameId, samlRegisteredService, facade);

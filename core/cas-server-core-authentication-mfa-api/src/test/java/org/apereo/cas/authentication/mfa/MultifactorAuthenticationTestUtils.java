@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultRequestedAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -68,9 +68,12 @@ public class MultifactorAuthenticationTestUtils {
         when(authentication.getAttributes()).thenReturn(attributes);
         when(authentication.getPrincipal()).thenReturn(principal);
 
-        val cmd = mock(CredentialMetaData.class);
-        when(cmd.getCredentialClass()).thenReturn((Class) Credential.class);
-        when(authentication.getCredentials()).thenReturn(CollectionUtils.wrapList(cmd));
+        val credentialMetadata = mock(CredentialMetadata.class);
+        when(credentialMetadata.getCredentialClass()).thenReturn((Class) Credential.class);
+
+        val credential = mock(Credential.class);
+        when(credential.getCredentialMetadata()).thenReturn(credentialMetadata);
+        when(authentication.getCredentials()).thenReturn(CollectionUtils.wrapList(credential));
         return authentication;
     }
 

@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.lock.LockRepository;
 
-import lombok.SneakyThrows;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,17 +55,13 @@ public class ZookeeperLockRegistryTests {
 
         val threads = new ArrayList<Thread>();
         IntStream.range(0, 10).forEach(i -> {
-            val thread = new Thread(new Runnable() {
-                @Override
-                @SneakyThrows
-                public void run() {
-                    Thread.sleep(250);
-                    casTicketRegistryLockRepository.execute(lockKey, () -> {
-                        container.values.get(lockKey).add(UUID.randomUUID().toString());
-                        return null;
-                    });
-                }
-            });
+            val thread = new Thread(Unchecked.runnable(() -> {
+                Thread.sleep(250);
+                casTicketRegistryLockRepository.execute(lockKey, () -> {
+                    container.values.get(lockKey).add(UUID.randomUUID().toString());
+                    return null;
+                });
+            }));
             thread.setName("Thread-" + i);
             threads.add(thread);
             thread.start();

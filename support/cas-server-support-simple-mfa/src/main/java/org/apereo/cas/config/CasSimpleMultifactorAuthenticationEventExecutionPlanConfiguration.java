@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -13,19 +12,28 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.mfa.simple.validation.RestfulCasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -36,25 +44,46 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
 @AutoConfiguration
 public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
+
+    @ConditionalOnMissingBean(name = CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier(TicketFactory.BEAN_NAME)
+        final TicketFactory ticketFactory,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry) {
+        val simple = casProperties.getAuthn().getMfa().getSimple();
+        return BeanSupplier.of(CasSimpleMultifactorAuthenticationService.class)
+            .when(BeanCondition.on("cas.authn.mfa.simple.token.rest.url").isUrl().given(applicationContext.getEnvironment()))
+            .supply(() -> new RestfulCasSimpleMultifactorAuthenticationService(simple.getToken().getRest(), ticketFactory))
+            .otherwise(() -> new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, ticketFactory))
+            .get();
+    }
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("casSimpleMultifactorAuthenticationProvider")
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("casSimpleMultifactorPrincipalFactory")
         final PrincipalFactory casSimpleMultifactorPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
+        @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+        final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
         final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getSimple();
-        return new CasSimpleMultifactorAuthenticationHandler(props.getName(),
-            servicesManager, casSimpleMultifactorPrincipalFactory,
-            centralAuthenticationService, props.getOrder());
+        return new CasSimpleMultifactorAuthenticationHandler(props,
+            applicationContext, servicesManager, casSimpleMultifactorPrincipalFactory,
+            casSimpleMultifactorAuthenticationService, multifactorAuthenticationProvider);
     }
 
     @Bean
@@ -100,10 +129,10 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
-        final MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider) {
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
-            casSimpleMultifactorAuthenticationProvider, servicesManager);
+            multifactorAuthenticationProvider, servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorPrincipalFactory")

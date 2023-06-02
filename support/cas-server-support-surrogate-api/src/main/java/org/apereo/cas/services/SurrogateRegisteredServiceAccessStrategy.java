@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -1688944419711632962L;
 
     /**
@@ -41,28 +43,21 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
-        if (isSurrogateAuthenticationSession(attributes)) {
-            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(principal, attributes);
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+        if (isSurrogateAuthenticationSession(request)) {
+            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(request);
         }
         return true;
     }
 
-    /**
-     * Do principal attributes allow surrogate service access?.
-     *
-     * @param principal           the principal
-     * @param principalAttributes the principal attributes
-     * @return true /false
-     */
-    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final String principal,
-                                                                       final Map<String, Object> principalAttributes) {
+
+    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
         return RegisteredServiceAccessStrategyEvaluator.builder()
             .caseInsensitive(this.caseInsensitive)
             .requireAllAttributes(this.requireAllAttributes)
             .requiredAttributes(this.surrogateRequiredAttributes)
             .rejectedAttributes(new LinkedHashMap<>(0))
             .build()
-            .evaluate(principal, principalAttributes);
+            .apply(request);
     }
 }

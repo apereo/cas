@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -38,7 +40,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the authentication builder
      * @since 4.2.0
      */
-    AuthenticationBuilder addCredentials(List<CredentialMetaData> credentials);
+    AuthenticationBuilder addCredentials(List<Credential> credentials);
 
     /**
      * Adds metadata about a credential presented for authentication.
@@ -46,7 +48,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param credential Credential metadata.
      * @return This builder instance.
      */
-    AuthenticationBuilder addCredential(CredentialMetaData credential);
+    AuthenticationBuilder addCredential(Credential credential);
 
     /**
      * Add warnings to authentication builder.
@@ -142,14 +144,6 @@ public interface AuthenticationBuilder extends Serializable {
     AuthenticationBuilder addSuccess(String key, AuthenticationHandlerExecutionResult value);
 
     /**
-     * Sets the authentication date and returns this instance.
-     *
-     * @param d Authentication date.
-     * @return This builder instance.
-     */
-    AuthenticationBuilder setAuthenticationDate(ZonedDateTime d);
-
-    /**
      * Creates an immutable authentication instance from builder data.
      *
      * @return Immutable authentication.
@@ -191,11 +185,24 @@ public interface AuthenticationBuilder extends Serializable {
     /**
      * Merge attribute.
      *
+     * @param toMerge the to merge
+     * @return the authentication builder
+     */
+    @CanIgnoreReturnValue
+    default AuthenticationBuilder mergeAttributes(final Map<String, List<Object>> toMerge) {
+        toMerge.forEach(this::mergeAttribute);
+        return this;
+    }
+    
+    /**
+     * Merge attribute.
+     *
      * @param key   the key
      * @param value the value
      * @return the authentication builder
      */
     AuthenticationBuilder mergeAttribute(String key, Object value);
+
 
     /**
      * Merge attribute.
@@ -208,9 +215,18 @@ public interface AuthenticationBuilder extends Serializable {
 
     /**
      * Retrieve the authentication date/time as indicated by this builder.
+     *
      * @return authn date/time
      */
     ZonedDateTime getAuthenticationDate();
+
+    /**
+     * Sets the authentication date and returns this instance.
+     *
+     * @param d Authentication date.
+     * @return This builder instance.
+     */
+    AuthenticationBuilder setAuthenticationDate(ZonedDateTime d);
 
     /**
      * Has attribute boolean.

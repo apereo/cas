@@ -9,9 +9,9 @@ async function fetchCode(page) {
 
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
@@ -47,10 +47,10 @@ async function exchangeCode(page, code, clientId) {
         },
         error => {
             throw `Operation failed to obtain access token: ${error}`;
-        })
+        });
 
-    assert(accessToken != null, "Access Token cannot be null")
-    assert(refreshToken != null, "Refresh Token cannot be null")
+    assert(accessToken != null, "Access Token cannot be null");
+    assert(refreshToken != null, "Refresh Token cannot be null");
     return {
         accessToken: accessToken,
         refreshToken: refreshToken
@@ -58,7 +58,7 @@ async function exchangeCode(page, code, clientId) {
 }
 
 async function fetchProfile(accessToken) {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
     params.append('access_token', accessToken);
 
     await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
@@ -104,7 +104,7 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
         });
 
 
-    await cas.logg("Logging out, removing all tokens...")
+    await cas.logg("Logging out, removing all tokens...");
     await cas.goto(page, "https://localhost:8443/cas/logout");
     try {
         await exchangeCode(page, code, "client");

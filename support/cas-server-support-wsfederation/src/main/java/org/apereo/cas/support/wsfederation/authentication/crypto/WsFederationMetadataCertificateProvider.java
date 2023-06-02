@@ -8,17 +8,20 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
+import org.opensaml.xmlsec.signature.KeyInfo;
 import org.opensaml.xmlsec.signature.X509Data;
 import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -51,16 +54,17 @@ public class WsFederationMetadataCertificateProvider implements WsFederationCert
             LOGGER.debug("Locating entity descriptor in the metadata for [{}]", configuration.getIdentityProviderIdentifier());
             val entityDescriptor = resolver.resolveSingle(criteria);
             val roleDescriptors = entityDescriptor.getRoleDescriptors(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-            val keyDescriptors = roleDescriptors.get(0).getKeyDescriptors();
-            val keyDescriptor = keyDescriptors
+            val signingDescriptors = roleDescriptors.get(0).getKeyDescriptors()
                 .stream()
                 .filter(key -> key.getUse() == UsageType.SIGNING)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Unable to find key descriptor marked for signing usage"));
-            return keyDescriptor
-                .getKeyInfo()
-                .getX509Datas()
+                .collect(Collectors.toList());
+            Collections.reverse(signingDescriptors);
+
+            return signingDescriptors
                 .stream()
+                .map(KeyDescriptor::getKeyInfo)
+                .map(KeyInfo::getX509Datas)
+                .flatMap(List::stream)
                 .map(X509Data::getX509Certificates)
                 .flatMap(List::stream)
                 .map(Unchecked.function(cert -> {

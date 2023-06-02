@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,11 +37,10 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
         val builder = new Saml10ObjectBuilder(this.configBean);
         val samlResponseBuilder = new SamlResponseBuilder(builder, null,
-            null, 0, "PT30S",
+            null, "0", "PT30S",
             new NoOpProtocolAttributeEncoder(), null);
         view = new Saml10FailureResponseView(new NoOpProtocolAttributeEncoder(), null,
             new DefaultArgumentExtractor(new SamlServiceFactory()),
-            StandardCharsets.UTF_8.name(),
             null,
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,

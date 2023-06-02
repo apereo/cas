@@ -3,6 +3,9 @@ package org.apereo.cas.support.events.ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
+
+import java.io.Serial;
 
 
 /**
@@ -16,6 +19,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGrantingTicketEvent {
 
+    @Serial
     private static final long serialVersionUID = -1862937393590213844L;
 
     /**
@@ -24,7 +28,7 @@ public class CasTicketGrantingTicketCreatedEvent extends AbstractCasTicketGranti
      * @param source               the source
      * @param ticketGrantingTicket the ticket granting ticket
      */
-    public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket) {
-        super(source, ticketGrantingTicket);
+    public CasTicketGrantingTicketCreatedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ClientInfo clientInfo) {
+        super(source, ticketGrantingTicket, clientInfo);
     }
 }

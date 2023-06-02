@@ -8,6 +8,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -21,11 +24,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -81,13 +88,15 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
      *
      * @param registrationRequest the registration request
      * @param url                 the url
-     * @return the boolean
+     * @return true/false
      */
     protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest, final String url) {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
-            val message = smsProps.getFormattedText(url);
-            return communicationsManager.sms(smsProps.getFrom(), registrationRequest.getPhone(), message);
+            val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
+            val smsRequest = SmsRequest.builder().from(smsProps.getFrom())
+                .to(registrationRequest.getPhone()).text(message).build();
+            return communicationsManager.sms(smsRequest);
         }
         return false;
     }
@@ -99,7 +108,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
      * @param registrationRequest the registration request
      * @param url                 the url
      * @param requestContext      the request context
-     * @return the boolean
+     * @return true/false
      */
     protected EmailCommunicationResult sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
                                                                               final String url,
@@ -108,13 +117,19 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
             val emailProps = casProperties.getAccountRegistration().getMail();
             val parameters = CollectionUtils.<String, Object>wrap("url", url);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                .map(resolver -> resolver.resolveLocale(request));
             val text = EmailMessageBodyBuilder.builder()
                 .properties(emailProps)
                 .parameters(parameters)
-                .locale(Optional.ofNullable(request.getLocale()))
+                .locale(locale)
                 .build()
-                .produce();
-            return communicationsManager.email(emailProps, registrationRequest.getEmail(), text);
+                .get();
+            val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
+                .locale(locale.orElseGet(Locale::getDefault))
+                .to(List.of(registrationRequest.getEmail()))
+                .body(text).build();
+            return communicationsManager.email(emailRequest);
         }
         return EmailCommunicationResult.builder().success(false).build();
     }

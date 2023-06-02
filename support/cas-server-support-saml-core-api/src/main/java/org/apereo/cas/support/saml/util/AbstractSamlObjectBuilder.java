@@ -3,10 +3,13 @@ package org.apereo.cas.support.saml.util;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
-import org.apereo.cas.util.serialization.JacksonXmlSerializer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +53,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -59,6 +63,7 @@ import java.security.PublicKey;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -78,10 +83,17 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     protected static final String DEFAULT_ELEMENT_LOCAL_NAME_FIELD = "DEFAULT_ELEMENT_LOCAL_NAME";
 
+    private static final ObjectMapper XML_OBJECT_MAPPER = JacksonObjectMapperFactory.builder()
+        .jsonFactory(new XmlFactory())
+        .useWrapperNameAsProperty(true)
+        .build()
+        .toObjectMapper();
+    
     private static final int RANDOM_ID_SIZE = 16;
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
+    @Serial
     private static final long serialVersionUID = -6833230731146922780L;
 
     private static final String LOG_MESSAGE_ATTR_CREATED = "Created attribute value XMLObject: [{}]";
@@ -254,10 +266,10 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
         if (value instanceof NameIDType) {
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, value);
-            ((NameIDType) value).detach();
-            return (NameIDType) value;
+            ((XMLObject) value).detach();
+            return (XMLObject) value;
         }
-        
+
         if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSStringBuilder();
             val attrValueObj = builder.buildObject(elementName, XSString.TYPE_NAME);
@@ -277,7 +289,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSBoolean.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSBooleanBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBoolean.TYPE_NAME);
-            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase()));
+            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase(Locale.ENGLISH)));
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
@@ -307,12 +319,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
 
         if (XSObject.class.getSimpleName().equalsIgnoreCase(valueType)) {
-            val mapper = new JacksonXmlSerializer();
-            val builder = new XSAnyBuilder();
-            val attrValueObj = builder.buildObject(elementName);
-            attrValueObj.setTextContent(mapper.writeValueAsString(value));
-            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
-            return attrValueObj;
+            return FunctionUtils.doUnchecked(() -> {
+                val builder = new XSAnyBuilder();
+                val attrValueObj = builder.buildObject(elementName);
+                attrValueObj.setTextContent(XML_OBJECT_MAPPER.writeValueAsString(value));
+                LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
+                return attrValueObj;
+            });
         }
 
         val builder = new XSAnyBuilder();

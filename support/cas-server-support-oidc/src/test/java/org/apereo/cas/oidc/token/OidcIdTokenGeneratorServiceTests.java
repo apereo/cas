@@ -3,8 +3,10 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -16,7 +18,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -32,11 +33,12 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.HashMap;
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.apereo.cas.oidc.OidcConstants.StandardScopes.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,14 +62,25 @@ public class OidcIdTokenGeneratorServiceTests {
     private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
 
     private static class MockOAuthRegisteredService extends OAuthRegisteredService {
+        @Serial
         private static final long serialVersionUID = 8152953800891665827L;
     }
 
+    private OAuth20AccessToken buildAccessToken(final MockTicketGrantingTicket tgt) {
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
+        when(accessToken.getId()).thenReturn(getClass().getSimpleName());
+        when(accessToken.getClientId()).thenReturn("client");
+        when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+        return accessToken;
+    }
+    
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
-        "cas.authn.oidc.core.include-id-token-claims=true"
+        "cas.authn.oidc.id-token.include-id-token-claims=true"
     })
     public class IgnoringResponseTypeTests extends AbstractOidcTests {
         @Test
@@ -80,15 +93,6 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TGT_ID);
-            val callback = casProperties.getServer().getPrefix()
-                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-
-            val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
-
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
@@ -99,17 +103,20 @@ public class OidcIdTokenGeneratorServiceTests {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce")));
-            when(tgt.getAuthentication()).thenReturn(authentication);
 
-            val accessToken = mock(OAuth20AccessToken.class);
-            when(accessToken.getAuthentication()).thenReturn(authentication);
-            when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-            when(accessToken.getId()).thenReturn(getClass().getSimpleName());
-            when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+            val tgt = new MockTicketGrantingTicket(authentication);
+            val callback = casProperties.getServer().getPrefix()
+                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+            val service = new WebApplicationServiceFactory().createService(callback);
+            tgt.getServices().putAll(CollectionUtils.wrap("service", service));
+
+            val accessToken = buildAccessToken(tgt);
+
+            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid");
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
-            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
@@ -124,7 +131,7 @@ public class OidcIdTokenGeneratorServiceTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
-        "cas.authn.oidc.core.include-id-token-claims=false",
+        "cas.authn.oidc.id-token.include-id-token-claims=false",
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.core.claims-map.preferred_username=custom-attribute"
     })
@@ -139,16 +146,7 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TGT_ID);
-            val callback = casProperties.getServer().getPrefix()
-                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-
-            val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
-
-            val phoneValues = List.of("123456789", "4805553241");
+            val phoneValues = List.of("\\\\123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
                 OIDC_CLAIM_PHONE_NUMBER, phoneValues,
@@ -159,17 +157,21 @@ public class OidcIdTokenGeneratorServiceTests {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce")));
-            when(tgt.getAuthentication()).thenReturn(authentication);
+            val tgt = new MockTicketGrantingTicket(authentication);
+            val callback = casProperties.getServer().getPrefix()
+                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+            val service = new WebApplicationServiceFactory().createService(callback);
+            tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
-            val accessToken = mock(OAuth20AccessToken.class);
-            when(accessToken.getAuthentication()).thenReturn(authentication);
-            when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-            when(accessToken.getId()).thenReturn(getClass().getSimpleName());
-            when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+            val accessToken = buildAccessToken(tgt);
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+            val registeredService = getOidcRegisteredService("clientid");
+            registeredService.setIdTokenIssuer(UUID.randomUUID().toString());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
-            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
+            servicesManager.save(registeredService);
+
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
@@ -184,6 +186,7 @@ public class OidcIdTokenGeneratorServiceTests {
             assertEquals("casuser", claims.getStringClaimValue(OIDC_CLAIM_NAME));
             assertEquals(phoneValues, claims.getStringListClaimValue(OIDC_CLAIM_PHONE_NUMBER));
             assertEquals("test", claims.getStringClaimValue(OIDC_CLAIM_PREFERRED_USERNAME));
+            assertEquals(registeredService.getIdTokenIssuer(), claims.getStringClaimValue(OidcConstants.ISS));
         }
 
         @Test
@@ -196,40 +199,34 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TGT_ID);
-            val callback = casProperties.getServer().getPrefix()
-                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-
-            val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
-
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
-                "color", List.of("yellow"),
                 OIDC_CLAIM_PHONE_NUMBER, phoneValues,
+                "color", List.of("yellow"),
                 OIDC_CLAIM_NAME, List.of("casuser")));
 
-            var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce")));
-            when(tgt.getAuthentication()).thenReturn(authentication);
+            val tgt = new MockTicketGrantingTicket(authentication);
+            val callback = casProperties.getServer().getPrefix()
+                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+            val service = new WebApplicationServiceFactory().createService(callback);
+            tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
-            val accessToken = mock(OAuth20AccessToken.class);
-            when(accessToken.getAuthentication()).thenReturn(authentication);
-            when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-            when(accessToken.getId()).thenReturn(getClass().getSimpleName());
-            when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+            val accessToken = buildAccessToken(tgt);
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid");
+            registeredService.setIdTokenExpirationPolicy(new DefaultRegisteredServiceOidcIdTokenExpirationPolicy("PT60S"));
+
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
-            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
 
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
             assertNotNull(claims);
             assertFalse(claims.hasClaim(OIDC_CLAIM_EMAIL));
             assertFalse(claims.hasClaim(OIDC_CLAIM_NAME));
@@ -246,15 +243,6 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TGT_ID);
-            val callback = casProperties.getServer().getPrefix()
-                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-
-            val service = new WebApplicationServiceFactory().createService(callback);
-            when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
-
             val phoneValues = List.of("123456789", "4805553241");
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
@@ -265,20 +253,24 @@ public class OidcIdTokenGeneratorServiceTests {
             var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce")));
-            when(tgt.getAuthentication()).thenReturn(authentication);
+            val tgt = new MockTicketGrantingTicket(authentication);
 
-            val accessToken = mock(OAuth20AccessToken.class);
-            when(accessToken.getAuthentication()).thenReturn(authentication);
-            when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-            when(accessToken.getId()).thenReturn(getClass().getSimpleName());
-            when(accessToken.getScopes()).thenReturn(Set.of(OPENID.getScope(), PROFILE.getScope(), EMAIL.getScope(), PHONE.getScope()));
+            val callback = casProperties.getServer().getPrefix()
+                           + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                           + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
-            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid");
+            val service = new WebApplicationServiceFactory().createService(callback);
+            tgt.getServices().putAll(CollectionUtils.wrap("service", service));
+
+            val accessToken = buildAccessToken(tgt);
+
+            val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid");
+            assertNotNull(registeredService);
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
-            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.AUTHORIZATION_CODE, registeredService);
             assertNotNull(idToken);
-            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.ofNullable(registeredService));
+            val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
             assertNotNull(claims);
             assertFalse(claims.hasClaim(OIDC_CLAIM_EMAIL));
             assertFalse(claims.hasClaim(OIDC_CLAIM_NAME));
@@ -294,35 +286,27 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getId()).thenReturn(TGT_ID);
-
             val mfa = casProperties.getAuthn().getMfa();
-
-            when(tgt.getServices()).thenReturn(new HashMap<>());
             val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                     OAuth20Constants.NONCE, List.of("some-nonce"),
-                    mfa.getCore().getAuthenticationContextAttribute(), List.of("context-cass"),
+                    mfa.getCore().getAuthenticationContextAttribute(), List.of("context-class"),
                     AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, List.of("Handler1")));
-            when(tgt.getAuthentication()).thenReturn(authentication);
 
-            val accessToken = mock(OAuth20AccessToken.class);
-            when(accessToken.getAuthentication()).thenReturn(authentication);
-            when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
-            when(accessToken.getId()).thenReturn(getClass().getSimpleName());
+            val tgt = new MockTicketGrantingTicket(authentication);
+            val accessToken = buildAccessToken(tgt);
 
-            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE,
-                OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
+                OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, "clientid"));
             assertNotNull(idToken);
         }
-
+        
         @Test
         public void verifyUnknownServiceType() {
             assertThrows(IllegalArgumentException.class, () -> {
                 val accessToken = mock(OAuth20AccessToken.class);
-                oidcIdTokenGenerator.generate(accessToken, 30, new CommonProfile(),
+                oidcIdTokenGenerator.generate(accessToken, new CommonProfile(),
                     OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, new MockOAuthRegisteredService());
             });
         }
@@ -336,13 +320,6 @@ public class OidcIdTokenGeneratorServiceTests {
             request.setAttribute(Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            val tgt = mock(TicketGrantingTicket.class);
-            when(tgt.getServices()).thenReturn(new HashMap<>());
-            val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
-                CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
-                    OAuth20Constants.NONCE, List.of("some-nonce")));
-            when(tgt.getAuthentication()).thenReturn(authentication);
-
             val accessToken = getAccessToken();
             val registeredService = getOidcRegisteredService(accessToken.getClientId());
             registeredService.setJwtAccessToken(true);
@@ -355,8 +332,8 @@ public class OidcIdTokenGeneratorServiceTests {
                 new DefaultRegisteredServiceProperty(repetitionInfo.getCurrentRepetition() % 2 == 0 ? "false" : "true")
             ));
 
-            this.servicesManager.save(registeredService);
-            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
+            servicesManager.save(registeredService);
+            val idToken = oidcIdTokenGenerator.generate(accessToken, profile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
             assertNotNull(idToken);
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken, Optional.of(registeredService));
             assertNotNull(claims);
@@ -374,7 +351,7 @@ public class OidcIdTokenGeneratorServiceTests {
                 .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder)
                 .issuer(issuer)
                 .build()
-                .encode();
+                .encode(accessToken.getId());
             val newHash = OAuth20AccessTokenAtHashGenerator.builder()
                 .encodedAccessToken(encodedAccessToken)
                 .registeredService(registeredService)

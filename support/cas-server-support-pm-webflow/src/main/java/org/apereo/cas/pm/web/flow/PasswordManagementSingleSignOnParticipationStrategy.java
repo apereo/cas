@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.ServicesManager;
@@ -21,14 +20,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Slf4j
 public class PasswordManagementSingleSignOnParticipationStrategy extends BaseSingleSignOnParticipationStrategy {
-    private final CentralAuthenticationService centralAuthenticationService;
 
     public PasswordManagementSingleSignOnParticipationStrategy(final ServicesManager servicesManager,
                                                                final TicketRegistrySupport ticketRegistrySupport,
-                                                               final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
-                                                               final CentralAuthenticationService centralAuthenticationService) {
+                                                               final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
-        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     @Override
@@ -36,7 +32,7 @@ public class PasswordManagementSingleSignOnParticipationStrategy extends BaseSin
         val token = ssoRequest.getRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
         try {
             if (token.isPresent() && StringUtils.isNotBlank(token.get())) {
-                val ticket = centralAuthenticationService.getTicket(token.get(), TransientSessionTicket.class);
+                val ticket = ticketRegistrySupport.getTicketRegistry().getTicket(token.get(), TransientSessionTicket.class);
                 LOGGER.trace("Token ticket [{}] is valid. SSO will be disabled to allow password-resets", ticket);
                 return false;
             }

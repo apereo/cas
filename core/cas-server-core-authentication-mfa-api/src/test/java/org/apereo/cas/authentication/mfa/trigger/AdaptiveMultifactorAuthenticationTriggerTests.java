@@ -71,7 +71,6 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
     }
 
 
-
     @Test
     @Order(5)
     public void verifyMissingProviders() {

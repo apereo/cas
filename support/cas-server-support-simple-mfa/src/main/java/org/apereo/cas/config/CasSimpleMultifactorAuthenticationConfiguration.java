@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
 import org.apereo.cas.bucket4j.producer.BucketStore;
 import org.apereo.cas.bucket4j.producer.InMemoryBucketStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
@@ -14,28 +14,30 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketImpl;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.mfa.simple.ticket.DefaultCasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.mfa.simple.web.CasSimpleMultifactorAuthenticationEndpoint;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,12 +48,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import java.io.Serial;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationConfiguration}.
@@ -61,29 +66,35 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
 @AutoConfiguration
 public class CasSimpleMultifactorAuthenticationConfiguration {
-
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
-    private static final BeanCondition CONDITION_BUCKET4J_ENABLED = BeanCondition.on("cas.authn.mfa.simple.bucket4j.enabled");
+    private static final BeanCondition CONDITION_BUCKET4J_ENABLED = BeanCondition.on("cas.authn.mfa.simple.bucket4j.enabled").isTrue();
 
     @Configuration(value = "CasSimpleMultifactorAuthenticationActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationActionConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnAvailableEndpoint
+        public CasSimpleMultifactorAuthenticationEndpoint mfaSimpleMultifactorEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return new CasSimpleMultifactorAuthenticationEndpoint(casProperties, applicationContext);
+        }
+
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorSendTokenAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory,
+            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+            final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
             @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier("mfaSimpleMultifactorBucketConsumer")
@@ -93,8 +104,8 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> {
                     val simple = casProperties.getAuthn().getMfa().getSimple();
-                    return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
-                        communicationsManager, ticketFactory, simple,
+                    return new CasSimpleMultifactorSendTokenAction(
+                        communicationsManager, casSimpleMultifactorAuthenticationService, simple,
                         mfaSimpleMultifactorTokenCommunicationStrategy,
                         mfaSimpleMultifactorBucketConsumer);
                 })
@@ -141,7 +152,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @Configuration(value = "CasSimpleMultifactorAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationPlanConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
@@ -183,13 +193,14 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
+            final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final ConfigurableApplicationContext applicationContext) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, CasSimpleMultifactorWebflowConfigurer.MFA_SIMPLE_EVENT_ID);
+            builder.addFlowBuilder(flowBuilder, casProperties.getAuthn().getMfa().getSimple().getId());
             return builder.build();
         }
 
@@ -215,7 +226,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator(final CasConfigurationProperties casProperties) {
-            val simple = casProperties.getAuthn().getMfa().getSimple();
+            val simple = casProperties.getAuthn().getMfa().getSimple().getToken().getCore();
             return new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(simple.getTokenLength());
         }
     }
@@ -252,6 +263,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         private static class CasSimpleMultifactorAuthenticationTicketStringSerializer
             extends AbstractJacksonBackedStringSerializer<CasSimpleMultifactorAuthenticationTicketImpl> {
+            @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
             @Override
@@ -274,7 +286,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @Configuration(value = "CasSimpleMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
     public static class CasSimpleMultifactorTrustConfiguration {
@@ -307,6 +319,53 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             @Qualifier("mfaSimpleMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorTrustWebflowConfigurer);
+        }
+    }
+
+    @Configuration(value = "CasSimpleMultifactorSurrogateAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(SurrogateAuthenticationService.class)
+    public static class CasSimpleMultifactorSurrogateAuthenticationWebflowPlanConfiguration {
+        @Bean
+        @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer")
+        public CasWebflowConfigurer surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return new SurrogateWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "surrogateCasSimpleMultifactorAuthenticationWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExecutionPlanConfigurer surrogateCasSimpleMultifactorAuthenticationWebflowExecutionPlanConfigurer(
+            @Qualifier("surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer")
+            final CasWebflowConfigurer surrogateWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
+        }
+
+        private static class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
+            SurrogateWebflowConfigurer(
+                final FlowBuilderServices flowBuilderServices,
+                final FlowDefinitionRegistry mainFlowDefinitionRegistry,
+                final ConfigurableApplicationContext applicationContext,
+                final CasConfigurationProperties casProperties) {
+                super(flowBuilderServices, mainFlowDefinitionRegistry, applicationContext, casProperties);
+                setOrder(Ordered.LOWEST_PRECEDENCE);
+            }
+
+            @Override
+            protected void doInitialize() {
+                val mfaState = getState(getLoginFlow(), casProperties.getAuthn().getMfa().getSimple().getId());
+                createTransitionForState(mfaState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
+            }
         }
     }
 }

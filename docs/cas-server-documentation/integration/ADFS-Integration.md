@@ -12,7 +12,7 @@ The integration between the CAS Server and ADFS delegates user authentication fr
 to ADFS, making CAS Server a WS-Federation client. Claims released from ADFS are made 
 available as attributes to CAS Server, and by extension CAS Clients.
 
-<div class="alert alert-info"><strong>Remember</strong><p>The functionality described 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>The functionality described 
 here allows CAS to use ADFS as an external identity provider. If you wish to do the 
 opposite, allowing ADFS to become a CAS client and using CAS as an identity 
 provider, you may take advantage of 
@@ -35,7 +35,7 @@ repositories {
 }
 ```
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
+<div class="alert alert-info">:information_source: <strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
 installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. 
 Be sure to pick the right version of the JCE for your Java version. Java 
 versions can be detected via the <code>java -version</code> command.</p></div>
@@ -145,3 +145,14 @@ registry to match the following:
 
 Be aware of clock drift issues between CAS and the ADFS server. Validation failures 
 of the response do show up in the logs, and the request is routed back to ADFS again, causing redirect loops.
+
+To enable additional logging, configure the log4j configuration file to add the following levels:
+
+```xml
+...
+<Logger name="org.apereo.cas.support.wsfederation" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+```

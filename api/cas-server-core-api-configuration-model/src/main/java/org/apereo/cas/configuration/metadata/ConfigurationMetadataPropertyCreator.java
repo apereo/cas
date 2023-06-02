@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,8 +16,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
+import java.io.Serial;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -87,16 +93,28 @@ public class ConfigurationMetadataPropertyCreator {
         val indexedName = indexedGroup.concat(".").concat(name);
 
         val prop = new ConfigurationMetadataProperty();
+
         if (fieldDecl.getJavadoc().isPresent()) {
-            val description = fieldDecl.getJavadoc().get().getDescription().toText();
+            var description = StringUtils.EMPTY;
+            if (indexedName.endsWith(".location")) {
+                val groupProperty = properties.stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(indexedGroup))
+                    .findFirst();
+                if (groupProperty.isPresent()) {
+                    description = groupProperty.get().getDescription() + '\n';
+                }
+            }
+            description += fieldDecl.getJavadoc().get().getDescription().toText();
+
             prop.setDescription(description);
             prop.setShortDescription(StringUtils.substringBefore(description, "."));
+
         } else {
             LOGGER.error("No Javadoc found for field [{}]", indexedName);
         }
         prop.setName(indexedName);
         prop.setId(indexedName);
-        
+
         var elementType = fieldDecl.getElementType();
         val elementTypeStr = elementType.asString();
         if (PRIMITIVES.containsKey(elementTypeStr)) {
@@ -113,11 +131,11 @@ public class ConfigurationMetadataPropertyCreator {
         } else {
             prop.setType(elementTypeStr);
             var parent = fieldDecl.getParentNode().get();
-            
+
             var enumDecl = parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(elementTypeStr));
             if (enumDecl.isPresent()) {
                 val em = enumDecl.get();
-                var builder = collectJavadocsEnumFields(prop, em);
+                val builder = collectJavadocsEnumFields(prop, em);
                 prop.setDescription(builder.toString());
                 em.getFullyQualifiedName().ifPresent(prop::setType);
             }
@@ -126,26 +144,64 @@ public class ConfigurationMetadataPropertyCreator {
         val initializer = variable.getInitializer();
         if (initializer.isPresent()) {
             val exp = initializer.get();
-            if (exp instanceof LiteralStringValueExpr) {
-                prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
-            } else if (exp instanceof BooleanLiteralExpr) {
-                prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
-            } else if (exp instanceof FieldAccessExpr) {
-                prop.setDefaultValue(((FieldAccessExpr) exp).getNameAsString());
+            try {
+                val parentClassInstance = Class.forName(parentClass);
+                if (!Modifier.isAbstract(parentClassInstance.getModifiers())) {
+                    val classInstance = parentClassInstance.getConstructor().newInstance();
+                    val propertyField = parentClassInstance.getDeclaredField(variable.getNameAsString());
+                    propertyField.trySetAccessible();
+                    val resultingValue = propertyField.get(classInstance);
+                    val valueType = resultingValue.getClass();
+                    if (valueType.isArray()) {
+                        prop.setDefaultValue(Arrays.toString((Object[]) resultingValue));
+                    } else if (resultingValue instanceof Collection<?> results) {
+                        if (!results.isEmpty()) {
+                            val values = results.stream()
+                                .map(Object::toString)
+                                .collect(Collectors.joining(","));
+                            prop.setDefaultValue(values);
+                        }
+                    } else if (valueType.isPrimitive() || valueType.isEnum()
+                               || PRIMITIVES.containsKey(valueType.getSimpleName())
+                               || PRIMITIVES.containsKey(elementTypeStr)) {
+                        prop.setDefaultValue(resultingValue.toString());
+                    } else if (resultingValue instanceof Map<?, ?> mappedValue) {
+                        if (!mappedValue.isEmpty()) {
+                            LOGGER.warn("Found configuration property as a Map: [{}]:[{}] with values [{}]",
+                                variable.getNameAsString(), valueType.getName(), mappedValue);
+                        }
+                    } else if (!parentClass.endsWith("Properties")) {
+                        LOGGER.debug("Cannot determine default value; Unknown configuration property type [{}]:[{}]",
+                            variable.getNameAsString(), valueType.getName());
+                    }
+                }
+            } catch (final Exception e) {
+                LOGGER.error("Processing [{}]:[{}]. Error [{}]", parentClass, name, e);
+                if (exp instanceof LiteralStringValueExpr) {
+                    prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
+                } else if (exp instanceof BooleanLiteralExpr) {
+                    prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
+                } else if (exp instanceof FieldAccessExpr) {
+                    prop.setDefaultValue(((NodeWithSimpleName<FieldAccessExpr>) exp).getNameAsString());
+                }
             }
         }
+
+        LOGGER.debug("Collecting property [{}]", prop.getName());
         properties.add(prop);
 
         val grp = new ComparableConfigurationMetadataProperty();
         grp.setId(indexedGroup);
         grp.setName(indexedGroup);
         grp.setType(parentClass);
+        LOGGER.debug("Collecting property [{}]", grp.getName());
         groups.add(grp);
 
         return prop;
     }
 
     private static class ComparableConfigurationMetadataProperty extends ConfigurationMetadataProperty {
+        @Serial
         private static final long serialVersionUID = -7924691650447203471L;
 
         @Override
@@ -161,10 +217,9 @@ public class ConfigurationMetadataPropertyCreator {
             if (obj == this) {
                 return true;
             }
-            if (!(obj instanceof ConfigurationMetadataProperty)) {
+            if (!(obj instanceof ConfigurationMetadataProperty rhs)) {
                 return false;
             }
-            var rhs = (ConfigurationMetadataProperty) obj;
             return new EqualsBuilder().append(getId(), rhs.getId()).isEquals();
         }
     }

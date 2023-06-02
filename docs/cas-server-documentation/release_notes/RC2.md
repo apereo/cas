@@ -4,22 +4,22 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# RC2 Release Notes
+# 7.0.0-RC2 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
-you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS releases are *strictly* time-based
-releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain confidence in a particular
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
+that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks,
+statistics or completion of features. To gain confidence in a particular
 release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
+If you benefit from Apereo CAS as free and open-source software, we invite you
+to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
 and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
 *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
 sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
-ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and
-operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.
 
 ## Get Involved
 
@@ -32,134 +32,129 @@ operates. If you consider your CAS deployment to be a critical part of the ident
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## Overlay
-
-In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html), adjust the following setting:
-
-```properties
-cas.version=6.6.0-RC2
-```
-
-<div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
-</div>
-
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+
+### JDK Requirement
+
+The JDK baseline requirement for this CAS release is and **MUST** be JDK `17`. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+
+### Spring Boot 3
+
+The migration of the entire codebase to Spring Boot 3 and Jakarta APIs is ongoing, and at the moment
+is waiting for the wider ecosystem of suppporting frameworks and libraries to catch up to these changes. 
+As a quick status update, we anticipate the work to finalize in the next release candidate.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `366` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
+### Account Registration
+
+The [account registration functionality](../registration/Account-Registration-Overview.html) now allows user accounts
+to be provisioned to [Apache Syncope](../registration/Account-Registration-Provisioning-Syncope.html).
+
+### Inwebo Multifactor Authentication
+
+Major improvements to [Inwebo Multifactor Authentication](../mfa/Inwebo-Authentication.html) to better detect authentication methods,
+support Inwebo's virtual authenticator and provide better control over push/browser settings. The mAccessWeb enrollment is also
+improved with a PIN code confirmation.
+
+### OpenFGA Access Strategy
+
+A new access strategy is now available to enforce fine-grained authorization 
+requests based on [Auth0's OpenFGA](../services/Service-Access-Strategy-OpenFGA.html).
  
-### OpenID Connect Compliance
+### Simple Multifactor Authentication
 
-The collection of algorithms specified in the CAS configuration for signing and encryption operations of ID tokens are now taken into account when CAS responses are produced for ID token and user profile requests. Furthermore, settings and values declared in CAS configuration for OpenID Connect discovery are now taken into account when responding or validating requests. These include supported scopes when building attribute release policies for each OpenID Connect scope, supported ACR values, response modes, prompt values, response types and grant types.
+The [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) module can now enable
+a special actuator endpoint to allow REST clients to create tokens programmatically. This extension module is also enhanced
+to support [REST-based authentication](../protocol/REST-Protocol-CredentialAuthentication.html) via a special `sotp` parameter, 
+in scenarios where the request may require and/or trigger multifactor authentication.
 
-### SAML2 Integration Tests
+### REST Authentication
 
-SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
+Support for [REST authentication](../authentication/Rest-Authentication.html) is now improved to support
+multiple REST endpoints and configuration blocks.
 
-### OpenID Connect Issuer Aliases
+### OPA Access Strategy
 
-CAS configuration for [OpenID Connect](../protocol/OIDC-Protocol.html) is now extended to support issuer aliases. Essentially, endpoint validation for OpenID Connect can now be be reached via alternative URLs that are trusted and registered in CAS as aliases of the issuer.
+A new access strategy is now available to enforce fine-grained authorization
+requests based on [Open Policy Agent](../services/Service-Access-Strategy-OpenPolicyAgent.html).
 
-### Bucket4j Capacity Planning
+### Duo Security Enrollment
 
-Integrations with Bucket4j such as those that [throttle authentication attempts](../authentication/Configuring-Authentication-Throttling.html) or request [simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) tokens are now able to construct and allocate buckets for individual requests as opposed to preparing a global bucket for the entire server instance. The allocation strategy is specific to the client IP address.
+If you would rather not rely on [Duo Security](../mfa/DuoSecurity-Authentication.html)’s built-in 
+registration flow and have your own registration application 
+that allows users to onboard and enroll with Duo Security, you can instruct CAS to redirect to your enrollment 
+application, if the user’s account status is determined to require enrollment with a special `principal` parameter
+that contains the user’s identity as JWT.
 
-### Feature Toggles
+### OpenID Connect JARM
 
-Support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now extended and handled by all CAS modules.
+Initial support for [JWT Secured Authorization Response Mode](../authentication/OIDC-Authentication-JARM.html) is now available for OpenID Connect.
+     
+### Delegated Authentication Profile Selection
 
-### OpenID Connect Client Registration
+[Delegated authentication profile selection](../integration/Delegate-Authentication-ProfileSelection.html) can 
+now support an LDAP directory to locate candidate linked profiles.
 
-[Dynamic Client Registration](../authentication/OIDC-Authentication-Clients.html) is now able to support an expiration date for client secrets and registration requests. Authentication requests from clients with an expired client secret blocked until the application renews its client secret. Furthermore, the client configuration endpoint is now able to accept `PATCH` requests to update existing application records, or it may also be used to renew the client secret, if and when expired.
+### Redis Ticket Registry
 
-Also in a situation where CAS is supporting open client registration, it will now check to see if the `logo_uri` and `policy_uri` have the same host as the hosts defined in the array of `redirect_uris`.
- 
-### Delegation Redirection Strategy
+A series of performance improvements to the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) 
+to support synchronized caching and better key selection criteria across CAS server nodes in a clustered deployment. 
 
-The Groovy [redirection strategy](../integration/Delegate-Authentication-Redirection.html) for delegated authentication
-is now modified to receive a list of all available providers upfront for better performance, in case the script needs to handle repeated tasks. 
+### DynamoDb Ticket Registry
 
-<div class="alert alert-warning"><strong>Breaking Change!</strong><p>You will need to examine the script you have today and rewrite certain parts of it to handle the signature change.</p></div>
-
-### CAS Initializr Projects
-
-[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now updated to produce and sync WAR overlay projects for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management-SpringCloud.html). Furthermore, along with the `6.4.x` and `6.5.x` releases of the CAS Management web application, CAS Initializr has been updated to produce WAR overlays for those builds as well.
-
-### SAML2 Authentication Context Class
-
-Building a SAML2 authentication context class can now be done in more dynamic 
-ways using a [Groovy script](../installation/Configuring-SAML2-AuthnContextClass.html). 
-
-### Spring Framework RCE
-
-As part of routine dependency upgrades and library maintenance, the version of the Spring Framework used by CAS is also bumped to remove the threat of the RCE vulnerability [discussed here](https://apereo.github.io/2022/03/31/spring-vuln/).
-
-### Puppeteer Testing Strategy
-
-The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `255` jobs. At the moment, total number of jobs stands at approximately `277` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
-
-### Password Management
-
-CAS may also allow individual end-users to update certain aspects of their account that relate to password management in a *mini portal* like setup, such as resetting the password or updating security questions, etc.
-
-<img width="100%" alt="image" src="https://user-images.githubusercontent.com/1205228/160280056-ec2244f1-acb3-44fb-93cc-ee3ac5e541e6.png">
-
-### Groovy GeoLocation
-
-Authentication requests can be mapped and geo-tracked to [physical locations](../authentication/GeoTracking-Authentication-Requests.html) using Groovy scripts. 
-
-### Google Authenticator Scratch Codes
-
-CAS now allows to encrypt the Google Authenticator scratch codes to protect their values. This is enabled when the following key is set: `cas.authn.mfa.gauth.core.scratch-codes.encryption.key`. You must notice that while the encrypted scratch codes are still numbers, they are in fact encrypted forms of the same scratch code encoded as large numbers. Note that previous, existing scratch codes will continue to work as they did before.
-
-<div class="alert alert-warning"><strong>Breaking Change!</strong><p>You may need to massage the underlying data model to account for this change. See notes below on how to handle this for relational databases.</p></div>
-
-In case you are managing device registration records in a database, the `scratch_codes` column in the `scratch_codes` table in the database needs to be updated. For example for PostgreSQL, you must run this SQL command to alter the column from an `int4` to a `numeric`:
-
-```sql
-ALTER TABLE scratch_codes ALTER COLUMN scratch_codes TYPE numeric USING scratch_codes::numeric;
-```
-
-This should be very similar for other databases: you need to migrate the column type from `integer` to `numeric`.
+When creating tickets, the [DynamoDb Ticket Registry](../ticketing/DynamoDb-Ticket-Registry.html) will adjust tables to enable auto-expiry of 
+ticket objects. On a per-table basis, a special `expiration` attribute is assigned to the table which is the expiration time of the ticket 
+in POSIX timestamp format. This attribute is automatically defined, calculated and populated for all ticket objects. Doing so should allow you
+to turn off the ticket registry cleaner and let DynamoDb remove expired objects on its own. Furthermore, a number of performance 
+improvements are now in place to support scanning, counting and updating ticket objects in DynamoDb using pagination and batch operations.
 
 ## Other Stuff
-      
-- Minor UI improvements to ensure "Reveal Password" buttons line up correctly in input fields.
-- The SAML2 attribute definition catalog is extended to support a few *known* attributes such as `title`, `eduPersonNickname`, etc.
-- Using "Provider Selection" in combination with a multifactor authentication policy for a service that triggers on principal attributes is now supported.
-- Links displayed as part of an [interrupt notification](../webflow/Webflow-Customization-Interrupt.html) can now take advantage of single sign-on sessions.
-- Support for [Apache Shiro](../authentication/Shiro-Authentication.html) is now deprecated; this feature is scheduled to be removed.
-- Minor bug fixes to correct the device registration flow for [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html). 
-- Documentation improvements to take advantage of [DataTables](https://www.datatables.net/) instead to show and paginate CAS configuration properties.
-- Support for graceful shutdowns for all *embedded* servlet containers such as Apache Tomcat.
-- Multifactor provider selection can now function in [delegated authentication](../integration/Delegate-Authentication.html) flows when required.
-- OAuth and OpenID Connect userinfo/profile endpoints are now able to accept `application/jwt` as a supported content type.
+
+- Small adjustments to [attribute consent](../integration/Attribute-Release-Consent-Activation.html) rules when activated for and assigned to a specific 
+  service definition. 
+- Client secrets for [OpenID Connect Services](../authentication/OIDC-Authentication-Clients.html) are now URL-decoded before validations.
+- A [DynamoDb-based health indicator](../monitoring/Configuring-Monitoring-DynamoDb.html) is available to report back on the health status of
+  DynamoDb tables and connections.
+- [Git service registry](../services/Git-Service-Management.html) is now able to support rebase operations.
+- SSO sessions under [account profile](../registration/Account-Management-Overview.html) can now be selectively removed.
+- Authentication attributes can now optionally be included in OpenID Connect ID token or user profile payloads. 
+- The ability to secure actuator endpoints via subnet addresses is now restored.
+- The persistence units for all JPA integrations are now corrected to refer to the defined unit name.
+- Username providers [based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) are now able to remove text from the final username 
+  using regular expressions. 
+- Performance improvements to [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html), particularly around fetching tickets from Redis.
 
 ## Library Upgrades
-      
-- Infinispan
-- Netty
-- TextMagic
+
+- Spring Boot   
 - Apache Tomcat
-- Nimbus
-- OpenSAML
-- Hibernate
-- Spring Data
-- Spring
-- Spring Boot
-- Spring WS
-- Spring Kafka
-- Spring Integration
-- Hazelcast
-- InfluxDb
-- Micrometer
-- Hibernate
-- MariaDb
-- Oshi
-- Okta
+- Twilio
 - Jose4j
-- Lettuce
+- Gradle
+- Apache Ignite
 - Apache Shiro
-- Joda Time
-- Font Awesome
-- Pac4j
+- Netty
+- Errorprone
+- Jackson
+- Hazelcast
+- Lettuce
+- Micrometer
+- Nimbus
+- InfluxDb
+- WSS4j
+- Hibernate
+- Groovy
+- HAL Explorer
+- Swagger
+- Jodatime
+- Spring Data
+- Azure CosmosDb
+- MongoDb

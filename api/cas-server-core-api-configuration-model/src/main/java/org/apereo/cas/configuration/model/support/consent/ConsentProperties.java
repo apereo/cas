@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("ConsentProperties")
 public class ConsentProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5201308051524438384L;
 
     /**
@@ -80,12 +82,6 @@ public class ConsentProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbConsentProperties mongo = new MongoDbConsentProperties();
-
-    /**
-     * Keep consent decisions stored via a CouchDb database resource.
-     */
-    @NestedConfigurationProperty
-    private CouchDbConsentProperties couchDb = new CouchDbConsentProperties();
 
     /**
      * Keep consent decisions stored via a DynamoDb database resource.

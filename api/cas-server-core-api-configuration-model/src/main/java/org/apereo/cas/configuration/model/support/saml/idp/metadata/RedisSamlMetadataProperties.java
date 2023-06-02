@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * Configuration properties class mongodb service registry.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("RedisSamlMetadataProperties")
 public class RedisSamlMetadataProperties extends BaseRedisProperties {
 
+    @Serial
     private static final long serialVersionUID = -227092724742371662L;
 
     /**
@@ -31,7 +34,7 @@ public class RedisSamlMetadataProperties extends BaseRedisProperties {
      * are expected to be found in the database.
      */
     private boolean idpMetadataEnabled;
-    
+
     /**
      * Crypto settings that sign/encrypt the metadata records.
      */

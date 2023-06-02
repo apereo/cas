@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JpaOidcJsonWebKeystoreProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("JpaOidcJsonWebKeystoreProperties")
 public class JpaOidcJsonWebKeystoreProperties extends AbstractJpaProperties {
+    @Serial
     private static final long serialVersionUID = 1633689616653363554L;
 
     /**

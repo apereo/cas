@@ -1,0 +1,34 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "sonarqube",
+  "clientSecret": "S0n@rq#b3S3cr3t",
+  "bypassApprovalPrompt": true,
+  "serviceId": "https://host.k3d.internal/.*",
+  "name": "Sonarqube",
+  "id": 20221009,
+  "description": "Sonarqube Service",
+  "evaluationOrder": 1,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "email" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code", "token", "id_token token", "id_token" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "refresh_token", "authorization_code" ] ],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy",
+          "order": 1,
+          "claimMappings" : {
+            "@class" : "java.util.TreeMap",
+            "preferred_username" : "username"
+          }
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
+          "order": 1
+        }
+      ]
+    ]
+  }
+}

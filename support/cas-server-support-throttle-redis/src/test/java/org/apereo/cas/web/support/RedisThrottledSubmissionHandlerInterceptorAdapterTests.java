@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.authn.throttle.core.usernameParameter=username",
+        "cas.authn.throttle.core.username-parameter=username",
         "cas.authn.throttle.failure.range-seconds=5",
         "cas.audit.redis.host=localhost",
         "cas.audit.redis.port=6379",
@@ -34,7 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
-    @Qualifier("authenticationThrottle")
+    @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 
 }

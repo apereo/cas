@@ -9,8 +9,10 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
+import java.io.Serial;
 
 /**
  * This is {@link GoogleSaml20ObjectBuilder} that
@@ -24,6 +26,7 @@ import javax.xml.namespace.QName;
 @EqualsAndHashCode(callSuper = true)
 @Deprecated(since = "6.2.0")
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
+    @Serial
     private static final long serialVersionUID = 2979638064754730668L;
 
     public GoogleSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {

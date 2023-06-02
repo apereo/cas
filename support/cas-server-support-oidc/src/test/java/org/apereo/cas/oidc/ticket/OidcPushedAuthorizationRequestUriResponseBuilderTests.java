@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.ticket.InvalidTicketException;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,6 +21,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,7 +55,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())
-            .authentication(RegisteredServiceTestUtils.getAuthentication())
+            .authentication(RegisteredServiceTestUtils.getAuthentication("casuser",
+                Map.of("customAttribute", List.of("CASUSER-ORIGINAL"))))
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
@@ -84,11 +89,13 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
 
         request.addParameter(OidcConstants.REQUEST_URI, uri);
 
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
+            Map.of("customAttribute", List.of("CASUSER-TGT")));
+        val tgt = new MockTicketGrantingTicket(authn);
         ticketRegistry.addTicket(tgt);
 
-        val c = ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
-        request.setCookies(c);
+        val cookie = ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
+        request.setCookies(cookie);
 
         context = new JEEContext(request, response);
         authzRequest = oidcPushedAuthorizationRequestResponseBuilder.toAuthorizationRequest(context,
@@ -100,7 +107,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         assertNotNull(accessTokenRequest.getResponseType());
         assertNotNull(accessTokenRequest.getGrantType());
         assertNotNull(accessTokenRequest.getTicketGrantingTicket());
-        ticket = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);
-        assertNull(ticket);
+        val customAttribute = accessTokenRequest.getAuthentication().getAttributes().get("customAttribute");
+        assertEquals(List.of("CASUSER-TGT", "CASUSER-ORIGINAL"), customAttribute);
+        assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class));
     }
 }

@@ -10,6 +10,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 
+import java.io.Serial;
+
 /**
  * This is {@link LiteralRegisteredServiceMatchingStrategy}.
  *
@@ -25,6 +27,7 @@ import lombok.val;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class LiteralRegisteredServiceMatchingStrategy implements RegisteredServiceMatchingStrategy {
+    @Serial
     private static final long serialVersionUID = -8345895859210185565L;
 
     private boolean caseInsensitive;

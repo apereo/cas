@@ -49,8 +49,8 @@ public class DefaultServiceRegistryInitializer implements ServiceRegistryInitial
             .stream()
             .sorted(Comparator.naturalOrder())
             .forEach(serviceRegistry::synchronize);
-        this.servicesManager.load();
+        servicesManager.load();
         LOGGER.info("Service registry [{}] contains [{}] service definitions",
-            this.serviceRegistry.getName(), this.servicesManager.count());
+            serviceRegistry.getName(), servicesManager.count());
     }
 }

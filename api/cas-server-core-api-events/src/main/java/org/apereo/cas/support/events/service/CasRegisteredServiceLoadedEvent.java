@@ -4,6 +4,9 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
+
+import java.io.Serial;
 
 /**
  * This is {@link CasRegisteredServiceLoadedEvent} that is signaled
@@ -16,6 +19,7 @@ import lombok.ToString;
 @Getter
 public class CasRegisteredServiceLoadedEvent extends BaseCasRegisteredServiceEvent {
 
+    @Serial
     private static final long serialVersionUID = 290968299766263298L;
 
     private final RegisteredService registeredService;
@@ -26,8 +30,8 @@ public class CasRegisteredServiceLoadedEvent extends BaseCasRegisteredServiceEve
      * @param source            the source
      * @param registeredService the registered service
      */
-    public CasRegisteredServiceLoadedEvent(final Object source, final RegisteredService registeredService) {
-        super(source);
+    public CasRegisteredServiceLoadedEvent(final Object source, final RegisteredService registeredService, final ClientInfo clientInfo) {
+        super(source, clientInfo);
         this.registeredService = registeredService;
     }
 }

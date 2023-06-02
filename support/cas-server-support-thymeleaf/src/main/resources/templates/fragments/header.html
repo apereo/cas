@@ -64,7 +64,7 @@
         </nav>
     </header>
 
-    <div th:replace="fragments/logindrawer :: logindrawer"/>
+    <div th:replace="~{fragments/logindrawer :: logindrawer}"/>
 
     <script>var countMessages = 0;</script>
     <div
@@ -92,7 +92,7 @@
                         </p>
                     </div>
                     <div class="cas-notification-message mdc-typography--body1"
-                         th:if="${not #httpServletRequest.secure}">
+                         th:unless="${httpRequestSecure}">
                         <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.nonsecure.title}"/>
                         <script>countMessages++;</script>
@@ -100,9 +100,18 @@
                             Unsure Connection
                         </p>
                     </div>
+
+                    <div id="cookiesSupportedDiv" class="cas-notification-message mdc-typography--body1" style="display: none">
+                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                            th:utext="#{screen.cookies.disabled.title}"></h6>
+                        <p class="text-wrap small" th:utext="#{screen.cookies.disabled.message}">
+                            Cookies are not supported by this browser.
+                        </p>
+                    </div>
+
                 </div>
                 <footer class="mdc-dialog__actions modal-footer">
-                    <button type="button" class="mdc-button mdc-dialog__button btn btn-primary"
+                    <button type="button" class="mdc-button mdc-button--raised mdc-dialog__button btn btn-primary"
                             data-mdc-dialog-action="accept"
                             data-mdc-dialog-button-default
                             data-bs-dismiss="modal">
@@ -123,10 +132,10 @@
                     material.autoInit();
                 },
                 attachDrawer: () => {
-                    var elm = document.getElementById('app-drawer');
+                    let elm = document.getElementById('app-drawer');
                     if (elm != null) {
-                        var drawer = material.drawer.MDCDrawer.attachTo(elm);
-                        var closeDrawer = evt => {
+                        let drawer = material.drawer.MDCDrawer.attachTo(elm);
+                        let closeDrawer = evt => {
                             drawer.open = false;
                         };
                         drawer.foundation.handleScrimClick = closeDrawer;
@@ -151,14 +160,6 @@
                     }
                     if (dialog != undefined) {
                         header.attachNotificationToggle(dialog);
-                    }
-                },
-                checkCaps: ev => {
-                    let s = String.fromCharCode(ev.which);
-                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                        ev.target.parentElement.classList.add('caps-on');
-                    } else {
-                        ev.target.parentElement.classList.remove('caps-on');
                     }
                 },
                 attachDrawerToggle: drawer => {
@@ -189,10 +190,28 @@
                     }
                 }
             }
+            function supportsCookies() {
+                try {
+                    document.cookie = 'testcookie=1';
+                    let ret = document.cookie.indexOf('testcookie=') !== -1;
+                    document.cookie = 'testcookie=1; expires=Thu, 01-Jan-1970 00:00:01 GMT';
+                    return ret;
+                } catch (e) {
+                    console.log(e);
+                    return false;
+                }
+            }
+
             document.addEventListener('DOMContentLoaded', () => {
                 if (material) {
                     header.init();
                 }
+
+                if (!supportsCookies()) {
+                    countMessages++;
+                    window.jQuery('#cookiesSupportedDiv').show();
+                }
+
                 if (countMessages === 0) {
                     window.jQuery('#notifications-count').remove();
                     window.jQuery('#cas-notifications-menu').remove();

@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.inspektr.common.web.ClientInfo;
 
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -17,14 +19,17 @@ import java.util.Map;
 @ToString(callSuper = true)
 @Getter
 public class CasAuthenticationPolicyFailureEvent extends CasAuthenticationTransactionFailureEvent {
+    @Serial
     private static final long serialVersionUID = 2208076621158767073L;
+
     private final Authentication authentication;
+
 
     public CasAuthenticationPolicyFailureEvent(final Object source,
                                                final Map<String, Throwable> failures,
                                                final AuthenticationTransaction transaction,
-                                               final Authentication authentication) {
-        super(source, failures, transaction.getCredentials());
+                                               final Authentication authentication, final ClientInfo clientInfo) {
+        super(source, failures, transaction.getCredentials(), clientInfo);
         this.authentication = authentication;
     }
 }

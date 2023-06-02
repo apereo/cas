@@ -59,13 +59,13 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     }
 
     @Override
-    protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
+    protected UsernamePasswordCredentials convertToCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
         val username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (StringUtils.isBlank(username)) {
             throw new AccountNotFoundException("Username is null.");
         }
-        val password = this.passwordEncoder.encode(casCredential.getPassword());
+        val password = this.passwordEncoder.encode(casCredential.toPassword());
         val credentials = new UsernamePasswordCredentials(username, password);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;

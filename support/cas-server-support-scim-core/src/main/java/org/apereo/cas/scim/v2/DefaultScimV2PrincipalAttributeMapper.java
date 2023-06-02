@@ -5,17 +5,16 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.unboundid.scim2.common.types.Email;
-import com.unboundid.scim2.common.types.Meta;
-import com.unboundid.scim2.common.types.Name;
-import com.unboundid.scim2.common.types.PhoneNumber;
-import com.unboundid.scim2.common.types.UserResource;
+import de.captaingoldfish.scim.sdk.common.resources.User;
+import de.captaingoldfish.scim.sdk.common.resources.complex.Meta;
+import de.captaingoldfish.scim.sdk.common.resources.complex.Name;
+import de.captaingoldfish.scim.sdk.common.resources.multicomplex.Email;
+import de.captaingoldfish.scim.sdk.common.resources.multicomplex.PhoneNumber;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.ZoneOffset;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 /**
  * This is {@link DefaultScimV2PrincipalAttributeMapper}.
@@ -25,13 +24,12 @@ import java.util.TimeZone;
  */
 public class DefaultScimV2PrincipalAttributeMapper implements ScimV2PrincipalAttributeMapper {
     @Override
-    public void map(final UserResource user, final Principal principal, final Credential credential) {
+    public void map(final User user, final Principal principal, final Credential credential) {
         user.setUserName(principal.getId());
         if (credential instanceof UsernamePasswordCredential) {
-            user.setPassword(UsernamePasswordCredential.class.cast(credential).getPassword());
+            user.setPassword(UsernamePasswordCredential.class.cast(credential).toPassword());
         }
         user.setActive(Boolean.TRUE);
-
         user.setNickName(getPrincipalAttributeValue(principal, "nickName"));
         user.setDisplayName(getPrincipalAttributeValue(principal, "displayName"));
 
@@ -53,11 +51,12 @@ public class DefaultScimV2PrincipalAttributeMapper implements ScimV2PrincipalAtt
         user.setPhoneNumbers(CollectionUtils.wrap(phone));
 
         user.setExternalId(getPrincipalAttributeValue(principal, "externalId", principal.getId()));
+        user.setGroups(null);
 
-        if (user.getMeta() == null) {
+        if (user.getMeta().isEmpty()) {
             val meta = new Meta();
-            meta.setCreated(Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC)));
-            meta.setResourceType(user.getUserType());
+            meta.setCreated(LocalDateTime.now(Clock.systemUTC()));
+            meta.setResourceType(getPrincipalAttributeValue(principal, "resourceType", "Unknown"));
             user.setMeta(meta);
         }
     }

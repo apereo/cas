@@ -7,10 +7,9 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link SamlAttributeQueryTicketExpirationPolicyBuilder}.
@@ -18,26 +17,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class SamlAttributeQueryTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlAttributeQueryTicket> {
+public record SamlAttributeQueryTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<SamlAttributeQueryTicket> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<SamlAttributeQueryTicket> getTicketType() {
-        return SamlAttributeQueryTicket.class;
     }
 
     /**

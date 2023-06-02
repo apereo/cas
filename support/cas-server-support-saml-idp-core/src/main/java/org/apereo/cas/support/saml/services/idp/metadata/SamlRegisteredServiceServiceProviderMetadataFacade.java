@@ -7,13 +7,13 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -35,6 +35,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,16 +50,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class SamlRegisteredServiceServiceProviderMetadataFacade {
-
-    private final SPSSODescriptor ssoDescriptor;
-
-    private final EntityDescriptor entityDescriptor;
-
-    @Getter
-    private final MetadataResolver metadataResolver;
+public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor ssoDescriptor, EntityDescriptor entityDescriptor, @Getter MetadataResolver metadataResolver) {
 
     /**
      * Adapt saml metadata and parse. Acts as a facade.
@@ -68,11 +60,16 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param entityID          the entity id
      * @return the saml metadata adaptor
      */
-    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                   final SamlRegisteredService registeredService,
-                                                                                   final String entityID) {
-        val criteria = new CriteriaSet(new EntityIdCriterion(entityID), new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        return get(resolver, registeredService, entityID, criteria);
+    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredService registeredService,
+        final String entityID) {
+        return Optional.ofNullable(entityID)
+            .map(id -> {
+                val criteria = new CriteriaSet(new EntityIdCriterion(id),
+                    new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                return get(resolver, registeredService, entityID, criteria);
+            }).orElseGet(Optional::empty);
     }
 
     /**
@@ -83,9 +80,10 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @param request           the request
      * @return the saml metadata adaptor
      */
-    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                   final SamlRegisteredService registeredService,
-                                                                                   final RequestAbstractType request) {
+    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredService registeredService,
+        final RequestAbstractType request) {
         return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 
@@ -98,11 +96,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
             criterions.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-            val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+            val cachedMetadataResolver = resolver.resolve(registeredService, criterions).getMetadataResolver();
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
-                registeredService.getMetadataLocation(), chainingMetadataResolver.getId(), entityID);
+                registeredService.getMetadataLocation(), cachedMetadataResolver.getId(), entityID);
 
-            val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+            val entityDescriptor = cachedMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criterions);
                 return Optional.empty();
@@ -117,7 +115,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                     return Optional.empty();
                 }
             }
-            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+            return getServiceProviderSsoDescriptor(entityID, cachedMetadataResolver, entityDescriptor);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -215,8 +213,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         val nameIdFormats = new ArrayList<String>();
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
-            nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                .map(child -> ((NameIDFormat) child).getURI()).collect(Collectors.toList()));
+            nameIdFormats.addAll(children.stream()
+                .filter(NameIDFormat.class::isInstance)
+                .map(child -> ((XSURI) child).getURI())
+                .filter(Objects::nonNull)
+                .toList());
         }
         return nameIdFormats;
     }
@@ -246,8 +247,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @return the assertion consumer service
      */
     public AssertionConsumerService getAssertionConsumerService(final String binding) {
-        val acsList = getAssertionConsumerServices().stream()
-            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).collect(Collectors.toList());
+        val acsList = getAssertionConsumerServices()
+            .stream()
+            .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
+            .collect(Collectors.toList());
         return SAML2MetadataSupport.getDefaultIndexedEndpoint(acsList);
     }
 
@@ -272,6 +276,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public List<String> getAssertionConsumerServiceLocations(final String binding) {
         return getAssertionConsumerServices()
             .stream()
+            .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
             .collect(Collectors.toList());
@@ -287,6 +292,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public Optional<String> getAssertionConsumerServiceFor(final String binding, final Integer index) {
         return getAssertionConsumerServices()
             .stream()
+            .filter(acs -> Objects.nonNull(acs) && Objects.nonNull(acs.getBinding()))
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding) && index != null && index.equals(acs.getIndex()))
             .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
             .findFirst();

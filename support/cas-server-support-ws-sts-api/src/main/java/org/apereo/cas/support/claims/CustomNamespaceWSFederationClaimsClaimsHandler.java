@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 
+import java.io.Serial;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class CustomNamespaceWSFederationClaimsClaimsHandler extends NonWSFederat
 
     @RequiredArgsConstructor
     private static class CustomNamespaceWSFederationClaimsList extends ArrayList<String> {
+        @Serial
         private static final long serialVersionUID = 8368878016992806802L;
 
         private final List<String> namespaces;

@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * Configuration properties class for tgc.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("TicketGrantingCookieProperties")
 public class TicketGrantingCookieProperties extends PinnableCookieProperties {
 
+    @Serial
     private static final long serialVersionUID = 7392972818105536350L;
 
     /**
@@ -46,7 +49,7 @@ public class TicketGrantingCookieProperties extends PinnableCookieProperties {
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public TicketGrantingCookieProperties() {
-        super.setName("TGC");
+        setName("TGC");
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

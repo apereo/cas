@@ -3,9 +3,9 @@ package org.apereo.cas.config;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.query.extractor.ValueCollector;
 import lombok.val;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,10 +21,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    HazelcastSessionConfiguration.class
-})
+@SpringBootTest(
+    classes = {
+        RefreshAutoConfiguration.class,
+        HazelcastSessionConfiguration.class
+    },
+    properties = "cas.webflow.session.server.hazelcast.cluster.core.instance-name=hzsessioninstance")
 @Tag("Hazelcast")
 public class HazelcastSessionConfigurationTests {
     @Autowired
@@ -35,11 +37,11 @@ public class HazelcastSessionConfigurationTests {
     public void verifyOperation() {
         assertNotNull(hazelcastInstance);
         val extractor = new HazelcastSessionPrincipalNameExtractor();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                extractor.extract(new MapSession(), "casuser", mock(ValueCollector.class));
-            }
-        });
+        assertDoesNotThrow(() -> extractor.extract(new MapSession(), "casuser", mock(ValueCollector.class)));
+    }
+
+    @AfterEach
+    public void shutdown() {
+        hazelcastInstance.shutdown();
     }
 }

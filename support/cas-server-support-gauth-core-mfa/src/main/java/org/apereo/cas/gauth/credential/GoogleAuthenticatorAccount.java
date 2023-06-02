@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 /**
  * This is {@link GoogleAuthenticatorAccount}.
  *
@@ -16,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
 public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
+    @Serial
     private static final long serialVersionUID = 2441775052626253711L;
 
     /**

@@ -38,7 +38,6 @@ import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMe
 import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
@@ -46,15 +45,17 @@ import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderPr
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.validation.annotation.Validated;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
@@ -65,17 +66,20 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(value = "cas")
+@ConfigurationProperties("cas")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CasConfigurationProperties")
+@RequiresModule(name = "cas-server-core-api", automated = true)
+@Validated
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.
      */
     public static final String PREFIX = "cas";
 
+    @Serial
     private static final long serialVersionUID = -8620267783496071683L;
 
     /**
@@ -348,12 +352,6 @@ public class CasConfigurationProperties implements Serializable {
     private SpringCloudConfigurationProperties spring = new SpringCloudConfigurationProperties();
 
     /**
-     * Session replication properties.
-     */
-    @NestedConfigurationProperty
-    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
-
-    /**
      * Account registration settings.
      */
     @NestedConfigurationProperty
@@ -369,15 +367,10 @@ public class CasConfigurationProperties implements Serializable {
         return new Holder(this);
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    @SuppressWarnings("UnusedMethod")
-    private static class Holder implements Serializable {
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    private record Holder(CasConfigurationProperties cas) implements Serializable {
+        @Serial
         private static final long serialVersionUID = -3129941286238115568L;
 
-        /**
-         * Reference to configuration settings.
-         */
-        private final CasConfigurationProperties cas;
     }
 }

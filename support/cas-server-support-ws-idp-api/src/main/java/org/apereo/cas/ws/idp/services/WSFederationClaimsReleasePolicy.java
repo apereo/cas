@@ -16,9 +16,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,6 +36,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+    @Serial
     private static final long serialVersionUID = -2814928645221579489L;
 
     private Map<String, String> allowedAttributes = new LinkedHashMap<>();
@@ -52,11 +55,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
         getAllowedAttributes()
             .entrySet()
             .stream()
-            .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase()))
+            .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase(Locale.ENGLISH)))
             .forEach(entry -> {
                 val claimName = entry.getKey();
                 val attributeValue = resolvedAttributes.get(entry.getValue());
-                val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
+                val claim = WSFederationClaims.valueOf(claimName.toUpperCase(Locale.ENGLISH));
                 if (resolvedAttributes.containsKey(claim.getUri())) {
                     attributesToRelease.put(claim.getUri(), resolvedAttributes.get(claim.getUri()));
                 } else {

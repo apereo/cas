@@ -9,14 +9,13 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link UmaFindPolicyForResourceSetEndpointController}.
@@ -39,12 +38,12 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @param response   the response
      * @return the policy for resource set
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL,
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                    final HttpServletRequest request,
-                                                    final HttpServletResponse response) {
+    @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
+    public ResponseEntity getPoliciesForResourceSet(
+        @PathVariable("resourceId")
+        final long resourceId,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
@@ -72,13 +71,14 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @param response   the response
      * @return the policy for resource set
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPolicyForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                  @PathVariable(value = "policyId") final long policyId,
-                                                  final HttpServletRequest request,
-                                                  final HttpServletResponse response) {
+    @GetMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    public ResponseEntity getPolicyForResourceSet(
+        @PathVariable("resourceId")
+        final long resourceId,
+        @PathVariable("policyId")
+        final long policyId,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);

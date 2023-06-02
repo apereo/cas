@@ -36,10 +36,10 @@ public class WebApplicationServiceResponseBuilderTests {
 
         val servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
-        
+
         val builder = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance());
         val response = builder.build(service, "SERVICE_TICKET_ID", mock(Authentication.class));
         assertNotNull(response);
-        assertEquals("https://example.org?ticket=SERVICE_TICKET_ID", response.getUrl());
+        assertEquals("https://example.org?ticket=SERVICE_TICKET_ID", response.url());
     }
 }

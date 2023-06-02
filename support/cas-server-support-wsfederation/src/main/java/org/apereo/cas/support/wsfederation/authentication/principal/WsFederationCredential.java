@@ -1,6 +1,6 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -27,8 +28,9 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WsFederationCredential implements Credential {
+public class WsFederationCredential extends AbstractCredential {
 
+    @Serial
     private static final long serialVersionUID = -824605020472810939L;
 
     private String audience;

@@ -38,14 +38,8 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
 @SuppressWarnings("JavaUtilDate")
-public class DynamoDbAuditTrailManagerFacilitator {
-    private final AuditDynamoDbProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
-
+public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
     /**
      * Build table attribute values map.
      *
@@ -143,7 +137,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
                     val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
                     val time1 = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
                     return new AuditActionContext(principal, resource, actionPerformed,
-                        appCode, new Date(time1), clientIp, serverIp, userAgent);
+                        appCode, new Date(time1), clientIp, serverIp, userAgent, Map.of());
                 })
             .collect(Collectors.toSet());
     }

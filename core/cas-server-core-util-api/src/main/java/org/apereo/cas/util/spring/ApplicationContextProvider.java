@@ -8,7 +8,9 @@ import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttribu
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.text.MessageSanitizer;
 
+import lombok.Synchronized;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
@@ -16,6 +18,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,12 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return CONTEXT;
     }
 
+    @Override
+    public void setApplicationContext(
+        @Nonnull final ApplicationContext context) {
+        CONTEXT = context;
+    }
+
     /**
      * Process bean injections.
      *
@@ -47,11 +57,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
             bpp.setBeanFactory(ac.getAutowireCapableBeanFactory());
             bpp.processInjection(bean);
         }
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext context) {
-        CONTEXT = context;
     }
 
     /**
@@ -102,6 +107,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @param beanId             the bean id
      * @return the t
      */
+    @Synchronized
     public static <T> T registerBeanIntoApplicationContext(final ConfigurableApplicationContext applicationContext,
                                                            final T beanInstance, final String beanId) {
         val beanFactory = applicationContext.getBeanFactory();
@@ -193,6 +199,18 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         if (CONTEXT != null && CONTEXT.containsBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)) {
             return Optional.of(CONTEXT.getBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME,
                 PrincipalAttributesRepositoryCache.class));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets messag sanitizer.
+     *
+     * @return the messag sanitizer
+     */
+    public static Optional<MessageSanitizer> getMessagSanitizer() {
+        if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
+            return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
         }
         return Optional.empty();
     }

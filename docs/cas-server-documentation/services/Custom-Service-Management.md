@@ -13,7 +13,7 @@ If you wish to design your own implementation of a service registry, you will ne
 ```java
 package org.apereo.cas.support;
 
-@Configuration(value = "myConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 

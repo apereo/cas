@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.Security;
 import java.util.Optional;
@@ -56,6 +57,7 @@ public abstract class AbstractRadiusServer implements RadiusServer {
      **/
     public static final int DEFAULT_RETRY_COUNT = 3;
 
+    @Serial
     private static final long serialVersionUID = -7122734096722096617L;
 
     static {

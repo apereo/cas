@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class RedisConsentRepository implements ConsentRepository {
      */
     public static final String CAS_CONSENT_DECISION_PREFIX = ConsentDecision.class.getSimpleName() + ':';
 
+    @Serial
     private static final long serialVersionUID = 1234168609139907616L;
 
     private final transient CasRedisTemplate<String, ConsentDecision> redisTemplate;
@@ -49,29 +51,31 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        val redisKeys = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount);
-        return redisKeys
-            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(ConsentDecision.class::cast)
-            .collect(Collectors.toList());
+        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount)) {
+            return redisKeys
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(ConsentDecision.class::cast)
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
-        val redisKeys = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + '*', this.scanCount);
-        return redisKeys
-            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(ConsentDecision.class::cast)
-            .collect(Collectors.toList());
+        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*', scanCount)) {
+            return redisKeys
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(ConsentDecision.class::cast)
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
     public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         try {
             val redisKey = CAS_CONSENT_DECISION_PREFIX + decision.getPrincipal() + ':' + decision.getId();
-            this.redisTemplate.boundValueOps(redisKey).set(decision);
+            redisTemplate.boundValueOps(redisKey).set(decision);
             return decision;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -81,24 +85,24 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        val redisKey = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId, this.scanCount)
-            .collect(Collectors.toSet());
-        val count = this.redisTemplate.delete(redisKey);
-        return count != null && count.intValue() > 0;
+        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId, scanCount)) {
+            val count = redisTemplate.delete(redisKey.collect(Collectors.toSet()));
+            return count != null && count.intValue() > 0;
+        }
     }
 
     @Override
     public void deleteAll() {
-        val redisKey = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + '*', this.scanCount)
-            .collect(Collectors.toSet());
-        this.redisTemplate.delete(redisKey);
+        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*', scanCount)) {
+            redisTemplate.delete(redisKey.collect(Collectors.toSet()));
+        }
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        val redisKey = redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount)
-            .collect(Collectors.toSet());
-        val count = this.redisTemplate.delete(redisKey);
-        return count != null && count.intValue() > 0;
+        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*", scanCount)) {
+            val count = redisTemplate.delete(redisKey.collect(Collectors.toSet()));
+            return count != null && count.intValue() > 0;
+        }
     }
 }

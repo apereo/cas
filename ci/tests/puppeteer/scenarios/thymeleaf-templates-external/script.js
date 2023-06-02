@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
 
-    await cas.assertVisibility(page, '#externalFooter')
+    await cas.assertVisibility(page, '#externalFooter');
 
     await browser.close();
 })();

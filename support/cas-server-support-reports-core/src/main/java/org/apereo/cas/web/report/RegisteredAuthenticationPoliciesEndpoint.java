@@ -14,6 +14,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
@@ -44,7 +45,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      * @return the web async task
      */
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get available authentication policies")
     public Collection<AuthenticationPolicyDetails> handle() {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
@@ -61,8 +62,8 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      * @return the authentication policy
      */
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Get available authentication policy by name", parameters = {@Parameter(name = "name", required = true)})
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get available authentication policy by name", parameters = @Parameter(name = "name", required = true))
     public AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
             .stream()
@@ -76,6 +77,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
     @Getter
     @SuppressWarnings("UnusedMethod")
     private static class AuthenticationPolicyDetails implements Serializable {
+        @Serial
         private static final long serialVersionUID = 6755362844006190415L;
 
         private final String name;

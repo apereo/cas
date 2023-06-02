@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -38,6 +36,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
 
     /**
      * Get the authentication policy assigned to this service.
+     *
      * @return the policy
      */
     RegisteredServiceAuthenticationPolicy getAuthenticationPolicy();
@@ -45,6 +44,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     /**
      * Get service matching strategy used to evaluate
      * given service identifiers against this service.
+     *
      * @return the strategy
      */
     RegisteredServiceMatchingStrategy getMatchingStrategy();
@@ -92,23 +92,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     String getName();
 
     /**
-     * Returns a short theme name. Services do not need to have unique theme
-     * names.
-     *
-     * @return the theme name associated with this service.
-     */
-    @ExpressionLanguageCapable
-    String getTheme();
-
-    /**
-     * Returns a locale name to be activated when this service is used.
-     *
-     * @return the locale name associated with this service.
-     */
-    @ExpressionLanguageCapable
-    String getLocale();
-
-    /**
      * Returns the description of the service.
      *
      * @return the description of the service.
@@ -118,13 +101,12 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     }
 
     /**
-     * Response determines how CAS should contact the matching service
-     * typically with a ticket id. By default, the strategy is a 302 redirect.
+     * Gets template name that acts
+     * as the base version of this registered service.
      *
-     * @return the response type
-     * @see Response.ResponseType
+     * @return the template name
      */
-    String getResponseType();
+    String getTemplateName();
 
     /**
      * Gets the relative evaluation order of this service when determining
@@ -164,16 +146,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     RegisteredServiceTicketGrantingTicketExpirationPolicy getTicketGrantingTicketExpirationPolicy();
 
     /**
-     * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
-     * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
-     *
-     * @return Non -null set of required handler names.
-     * @deprecated Since 6.2, replaced by {@link org.apereo.cas.services.RegisteredServiceAuthenticationPolicy#getRequiredAuthenticationHandlers()}.
-     */
-    @Deprecated(since = "6.2.0")
-    Set<String> getRequiredHandlers();
-
-    /**
      * Gets the set of  names that correspond to the environment to which this service belongs.
      * This may be used as a filter at runtime to narrow down the list of services
      * that are applicable to a particular environment, such as test, prod, etc.
@@ -208,13 +180,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     boolean matches(String serviceId);
 
     /**
-     * Returns the logout type of the service.
-     *
-     * @return the logout type of the service.
-     */
-    RegisteredServiceLogoutType getLogoutType();
-
-    /**
      * Gets the attribute filtering policy to determine
      * how attributes are to be filtered and released for
      * this service.
@@ -222,44 +187,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the attribute release policy
      */
     RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy();
-
-    /**
-     * Gets the logo image associated with this service.
-     * The image mostly is served on the user interface
-     * to identify this requesting service during authentication.
-     *
-     * @return URL of the image
-     * @since 4.1
-     */
-    String getLogo();
-
-    /**
-     * Describes the canonical information url
-     * where this service is advertised and may provide
-     * help/guidance.
-     *
-     * @return the info url.
-     */
-    String getInformationUrl();
-
-    /**
-     * Links to the privacy policy of this service, if any.
-     *
-     * @return the link to privacy policy
-     */
-    String getPrivacyUrl();
-
-    /**
-     * Identifies the logout url that will be invoked
-     * upon sending single-logout callback notifications.
-     * This is an optional setting. When undefined, the service
-     * url as is defined by {@link #getServiceId()} will be used
-     * to handle logout invocations.
-     *
-     * @return the logout url for this service
-     * @since 4.1
-     */
-    String getLogoutUrl();
 
     /**
      * Describes extra metadata about the service; custom fields
@@ -305,7 +232,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     default String getFriendlyName() {
         return this.getClass().getSimpleName();
     }
-    
+
     /**
      * Initialize the registered service instance by defaulting fields to specific
      * values or object instances, etc.

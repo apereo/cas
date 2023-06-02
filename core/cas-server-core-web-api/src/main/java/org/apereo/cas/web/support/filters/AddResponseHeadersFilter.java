@@ -5,13 +5,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -52,8 +53,7 @@ public class AddResponseHeadersFilter extends AbstractSecurityFilter implements 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
-        if (servletResponse instanceof HttpServletResponse) {
-            val httpServletResponse = (HttpServletResponse) servletResponse;
+        if (servletResponse instanceof HttpServletResponse httpServletResponse) {
             for (val entry : this.headersMap.entrySet()) {
                 LOGGER.debug("Adding parameter [{}] with value [{}]", entry.getKey(), entry.getValue());
                 httpServletResponse.addHeader(entry.getKey(), entry.getValue());

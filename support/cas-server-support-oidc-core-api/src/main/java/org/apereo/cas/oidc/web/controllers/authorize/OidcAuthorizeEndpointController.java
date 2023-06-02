@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OidcAuthorizeEndpointController}.
@@ -30,7 +30,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         super(configurationContext);
     }
 
-    @GetMapping(value = {
+    @GetMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
         "/**/" + OidcConstants.AUTHORIZE_URL
     })
@@ -58,7 +58,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         return super.handleRequest(request, response);
     }
 
-    @PostMapping(value = {
+    @PostMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
         "/**/" + OidcConstants.AUTHORIZE_URL
     })

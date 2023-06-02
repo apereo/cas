@@ -10,7 +10,9 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 
 /**
  * Multifactor Bypass Provider based on Authentication.
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = 5582655921143779773L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;

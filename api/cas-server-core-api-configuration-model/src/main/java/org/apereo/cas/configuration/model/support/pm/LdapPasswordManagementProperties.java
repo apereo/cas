@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonFilter("LdapPasswordManagementProperties")
 @Accessors(chain = true)
 public class LdapPasswordManagementProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -2610186056194686825L;
 
     /**
@@ -32,6 +34,14 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
      * for the security question and the value is the attribute name for the answer linked to the question.
      */
     private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>(0);
+
+    /**
+     * Name of LDAP attribute that represents the account locked status.
+     * The value of the attribute is set to {@code "true"} if the account is
+     * ever updated to indicated a locked status.
+     */
+    @RequiredProperty
+    private String accountLockedAttribute = "pwdLockout";
 
     /**
      * The specific variant of LDAP

@@ -3,7 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties.RecaptchaVersions;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link CaptchaValidator}.
@@ -33,7 +33,7 @@ public interface CaptchaValidator {
      *
      * @param recaptchaResponse the recaptcha response
      * @param userAgent         the user agent
-     * @return the boolean
+     * @return true/false
      */
     boolean validate(String recaptchaResponse, String userAgent);
 

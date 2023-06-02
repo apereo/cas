@@ -28,13 +28,14 @@ public class ResponseHeadersEnforcementFilterTests {
     public void setup() {
         val servletContext = new MockServletContext();
         this.filterConfig = new MockFilterConfig(servletContext);
-        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.THROW_ON_ERROR, "true");
+        filterConfig.addInitParameter(AbstractSecurityFilter.THROW_ON_ERROR, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XCONTENT_OPTIONS, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XSS_PROTECTION, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "default-src https");
+        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES, "css|js|png|txt|jpg|ico|jpeg|bmp|gif");
         this.filter = new ResponseHeadersEnforcementFilter();
     }
 
@@ -62,5 +63,35 @@ public class ResponseHeadersEnforcementFilterTests {
         assertNotNull(servletResponse.getHeaderValue("X-Frame-Options"));
         assertNotNull(servletResponse.getHeaderValue("X-Content-Type-Options"));
         assertNotNull(servletResponse.getHeaderValue("Strict-Transport-Security"));
+    }
+
+    @Test
+    public void verifyNoCacheParamJpeg() {
+        filter.init(filterConfig);
+
+        val servletRequest = new MockHttpServletRequest();
+        servletRequest.setSecure(true);
+        servletRequest.setRequestURI("test.jpeg");
+        val servletResponse = new MockHttpServletResponse();
+        assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
+        assertDoesNotThrow(() -> filter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
+        filter.destroy();
+        assertNull(servletResponse.getHeaderValue("Cache-Control"));
+        assertNull(servletResponse.getHeaderValue("Pragma"));
+    }
+
+    @Test
+    public void verifyNoCacheParamPng() {
+        filter.init(filterConfig);
+
+        val servletRequest = new MockHttpServletRequest();
+        servletRequest.setSecure(true);
+        servletRequest.setRequestURI("test.png");
+        val servletResponse = new MockHttpServletResponse();
+        assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
+        assertDoesNotThrow(() -> filter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
+        filter.destroy();
+        assertNull(servletResponse.getHeaderValue("Cache-Control"));
+        assertNull(servletResponse.getHeaderValue("Pragma"));
     }
 }

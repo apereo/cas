@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +48,7 @@ public class SamlUtilsTests {
     @Test
     public void verifyTransformFails() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val attr = builder.getNameID(NameID.TRANSIENT, "value");
+        val attr = builder.getNameID(NameIDType.TRANSIENT, "value");
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, attr).toString();
         assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(openSamlConfigBean,
             xml.getBytes(StandardCharsets.UTF_8), AuthnRequest.class));

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+import java.io.Serial;
 
 /**
  * The {@link DefaultAuthenticationResult} represents a concrete implementation of {@link AuthenticationResult}.
@@ -19,7 +22,9 @@ import lombok.ToString;
 @Setter
 @Getter
 @RequiredArgsConstructor
+@SuperBuilder
 public class DefaultAuthenticationResult implements AuthenticationResult {
+    @Serial
     private static final long serialVersionUID = 8454900425245262824L;
 
     private final Authentication authentication;

@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountGroup;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserDevice;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -169,13 +169,13 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val method = params.getOrDefault("method", HttpMethod.GET.name());
 
         val originalHost = resolver.resolve(duoProperties.getDuoApiHost());
-        val request = new Http.HttpBuilder(method, new URI("https://" + originalHost).getHost(), uri).build();
+        val request = new CasHttpBuilder(method, new URI("https://" + originalHost).getHost(), uri).build();
 
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
         ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
         ReflectionUtils.setField(hostField, request, originalHost);
 
-        val factory = this.httpClient.getHttpClientFactory();
+        val factory = this.httpClient.httpClientFactory();
         val okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -202,5 +202,11 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
                && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)
             ? result.getJSONArray(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
             : null;
+    }
+
+    private static class CasHttpBuilder extends Http.HttpBuilder {
+        CasHttpBuilder(final String method, final String host, final String uri) {
+            super(method, host, uri);
+        }
     }
 }

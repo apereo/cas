@@ -44,7 +44,7 @@ public class CasConfigurationMetadataRepository {
      */
     public CasConfigurationMetadataRepository(final String resource) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             val resources = new PathMatchingResourcePatternResolver().getResources(resource);
             Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
                 try (val in = r.getInputStream()) {
@@ -62,7 +62,7 @@ public class CasConfigurationMetadataRepository {
      */
     public CasConfigurationMetadataRepository(final Resource resource) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val in = resource.getInputStream()) {
                 builder.withJsonResource(in);
             }

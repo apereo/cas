@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public interface AuthenticationHandlerResolver extends Ordered {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandlerResolver.class);
 
     /**
@@ -29,15 +32,15 @@ public interface AuthenticationHandlerResolver extends Ordered {
     static AuthenticationHandlerResolver noOp() {
         return new AuthenticationHandlerResolver() {
             @Override
-            public boolean supports(final Set<AuthenticationHandler> handlers,
-                                    final AuthenticationTransaction transaction) {
-                return false;
-            }
-
-            @Override
             public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
                                                       final AuthenticationTransaction transaction) {
                 return new LinkedHashSet<>();
+            }
+
+            @Override
+            public boolean supports(final Set<AuthenticationHandler> handlers,
+                                    final AuthenticationTransaction transaction) {
+                return false;
             }
         };
     }

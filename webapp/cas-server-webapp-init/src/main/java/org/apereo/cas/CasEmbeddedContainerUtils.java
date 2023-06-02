@@ -1,25 +1,22 @@
 package org.apereo.cas;
 
-import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.logging.LoggingInitialization;
-import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
+import org.apereo.cas.util.spring.boot.CasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
-import org.springframework.boot.Banner;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Objects;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasEmbeddedContainerUtils}.
@@ -33,22 +30,17 @@ public class CasEmbeddedContainerUtils {
     private static final int APPLICATION_EVENTS_CAPACITY = 5_000;
 
     /**
-     * Gets logging initialization.
+     * Gets application initialization components.
      *
-     * @return the logging initialization
+     * @return the initialization components
      */
-    public static Optional<LoggingInitialization> getLoggingInitialization() {
-        return FunctionUtils.doUnchecked(() -> {
-            val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-            val reflections = new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                .setUrls(ClasspathHelper.forPackage(packageName)));
-
-            val subTypes = reflections.getSubTypesOf(LoggingInitialization.class);
-            return subTypes.isEmpty()
-                ? Optional.empty()
-                : Optional.of(subTypes.iterator().next().getDeclaredConstructor().newInstance());
-        });
+    public static List<ApplicationEntrypointInitializer> getApplicationEntrypointInitializers() {
+        return ServiceLoader.load(ApplicationEntrypointInitializer.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .filter(Objects::nonNull)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -56,26 +48,10 @@ public class CasEmbeddedContainerUtils {
      *
      * @return the cas banner instance
      */
-    public static Banner getCasBannerInstance() {
-        val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-        val reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setExpandSuperTypes(true)
-            .setUrls(ClasspathHelper.forPackage(packageName)));
-        
-        val subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
-        subTypes.remove(DefaultCasBanner.class);
-
-        if (subTypes.isEmpty()) {
-            return new DefaultCasBanner();
-        }
-        try {
-            val clz = subTypes.iterator().next();
-            return clz.getDeclaredConstructor().newInstance();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new DefaultCasBanner();
+    public static CasBanner getCasBannerInstance() {
+        val subTypes = ServiceLoader.load(CasBanner.class).stream()
+            .map(ServiceLoader.Provider::get).toList();
+        return subTypes.isEmpty() ? new DefaultCasBanner() : subTypes.get(0);
     }
 
     /**

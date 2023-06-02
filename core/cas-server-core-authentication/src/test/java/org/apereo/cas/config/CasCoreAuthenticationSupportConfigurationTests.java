@@ -1,20 +1,24 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,15 +39,19 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
+    CasCoreAuthenticationSupportConfigurationTests.CasCoreAuthenticationSupportTestConfiguration.class,
+    
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreAuthenticationSupportConfigurationTests.CasCoreAuthenticationSupportConfigurationTestConfiguration.class,
+    ObservationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreMonitorConfiguration.class,
+    CasCoreAuthenticationMonitoringConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -53,8 +61,8 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "cas.authn.core.groovy-authentication-resolution.location=classpath:GroovyAuthenticationHandlerResolver.groovy",
-        "cas.authn.core.engine.groovy-pre-processor.location=classpath:GroovyPostProcessor.groovy",
-        "cas.authn.core.engine.groovy-post-processor.location=classpath:GroovyPreProcessor.groovy",
+        "cas.authn.core.engine.groovy-pre-processor.location=classpath:GroovyPreProcessor.groovy",
+        "cas.authn.core.engine.groovy-post-processor.location=classpath:GroovyPostProcessor.groovy",
         "cas.authn.authentication-attribute-release.enabled=false",
         "cas.authn.attribute-repository.core.expiration-time=0",
         "cas.authn.policy.source-selection-enabled=true"
@@ -62,13 +70,16 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
 public class CasCoreAuthenticationSupportConfigurationTests {
+    @Autowired
+    @Qualifier(AuthenticationManager.BEAN_NAME)
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
     private RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository;
 
     @Autowired
-    @Qualifier("authenticationAttributeReleasePolicy")
+    @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
     private AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Autowired
@@ -83,15 +94,20 @@ public class CasCoreAuthenticationSupportConfigurationTests {
     public void verifyOperation() {
         assertNotNull(groovyAuthenticationHandlerResolver);
         assertNotNull(globalPrincipalAttributeRepository);
+        assertNotNull(authenticationManager);
         assertNotNull(groovyAuthenticationProcessorExecutionPlanConfigurer);
-        assertTrue(authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-                CoreAuthenticationTestUtils.getAuthentication(),
-                mock(Assertion.class), Map.of(), CoreAuthenticationTestUtils.getRegisteredService())
-            .isEmpty());
+
+        val attributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
+            CoreAuthenticationTestUtils.getAuthentication(), mock(Assertion.class),
+            Map.of(), CoreAuthenticationTestUtils.getRegisteredService());
+        assertTrue(attributes.isEmpty());
+
+        assertThrows(AuthenticationException.class, () -> authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
     }
 
     @TestConfiguration(value = "CasCoreAuthenticationSupportConfigurationTestConfiguration", proxyBeanMethods = false)
-    public static class CasCoreAuthenticationSupportConfigurationTestConfiguration {
+    public static class CasCoreAuthenticationSupportTestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {

@@ -13,6 +13,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
+
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
  * as the parent of all providers.
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 @EqualsAndHashCode(of = {"order", "id"})
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 4789727148134156909L;
 
     private MultifactorAuthenticationProviderBypassEvaluator bypassEvaluator;

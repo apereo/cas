@@ -50,7 +50,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyServiceWithInvalidFileName(final Class<? extends BaseRegisteredService> registeredServiceClass) {
+    public void verifyServiceWithInvalidFileName(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         r.setName("hell/o@world:*");
         assertThrows(IllegalArgumentException.class, () -> this.newServiceRegistry.save(r));
@@ -83,12 +83,12 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
         val serializer = mock(StringSerializer.class);
         doThrow(new RuntimeException()).when(serializer).to(any(OutputStream.class), any());
 
-        val registry = new AbstractResourceBasedServiceRegistry(FileUtils.getTempDirectory().toPath(), 
+        val registry = new AbstractResourceBasedServiceRegistry(FileUtils.getTempDirectory().toPath(),
             serializer, applicationContext, mock(RegisteredServiceReplicationStrategy.class),
             new DefaultRegisteredServiceResourceNamingStrategy(), List.of(), mock(WatcherService.class)) {
             @Override
             protected String[] getExtensions() {
-                return new String[] {".json"};
+                return new String[]{".json"};
             }
         };
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), CasRegisteredService.class);

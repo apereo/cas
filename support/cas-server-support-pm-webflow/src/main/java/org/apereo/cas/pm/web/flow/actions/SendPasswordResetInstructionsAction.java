@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -11,6 +12,9 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
+import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
@@ -27,11 +31,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -99,7 +107,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
-        principalResolverName = "REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
+        principalResolverName = AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
         actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
@@ -118,7 +126,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val phone = passwordManagementService.findPhone(query);
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
-            return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
+            return getInvalidContactEvent(requestContext);
         }
 
         val service = WebUtils.getService(requestContext);
@@ -151,34 +159,32 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     /**
-     * Send password reset sms to account.
+     * Get the "invalid contact" event.
+     * It could be overriden to return success and hide the fact that the login does not exist.
      *
-     * @param to  the to
-     * @param url the url
-     * @return true/false
+     * @param requestContext the request context
+     * @return the event
      */
+    protected Event getInvalidContactEvent(final RequestContext requestContext) {
+        return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
+    }
+
     protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
-            val message = reset.getFormattedText(url.toExternalForm());
-            return communicationsManager.sms(reset.getFrom(), to, message);
+            val message = SmsBodyBuilder.builder().properties(reset).parameters(Map.of("url", url.toExternalForm())).build().get();
+            val smsRequest = SmsRequest.builder().from(reset.getFrom()).to(to).text(message).build();
+            return communicationsManager.sms(smsRequest);
         }
         return false;
     }
 
-    /**
-     * Send password reset email to account.
-     *
-     * @param username       the username
-     * @param to             the to
-     * @param url            the url
-     * @param requestContext the request context
-     * @return true /false
-     */
-    protected EmailCommunicationResult sendPasswordResetEmailToAccount(final String username, final String to,
-                                                                       final URL url,
-                                                                       final RequestContext requestContext) {
+    protected EmailCommunicationResult sendPasswordResetEmailToAccount(
+        final String username,
+        final String to,
+        final URL url,
+        final RequestContext requestContext) {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val parameters = CollectionUtils.<String, Object>wrap("url", url.toExternalForm());
         if (StringUtils.isNotBlank(to)) {
@@ -187,16 +193,26 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             val person = principalResolver.resolve(credential);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                .map(resolver -> resolver.resolveLocale(request));
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
                 .parameters(parameters)
-                .locale(Optional.ofNullable(request.getLocale()))
+                .locale(locale)
                 .build()
-                .produce();
+                .get();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
-            return this.communicationsManager.email(reset, to, text);
+
+            val emailRequest = EmailMessageRequest.builder()
+                .emailProperties(reset)
+                .principal(person)
+                .to(List.of(to))
+                .locale(locale.orElseGet(Locale::getDefault))
+                .body(text)
+                .build();
+            return this.communicationsManager.email(emailRequest);
         }
-        return EmailCommunicationResult.builder().success(false).to(to).build();
+        return EmailCommunicationResult.builder().success(false).to(List.of(to)).build();
     }
 
     /**

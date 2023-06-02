@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,6 +12,18 @@ import java.io.Serializable;
  * @since 6.1.0
  */
 public interface ServiceRegistryListener extends Serializable, Ordered {
+    /**
+     * No op service registry listener.
+     *
+     * @return the service registry listener
+     */
+    static ServiceRegistryListener noOp() {
+        return new ServiceRegistryListener() {
+            @Serial
+            private static final long serialVersionUID = -8064239596498367543L;
+        };
+    }
+
     /**
      * Pre save registered service.
      *
@@ -34,15 +47,5 @@ public interface ServiceRegistryListener extends Serializable, Ordered {
     @Override
     default int getOrder() {
         return 0;
-    }
-
-    /**
-     * No op service registry listener.
-     *
-     * @return the service registry listener
-     */
-    static ServiceRegistryListener noOp() {
-        return new ServiceRegistryListener() {
-        };
     }
 }

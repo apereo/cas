@@ -3,10 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
  *
@@ -38,7 +40,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
 public class Pac4jDelegatedAuthenticationConfiguration {
 
@@ -47,7 +49,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     public static class Pac4jDelegatedAuthenticationBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+        @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
         public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
             return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
         }
@@ -67,7 +69,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
-            @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -115,6 +117,7 @@ public class Pac4jDelegatedAuthenticationConfiguration {
      * The type Oauth1 request token mixin.
      */
     private abstract static class AbstractOAuth1RequestTokenMixin extends OAuth1RequestToken {
+        @Serial
         private static final long serialVersionUID = -7839084408338396531L;
 
         @JsonCreator

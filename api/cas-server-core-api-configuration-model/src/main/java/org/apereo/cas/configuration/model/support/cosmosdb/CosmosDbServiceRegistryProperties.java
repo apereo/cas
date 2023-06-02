@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link CosmosDbServiceRegistryProperties}.
  *
@@ -19,6 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 6194689836396653458L;
 
     /**
@@ -26,4 +29,9 @@ public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties {
      */
     @RequiredProperty
     private String container = "CasCosmosDbServiceRegistry";
+
+    /**
+     * Whether collections should be created on startup.
+     */
+    private boolean createContainer;
 }

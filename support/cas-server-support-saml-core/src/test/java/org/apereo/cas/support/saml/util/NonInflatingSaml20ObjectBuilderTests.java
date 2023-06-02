@@ -18,7 +18,7 @@ import org.opensaml.core.xml.schema.XSDateTime;
 import org.opensaml.core.xml.schema.XSInteger;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
 public class NonInflatingSaml20ObjectBuilderTests {
     @Autowired
@@ -139,10 +139,20 @@ public class NonInflatingSaml20ObjectBuilderTests {
     @Test
     public void verifySubject() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val id = builder.getNameID(NameID.UNSPECIFIED, "casuser");
-        val subjectId = builder.getNameID(NameID.UNSPECIFIED, "casuser");
-        val sub = builder.newSubject(id, subjectId, "cas", ZonedDateTime.now(ZoneOffset.UTC),
-            "https://github.com", ZonedDateTime.now(ZoneOffset.UTC));
+        val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
+        val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
+        val sub = builder.newSubject(id, subjectId, "https://www.apereo.org/app/sp", ZonedDateTime.now(ZoneOffset.UTC),
+            "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
+        assertNotNull(sub);
+    }
+
+    @Test
+    public void verifySubjectNoRecipient() {
+        val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
+        val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
+        val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
+        val sub = builder.newSubject(id, subjectId, null, ZonedDateTime.now(ZoneOffset.UTC),
+                "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC));
         assertNotNull(sub);
     }
 

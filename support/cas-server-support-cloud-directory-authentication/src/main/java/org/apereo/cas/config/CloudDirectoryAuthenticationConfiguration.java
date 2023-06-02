@@ -13,9 +13,9 @@ import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
 import org.apereo.cas.clouddirectory.DefaultAmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.clouddirectory.CloudDirectoryClient;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "cloud-directory")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "cloud-directory")
 @AutoConfiguration
 public class CloudDirectoryAuthenticationConfiguration {
 
@@ -81,7 +81,7 @@ public class CloudDirectoryAuthenticationConfiguration {
     public CloudDirectoryClient amazonCloudDirectory(final CasConfigurationProperties casProperties) {
         val cloud = casProperties.getAuthn().getCloudDirectory();
         val builder = CloudDirectoryClient.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder,
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder,
             ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
                 cloud.getCredentialSecretKey(), cloud.getProfilePath(), cloud.getProfileName()), cloud);
         return builder.build();

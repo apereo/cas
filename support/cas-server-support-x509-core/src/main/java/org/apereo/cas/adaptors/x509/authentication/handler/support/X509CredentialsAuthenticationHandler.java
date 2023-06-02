@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -192,11 +193,12 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * when this is a CA cert and -1 when it's not.
      *
      * @param credential Credential to authenticate.
+     * @param service the requesting service.
      * @return Authn handler execution result.
      * @throws GeneralSecurityException security exception
      */
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws GeneralSecurityException {
 
         val x509Credential = (X509CertificateCredential) credential;
         val certificates = x509Credential.getCertificates();

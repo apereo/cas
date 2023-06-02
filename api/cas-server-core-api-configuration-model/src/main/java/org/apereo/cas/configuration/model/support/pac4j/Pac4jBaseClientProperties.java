@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("Pac4jBaseClientProperties")
 public class Pac4jBaseClientProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7885975876831784206L;
 
     /**
@@ -39,10 +41,11 @@ public class Pac4jBaseClientProperties implements Serializable {
     private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.NONE;
 
     /**
-     * The attribute to use as the principal identifier built
-     * during and upon a successful authentication attempt.
+     * The attribute found in the identity provider response
+     * that may be used to establish the authenticated
+     * user and build a profile for CAS.
      */
-    private String principalAttributeId;
+    private String principalIdAttribute;
 
     /**
      * Whether the client/external identity provider should be considered

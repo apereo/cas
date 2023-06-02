@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -72,7 +71,7 @@ public class RegisteredServiceTestUtils {
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
         val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
-        usernamePasswordCredentials.setPassword(username);
+        usernamePasswordCredentials.assignPassword(username);
 
         return usernamePasswordCredentials;
     }
@@ -80,7 +79,7 @@ public class RegisteredServiceTestUtils {
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
         val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
-        usernamePasswordCredentials.setPassword(password);
+        usernamePasswordCredentials.assignPassword(password);
 
         return usernamePasswordCredentials;
     }
@@ -124,18 +123,18 @@ public class RegisteredServiceTestUtils {
         return attributes;
     }
 
-    public static BaseRegisteredService getRegisteredService() {
+    public static BaseWebBasedRegisteredService getRegisteredService() {
         return getRegisteredService(CONST_TEST_URL);
     }
 
-    public static BaseRegisteredService getRegisteredService(final Map requiredAttributes) {
+    public static BaseWebBasedRegisteredService getRegisteredService(final Map requiredAttributes) {
         return getRegisteredService(CONST_TEST_URL, requiredAttributes);
     }
 
     @SneakyThrows
-    public static <T extends BaseRegisteredService> T getRegisteredService(final String id,
-                                                                           final Class<T> clazz,
-                                                                           final boolean uniq) {
+    public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id,
+                                                                                   final Class<T> clazz,
+                                                                                   final boolean uniq) {
         return getRegisteredService(id, clazz, uniq, getTestAttributes());
     }
 
@@ -167,7 +166,9 @@ public class RegisteredServiceTestUtils {
         s.setLogoutUrl("https://sys.example.org/logout.png");
 
         if (s instanceof CasRegisteredService) {
-            ((CasRegisteredService) s).setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
+            val policy = new RegexMatchingRegisteredServiceProxyPolicy();
+            policy.setPattern("^http.+");
+            ((CasRegisteredService) s).setProxyPolicy(policy);
         }
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
@@ -185,7 +186,7 @@ public class RegisteredServiceTestUtils {
         return (T) s;
     }
 
-    public static <T extends BaseRegisteredService> T getRegisteredService(final String id, final Class<T> clazz) {
+    public static <T extends BaseWebBasedRegisteredService> T getRegisteredService(final String id, final Class<T> clazz) {
         return getRegisteredService(id, clazz, true);
     }
 
@@ -231,10 +232,10 @@ public class RegisteredServiceTestUtils {
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val credential = new UsernamePasswordCredential();
         return new DefaultAuthenticationBuilder(principal)
-            .addCredential(meta)
-            .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))
+            .addCredential(credential)
+            .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, credential))
             .setAttributes(attributes)
             .build();
     }
@@ -277,7 +278,7 @@ public class RegisteredServiceTestUtils {
 
         val svc5 = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
         svc5.setEvaluationOrder(1);
-        svc5.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc5.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".+"));
         svc5.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
         val policy1 = new ReturnAllowedAttributeReleasePolicy();
         policy1.setAuthorizedToReleaseCredentialPassword(true);
@@ -334,7 +335,7 @@ public class RegisteredServiceTestUtils {
         list.add(svc12);
 
         val svc13 = RegisteredServiceTestUtils.getRegisteredService("^http://www.jasig.org.+");
-        svc13.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc13.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".+"));
         svc13.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc13.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         list.add(svc13);
@@ -345,7 +346,7 @@ public class RegisteredServiceTestUtils {
         list.add(svc14);
 
         val svc15 = RegisteredServiceTestUtils.getRegisteredService("proxyService");
-        svc15.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https://.+"));
+        svc15.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https://.+"));
         svc15.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc15.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         list.add(svc15);
@@ -411,7 +412,7 @@ public class RegisteredServiceTestUtils {
         list.add(svc23);
 
         val svc24 = RegisteredServiceTestUtils.getRegisteredService("https://www.casinthecloud.com");
-        svc24.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
+        svc24.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern(".+"));
         svc24.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
         val policy24 = new ReturnAllowedAttributeReleasePolicy();
         policy24.setAuthorizedToReleaseCredentialPassword(true);
@@ -423,8 +424,8 @@ public class RegisteredServiceTestUtils {
         list.add(svc24);
 
         val svc25 = RegisteredServiceTestUtils.getRegisteredService("accessStrategyMapped");
-        svc25.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
-            Map.of("sAMAccountName", "uid",
+        svc25.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(Map.of("sAMAccountName", "uid",
                 "mail", "groovy { return attributes['sAMAccountName'][0] + '@example.org'}")));
         svc25.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(
             Map.of("mail", Set.of(".*"))));

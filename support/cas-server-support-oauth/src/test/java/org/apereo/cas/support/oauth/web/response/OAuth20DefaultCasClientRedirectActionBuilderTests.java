@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20DefaultCasClientRedirectActionBuilderTests extends AbstractOAuth20Tests {
 
     @Test

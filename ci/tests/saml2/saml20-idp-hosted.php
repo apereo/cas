@@ -18,12 +18,20 @@ $metadata['__DYNAMIC:1__'] = [
     'privatekey' => 'server.pem',
     'certificate' => 'server.crt',
 
+    
+    // 'logouttype' => 'traditional',
+
     /*
      * Authentication source to use. Must be one that is configured in
      * 'config/authsources.php'.
      */
     'auth' => 'example-userpass',
-    
+
+    'SingleSignOnServiceBinding' => [
+        'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+        'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+    ],
+
     'SingleLogoutServiceBinding' => [
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'

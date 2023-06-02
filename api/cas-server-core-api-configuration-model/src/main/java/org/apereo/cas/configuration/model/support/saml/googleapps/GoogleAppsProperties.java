@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.saml.googleapps;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,24 +24,30 @@ import java.io.Serializable;
 @Deprecated(since = "6.2.0")
 public class GoogleAppsProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5133482766495375325L;
 
     /**
      * The public key location that is also shared with google apps.
+     *
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
+    @RequiredProperty
     private String publicKeyLocation = "file:/etc/cas/public.key";
 
     /**
      * The private key location that is used to sign responses, etc.
+     *
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
+    @RequiredProperty
     private String privateKeyLocation = "file:/etc/cas/private.key";
 
     /**
      * Signature algorithm used to generate keys.
+     *
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")

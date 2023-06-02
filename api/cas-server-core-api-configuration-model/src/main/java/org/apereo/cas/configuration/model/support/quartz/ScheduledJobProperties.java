@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("ScheduledJobProperties")
 public class ScheduledJobProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 9059671958275130605L;
 
     /**
@@ -32,10 +34,4 @@ public class ScheduledJobProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
-
-    public ScheduledJobProperties(final String startDelay, final String repeatInterval) {
-        schedule.setEnabled(true);
-        schedule.setStartDelay(startDelay);
-        schedule.setRepeatInterval(repeatInterval);
-    }
 }

@@ -6,10 +6,9 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link OAuth20DeviceTokenExpirationPolicyBuilder}.
@@ -17,25 +16,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class OAuth20DeviceTokenExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20DeviceToken> {
+public record OAuth20DeviceTokenExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OAuth20DeviceToken> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<OAuth20DeviceToken> getTicketType() {
-        return OAuth20DeviceToken.class;
     }
 
     /**

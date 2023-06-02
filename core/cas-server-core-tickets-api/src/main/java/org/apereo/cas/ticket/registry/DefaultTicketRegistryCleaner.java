@@ -13,15 +13,17 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final LockRepository lockRepository;
 
@@ -57,16 +59,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
         })).orElseThrow();
     }
 
-    /**
-     * Clean tickets.
-     *
-     * @return the int
-     */
     protected int cleanInternal() {
-        try (val expiredTickets = ticketRegistry.stream().filter(Ticket::isExpired)) {
-            val ticketsDeleted = expiredTickets
-                .mapToInt(this::cleanTicket)
-                .sum();
+        try (val expiredTickets = ticketRegistry.stream().filter(Objects::nonNull).filter(Ticket::isExpired)) {
+            val ticketsDeleted = expiredTickets.mapToInt(this::cleanTicket).sum();
             LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
             return ticketsDeleted;
         }

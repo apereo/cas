@@ -40,7 +40,7 @@ tomcatVersion=$(cat gradle.properties | grep tomcatVersion | awk -F"=" '{printf 
 echo "Apache Tomcat version: ${tomcatVersion}"
 
 tomcatVersionTag="v${tomcatVersion}"
-tomcatUrl="https://downloads.apache.org/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
+tomcatUrl="https://archive.apache.org/dist/tomcat/tomcat-10/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 
 export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
 rm -Rf ${CATALINA_HOME}
@@ -48,6 +48,12 @@ rm -Rf apache-tomcat-${tomcatVersion}.zip
 
 echo -e "Downloading Apache Tomcat from ${tomcatUrl}"
 wget --no-check-certificate ${tomcatUrl}
+if [[ $? -ne 0 ]]; then
+  echo "Unable to download Apache Tomcat ${tomcatVersion} from ${tomcatUrl}"
+  exit 1
+fi
+
+
 unzip apache-tomcat-${tomcatVersion}.zip >/dev/null 2>&1
 
 clear

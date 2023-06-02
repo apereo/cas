@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -29,6 +29,8 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
@@ -47,41 +49,13 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = -7688729533538097898L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final RestAuthenticationPolicyProperties properties;
-
-    @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
-                                                             final Set<AuthenticationHandler> authenticationHandlers,
-                                                             final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
-        HttpResponse response = null;
-        val principal = authentication.getPrincipal();
-        try {
-            val entity = MAPPER.writeValueAsString(principal);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .url(properties.getUrl())
-                .basicAuthPassword(properties.getBasicAuthUsername())
-                .basicAuthUsername(properties.getBasicAuthPassword())
-                .method(HttpMethod.POST)
-                .entity(entity)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
-                .build();
-            response = HttpUtils.execute(exec);
-            val statusCode = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-            if (statusCode != HttpStatus.OK) {
-                val ex = handleResponseStatusCode(statusCode, principal);
-                throw new GeneralSecurityException(ex);
-            }
-            return AuthenticationPolicyExecutionResult.success();
-        } finally {
-            HttpUtils.close(response);
-        }
-    }
 
     private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
@@ -103,5 +77,34 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
             return new AccountPasswordMustChangeException("Account password must change for " + p.getId());
         }
         return new FailedLoginException("Rest endpoint returned an unknown status code " + statusCode);
+    }
+
+    @Override
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) throws Exception {
+        HttpResponse response = null;
+        val principal = authentication.getPrincipal();
+        try {
+            val entity = MAPPER.writeValueAsString(principal);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .url(properties.getUrl())
+                .basicAuthPassword(properties.getBasicAuthUsername())
+                .basicAuthUsername(properties.getBasicAuthPassword())
+                .method(HttpMethod.POST)
+                .entity(entity)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .build();
+            response = HttpUtils.execute(exec);
+            val statusCode = HttpStatus.valueOf(response.getCode());
+            if (statusCode != HttpStatus.OK) {
+                val ex = handleResponseStatusCode(statusCode, principal);
+                throw new GeneralSecurityException(ex);
+            }
+            return AuthenticationPolicyExecutionResult.success();
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 }

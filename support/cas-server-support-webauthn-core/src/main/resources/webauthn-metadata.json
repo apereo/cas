@@ -1,0 +1,367 @@
+{
+  "identifier": "2fb54029-7613-4f1d-94f1-fb876c14a6fe",
+  "version": 19,
+  "vendorInfo": {
+    "url": "https://yubico.com",
+    "imageUrl": "https://developers.yubico.com/U2F/Images/yubico.png",
+    "name": "Yubico"
+  },
+  "trustedCertificates": [
+    "-----BEGIN CERTIFICATE-----\nMIIDHjCCAgagAwIBAgIEG1BT9zANBgkqhkiG9w0BAQsFADAuMSwwKgYDVQQDEyNZ\ndWJpY28gVTJGIFJvb3QgQ0EgU2VyaWFsIDQ1NzIwMDYzMTAgFw0xNDA4MDEwMDAw\nMDBaGA8yMDUwMDkwNDAwMDAwMFowLjEsMCoGA1UEAxMjWXViaWNvIFUyRiBSb290\nIENBIFNlcmlhbCA0NTcyMDA2MzEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK\nAoIBAQC/jwYuhBVlqaiYWEMsrWFisgJ+PtM91eSrpI4TK7U53mwCIawSDHy8vUmk\n5N2KAj9abvT9NP5SMS1hQi3usxoYGonXQgfO6ZXyUA9a+KAkqdFnBnlyugSeCOep\n8EdZFfsaRFtMjkwz5Gcz2Py4vIYvCdMHPtwaz0bVuzneueIEz6TnQjE63Rdt2zbw\nnebwTG5ZybeWSwbzy+BJ34ZHcUhPAY89yJQXuE0IzMZFcEBbPNRbWECRKgjq//qT\n9nmDOFVlSRCt2wiqPSzluwn+v+suQEBsUjTGMEd25tKXXTkNW21wIWbxeSyUoTXw\nLvGS6xlwQSgNpk2qXYwf8iXg7VWZAgMBAAGjQjBAMB0GA1UdDgQWBBQgIvz0bNGJ\nhjgpToksyKpP9xv9oDAPBgNVHRMECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBBjAN\nBgkqhkiG9w0BAQsFAAOCAQEAjvjuOMDSa+JXFCLyBKsycXtBVZsJ4Ue3LbaEsPY4\nMYN/hIQ5ZM5p7EjfcnMG4CtYkNsfNHc0AhBLdq45rnT87q/6O3vUEtNMafbhU6kt\nhX7Y+9XFN9NpmYxr+ekVY5xOxi8h9JDIgoMP4VB1uS0aunL1IGqrNooL9mmFnL2k\nLVVee6/VR6C5+KSTCMCWppMuJIZII2v9o4dkoZ8Y7QRjQlLfYzd3qGtKbw7xaF1U\nsG/5xUb/Btwb2X2g4InpiB/yt/3CpQXpiWX/K4mBvUKiGn05ZsqeY1gx4g0xLBqc\nU9psmyPzK+Vsgw2jeRQ5JlKDyqE0hebfC1tvFu0CCrJFcw==\n-----END CERTIFICATE-----"
+  ],
+  "devices": [
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.1",
+      "displayName": "Security Key NFC by Yubico",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000019469-security-key-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/SKY-NFC.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "6d44ba9bf6ec2e49b9300c8fe920cb73"
+            }
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "149a20218ef6413396b881f8d5b7f1f5"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.1",
+      "displayName": "Security Key NFC by Yubico",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000019469-security-key-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5NFC-CNFC.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "a4e9fc6d4cbe4758b8ba37598bb5bbaa"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.1",
+      "displayName": "Security Key NFC by Yubico - Enterprise Edition",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000019469-security-key-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5NFC-CNFC.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "0bb43545fd2c418587ddfeb0b2916ace"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.1",
+      "displayName": "Security Key by Yubico",
+      "transports": 4,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000006900-security-key-by-yubico",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/SKY.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.41482.1.1"
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "value": "1.3.6.1.4.1.41482.1.1",
+            "key": "1.3.6.1.4.1.41482.2"
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "b92c3f9ac0144056887f140a2501163b"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.2",
+      "displayName": "YubiKey NEO/NEO-n",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000006494-yubikey-neo",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/NEO.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.41482.1.2"
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "value": "1.3.6.1.4.1.41482.1.2",
+            "key": "1.3.6.1.4.1.41482.2"
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.3",
+      "displayName": "YubiKey Plus",
+      "transports": 4,
+      "deviceUrl": "https://www.yubico.com/products/yubikey-hardware/",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/PLS.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.41482.1.3"
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "value": "1.3.6.1.4.1.41482.1.3",
+            "key": "1.3.6.1.4.1.41482.2"
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.4",
+      "displayName": "YubiKey Edge",
+      "transports": 4,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000006492-yubikey-edge",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YKE.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "value": "1.3.6.1.4.1.41482.1.4",
+            "key": "1.3.6.1.4.1.41482.2"
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.5",
+      "displayName": "YubiKey 4/YubiKey 4 Nano",
+      "transports": 4,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000006486-yubikey-4",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK4.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "value": "1.3.6.1.4.1.41482.1.5",
+            "key": "1.3.6.1.4.1.41482.2"
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5 NFC",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000014174--yubikey-5-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "fa2b99dc9e3942578f924a30d23c4118"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5/5C NFC",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000014174--yubikey-5-nfc",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5NFC-CNFC.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "2fc0579f811347eab116bb5a8db9202a"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5 Series",
+      "transports": 4,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000014180-yubikey-5c",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5-series.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "cb69481e8ff7403993ec0a2729a154a8"
+            }
+          }
+        },
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "ee882879721c491397753dfcce97072a"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5Ci",
+      "transports": 20,
+      "deviceUrl": "https://support.yubico.com/support/solutions/articles/15000027140-yubikey-5ci",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5Ci.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "c5ef55ffad9a4b9fb580adebafe026d0"
+            }
+          }
+        }
+      ]
+    },
+
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5/5C NFC FIPS",
+      "transports": 12,
+      "deviceUrl": "https://support.yubico.com/hc/en-us/articles/360021443340-YubiKey-5-NFC-FIPS",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "c1f9a0bc1dd2404ab27f8e29047a43fd"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5 FIPS series",
+      "transports": 4,
+      "deviceUrl": "https://support.yubico.com/hc/en-us/articles/360021467359-YubiKey-5C-FIPS",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5-series.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "73bb0cd4e50249b89c6fb59445bf720b"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.7",
+      "displayName": "YubiKey 5Ci FIPS",
+      "transports": 20,
+      "deviceUrl": "https://support.yubico.com/hc/en-us/articles/360021443360-YubiKey-5Ci-FIPS",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/YK5Ci.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "8520342148f943559bc88a53846e5083"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "deviceId": "1.3.6.1.4.1.41482.1.9",
+      "displayName": "YubiKey Bio - FIDO Edition",
+      "transports": 4,
+      "deviceUrl": "https://support.yubico.com/hc/en-us/articles/4407743521810-YubiKey-Bio-FIDO-Edition",
+      "imageUrl": "https://developers.yubico.com/U2F/Images/BIO.png",
+      "selectors": [
+        {
+          "type": "x509Extension",
+          "parameters": {
+            "key": "1.3.6.1.4.1.45724.1.1.4",
+            "value": {
+              "type": "hex",
+              "value": "d8522d9f575b486688a9ba99fa02f35b"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

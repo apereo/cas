@@ -8,7 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
+    @Serial
     private static final long serialVersionUID = 5318897374067731021L;
 
     private String clientSecret;
@@ -39,6 +42,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean jwtAccessToken;
 
+    private Set<String> audience = new HashSet<>();
+    
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
 
     private RegisteredServiceOAuthAccessTokenExpirationPolicy accessTokenExpirationPolicy;
@@ -53,6 +58,10 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private String userProfileViewType;
 
+    private Set<String> scopes = new HashSet<>(0);
+
+    private String responseMode;
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {
@@ -63,5 +72,34 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     @Override
     public int getEvaluationPriority() {
         return 2;
+    }
+
+    /**
+     * Gets scopes.
+     *
+     * @return the scopes
+     */
+    public Set<String> getScopes() {
+        if (this.scopes == null) {
+            this.scopes = new HashSet<>(0);
+        }
+        return scopes;
+    }
+
+    /**
+     * Sets scopes.
+     *
+     * @param scopes the scopes
+     */
+    public void setScopes(final Set<String> scopes) {
+        getScopes().clear();
+        getScopes().addAll(scopes);
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
+        this.audience = ObjectUtils.defaultIfNull(this.audience, new HashSet<>(0));
     }
 }

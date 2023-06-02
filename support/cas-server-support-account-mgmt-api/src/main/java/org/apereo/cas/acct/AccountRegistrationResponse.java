@@ -4,11 +4,13 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString(of = "properties")
 public class AccountRegistrationResponse implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1822843820128948428L;
 
     @Getter
@@ -31,6 +34,15 @@ public class AccountRegistrationResponse implements Serializable {
 
     public AccountRegistrationResponse(final Map<String, Object> properties) {
         putProperties(properties);
+    }
+
+    /**
+     * Failure.
+     *
+     * @return the account registration response
+     */
+    public static AccountRegistrationResponse failure() {
+        return new AccountRegistrationResponse(CollectionUtils.wrap("success", Boolean.FALSE));
     }
 
     /**
@@ -53,6 +65,16 @@ public class AccountRegistrationResponse implements Serializable {
     }
 
     /**
+     * Is failure.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isFailure() {
+        return !isSuccess();
+    }
+
+    /**
      * Gets property.
      *
      * @param <T>   the type parameter
@@ -69,7 +91,7 @@ public class AccountRegistrationResponse implements Serializable {
      * Contains property.
      *
      * @param name the name
-     * @return the boolean
+     * @return true/false
      */
     public boolean containsProperty(final String name) {
         return properties.containsKey(name);
@@ -80,18 +102,24 @@ public class AccountRegistrationResponse implements Serializable {
      *
      * @param name  the name
      * @param value the value
+     * @return the account registration response
      */
-    public void putProperty(final String name, final Object value) {
+    @CanIgnoreReturnValue
+    public AccountRegistrationResponse putProperty(final String name, final Object value) {
         this.properties.put(name, value);
+        return this;
     }
 
     /**
      * Put properties.
      *
      * @param map the as map
+     * @return the account registration response
      */
-    public void putProperties(final Map<String, Object> map) {
+    @CanIgnoreReturnValue
+    public AccountRegistrationResponse putProperties(final Map<String, Object> map) {
         this.properties.putAll(map);
+        return this;
     }
 
     /**

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,7 +26,9 @@ import java.util.Map;
 @JsonFilter("LdapPrincipalAttributesProperties")
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = 5760065368731012063L;
+
 
     /**
      * The order of this attribute repository in the chain of repositories.
@@ -74,4 +77,6 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * and the value is the column/field that should map.
      */
     private Map<String, String> queryAttributes = new HashMap<>(0);
+
+
 }

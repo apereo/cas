@@ -30,8 +30,8 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -136,7 +136,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), StringUtils.defaultString(profile, amz.getProfileName()));
         val builder = StsClient.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         val client = builder.build();
 
         if (amz.isRbacEnabled()) {

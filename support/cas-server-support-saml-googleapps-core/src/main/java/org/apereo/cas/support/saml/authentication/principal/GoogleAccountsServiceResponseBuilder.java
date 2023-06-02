@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResp
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -23,13 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 
+import java.io.Serial;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.time.ZoneOffset;
@@ -52,6 +54,7 @@ import java.util.stream.Stream;
     of = {"publicKeyLocation", "privateKeyLocation", "keyAlgorithm", "samlObjectBuilder", "skewAllowance"})
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
+    @Serial
     private static final long serialVersionUID = -4584732364007702423L;
 
     private final String publicKeyLocation;
@@ -125,8 +128,13 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         }
 
         val principal = authentication.getPrincipal();
-        val userId = registeredService.getUsernameAttributeProvider()
-            .resolveUsername(principal, service, registeredService);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(principal)
+            .build();
+        val userId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
 
         val response = this.samlObjectBuilder.newResponse(
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
@@ -142,7 +150,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             currentDateTime.plusSeconds(skew), service.getId());
         assertion.setConditions(conditions);
 
-        val subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
+        val subject = this.samlObjectBuilder.newSubject(NameIDType.EMAIL, userId,
             service.getId(), currentDateTime.plusSeconds(skew), service.getRequestId(), null);
         assertion.setSubject(subject);
 

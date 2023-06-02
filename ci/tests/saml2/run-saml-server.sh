@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -z "${SP_SLO_SERVICE}" ]]; then
-  export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client&logoutendpoint=true"
+  export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client"
 else
   echo -e "Found existing SLO service at ${SP_SLO_SERVICE}"
 fi
@@ -40,6 +40,10 @@ else
   echo -e "Found existing IDP entity id at ${IDP_ENTITYID}"
 fi
 
+echo -e "Using IDP signing certificate:\n$IDP_SIGNING_CERTIFICATE"
+echo -e "Using IDP encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
+echo -e "SP passive authentication enabled: ${SP_PASSIVE_AUTHN}"
+
 docker run --name=simplesamlphp-idp -p 9443:8080 \
   -e SIMPLESAMLPHP_SP_ENTITY_ID="${SP_ENTITY_ID}" \
   -e SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE="${SP_ACS_SERVICE}" \
@@ -47,10 +51,12 @@ docker run --name=simplesamlphp-idp -p 9443:8080 \
   -e IDP_ENCRYPTION_CERTIFICATE="${IDP_ENCRYPTION_CERTIFICATE}" \
   -e IDP_SIGNING_CERTIFICATE="${IDP_SIGNING_CERTIFICATE}" \
   -e IDP_ENTITYID="${IDP_ENTITYID}" \
+  -e SP_PASSIVE_AUTHN="${SP_PASSIVE_AUTHN}" \
   -v $TMPDIR/saml.crt:/var/www/simplesamlphp/cert/saml.crt \
   -v $TMPDIR/saml.pem:/var/www/simplesamlphp/cert/saml.pem \
   -v $PWD/ci/tests/saml2/saml20-idp-remote.php:/var/www/simplesamlphp/metadata/saml20-idp-remote.php \
   -v $PWD/ci/tests/saml2/saml20-idp-hosted.php:/var/www/simplesamlphp/metadata/saml20-idp-hosted.php \
   -v $PWD/ci/tests/saml2/authsources.php:/var/www/simplesamlphp/config/authsources.php \
   -v $PWD/ci/tests/saml2/config.php:/var/www/simplesamlphp/config/config.php \
+  -v $PWD/ci/tests/saml2/php.ini-production:/usr/local/etc/php/php.ini \
   -d kenchan0130/simplesamlphp

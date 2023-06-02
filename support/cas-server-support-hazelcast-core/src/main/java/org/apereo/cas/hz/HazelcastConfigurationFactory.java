@@ -39,11 +39,13 @@ import com.hazelcast.spi.merge.LatestUpdateMergePolicy;
 import com.hazelcast.spi.merge.PassThroughMergePolicy;
 import com.hazelcast.spi.merge.PutIfAbsentMergePolicy;
 import com.hazelcast.wan.WanPublisherState;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
@@ -54,18 +56,21 @@ import java.util.UUID;
  * @since 5.2.0
  */
 @Slf4j
+@UtilityClass
 public class HazelcastConfigurationFactory {
     /**
      * Sets config map.
      *
-     * @param mapConfig the map config
-     * @param config    the config
+     * @param namedConfig the map config
+     * @param config      the config
      */
-    public static void setConfigMap(final NamedConfig mapConfig, final Config config) {
-        if (mapConfig instanceof MapConfig) {
-            config.addMapConfig((MapConfig) mapConfig);
-        } else if (mapConfig instanceof ReplicatedMapConfig) {
-            config.addReplicatedMapConfig((ReplicatedMapConfig) mapConfig);
+    public static void setConfigMap(final NamedConfig namedConfig, final Config config) {
+        if (namedConfig instanceof MapConfig mappedConfig) {
+            FunctionUtils.doIf(!config.getMapConfigs().containsKey(namedConfig.getName()),
+                u -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
+        } else if (namedConfig instanceof ReplicatedMapConfig replicatedConfig) {
+            FunctionUtils.doIf(!config.getReliableTopicConfigs().containsKey(namedConfig.getName()),
+                u -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
         }
     }
 
@@ -93,6 +98,8 @@ public class HazelcastConfigurationFactory {
         val config = new Config();
 
         config.setLicenseKey(hz.getCore().getLicenseKey());
+        config.getJetConfig().setEnabled(hz.getCore().isEnableJet());
+
         if (cluster.getCore().getCpMemberCount() > 0) {
             config.getCPSubsystemConfig().setCPMemberCount(cluster.getCore().getCpMemberCount());
         }
@@ -102,7 +109,7 @@ public class HazelcastConfigurationFactory {
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getNetwork().getPort())
             .setPortAutoIncrement(cluster.getNetwork().isPortAutoIncrement());
-        
+
         buildNetworkSslConfig(networkConfig, hz);
 
         if (StringUtils.hasText(cluster.getNetwork().getNetworkInterfaces())) {
@@ -270,7 +277,7 @@ public class HazelcastConfigurationFactory {
         if (StringUtils.hasText(hz.getCluster().getCore().getPartitionMemberGroupType())) {
             val partitionGroupConfig = config.getPartitionGroupConfig();
             val type = PartitionGroupConfig.MemberGroupType.valueOf(
-                hz.getCluster().getCore().getPartitionMemberGroupType().toUpperCase());
+                hz.getCluster().getCore().getPartitionMemberGroupType().toUpperCase(Locale.ENGLISH));
             LOGGER.trace("Using partition member group type [{}]", type);
             partitionGroupConfig.setEnabled(true).setGroupType(type);
         }
@@ -285,7 +292,8 @@ public class HazelcastConfigurationFactory {
      * @param timeoutSeconds the timeoutSeconds
      * @return the map config
      */
-    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
+    public static NamedConfig buildMapConfig(final BaseHazelcastProperties hz,
+                                             final String mapName, final long timeoutSeconds) {
         val cluster = hz.getCluster();
 
         val evictionPolicy = EvictionPolicy.valueOf(cluster.getCore().getEvictionPolicy());
@@ -297,29 +305,14 @@ public class HazelcastConfigurationFactory {
 
         val mergePolicyConfig = new MergePolicyConfig();
         if (StringUtils.hasText(cluster.getCore().getMapMergePolicy())) {
-            switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase()) {
-                case "discard":
-                    mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
-                    break;
-                case "pass_through":
-                    mergePolicyConfig.setPolicy(PassThroughMergePolicy.class.getName());
-                    break;
-                case "expiration_time":
-                    mergePolicyConfig.setPolicy(ExpirationTimeMergePolicy.class.getName());
-                    break;
-                case "higher_hits":
-                    mergePolicyConfig.setPolicy(HigherHitsMergePolicy.class.getName());
-                    break;
-                case "latest_update":
-                    mergePolicyConfig.setPolicy(LatestUpdateMergePolicy.class.getName());
-                    break;
-                case "latest_access":
-                    mergePolicyConfig.setPolicy(LatestAccessMergePolicy.class.getName());
-                    break;
-                case "put_if_absent":
-                default:
-                    mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
-                    break;
+            switch (cluster.getCore().getMapMergePolicy().trim().toLowerCase(Locale.ENGLISH)) {
+                case "discard" -> mergePolicyConfig.setPolicy(DiscardMergePolicy.class.getName());
+                case "pass_through" -> mergePolicyConfig.setPolicy(PassThroughMergePolicy.class.getName());
+                case "expiration_time" -> mergePolicyConfig.setPolicy(ExpirationTimeMergePolicy.class.getName());
+                case "higher_hits" -> mergePolicyConfig.setPolicy(HigherHitsMergePolicy.class.getName());
+                case "latest_update" -> mergePolicyConfig.setPolicy(LatestUpdateMergePolicy.class.getName());
+                case "latest_access" -> mergePolicyConfig.setPolicy(LatestAccessMergePolicy.class.getName());
+                case "put_if_absent" -> mergePolicyConfig.setPolicy(PutIfAbsentMergePolicy.class.getName());
             }
         }
 
@@ -332,6 +325,7 @@ public class HazelcastConfigurationFactory {
                 .setSplitBrainProtectionName(mapName.concat("-SplitBrainProtection"))
                 .setMergePolicyConfig(mergePolicyConfig);
         }
+
         return new MapConfig()
             .setName(mapName)
             .setStatisticsEnabled(true)

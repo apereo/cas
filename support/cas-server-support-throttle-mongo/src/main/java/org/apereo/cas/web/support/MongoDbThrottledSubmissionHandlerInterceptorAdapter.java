@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 /**
@@ -20,12 +20,14 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final transient MongoOperations mongoTemplate;
+    private final MongoOperations mongoTemplate;
+
     private final String collectionName;
 
-    public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                               final MongoOperations mongoTemplate,
-                                                               final String collectionName) {
+    public MongoDbThrottledSubmissionHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final MongoOperations mongoTemplate,
+        final String collectionName) {
         super(configurationContext);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
@@ -36,20 +38,21 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
 
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
         val query = new Query()
             .addCriteria(Criteria.where("clientIpAddress").is(remoteAddress)
                 .and("principal").is(getUsernameParameterFromRequest(request))
-                .and("actionPerformed").is(getConfigurationContext().getAuthenticationFailureCode())
-                .and("applicationCode").is(getConfigurationContext().getApplicationCode())
+                .and("actionPerformed").is(throttle.getFailure().getCode())
+                .and("applicationCode").is(throttle.getCore().getAppCode())
                 .and("whenActionWasPerformed").gte(getFailureInRangeCutOffDate()));
         query.with(Sort.by(Sort.Direction.DESC, "whenActionWasPerformed"));
         query.limit(2);
         query.fields().include("whenActionWasPerformed");
 
-        LOGGER.debug("Executing MongoDb throttling query [{}]", query.toString());
+        LOGGER.debug("Executing MongoDb throttling query [{}]", query);
         val failures = this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName)
             .stream()
-            .map(AuditActionContext::getWhenActionWasPerformed)
+            .map(this::toThrottledSubmission)
             .collect(Collectors.toList());
         return calculateFailureThresholdRateAndCompare(failures);
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.rest;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("RestRegisteredServicesProperties")
 public class RestRegisteredServicesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1822107478273171342L;
 
     /**
@@ -38,5 +41,6 @@ public class RestRegisteredServicesProperties implements Serializable {
      * The attribute value may also be constructed as a regex pattern.
      */
     @RequiredProperty
+    @RegularExpressionCapable
     private String attributeValue;
 }

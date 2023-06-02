@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,10 +34,10 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.sso.required-service-pattern=^https://www.google.com.*",
+    "cas.sso.services.required-service-pattern=^https://www.google.com.*",
     "cas.tgc.crypto.enabled=false"
 })
-@Tag("WebflowActions")
+@Tag("WebflowServiceActions")
 public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
     private Action verifyRequiredServiceAction;
@@ -109,7 +109,8 @@ public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTest
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app2.com/"));
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://google.com/"));
+        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://google.com/"),
+            serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
         this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
@@ -124,7 +125,8 @@ public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTest
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app2.com/"));
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://www.google.com/"));
+        tgt.grantServiceTicket(RegisteredServiceTestUtils.getService("https://www.google.com/"),
+            serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
         this.httpRequest.setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));

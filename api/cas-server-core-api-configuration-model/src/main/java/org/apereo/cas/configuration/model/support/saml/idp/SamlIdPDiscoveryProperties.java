@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,9 @@ import java.util.List;
 @JsonFilter("SamlIdPDiscoveryProperties")
 public class SamlIdPDiscoveryProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3547093517788229284L;
+
     /**
      * Locate discovery feed json file.
      */

@@ -1,13 +1,16 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.io.Serial;
+import java.time.ZonedDateTime;
 
 /**
  * AlwaysExpiresExpirationPolicy always answers true when asked if a Ticket is
@@ -26,6 +29,7 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     public static final ExpirationPolicy INSTANCE = new AlwaysExpiresExpirationPolicy();
 
+    @Serial
     private static final long serialVersionUID = 3836547698242303540L;
 
     @Override
@@ -45,4 +49,15 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
         return 0L;
     }
 
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(getClock());
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(getClock());
+    }
 }

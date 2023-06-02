@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link DuoSecurityPasscodeCredential}.
  *
@@ -19,6 +21,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Setter
 public class DuoSecurityPasscodeCredential extends OneTimePasswordCredential implements MultifactorAuthenticationCredential {
+    @Serial
     private static final long serialVersionUID = 3007700749231783156L;
 
     private final String providerId;

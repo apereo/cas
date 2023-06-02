@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 
 /**
@@ -51,11 +53,12 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws GeneralSecurityException {
         val httpCredential = (HttpBasedServiceCredential) credential;
-        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
+        if (!httpCredential.getService().getProxyPolicy()
+            .isAllowedProxyCallbackUrl(httpCredential.getService(), httpCredential.getCallbackUrl())) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
-                httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
+                httpCredential.getService(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
@@ -64,17 +67,16 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
         }
-        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, this.principalFactory.createPrincipal(httpCredential.getId()));
+        return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, principalFactory.createPrincipal(httpCredential.getId()));
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof HttpBasedServiceCredential;
     }
 
     @Override
     public boolean supports(final Class<? extends Credential> clazz) {
         return HttpBasedServiceCredential.class.isAssignableFrom(clazz);
-    }
-
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof HttpBasedServiceCredential;
     }
 }

@@ -32,11 +32,11 @@ import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
 
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
  * @author Middleware Services
  * @since 3.0.0
  */
-@SpringBootTest(classes = {
+@Import({
     MemcachedTicketRegistryConfiguration.class,
     CasCoreUtilSerializationConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
@@ -57,9 +57,9 @@ import static org.mockito.Mockito.*;
     CasCoreServicesComponentSerializationConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
-    BaseTicketRegistryTests.SharedTestConfiguration.class
-},
+    MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class
+})
+@TestPropertySource(
     properties = {
         "cas.ticket.registry.memcached.servers=localhost:11211",
         "cas.ticket.registry.memcached.failure-mode=Redistribute",
@@ -128,23 +128,20 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyFailures() throws Exception {
         val pool = mock(ObjectPool.class);
-        val registry = new MemcachedTicketRegistry(pool);
+        val registry = new MemcachedTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, pool);
         assertNotNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
-        assertNotNull(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser").getId()));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                val client = mock(MemcachedClientIF.class);
-                when(pool.borrowObject()).thenReturn(client);
-                when(client.set(anyString(), anyInt(), any())).thenThrow(new IllegalArgumentException());
-                doThrow(new IllegalArgumentException()).when(pool).returnObject(any());
-                registry.addTicket(new MockTicketGrantingTicket("casuser"));
-            }
+        assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket("casuser")) > 0);
+        assertDoesNotThrow(() -> {
+            val client = mock(MemcachedClientIF.class);
+            when(pool.borrowObject()).thenReturn(client);
+            when(client.set(anyString(), anyInt(), any())).thenThrow(new IllegalArgumentException());
+            doThrow(new IllegalArgumentException()).when(pool).returnObject(any());
+            registry.addTicket(new MockTicketGrantingTicket("casuser"));
         });
     }
 
     @TestConfiguration(value = "MemcachedTicketRegistryTestConfiguration", proxyBeanMethods = false)
-        public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
+    public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override
         public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
             plan.registerSerializableClass(MockTicketGrantingTicket.class);

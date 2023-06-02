@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 
-
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,8 +13,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -34,8 +36,10 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
+@Slf4j
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -7636642464326939536L;
 
     /**
@@ -49,19 +53,25 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInSeconds) {
+    public TimeoutExpirationPolicy(
+        @JsonProperty("timeToIdle") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
-    
+
     @Override
     public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         if (ticketState == null) {
             return true;
         }
         val now = ZonedDateTime.now(getClock());
-        val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expirationTime = getIdleExpirationTime(ticketState);
         val expired = now.isAfter(expirationTime);
-        return expired || super.isExpired(ticketState);
+        val result = expired || super.isExpired(ticketState);
+        if (result) {
+            LOGGER.trace("Ticket [{}] is expired because its expiration time [{}] is after [{}] or its parent ticket, if any, has expired",
+                ticketState.getId(), expirationTime, now);
+        }
+        return result;
     }
 
     @JsonIgnore
@@ -73,5 +83,12 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 }

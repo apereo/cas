@@ -7,7 +7,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.rest.audit.RestResponseEntityAuditResourceResolver;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
@@ -27,9 +27,10 @@ import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -53,6 +54,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -63,7 +65,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.RestProtocol)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.RestProtocol)
 @AutoConfiguration
 public class CasRestConfiguration {
 
@@ -78,9 +80,7 @@ public class CasRestConfiguration {
             final CentralAuthenticationService centralAuthenticationService) {
             return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService));
         }
-
     }
-
     @Configuration(value = "CasRestResponseFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasRestResponseFactoryConfiguration {
@@ -90,7 +90,7 @@ public class CasRestConfiguration {
         public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
             final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
             val plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
-            configurers.forEach(c -> c.configureEntityResponseFactory(plan));
+            configurers.forEach(config -> config.configureEntityResponseFactory(plan));
             return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
         }
 
@@ -138,7 +138,9 @@ public class CasRestConfiguration {
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         LOGGER.debug("Activating authentication throttling for REST endpoints...");
@@ -158,9 +160,9 @@ public class CasRestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketStatusResource ticketStatusResource(
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
-            return new TicketStatusResource(centralAuthenticationService);
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
+            return new TicketStatusResource(ticketRegistry);
         }
 
         @Bean
@@ -191,7 +193,7 @@ public class CasRestConfiguration {
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
             final RestAuthenticationService restAuthenticationService,
-            @Qualifier("defaultSingleLogoutRequestExecutor")
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
             return new TicketGrantingTicketResource(restAuthenticationService,
                 centralAuthenticationService, ticketGrantingTicketResourceEntityResponseFactory,

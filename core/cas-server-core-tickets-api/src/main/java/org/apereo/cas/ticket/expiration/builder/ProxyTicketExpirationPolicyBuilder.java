@@ -7,10 +7,9 @@ import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link ProxyTicketExpirationPolicyBuilder}.
@@ -18,25 +17,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class ProxyTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<ProxyTicket> {
+public record ProxyTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<ProxyTicket> {
+    @Serial
     private static final long serialVersionUID = -2597980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toProxyTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<ProxyTicket> getTicketType() {
-        return ProxyTicket.class;
     }
 
     /**

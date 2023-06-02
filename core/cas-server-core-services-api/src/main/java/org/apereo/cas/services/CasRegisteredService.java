@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serial;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * This is {@link CasRegisteredService}.
  *
@@ -18,12 +22,13 @@ import org.apache.commons.lang3.ObjectUtils;
 @Getter
 @Setter
 public class CasRegisteredService extends BaseWebBasedRegisteredService implements CasModelRegisteredService {
-    
+
     /**
      * The friendly name for this client.
      */
     public static final String FRIENDLY_NAME = "CAS Client";
 
+    @Serial
     private static final long serialVersionUID = -2416680749378661897L;
 
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
@@ -35,6 +40,10 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
     private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
 
     private String redirectUrl;
+
+    private Set<String> supportedProtocols = new LinkedHashSet<>(0);
+
+    private String responseType;
 
     @JsonIgnore
     @Override

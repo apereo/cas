@@ -31,20 +31,22 @@ public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
     public void verifyExcludeOperationForAllActions() {
-        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString());
+        val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of("TES.+"));
         mgr.record(ctx);
         assertTrue(mock.getAuditRecords().isEmpty());
     }
-    
+
+    private static AuditActionContext getAuditActionContext() {
+        return new AuditActionContext("casuser", "TEST", "TEST",
+            "CAS", new Date(), "1.2.3.4",
+            "1.2.3.4", UUID.randomUUID().toString(), Map.of());
+    }
+
     @Test
     public void verifyOperationForAllActions() {
-        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString());
+        val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of());
         mgr.record(ctx);
@@ -53,9 +55,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
     public void verifyOperationForAllSupportedActions() {
-        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString());
+        val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
@@ -64,9 +64,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
     public void verifyOperationForUnmatchedActions() {
-        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString());
+        val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"), List.of());
         mgr.record(ctx);
@@ -79,7 +77,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS",
             DateTimeUtils.dateOf(LocalDateTime.now(ZoneOffset.UTC).plusDays(1)),
             "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString());
+            "1.2.3.4", UUID.randomUUID().toString(), Map.of());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);

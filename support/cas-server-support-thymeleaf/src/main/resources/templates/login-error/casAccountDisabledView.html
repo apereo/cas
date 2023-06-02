@@ -11,11 +11,17 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66">
+        <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
             <h2 th:utext="#{screen.accountdisabled.heading}">This account has been disabled.</h2>
-            <p th:utext="#{screen.accountdisabled.message}">Please contact the system administrator to regain
-                access.</p>
+            <span th:remove="tag" th:if="${#bools.isTrue(enableAccountUnlock)}">
+                    <p th:utext="#{screen.account.unlock.description}">Please unlock the account.</p>
+                    <div th:replace="~{fragments/unlockaccount :: unlock}"></div>
+                </span>
+            <span th:remove="tag" th:unless="${enableAccountUnlock}">
+                    <p th:utext="#{screen.accountdisabled.message}">Please contact the system administrator to regain access.</p>
+            </span>
         </div>
+
     </main>
 </body>
 

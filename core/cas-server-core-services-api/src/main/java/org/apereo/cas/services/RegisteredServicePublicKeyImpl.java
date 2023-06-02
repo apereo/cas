@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
 import javax.crypto.Cipher;
+
+import java.io.Serial;
 import java.security.PublicKey;
 
 /**
@@ -39,6 +41,7 @@ import java.security.PublicKey;
 @Accessors(chain = true)
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
+    @Serial
     private static final long serialVersionUID = -8497658523695695863L;
 
     @ExpressionLanguageCapable

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.login;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -10,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class GenericSuccessViewAction extends BaseCasWebflowAction {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final ServicesManager servicesManager;
 
@@ -51,7 +51,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
      */
     public Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
-            val ticketGrantingTicket = centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return Optional.of(ticketGrantingTicket.getAuthentication());
         } catch (final InvalidTicketException e) {
             LOGGER.debug(e.getMessage(), e);
@@ -82,7 +82,7 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                                     registeredService, authn.getPrincipal().getId(),
                                     (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
                             } catch (final Exception e) {
-                                LOGGER.error(e.getMessage(), e);
+                                LOGGER.info(e.getMessage(), e);
                                 return false;
                             }
                         })

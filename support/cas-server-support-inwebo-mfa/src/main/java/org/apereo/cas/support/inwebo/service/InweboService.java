@@ -11,8 +11,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
@@ -23,6 +21,8 @@ import javax.net.ssl.SSLContext;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
+
 /**
  * The Inwebo service.
  *
@@ -30,17 +30,9 @@ import java.net.URL;
  * @since 6.4.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class InweboService {
+public record InweboService(CasConfigurationProperties casProperties, InweboConsoleAdmin consoleAdmin, SSLContext context) {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-
-    private final CasConfigurationProperties casProperties;
-
-    private final InweboConsoleAdmin consoleAdmin;
-
-    private final SSLContext context;
 
     /**
      * Retrieve device name.
@@ -48,8 +40,8 @@ public class InweboService {
      * @param json     the json
      * @param response the response
      */
-    protected static void retrieveDeviceName(final JsonNode json,
-                                             final InweboDeviceNameResponse response) {
+    static void retrieveDeviceName(final JsonNode json,
+                                   final InweboDeviceNameResponse response) {
         if (response.isOk()) {
             val name = json.get("name");
             if (name != null) {
@@ -59,23 +51,42 @@ public class InweboService {
     }
 
     /**
-     * Login search.
+     * Login search and query.
      *
      * @param login the login
-     * @return the inwebo login search response
+     * @return the inwebo login search/query response
      */
-    public InweboLoginSearchResponse loginSearch(final String login) {
-        val soap = consoleAdmin.loginSearch(login);
-        val err = soap.getErr();
+    public InweboLoginSearchResponse loginSearchQuery(final String login) {
+        val loginSearchResult = consoleAdmin.loginSearch(login);
+        val err = loginSearchResult.getErr();
         val response = (InweboLoginSearchResponse) buildResponse(new InweboLoginSearchResponse(),
             "loginSearch(" + login + ')', err);
         if (response.isOk()) {
-            val count = soap.getCount();
+            val count = loginSearchResult.getCount();
             response.setCount(count);
             if (count == 1) {
-                response.setUserId(soap.getId().get(0));
-                response.setUserStatus(soap.getStatus().get(0));
-                response.setActivationStatus(soap.getActivationStatus().get(0));
+                var activationStatus = loginSearchResult.getActivationStatus().get(0);
+                val userId = loginSearchResult.getId().get(0);
+                if (activationStatus == 1) {
+                    val loginQueryResult = consoleAdmin.loginQuery(userId);
+                    if ("OK".equals(loginQueryResult.getErr())) {
+                        var hasAuthenticator = false;
+                        for (val maname : loginQueryResult.getManame()) {
+                            if (maname.contains("Authenticator")) {
+                                hasAuthenticator = true;
+                                break;
+                            }
+                        }
+                        if (!hasAuthenticator) {
+                            activationStatus = BROWSER_AUTHENTICATION_STATUS;
+                        } else if (loginQueryResult.getManame().size() > 2) {
+                            activationStatus = PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
+                        }
+                    }
+                }
+                response.setUserId(userId);
+                response.setUserStatus(loginSearchResult.getStatus().get(0));
+                response.setActivationStatus(activationStatus);
             }
         }
         return response;
@@ -172,7 +183,7 @@ public class InweboService {
      * @return the json node
      * @throws Exception the exception
      */
-    protected JsonNode call(final String url) throws Exception {
+    JsonNode call(final String url) throws Exception {
         val conn = (HttpURLConnection) new URL(url).openConnection();
         if (conn instanceof HttpsURLConnection) {
             HttpsURLConnection.class.cast(conn)
@@ -190,7 +201,7 @@ public class InweboService {
      * @param err       the err
      * @return the abstract inwebo response
      */
-    protected AbstractInweboResponse buildResponse(final AbstractInweboResponse response, final String operation, final String err) {
+    AbstractInweboResponse buildResponse(final AbstractInweboResponse response, final String operation, final String err) {
         if ("OK".equals(err)) {
             response.setResult(InweboResult.OK);
         } else {

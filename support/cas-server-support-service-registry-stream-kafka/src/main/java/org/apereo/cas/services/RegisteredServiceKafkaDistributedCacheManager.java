@@ -6,11 +6,10 @@ import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.cache.MappableDistributedCacheManager;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.kafka.core.KafkaOperations;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,6 +35,7 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
         set(final RegisteredService key, final DistributedCacheObject<RegisteredService> item,
             final boolean publish) {
@@ -46,6 +46,7 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
         update(final RegisteredService key, final DistributedCacheObject<RegisteredService> item,
                final boolean publish) {
@@ -56,6 +57,7 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>
         remove(final RegisteredService key, final DistributedCacheObject<RegisteredService> item, final boolean publish) {
         if (publish) {
@@ -64,24 +66,13 @@ public class RegisteredServiceKafkaDistributedCacheManager extends
         return super.remove(key, item, publish);
     }
 
-    @Override
-    public void clear() {
-        getAll().forEach(item -> remove(item.getValue(), item, true));
-        super.clear();
-    }
-
+    @SuppressWarnings("FutureReturnValueIgnored")
     private void sendObject(final RegisteredService key, final DistributedCacheObject<RegisteredService> item) {
-        val future = kafkaTemplate.send(topic, buildKey(key), item);
-        future.addCallback(new ListenableFutureCallback<SendResult>() {
-            @Override
-            public void onSuccess(final SendResult result) {
-                LOGGER.trace("Published [{}] successfully", result);
-            }
-
-            @Override
-            public void onFailure(final Throwable e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+        val itemKey = buildKey(key);
+        val future = kafkaTemplate.send(topic, itemKey, item);
+        future.whenComplete((result, ex) -> {
+            LOGGER.trace("Published [{}]", result);
+            LoggingUtils.error(LOGGER, ex);
         });
     }
 }

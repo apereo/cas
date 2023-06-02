@@ -6,6 +6,8 @@ import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is {@link CasApplicationContextInitializer}.
  *
@@ -19,7 +21,8 @@ public class CasApplicationContextInitializer implements ApplicationContextIniti
     public static final String SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS = "CONFIG_VALIDATION_STATUS";
 
     @Override
-    public void initialize(final ConfigurableApplicationContext applicationContext) {
+    public void initialize(
+        @Nonnull final ConfigurableApplicationContext applicationContext) {
         if (!Boolean.getBoolean("SKIP_CONFIG_VALIDATION")) {
             val validator = new CasConfigurationPropertiesValidator(applicationContext);
             val results = validator.validate();

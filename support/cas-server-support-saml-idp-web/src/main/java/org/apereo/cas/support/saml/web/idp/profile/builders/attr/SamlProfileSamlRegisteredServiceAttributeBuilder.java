@@ -50,7 +50,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSam
             LOGGER.debug("No explicit attribute encryption rules are defined; Attribute [{}] is selected for encryption.", attribute.getName());
             return true;
         }
-        if (encryptableAttributes.contains(attribute.getName())) {
+        if (encryptableAttributes.contains(attribute.getName()) || encryptableAttributes.contains(attribute.getFriendlyName())) {
             LOGGER.debug("Attribute encryption rules allow [{}] to be encrypted", attribute.getName());
             return true;
         }

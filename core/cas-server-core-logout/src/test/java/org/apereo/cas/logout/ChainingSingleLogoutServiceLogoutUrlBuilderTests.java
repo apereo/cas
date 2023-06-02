@@ -6,11 +6,12 @@ import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.web.SimpleUrlValidator;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -23,6 +24,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,6 +45,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
         appCtx.refresh();
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .registeredServicesTemplatesManager(mock(RegisteredServicesTemplatesManager.class))
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
@@ -64,6 +67,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
         when(registeredService.matches(anyString())).thenReturn(Boolean.TRUE);
         when(registeredService.getAccessStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy());
         when(registeredService.getLogoutUrl()).thenReturn("https://somewhere.org");
+        when(registeredService.getName()).thenReturn(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
         assertTrue(builder.supports(registeredService, service, Optional.empty()));

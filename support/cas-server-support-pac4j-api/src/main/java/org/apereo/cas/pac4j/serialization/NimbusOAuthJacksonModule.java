@@ -12,6 +12,7 @@ import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Token;
 import net.minidev.json.JSONObject;
 
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import java.util.Set;
  * @since 6.3.0
  */
 public class NimbusOAuthJacksonModule extends SimpleModule {
+    @Serial
     private static final long serialVersionUID = 4380897174293794761L;
 
     public NimbusOAuthJacksonModule() {
@@ -42,6 +44,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
     }
 
     private static class ScopeValueMixin extends Scope.Value {
+        @Serial
         private static final long serialVersionUID = -5131994521473883314L;
 
         @JsonCreator
@@ -53,6 +56,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
     }
 
     private static class ScopeMixin extends Scope {
+        @Serial
         private static final long serialVersionUID = -5131994521473883314L;
 
         @JsonCreator
@@ -64,6 +68,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
     }
 
     private static class RefreshTokenMixin extends Token {
+        @Serial
         private static final long serialVersionUID = 867184690952714608L;
 
         @JsonCreator
@@ -72,6 +77,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
             final String value) {
         }
 
+        @Override
         @JsonIgnore
         public Set<String> getParameterNames() {
             return new HashSet<>();
@@ -85,6 +91,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
     }
 
     private static class BearerAccessTokenMixin extends BearerAccessToken {
+        @Serial
         private static final long serialVersionUID = -7042673498464860693L;
 
         @JsonCreator
@@ -106,6 +113,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
     }
 
     private static class CodeVerifierMixin extends CodeVerifier {
+        @Serial
         private static final long serialVersionUID = -5587339765097722026L;
 
         @JsonCreator

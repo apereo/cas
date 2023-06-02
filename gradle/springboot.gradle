@@ -11,11 +11,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
          * Application’s static resources are loaded from their source location.
          */
         bootRun {
-            resources {
-                srcDirs new File("//etc/cas/templates/"),
-                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                        new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
-                        new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
+            if (project.hasProperty("casWebApplication") && project.ext.casWebApplication) {
+                resources {
+                    srcDirs new File("//etc/cas/templates/"),
+                            new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                            new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
+                            new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
+                }
             }
         }
     }
@@ -32,25 +34,27 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     }
 
     if (plugins.hasPlugin("war")) {
-        
-        javadoc {
+
+        tasks.named('javadoc') {
             enabled false
         }
 
-        bootWar {
+        tasks.named('bootWar') {
+
+            def gitCommitId = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
-                        "Automatic-Module-Name": project.name,
+                        "Automatic-Module-Name": project.name.replace("-", "."),
                         "Implementation-Title": project.name,
                         "Implementation-Vendor": project.group,
                         "Created-By": project.group)
                 if (rootProject.generateTimestamps) {
                     attributes("Implementation-Date": java.time.ZonedDateTime.now())
                 }
-                
+
                 attributes(
-                        "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
+                        "Specification-Version": "${-> gitCommitId}",
                         "Implementation-Version": project.version)
             }
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
@@ -59,7 +63,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
 
     } else {
-        bootJar {
+        tasks.named('bootJar') {
             mainClass.set(project.ext.mainClassName)
             if (project.ext.has("archiveFileName")) {
                 archiveFileName = project.ext.archiveFileName
@@ -89,9 +93,9 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
     }
 
-    bootRun {
+    tasks.named('bootRun') {
         mainClass.set(project.ext.mainClassName)
-        
+
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             dependsOn pathingJar
             doFirst {
@@ -101,8 +105,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
         sourceResources sourceSets.bootRun
         systemProperties = System.properties
-        
+
         def list = []
+        list.add("-Djava.net.preferIPv4Stack=true ")
+        list.add("-Djava.net.preferIPv4Addresses=true")
         list.add("-XX:TieredStopAtLevel=1")
         list.add("--add-modules")
         list.add("java.se")
@@ -110,6 +116,12 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.util=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.time=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.net=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/sun.security.action=jdk.crypto.ec")
         list.add("--add-opens")
@@ -150,7 +162,7 @@ int findAvailableTcpPort(List<Integer> portRange) {
             serverSocket.close()
             return port
         } catch (Exception e) {
-             logger.debug "Port ${port} is not available: ${e.message}"
+            logger.debug "Port ${port} is not available: ${e.message}"
         }
     }
     return -1

@@ -13,8 +13,8 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -46,7 +46,6 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
         final List<NameValuePair> params,
         final OAuth20RefreshToken refreshToken) throws Exception {
         val idToken = configurationContext.getIdTokenGeneratorService().generate(accessToken,
-            configurationContext.getIdTokenExpirationPolicy().buildTicketExpirationPolicy().getTimeToLive(),
             holder.getUserProfile(), OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getGrantType(),
             holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);

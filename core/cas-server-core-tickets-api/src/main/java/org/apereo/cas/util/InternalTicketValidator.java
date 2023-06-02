@@ -5,16 +5,12 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.AssertionImpl;
-import org.jasig.cas.client.validation.TicketValidator;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is a ticket validator that uses CAS back channels to validate ST.
@@ -33,18 +29,21 @@ public class InternalTicketValidator implements TicketValidator {
     private final ServicesManager servicesManager;
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Assertion validate(final String ticketId, final String serviceId) {
+    public ValidationResult validate(final String ticketId, final String serviceId) {
         val service = webApplicationServiceFactory.createService(serviceId);
         val assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
         val authentication = assertion.getPrimaryAuthentication();
         val principal = authentication.getPrincipal();
-        val attrPrincipal = new AttributePrincipalImpl(principal.getId(), (Map) principal.getAttributes());
-
         val registeredService = servicesManager.findServiceBy(service);
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-            authentication, assertion,
-            new HashMap<>(0), registeredService);
-        return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes);
+            authentication, assertion, new HashMap<>(0), registeredService);
+
+        return ValidationResult.builder()
+            .principal(principal)
+            .service(service)
+            .attributes(authenticationAttributes)
+            .assertion(assertion)
+            .registeredService(registeredService)
+            .build();
     }
 }

@@ -18,8 +18,8 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link UmaRequestingPartyClaimsCollectionEndpointController}.
@@ -45,7 +45,7 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
      * @return redirect view
      * @throws Exception the exception
      */
-    @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_CLAIMS_COLLECTION_URL)
+    @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_CLAIMS_COLLECTION_URL)
     public View getClaims(@RequestParam("client_id") final String clientId,
                           @RequestParam("redirect_uri") final String redirectUri,
                           @RequestParam("ticket") final String ticketId,

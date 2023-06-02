@@ -49,6 +49,11 @@ public interface OAuth20Constants {
     String REDIRECT_URI = "redirect_uri";
 
     /**
+     * The Authorization Server is unable to meet the requirements of the Relying Party for the authentication of the End-User. 
+     */
+    String UNMET_AUTHENTICATION_REQUIREMENTS = "unmet_authentication_requirements";
+    
+    /**
      * The response type.
      */
     String RESPONSE_TYPE = "response_type";
@@ -134,11 +139,6 @@ public interface OAuth20Constants {
     String ERROR_WITH_CALLBACK = "error_with_callback";
 
     /**
-     * Request parameter is not supported.
-     */
-    String REQUEST_NOT_SUPPORTED = "request_not_supported";
-
-    /**
      * Unsupported response_type error.
      */
     String UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";
@@ -217,6 +217,11 @@ public interface OAuth20Constants {
      * The invalid grant.
      */
     String INVALID_GRANT = "invalid_grant";
+
+    /**
+     * The invalid dpop.
+     */
+    String INVALID_DPOP_PROOF = "invalid_dpop_proof";
 
     /**
      * The invalid scope.
@@ -311,7 +316,12 @@ public interface OAuth20Constants {
     /**
      * The bearer type.
      */
-    String TOKEN_TYPE_BEARER = "bearer";
+    String TOKEN_TYPE_BEARER = "Bearer";
+
+    /**
+     * The DPOP Token.
+     */
+    String TOKEN_TYPE_DPOP = "DPoP";
 
     /**
      * Client assertion type as jwt bearer.
@@ -382,4 +392,15 @@ public interface OAuth20Constants {
      * The unauthorized client.
      */
     String UNAUTHORIZED_CLIENT = "unauthorized_client";
+
+    /**
+     * DPoP header.
+     */
+    String DPOP = "DPoP";
+
+
+    /**
+     * DPoP confirmation that is put inside access token as an attribute.
+     */
+    String DPOP_CONFIRMATION = "DPoPConfirmation";
 }

@@ -1,11 +1,11 @@
 package org.apereo.cas.token.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.config.CasCookieConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -15,28 +15,29 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebflowContextConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.TokenTicketsConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
@@ -81,6 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowContextConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
@@ -108,8 +110,8 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
-    @Qualifier(CentralAuthenticationService.BEAN_NAME)
-    private CentralAuthenticationService cas;
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
 
     @Test
     public void verifyDecrypt() {
@@ -133,13 +135,13 @@ public class TokenWebApplicationServiceResponseBuilderTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(user);
         val tgt = new MockTicketGrantingTicket(authentication);
         val st = new MockServiceTicket("ST-123456", service, tgt);
-        cas.addTicket(tgt);
-        cas.addTicket(st);
+        ticketRegistry.addTicket(tgt);
+        ticketRegistry.addTicket(st);
 
         val result = responseBuilder.build(service, st.getId(), authentication);
         assertNotNull(result);
-        assertTrue(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
-        val ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
+        assertTrue(result.attributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        val ticket = result.attributes().get(CasProtocolConstants.PARAMETER_TICKET);
         assertNotNull(JWTParser.parse(ticket));
     }
 
@@ -149,6 +151,6 @@ public class TokenWebApplicationServiceResponseBuilderTests {
             StringUtils.EMPTY,
             CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(result);
-        assertFalse(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        assertFalse(result.attributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 }

@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -11,6 +12,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serial;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link SyncopeAuthenticationProperties}.
@@ -23,8 +28,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("SyncopeAuthenticationProperties")
-public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties implements CasFeatureModule {
+public class SyncopeAuthenticationProperties extends BaseSyncopeProperties implements CasFeatureModule {
 
+    @Serial
     private static final long serialVersionUID = -2446926316502297496L;
 
     /**
@@ -37,6 +43,11 @@ public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties i
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * The order of this authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
 
     /**
      * Password encoder settings for the authentication handler.
@@ -53,7 +64,21 @@ public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties i
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
+
+    /**
+     * Map of attributes that optionally may be used to control the names
+     * of the collected attributes from Syncope. If an attribute is provided by Syncope,
+     * it can be listed here as the key of the map with a value that should be the name
+     * of that attribute as collected and recorded by CAS.
+     * For example, the convention {@code lastLoginDate->lastDate} will process the
+     * Syncope attribute {@code lastLoginDate} and will internally rename that to {@code lastDate}.
+     * If no mapping is specified, CAS defaults will be used instead.
+     * In other words, this settings allows one to virtually rename and remap Syncopen attributes
+     * during the authentication event.
+     */
+    private Map<String, String> attributeMappings = new LinkedHashMap<>();
 
     /**
      * This is principal transformation properties.
@@ -61,4 +86,9 @@ public class SyncopeAuthenticationProperties extends AbstractSyncopeProperties i
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
+    /**
+     * Handling just-in-time provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private SyncopePrincipalProvisioningProperties provisioning = new SyncopePrincipalProvisioningProperties();
 }

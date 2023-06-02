@@ -23,6 +23,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.lang.Nullable;
@@ -47,17 +48,17 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
 
     private final List<ExpirationPolicyBuilder> expirationPolicyBuilders;
 
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManagerProvider;
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     public TicketExpirationPoliciesEndpoint(final CasConfigurationProperties casProperties,
                                             final List<ExpirationPolicyBuilder> expirationPolicyBuilders,
-                                            final ServicesManager servicesManager,
+                                            final ObjectProvider<ServicesManager> servicesManager,
                                             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(casProperties);
         this.expirationPolicyBuilders = expirationPolicyBuilders;
-        this.servicesManager = servicesManager;
+        this.servicesManagerProvider = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
@@ -73,19 +74,20 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @ReadOperation
-    @Operation(summary = "Produce expiration policies given an optional service id", parameters = {@Parameter(name = "serviceId")})
+    @Operation(summary = "Produce expiration policies given an optional service id", parameters = @Parameter(name = "serviceId"))
     public Map<String, String> handle(@Nullable final String serviceId) throws Exception {
         val model = new HashMap<String, String>();
         expirationPolicyBuilders.forEach(Unchecked.consumer(builder -> {
             val policy = builder.buildTicketExpirationPolicy();
             val details = getTicketExpirationPolicyDetails(policy);
-            model.put(builder.getTicketType().getName(), details);
+            model.put(builder.getClass().getSimpleName(), details);
         }));
 
+        val servicesManager = servicesManagerProvider.getObject();
         val registeredService = StringUtils.isNotBlank(serviceId)
             ? NumberUtils.isCreatable(serviceId)
-                ? servicesManager.findServiceBy(Long.parseLong(serviceId))
-                : servicesManager.findServiceBy(webApplicationServiceFactory.createService(serviceId))
+            ? servicesManager.findServiceBy(Long.parseLong(serviceId))
+            : servicesManager.findServiceBy(webApplicationServiceFactory.createService(serviceId))
             : null;
 
         Optional.ofNullable(registeredService)

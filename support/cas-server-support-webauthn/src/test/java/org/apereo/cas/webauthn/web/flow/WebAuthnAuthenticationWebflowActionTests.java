@@ -118,7 +118,7 @@ public class WebAuthnAuthenticationWebflowActionTests {
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
         WebUtils.putAuthenticationResultBuilder(builder, context);
 
-        WebUtils.putCredential(context, new WebAuthnCredential(sessionId.toJsonString()));
+        WebUtils.putCredential(context, new WebAuthnCredential(sessionId.getBase64Url()));
         result = webAuthnAuthenticationWebflowAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
     }

@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UnauthorizedSsoServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized.sso";
+
     private static final String MESSAGE = "GG";
 
     @Test

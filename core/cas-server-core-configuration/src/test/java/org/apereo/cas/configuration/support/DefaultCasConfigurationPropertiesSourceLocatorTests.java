@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.config.CasCoreBootstrapStandaloneConfiguration;
+import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentConfiguration;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.configuration.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
-import org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +55,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
 
     @Autowired
     @Qualifier("casConfigurationWatchService")
-    private CasEventListener casConfigurationWatchService;
+    private InitializingBean casConfigurationWatchService;
 
     @Autowired
     private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;

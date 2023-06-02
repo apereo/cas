@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @JsonFilter("SamlIdPServicesProperties")
 public class SamlIdPServicesProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 7211477683583467619L;
 
     /**

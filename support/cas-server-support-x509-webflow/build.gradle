@@ -1,4 +1,12 @@
 description = "Apereo CAS X509 Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "X.509 Authentication",
+            aliases: ["x509"]
+    ]
+}
 dependencies {
     compileOnly libraries.springboottomcat
 

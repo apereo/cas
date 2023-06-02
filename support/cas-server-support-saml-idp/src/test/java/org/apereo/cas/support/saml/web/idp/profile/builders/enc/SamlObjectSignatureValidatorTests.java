@@ -7,11 +7,10 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
@@ -22,7 +21,9 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
@@ -70,9 +71,10 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2Client.init();
 
         samlContext = new MessageContext();
-        saml2MessageContext = new SAML2MessageContext();
+
+        val ctx = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, JEESessionStore.INSTANCE));
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 
@@ -135,18 +137,13 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         val secContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
 
         val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
-        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
+        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.ssoDescriptor()));
 
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.initialize();
         handler.invoke(messageContext);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
-            }
-        });
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
     }
 
     @Test
@@ -158,13 +155,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2ClientConfiguration.setAuthnRequestSigned(true);
         val authnRequest = builder.build(saml2MessageContext);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
-            }
-        });
-
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
     }
 
     @Test
@@ -180,14 +171,9 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         val secContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
 
         val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
-        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
+        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.ssoDescriptor()));
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
-            }
-        });
+        assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext));
 
     }
 }

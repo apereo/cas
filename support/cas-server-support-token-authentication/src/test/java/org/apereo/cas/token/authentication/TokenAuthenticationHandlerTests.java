@@ -1,6 +1,7 @@
 package org.apereo.cas.token.authentication;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -10,18 +11,19 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -49,10 +51,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link TokenAuthenticationHandlerTests}.
@@ -73,6 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreWebConfiguration.class,
     TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
@@ -108,7 +113,7 @@ public class TokenAuthenticationHandlerTests {
         profile.setId("casuser");
         val token = g.generate(profile);
         val c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
-        val result = this.tokenAuthenticationHandler.authenticate(c);
+        val result = this.tokenAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }
@@ -121,7 +126,7 @@ public class TokenAuthenticationHandlerTests {
         profile.setId("casuser");
         val token = g.generate(profile);
         val c = new TokenCredential(token, RegisteredServiceTestUtils.getService("nosigningservice"));
-        assertThrows(FailedLoginException.class, () -> tokenAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> tokenAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -132,7 +137,7 @@ public class TokenAuthenticationHandlerTests {
         profile.setId("casuser");
         val token = g.generate(profile);
         val c = new TokenCredential(token, RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL2));
-        assertThrows(FailedLoginException.class, () -> tokenAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> tokenAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
@@ -144,7 +149,7 @@ public class TokenAuthenticationHandlerTests {
         profile.setId("casuser");
         val token = g.generate(profile);
         val c = new TokenCredential(token, RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL3));
-        assertNotNull(tokenAuthenticationHandler.authenticate(c));
+        assertNotNull(tokenAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)

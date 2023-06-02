@@ -16,6 +16,7 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +38,7 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -3871692225877293627L;
 
     /**
@@ -48,7 +50,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
      * Flag to try all credentials before policy is satisfied.
      */
     private boolean tryAll;
-    
+
     protected BaseAuthenticationHandlerAuthenticationPolicy(final String requiredHandlerNames) {
         this(StringUtils.commaDelimitedListToSet(requiredHandlerNames), false);
     }
@@ -66,7 +68,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
 
         if (!credsOk) {
             LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]. "
-                + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
+                        + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
             return AuthenticationPolicyExecutionResult.failure();
         }
 

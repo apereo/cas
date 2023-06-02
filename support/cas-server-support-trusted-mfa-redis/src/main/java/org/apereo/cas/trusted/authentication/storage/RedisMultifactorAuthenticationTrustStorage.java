@@ -65,30 +65,33 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     @Override
     public void remove(final String key) {
         val principal = getKeyGenerationStrategy().getPrincipalFromRecordKey(getCipherExecutor().decode(key));
-        redisTemplate.keys(buildRedisKeyForRecord(principal), this.scanCount)
-            .findFirst()
-            .ifPresent(redisTemplate::delete);
+        try (val results = redisTemplate.scan(buildRedisKeyForRecord(principal), this.scanCount)) {
+            results.findFirst().ifPresent(redisTemplate::delete);
+        }
     }
 
     @Override
     public void remove(final ZonedDateTime expirationDate) {
-        redisTemplate.keys(getPatternRedisKey(), this.scanCount)
-            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .flatMap(List::stream)
-            .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isBefore(expirationDate))
-            .forEach(record -> {
-                val recordKeys = redisTemplate.keys(buildRedisKeyForRecord(record), this.scanCount)
-                    .collect(Collectors.toSet());
-                redisTemplate.delete(Objects.requireNonNull(recordKeys));
-            });
+        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+            results
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isBefore(expirationDate))
+                .forEach(record -> {
+                    try (val recordKeys = redisTemplate.scan(buildRedisKeyForRecord(record), this.scanCount)) {
+                        redisTemplate.delete(Objects.requireNonNull(recordKeys.collect(Collectors.toSet())));
+                    }
+                });
+        }
     }
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
         remove();
-        val keys = redisTemplate.keys(getPatternRedisKey(), this.scanCount);
-        return getFromRedisKeys(keys);
+        try (val keys = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+            return getFromRedisKeys(keys);
+        }
     }
 
     @Override
@@ -103,23 +106,26 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         remove();
-        val keys = redisTemplate.keys(buildRedisKeyForRecord(principal), this.scanCount);
-        return getFromRedisKeys(keys);
+        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(principal), this.scanCount)) {
+            return getFromRedisKeys(keys);
+        }
     }
 
     @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
         remove();
-        return redisTemplate.keys(buildRedisKeyForRecord(id), this.scanCount)
-            .findFirst()
-            .map(redisKey -> {
-                val results = this.redisTemplate.boundValueOps(redisKey).get();
-                if (results != null && !results.isEmpty()) {
-                    return results.get(0);
-                }
-                return null;
-            })
-            .orElse(null);
+        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(id), this.scanCount)) {
+            return keys
+                .findFirst()
+                .map(redisKey -> {
+                    val results = this.redisTemplate.boundValueOps(redisKey).get();
+                    if (results != null && !results.isEmpty()) {
+                        return results.get(0);
+                    }
+                    return null;
+                })
+                .orElse(null);
+        }
     }
 
     @Override

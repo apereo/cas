@@ -8,10 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.IvGenerator;
+import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -29,29 +33,36 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * Pattern for algorithms that require an initialization vector.
      * Regex matches all PBEWITHHMACSHA###ANDAES algorithms that aren't BouncyCastle.
      */
-    public static final String ALGS_THAT_REQUIRE_IV_PATTERN = "PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$";
+    private static final Pattern ALGS_THAT_REQUIRE_IV_PATTERN = Pattern.compile("PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$");
 
     /**
      * The Jasypt instance.
      */
     private final StandardPBEStringEncryptor jasyptInstance;
 
-    public CasConfigurationJasyptCipherExecutor(final Environment environment) {
+    static {
         Security.addProvider(new BouncyCastleProvider());
-        this.jasyptInstance = new StandardPBEStringEncryptor();
+    }
+    
+    public CasConfigurationJasyptCipherExecutor(final String algorithm, final String password) {
+        jasyptInstance = new StandardPBEStringEncryptor();
+        setIvGenerator(new RandomIvGenerator());
+        setAlgorithm(algorithm);
+        setPassword(password);
+    }
 
-        val alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
-        setAlgorithm(alg);
-        val psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
-        setPassword(psw);
+    public CasConfigurationJasyptCipherExecutor(final Environment environment) {
+        this(getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM),
+            getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD));
         val pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
-        val initializationVector = Boolean.parseBoolean(
-                getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
-        if (initializationVector || isVectorInitializationRequiredFor(alg)) {
-            configureInitializationVector();
+
+        val initialize = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR);
+        if (StringUtils.isNotBlank(initialize)) {
+            val required = Boolean.parseBoolean(initialize);
+            setIvGenerator(required ? new RandomIvGenerator() : new NoIvGenerator());
         }
     }
 
@@ -67,6 +78,38 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
+     * Return true if the algorithm requires initialization vector.
+     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
+     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
+     *
+     * @param algorithm the algorithm to check
+     * @return true if algorithm requires initialization vector
+     */
+    private static boolean isVectorInitializationRequiredFor(final String algorithm) {
+        return StringUtils.isNotBlank(algorithm) && ALGS_THAT_REQUIRE_IV_PATTERN.matcher(algorithm).matches();
+    }
+
+    /**
+     * Is value encrypted, and does it start with the required prefix.
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isValueEncrypted(final String value) {
+        return StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX);
+    }
+
+    /**
+     * Extract encrypted value as string to decode later.
+     *
+     * @param value the value
+     * @return the string
+     */
+    public static String extractEncryptedValue(final String value) {
+        return isValueEncrypted(value) ? value.substring(ENCRYPTED_VALUE_PREFIX.length()) : value;
+    }
+
+    /**
      * Sets algorithm.
      *
      * @param alg the alg
@@ -75,36 +118,18 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         if (StringUtils.isNotBlank(alg)) {
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
+            val required = isVectorInitializationRequiredFor(alg);
+            setIvGenerator(required ? new RandomIvGenerator() : new NoIvGenerator());
         }
     }
 
     /**
-     * Sets algorithm (possibly to bad algorithm, for unit test usage).
+     * Sets iv generator.
      *
-     * @param alg the alg
+     * @param iv the iv
      */
-    protected void setAlgorithmForce(final String alg) {
-        if (StringUtils.isNotBlank(alg)) {
-            LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
-            jasyptInstance.setAlgorithm(alg);
-        }
-    }
-
-    /**
-     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
-     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
-     */
-    public void configureInitializationVector() {
-        jasyptInstance.setIvGenerator(new RandomIvGenerator());
-    }
-
-    /**
-     * Return true if the algorithm requires initialization vector.
-     * @param algorithm the algorithm to check
-     * @return true if algorithm requires initialization vector
-     */
-    public boolean isVectorInitializationRequiredFor(final String algorithm) {
-        return StringUtils.isNotBlank(algorithm) && algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
+    public void setIvGenerator(final IvGenerator iv) {
+        jasyptInstance.setIvGenerator(iv);
     }
 
     /**
@@ -139,7 +164,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public void setProviderName(final String pName) {
         if (StringUtils.isNotBlank(pName)) {
             LOGGER.debug("Configured Jasypt provider");
-            this.jasyptInstance.setProviderName(pName);
+            jasyptInstance.setProviderName(pName);
         }
     }
 
@@ -161,27 +186,29 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     /**
      * Encrypt value string.
      *
-     * @param value the value
+     * @param value   the value
+     * @param handler the handler
      * @return the string
      */
-    public String encryptValue(final String value) {
+    public String encryptValue(final String value, final Function<Exception, String> handler) {
         try {
-            return encryptValuePropagateExceptions(value);
+            return encryptValueAndThrow(value);
         } catch (final Exception e) {
-            LOGGER.error("Could not encrypt value [{}]", value, e);
+            return handler.apply(e);
         }
-        return null;
     }
 
     /**
-     * Encrypt value string (but don't log error, for use in shell).
+     * Encrypt value as string.
      *
      * @param value the value
      * @return the string
      */
-    public String encryptValuePropagateExceptions(final String value) {
-        initializeJasyptInstanceIfNecessary();
-        return ENCRYPTED_VALUE_PREFIX + this.jasyptInstance.encrypt(value);
+    public String encryptValue(final String value) {
+        return encryptValue(value, e -> {
+            LOGGER.warn("Could not encrypt value [{}]", value, e);
+            return null;
+        });
     }
 
     /**
@@ -192,11 +219,40 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String decryptValue(final String value) {
         try {
-            return decryptValuePropagateExceptions(value);
+            return decryptValueAndThrow(value);
         } catch (final Exception e) {
-            LOGGER.error("Could not decrypt value [{}]", value, e);
+            LOGGER.warn("Could not decrypt value [{}]", value, e);
         }
         return null;
+    }
+
+    /**
+     * Encrypt value string (but don't log error, for use in shell).
+     *
+     * @param value the value
+     * @return the string
+     */
+    private String encryptValueAndThrow(final String value) {
+        initializeJasyptInstanceIfNecessary();
+        return ENCRYPTED_VALUE_PREFIX + jasyptInstance.encrypt(value);
+    }
+
+    /**
+     * Decrypt value directly, regardless of prefixes, etc.
+     *
+     * @param value the value
+     * @return the decrypted value, or parameter value as was passed.
+     */
+    private String decryptValueDirect(final String value) {
+        initializeJasyptInstanceIfNecessary();
+        LOGGER.trace("Decrypting value [{}]...", value);
+        val result = jasyptInstance.decrypt(value);
+        if (StringUtils.isNotBlank(result)) {
+            LOGGER.debug("Decrypted value [{}] successfully.", value);
+            return result;
+        }
+        LOGGER.warn("Encrypted value [{}] has no values.", value);
+        return value;
     }
 
     /**
@@ -205,31 +261,21 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public String decryptValuePropagateExceptions(final String value) {
-        if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
-            initializeJasyptInstanceIfNecessary();
-
-            val encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
-            LOGGER.trace("Decrypting value [{}]...", encValue);
-            val result = this.jasyptInstance.decrypt(encValue);
-
-            if (StringUtils.isNotBlank(result)) {
-                LOGGER.debug("Decrypted value [{}] successfully.", encValue);
-                return result;
-            }
-            LOGGER.warn("Encrypted value [{}] has no values.", encValue);
+    private String decryptValueAndThrow(final String value) {
+        if (isValueEncrypted(value)) {
+            val encValue = extractEncryptedValue(value);
+            return decryptValueDirect(encValue);
         }
         return value;
     }
-
 
     /**
      * Initialize jasypt instance if necessary.
      */
     private void initializeJasyptInstanceIfNecessary() {
-        if (!this.jasyptInstance.isInitialized()) {
+        if (!jasyptInstance.isInitialized()) {
             LOGGER.trace("Initializing Jasypt...");
-            this.jasyptInstance.initialize();
+            jasyptInstance.initialize();
         }
     }
 
@@ -257,7 +303,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Use (or not) a Jasypt Initialization Vector.
          */
-        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", "false");
+        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", null);
 
         /**
          * The Name.

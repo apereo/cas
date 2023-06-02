@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -13,10 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -43,65 +41,93 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(null);
         provider.setEncryptUsername(true);
-        val principal = mock(Principal.class);
-        when(principal.getId()).thenReturn("ID");
+        val principal = RegisteredServiceTestUtils.getPrincipal("ID");
         val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(), service);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(service)
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+
+        val id = provider.resolveUsername(usernameContext);
         provider.initialize();
-        assertEquals(id, principal.getId().toUpperCase());
+        assertEquals(id, principal.getId().toUpperCase(Locale.ENGLISH));
     }
 
     @Test
     public void verifyRegServiceUsernameUpper() {
-        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
-        val principal = mock(Principal.class);
-        when(principal.getId()).thenReturn("id");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
-        assertEquals(id, principal.getId().toUpperCase());
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        val principal = RegisteredServiceTestUtils.getPrincipal("id");
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
+        assertEquals(id, principal.getId().toUpperCase(Locale.ENGLISH));
+    }
+
+    @Test
+    public void verifyPatternRemoval() {
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
+        provider.setRemovePattern("@.+");
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser@example.org");
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
+        assertEquals(id, "CASUSER");
     }
 
     @Test
     public void verifyScopedUsername() {
-        val provider = new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.UPPER.name());
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
         provider.setScope("example.org");
-        val principal = mock(Principal.class);
-        when(principal.getId()).thenReturn("id");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
-        assertEquals(id, principal.getId().toUpperCase().concat("@EXAMPLE.ORG"));
+        val principal = RegisteredServiceTestUtils.getPrincipal("id");
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
+        assertEquals(id, principal.getId().toUpperCase(Locale.ENGLISH).concat("@EXAMPLE.ORG"));
     }
 
     @Test
     public void verifyRegServiceUsername() {
         val provider = new DefaultRegisteredServiceUsernameProvider();
+        val principal = RegisteredServiceTestUtils.getPrincipal("id");
 
-        val principal = mock(Principal.class);
-        when(principal.getId()).thenReturn("id");
-        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("id"));
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("id"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, principal.getId());
     }
 
     @Test
     public void verifyEquality() {
-        val provider =
-            new DefaultRegisteredServiceUsernameProvider();
-
-        val provider2 =
-            new DefaultRegisteredServiceUsernameProvider();
-
+        val provider = new DefaultRegisteredServiceUsernameProvider();
+        val provider2 = new DefaultRegisteredServiceUsernameProvider();
         assertEquals(provider, provider2);
     }
 
     @Test
-    public void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws IOException {
+    public void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws Exception {
         val providerWritten = new DefaultRegisteredServiceUsernameProvider();
-
         MAPPER.writeValue(JSON_FILE, providerWritten);
-
         val providerRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceUsernameProvider.class);
-
         assertEquals(providerWritten, providerRead);
     }
 }

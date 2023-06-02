@@ -4,11 +4,11 @@ import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.aws.s3.services.AmazonS3ServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "s3")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "s3")
 @AutoConfiguration
 public class AmazonS3ServiceRegistryConfiguration {
 
@@ -43,7 +43,7 @@ public class AmazonS3ServiceRegistryConfiguration {
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
         val builder = S3Client.builder();
-        AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
+        AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         return builder.build();
     }
 

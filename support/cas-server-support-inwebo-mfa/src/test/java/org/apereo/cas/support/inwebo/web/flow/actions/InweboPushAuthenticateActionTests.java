@@ -23,6 +23,7 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
 
     private InweboPushAuthenticateAction action;
 
+    @Override
     @BeforeEach
     public void setUp() {
         super.setUp();

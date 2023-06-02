@@ -26,7 +26,7 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     public void verifyResolverSupports() throws Exception {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
@@ -38,11 +38,11 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");
-        service.setMetadataLocation("http://mdq-preview.incommon.org/entities/{0}");
+        service.setMetadataLocation("http://mdq.incommon.org/entities/{0}");
         service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
@@ -52,7 +52,7 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     public void verifyResolverFails() throws Exception {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");

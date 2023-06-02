@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -77,7 +78,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -236,7 +236,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public ActionState createActionState(final Flow flow, final String name, final String... action) {
-        val actionList = Arrays.stream(action).map(this::createEvaluateAction).collect(Collectors.toList());
+        val actionList = Arrays.stream(action).map(this::createEvaluateAction).toList();
         return createActionState(flow, name, actionList.toArray(EMPTY_ACTIONS_ARRAY));
     }
 
@@ -372,13 +372,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
-        if (containsFlowState(flow, id)) {
-            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
-            return getTransitionableState(flow, id, SubflowState.class);
+    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
+        if (containsFlowState(flow, stateId)) {
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), stateId);
+            return getTransitionableState(flow, stateId, SubflowState.class);
         }
 
-        val state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.mainFlowDefinitionRegistry));
+        val state = new SubflowState(flow, stateId, new BasicSubflowExpression(subflow, this.mainFlowDefinitionRegistry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);
         }
@@ -386,8 +386,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
-        return createSubflowState(flow, id, subflow, null);
+    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow) {
+        return createSubflowState(flow, stateId, subflow, null);
     }
 
     @Override
@@ -547,6 +547,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
+    public BinderConfiguration createStateBinderConfiguration(final Map<String, Map<String, String>> properties) {
+        val binder = new BinderConfiguration();
+        properties.forEach((key, value) -> {
+            val converter = value.get("converter");
+            val required = BooleanUtils.toBoolean(value.getOrDefault("required", Boolean.TRUE.toString()));
+            val binding = new BinderConfiguration.Binding(key, converter, required);
+            binder.addBinding(binding);
+        });
+        return binder;
+    }
+
+    @Override
     public BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
         val binder = new BinderConfiguration();
         properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
@@ -568,8 +580,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public List<TransitionCriteria> getTransitionExecutionCriteriaChainForTransition(final Transition def) {
-        if (def.getExecutionCriteria() instanceof TransitionCriteriaChain) {
-            val chain = (TransitionCriteriaChain) def.getExecutionCriteria();
+        if (def.getExecutionCriteria() instanceof TransitionCriteriaChain chain) {
             val field = ReflectionUtils.findField(chain.getClass(), "criteriaChain");
             Assert.notNull(field, "criteriaChain cannot be null");
             ReflectionUtils.makeAccessible(field);
@@ -642,12 +653,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Create mapper to subflow state.
      *
      * @param mappings the mappings
+     * @param flow     the flow
      * @return the mapper
      */
-    public Mapper createMapperToSubflowState(final List<DefaultMapping> mappings) {
-        val inputMapper = new DefaultMapper();
-        mappings.forEach(inputMapper::addMapping);
-        return inputMapper;
+    public Mapper createFlowInputMapper(final List<DefaultMapping> mappings,
+                                        final Flow flow) {
+        val flowInputMapper = flow.getInputMapper() == null
+            ? new DefaultMapper()
+            : (DefaultMapper) flow.getInputMapper();
+        mappings.forEach(flowInputMapper::addMapping);
+        flow.setInputMapper(flowInputMapper);
+        return flowInputMapper;
+    }
+
+    /**
+     * Create flow input mapper.
+     *
+     * @param mappings the mappings
+     * @return the mapper
+     */
+    public Mapper createFlowInputMapper(final List<DefaultMapping> mappings) {
+        val flowInputMapper = new DefaultMapper();
+        mappings.forEach(flowInputMapper::addMapping);
+        return flowInputMapper;
     }
 
     /**
@@ -659,7 +687,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param type     the type
      * @return the default mapping
      */
-    public DefaultMapping createMappingToSubflowState(final String name, final String value, final boolean required, final Class type) {
+    public DefaultMapping createMappingToSubflowState(final String name, final String value,
+                                                      final boolean required, final Class type) {
         val parser = this.flowBuilderServices.getExpressionParser();
         val source = parser.parseExpression(value, new FluentParserContext());
         val target = parser.parseExpression(name, new FluentParserContext());

@@ -10,7 +10,7 @@ public interface AuditableActions {
     /**
      * Auditable action {@code MULTIFACTOR_AUTHENTICATION_BYPASS}.
      */
-    String MULTIFACTOR_AUTHENTICATION_BYPASS = "MULTIFACTOR_AUTHENTICATION_BYPASS";
+    String MULTIFACTOR_AUTHENTICATION_BYPASS = "MULTIFACTOR_AUTHENTICATION_BYPASS_EVALUATION";
     /**
      * Auditable action {@code AUTHENTICATION_EVENT}.
      */
@@ -112,6 +112,10 @@ public interface AuditableActions {
     String SAML2_REQUEST = "SAML2_REQUEST";
 
     /**
+     * Auditable action {@code SAML2_METADATA_RESOLUTION}.
+     */
+    String SAML2_METADATA_RESOLUTION = "SAML2_METADATA_RESOLUTION";
+    /**
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_RESPONSE}.
      */
     String OAUTH2_ACCESS_TOKEN_RESPONSE = "OAUTH2_ACCESS_TOKEN_RESPONSE";
@@ -120,9 +124,9 @@ public interface AuditableActions {
      */
     String OAUTH2_USER_PROFILE = "OAUTH2_USER_PROFILE";
     /**
-     * Auditable action {@code OAUTH2_CODE_RESPONSE}.
+     * Auditable action {@code OAUTH2_AUTHORIZATION_RESPONSE}.
      */
-    String OAUTH2_CODE_RESPONSE = "OAUTH2_CODE_RESPONSE";
+    String OAUTH2_AUTHORIZATION_RESPONSE = "OAUTH2_AUTHORIZATION_RESPONSE";
     /**
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_REQUEST}.
      */
@@ -154,4 +158,9 @@ public interface AuditableActions {
      * Auditable action {@code ACCOUNT_REGISTRATION}.
      */
     String ACCOUNT_REGISTRATION = "ACCOUNT_REGISTRATION";
+
+    /**
+     * Auditable action {@code LOGOUT}.
+     */
+    String LOGOUT = "LOGOUT";
 }

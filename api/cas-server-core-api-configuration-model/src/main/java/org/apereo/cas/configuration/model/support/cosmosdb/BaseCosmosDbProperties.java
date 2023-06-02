@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 @JsonFilter("BaseCosmosDbProperties")
 public abstract class BaseCosmosDbProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2528153816791719898L;
 
     /**
@@ -89,11 +91,6 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * it to cosmos monitoring service, which will be helpful during debugging.
      */
     private boolean allowTelemetry;
-
-    /**
-     * Whether collections should be created on startup.
-     */
-    private boolean createContainer;
 
     /**
      * Sets the preferred regions for geo-replicated database accounts. For example, "East US" as the preferred region.

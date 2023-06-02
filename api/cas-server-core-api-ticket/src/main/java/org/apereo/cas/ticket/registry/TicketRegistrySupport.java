@@ -73,4 +73,11 @@ public interface TicketRegistrySupport {
      * @throws Exception the exception
      */
     void updateAuthentication(String ticketGrantingTicketId, Authentication authentication) throws Exception;
+
+    /**
+     * Gets ticket registry.
+     *
+     * @return the ticket registry
+     */
+    TicketRegistry getTicketRegistry();
 }

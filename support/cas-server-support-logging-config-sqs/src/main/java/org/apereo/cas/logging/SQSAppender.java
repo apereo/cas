@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Plugin(name = "SQSAppender", category = "Core", elementType = "appender", printObject = true)
 public class SQSAppender extends AbstractAppender implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1144758913028847477L;
 
     private final SqsAsyncClient sqsAsyncClient;
@@ -150,7 +152,7 @@ public class SQSAppender extends AbstractAppender implements Serializable {
             .messageBody(message)
             .messageAttributes(context)
             .build();
-        FunctionUtils.doUnchecked(u -> sqsAsyncClient.sendMessage(request).get());
+        FunctionUtils.doUnchecked(__ -> sqsAsyncClient.sendMessage(request).get());
     }
 
     @Override

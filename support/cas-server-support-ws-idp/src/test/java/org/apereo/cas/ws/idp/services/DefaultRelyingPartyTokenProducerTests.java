@@ -4,15 +4,16 @@ import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import lombok.val;
 import org.apache.cxf.binding.soap.SoapFault;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.Assertion;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -28,6 +29,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -63,13 +65,21 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);
 
-        val principal = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
-        val assertion = mock(Assertion.class);
-        when(assertion.getPrincipal()).thenReturn(principal);
-
+        val assertion = getValidationResult();
         val securityToken = mock(SecurityToken.class);
         assertThrows(SoapFault.class, () -> wsFederationRelyingPartyTokenProducer.produce(securityToken, registeredService,
             WSFederationRequest.of(request), request, assertion));
+    }
+
+    private static TicketValidator.ValidationResult getValidationResult(final Map<String, List<Object>> attributes) {
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser", attributes);
+        val assertion = mock(TicketValidator.ValidationResult.class);
+        when(assertion.getPrincipal()).thenReturn(principal);
+        return assertion;
+    }
+
+    private static TicketValidator.ValidationResult getValidationResult() {
+        return getValidationResult(CoreAuthenticationTestUtils.getAttributes());
     }
 
     @Test
@@ -85,10 +95,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);
 
-        val principal = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
-        val assertion = mock(Assertion.class);
-        when(assertion.getPrincipal()).thenReturn(principal);
-
+        val assertion = getValidationResult();
         val securityToken = mock(SecurityToken.class);
         assertThrows(IllegalArgumentException.class, () -> wsFederationRelyingPartyTokenProducer.produce(securityToken, registeredService,
             WSFederationRequest.of(request), request, assertion));
@@ -113,9 +120,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
         attributes.put(WSFederationClaims.GIVEN_NAME.getUri(), List.of("common-name-wsfed"));
         attributes.put("my-custom-claim", List.of("custom-claim-value"));
 
-        val principal = new AttributePrincipalImpl("casuser", attributes);
-        val assertion = mock(Assertion.class);
-        when(assertion.getPrincipal()).thenReturn(principal);
+        val assertion = getValidationResult(attributes);
 
         val securityToken = mock(SecurityToken.class);
         val result = wsFederationRelyingPartyTokenProducer.produce(securityToken, registeredService,
@@ -140,7 +145,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
             elementResponse.setAttribute("id", "abcdefgh123456");
             when(client.requestSecurityTokenResponse(ArgumentMatchers.eq("CAS"))).thenReturn(elementResponse);
             when(client.requestSecurityTokenResponse(ArgumentMatchers.eq("FatalError")))
-                .thenThrow(new SoapFault("error", SoapFault.FAULT_CODE_SERVER));
+                .thenThrow(new SoapFault("error", Fault.FAULT_CODE_SERVER));
             when(client.requestSecurityTokenResponse(ArgumentMatchers.eq("RequestFailed")))
                 .thenThrow(new SoapFault("error", new QName("RequestFailed")));
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("MonitorWarningProperties")
 public class MonitorWarningProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2788617778375787703L;
 
     /**

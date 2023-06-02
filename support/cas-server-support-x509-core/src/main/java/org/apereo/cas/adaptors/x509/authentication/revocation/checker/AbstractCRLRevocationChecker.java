@@ -10,14 +10,13 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Base class for all CRL-based revocation checkers.
@@ -89,7 +88,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             crls.removeAll(expiredCrls);
             LOGGER.debug("Valid CRLs [{}] found that are not expired yet", crls);
 
-            val revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).collect(Collectors.toList());
+            val revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).toList();
             if (revokedCrls.size() == crls.size()) {
                 val entry = revokedCrls.get(0);
                 LOGGER.warn("All CRL entries have been revoked. Rejecting the first entry [{}]", entry);

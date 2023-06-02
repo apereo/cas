@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("SamlCoreProperties")
 public class SamlCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8505851926931247878L;
 
     /**
@@ -34,7 +36,8 @@ public class SamlCoreProperties implements Serializable {
     /**
      * Issue length that controls the validity period of the assertion.
      */
-    private int issueLength = 30;
+    @DurationCapable
+    private String issueLength = "PT30S";
 
     /**
      * Attribute namespace to use when generating SAML1 responses.

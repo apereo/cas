@@ -8,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,13 +26,14 @@ import java.io.Serializable;
 @JsonFilter("ClientCertificateProperties")
 public class ClientCertificateProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8004292720523993292L;
 
     /**
      * The location of the client certificate (PKCS12 format).
      */
-    @RequiredProperty
-    private transient SpringResourceProperties certificate = new SpringResourceProperties();
+    @NestedConfigurationProperty
+    private SpringResourceProperties certificate = new SpringResourceProperties();
 
     /**
      * The passphrase of the client certificate.

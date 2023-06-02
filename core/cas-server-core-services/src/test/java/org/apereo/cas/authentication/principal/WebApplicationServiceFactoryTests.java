@@ -33,7 +33,7 @@ public class WebApplicationServiceFactoryTests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(request);
         assertNotNull(service);
-        assertEquals(4, service.getAttributes().size());
+        assertEquals(5, service.getAttributes().size());
         assertTrue(service.getAttributes().containsKey("p1"));
         assertTrue(service.getAttributes().containsKey("p2"));
         assertTrue(service.getAttributes().containsKey("p3"));

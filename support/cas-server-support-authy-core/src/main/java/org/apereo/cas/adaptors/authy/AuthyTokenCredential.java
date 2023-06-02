@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuthyTokenCredential}.
  *
@@ -20,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AuthyTokenCredential extends OneTimeTokenCredential {
+    @Serial
     private static final long serialVersionUID = -7970600701132111037L;
 
     public AuthyTokenCredential(final String token) {

@@ -49,18 +49,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
             return new LinkedHashMap<>(0);
         }
-
-        val attrs = new LinkedHashMap<>(authentication.getAttributes());
-        attrs.keySet().removeAll(neverReleaseAttributes);
-
-        if (onlyReleaseAttributes != null && !onlyReleaseAttributes.isEmpty()) {
-            attrs.keySet().retainAll(onlyReleaseAttributes);
-        }
-
-        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE)) {
-            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
-                CollectionUtils.wrap(authentication.getAuthenticationDate()));
-        }
+        val attrs = getAuthenticationAttributesForRelease(authentication, service);
 
         if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
             var forceAuthn = assertion != null && assertion.isFromNewLogin();
@@ -81,17 +70,46 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
             attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
         }
 
-        if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
-            val contextProvider = CollectionUtils.firstElement(model.get(this.authenticationContextAttribute));
-            contextProvider.ifPresent(provider -> {
-                if (isAttributeAllowedForRelease(authenticationContextAttribute)) {
-                    attrs.put(this.authenticationContextAttribute, CollectionUtils.wrap(provider));
-                }
-            });
+        if (StringUtils.isNotBlank(authenticationContextAttribute)) {
+            org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute)
+                .stream()
+                .filter(model::containsKey)
+                .forEach(attr -> {
+                    val contextProvider = CollectionUtils.firstElement(model.get(attr));
+                    contextProvider.ifPresent(provider -> {
+                        if (isAttributeAllowedForRelease(attr)) {
+                            attrs.put(attr, CollectionUtils.wrap(provider));
+                        }
+                    });
+                });
+        }
+        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
+        LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
+        return attrs;
+    }
+
+    @Override
+    public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
+                                                                           final RegisteredService service) {
+        if (service == null || !service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
+            LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service);
+            return new LinkedHashMap<>(0);
+        }
+
+        val attrs = new LinkedHashMap<>(authentication.getAttributes());
+        attrs.keySet().removeAll(neverReleaseAttributes);
+
+        if (onlyReleaseAttributes != null && !onlyReleaseAttributes.isEmpty()) {
+            attrs.keySet().retainAll(onlyReleaseAttributes);
+        }
+
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE)) {
+            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
+                CollectionUtils.wrap(authentication.getAuthenticationDate()));
         }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attrs, authentication, service);
-        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attrs, model, service);
+
         LOGGER.trace("Processed protocol/authentication attributes from the output model to be [{}]", attrs.keySet());
         return attrs;
     }

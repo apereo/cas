@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -20,6 +21,7 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 public class MongoDbConsentRepository implements ConsentRepository {
+    @Serial
     private static final long serialVersionUID = 7734163279139907616L;
 
     private final transient MongoOperations mongoTemplate;

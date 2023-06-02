@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,6 +42,7 @@ public class InterruptSingleSignOnParticipationStrategyTests {
     public void verifyStrategyWithoutInterrupt() {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
             .requestContext(new MockRequestContext())
             .build();
         assertFalse(interruptSingleSignOnParticipationStrategy.isParticipating(ssoRequest));
@@ -55,6 +57,7 @@ public class InterruptSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
             .requestContext(ctx)
             .build();
         assertTrue(interruptSingleSignOnParticipationStrategy.supports(ssoRequest));

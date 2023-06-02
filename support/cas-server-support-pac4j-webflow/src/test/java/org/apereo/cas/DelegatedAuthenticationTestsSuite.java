@@ -1,24 +1,41 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolverTests;
+import org.apereo.cas.authentication.principal.GroovyDelegatedClientAuthenticationCredentialResolverTests;
+import org.apereo.cas.authentication.principal.ldap.LdapDelegatedClientAuthenticationCredentialResolverTests;
 import org.apereo.cas.support.pac4j.RefreshableDelegatedClientsTests;
-import org.apereo.cas.support.pac4j.client.GroovyDelegatedClientAuthenticationRequestCustomizerTests;
+import org.apereo.cas.support.pac4j.clients.DefaultDelegatedClientFactoryTests;
+import org.apereo.cas.support.pac4j.clients.DelegatedClientsEndpointTests;
+import org.apereo.cas.support.pac4j.clients.GroovyDelegatedClientAuthenticationRequestCustomizerTests;
+import org.apereo.cas.support.pac4j.clients.RestfulDelegatedClientFactoryTests;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderRedirectionStrategyTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManagerTests;
 import org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducerTests;
-import org.apereo.cas.web.flow.DelegatedAuthenticationClientFinishLogoutActionTests;
-import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutActionTests;
-import org.apereo.cas.web.flow.DelegatedAuthenticationClientRetryActionTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolverTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSAMLConfigurationTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurerTests;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationActionTests;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
-import org.apereo.cas.web.flow.DelegatedClientAuthenticationFailureActionTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationPostProcessorTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducerTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientFinishLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationClientRetryActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationGenerateClientsActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedAuthenticationIdentityProviderLogoutActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationFailureActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationRedirectActionTests;
+import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationStoreWebflowStateActionTests;
+import org.apereo.cas.web.flow.authz.DefaultDelegatedClientIdentityProviderAuthorizerTests;
+import org.apereo.cas.web.saml2.DelegatedAuthenticationSamlIdPResponseCustomizerTests;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataControllerTests;
+import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataJdbcTests;
+import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataMongoDbTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -30,8 +47,19 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.3.0
  */
 @SelectClasses({
+    DelegatedAuthenticationSamlIdPResponseCustomizerTests.class,
     DelegatedClientIdentityProviderRedirectionStrategyTests.class,
+    DelegatedClientAuthenticationRedirectActionTests.class,
+    DelegatedAuthenticationGenerateClientsActionTests.class,
+    DelegatedSaml2ClientMetadataJdbcTests.class,
     RefreshableDelegatedClientsTests.class,
+    DelegatedClientsEndpointTests.class,
+    DefaultDelegatedClientFactoryTests.class,
+    GroovyDelegatedClientAuthenticationCredentialResolverTests.class,
+    DelegatedClientAuthenticationCredentialResolverTests.class,
+    RestfulDelegatedClientFactoryTests.class,
+    LdapDelegatedClientAuthenticationCredentialResolverTests.class,
+    DelegatedClientAuthenticationStoreWebflowStateActionTests.class,
     DelegatedClientAuthenticationFailureActionTests.class,
     GroovyDelegatedClientAuthenticationRequestCustomizerTests.class,
     DelegatedClientIdentityProviderConfigurationPostProcessorTests.class,
@@ -39,6 +67,9 @@ import org.junit.platform.suite.api.Suite;
     DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests.class,
     DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests.class,
     DelegatedClientAuthenticationActionTests.class,
+    DelegatedSaml2ClientMetadataMongoDbTests.class,
+    DelegatedAuthenticationIdentityProviderLogoutActionTests.class,
+    DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests.class,
     DelegatedClientIdentityProviderConfigurationProducerTests.class,
     DelegatedAuthenticationErrorViewResolverTests.class,
     DefaultDelegatedAuthenticationNavigationControllerTests.class,
@@ -47,7 +78,10 @@ import org.junit.platform.suite.api.Suite;
     DefaultDelegatedClientAuthenticationWebflowManagerTests.class,
     DefaultDelegatedClientIdentityProviderConfigurationProducerTests.class,
     DelegatedAuthenticationClientRetryActionTests.class,
+    DefaultDelegatedClientIdentityProviderAuthorizerTests.class,
     DelegatedAuthenticationWebflowConfigurerTests.class,
+    DelegatedClientAuthenticationCredentialSelectionActionTests.class,
+    DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests.class,
     DelegatedSaml2ClientMetadataControllerTests.class
 })
 @Suite

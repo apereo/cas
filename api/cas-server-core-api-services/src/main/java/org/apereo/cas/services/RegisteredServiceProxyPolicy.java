@@ -31,8 +31,9 @@ public interface RegisteredServiceProxyPolicy extends Serializable {
      * url is authorized and allowed to
      * request proxy access.
      *
-     * @param pgtUrl the pgt url
+     * @param registeredService the registered service
+     * @param pgtUrl            the pgt url
      * @return true, if url allowed.
      */
-    boolean isAllowedProxyCallbackUrl(URL pgtUrl);
+    boolean isAllowedProxyCallbackUrl(RegisteredService registeredService, URL pgtUrl);
 }

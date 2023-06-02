@@ -45,7 +45,7 @@ public class SamlIdPMetadataUIAction extends BaseCasWebflowAction {
                     return success();
                 }
 
-                val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
+                val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().entityDescriptor(),
                     service.getId(), samlService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }

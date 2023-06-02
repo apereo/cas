@@ -1,13 +1,14 @@
 package org.apereo.cas.impl.token;
 
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
+import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
 import lombok.Getter;
 import lombok.val;
-import org.joda.time.DateTimeUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,32 +40,38 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
-    private PasswordlessTokenRepository repository;
+    private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
     public void verifyAction() {
         val uid = UUID.randomUUID().toString();
-        val token = repository.createToken(uid);
-        assertTrue(repository.findToken(uid).isEmpty());
 
-        repository.saveToken(uid, token);
-        assertTrue(repository.findToken(uid).isPresent());
+        val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
+        val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
 
-        repository.deleteToken(uid, token);
-        assertTrue(repository.findToken(uid).isEmpty());
+        assertTrue(passwordlessTokenRepository.findToken(uid).isEmpty());
+
+        val savedToken = passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
+        assertTrue(passwordlessTokenRepository.findToken(uid).isPresent());
+
+        passwordlessTokenRepository.deleteToken(savedToken);
+        assertTrue(passwordlessTokenRepository.findToken(uid).isEmpty());
     }
+
 
     @Test
     public void verifyCleaner() {
         val uid = UUID.randomUUID().toString();
-        val token = repository.createToken(uid);
-        repository.saveToken(uid, token);
-        assertTrue(repository.findToken(uid).isPresent());
+        val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
+        val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();
+        val token = passwordlessTokenRepository.createToken(passwordlessUserAccount, passwordlessRequest);
 
-        val tt = ZonedDateTime.now(ZoneOffset.UTC).plusHours(5).toInstant().toEpochMilli();
-        DateTimeUtils.setCurrentMillisFixed(tt);
-        repository.clean();
+        passwordlessTokenRepository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
+        assertTrue(passwordlessTokenRepository.findToken(uid).isPresent());
 
-        assertTrue(repository.findToken(uid).isEmpty());
+        passwordlessTokenRepository.clean();
+
+        assertTrue(passwordlessTokenRepository.findToken(uid).isEmpty());
     }
 }

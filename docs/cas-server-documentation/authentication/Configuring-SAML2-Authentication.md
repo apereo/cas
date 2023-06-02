@@ -11,7 +11,7 @@ CAS can act as a SAML2 identity provider accepting authentication requests and p
 
 If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
 
-<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 
+<div class="alert alert-info">:information_source: <strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 
 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure 
 about the concepts referred to on this page, please start with reviewing 
 the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
@@ -60,7 +60,7 @@ repositories {
 }
 ```
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp.core,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core" %}
 
 ### Actuator Endpoints
 
@@ -107,7 +107,7 @@ Please see [this guide](../installation/Configuring-SAML2-AttributeQuery.html) f
 
 For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:
 
-- [Spring Security SAML](https://spring.io/projects/spring-security-saml)
+- [Spring Security SAML](https://docs.spring.io/spring-security/reference)
 - [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
 
 ## Sample Client Applications

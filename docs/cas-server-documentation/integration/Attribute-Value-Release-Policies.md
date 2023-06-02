@@ -138,6 +138,7 @@ Identical to the *Mapped Regex* filter, except that the filter only allows a sel
     "attributeFilter" : {
       "@class": "org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttributeFilter",
       "patterns": {
+          "@class" : "java.util.TreeMap",  
           "memberOf": "^\\w{3}$"
       },
       "excludeUnmappedAttributes": false,
@@ -241,7 +242,7 @@ def run(final Object... args) {
     def logger = args[1]
 
     logger.info "Attributes currently resolved: ${attributes}"
-    def map =...
+    def map = ...
     return map
 }
 ```

@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,18 +27,13 @@ import java.io.Serializable;
 @JsonFilter("SurrogateAuthenticationProperties")
 public class SurrogateAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2088813217398883623L;
 
     /**
      * The separator character used to distinguish between the surrogate account and the admin account.
      */
     private String separator = "+";
-
-    /**
-     * Locate surrogate accounts via CouchDB.
-     */
-    @NestedConfigurationProperty
-    private SurrogateCouchDbAuthenticationProperties couchDb = new SurrogateCouchDbAuthenticationProperties();
 
     /**
      * Locate surrogate accounts via CAS configuration, hardcoded as properties.
@@ -50,6 +46,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SurrogateJsonAuthenticationProperties json = new SurrogateJsonAuthenticationProperties();
+
+    /**
+     * Locate surrogate accounts via a Groovy resource.
+     */
+    @NestedConfigurationProperty
+    private SurrogateGroovyAuthenticationProperties groovy = new SurrogateGroovyAuthenticationProperties();
 
     /**
      * Locate surrogate accounts via an LDAP server.

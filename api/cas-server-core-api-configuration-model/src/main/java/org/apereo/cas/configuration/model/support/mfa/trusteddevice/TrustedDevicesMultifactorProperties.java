@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -27,6 +28,7 @@ import java.io.Serializable;
 @JsonFilter("TrustedDevicesMultifactorProperties")
 public class TrustedDevicesMultifactorProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1505013239016790473L;
 
     /**
@@ -63,19 +65,13 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * Settings that control the background cleaner process.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
 
     /**
      * Store devices records inside MongoDb.
      */
     @NestedConfigurationProperty
     private MongoDbTrustedDevicesMultifactorProperties mongo = new MongoDbTrustedDevicesMultifactorProperties();
-
-    /**
-     * Store devices records inside CouchDb.
-     */
-    @NestedConfigurationProperty
-    private CouchDbTrustedDevicesMultifactorProperties couchDb = new CouchDbTrustedDevicesMultifactorProperties();
 
     /**
      * Store devices records inside DynamoDb.
@@ -98,5 +94,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     public TrustedDevicesMultifactorProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT1M");
     }
 }

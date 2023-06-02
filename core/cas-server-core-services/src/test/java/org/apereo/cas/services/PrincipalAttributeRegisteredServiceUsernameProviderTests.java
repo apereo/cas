@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,12 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -48,17 +45,21 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", List.of(mappedAttribute));
-        val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
+        val policy = new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(CollectionUtils.wrap(allowedAttributes));
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setAttributeReleasePolicy(policy);
 
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("email", List.of("user@example.org"));
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        when(p.getAttributes()).thenReturn(principalAttributes);
-        val id = provider.resolveUsername(p,
-            RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"), registeredService);
+        val p = RegisteredServiceTestUtils.getPrincipal("person", principalAttributes);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"))
+            .principal(p)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals("user@example.org", id);
     }
 
@@ -71,12 +72,14 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         attrs.put("userid", CollectionUtils.wrap("u1"));
         attrs.put("cn", CollectionUtils.wrap("TheName"));
 
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        when(p.getAttributes()).thenReturn(attrs);
+        val p = RegisteredServiceTestUtils.getPrincipal("person", attrs);
 
-        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
+            .principal(p)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals("TheName", id);
     }
 
@@ -88,12 +91,13 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         attrs.put("userid", List.of("u1"));
         attrs.put("cn", List.of("TheName"));
 
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        when(p.getAttributes()).thenReturn(attrs);
-
-        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        val principal = RegisteredServiceTestUtils.getPrincipal("person", attrs);
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
+            .principal(principal)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals("TheName", id);
     }
 
@@ -105,13 +109,17 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         attrs.put("userid", List.of("u1"));
         attrs.put("cn", List.of("TheName"));
 
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        when(p.getAttributes()).thenReturn(attrs);
+        val p = RegisteredServiceTestUtils.getPrincipal("person", attrs);
 
         val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
         service.setAttributeReleasePolicy(null);
-        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"), service);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
+            .principal(p)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals("TheName", id);
     }
 
@@ -123,15 +131,18 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         attrs.put("userid", List.of("u1"));
         attrs.put("cn", List.of("TheName"));
 
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        when(p.getAttributes()).thenReturn(attrs);
+        val principal = RegisteredServiceTestUtils.getPrincipal("person", attrs);
 
-        val service = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
-        service.setAttributeReleasePolicy(null);
-        assertThrows(UnauthorizedServiceException.class,
-            () -> provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"), service));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
+        registeredService.setAttributeReleasePolicy(null);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
+            .principal(principal)
+            .build();
+        assertThrows(UnauthorizedServiceException.class, () -> provider.resolveUsername(usernameContext));
     }
 
     @Test
@@ -141,22 +152,27 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val attrs = new HashMap<String, List<Object>>();
         attrs.put("userid", List.of("u1"));
 
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        when(p.getAttributes()).thenReturn(attrs);
+        val p = RegisteredServiceTestUtils.getPrincipal("person", attrs);
 
-        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
+            .principal(p)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, p.getId());
     }
 
     @Test
     public void verifyUsernameUndefined() {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider();
-        val p = mock(Principal.class);
-        when(p.getId()).thenReturn("person");
-        val id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
-            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+        val p = RegisteredServiceTestUtils.getPrincipal("person");
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"))
+            .service(RegisteredServiceTestUtils.getService("usernameAttributeProviderService"))
+            .principal(p)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals(id, p.getId());
     }
 
@@ -168,7 +184,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void verifySerializeAPrincipalAttributeRegisteredServiceUsernameProviderToJson() throws IOException {
+    public void verifySerializeAPrincipalAttributeRegisteredServiceUsernameProviderToJson() throws Exception {
         val providerWritten = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         MAPPER.writeValue(JSON_FILE, providerWritten);
         val providerRead = MAPPER.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);

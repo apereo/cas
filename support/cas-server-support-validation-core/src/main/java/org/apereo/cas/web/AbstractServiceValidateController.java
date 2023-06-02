@@ -34,8 +34,8 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,7 +92,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     public ProxyGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
         throws AuthenticationException, AbstractTicketException {
-        val serviceTicket = serviceValidateConfigurationContext.getCentralAuthenticationService().getTicket(serviceTicketId, ServiceTicket.class);
+        val serviceTicket = serviceValidateConfigurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
             .finalizeAuthenticationTransaction(serviceTicket.getService(), credential);
         val proxyGrantingTicketId = serviceValidateConfigurationContext.getCentralAuthenticationService()
@@ -394,8 +394,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
-        multifactorProvider.ifPresent(provider -> modelAndView.addObject(
-            serviceValidateConfigurationContext.getCasProperties().getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), provider));
+        multifactorProvider.ifPresent(provider -> {
+            val authenticationContextAttribute = serviceValidateConfigurationContext.getCasProperties().getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute)
+                .forEach(attr -> modelAndView.addObject(attr, provider));
+        });
         val augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         modelAndView.addAllObjects(augmentedModelObjects);
         return modelAndView;

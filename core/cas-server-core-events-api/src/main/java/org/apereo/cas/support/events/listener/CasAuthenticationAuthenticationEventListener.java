@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
@@ -10,15 +12,15 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.serialization.MessageSanitizationUtils;
+import org.apereo.cas.util.text.MessageSanitizer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.apereo.inspektr.common.web.ClientInfo;
 
-import javax.validation.constraints.NotNull;
+
 import java.time.Instant;
 
 /**
@@ -34,22 +36,24 @@ import java.time.Instant;
 @Slf4j
 public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
 
-    @NotNull
     private final CasEventRepository casEventRepository;
 
-    private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
+    private final MessageSanitizer messageSanitizer;
+
+    private final GeoLocationService geoLocationService;
+
+    private CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
         dto.setCreationTime(dt.toString());
-
-        val clientInfo = ClientInfoHolder.getClientInfo();
+        val clientInfo = event.getClientInfo();
         if (clientInfo != null) {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());
             dto.putServerIpAddress(clientInfo.getServerIpAddress());
             dto.putAgent(clientInfo.getUserAgent());
-            val location = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
+            val location = determineGeoLocationFor(clientInfo);
             dto.putGeoLocation(location);
         } else {
             LOGGER.trace("No client information is available. The final event cannot track client location, user agent or IP addresses");
@@ -57,11 +61,22 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         return dto;
     }
 
+    private GeoLocationRequest determineGeoLocationFor(final ClientInfo clientInfo) {
+        val geoLocationRequest = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
+        if (!geoLocationRequest.isValid() && geoLocationService != null) {
+            val geoResponse = geoLocationService.locate(clientInfo.getClientIpAddress());
+            if (geoResponse != null) {
+                return new GeoLocationRequest(geoResponse.getLatitude(), geoResponse.getLongitude());
+            }
+        }
+        return geoLocationRequest;
+    }
+
     @Override
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) throws Exception {
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-        dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+        dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);
     }
@@ -70,7 +85,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) throws Exception {
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-        dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+        dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);
     }
@@ -79,7 +94,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) throws Exception {
         val dto = prepareCasEvent(event);
         dto.setPrincipalId(event.getCredential().getId());
-        dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+        dto.putEventId(CasAuthenticationTransactionFailureEvent.class.getSimpleName());
         this.casEventRepository.save(dto);
     }
 

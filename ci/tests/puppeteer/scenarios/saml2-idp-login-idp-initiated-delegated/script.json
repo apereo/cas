@@ -11,8 +11,9 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas=info",
     "--cas.audit.engine.enabled=false",
+    "--cas.audit.slf4j.use-single-line=true",
 
     "--cas.http-client.host-name-verifier=none",
     
@@ -20,8 +21,16 @@
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
-    "--cas.authn.pac4j.cas[0].client-name=CasClient"
-  ,
+    "--cas.authn.pac4j.cas[0].client-name=CasClient",
+
+    "--cas.authn.pac4j.cas[1].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[1].protocol=CAS20",
+    "--cas.authn.pac4j.cas[1].client-name=CasClientFancy",
+
+    "--cas.authn.pac4j.cas[2].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[2].protocol=CAS20",
+    "--cas.authn.pac4j.cas[2].client-name=CasClientNone",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

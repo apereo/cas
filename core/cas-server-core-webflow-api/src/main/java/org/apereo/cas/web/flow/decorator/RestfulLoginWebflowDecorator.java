@@ -9,7 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -34,19 +36,19 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
 
     @Override
     public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             HttpResponse response = null;
             try {
                 val exec = HttpUtils.HttpExecutionRequest.builder()
                     .basicAuthPassword(restProperties.getBasicAuthPassword())
                     .basicAuthUsername(restProperties.getBasicAuthUsername())
-                    .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                    .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                     .url(restProperties.getUrl())
                     .build();
                 response = HttpUtils.execute(exec);
-                val statusCode = response.getStatusLine().getStatusCode();
+                val statusCode = response.getCode();
                 if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                     val jsonObject = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
                     requestContext.getFlowScope().put("decoration", jsonObject);
                 }

@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
@@ -12,7 +12,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -44,9 +45,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@ConditionalOnClass(value = JpaBeans.class)
+@ConditionalOnClass(JpaBeans.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfiguration
 public class CasPersonDirectoryJdbcConfiguration {
@@ -66,8 +67,8 @@ public class CasPersonDirectoryJdbcConfiguration {
                 .stream()
                 .map(entry -> Pair.of(entry.getKey(),
                     StringUtils.isBlank(entry.getValue())
-                        ? CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase())
-                        : CaseCanonicalizationMode.valueOf(entry.getValue().toUpperCase())))
+                        ? CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase(Locale.ENGLISH))
+                        : CaseCanonicalizationMode.valueOf(entry.getValue().toUpperCase(Locale.ENGLISH))))
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue)));
             return dao;
         }
@@ -121,10 +122,10 @@ public class CasPersonDirectoryJdbcConfiguration {
                             }
                             jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
 
-                            val caseMode = CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase());
+                            val caseMode = CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase(Locale.ENGLISH));
                             jdbcDao.setUsernameCaseCanonicalizationMode(caseMode);
                             jdbcDao.setDefaultCaseCanonicalizationMode(caseMode);
-                            jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase()));
+                            jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase(Locale.ENGLISH)));
                             jdbcDao.setOrder(jdbc.getOrder());
                             jdbcDao.setEnabled(jdbc.getState() != AttributeRepositoryStates.DISABLED);
                             jdbcDao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),

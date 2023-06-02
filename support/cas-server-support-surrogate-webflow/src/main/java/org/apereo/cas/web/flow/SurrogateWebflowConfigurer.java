@@ -55,36 +55,10 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createSurrogateListViewState(final Flow flow) {
         val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_SURROGATE_VIEW, "surrogate/casSurrogateAuthnListView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SELECT_SURROGATE);
+
+        createEndState(flow, CasWebflowConstants.STATE_ID_SURROGATE_WILDCARD_VIEW, "surrogate/casSurrogateAuthnWildcardView");
     }
-
-    public static class DuoSecurityMultifactorAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
-        public DuoSecurityMultifactorAuthenticationWebflowConfigurer(
-            final FlowBuilderServices flowBuilderServices,
-            final FlowDefinitionRegistry mainFlowDefinitionRegistry,
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            super(flowBuilderServices, mainFlowDefinitionRegistry, applicationContext, casProperties);
-            setOrder(Ordered.LOWEST_PRECEDENCE);
-        }
-
-        @Override
-        protected void doInitialize() {
-            val validateAction = getState(getLoginFlow(), CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
-            if (validateAction != null) {
-                createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                    CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
-            }
-            val duoConfig = casProperties.getAuthn().getMfa().getDuo();
-            duoConfig.forEach(duoCfg -> {
-                val duoSuccess = getState(getLoginFlow(), duoCfg.getId());
-                if (duoSuccess != null) {
-                    createTransitionForState(duoSuccess, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                        CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
-                }
-            });
-        }
-    }
-
+    
     private void createSurrogateAuthorizationActionState(final Flow flow) {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK));
@@ -100,6 +74,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
             CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW, CasWebflowConstants.STATE_ID_SURROGATE_VIEW);
+        createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SURROGATE_WILDCARD_VIEW, CasWebflowConstants.STATE_ID_SURROGATE_WILDCARD_VIEW);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);

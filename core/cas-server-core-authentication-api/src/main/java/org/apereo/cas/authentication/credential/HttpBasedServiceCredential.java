@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.net.URL;
 
 /**
@@ -30,6 +31,7 @@ import java.net.URL;
 @EqualsAndHashCode(callSuper = true)
 public class HttpBasedServiceCredential extends AbstractCredential {
 
+    @Serial
     private static final long serialVersionUID = 1492607216336354503L;
 
     /**
@@ -44,10 +46,8 @@ public class HttpBasedServiceCredential extends AbstractCredential {
 
     @JsonCreator
     public HttpBasedServiceCredential(
-        @JsonProperty("callbackUrl")
-        final String callbackUrl,
-        @JsonProperty("service")
-        final CasModelRegisteredService service) {
+        @JsonProperty("callbackUrl") final String callbackUrl,
+        @JsonProperty("service") final CasModelRegisteredService service) {
         this.callbackUrl = FunctionUtils.doUnchecked(() -> new URL(callbackUrl));
         this.service = service;
     }

@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenSuccessResponse;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -47,10 +48,11 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         this.ticketRegistry.addTicket(accessToken);
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
-        assertNotNull(result.getBody());
-        assertTrue(Instant.ofEpochSecond(result.getBody().getExp()).isAfter(Instant.ofEpochSecond(result.getBody().getIat())));
-        assertTrue(result.getBody().isActive());
-        assertEquals(accessToken.getScopes(), Set.of(result.getBody().getScope().split(" ")));
+        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) result.getBody();
+        assertNotNull(body);
+        assertTrue(Instant.ofEpochSecond(body.getExp()).isAfter(Instant.ofEpochSecond(body.getIat())));
+        assertTrue(body.isActive());
+        assertEquals(accessToken.getScopes(), Set.of(body.getScope().split(" ")));
     }
 
     @Test
@@ -76,7 +78,8 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertNotNull(result.getBody());
-        assertFalse(result.getBody().isActive());
+        val body = (OAuth20IntrospectionAccessTokenSuccessResponse) result.getBody();
+        assertNotNull(body);
+        assertFalse(body.isActive());
     }
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -22,16 +23,17 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSaml2AttributeQueryProfileHandlerController}.
@@ -99,8 +101,13 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .getAuthenticationAttributesForRelease(authentication, null, Map.of(), registeredService);
             val finalAttributes = CollectionUtils.merge(principalAttributes, authenticationAttributes);
 
-            val principalId = registeredService.getUsernameAttributeProvider()
-                .resolveUsername(authentication.getPrincipal(), ticket.getService(), registeredService);
+            val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+                .registeredService(registeredService)
+                .service(ticket.getService())
+                .principal(authentication.getPrincipal())
+                .build();
+            
+            val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
             LOGGER.debug("Principal id used for attribute query response should be [{}]", principalId);
             LOGGER.debug("Final attributes to be processed for the SAML2 response are [{}]", finalAttributes);
 
@@ -111,7 +118,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .samlRequest(query)
                 .httpRequest(request)
                 .httpResponse(response)
-                .authenticatedAssertion(casAssertion)
+                .authenticatedAssertion(Optional.of(casAssertion))
                 .registeredService(registeredService)
                 .adaptor(facade)
                 .binding(SAMLConstants.SAML2_SOAP11_BINDING_URI)

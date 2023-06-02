@@ -1,11 +1,12 @@
 package org.apereo.cas.web.flow.services;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,7 +23,8 @@ import static org.mockito.Mockito.*;
 public class DefaultRegisteredServiceUserInterfaceInfoTests {
     @Test
     public void verifyOperation() {
-        val info = new DefaultRegisteredServiceUserInterfaceInfo(mock(RegisteredService.class)) {
+        val info = new DefaultRegisteredServiceUserInterfaceInfo(mock(WebBasedRegisteredService.class)) {
+            @Serial
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override
@@ -41,13 +43,13 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
             }
 
             @Override
-            public Collection<Logo> getLogoUrls() {
-                return List.of(new Logo("https://logo.url", 32, 32));
+            public Collection<String> getPrivacyStatementURLs() {
+                return List.of("https://apereo.org/cas");
             }
 
             @Override
-            public Collection<String> getPrivacyStatementURLs() {
-                return List.of("https://apereo.org/cas");
+            public Collection<Logo> getLogoUrls() {
+                return List.of(new Logo("https://logo.url", 32, 32));
             }
         };
         assertNotNull(info.getDescription());
@@ -58,12 +60,13 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
 
     @Test
     public void verifySpecialCases() {
-        val service = mock(RegisteredService.class);
+        val service = mock(WebBasedRegisteredService.class);
         when(service.getInformationUrl()).thenReturn("https://apereo.org/cas");
         when(service.getPrivacyUrl()).thenReturn("https://apereo.org/cas");
         when(service.getLogo()).thenReturn("https://apereo.org/cas");
 
         val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
+            @Serial
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override
@@ -82,13 +85,13 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
             }
 
             @Override
-            public Collection<Logo> getLogoUrls() {
-                throw new RuntimeException("Bad Logo");
+            public Collection<String> getPrivacyStatementURLs() {
+                return List.of();
             }
 
             @Override
-            public Collection<String> getPrivacyStatementURLs() {
-                return List.of();
+            public Collection<Logo> getLogoUrls() {
+                throw new RuntimeException("Bad Logo");
             }
         };
         assertNotNull(info.getInformationURL());
@@ -100,8 +103,9 @@ public class DefaultRegisteredServiceUserInterfaceInfoTests {
 
     @Test
     public void verifyDefault() {
-        val service = mock(RegisteredService.class);
+        val service = mock(WebBasedRegisteredService.class);
         val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
+            @Serial
             private static final long serialVersionUID = 2331519665722637762L;
 
             @Override

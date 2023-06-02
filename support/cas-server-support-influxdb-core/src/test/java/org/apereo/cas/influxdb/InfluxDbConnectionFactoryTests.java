@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Map;
@@ -65,6 +66,9 @@ public class InfluxDbConnectionFactoryTests {
     @Setter
     @ToString
     public static class InfluxEvent implements Serializable {
+        @Serial
+        private static final long serialVersionUID = -7065491678170232623L;
+
         @Column(name = "time", timestamp = true)
         private Instant time;
 

@@ -23,7 +23,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowServiceActions")
 public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
@@ -54,7 +54,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         getServicesManager().save(registeredService);
 
         val authnResult = getAuthenticationSystemSupport().finalizeAuthenticationTransaction(service,
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
@@ -91,8 +91,8 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         val context = new MockRequestContext();
         val serviceId = UUID.randomUUID().toString();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("Role", Set.of(".*developer.*")));
-        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
-            Map.of("Role", "groovy { return attributes['eduPersonAffiliation'].get(0) }")));
+        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(Map.of("Role", "groovy { return attributes['eduPersonAffiliation'].get(0) }")));
         getServicesManager().save(registeredService);
 
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, RegisteredServiceTestUtils.getService(serviceId));
@@ -131,8 +131,8 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId,
             Map.of("eduPersonAffiliation", Set.of(".*developer.*")));
-        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
-            Map.of("eduPersonAffiliation", "groovy { return 'engineers' }")));
+        registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy()
+            .setAllowedAttributes(Map.of("eduPersonAffiliation", "groovy { return 'engineers' }")));
 
         getServicesManager().save(registeredService);
 

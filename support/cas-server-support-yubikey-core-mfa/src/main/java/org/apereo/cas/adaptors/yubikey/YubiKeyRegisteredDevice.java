@@ -15,10 +15,11 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -42,6 +43,7 @@ import java.time.ZonedDateTime;
 @Accessors(chain = true)
 public class YubiKeyRegisteredDevice implements Serializable, Cloneable {
 
+    @Serial
     private static final long serialVersionUID = 221869140885521905L;
 
     @Id

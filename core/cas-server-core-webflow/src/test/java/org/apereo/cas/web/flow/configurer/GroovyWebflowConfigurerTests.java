@@ -5,7 +5,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -27,12 +26,7 @@ public class GroovyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                groovyWebflowConfigurer.initialize();
-            }
-        });
+        assertDoesNotThrow(() -> groovyWebflowConfigurer.initialize());
     }
 
 }

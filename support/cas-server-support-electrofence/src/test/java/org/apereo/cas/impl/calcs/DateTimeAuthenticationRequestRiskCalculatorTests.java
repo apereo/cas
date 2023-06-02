@@ -17,7 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = {"cas.authn.adaptive.risk.date-time.enabled=true", "cas.authn.adaptive.risk.date-time.window-in-hours=4"})
+@TestPropertySource(properties = {
+    "cas.authn.adaptive.risk.date-time.enabled=true",
+    "cas.authn.adaptive.risk.date-time.window-in-hours=4"
+})
 @Tag("Authentication")
 public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
@@ -37,4 +40,5 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isLowestRisk());
     }
+
 }

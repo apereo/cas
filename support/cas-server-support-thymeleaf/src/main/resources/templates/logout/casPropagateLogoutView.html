@@ -14,12 +14,12 @@
         }
 
         function handleCallback(index, status) {
-            if (status == 200) {
-                $('#service' + index).addClass('mdi-check').removeClass('mdi-help-circle');
-                $('#service' + index).prop('title', 'Logout request was successfully received.');
+            if (status === 200) {
+                $(`#service${index}`).addClass('mdi-check').removeClass('mdi-help-circle');
+                $(`#service${index}`).prop('title', 'Logout request was successfully received.');
             } else {
-                $('#service' + index).addClass('mdi-alert-circle').removeClass('mdi-help-circle');
-                $('#service' + index).prop('title', 'Logout notification could not be sent.');
+                $(`#service${index}`).addClass('mdi-alert-circle').removeClass('mdi-help-circle');
+                $(`#service${index}`).prop('title', 'Logout notification could not be sent.');
             }
         }
 
@@ -32,7 +32,7 @@
     <div layout:fragment="content">
         <div class="alert alert-success">
             <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
-            <p th:utext="#{screen.logout.fc.success}">You have successfully logged out of the Central Authentication
+            <p id="logoutMessage" th:utext="#{screen.logout.fc.success}">You have successfully logged out of the Central Authentication
                 Service. Given single logout is enabled with CAS, \
                 the following list of applications are <strong> only notified</strong> to log you out and destroy your
                 user session. Remember that this \
@@ -44,18 +44,18 @@
                     <script type="text/javascript" th:inline="javascript">
                         /*<![CDATA[*/
                         $.ajax({
-                            url: [[${entry.key.logoutUrl.toExternalForm()}]],
+                            url: [[${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl)}]],
                             dataType: 'jsonp',
                             async: true,
                             contentType: [[${entry.value.contentType}]]
                             , data: [[${entry.value.message}]]
-                            , success: function (data) {
+                            , success: data => {
                                 var index = [[${iterStat.index}]];
                                 handleCallback(index, 200);
                             },
-                            error: function (err, textStatus, errorThrown) {
+                            error: (err, textStatus, errorThrown) => {
                                 var index = [[${iterStat.index}]];
-                                console.log(err.status + ' ' + textStatus + ' ' + errorThrown)
+                                console.log(`${err.status} ${textStatus} ${errorThrown}`)
                                 handleCallback(index, 500);
                             }
                         });

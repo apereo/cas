@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,12 +38,8 @@ public class AuthenticationTransactionTests {
     @Test
     public void verifyOperation() {
         val transaction = new AuthenticationTransaction() {
+            @Serial
             private static final long serialVersionUID = -8503574003503719399L;
-
-            @Override
-            public Collection<Authentication> getAuthentications() {
-                return List.of();
-            }
 
             @Override
             public AuthenticationTransaction collect(final Collection<Authentication> authentications) {
@@ -57,6 +55,11 @@ public class AuthenticationTransactionTests {
             public Collection<Credential> getCredentials() {
                 return List.of(new TestCredentialType1());
             }
+
+            @Override
+            public Collection<Authentication> getAuthentications() {
+                return List.of();
+            }
         };
         assertNotNull(transaction.getPrimaryCredential());
         assertNotNull(transaction.getAuthentications());
@@ -65,10 +68,17 @@ public class AuthenticationTransactionTests {
     }
 
     public abstract static class BaseTestCredential implements Credential {
+        @Serial
         private static final long serialVersionUID = -6933725969701066361L;
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
+        }
     }
 
     public static class TestCredentialType1 extends BaseTestCredential {
+        @Serial
         private static final long serialVersionUID = -2785558255024055757L;
 
         @Override
@@ -78,11 +88,17 @@ public class AuthenticationTransactionTests {
     }
 
     public static class TestCredentialType2 implements Credential {
+        @Serial
         private static final long serialVersionUID = -4137096818705980020L;
 
         @Override
         public String getId() {
             return null;
+        }
+
+        @Override
+        public CredentialMetadata getCredentialMetadata() {
+            return new BasicCredentialMetadata(this);
         }
     }
 }

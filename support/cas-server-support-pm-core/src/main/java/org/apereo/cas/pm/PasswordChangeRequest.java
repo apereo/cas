@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link PasswordChangeRequest}.
@@ -21,11 +23,40 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordChangeRequest implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8885460875620586503L;
 
     private String username;
+    private char[] currentPassword;
 
-    private @Size(min = 1, message = "required.password") String password;
+    private @Size(min = 1, message = "required.password") char[] password;
 
-    private @Size(min = 1, message = "required.confirmedPassword") String confirmedPassword;
+    private @Size(min = 1, message = "required.confirmedPassword") char[] confirmedPassword;
+
+    /**
+     * To current/old password string.
+     *
+     * @return the string
+     */
+    public String toCurrentPassword() {
+        return new String(this.currentPassword);
+    }
+
+    /**
+     * To new password string.
+     *
+     * @return the string
+     */
+    public String toPassword() {
+        return Optional.ofNullable(this.password).map(String::new).orElse(null);
+    }
+
+    /**
+     * To new/confirmed password string.
+     *
+     * @return the string
+     */
+    public String toConfirmedPassword() {
+        return new String(this.confirmedPassword);
+    }
 }

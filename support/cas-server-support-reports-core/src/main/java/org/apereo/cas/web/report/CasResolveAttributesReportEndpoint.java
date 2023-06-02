@@ -41,7 +41,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint 
      * @return the map
      */
     @ReadOperation
-    @Operation(summary = "Resolve principal attributes for user", parameters = {@Parameter(name = "uid", required = true)})
+    @Operation(summary = "Resolve principal attributes for user", parameters = @Parameter(name = "uid", required = true))
     public Map<String, Object> resolvePrincipalAttributes(
         @Selector
         final String uid) {

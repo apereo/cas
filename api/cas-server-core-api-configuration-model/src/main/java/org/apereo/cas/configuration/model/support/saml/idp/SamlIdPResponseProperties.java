@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import java.util.Map;
 @JsonFilter("SamlIdPResponseProperties")
 public class SamlIdPResponseProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7200477683583467619L;
 
     /**

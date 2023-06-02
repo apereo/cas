@@ -29,7 +29,6 @@ The following multifactor providers are supported by CAS.
 |----------------------|----------------|------------------------------------------------------------|
 | Duo Security         | `mfa-duo`      | [See this guide](DuoSecurity-Authentication.html).         |
 | Authy Authenticator  | `mfa-authy`    | [See this guide](AuthyAuthenticator-Authentication.html).  |
-| Acceptto             | `mfa-acceptto` | [See this guide](Acceptto-Authentication.html).            |
 | YubiKey              | `mfa-yubikey`  | [See this guide](YubiKey-Authentication.html).             |
 | RSA/RADIUS           | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
 | WiKID                | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
@@ -37,9 +36,14 @@ The following multifactor providers are supported by CAS.
 | FIDO U2F             | `mfa-u2f`      | [See this guide](FIDO-U2F-Authentication.html).            |
 | FIDO2 WebAuthN       | `mfa-webauthn` | [See this guide](FIDO2-WebAuthn-Authentication.html).      |
 | CAS Simple           | `mfa-simple`   | [See this guide](Simple-Multifactor-Authentication.html).  |
-| Swivel Secure        | `mfa-swivel`   | [See this guide](SwivelSecure-Authentication.html).        |
 | Inwebo               | `mfa-inwebo`   | [See this guide](Inwebo-Authentication.html).              |
 | Custom               | Custom         | [See this guide](../mfa/Custom-MFA-Authentication.html).   |
+
+<div class="alert alert-info">:information_source: <strong>Azure Multifactor</strong>
+<p>Microsoft has removed the ability for external SSO servers to use Azure MFA. To use Azure MFA, 
+you must also have all your users authenticate using Azure AD SSO.
+You may want to route authentication requests to Azure AD SSO using the 
+delegated authentication features of CAS.</p></div>
 
 ## Core Configuration
 
@@ -88,13 +92,12 @@ class SampleGroovyProviderSelection {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-------------------------------------------------------------------------------------------------------------------
-| `service`             | The object representing the incoming service provided in the request, if any.
-| `principal`           | The object representing the authenticated principal along with its attributes.
-| `providersCollection` | The object representing the collection of candidate multifactor providers qualified for the transaction.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
-
+| Parameter             | Description                                                                                              |
+|-----------------------|----------------------------------------------------------------------------------------------------------|
+| `service`             | The object representing the incoming service provided in the request, if any.                            |
+| `principal`           | The object representing the authenticated principal along with its attributes.                           |
+| `providersCollection` | The object representing the collection of candidate multifactor providers qualified for the transaction. |
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.                              |
 
 ## Ranking Providers
 

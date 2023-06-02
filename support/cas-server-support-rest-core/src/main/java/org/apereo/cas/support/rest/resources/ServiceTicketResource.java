@@ -27,19 +27,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
- * {@link RestController} implementation of CAS' REST API.
- * <p>
- * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- * </p>
+ * CAS RESTful resource for vending STs.
+ *
  * <ul>
- * <li>{@code POST /v1/tickets}</li>
  * <li>{@code POST /v1/tickets/{TGT-id}}</li>
- * <li>{@code GET /v1/tickets/{TGT-id}}</li>
- * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
  * </ul>
  *
  * @author Dmitriy Kopylenko

@@ -23,6 +23,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,12 +60,12 @@ public class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTest
         mockRequest.setMethod(HttpMethod.GET.name());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
-        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
 
         val oauthContext = oidcPushedAuthorizeController.getConfigurationContext();
-        oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
+        oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
         oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
         val service = getOidcRegisteredService(id);

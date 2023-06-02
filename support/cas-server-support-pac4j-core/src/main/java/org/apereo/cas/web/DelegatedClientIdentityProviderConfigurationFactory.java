@@ -10,13 +10,13 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -52,7 +52,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
     public Optional<DelegatedClientIdentityProviderConfiguration> resolve() {
         val name = client.getName();
         val matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase(Locale.ENGLISH);
         val uriBuilder = UriComponentsBuilder
             .fromUriString(ENDPOINT_URL_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
@@ -79,17 +79,18 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val autoRedirect = (DelegationAutoRedirectTypes) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.NONE);
         val title = (String) client.getCustomProperties()
-            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, name);
-
-        val p = DelegatedClientIdentityProviderConfiguration.builder()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, name);
+        val cssClass = (String) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, StringUtils.EMPTY);
+        val providerConfig = DelegatedClientIdentityProviderConfiguration.builder()
             .name(name)
             .autoRedirectType(autoRedirect)
             .redirectUrl(redirectUrl)
             .type(type)
             .title(title)
-            .cssClass(getCssClass(client))
+            .cssClass(cssClass)
             .build();
-        return Optional.of(p);
+        return Optional.of(providerConfig);
     }
 
     /**
@@ -137,21 +138,5 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         });
-    }
-
-    /**
-     * Get a valid CSS class for the given provider name.
-     *
-     * @param client the client
-     * @return the css class
-     */
-    protected String getCssClass(final BaseClient client) {
-        val customProperties = client.getCustomProperties();
-        if (customProperties != null && customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
-            val css = customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS).toString();
-            LOGGER.debug("Located custom CSS class [{}] for client [{}]", client, css);
-            return css;
-        }
-        return null;
     }
 }

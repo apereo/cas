@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -21,6 +20,7 @@ import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -53,41 +53,40 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeRequest bean) {
-        val c = (UsernamePasswordCredential) credential;
-        if (StringUtils.isBlank(bean.getPassword())) {
+    public boolean changeInternal(final @NonNull PasswordChangeRequest bean) {
+        if (StringUtils.isBlank(bean.toPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
         }
-        if (!StringUtils.equals(bean.getPassword(), bean.getConfirmedPassword())) {
+        if (!StringUtils.equals(bean.toPassword(), bean.toConfirmedPassword())) {
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }
-        val account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
+        val account = jsonBackedAccounts.getOrDefault(bean.getUsername(), null);
         if (account == null) {
-            LOGGER.error("User account [{}] cannot be found", c.getId());
+            LOGGER.error("User account [{}] cannot be found", bean.getUsername());
             return false;
         }
-        account.setPassword(bean.getPassword());
-        this.jsonBackedAccounts.put(c.getId(), account);
+        account.setPassword(bean.toPassword());
+        jsonBackedAccounts.put(bean.getUsername(), account);
         return writeAccountToJsonResource();
     }
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
+        val account = jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         return Optional.ofNullable(account).map(JsonBackedAccount::getEmail).orElse(null);
     }
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
+        val account = jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         return Optional.ofNullable(account).map(JsonBackedAccount::getPhone).orElse(null);
     }
 
     @Override
     public String findUsername(final PasswordManagementQuery query) {
-        val result = this.jsonBackedAccounts.entrySet()
+        val result = jsonBackedAccounts.entrySet()
             .stream()
             .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(query.getEmail()))
             .findFirst();
@@ -96,7 +95,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
+        val account = jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         if (account != null) {
             return account.getSecurityQuestions();
         }
@@ -105,16 +104,27 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
+        val account = jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         if (account != null) {
             account.setSecurityQuestions(query.getSecurityQuestions().toSingleValueMap());
             writeAccountToJsonResource();
         }
     }
 
+    @Override
+    public boolean unlockAccount(final Credential credential) {
+        val account = jsonBackedAccounts.getOrDefault(credential.getId(), null);
+        if (account != null && "locked".equalsIgnoreCase(account.getStatus())) {
+            account.setStatus("OK");
+            writeAccountToJsonResource();
+        }
+        return true;
+    }
+
     @Data
     @SuppressWarnings("UnusedMethod")
     private static class JsonBackedAccount implements Serializable {
+        @Serial
         private static final long serialVersionUID = -8522936598053838986L;
 
         private String email;
@@ -123,23 +133,25 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
         private String phone;
 
+        private String status;
+
         private Map<String, String> securityQuestions = new HashMap<>(0);
     }
 
     private boolean writeAccountToJsonResource() {
         return FunctionUtils.doUnchecked(() -> {
-            MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), jsonBackedAccounts);
             readAccountsFromJsonResource();
             return true;
         });
     }
 
     private void readAccountsFromJsonResource() {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                 val personList = new TypeReference<Map<String, JsonBackedAccount>>() {
                 };
-                this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+                jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }
         });
     }

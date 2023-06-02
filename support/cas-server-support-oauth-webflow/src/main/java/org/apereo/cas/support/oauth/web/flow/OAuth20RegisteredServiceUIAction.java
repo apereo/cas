@@ -13,6 +13,7 @@ import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
  */
 @RequiredArgsConstructor
 public class OAuth20RegisteredServiceUIAction extends BaseCasWebflowAction implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5588216693657081923L;
     private final transient ServicesManager servicesManager;
 

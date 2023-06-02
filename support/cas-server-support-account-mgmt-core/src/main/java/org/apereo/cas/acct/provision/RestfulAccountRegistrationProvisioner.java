@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,9 +42,9 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
         HttpResponse response = null;
         try {
-            val headers = new HashMap<String, Object>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON);
-            headers.put("Accept", MediaType.APPLICATION_JSON);
+            val headers = new HashMap<String, String>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -55,20 +56,20 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
                 .entity(MAPPER.writeValueAsString(request))
                 .build();
             response = HttpUtils.execute(exec);
-            if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-                val entity = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                val entity = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 val success = AccountRegistrationResponse.success();
-                Arrays.stream(response.getAllHeaders())
+                Arrays.stream(response.getHeaders())
                     .forEach(header -> success.putProperty(header.getName(), header.getValue()));
                 FunctionUtils.doIf(StringUtils.isNotBlank(entity),
                     value -> success.putProperty("entity", value)).accept(StringUtils.defaultString(entity));
-                success.putProperty("status", response.getStatusLine().getStatusCode());
+                success.putProperty("status", response.getCode());
                 success.putProperty("entity", StringUtils.defaultString(entity));
                 return success;
             }
-            val details = CollectionUtils.wrap("status", response.getStatusLine().getStatusCode(),
-                "reason", response.getStatusLine().getReasonPhrase());
-            Arrays.stream(response.getAllHeaders())
+            val details = CollectionUtils.wrap("status", response.getCode(),
+                "reason", response.getReasonPhrase());
+            Arrays.stream(response.getHeaders())
                 .forEach(header -> details.put(header.getName(), header.getValue()));
             return new AccountRegistrationResponse(details);
         } finally {

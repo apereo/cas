@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -15,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenActionTests}.
@@ -33,7 +35,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
 
         "cas.authn.mfa.simple.mail.from=admin@example.org",
         "cas.authn.mfa.simple.mail.subject=CAS Token",
-        "cas.authn.mfa.simple.mail.text=CAS Token is %s",
+        "cas.authn.mfa.simple.mail.text=CAS Token is ${token}",
 
         "cas.authn.mfa.simple.sms.from=347746512"
     })
@@ -44,7 +46,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
             val theToken = createToken("casuser").getKey();
             assertNotNull(this.ticketRegistry.getTicket(theToken));
             val token = new CasSimpleMultifactorTokenCredential(theToken);
-            val result = authenticationHandler.authenticate(token);
+            val result = authenticationHandler.authenticate(token, mock(Service.class));
             assertNotNull(result);
             assertNull(this.ticketRegistry.getTicket(theToken));
         }
@@ -60,7 +62,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
 
             val token = new CasSimpleMultifactorTokenCredential(theToken);
-            val result = authenticationHandler.authenticate(token);
+            val result = authenticationHandler.authenticate(token, mock(Service.class));
             assertNotNull(result);
             assertNull(this.ticketRegistry.getTicket(theToken));
         }
@@ -73,7 +75,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
             val theToken2 = createToken("casuser2");
             assertNotNull(theToken2);
             val token = new CasSimpleMultifactorTokenCredential(theToken1.getKey());
-            assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(token));
+            assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(token, mock(Service.class)));
 
         }
     }

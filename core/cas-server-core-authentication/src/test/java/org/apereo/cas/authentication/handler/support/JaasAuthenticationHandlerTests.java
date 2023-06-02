@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.handler.support;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +49,7 @@ public class JaasAuthenticationHandlerTests {
         handler.setLoginConfigType("JavaLoginConfig");
         handler.setLoginConfigurationFile(this.fileName);
         handler.setRealm("CAS");
-        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
@@ -59,7 +61,7 @@ public class JaasAuthenticationHandlerTests {
         handler.setRealm("CAS");
         handler.setPasswordPolicyHandlingStrategy(null);
         assertThrows(FailedLoginException.class,
-            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
@@ -69,6 +71,7 @@ public class JaasAuthenticationHandlerTests {
         handler.setLoginConfigType("JavaLoginConfig");
         handler.setLoginConfigurationFile(this.fileName);
         handler.setRealm("ACCTS");
-        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
+        assertNotNull(handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"), mock(Service.class)));
     }
 }

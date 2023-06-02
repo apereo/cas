@@ -24,25 +24,25 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,6 +81,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreConfiguration.class,
@@ -96,132 +97,6 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Test
-    public void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
-        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new AllAuthenticationHandlersSucceededAuthenticationPolicy(), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
-            getOtpCredential(), getTestOtpAuthenticationHandler());
-        val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
-    }
-
-    @Test
-    public void verifyAllCredentialsValidatedAuthenticationPolicy() {
-        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new AllCredentialsValidatedAuthenticationPolicy(), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
-            getOtpCredential(), getTestOtpAuthenticationHandler());
-        val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
-    }
-
-    @Test
-    public void verifyRequiredHandlerAuthenticationPolicy() {
-        val handler = getAcceptUsersAuthenticationHandler();
-        val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new RequiredAuthenticationHandlerAuthenticationPolicy(handler.getName()), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), handler,
-            getOtpCredential(), getTestOtpAuthenticationHandler());
-        val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
-    }
-
-    @Test
-    public void verifyRequiredHandlerAuthenticationPolicyTryAll() {
-        val handler = getAcceptUsersAuthenticationHandler();
-        val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(handler.getName()), true), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), handler,
-            getOtpCredential(), getTestOtpAuthenticationHandler());
-        val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
-    }
-
-    @Test
-    public void verifyOperationWithHandlersAndAtLeastOneCredential() {
-        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
-            getOtpCredential(), getTestOtpAuthenticationHandler());
-        val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
-    }
-
-    @Test
-    public void verifyOperationWithHandlersAndAtLeastOneCredentialMustTryAll() {
-        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(true), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
-            getOtpCredential(), getTestOtpAuthenticationHandler());
-        val assertion = getAssertion(map);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                authz.authorize(new MockHttpServletRequest(), service, assertion);
-            }
-        });
-    }
-
-    @Test
-    public void verifyOperationWithExcludedHandlers() {
-        val h1 = getTestOtpAuthenticationHandler();
-        val h2 = getSimpleTestAuthenticationHandler();
-        val handlers = List.of(h1, getAcceptUsersAuthenticationHandler(), h2);
-        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
-        val authz = getAuthorizer(new ExcludedAuthenticationHandlerAuthenticationPolicy(Set.of(h1.getName(), h2.getName()), false), handlers);
-        val map = (Map) Map.of(
-            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
-            getOtpCredential(), h1);
-        val assertion = getAssertion(map);
-        assertThrows(UnauthorizedServiceException.class, () -> authz.authorize(new MockHttpServletRequest(), service, assertion));
-    }
-
-    private ServiceTicketValidationAuthorizer getAuthorizer(final AuthenticationPolicy policy,
-        final List<? extends AuthenticationHandler> authenticationHandlers) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
-        plan.registerAuthenticationHandlers(authenticationHandlers);
-        plan.registerAuthenticationPolicy(policy);
-        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);
-    }
 
     private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
         val assertion = mock(Assertion.class);
@@ -247,5 +122,101 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
 
     private static TestOneTimePasswordAuthenticationHandler getTestOtpAuthenticationHandler() {
         return new TestOneTimePasswordAuthenticationHandler(Map.of("casuser", "123456789"));
+    }
+
+    @Test
+    public void verifyAllAuthenticationHandlersSucceededAuthenticationPolicy() {
+        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new AllAuthenticationHandlersSucceededAuthenticationPolicy(), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
+            getOtpCredential(), getTestOtpAuthenticationHandler());
+        val assertion = getAssertion(map);
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    @Test
+    public void verifyAllCredentialsValidatedAuthenticationPolicy() {
+        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new AllCredentialsValidatedAuthenticationPolicy(), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
+            getOtpCredential(), getTestOtpAuthenticationHandler());
+        val assertion = getAssertion(map);
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    @Test
+    public void verifyRequiredHandlerAuthenticationPolicy() {
+        val handler = getAcceptUsersAuthenticationHandler();
+        val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new RequiredAuthenticationHandlerAuthenticationPolicy(handler.getName()), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), handler,
+            getOtpCredential(), getTestOtpAuthenticationHandler());
+        val assertion = getAssertion(map);
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    @Test
+    public void verifyRequiredHandlerAuthenticationPolicyTryAll() {
+        val handler = getAcceptUsersAuthenticationHandler();
+        val handlers = List.of(getTestOtpAuthenticationHandler(), handler, getSimpleTestAuthenticationHandler());
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(handler.getName()), true), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), handler,
+            getOtpCredential(), getTestOtpAuthenticationHandler());
+        val assertion = getAssertion(map);
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    @Test
+    public void verifyOperationWithHandlersAndAtLeastOneCredential() {
+        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
+            getOtpCredential(), getTestOtpAuthenticationHandler());
+        val assertion = getAssertion(map);
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    @Test
+    public void verifyOperationWithHandlersAndAtLeastOneCredentialMustTryAll() {
+        val handlers = List.of(getTestOtpAuthenticationHandler(), getAcceptUsersAuthenticationHandler(), getSimpleTestAuthenticationHandler());
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new AtLeastOneCredentialValidatedAuthenticationPolicy(true), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
+            getOtpCredential(), getTestOtpAuthenticationHandler());
+        val assertion = getAssertion(map);
+        assertDoesNotThrow(() -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    @Test
+    public void verifyOperationWithExcludedHandlers() {
+        val h1 = getTestOtpAuthenticationHandler();
+        val h2 = getSimpleTestAuthenticationHandler();
+        val handlers = List.of(h1, getAcceptUsersAuthenticationHandler(), h2);
+        val service = CoreAuthenticationTestUtils.getService("https://example.com/high/");
+        val authz = getAuthorizer(new ExcludedAuthenticationHandlerAuthenticationPolicy(Set.of(h1.getName(), h2.getName()), false), handlers);
+        val map = (Map) Map.of(
+            new UsernamePasswordCredential(), getAcceptUsersAuthenticationHandler(),
+            getOtpCredential(), h1);
+        val assertion = getAssertion(map);
+        assertThrows(UnauthorizedServiceException.class, () -> authz.authorize(new MockHttpServletRequest(), service, assertion));
+    }
+
+    private ServiceTicketValidationAuthorizer getAuthorizer(final AuthenticationPolicy policy,
+                                                            final List<? extends AuthenticationHandler> authenticationHandlers) {
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        plan.registerAuthenticationHandlers(authenticationHandlers);
+        plan.registerAuthenticationPolicy(policy);
+        return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);
     }
 }

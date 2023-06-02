@@ -204,7 +204,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the cas authentication attributes
      */
     protected Map<String, List<Object>> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
-                                                                         final RegisteredService registeredService) {
+                                                                               final RegisteredService registeredService) {
         val authn = getPrimaryAuthenticationFrom(model);
         val assertion = getAssertionFrom(model);
         return authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authn, assertion, model, registeredService);
@@ -218,7 +218,10 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected Map prepareViewModelWithAuthenticationPrincipal(final Map<String, Object> model) {
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
-        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
+        val chain = getChainedAuthentications(model);
+        if (!chain.isEmpty()) {
+            putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, chain);
+        }
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
         LOGGER.trace("Prepared CAS response output model with attribute names [{}]", model.keySet());
         return model;
@@ -227,7 +230,7 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Prepare cas response attributes for view model.
      *
-     * @param model                 the model
+     * @param model the model
      */
     protected void prepareCasResponseAttributesForViewModel(final Map<String, Object> model) {
         val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
@@ -258,10 +261,10 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Put cas response attributes into model.
      *
-     * @param model                 the model
-     * @param attributes            the attributes
-     * @param registeredService     the registered service
-     * @param attributesRenderer    the attributes renderer
+     * @param model              the model
+     * @param attributes         the attributes
+     * @param registeredService  the registered service
+     * @param attributesRenderer the attributes renderer
      */
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
                                                      final Map<String, Object> attributes,
@@ -276,6 +279,8 @@ public abstract class AbstractCasView extends AbstractView {
         putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         val formattedAttributes = attributesRenderer.render(encodedAttributes);
-        putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
+        if (!formattedAttributes.isEmpty()) {
+            putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
+        }
     }
 }

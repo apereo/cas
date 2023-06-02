@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlIdPSLOProfileProperties}.
  *
@@ -19,5 +21,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("SamlIdPSLOProfileProperties")
 public class SamlIdPSLOProfileProperties extends SamlIdPBaseProfileProperties {
+    @Serial
     private static final long serialVersionUID = -8100516679034234656L;
 }

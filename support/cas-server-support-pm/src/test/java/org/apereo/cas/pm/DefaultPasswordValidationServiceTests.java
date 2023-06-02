@@ -1,18 +1,17 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsSerializationConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreAuditConfiguration.class,
@@ -58,34 +58,26 @@ public class DefaultPasswordValidationServiceTests {
 
     @Test
     public void verifyReuseOldPassword() {
-        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "This!$P@$$");
-        assertFalse(passwordValidationService.isValid(
-            creds,
-            new PasswordChangeRequest("user", "123456", "123456")));
-
-        assertFalse(passwordValidationService.isValid(
-            creds,
-            new PasswordChangeRequest("user", "This!$P@$$", "This!$P@$$")));
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
+        assertFalse(passwordValidationService.isValid(request));
+        request.setPassword("This!$P@$$".toCharArray());
+        request.setConfirmedPassword("This!$P@$$".toCharArray());
+        assertFalse(passwordValidationService.isValid(request));
     }
 
     @Test
     public void verifyValidity() {
-        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password");
         assertFalse(passwordValidationService.isValid(
-            creds,
-            new PasswordChangeRequest("user", StringUtils.EMPTY, null)));
-
+            new PasswordChangeRequest("casuser", "current-psw".toCharArray(), null, null)));
         assertFalse(passwordValidationService.isValid(
-            creds,
-            new PasswordChangeRequest("user", "password", "password")));
-
+            new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray())));
         assertFalse(passwordValidationService.isValid(
-            creds,
-            new PasswordChangeRequest("user", "Th!sIsT3st", "password")));
+            new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "Th!sIsT3st".toCharArray(), "password".toCharArray())));
 
-        val request = new PasswordChangeRequest("user", "Th!sIsT3st", "Th!sIsT3st");
-        assertTrue(passwordValidationService.isValid(creds, request));
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "Th!sIsT3st".toCharArray(), "Th!sIsT3st".toCharArray());
+        assertTrue(passwordValidationService.isValid(request));
+
         passwordHistoryService.store(request);
-        assertFalse(passwordValidationService.isValid(creds, request));
+        assertFalse(passwordValidationService.isValid(request));
     }
 }

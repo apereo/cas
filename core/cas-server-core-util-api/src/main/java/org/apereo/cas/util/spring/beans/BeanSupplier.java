@@ -2,11 +2,13 @@ package org.apereo.cas.util.spring.beans;
 
 import org.apereo.cas.util.ResourceUtils;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +49,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * Is proxy class?
      *
      * @param result the result
-     * @return the boolean
+     * @return true/false
      */
     static boolean isProxy(final Object result) {
         return result != null && Proxy.isProxyClass(result.getClass())
@@ -58,10 +60,10 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * Is not proxy class?
      *
      * @param result the result
-     * @return the boolean
+     * @return true/false
      */
     static boolean isNotProxy(final Object result) {
-        return !isProxy(result);
+        return result != null && !isProxy(result);
     }
 
     @Override
@@ -171,24 +173,28 @@ public interface BeanSupplier<T> extends Supplier<T> {
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> when(final Supplier<Boolean> conditionSupplier) {
             this.conditionSuppliers.add(conditionSupplier);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> supply(final Supplier<T> beanSupplier) {
             this.beanSupplier = beanSupplier;
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> otherwise(final Supplier<T> beanSupplier) {
             this.proxySupplier = beanSupplier;
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanSupplier<T> otherwiseProxy() {
             return otherwise(new ProxiedBeanSupplier<>(this.clazz));
         }
@@ -249,7 +255,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
                 s -> Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class[]{clazz},
                     (proxy, method, args) -> {
-                        if (method.getName().equals("toString")) {
+                        if ("toString".equals(method.getName())) {
                             return PROXY_BEAN_TOSTRING_PREFIX + clazz.getName();
                         }
                         val returnType = method.getReturnType();

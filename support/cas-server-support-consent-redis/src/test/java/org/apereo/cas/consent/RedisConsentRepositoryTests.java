@@ -27,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.consent.redis.host=localhost",
-        "cas.consent.redis.port=6379"
+        "cas.consent.redis.port=6379",
+        "cas.consent.redis.pool.max-active=20",
+        "cas.consent.redis.pool.enabled=true"
     })
 @Tag("Redis")
 @Getter
@@ -40,13 +42,13 @@ public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Test
     public void storeBadDecision() throws Exception {
-        val repo = getRepository("storeBadDecision");
+        val repo = getRepository();
         assertNull(repo.storeConsentDecision(null));
     }
     
     @Test
     public void verifyDeleteFails() {
-        val repo = getRepository("verifyDeleteFails");
+        val repo = getRepository();
         assertFalse(repo.deleteConsentDecision(-1, UUID.randomUUID().toString()));
     }
 

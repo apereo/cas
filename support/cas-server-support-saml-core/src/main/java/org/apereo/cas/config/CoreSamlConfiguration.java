@@ -1,12 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.support.saml.DefaultOpenSamlConfigBean;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import net.shibboleth.shared.xml.impl.BasicParserPool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.velocity.app.VelocityEngine;
@@ -24,6 +25,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
@@ -40,7 +42,7 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
 @AutoConfiguration
 public class CoreSamlConfiguration {
 
@@ -74,9 +76,10 @@ public class CoreSamlConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
     public OpenSamlConfigBean openSamlConfigBean(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("shibboleth.ParserPool")
         final BasicParserPool parserPool) throws Exception {
-        return new OpenSamlConfigBean(parserPool);
+        return new DefaultOpenSamlConfigBean(parserPool, applicationContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

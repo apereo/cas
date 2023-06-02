@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,10 +12,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link X509Properties}.
@@ -27,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Accessors(chain = true)
 public class X509Properties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -9032744084671270366L;
 
     /**
@@ -103,7 +106,7 @@ public class X509Properties implements Serializable {
 
     /**
      * Options to describe how to fetch CRL resources.
-     * 
+     * <p>
      * To fetch CRLs, the following options are available:
      * <ul>
      * <li>{@code RESOURCE}: By default, all revocation checks use fixed
@@ -125,32 +128,18 @@ public class X509Properties implements Serializable {
     private int cacheMaxElementsInMemory = 1_000;
 
     /**
-     * When CRLs are cached, indicate whether cache should overflow to disk.
-     */
-    private boolean cacheDiskOverflow;
-
-    /**
-     * Size of cache on disk.
-     */
-    private String cacheDiskSize = "100MB";
-
-    /**
-     * When CRLs are cached, indicate if cache items should be eternal.
-     */
-    private boolean cacheEternal;
-
-    /**
      * Determine whether X509 authentication should allow
      * other forms of authentication such as username/password.
      * If this setting is turned off, typically the ability to view
      * the login form as the primary form of authentication is turned off.
      */
     private boolean mixedMode = true;
-    
+
     /**
      * When CRLs are cached, indicate the time-to-live of cache items.
      */
-    private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
+    @DurationCapable
+    private String cacheTimeToLiveSeconds = "PT4H";
 
     /**
      * If the CRL resource is unavailable, activate the this policy.
@@ -219,6 +208,7 @@ public class X509Properties implements Serializable {
     /**
      * The compiled pattern supplied by the deployer.
      */
+    @RegularExpressionCapable
     private String regExTrustedIssuerDnPattern;
 
     /**
@@ -247,6 +237,7 @@ public class X509Properties implements Serializable {
     /**
      * The pattern that authorizes an acceptable certificate by its subject dn.
      */
+    @RegularExpressionCapable
     private String regExSubjectDnPattern = ".+";
 
     /**

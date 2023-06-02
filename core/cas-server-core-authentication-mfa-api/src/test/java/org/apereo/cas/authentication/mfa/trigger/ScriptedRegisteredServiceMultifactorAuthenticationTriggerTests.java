@@ -18,10 +18,8 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
- * @deprecated Since 6.2
  */
-@Tag("Groovy")
-@Deprecated(since = "6.2.0")
+@Tag("GroovyAuthentication")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByProviderEmbeddedScript() {
@@ -61,15 +59,15 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
 
     @Test
     public void verifyEmptyProviders() {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
 
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return '" + multifactorAuthenticationProvider.getId() + "' }");
         when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
-        val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
+        val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, ctx);
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }

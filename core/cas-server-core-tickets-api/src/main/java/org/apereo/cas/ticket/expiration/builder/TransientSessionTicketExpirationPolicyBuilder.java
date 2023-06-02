@@ -7,10 +7,9 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link TransientSessionTicketExpirationPolicyBuilder}.
@@ -18,26 +17,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class TransientSessionTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TransientSessionTicket> {
+public record TransientSessionTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TransientSessionTicket> {
+    @Serial
     private static final long serialVersionUID = -1587980180617072826L;
-
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTransientSessionTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<TransientSessionTicket> getTicketType() {
-        return TransientSessionTicket.class;
     }
 
     /**

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.inwebo.browserauthent.title}">Browser authentication</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66">
+        <script type="text/JavaScript" src="https://ult-inwebo.com/va/client.js"></script>
+        <form id="otpForm" style="display:none;" method="POST" onsubmit="alert('submit')">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+            <input type="hidden" name="_eventId" value="otp" />
+            <input type="hidden" name="otp" id="otp" value="" />
+        </form>
+        <div id="inwebologin" style="display:none;">[[${login}]]</div>
+        <div id="vaContainer" style="display:none;"></div>
+        <div id="vaStartAuthentication" data-action="authentication" data-container="vaContainer"
+             data-lang="en" th:data-alias="${siteAlias}" data-width="auto"></div>
+        <div id="vaStartActivation" data-action="activation" data-container="vaContainer"
+             data-lang="en" th:data-alias="${siteAlias}" data-width="auto"></div>
+        <span id="vaError" />
+        <script th:inline="javascript">
+            window.onload = () => {
+                iwstart("vaStartAuthentication", function(iw, data) {
+                    if (data.action == "authentication" && data.code == "ok") {
+                        document.getElementById('otp').value = data.result.values[1];
+                        document.getElementById("otpForm").submit();
+                    }
+                    if (data.type == "error" && data.code == "nok") {
+                        if (data.result.reason == "no_profile") {
+                            iwterminate();
+                            setTimeout(function() {
+                                iwstart("vaStartActivation", function(iw, data) {
+                                    if (data.type == "success" && data.code == "ok" && data.action == "activation") {
+                                        window.location.href = window.location.href;
+                                    }
+                                });
+                            }, 0);
+                        } else if (data.result.reason == "force_close") {
+                            document.getElementById('vaError').textContent = 'Error: enable third-party cookies for this browser!';
+                        }
+                    }
+                });
+            };
+        </script>
+    </div>
+</main>
+</body>
+</html>

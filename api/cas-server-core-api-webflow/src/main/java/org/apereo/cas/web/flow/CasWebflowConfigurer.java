@@ -31,6 +31,12 @@ import java.util.Map;
  * @since 5.0.0
  */
 public interface CasWebflowConfigurer extends Ordered {
+
+    /**
+     * Flow id for delegated authentication redirect.
+     */
+    String FLOW_ID_DELEGATION_REDIRECT = "clientredirect";
+
     /**
      * Flow id for password reset.
      */
@@ -200,7 +206,7 @@ public interface CasWebflowConfigurer extends Ordered {
      */
     DecisionState createDecisionState(Flow flow, String id, String testExpression,
                                       String thenStateId, String elseStateId);
-    
+
     /**
      * Sets start state.
      *
@@ -337,7 +343,7 @@ public interface CasWebflowConfigurer extends Ordered {
     /**
      * Build flow.
      *
-     * @param id       the id
+     * @param id the id
      * @return the flow
      */
     Flow buildFlow(String id);
@@ -510,7 +516,7 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param flow    the flow
      * @param stateId the state id
-     * @return the boolean
+     * @return true/false
      */
     boolean containsFlowState(Flow flow, String stateId);
 
@@ -519,7 +525,7 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param flow    the flow
      * @param stateId the state id
-     * @return the boolean
+     * @return true/false
      */
     boolean containsSubflowState(Flow flow, String stateId);
 
@@ -528,7 +534,7 @@ public interface CasWebflowConfigurer extends Ordered {
      *
      * @param state      the state
      * @param transition the transition
-     * @return the boolean
+     * @return true/false
      */
     boolean containsTransition(TransitionableState state, String transition);
 
@@ -541,6 +547,14 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the flow variable
      */
     FlowVariable createFlowVariable(Flow flow, String id, Class type);
+
+    /**
+     * Create state binder configuration.
+     *
+     * @param properties the properties
+     * @return the binder configuration
+     */
+    BinderConfiguration createStateBinderConfiguration(Map<String, Map<String, String>> properties);
 
     /**
      * Create state binder configuration binder configuration.

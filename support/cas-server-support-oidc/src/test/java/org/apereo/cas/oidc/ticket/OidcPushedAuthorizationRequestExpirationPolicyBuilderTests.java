@@ -30,6 +30,5 @@ public class OidcPushedAuthorizationRequestExpirationPolicyBuilderTests extends 
     public void verifyOperation() {
         val expiration = Beans.newDuration(casProperties.getAuthn().getOidc().getPar().getMaxTimeToLiveInSeconds()).getSeconds();
         assertEquals(expiration, pushedAuthorizationUriExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive());
-        assertEquals(OidcPushedAuthorizationRequest.class, pushedAuthorizationUriExpirationPolicy.getTicketType());
     }
 }

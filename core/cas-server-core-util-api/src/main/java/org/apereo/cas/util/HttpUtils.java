@@ -1,6 +1,9 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpClientFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,31 +13,44 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicHttpResponse;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
+import org.apache.hc.core5.pool.PoolReusePolicy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import javax.net.ssl.SSLHandshakeException;
+
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link HttpUtils}.
@@ -45,15 +61,10 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int MAX_CONNECTIONS = 200;
-
-    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
-
-    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
+    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 5000;
 
     private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
 
-    private static final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 
     /**
      * Execute http request and produce a response.
@@ -61,30 +72,38 @@ public class HttpUtils {
      * @param execution the request
      * @return the http response
      */
-    public static HttpResponse execute(final HttpExecutionRequest execution) {
+    public HttpResponse execute(final HttpExecutionRequest execution) {
         val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
-        val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
+        val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(), execution.getEntity(), uri);
         try {
-            execution.getHeaders().forEach((k, v) -> request.addHeader(k, v.toString()));
+            val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
+            execution.getHeaders().forEach((key, value) -> {
+                val headerValue = expressionResolver.resolve(value);
+                val headerKey = expressionResolver.resolve(key);
+                request.addHeader(headerKey, headerValue);
+            });
             prepareHttpRequest(request, execution);
-            val builder = getHttpClientBuilder();
-            if (StringUtils.isNotBlank(execution.getProxyUrl())) {
-                val proxyEndpoint = new URL(execution.getProxyUrl());
-                val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort(), proxyEndpoint.getProtocol());
-                builder.setProxy(proxy);
-            }
-            val client = builder.build();
+            val client = getHttpClient(execution);
             return client.execute(request);
         } catch (final SSLHandshakeException e) {
             val sanitizedUrl = FunctionUtils.doUnchecked(
                 () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());
             LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + ']', e);
-            return new BasicHttpResponse(new BasicStatusLine(request.getProtocolVersion(),
-                HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl));
+            return new BasicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution) throws Exception {
+        val builder = getHttpClientBuilder(execution);
+        if (StringUtils.isNotBlank(execution.getProxyUrl())) {
+            val proxyEndpoint = new URL(execution.getProxyUrl());
+            val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort());
+            builder.setProxy(proxy);
+        }
+        return builder.build();
     }
 
     /**
@@ -92,9 +111,8 @@ public class HttpUtils {
      *
      * @param response the response to close
      */
-    public static void close(final HttpResponse response) {
-        if (response instanceof CloseableHttpResponse) {
-            val closeableHttpResponse = (CloseableHttpResponse) response;
+    public void close(final HttpResponse response) {
+        if (response instanceof CloseableHttpResponse closeableHttpResponse) {
             try {
                 closeableHttpResponse.close();
             } catch (final Exception e) {
@@ -110,8 +128,8 @@ public class HttpUtils {
      * @param basicAuthPassword the basic auth password
      * @return http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
-                                                                              final String basicAuthPassword) {
+    public org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
+                                                                       final String basicAuthPassword) {
         return HttpUtils.createBasicAuthHeaders(basicAuthUser, basicAuthPassword, "US-ASCII");
     }
 
@@ -123,9 +141,9 @@ public class HttpUtils {
      * @param basicCharset      The charset used to encode auth header
      * @return the org . springframework . http . http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
-                                                                              final String basicAuthPassword,
-                                                                              final String basicCharset) {
+    public org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
+                                                                       final String basicAuthPassword,
+                                                                       final String basicCharset) {
         val acceptHeaders = new org.springframework.http.HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
@@ -136,7 +154,7 @@ public class HttpUtils {
         return acceptHeaders;
     }
 
-    private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
+    private HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
         if ("post".equalsIgnoreCase(method)) {
             val request = new HttpPost(uri);
             if (StringUtils.isNotBlank(entity)) {
@@ -160,8 +178,8 @@ public class HttpUtils {
      * @param request   the request
      * @param execution the execution request
      */
-    private static void prepareHttpRequest(final HttpUriRequest request,
-                                           final HttpExecutionRequest execution) {
+    private void prepareHttpRequest(final HttpUriRequest request,
+                                    final HttpExecutionRequest execution) {
         if (execution.isBasicAuthentication()) {
             val auth = EncodingUtils.encodeBase64(execution.getBasicAuthUsername() + ':' + execution.getBasicAuthPassword());
             request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
@@ -171,31 +189,58 @@ public class HttpUtils {
         }
     }
 
-    private static URI buildHttpUri(final String url, final Map<String, Object> parameters) {
+    private URI buildHttpUri(final String url, final Map<String, String> parameters) {
         return FunctionUtils.doUnchecked(() -> {
             val uriBuilder = new URIBuilder(url);
-            parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
+            parameters.forEach(uriBuilder::addParameter);
             return uriBuilder.build();
         });
     }
 
-    private HttpClientBuilder getHttpClientBuilder() {
+    private HttpClientBuilder getHttpClientBuilder(final HttpExecutionRequest execution) {
         val requestConfig = RequestConfig.custom();
-        requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
-        requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
-        requestConfig.setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS);
+        requestConfig.setConnectTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS));
+        requestConfig.setConnectionRequestTimeout(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS));
 
-        return HttpClientBuilder
+        val builder =HttpClientBuilder
             .create()
             .useSystemProperties()
-            .setMaxConnTotal(MAX_CONNECTIONS)
-            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
             .setDefaultRequestConfig(requestConfig.build());
+        
+        val socketFactory = Optional.ofNullable(execution.getHttpClient())
+            .map(HttpClient::httpClientFactory)
+            .filter(factory -> Objects.nonNull(factory.getSslSocketFactory()))
+            .map(HttpClientFactory::getSslSocketFactory)
+            .orElseGet(() -> getSslConnectionSocketFactory(execution));
+
+        val connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+            .setSSLSocketFactory(socketFactory)
+            .setDefaultSocketConfig(SocketConfig.custom()
+                .setSoTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT_IN_MILLISECONDS)).build())
+            .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
+            .setConnPoolPolicy(PoolReusePolicy.LIFO)
+            .setConnectionTimeToLive(Timeout.ofMilliseconds(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS))
+            .build();
+        builder.setConnectionManager(connectionManager);
+        return builder;
+    }
+
+    private static SSLConnectionSocketFactory getSslConnectionSocketFactory(final HttpExecutionRequest execution) {
+        val builder = SSLConnectionSocketFactoryBuilder.create().useSystemProperties();
+        Optional.ofNullable(execution.getHttpClient())
+            .map(HttpClient::httpClientFactory)
+            .ifPresentOrElse(factory -> {
+                builder.setHostnameVerifier(factory.getHostnameVerifier());
+                builder.setSslContext(factory.getSslContext());
+            }, () -> builder.setSslContext(SSLContexts.createDefault()).setHostnameVerifier(new DefaultHostnameVerifier()));
+        return builder.build();
     }
 
     @SuperBuilder
     @Getter
     public static class HttpExecutionRequest {
+        private final HttpClient httpClient;
+
         @NonNull
         private final HttpMethod method;
 
@@ -213,15 +258,15 @@ public class HttpUtils {
         private final String bearerToken;
 
         @Builder.Default
-        private final Map<String, Object> parameters = new LinkedHashMap<>();
+        private final Map<String, String> parameters = new LinkedHashMap<>();
 
         @Builder.Default
-        private final Map<String, Object> headers = new LinkedHashMap<>();
+        private final Map<String, String> headers = new LinkedHashMap<>();
 
         /**
          * Is basic authentication?
          *
-         * @return the boolean
+         * @return true/false
          */
         private boolean isBasicAuthentication() {
             return StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword);
@@ -230,7 +275,7 @@ public class HttpUtils {
         /**
          * Is bearer authentication?
          *
-         * @return the boolean
+         * @return true/false
          */
         private boolean isBearerAuthentication() {
             return StringUtils.isNotBlank(bearerToken);

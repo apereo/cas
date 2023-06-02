@@ -43,11 +43,12 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
 
     @Test
     public void verifyGrantType() {
+        val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addHeader("X-" + CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL2);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org?"
-            + OAuth20Constants.CLIENT_ID + '=' + CLIENT_ID + '&'
+            + OAuth20Constants.CLIENT_ID + '=' + registeredService.getClientId() + '&'
             + OAuth20Constants.GRANT_TYPE + '=' + OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
         assertNotNull(service);
         assertTrue(service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
@@ -57,11 +58,12 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
 
     @Test
     public void verifyJwtRequest() {
+        val registeredService = addRegisteredService();
         val claims = new JWTClaimsSet.Builder().subject("cas")
             .claim("scope", new String[]{"profile"})
             .claim("redirect_uri", REDIRECT_URI)
             .claim("grant_type", OAuth20GrantTypes.CLIENT_CREDENTIALS.getType())
-            .claim("client_id", CLIENT_ID)
+            .claim("client_id", registeredService.getClientId())
             .build();
         val jwt = new PlainJWT(claims);
         val jwtRequest = jwt.serialize();
@@ -82,6 +84,7 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org"));
         assertNotNull(service);
-        assertTrue(service.getAttributes().isEmpty());
+        assertEquals(1, service.getAttributes().size());
+        assertTrue(service.getAttributes().containsKey(CasProtocolConstants.PARAMETER_SERVICE));
     }
 }

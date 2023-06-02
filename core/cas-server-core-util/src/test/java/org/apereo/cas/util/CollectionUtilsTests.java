@@ -28,8 +28,9 @@ public class CollectionUtilsTests {
         value.put("Hello", CollectionUtils.wrapList("People", "World"));
         val result = CollectionUtils.toCollection(value, ArrayList.class);
         assertEquals(1, result.size());
-        assertEquals(ImmutablePair.class, result.get(0).getClass());
+        assertSame(ImmutablePair.class, result.get(0).getClass());
     }
+
     @Test
     public void verifyToCol() {
         assertThrows(IllegalArgumentException.class, () ->

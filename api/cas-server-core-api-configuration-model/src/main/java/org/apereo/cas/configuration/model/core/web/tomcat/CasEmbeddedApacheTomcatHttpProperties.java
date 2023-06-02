@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8809922027350085888L;
 
     /**
@@ -48,6 +50,16 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
      * HTTP protocol to use.
      */
     private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
+
+    /**
+     * Scheme used for the connector.
+     */
+    private String scheme = "http";
+
+    /**
+     * Whether connector should run in secure mode.
+     */
+    private boolean secure;
 
     /**
      * Additional attributes to be set on the connector.

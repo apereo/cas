@@ -6,4 +6,4 @@ docker run --rm --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 -p 8080:
 echo "Waiting for ZooKeeper image to prepare..."
 sleep 5
 docker ps | grep "zookeeper"
-echo "ZooKeeper docker image is running."
+echo "ZooKeeper docker container is running."

@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link AuditJdbcProperties}.
  *
@@ -21,6 +23,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class AuditJdbcProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 4227475246873515918L;
 
     /**
@@ -55,7 +58,7 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * Default value is {@code yyyy-MM-dd 00:00:00.000000}.
      */
     private String dateFormatterPattern;
-    
+
     /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */

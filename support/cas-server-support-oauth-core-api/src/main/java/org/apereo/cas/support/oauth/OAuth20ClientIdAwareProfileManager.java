@@ -50,7 +50,8 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
             .stream()
             .filter(it -> {
                 val profile = it.getValue();
-                return StringUtils.equals((String) profile.getAttribute(SESSION_CLIENT_ID), clientId);
+                return StringUtils.isBlank(clientId)
+                       || StringUtils.equals((CharSequence) profile.getAttribute(SESSION_CLIENT_ID), clientId);
             })
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
@@ -66,7 +67,9 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
     @Override
     public void save(final boolean saveInSession, final UserProfile profile, final boolean multiProfile) {
         val clientId = getClientIdFromRequest();
-        profile.addAttribute(SESSION_CLIENT_ID, clientId);
+        if (StringUtils.isNotBlank(clientId)) {
+            profile.addAttribute(SESSION_CLIENT_ID, clientId);
+        }
         super.save(saveInSession, profile, multiProfile);
     }
 

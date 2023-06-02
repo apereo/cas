@@ -5,12 +5,12 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -100,12 +102,12 @@ public class OidcAuthorizeEndpointControllerTests {
             mockRequest.setMethod(HttpMethod.GET.name());
             mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
             mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
-            mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
+            mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
             mockRequest.setContextPath(StringUtils.EMPTY);
             val mockResponse = new MockHttpServletResponse();
 
             val oauthContext = oidcAuthorizeEndpointController.getConfigurationContext();
-            oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
+            oauthContext.getCasProperties().getAuthn().getOauth().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
             oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
             val service = getOidcRegisteredService(id);
@@ -119,14 +121,14 @@ public class OidcAuthorizeEndpointControllerTests {
             val context = new JEEContext(mockRequest, mockResponse);
             val ticket = new MockTicketGrantingTicket("casuser");
             oidcAuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
-            sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
+            profile.addAttribute(TicketGrantingTicket.class.getName(), ticket.getId());
             sessionStore.set(context, Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
             val modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
             val view = modelAndView.getView();
             assertTrue(view instanceof RedirectView);
-            val url = ((RedirectView) view).getUrl();
+            val url = ((AbstractUrlBasedView) view).getUrl();
             assertTrue(url.startsWith("https://oauth.example.org/"));
 
             val fragment = new URIBuilder(url).getFragment();

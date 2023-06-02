@@ -34,6 +34,7 @@ public class ChainingSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(chain.isParticipating(ssoRequest));
@@ -50,6 +51,7 @@ public class ChainingSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(chain.isParticipating(ssoRequest));
@@ -67,6 +69,7 @@ public class ChainingSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertTrue(chain.isParticipating(ssoRequest));
@@ -95,6 +98,7 @@ public class ChainingSingleSignOnParticipationStrategyTests {
 
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build();
         assertFalse(chain.isParticipating(ssoRequest));

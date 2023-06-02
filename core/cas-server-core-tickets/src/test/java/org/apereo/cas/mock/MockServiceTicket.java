@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -33,6 +34,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "id")
 public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket, ProxyGrantingTicketIssuerTicket {
 
+    @Serial
     private static final long serialVersionUID = 8203377063087967768L;
 
     private final String id;
@@ -72,6 +74,16 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
+    public Authentication getAuthentication() {
+        return this.ticketGrantingTicket.getAuthentication();
+    }
+
+    @Override
+    public int getCountOfUses() {
+        return 0;
+    }
+
+    @Override
     public String getPrefix() {
         return ServiceTicket.PREFIX;
     }
@@ -82,17 +94,8 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
-    public Authentication getAuthentication() {
-        return this.ticketGrantingTicket.getAuthentication();
-    }
-
-    @Override
-    public void update() {
-    }
-
-    @Override
-    public int getCountOfUses() {
-        return 0;
+    public void markTicketExpired() {
+        this.expired = true;
     }
 
     @Override
@@ -106,13 +109,12 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
-    public int compareTo(final Ticket o) {
-        return this.id.compareTo(o.getId());
+    public void update() {
     }
 
     @Override
-    public void markTicketExpired() {
-        this.expired = true;
+    public int compareTo(final Ticket o) {
+        return this.id.compareTo(o.getId());
     }
 
     @Override

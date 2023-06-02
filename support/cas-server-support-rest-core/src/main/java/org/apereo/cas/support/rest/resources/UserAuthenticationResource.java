@@ -19,24 +19,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.security.auth.login.FailedLoginException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
- * {@link RestController} implementation of CAS' REST API.
- * <p>
- * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- * </p>
+ * CAS RESTful resource for validating user credentials.
  * <ul>
- * <li>{@code POST /v1/tickets}</li>
- * <li>{@code POST /v1/tickets/{TGT-id}}</li>
- * <li>{@code GET /v1/tickets/{TGT-id}}</li>
- * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
+ * <li>{@code POST /v1/users}</li>
  * </ul>
  *
- * @author Dmitriy Kopylenko
- * @since 4.1.0
+ * @author Misagh Moayyed
+ * @since 6.1.0
  */
 @RestController("userAuthenticationResource")
 @Slf4j

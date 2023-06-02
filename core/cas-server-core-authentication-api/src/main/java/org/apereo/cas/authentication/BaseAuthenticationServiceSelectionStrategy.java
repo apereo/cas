@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.val;
 import org.springframework.core.Ordered;
 
+import java.io.Serial;
+
 /**
  * This is {@link BaseAuthenticationServiceSelectionStrategy}.
  *
@@ -23,6 +25,7 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
 
+    @Serial
     private static final long serialVersionUID = -7458940344679793681L;
 
     private final transient ServicesManager servicesManager;

@@ -13,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -74,7 +76,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 return new ArrayList<>(0);
             }
 
-            val account = map.get(username.trim().toLowerCase());
+            val account = map.get(username.trim().toLowerCase(Locale.ENGLISH));
             if (account != null) {
                 return decode(account);
             }
@@ -103,9 +105,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]",
                 accounts.size(), account.getUsername());
             val encoded = encode(account);
-            val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(), new ArrayList<>());
+            val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
             records.add(encoded);
-            accounts.put(account.getUsername().trim().toLowerCase(), records);
+            accounts.put(account.getUsername().trim().toLowerCase(Locale.ENGLISH), records);
             writeAccountsToJsonRepository(accounts);
             return encoded;
         } catch (final Exception e) {
@@ -118,8 +120,8 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         try {
             val accounts = readAccountsFromJsonRepository();
-            if (accounts.containsKey(account.getUsername().trim().toLowerCase())) {
-                val records = accounts.get(account.getUsername().trim().toLowerCase());
+            if (accounts.containsKey(account.getUsername().trim().toLowerCase(Locale.ENGLISH))) {
+                val records = accounts.get(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
                 return records.stream()
                     .filter(rec -> rec.getId() == account.getId())
                     .findFirst()
@@ -147,7 +149,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @Override
     public void delete(final String username) {
         val accounts = readAccountsFromJsonRepository();
-        accounts.remove(username.trim().toLowerCase());
+        accounts.remove(username.trim().toLowerCase(Locale.ENGLISH));
         writeAccountsToJsonRepository(accounts);
     }
 
@@ -167,10 +169,11 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     @Override
     public long count(final String username) {
         val accounts = readAccountsFromJsonRepository();
-        return accounts.containsKey(username.trim().toLowerCase()) ? accounts.get(username.trim().toLowerCase()).size() : 0;
+        return accounts.containsKey(username.trim().toLowerCase(Locale.ENGLISH)) ? accounts.get(username.trim().toLowerCase(Locale.ENGLISH)).size() : 0;
     }
 
     private static class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
+        @Serial
         private static final long serialVersionUID = 1466569521275630254L;
 
         @Override
@@ -180,7 +183,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doUnchecked(__ -> {
             if (location.getFile() != null) {
                 LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
                 serializer.to(location.getFile(), accounts);

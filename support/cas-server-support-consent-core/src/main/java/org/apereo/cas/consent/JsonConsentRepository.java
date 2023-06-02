@@ -18,6 +18,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -30,6 +31,7 @@ import java.util.Set;
  */
 @Getter
 public class JsonConsentRepository extends BaseConsentRepository implements DisposableBean {
+    @Serial
     private static final long serialVersionUID = -402728417464783825L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -51,9 +53,7 @@ public class JsonConsentRepository extends BaseConsentRepository implements Disp
 
     @Override
     public void destroy() {
-        if (watcherService != null) {
-            watcherService.close();
-        }
+        FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
     }
 
     @Override

@@ -15,12 +15,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationRiskEvaluator}.
@@ -43,8 +42,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
 
         val activeCalculators = this.calculators
             .stream()
-            .filter(BeanSupplier::isNotProxy)
-            .collect(Collectors.toList());
+            .filter(BeanSupplier::isNotProxy).toList();
 
         if (activeCalculators.isEmpty()) {
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
@@ -53,11 +51,10 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         val scores = activeCalculators
             .stream()
             .map(r -> r.calculate(authentication, service, request))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .filter(Objects::nonNull).toList();
 
         val sum = scores.stream()
-            .map(AuthenticationRiskScore::getScore)
+            .map(AuthenticationRiskScore::score)
             .filter(Objects::nonNull)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         val score = sum.divide(BigDecimal.valueOf(activeCalculators.size()), 2, RoundingMode.UP);

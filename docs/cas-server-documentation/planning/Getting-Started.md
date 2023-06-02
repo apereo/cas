@@ -8,10 +8,28 @@ category: Planning
 
 # Getting Started
 
+We want to start by saying thank you for using CAS.
+
 This document provides a high-level guide on how to get started with a CAS server deployment. 
 The sole focus of the guide is describe the process
 that must be followed and adopted by CAS deployers in order to arrive at a successful 
 and sustainable architecture and deployment.
+       
+## Before You Begin
+
+It is very important that you start with [this document](/cas/developer/Contributor-Guidelines.html) first. This will help you understand how
+the CAS project runs and operates. You will learn how to get involved with the project, how to ask for help, 
+how changes are managed and released, what the project expects from you and what you can expect from CAS itself. 
+
+## Ask for Help
+
+A CAS deployment is often seen as mission critical. Its deployment success, health status and general upkeep is vital to an organization's
+daily routine and business. Furthermore, as an identity provider that operates in the domain of access management, it plays an important
+and sensitive role in the overall security architecture of one's deployment. Therefor, you may need *extra expert* help
+from specialists and experts that know the software in and out and can help you with gotchas, deployment best practices and practical upgrade guidelines.
+Free support only works up to a certain degree, and generally is best for personal use and/or hobbyists.
+
+For best results, [ask for help](/cas/Support.html).
 
 ## Collect Use Cases
 
@@ -20,7 +38,7 @@ Once you have a few ideas, please discuss and share those with the [CAS communit
 to learn about common trends, practices and patterns
 that may already have solved the same issues you face today. 
 
-<div class="alert alert-warning"><strong>KISS</strong><p>In general, avoid designing and/or adopting
+<div class="alert alert-warning">:warning: <strong>KISS</strong><p>In general, avoid designing and/or adopting
 use cases and workflows that heavily alter the CAS internal components, induce a heavy burden on your management
 and maintenance of the configuration or re-invent the CAS software and its supported protocols. All options 
 add to maintenance cost and headache.</p></div>
@@ -40,7 +58,8 @@ CAS [supported protocols and specifications](../protocol/Protocol-Overview.html)
 From time to time, blog posts appears on the [Apereo Blog](https://apereo.github.io/)
 that might become useful as you are thinking about requirements and evaluating features.
 It is generally recommended that you follow the blog and keep up with project news and 
-announcements as much as possible, and do not shy away from writing and contributing your own blog posts, experiences and updates throughout your CAS deployment.
+announcements as much as possible, and do not shy away from writing and contributing your own blog posts, 
+experiences and updates throughout your CAS deployment.
 
 ## Prepare Environment
 
@@ -92,3 +111,13 @@ will likely lead to disastrous results in the long run.
 The [troubleshooting guide](../installation/Troubleshooting-Guide.html) might have some answers 
 for issues you may have run into and it generally tries to describe a strategy useful for troubleshooting
 and diagnostics. You may also seek assistance from the [CAS community](/cas/Mailing-Lists.html).
+   
+## Test
+
+Invest in test automation. A lot. It can be boring and redundant and yet, it will bring you peace of mind, 
+fewer sleepless nights, and an overall healthier and more agile attitude towards upgrades. Furthermore, 
+don’t test too late. Many CAS deployment projects proceed such that by the time the deployment and/or upgrade and its testing have finished, 
+the CAS software itself has become EOL. Try not to go to production with a version that is declared dead for maintenance. 
+Remember that the CAS project puts out release candidates in the hopes of getting early feedback, allowing you to test early. 
+
+If you wait too long, then you will have waited too long. So, don't wait long.

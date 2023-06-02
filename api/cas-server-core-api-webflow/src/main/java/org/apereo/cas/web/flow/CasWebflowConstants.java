@@ -22,14 +22,17 @@ public interface CasWebflowConstants {
      * Bean name for login flow registry.
      */
     String BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY = "loginFlowRegistry";
+
     /**
      * Bean name for logout flow registry.
      */
     String BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY = "logoutFlowRegistry";
+
     /**
      * Bean name for flow builder services.
      */
     String BEAN_NAME_FLOW_BUILDER_SERVICES = "flowBuilderServices";
+
     /**
      * Bean name for flow builder.
      */
@@ -113,6 +116,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SURROGATE_VIEW = "surrogateListView";
 
     /**
+     * The view id 'surrogateWildcardView'.
+     */
+    String TRANSITION_ID_SURROGATE_WILDCARD_VIEW = "surrogateWildcardView";
+
+    /**
      * Skip surrogate view if no surrogates can be found.
      */
     String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
@@ -145,6 +153,11 @@ public interface CasWebflowConstants {
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
+
+    /**
+     * The transition state 'restore'.
+     */
+    String TRANSITION_ID_RESTORE = "restore";
 
     /**
      * The transition state 'validate'.
@@ -240,9 +253,29 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUCCESS = "success";
 
     /**
+     * The transition state 'generate'.
+     */
+    String TRANSITION_ID_GENERATE = "generate";
+
+    /**
+     * The transition state 'logout'.
+     */
+    String TRANSITION_ID_LOGOUT = "logout";
+
+    /**
+     * Transition id 'delegatedAuthenticationRedirect' .
+     */
+    String TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT = "delegatedAuthenticationRedirect";
+
+    /**
      * Transition id 'redirect' .
      */
     String TRANSITION_ID_REDIRECT = "redirect";
+
+    /**
+     * The transition id 'serviceUnauthorizedCheck'.
+     */
+    String TRANSITION_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
 
     /**
      * Transition id 'post' .
@@ -283,6 +316,11 @@ public interface CasWebflowConstants {
      * Proceed transition id.
      */
     String TRANSITION_ID_PROCEED = "proceed";
+
+    /**
+     * Transition id 'done'.
+     */
+    String TRANSITION_ID_DONE = "done";
 
     /**
      * Confirm transition id.
@@ -416,6 +454,16 @@ public interface CasWebflowConstants {
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
+     * The state id 'casSessionStorageWriteView'.
+     */
+    String STATE_ID_SESSION_STORAGE_WRITE = "casSessionStorageWriteView";
+
+    /**
+     * The state id 'casSessionStorageReadView'.
+     */
+    String STATE_ID_SESSION_STORAGE_READ = "casSessionStorageReadView";
+
+    /**
      * The state id 'ticketGrantingTicketCheck'.
      */
     String STATE_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
@@ -449,6 +497,11 @@ public interface CasWebflowConstants {
      * The state 'surrogateListView'.
      */
     String STATE_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * The state 'surrogateWildcardView'.
+     */
+    String STATE_ID_SURROGATE_WILDCARD_VIEW = "surrogateWildcardView";
 
     /**
      * The state 'loadSurrogatesAction'.
@@ -683,7 +736,39 @@ public interface CasWebflowConstants {
     /**
      * State id 'redirectToDelegatedAuthnProviderView'.
      */
-    String STATE_ID_REDIRECT_TO_DELEGATED_AUTHN_PROVIDER_VIEW = "redirectToDelegatedAuthnProviderView";
+    String STATE_ID_DELEGATED_AUTHENTICATION_REDIRECT_TO_AUTHN_PROVIDER = "redirectToDelegatedAuthnProviderView";
+
+    /**
+     * State id 'delegatedAuthenticationSelectCredential'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION = "delegatedAuthenticationSelectCredential";
+
+    /**
+     * State id 'delegatedAuthenticationIdPLogout'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT = "delegatedAuthenticationIdPLogout";
+
+    /**
+     * State id 'delegatedAuthenticationFinalizeCredential'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_FINALIZE = "delegatedAuthenticationFinalizeCredential";
+
+
+    /**
+     * State id 'delegatedAuthenticationStoreWebflowState'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_STORE = "delegatedAuthenticationStoreWebflowState";
+
+    /**
+     * State id 'delegatedAuthenticationClientSubflow'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_SUBFLOW = "delegatedAuthenticationClientSubflow";
+
+
+    /**
+     * State id 'delegatedAuthenticationClientRedirect'.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT = "delegatedAuthenticationClientRedirect";
 
     /**
      * State id 'delegatedAuthenticationDynamicDiscoveryView'.
@@ -776,11 +861,6 @@ public interface CasWebflowConstants {
     String STATE_ID_SHOW_AUTHN_WARNING_MSGS = "showAuthenticationWarningMessages";
 
     /**
-     * State id 'openIdSingleSignOnAction'.
-     */
-    String STATE_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
-
-    /**
      * The state id 'registerDeviceView'.
      */
     String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
@@ -866,6 +946,11 @@ public interface CasWebflowConstants {
     String STATE_ID_ACCOUNT_LOCKED = "casAccountLockedView";
 
     /**
+     * State id 'casAccountUnlockedView'.
+     */
+    String STATE_ID_ACCOUNT_UNLOCKED = "casAccountUnlockedView";
+
+    /**
      * State id 'casBadHoursView'.
      */
     String STATE_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
@@ -927,6 +1012,10 @@ public interface CasWebflowConstants {
      * State id 'updateSecurityQuestions'.
      */
     String STATE_ID_UPDATE_SECURITY_QUESTIONS = "updateSecurityQuestions";
+    /**
+     * State id 'removeSingleSignOnSession'.
+     */
+    String STATE_ID_REMOVE_SINGLE_SIGNON_SESSION = "removeSingleSignOnSession";
 
     /**
      * State id 'viewRegistration'.
@@ -1071,9 +1160,9 @@ public interface CasWebflowConstants {
     String VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW = "delegated-authn/casDelegatedAuthnErrorView";
 
     /**
-     * The view state 'casPac4jStopWebflow'.
+     * The view state 'casDelegatedAuthnStopWebflow'.
      */
-    String VIEW_ID_PAC4J_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
+    String VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW = "delegated-authn/casDelegatedAuthnStopWebflow";
 
     /**
      * The view state 'casSessionStorageWriteView'.
@@ -1084,6 +1173,11 @@ public interface CasWebflowConstants {
      * The view state 'casSessionStorageReadView'.
      */
     String VIEW_ID_SESSION_STORAGE_READ = "storage/casSessionStorageReadView";
+
+    /**
+     * The view state 'dynamicHtmlView'.
+     */
+    String VIEW_ID_DYNAMIC_HTML = "dynamicHtmlView";
 
     /*
      ****************************************
@@ -1100,11 +1194,6 @@ public interface CasWebflowConstants {
      * Action to check if login should redirect to password reset subflow.
      */
     String DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
-
-    /**
-     * Action state 'selectFirstAction'.
-     */
-    String DECISION_STATE_OPEN_ID_SELECT_FIRST_ACTION = "selectFirstAction";
 
     /*
      ****************************************
@@ -1139,9 +1228,44 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action id 'accountUnlockStatusPrepareAction'.
+     */
+    String ACTION_ID_ACCOUNT_UNLOCK_PREPARE = "accountUnlockStatusPrepareAction";
+
+
+    /**
+     * Action id 'delegatedAuthenticationClientCredentialSelectionFinalizeAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION_FINALIZE = "delegatedAuthenticationClientCredentialSelectionFinalizeAction";
+    /**
+     * Action id 'delegatedAuthenticationIdentityProviderLogoutAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT = "delegatedAuthenticationIdentityProviderLogoutAction";
+
+    /**
+     * Action id 'delegatedAuthenticationIdentityProviderFinalizeLogoutAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT = "delegatedAuthenticationIdentityProviderFinalizeLogoutAction";
+
+    /**
+     * Action id 'delegatedAuthenticationClientCredentialSelectionAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_CREDENTIAL_SELECTION = "delegatedAuthenticationClientCredentialSelectionAction";
+
+    /**
      * Action id 'delegatedAuthenticationProviderDynamicDiscoveryAction'.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION = "delegatedAuthenticationProviderDynamicDiscoveryExecutionAction";
+
+    /**
+     * Action id 'delegatedAuthenticationRedirectToClientAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT = "delegatedAuthenticationRedirectToClientAction";
+
+    /**
+     * Action id 'delegatedAuthenticationStoreWebflowAction'.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_STORE_WEBFLOW_STATE = "delegatedAuthenticationStoreWebflowAction";
 
     /**
      * Action id 'multifactorProviderSelectedAction'.
@@ -1197,6 +1321,12 @@ public interface CasWebflowConstants {
      * Action id 'forgotUsernameInitializeCaptchaAction'.
      */
     String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
+
+
+    /**
+     * Action id 'accountUnlockStatusAction .
+     */
+    String ACTION_ID_UNLOCK_ACCOUNT_STATUS = "accountUnlockStatusAction";
 
     /**
      * Action id 'initPasswordChangeAction .
@@ -1359,6 +1489,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
 
     /**
+     * Action id `delegatedAuthenticationCreateClientsAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS = "delegatedAuthenticationCreateClientsAction";
+
+    /**
      * Action id `delegatedAuthenticationFailureAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_FAILURE = "delegatedAuthenticationFailureAction";
@@ -1383,14 +1518,6 @@ public interface CasWebflowConstants {
      * Action id `renewAuthenticationRequestCheckAction`.
      */
     String ACTION_ID_RENEW_AUTHN_REQUEST = "renewAuthenticationRequestCheckAction";
-
-    /**
-     * Action id 'openIdSingleSignOnAction .
-     *
-     * @deprecated Since 6.2
-     */
-    @Deprecated(since = "6.2.0")
-    String ACTION_ID_OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
 
     /**
      * Action id 'negociateSpneg .
@@ -1626,6 +1753,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_MFA_CHECK_FAILURE = "mfaFailureAction";
 
     /**
+     * Action id 'consentAccountProfilePrepareAction'.
+     */
+    String ACTION_ID_CONSENT_ACCOUNT_PROFILE_PREPARE = "consentAccountProfilePrepareAction";
+
+    /**
      * Action id 'checkConsentRequiredAction'.
      */
     String ACTION_ID_CHECK_CONSENT_REQUIRED = "checkConsentRequiredAction";
@@ -1834,11 +1966,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_SAML_METADATA_UI_PARSER = "samlMetadataUIParserAction";
 
     /**
-     * Action id 'samlIdPSessionStoreTicketGrantingTicketAction'.
-     */
-    String ACTION_ID_SAML_IDP_SESSION_STORE_TICKET_GRANTING_TICKET = "samlIdPSessionStoreTicketGrantingTicketAction";
-
-    /**
      * Action id 'samlIdPMetadataUIParserAction'.
      */
     String ACTION_ID_SAML_IDP_METADATA_UI_PARSER = "samlIdPMetadataUIParserAction";
@@ -1852,11 +1979,6 @@ public interface CasWebflowConstants {
      * Action id 'oauth20RegisteredServiceUIAction'.
      */
     String ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI = "oauth20RegisteredServiceUIAction";
-
-    /**
-     * Action id 'oauth20SessionStoreTicketGrantingTicketAction'.
-     */
-    String ACTION_ID_OAUTH20_SESSION_STORE_TICKET_GRANTING_TICKET = "oauth20SessionStoreTicketGrantingTicketAction";
 
     /**
      * Action id 'inweboPushAuthenticateAction'.
@@ -1884,41 +2006,6 @@ public interface CasWebflowConstants {
     String ACTION_ID_INWEBO_SUCCESS = "inweboSuccessAction";
 
     /**
-     * Action id 'mfaAccepttoMultifactorValidateUserDeviceRegistrationAction'.
-     */
-    String ACTION_ID_ACCEPTTO_VALIDATE_USER_DEVICE_REGISTRATION = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorFetchChannelAction'.
-     */
-    String ACTION_ID_ACCEPTTO_FETCH_CHANNEL = "mfaAccepttoMultifactorFetchChannelAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorValidateChannelAction'.
-     */
-    String ACTION_ID_ACCEPTTO_VALIDATE_CHANNEL = "mfaAccepttoMultifactorValidateChannelAction";
-
-    /**
-     * Action id 'mfaAccepttoQRCodeValidateWebSocketChannelAction'.
-     */
-    String ACTION_ID_ACCEPTTO_QR_CODE_VALIDATE_CHANNEL = "mfaAccepttoQRCodeValidateWebSocketChannelAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_ACCEPTTO_FINALIZE_AUTHENTICATION = "mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction";
-
-    /**
-     * Action id 'mfaAccepttoMultifactorDetermineUserAccountStatusAction'.
-     */
-    String ACTION_ID_ACCEPTTO_DETERMINE_USER_ACCOUNT_STATUS = "mfaAccepttoMultifactorDetermineUserAccountStatusAction";
-
-    /**
-     * Action id 'swivelAuthenticationWebflowAction'.
-     */
-    String ACTION_ID_SWIVEL_AUTHENTICATION = "swivelAuthenticationWebflowAction";
-
-    /**
      * Action id 'wsFederationMetadataUIAction'.
      */
     String ACTION_ID_WSFEDERATION_METADATA_UI = "wsFederationMetadataUIAction";
@@ -1927,6 +2014,10 @@ public interface CasWebflowConstants {
      * Action id 'accountProfileUpdateSecurityQuestionsAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS = "accountProfileUpdateSecurityQuestionsAction";
+    /**
+     * Action id 'accountProfileRemoveSingleSignOnSessionAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION = "accountProfileRemoveSingleSignOnSessionAction";
 
     /**
      * Action id 'ldapSpnegoClientAction'.
@@ -1947,4 +2038,8 @@ public interface CasWebflowConstants {
      * The action id 'spnego'.
      */
     String ACTION_ID_SPNEGO = "spnego";
+    /**
+     * The action id 'syncopePrincipalProvisionerAction'.
+     */
+    String ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION = "syncopePrincipalProvisionerAction";
 }

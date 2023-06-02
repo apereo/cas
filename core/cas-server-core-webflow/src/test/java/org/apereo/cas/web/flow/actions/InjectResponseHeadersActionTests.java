@@ -11,7 +11,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -31,6 +31,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -90,12 +91,12 @@ public class InjectResponseHeadersActionTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
         val attributes = new HashMap<String, String>();
-        attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(), "true");
+        attributes.put(Response.ResponseType.REDIRECT.name().toLowerCase(Locale.ENGLISH), "true");
 
         val casResponse = mock(Response.class);
-        when(casResponse.getUrl()).thenReturn("https://google.com");
-        when(casResponse.getResponseType()).thenReturn(Response.ResponseType.REDIRECT);
-        when(casResponse.getAttributes()).thenReturn(attributes);
+        when(casResponse.url()).thenReturn("https://google.com");
+        when(casResponse.responseType()).thenReturn(Response.ResponseType.REDIRECT);
+        when(casResponse.attributes()).thenReturn(attributes);
         val responseBuilder = mock(ResponseBuilder.class);
         when(responseBuilder.build(any(), any(), any())).thenReturn(casResponse);
         val locator = mock(ResponseBuilderLocator.class);

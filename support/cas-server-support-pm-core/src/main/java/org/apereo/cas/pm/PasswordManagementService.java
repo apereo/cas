@@ -19,6 +19,11 @@ import java.util.Map;
 public interface PasswordManagementService {
 
     /**
+     * Name of parameter that can be supplied to login url to force display of password change during login.
+     */
+    String PARAMETER_DO_CHANGE_PASSWORD = "doChangePassword";
+
+    /**
      * Param name for the token.
      */
     String PARAMETER_PASSWORD_RESET_TOKEN = "pswdrst";
@@ -36,12 +41,21 @@ public interface PasswordManagementService {
     /**
      * Execute op to change password.
      *
-     * @param c    the credentials
-     * @param bean the bean
+     * @param bean       the bean
      * @return true /false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    default boolean change(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
+    default boolean change(final PasswordChangeRequest bean) throws InvalidPasswordException {
+        return false;
+    }
+
+    /**
+     * Unlock account for credential.
+     *
+     * @param credential the credential
+     * @return true/false
+     */
+    default boolean unlockAccount(final Credential credential) {
         return false;
     }
 
@@ -113,8 +127,9 @@ public interface PasswordManagementService {
      *
      * @param query the query
      */
-    default void updateSecurityQuestions(final PasswordManagementQuery query) {}
-    
+    default void updateSecurityQuestions(final PasswordManagementQuery query) {
+    }
+
     /**
      * Checks a security questions answer.
      *

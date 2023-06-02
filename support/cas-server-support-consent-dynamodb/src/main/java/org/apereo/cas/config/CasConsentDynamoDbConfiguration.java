@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.DynamoDbConsentFacilitator;
 import org.apereo.cas.consent.DynamoDbConsentRepository;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 6.5.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent, module = "dynamodb")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Consent, module = "dynamodb")
 @AutoConfiguration
 public class CasConsentDynamoDbConfiguration {
 
@@ -54,11 +54,11 @@ public class CasConsentDynamoDbConfiguration {
         final DynamoDbClient amazonDynamoDbConsentClient,
         final CasConfigurationProperties casProperties) {
         val db = casProperties.getConsent().getDynamoDb();
-        val f = new DynamoDbConsentFacilitator(db, amazonDynamoDbConsentClient);
+        val facilitator = new DynamoDbConsentFacilitator(db, amazonDynamoDbConsentClient);
         if (!db.isPreventTableCreationOnStartup()) {
-            f.createTable(db.isDropTablesOnStartup());
+            facilitator.createTable(db.isDropTablesOnStartup());
         }
-        return f;
+        return facilitator;
     }
 
 }

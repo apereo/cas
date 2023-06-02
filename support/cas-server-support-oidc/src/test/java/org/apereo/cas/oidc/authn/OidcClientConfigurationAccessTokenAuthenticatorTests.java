@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
@@ -30,28 +31,31 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
         val at = getAccessToken();
-        when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        when(at.getScopes()).thenReturn(Set.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE));
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
         assertEquals("casuser", userProfile.getId());
     }
 
+    private OidcClientConfigurationAccessTokenAuthenticator getAuthenticator() {
+        return new OidcClientConfigurationAccessTokenAuthenticator(
+            oidcConfigurationContext.getTicketRegistry(), oidcAccessTokenJwtBuilder);
+    }
+
     @Test
     public void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
         val at = getAccessToken();
         when(at.getScopes()).thenThrow(new IllegalArgumentException());
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        getAuthenticator().validate(new CallContext(ctx, JEESessionStore.INSTANCE), credentials);
         val userProfile = credentials.getUserProfile();
         assertNull(userProfile);
     }

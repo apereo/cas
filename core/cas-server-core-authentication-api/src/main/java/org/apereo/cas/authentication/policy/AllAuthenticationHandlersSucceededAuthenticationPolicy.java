@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 public class AllAuthenticationHandlersSucceededAuthenticationPolicy extends BaseAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = 8901190843828760737L;
 
     @Override

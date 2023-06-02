@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("AuditProperties")
 public class AuditProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3946106584608417663L;
 
     /**
@@ -47,12 +49,6 @@ public class AuditProperties implements Serializable {
     private AuditMongoDbProperties mongo = new AuditMongoDbProperties();
 
     /**
-     * Family of sub-properties pertaining to CouchDb-based audit destinations.
-     */
-    @NestedConfigurationProperty
-    private AuditCouchDbProperties couchDb = new AuditCouchDbProperties();
-
-    /**
      * Family of sub-properties pertaining to Redis-based audit destinations.
      */
     @NestedConfigurationProperty
@@ -71,14 +67,14 @@ public class AuditProperties implements Serializable {
     private AuditSlf4jLogProperties slf4j = new AuditSlf4jLogProperties();
 
     /**
-     * Family of sub-properties pertaining to couchbase-based audit destinations.
-     */
-    @NestedConfigurationProperty
-    private AuditCouchbaseProperties couchbase = new AuditCouchbaseProperties();
-
-    /**
      * Family of sub-properties pertaining to dynamodb-based audit destinations.
      */
     @NestedConfigurationProperty
     private AuditDynamoDbProperties dynamoDb = new AuditDynamoDbProperties();
+
+    /**
+     * Family of sub-properties pertaining to groovy-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditGroovyProperties groovy = new AuditGroovyProperties();
 }

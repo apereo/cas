@@ -3,12 +3,15 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -16,11 +19,14 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.List;
 
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
@@ -34,11 +40,18 @@ import org.springframework.webflow.execution.RequestContext;
 public class GenerateServiceTicketAction extends BaseCasWebflowAction {
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final CentralAuthenticationService centralAuthenticationService;
+
     private final TicketRegistrySupport ticketRegistrySupport;
+
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     private final ServicesManager servicesManager;
+
     private final PrincipalElectionStrategy principalElectionStrategy;
+
+    private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 
     /**
      * {@inheritDoc}
@@ -60,7 +73,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
         LOGGER.debug("Ticket-granting ticket found in the context is [{}]", ticketGrantingTicket);
 
         try {
-            val authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            val authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
                 val authn = new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket);
                 throw new InvalidTicketException(authn, ticketGrantingTicket);
@@ -85,19 +98,17 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             }
 
             val credential = WebUtils.getCredential(context);
-            val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+            val builder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
             val authenticationResult = builder.build(principalElectionStrategy, service);
 
             LOGGER.trace("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
-            val serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
-            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
+            grantServiceTicket(authenticationResult, service, context);
             return success();
 
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 LOGGER.debug("CAS has determined ticket-granting ticket [{}] is invalid and must be destroyed", ticketGrantingTicket);
-                centralAuthenticationService.deleteTicket(ticketGrantingTicket);
+                ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
                 LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.TRANSITION_ID_GATEWAY);
@@ -106,6 +117,24 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             LOGGER.warn("Could not grant service ticket [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
+    }
+
+    private void grantServiceTicket(final AuthenticationResult authenticationResult,
+                                    final Service service,
+                                    final RequestContext requestContext) {
+        serviceTicketAuthorities
+            .stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .filter(auth -> auth.supports(authenticationResult, service))
+            .findFirst()
+            .ifPresent(auth -> {
+                if (auth.shouldGenerate(authenticationResult, service)) {
+                    val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
+                    val serviceTicketId = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+                    WebUtils.putServiceTicketInRequestScope(requestContext, serviceTicketId);
+                    LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
+                }
+            });
     }
 
     /**

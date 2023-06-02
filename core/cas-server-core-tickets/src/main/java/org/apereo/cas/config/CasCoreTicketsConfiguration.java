@@ -4,12 +4,15 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
@@ -36,17 +39,24 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.ticket.registry.pubsub.DefaultQueueableTicketRegistryMessageReceiver;
+import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -61,6 +71,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -83,13 +94,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableAsync(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
 @AutoConfiguration
 public class CasCoreTicketsConfiguration {
-
     @Configuration(value = "CasCoreTicketsBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketsBaseConfiguration {
+
+        @ConditionalOnMissingBean(name = ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultServiceTicketSessionTrackingPolicy(casProperties, ticketRegistry);
+        }
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
         @Bean
@@ -99,7 +119,6 @@ public class CasCoreTicketsConfiguration {
             final TicketRegistry ticketRegistry) {
             return new DefaultTicketRegistrySupport(ticketRegistry);
         }
-
     }
 
     @Configuration(value = "CasCoreTicketsAuthenticationPlanConfiguration", proxyBeanMethods = false)
@@ -125,23 +144,73 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketRegistryConfiguration {
+
         @ConditionalOnMissingBean(name = TicketRegistry.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistry ticketRegistry(
+            @Qualifier("messageQueueTicketRegistryPublisher")
+            final QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher,
+            @Qualifier("defaultTicketRegistryCipherExecutor")
+            final CipherExecutor defaultTicketRegistryCipherExecutor,
+            @Qualifier("messageQueueTicketRegistryIdentifier")
+            final PublisherIdentifier messageQueueTicketRegistryIdentifier,
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final TicketCatalog ticketCatalog,
+            @Qualifier(TicketSerializationManager.BEAN_NAME)
+            final TicketSerializationManager ticketSerializationManager,
             @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
             final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
             LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
             val mem = casProperties.getTicket().getRegistry().getInMemory();
-            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
-
             if (mem.isCache()) {
-                return new CachingTicketRegistry(cipher, logoutManager);
+                return new CachingTicketRegistry(defaultTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
+                    logoutManager, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
             }
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
-            return new DefaultTicketRegistry(storageMap, cipher);
+            return new DefaultTicketRegistry(defaultTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
+                storageMap, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultTicketRegistryCipherExecutor")
+        public CipherExecutor defaultTicketRegistryCipherExecutor(final CasConfigurationProperties casProperties) {
+            val mem = casProperties.getTicket().getRegistry().getInMemory();
+            return CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "messageQueueTicketRegistryPublisher")
+        public QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher() {
+            return QueueableTicketRegistryMessagePublisher.noOp();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
+        @Lazy(false)
+        public QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("messageQueueTicketRegistryIdentifier")
+            final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
+            return ticketRegistry instanceof QueueableTicketRegistry queueableTicketRegistry
+                ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier)
+                : QueueableTicketRegistryMessageReceiver.noOp();
+        }
+
+        @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
+            val bean = new PublisherIdentifier();
+            val amqp = casProperties.getTicket().getRegistry().getCore();
+            FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
+            return bean;
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -295,27 +364,31 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreServiceTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServiceTicketFactoryConfiguration {
-
         @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketFactory defaultServiceTicketFactory(
+            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
-            final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("uniqueIdGeneratorsMap")
             final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
             return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy,
-                uniqueIdGeneratorsMap, onlyTrackMostRecentSession,
+                uniqueIdGeneratorsMap, serviceTicketSessionTrackingPolicy,
                 protocolTicketCipherExecutor, servicesManager);
         }
 
-
+        @ConditionalOnMissingBean(name = "defaultServiceTicketGeneratorAuthority")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketGeneratorAuthority defaultServiceTicketGeneratorAuthority() {
+            return ServiceTicketGeneratorAuthority.allow();
+        }
     }
 
     @Configuration(value = "CasCoreProxyTicketFactoryConfiguration", proxyBeanMethods = false)
@@ -325,18 +398,18 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public ProxyTicketFactory defaultProxyTicketFactory(
+            @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
+            final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_PROXY_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
-            final CasConfigurationProperties casProperties,
             @Qualifier("uniqueIdGeneratorsMap")
             final Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
             return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy, uniqueIdGeneratorsMap,
-                protocolTicketCipherExecutor, onlyTrackMostRecentSession, servicesManager);
+                protocolTicketCipherExecutor, serviceTicketSessionTrackingPolicy, servicesManager);
         }
     }
 

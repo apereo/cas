@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -44,7 +44,8 @@ import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -53,7 +54,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.http.client.direct.HeaderClient;
-import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
+import org.pac4j.jee.context.JEEContextFactory;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -70,6 +71,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,7 +82,7 @@ import java.util.stream.Stream;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth, module = "uma")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth, module = "uma")
 @AutoConfiguration
 public class CasOAuthUmaConfiguration {
 
@@ -153,11 +155,14 @@ public class CasOAuthUmaConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
             final CasConfigurationProperties casProperties) {
 
             return UmaConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .applicationContext(applicationContext)
                 .accessTokenGenerator(oauthTokenGenerator)
                 .casProperties(casProperties)
@@ -189,25 +194,22 @@ public class CasOAuthUmaConfiguration {
             headerClient.setName(clientName);
             val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
             val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
-            config.setSessionStore(oauthDistributedSessionStore);
-            val interceptor = new SecurityInterceptor(config, clients, JEEHttpActionAdapter.INSTANCE);
-            interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-            interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
-            return interceptor;
+            config.setSessionStoreFactory(objects -> oauthDistributedSessionStore);
+            config.setWebContextFactory(JEEContextFactory.INSTANCE);
+            return new SecurityInterceptor(config, clients, DefaultAuthorizers.IS_FULLY_AUTHENTICATED,
+                    DefaultMatchers.SECURITYHEADERS);
         }
-
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
         }
 
@@ -217,11 +219,11 @@ public class CasOAuthUmaConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaAuthorizationApiTokenAuthenticator(centralAuthenticationService, accessTokenJwtBuilder);
+            val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
                 oauthDistributedSessionStore, casProperties);
         }
@@ -254,12 +256,20 @@ public class CasOAuthUmaConfiguration {
             final ObjectProvider<SecurityInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(final InterceptorRegistry registry) {
+                public void addInterceptors(
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     registry.addInterceptor(new RefreshableHandlerInterceptor(umaRequestingPartyTokenSecurityInterceptor)).order(100)
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("/*"))
+
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
+                        
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("/*"))
+                        .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("/*"))
+
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
                     registry.addInterceptor(new RefreshableHandlerInterceptor(umaAuthorizationApiTokenSecurityInterceptor)).order(100)
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
@@ -342,7 +352,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaWellKnownEndpointController umaWellKnownEndpointController(
             @Qualifier("umaServerDiscoverySettingsFactory")
             final UmaServerDiscoverySettings discoverySettings) {
@@ -350,7 +359,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -358,7 +366,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -366,7 +373,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -374,7 +380,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -382,7 +387,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -390,7 +394,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -398,7 +401,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -406,7 +408,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {
@@ -414,7 +415,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController(
             @Qualifier(UmaConfigurationContext.BEAN_NAME)
             final UmaConfigurationContext umaConfigurationContext) {

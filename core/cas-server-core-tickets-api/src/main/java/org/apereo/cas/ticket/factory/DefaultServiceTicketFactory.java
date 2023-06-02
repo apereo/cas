@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -39,7 +40,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
-    private final boolean trackMostRecentSession;
+    private final ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     private final CipherExecutor<String, String> cipherExecutor;
 
@@ -49,9 +50,9 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
-        final Service service,
-        final boolean credentialProvided,
-        final Class<T> clazz) {
+                                       final Service service,
+                                       final boolean credentialProvided,
+                                       final Class<T> clazz) {
         val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         var result = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
             LOGGER.trace("Attempting to encode service ticket [{}]", ticketId);
@@ -79,10 +80,10 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      * @return the ticket
      */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket,
-        final Service service,
-        final boolean credentialProvided,
-        final String ticketId,
-        final Class<T> clazz) {
+                                                 final Service service,
+                                                 final boolean credentialProvided,
+                                                 final String ticketId,
+                                                 final Class<T> clazz) {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
 
         val result = ticketGrantingTicket.grantServiceTicket(
@@ -90,12 +91,12 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             service,
             expirationPolicyToUse,
             credentialProvided,
-            trackMostRecentSession);
+            serviceTicketSessionTrackingPolicy);
 
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
+                                         + " is of type " + result.getClass()
+                                         + " when we were expecting " + clazz);
         }
         return (T) result;
     }
@@ -109,7 +110,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      * @return ticket id
      */
     protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
-        final boolean credentialProvided) {
+                                             final boolean credentialProvided) {
         val uniqueTicketIdGenKey = service.getClass().getName();
         var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {

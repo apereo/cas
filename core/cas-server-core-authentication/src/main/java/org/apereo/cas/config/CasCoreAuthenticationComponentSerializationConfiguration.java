@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
@@ -14,18 +16,18 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.ValidationResponseType;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -45,7 +47,7 @@ import javax.security.auth.login.AccountLockedException;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration
 public class CasCoreAuthenticationComponentSerializationConfiguration {
     @Bean
@@ -54,7 +56,7 @@ public class CasCoreAuthenticationComponentSerializationConfiguration {
     public ComponentSerializationPlanConfigurer casCoreAuthenticationComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(SimpleWebApplicationServiceImpl.class);
-            plan.registerSerializableClass(BasicCredentialMetaData.class);
+            plan.registerSerializableClass(BasicCredentialMetadata.class);
             plan.registerSerializableClass(BasicIdentifiableCredential.class);
             plan.registerSerializableClass(DefaultAuthenticationHandlerExecutionResult.class);
             plan.registerSerializableClass(DefaultAuthentication.class);
@@ -79,6 +81,8 @@ public class CasCoreAuthenticationComponentSerializationConfiguration {
             plan.registerSerializableClass(UnauthorizedSsoServiceException.class);
 
             plan.registerSerializableClass(DefaultMessageDescriptor.class);
+            plan.registerSerializableClass(GeoLocationRequest.class);
+            plan.registerSerializableClass(GeoLocationResponse.class);
             plan.registerSerializableClass(PasswordExpiringWarningMessageDescriptor.class);
         };
     }

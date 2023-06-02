@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,12 +21,15 @@ import java.io.Serializable;
 @ToString
 @Setter
 public class CasReferenceProperty implements Serializable, Comparable<CasReferenceProperty> {
+    @Serial
     private static final long serialVersionUID = 6084780445748297104L;
 
     private final boolean expressionLanguage;
 
+    private final boolean regexPattern;
+
     private final boolean duration;
-    
+
     private final boolean required;
 
     private final String module;
@@ -33,8 +37,6 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
     private final String owner;
 
     private final String type;
-
-    private String description;
 
     private final String shortDescription;
 
@@ -49,6 +51,8 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
     private final String deprecationReplacement;
 
     private final String sourceType;
+
+    private String description;
 
     @Override
     public int compareTo(final CasReferenceProperty o) {

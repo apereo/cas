@@ -6,11 +6,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,7 +38,7 @@ import java.util.HashSet;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.LDAP, module = "authentication")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.LDAP, module = "authentication")
 @AutoConfiguration
 public class LdapAuthenticationConfiguration {
 
@@ -72,15 +72,15 @@ public class LdapAuthenticationConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
             val handlers = new HashSet<AuthenticationHandler>();
-            casProperties.getAuthn().getLdap().stream().filter(l -> {
-                if (l.getType() == null || StringUtils.isBlank(l.getLdapUrl())) {
+            casProperties.getAuthn().getLdap().stream().filter(prop -> {
+                if (prop.getType() == null || StringUtils.isBlank(prop.getLdapUrl())) {
                     LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
                     return false;
                 }
                 return true;
-            }).forEach(l -> {
-                val handler = LdapUtils.createLdapAuthenticationHandler(l, applicationContext, servicesManager, ldapPrincipalFactory);
-                handler.setState(l.getState());
+            }).forEach(prop -> {
+                val handler = LdapUtils.createLdapAuthenticationHandler(prop, applicationContext, servicesManager, ldapPrincipalFactory);
+                handler.setState(prop.getState());
                 handlers.add(handler);
             });
             ldapAuthenticationHandlerSetFactoryBean.getObject().addAll(handlers);

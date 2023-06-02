@@ -1,5 +1,12 @@
 description = "Apereo CAS Passwordless Authentication Webflow Support"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Passwordless Authentication",
+            title: "Passwordless Authentication",
+            aliases: ["passwordless"]
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
@@ -11,14 +18,18 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-web")
 
+    implementation project(":support:cas-server-support-thymeleaf-core")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
-    implementation project(":support:cas-server-support-passwordless")
+    implementation project(":support:cas-server-support-passwordless-api")
+    implementation project(":support:cas-server-support-passwordless-authentication")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
 
@@ -36,6 +47,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
+
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-pac4j")

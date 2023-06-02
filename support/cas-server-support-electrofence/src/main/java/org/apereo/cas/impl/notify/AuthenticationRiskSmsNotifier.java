@@ -2,6 +2,9 @@ package org.apereo.cas.impl.notify;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.sms.SmsBodyBuilder;
+import org.apereo.cas.notifications.sms.SmsRequest;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +41,10 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
                 principal.getId());
             return;
         }
-        val to = principal.getAttributes().get(sms.getAttributeName()).toString();
-        communicationsManager.sms(sms.getFrom(), to, sms.getFormattedText());
+        val to = CollectionUtils.firstElement(principal.getAttributes().get(sms.getAttributeName()))
+            .orElse(StringUtils.EMPTY).toString();
+        val text = SmsBodyBuilder.builder().properties(sms).build().get();
+        val smsRequest = SmsRequest.builder().from(sms.getFrom()).to(to).text(text).build();
+        communicationsManager.sms(smsRequest);
     }
 }

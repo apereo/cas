@@ -5,7 +5,8 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -15,7 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,9 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
 
         val providerId = StringUtils.defaultString(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-        return CollectionUtils.wrap(new DuoSecurityPasscodeCredential(username, token, providerId));
+        val source = new DuoSecurityPasscodeCredential(username, token, providerId);
+        source.setCredentialMetadata(new BasicCredentialMetadata(source));
+        return CollectionUtils.wrap(source);
     }
 
     @Override
@@ -63,6 +66,8 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
                                                final Authentication authentication,
                                                final MultifactorAuthenticationProvider provider) {
         val principal = authentication.getPrincipal();
-        return List.of(new DuoSecurityDirectCredential(principal, provider.getId()));
+        val credential = new DuoSecurityDirectCredential(principal, provider.getId());
+        credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
+        return List.of(credential);
     }
 }

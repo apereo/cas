@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +38,7 @@ public class CasProtocolThymeleafViewFactoryTests {
     @Test
     public void verifyOperation() {
         val factory = new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
-        val view = (CasProtocolView) factory.create(applicationContext, "login/casLoginView");
+        val view = (CasThymeleafView) factory.create(applicationContext, "login/casLoginView");
         assertNotNull(view);
         assertNotNull(view.toString());
         assertNotNull(view.getLocale());

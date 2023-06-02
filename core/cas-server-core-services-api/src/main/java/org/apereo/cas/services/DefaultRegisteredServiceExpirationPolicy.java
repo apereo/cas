@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -37,6 +38,7 @@ import java.time.ZoneId;
 @Accessors(chain = true)
 public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServiceExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = 5106652807554743500L;
 
     private boolean deleteWhenExpired;

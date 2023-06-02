@@ -139,7 +139,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * @param deleteTables the delete tables
      */
     public void createServicesTable(final boolean deleteTables) {
-        FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
                 dynamoDbProperties.getTableName(), deleteTables,
                 List.of(AttributeDefinition.builder()
                     .attributeName(ColumnNames.ID.getColumnName())
@@ -190,13 +190,15 @@ public class DynamoDbServiceRegistryFacilitator {
     }
 
     private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
-        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
-        LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
-
-        try (val is = bb.asInputStream()) {
-            return this.jsonSerializer.from(is);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        val attributeValue = returnItem.get(ColumnNames.ENCODED.getColumnName());
+        if (attributeValue != null) {
+            val blob = attributeValue.b();
+            LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
+            try (val is = blob.asInputStream()) {
+                return this.jsonSerializer.from(is);
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            }
         }
         return null;
     }

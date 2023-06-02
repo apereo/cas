@@ -7,10 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * This is {@link BaseAlternativePrincipalResolverProperties}.
+ *
  * @since 6.0.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
@@ -19,6 +21,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("BaseAlternativePrincipalResolverProperties")
 public abstract class BaseAlternativePrincipalResolverProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 4770829035414038072L;
 
     /**

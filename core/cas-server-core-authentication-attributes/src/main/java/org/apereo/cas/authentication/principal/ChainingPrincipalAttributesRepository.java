@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,18 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ChainingPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
+    @Serial
+    private static final long serialVersionUID = 3132218595095989750L;
+
     private final List<RegisteredServicePrincipalAttributesRepository> repositories;
+
+    @Override
+    public Map<String, List<Object>> getAttributes(final Principal principal,
+                                                   final RegisteredService registeredService) {
+        val results = new LinkedHashMap<String, List<Object>>();
+        repositories.forEach(repo -> results.putAll(repo.getAttributes(principal, registeredService)));
+        return results;
+    }
 
     @Override
     public Set<String> getAttributeRepositoryIds() {
@@ -29,14 +41,6 @@ public class ChainingPrincipalAttributesRepository implements RegisteredServiceP
             .filter(Objects::nonNull)
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Map<String, List<Object>> getAttributes(final Principal principal,
-                                                   final RegisteredService registeredService) {
-        val results = new LinkedHashMap<String, List<Object>>();
-        repositories.forEach(repo -> results.putAll(repo.getAttributes(principal, registeredService)));
-        return results;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.apereo.cas.util.cache;
 
 import org.apereo.cas.util.PublisherIdentifier;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -37,20 +38,7 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
 
     @Override
     public Collection<V> getAll() {
-        return this.mapInstance.values();
-    }
-
-    @Override
-    public DistributedCacheManager<K, V, PublisherIdentifier> set(final K key,
-                                                                  final V item,
-                                                                  final boolean publish) {
-        this.mapInstance.put(buildKey(key), item);
-        return this;
-    }
-
-    @Override
-    public void clear() {
-        this.mapInstance.clear();
+        return mapInstance.values();
     }
 
     @Override
@@ -59,6 +47,21 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
+    public void clear() {
+        this.mapInstance.clear();
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public DistributedCacheManager<K, V, PublisherIdentifier> set(final K key,
+                                                                  final V item,
+                                                                  final boolean publish) {
+        this.mapInstance.put(buildKey(key), item);
+        return this;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<K, V, PublisherIdentifier> update(final K key, final V item,
                                                                      final boolean publish) {
         remove(key, item, publish);
@@ -67,6 +70,7 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
+    @CanIgnoreReturnValue
     public DistributedCacheManager<K, V, PublisherIdentifier> remove(final K key, final V item,
                                                                      final boolean publish) {
         val cacheKey = buildKey(key);

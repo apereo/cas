@@ -15,6 +15,8 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 an open-source Java server component by the same name hosted here, with support for a plethora of 
 additional authentication protocols and features.
 
+## Feature Summary
+
 The following items include a summary of features and technologies presented by the CAS project:
 
 * [Spring Webflow](webflow/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).
@@ -23,10 +25,10 @@ The following items include a summary of features and technologies presented by 
 [JAAS](authentication/JAAS-Authentication.html), [JWT](authentication/JWT-Authentication.html), 
 [RADIUS](mfa/RADIUS-Authentication.html), [MongoDb](authentication/MongoDb-Authentication.html), etc)
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML v1](protocol/SAML-Protocol.html), [SAML v2](authentication/Configuring-SAML2-Authentication.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
-[OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
+[OAuth2](protocol/OAuth-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/FIDO-U2F-Authentication.html), 
-[YubiKey](mfa/YubiKey-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html), [Acceptto](mfa/Acceptto-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
+[YubiKey](mfa/YubiKey-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external identity providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, OIDC OPs, etc.
 * Built-in support for [password management](password_management/Password-Management.html), [notifications](webflow/Webflow-Customization-Interrupt.html), [terms of use](webflow/Webflow-Customization-AUP.html) and [impersonation](authentication/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).
@@ -35,7 +37,8 @@ providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/F
 * Manage and register [client applications and services](services/Service-Management.html) with specific authentication policies.
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .NET, PHP, Perl, Apache, etc).
 * Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
-* Support for many other types of integrations, such as [SCIM](integration/SCIM-Integration.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), [Swagger](integration/Swagger-Integration.html), etc.
+* Support for many other types of integrations, such as [SCIM](integration/SCIM-Provisioning.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), 
+  [Swagger](integration/Swagger-Integration.html), etc.
 
 ## Contribute
 
@@ -50,6 +53,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
 * [Blog](https://apereo.github.io)
+* [Release Schedule](https://github.com/apereo/cas/milestones)
 
 ## Powered By
 

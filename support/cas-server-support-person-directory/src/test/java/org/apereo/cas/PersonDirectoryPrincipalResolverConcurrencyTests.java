@@ -1,13 +1,13 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -63,6 +63,14 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     private PrincipalResolver personDirectoryResolver;
 
     /**
@@ -112,6 +120,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
             PrincipalFactoryUtils.newPrincipalFactory(),
             attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory()
         );
     }
@@ -131,15 +140,9 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
         assertConcurrent("Getting persons", runnables, 600);
     }
 
-    @Getter
     @Slf4j
-    @RequiredArgsConstructor
-    @SuppressWarnings("UnusedMethod")
-    private static class PersonAttrGetter implements Runnable {
-
-        private final PrincipalResolver personDirectoryResolver;
-
-        private final String username;
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
+    private record PersonAttrGetter(PrincipalResolver personDirectoryResolver, String username) implements Runnable {
 
         @Override
         public void run() {

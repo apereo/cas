@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbYubiKeyAccount}.
  *
@@ -18,5 +20,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @SuperBuilder
 @Accessors(chain = true)
 public class MongoDbYubiKeyAccount extends YubiKeyAccount {
+    @Serial
     private static final long serialVersionUID = 1505204109111619367L;
 }

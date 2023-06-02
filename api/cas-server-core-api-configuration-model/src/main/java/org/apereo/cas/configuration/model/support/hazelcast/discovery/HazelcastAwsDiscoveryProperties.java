@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -67,7 +68,34 @@ public class HazelcastAwsDiscoveryProperties implements Serializable {
      * AWS discovery HZ port property.
      */
     public static final String AWS_DISCOVERY_PORT = "hz-port";
+    /**
+     * Property name for connection and read timeouts when making a call to AWS API.
+     */
+    public static final String AWS_DISCOVERY_CONNECTION_TIMEOUT = "connection-timeout-seconds";
 
+    /**
+     * Property name for connection and read timeouts when making a call to AWS API.
+     */
+    public static final String AWS_DISCOVERY_READ_TIMEOUT = "read-timeout-seconds";
+
+    /**
+     * Property name for ECS cluster short name or ARN; default is the current cluster.
+     */
+    public static final String AWS_DISCOVERY_CLUSTER = "cluster";
+
+    /**
+     * Property name for filter to look only for ECS tasks from the
+     * given service; mutually exclusive with {@link #AWS_DISCOVERY_FAMILY}.
+     */
+    public static final String AWS_DISCOVERY_SERVCE_NAME = "service-name";
+    
+    /**
+     * Property name for filter to look only for ECS tasks with the given family name;
+     * mutually exclusive with {@link #AWS_DISCOVERY_SERVCE_NAME}.
+     */
+    public static final String AWS_DISCOVERY_FAMILY = "family";
+
+    @Serial
     private static final long serialVersionUID = -8281247687171101766L;
 
     /**
@@ -134,4 +162,21 @@ public class HazelcastAwsDiscoveryProperties implements Serializable {
      * Its default value is 5.
      */
     private int connectionTimeoutSeconds = 5;
+
+    /**
+     * ECS cluster short name or ARN; default is the current cluster.
+     */
+    private String cluster;
+
+    /**
+     * Filter to look only for ECS tasks from the
+     * given service; mutually exclusive with {@link #getFamily()}.
+     */
+    private String serviceName;
+
+    /**
+     * Filter to look only for ECS tasks with the given family name;
+     * mutually exclusive with {@link #getServiceName()}.
+     */
+    private String family;
 }

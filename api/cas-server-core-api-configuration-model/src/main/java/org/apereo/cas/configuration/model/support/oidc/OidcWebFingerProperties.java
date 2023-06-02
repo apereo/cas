@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,7 +25,13 @@ import java.io.Serializable;
 @JsonFilter("OidcWebFingerProperties")
 public class OidcWebFingerProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 231228615694269276L;
+
+    /**
+     * Indicate if webfinger discovery protocol should be enabled.
+     */
+    private boolean enabled = true;
 
     /**
      * Manage settings related to user-info repositories
@@ -37,6 +44,7 @@ public class OidcWebFingerProperties implements Serializable {
     @Accessors(chain = true)
     @Getter
     public static class UserInfoRepository implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1279027843747126043L;
 
         /**
@@ -55,6 +63,7 @@ public class OidcWebFingerProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
+        @Serial
         private static final long serialVersionUID = 7179027843747126083L;
     }
 
@@ -63,6 +72,7 @@ public class OidcWebFingerProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Rest extends RestEndpointProperties {
+        @Serial
         private static final long serialVersionUID = -2172345378378393382L;
     }
 }

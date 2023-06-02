@@ -27,9 +27,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.persistence.Transient;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.persistence.Transient;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,12 +40,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
- * @deprecated Since 6.2
  */
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-@Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
 

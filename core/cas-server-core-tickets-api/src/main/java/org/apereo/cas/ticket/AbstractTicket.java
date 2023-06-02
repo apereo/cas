@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ import java.util.Optional;
 @Slf4j
 public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicket, TicketGrantingTicketAwareTicket {
 
+    @Serial
     private static final long serialVersionUID = -8506442397878267555L;
 
     /**
@@ -92,14 +94,19 @@ public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicke
     }
 
     @Override
-    public void update() {
-        updateTicketState();
-        updateTicketGrantingTicketState();
+    public boolean isExpired() {
+        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
     }
 
     @Override
-    public boolean isExpired() {
-        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
+    public void markTicketExpired() {
+        this.expired = Boolean.TRUE;
+    }
+
+    @Override
+    public void update() {
+        updateTicketState();
+        updateTicketGrantingTicketState();
     }
 
     @Override
@@ -123,11 +130,6 @@ public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicke
     @Override
     public TicketGrantingTicket getTicketGrantingTicket() {
         return null;
-    }
-
-    @Override
-    public void markTicketExpired() {
-        this.expired = Boolean.TRUE;
     }
 
     /**

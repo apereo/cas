@@ -5,8 +5,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -31,22 +33,25 @@ public class RefreshableHandlerInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
-                             final Object handler) throws Exception {
+    public boolean preHandle(
+        @Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
+        @Nonnull final Object handler) throws Exception {
         return getHandlerInterceptors()
             .stream()
             .allMatch(Unchecked.predicate(i -> i.preHandle(request, response, handler)));
     }
 
     @Override
-    public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                           final Object handler, final ModelAndView modelAndView) {
+    public void postHandle(
+        @Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
+        @Nonnull final Object handler, final ModelAndView modelAndView) {
         getHandlerInterceptors().forEach(Unchecked.consumer(i -> i.postHandle(request, response, handler, modelAndView)));
     }
 
     @Override
-    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object handler, final Exception ex) {
+    public void afterCompletion(
+        @Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
+        @Nonnull final Object handler, final Exception ex) {
         getHandlerInterceptors().forEach(Unchecked.consumer(i -> i.afterCompletion(request, response, handler, ex)));
     }
 

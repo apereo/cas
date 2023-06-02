@@ -4,20 +4,20 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasThemesConfiguration;
 import org.apereo.cas.config.CasThymeleafConfiguration;
+import org.apereo.cas.config.CasValidationConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Objects;
 
@@ -56,7 +56,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     protected AbstractServiceValidateController serviceValidateController;
 
     protected static CasProtocolValidationSpecification getValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
+        return new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class),
+            input -> input.getChainedAuthentications().size() == 1);
     }
 
     protected static ProxyHandler getProxyHandler() {
@@ -145,7 +146,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
-        getCentralAuthenticationService().deleteTicket(tId.getId());
+        getTicketRegistry().deleteTicket(tId.getId());
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());

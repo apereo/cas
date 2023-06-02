@@ -19,7 +19,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include_cached casproperties.html properties="cas.google-recaptcha" %}
 
-<div class="alert alert-info"><strong>Use Case</strong><p>Note that this particular integration
+<div class="alert alert-info">:information_source: <strong>Use Case</strong><p>Note that this particular integration
 applies to login and authentication attempts. Several other CAS modules do also support reCAPTCHA
 integrations for their own special flows, specially when it comes to reCAPTCHA activation strategies,
 separate from what is documented and available here.</p></div>
@@ -60,7 +60,7 @@ basis via [dedicated properties](../services/Configuring-Service-Custom-Properti
 
 reCAPTCHA activation strategy is generally controlled via CAS settings. It is also possible to design and 
 inject your own activation strategy into CAS using the following `@Bean` that would 
-be registered in a `@Configuration` class:
+be registered in a `@AutoConfiguration` class:
 
 ```java
 @Bean

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 
 import lombok.val;
 import org.springframework.core.Ordered;
@@ -276,5 +277,13 @@ public interface ServicesManager extends Ordered {
      * @return list of services
      */
     Collection<RegisteredService> getServicesForDomain(String domain);
-    
+
+    /**
+     * Query the services found using arbitrary attributes
+     * for which indexes are registered.
+     * @param queries list of queries each mapped to a field
+     * @return query results
+     */
+    Stream<RegisteredService> findServicesBy(RegisteredServiceQuery... queries);
+
 }

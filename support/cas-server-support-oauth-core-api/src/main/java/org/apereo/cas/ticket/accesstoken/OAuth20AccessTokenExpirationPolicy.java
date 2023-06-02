@@ -15,6 +15,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -32,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 @ToString(callSuper = true)
 public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -8383186650682727360L;
 
     /**
@@ -70,24 +72,30 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
         return this.timeToKillInSeconds;
     }
 
-    /**
-     * Is access token expired ?
-     *
-     * @param ticketState the ticket state
-     * @return true/false
-     */
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+    }
+
     @JsonIgnore
     protected boolean isAccessTokenExpired(final Ticket ticketState) {
         val currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
-        val creationTime = ticketState.getCreationTime();
-
-        var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+        var expirationTime = getMaximumExpirationTime(ticketState);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTime);
             return true;
         }
 
-        val expirationTimeToKill = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expirationTimeToKill = getIdleExpirationTime(ticketState);
         if (currentSystemTime.isAfter(expirationTimeToKill)) {
             LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTimeToKill);
             return true;
@@ -106,6 +114,7 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)
     public static class OAuthAccessTokenSovereignExpirationPolicy extends OAuth20AccessTokenExpirationPolicy {
+        @Serial
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator

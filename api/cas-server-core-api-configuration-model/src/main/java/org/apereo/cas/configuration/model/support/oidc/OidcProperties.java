@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,7 +25,14 @@ import java.io.Serializable;
 @JsonFilter("OidcProperties")
 public class OidcProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 813028615694269276L;
+
+    /**
+     * Control OIDC response and response mode settings.
+     */
+    @NestedConfigurationProperty
+    private OidcResponseProperties response = new OidcResponseProperties();
 
     /**
      * Configuration properties managing the jwks settings for OIDC.
@@ -37,6 +45,12 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcCoreProperties core = new OidcCoreProperties();
+
+    /**
+     * OIDC core protocol settings.
+     */
+    @NestedConfigurationProperty
+    private OidcIdTokenProperties idToken = new OidcIdTokenProperties();
 
     /**
      * OIDC webfinger protocol settings.
@@ -61,6 +75,12 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcPushedAuthorizationProperties par = new OidcPushedAuthorizationProperties();
+
+    /**
+     * OIDC pushed authorization requests configuration.
+     */
+    @NestedConfigurationProperty
+    private OidcJwtAuthorizationResponseModeProperties jarm = new OidcJwtAuthorizationResponseModeProperties();
 
     /**
      * OIDC handling of dynamic client registration requests and settings.

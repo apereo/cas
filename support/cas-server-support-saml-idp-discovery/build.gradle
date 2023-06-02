@@ -1,4 +1,12 @@
 description = "Apereo CAS SAML2 Identity Provider Discovery Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 Identity Provider Discovery",
+            aliases: ["saml2discovery"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
@@ -55,4 +63,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
 }

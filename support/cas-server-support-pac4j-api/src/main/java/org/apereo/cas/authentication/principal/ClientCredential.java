@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,9 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
+import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 
+import java.io.Serial;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -25,7 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ClientCredential implements Credential {
+public class ClientCredential extends AbstractCredential {
 
     /**
      * The prefix used when building an identifier for an unauthenticated user.
@@ -37,12 +41,13 @@ public class ClientCredential implements Credential {
      */
     public static final String AUTHENTICATION_ATTRIBUTE_CLIENT_NAME = "clientName";
 
+    @Serial
     private static final long serialVersionUID = -7883301304291894763L;
 
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private final transient Credentials credentials;
+    private final Credentials credentials;
 
     /**
      * Name of the client that established the credential.
@@ -56,13 +61,21 @@ public class ClientCredential implements Credential {
      */
     private UserProfile userProfile;
 
+    public ClientCredential(final String clientName, final UserProfile userProfile) {
+        this.credentials = new AnonymousCredentials();
+        this.clientName = clientName;
+        this.userProfile = userProfile;
+    }
+
+    public UserProfile getUserProfile() {
+        return Optional.ofNullable(userProfile).orElseGet(credentials::getUserProfile);
+    }
+
     @Override
     public String getId() {
-        if (this.userProfile != null) {
-            if (this.typedIdUsed) {
-                return this.userProfile.getTypedId();
-            }
-            return this.userProfile.getId();
+        val up = getUserProfile();
+        if (up != null) {
+            return this.typedIdUsed ? up.getTypedId() : up.getId();
         }
         return NOT_YET_AUTHENTICATED + UUID.randomUUID();
     }

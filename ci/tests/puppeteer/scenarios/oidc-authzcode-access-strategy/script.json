@@ -1,0 +1,24 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.audit.engine.enabled=false",
+    "--cas.audit.slf4j.use-single-line=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.groups=director,admin",
+    "--cas.authn.attribute-repository.stub.attributes.my_email=cas@example.org",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email",
+    "--cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,email,memberships",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

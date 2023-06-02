@@ -4,6 +4,7 @@ import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -13,6 +14,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 public class WsFederationCookieSerializer extends AbstractJacksonBackedStringSerializer<Map> {
+    @Serial
     private static final long serialVersionUID = -1152522695984638020L;
 
     public WsFederationCookieSerializer() {

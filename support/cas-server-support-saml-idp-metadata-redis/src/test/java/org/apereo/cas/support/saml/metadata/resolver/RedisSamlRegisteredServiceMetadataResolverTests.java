@@ -37,8 +37,9 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     @BeforeEach
     public void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
-        val keys = redisSamlRegisteredServiceMetadataResolverTemplate.keys(key, 0).collect(Collectors.toSet());
-        redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys);
+        try (val keys = redisSamlRegisteredServiceMetadataResolverTemplate.scan(key, 0)) {
+            redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys.collect(Collectors.toSet()));
+        }
     }
 
     @Test

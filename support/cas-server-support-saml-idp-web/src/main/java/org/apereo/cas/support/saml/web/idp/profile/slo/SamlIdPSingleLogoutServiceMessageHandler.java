@@ -27,9 +27,10 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -124,6 +125,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 val exec = HttpUtils.HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(redirectUrl)
+                    .httpClient(getHttpClient())
                     .build();
                 response = HttpUtils.execute(exec);
             } else {
@@ -138,11 +140,12 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                     .url(msg.getUrl().toExternalForm())
                     .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message))
                     .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                    .httpClient(getHttpClient())
                     .build();
                 response = HttpUtils.execute(exec);
             }
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.trace("Received logout response as [{}]", result);
                 return true;
             }

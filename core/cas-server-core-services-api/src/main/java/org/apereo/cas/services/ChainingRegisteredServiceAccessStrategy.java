@@ -13,6 +13,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
 
+import java.io.Serial;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,16 +37,19 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
+    @Serial
     private static final long serialVersionUID = 5018603912161923218L;
 
     private List<RegisteredServiceAccessStrategy> strategies = new ArrayList<>();
 
-    private RegisteredServiceChainOperatorTypes operator = RegisteredServiceChainOperatorTypes.AND;
+    private LogicalOperatorTypes operator = LogicalOperatorTypes.AND;
 
     /**
      * The unauthorized redirect url.
      */
     private URI unauthorizedRedirectUrl;
+
+    private int order;
 
     /**
      * Add policy/strategy.
@@ -68,7 +72,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowed() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
         }
         return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
@@ -76,25 +80,19 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
 
     @Override
     @JsonIgnore
-    public void setServiceAccessAllowed(final boolean enabled) {
-        strategies.forEach(strategy -> strategy.setServiceAccessAllowed(enabled));
-    }
-
-    @Override
-    @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
         }
         return strategies.stream().allMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
     }
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
-            return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(principal, attributes));
+    public boolean doPrincipalAttributesAllowServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+        if (operator == LogicalOperatorTypes.OR) {
+            return strategies.stream().anyMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
         }
-        return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(principal, attributes));
+        return strategies.stream().allMatch(strategy -> strategy.doPrincipalAttributesAllowServiceAccess(request));
     }
 
     @Override

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
@@ -28,6 +28,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"
@@ -114,7 +116,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true, true);
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -134,7 +136,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(false, true);
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -262,7 +264,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList(
             EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP));
 
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -289,7 +291,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList(
             EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP));
 
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -314,7 +316,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         service.setEncryptionDataAlgorithms(CollectionUtils.wrapArrayList("something"));
         service.setEncryptionKeyAlgorithms(CollectionUtils.wrapArrayList("something"));
         service.setEncryptionOptional(true);
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -347,7 +349,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(registeredService)
             .adaptor(adaptor)
             .binding(binding)

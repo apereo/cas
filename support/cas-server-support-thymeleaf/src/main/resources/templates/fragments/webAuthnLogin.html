@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Service UI Fragment</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
@@ -26,8 +27,8 @@
         </script>
 
         <script type="text/javascript" th:inline="javascript">
-            var authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
-            var authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
+            let authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
+            let authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
         </script>
 
         <script th:src="@{/js/webauthn/webauthn.js}"></script>
@@ -119,6 +120,7 @@
             <input type="hidden" name="_eventId" value="validate"/>
             <input type="hidden" id="token" name="token"/>
             <input type="hidden" name="geolocation"/>
+            <input type="hidden" id="authnCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 

@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
@@ -21,12 +21,12 @@ const cas = require('../../cas.js');
         "idp-signing.key",
         "idp-encryption.crt",
         "idp-signing.crt"
-    ]
+    ];
     artifacts.forEach(art => {
         let pt = path.join(__dirname, `/saml-md/${art}`);
-        console.log(`Deleting ${pt}`)
+        console.log(`Deleting ${pt}`);
         fs.rmSync(pt, { force: true });
-    })
+    });
 
     await browser.close();
 })();

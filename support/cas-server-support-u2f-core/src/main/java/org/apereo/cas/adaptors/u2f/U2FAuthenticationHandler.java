@@ -5,9 +5,11 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -15,9 +17,11 @@ import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.DeviceRegistration;
 import com.yubico.u2f.data.messages.SignRequestData;
 import com.yubico.u2f.data.messages.SignResponse;
+import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,24 +32,29 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Getter
 public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private final U2F u2f;
     private final U2FDeviceRepository u2FDeviceRepository;
+
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public U2FAuthenticationHandler(final String name,
                                     final ServicesManager servicesManager,
                                     final PrincipalFactory principalFactory,
                                     final U2FDeviceRepository u2FDeviceRepository,
                                     final U2F u2f,
-                                    final Integer order) {
+                                    final Integer order,
+                                    final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, servicesManager, principalFactory, order);
         this.u2f = u2f;
         this.u2FDeviceRepository = u2FDeviceRepository;
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws PreventedException {
         val tokenCredential = (U2FTokenCredential) credential;
 
         val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),

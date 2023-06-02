@@ -9,9 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import java.io.Serial;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -29,6 +30,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class SamlService extends AbstractWebApplicationService {
 
+    @Serial
     private static final long serialVersionUID = -6867572626767140223L;
 
     @Column

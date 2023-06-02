@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 public class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlAuthNStatementBuilder")
@@ -44,7 +45,7 @@ public class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfig
             .samlRequest(request)
             .httpRequest(new MockHttpServletRequest())
             .httpResponse(new MockHttpServletResponse())
-            .authenticatedAssertion(getAssertion())
+            .authenticatedAssertion(Optional.of(getAssertion()))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)

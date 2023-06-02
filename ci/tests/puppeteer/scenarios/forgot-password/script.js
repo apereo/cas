@@ -5,37 +5,37 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.goto(page, "https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login?locale=en");
 
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(2000);
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     
-    await cas.click(page, "#forgotPasswordLink")
-    await page.waitForTimeout(1000)
+    await cas.click(page, "#forgotPasswordLink");
+    await page.waitForTimeout(1000);
     await cas.assertInnerText(page, "#reset #fm1 h3", "Reset your password");
-    await cas.assertVisibility(page, '#username')
+    await cas.assertVisibility(page, '#username');
     let uid = await page.$('#username');
-    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
-    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
-    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")));
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")));
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")));
 
     await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
     await cas.goto(page, "http://localhost:8282");
-    await page.waitForTimeout(1000)
-    await cas.click(page, "table tbody td a")
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
+    await cas.click(page, "table tbody td a");
+    await page.waitForTimeout(1000);
 
     let link = await cas.textContent(page, "div[name=bodyPlainText] .well");
     await cas.goto(page, link);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
     await cas.assertInnerText(page, "#content h2", "Answer Security Questions");
 
@@ -43,10 +43,10 @@ const cas = require('../../cas.js');
     await cas.type(page,'#q1', "answer2");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
 
-    await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI")
-    await page.waitForTimeout(1000)
+    await typePassword(page, "EaP8R&iX$eK4nb8eAI", "EaP8R&iX$eK4nb8eAI");
+    await page.waitForTimeout(1000);
     await cas.assertInvisibility(page, '#password-confirm-mismatch-msg');
     await cas.assertInvisibility(page, '#password-policy-violation-msg');
 

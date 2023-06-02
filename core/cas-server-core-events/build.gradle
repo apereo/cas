@@ -1,4 +1,11 @@
 description = "Apereo CAS Core Events"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Events",
+            title: "Authentication Events"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")
@@ -11,6 +18,8 @@ dependencies {
     implementation project(":core:cas-server-core-events-api")
 
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-services-authentication")

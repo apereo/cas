@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -27,10 +27,12 @@ import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.Serial;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,6 +47,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "properties")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
+    @Serial
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
@@ -102,9 +105,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         try {
             val userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
-            LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
+            LOGGER.debug("Contacting Duo Security to inquire about username [{}]", username);
             val userResponse = getHttpResponse(userRequest);
-            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
+            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8);
             LOGGER.debug("Received Duo response [{}]", jsonResponse);
 
             val result = MAPPER.readTree(jsonResponse);
@@ -113,9 +116,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 throw new DuoWebException("Invalid response format received from Duo");
             }
 
-            if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
-                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
+                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
                 account.setStatus(status);
@@ -172,7 +175,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @throws Exception the exception
      */
     protected String getHttpResponse(final Http userRequest) throws Exception {
-        return userRequest.executeHttpRequest().body().string();
+        try (val request = userRequest.executeHttpRequest()) {
+            return Objects.requireNonNull(request.body()).string();
+        }
     }
 
     /**
@@ -203,7 +208,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private Http buildHttpRequest(final String format) throws Exception {
         val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost());
-        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
+        val request = new CasHttpBuilder(HttpMethod.POST.name(),
             new URI("https://" + originalHost).getHost(),
             String.format(format, AUTH_API_VERSION)).build();
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
@@ -219,7 +224,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param request the request
      */
     protected void configureHttpRequest(final Http request) {
-        val factory = this.httpClient.getHttpClientFactory();
+        val factory = this.httpClient.httpClientFactory();
         if (factory.getProxy() != null) {
             request.setProxy(factory.getProxy().getHostName(), factory.getProxy().getPort());
         }
@@ -321,5 +326,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LoggingUtils.error(LOGGER, e);
         }
         return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
+    }
+
+    private static class CasHttpBuilder extends Http.HttpBuilder {
+        CasHttpBuilder(final String method, final String host, final String uri) {
+            super(method, host, uri);
+        }
     }
 }

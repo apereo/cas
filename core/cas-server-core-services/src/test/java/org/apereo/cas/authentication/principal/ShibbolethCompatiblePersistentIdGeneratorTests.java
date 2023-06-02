@@ -46,7 +46,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
         generator.setAttribute("uid");
         assertNotNull(generator.toString());
         assertNotNull(generator.determinePrincipalIdFromAttributes("uid", attrs));
-        
+
         val p = mock(Principal.class);
         when(p.getAttributes()).thenReturn(attrs);
         when(p.getId()).thenReturn("testuser");

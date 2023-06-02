@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonFilter("GrouperPrincipalAttributesProperties")
 public class GrouperPrincipalAttributesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7139471665871712818L;
 
     /**
@@ -46,11 +48,11 @@ public class GrouperPrincipalAttributesProperties implements Serializable {
     /**
      * Indicate how the username passed to the attribute repository
      * should be set and treated by the grouper client to look up records.
-     *
+     * <p>
      * Accepted values are: {@code SUBJECT_IDENTIFIER}, {@code SUBJECT_ATTRIBUTE_NAME}, {@code SUBJECT_ID}.
      */
     private String subjectType = "SUBJECT_ID";
-    
+
     /**
      * The attribute name that would be used to look up and
      * determine the user id from the query map. The value

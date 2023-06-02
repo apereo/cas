@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
@@ -29,8 +30,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -67,9 +71,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
+        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+
         val webContext = new JEEContext(request, response);
-        val prompts = getConfigurationContext().getRequestParameterResolver().resolveSupportedPromptValues(webContext);
-        val requestedPrompt = getConfigurationContext().getRequestParameterResolver().resolveRequestedPromptValues(webContext);
+        val prompts = requestParameterResolver.resolveSupportedPromptValues(webContext);
+        val requestedPrompt = requestParameterResolver.resolveRequestedPromptValues(webContext);
         if (!requestedPrompt.isEmpty() && !requestedPrompt.equals(prompts)) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Unsupported prompt parameter value");
         }
@@ -85,12 +91,23 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             }
         }
 
-        val clientId = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
+        val clientId = requestParameterResolver
+            .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
 
+        if (LoggingUtils.isProtocolMessageLoggerEnabled()) {
+            val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
+            val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+            val scopes = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE).orElse(StringUtils.EMPTY);
+            val state = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.STATE).orElse(StringUtils.EMPTY);
+            LoggingUtils.protocolMessage("OAuth/OpenID Connect Authorization Request",
+                Map.of("Registered Service", registeredService.getName(), "Client ID", clientId, "State", state,
+                    "Redirect URI", redirectUri, "Response Type", responseType, "Scopes", scopes));
+        }
+        
         if (isRequestAuthenticated(manager, context, registeredService)) {
             val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
             if (!mv.isEmpty() && mv.hasView()) {
@@ -129,30 +146,6 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     }
 
     /**
-     * Ensure Session Replication Is Auto-Configured If needed.
-     *
-     * @param request the request
-     */
-    protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val casProperties = getConfigurationContext().getCasProperties();
-        val replicationRequested = casProperties.getAuthn().getOauth().isReplicateSessions();
-        val cookieAutoconfigured = casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath();
-        if (replicationRequested && cookieAutoconfigured) {
-            val contextPath = request.getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-            val path = getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
-                getConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
-                    getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
-            }
-        }
-    }
-
-    /**
      * Gets registered service by client id.
      *
      * @param clientId the client id
@@ -161,15 +154,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
-
-    /**
-     * Redirect to callback redirect url model and view.
-     *
-     * @param manager           the manager
-     * @param registeredService the registered service
-     * @param context           the context
-     * @return the model and view
-     */
+    
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context) {
@@ -186,12 +171,12 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
             val audit = AuditableContext.builder()
                 .service(service)
-                .authentication(authentication)
                 .registeredService(registeredService)
+                .principal(authentication.getPrincipal())
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
-
+            
             val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
             return Optional.ofNullable(modelAndView)
                 .filter(ModelAndView::hasView)
@@ -238,11 +223,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .orElseGet(Unchecked.supplier(() -> prepareAccessTokenRequestContext(authzRequest,
                 registeredService, context, service, authentication)));
 
-        return registeredBuilders
+        val result = registeredBuilders
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(OrderComparator.INSTANCE)
-            .filter(b -> b.supports(authzRequest))
+            .filter(bldr -> bldr.supports(authzRequest))
             .findFirst()
             .map(Unchecked.function(builder -> {
                 if (authzRequest.isSingleSignOnSessionRequired() && payload.getTicketGrantingTicket() == null) {
@@ -254,6 +239,15 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 return builder.build(payload);
             }))
             .orElseGet(() -> OAuth20Utils.produceErrorView(new PreventedException("Could not build the callback response")));
+
+        if (LoggingUtils.isProtocolMessageLoggerEnabled()) {
+            LoggingUtils.protocolMessage("OAuth/OpenID Connect Authorization Response",
+                Map.of("Service", service.getId(), "Client ID", payload.getClientId(),
+                    "Response Mode", payload.getResponseMode(), "Response Type", payload.getResponseType(),
+                    "Redirect URI", payload.getRedirectUri()),
+                result.getModel().isEmpty() ? StringUtils.EMPTY : JsonUtils.render(result.getModel()));
+        }
+        return result;
     }
 
     /**
@@ -285,7 +279,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
         val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
@@ -295,7 +289,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .map(String::valueOf)
             .filter(challengeMethodsSupported::contains)
             .orElse(StringUtils.EMPTY)
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
         val claims = getConfigurationContext().getRequestParameterResolver().resolveRequestClaims(context);

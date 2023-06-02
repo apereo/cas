@@ -33,7 +33,7 @@ import org.springframework.test.context.TestPropertySource;
         "cas.authn.mfa.web-authn.mongo.database-name=mfa",
         "cas.authn.mfa.web-authn.mongo.authentication-database-name=admin"
     })
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
 @Import(MongoDbWebAuthnConfiguration.class)

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -8,6 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -53,20 +55,23 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val valid = redirectUri.isPresent() && code.isPresent() && OAuth20Utils.checkCallbackValid(registeredService, redirectUri.get());
 
         if (valid) {
-            val token = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
+            val token = FunctionUtils.doAndHandle(() -> {
+                val state = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
+                return state == null || state.isExpired() ? null : state;
+            });
             val removeTokens = getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
             if (token == null || token.isExpired()) {
                 if (removeTokens) {
                     LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
-                    val accessTokensByCode = getConfigurationContext().getCentralAuthenticationService().getTickets(ticket ->
+                    val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
                         ticket instanceof OAuth20AccessToken
                         && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code.get()));
                     accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
                         LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
-                        getConfigurationContext().getCentralAuthenticationService().deleteTicket(ticket);
+                        getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
                     }));
                 }
-                LOGGER.warn("Request OAuth code [{}] is not found or has expired", code.get());
+                LOGGER.warn("Provided OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }
 
@@ -74,10 +79,16 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
             val codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getConfigurationContext().getServicesManager(), id);
 
+            val originalPrincipal = token.getTicketGrantingTicket().getAuthentication().getPrincipal();
+            val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
+                token.getAuthentication().getPrincipal().getAttributes());
+            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
+                .createPrincipal(token.getAuthentication().getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(token.getService())
-                .authentication(token.getAuthentication())
                 .registeredService(codeRegisteredService)
+                .authentication(token.getAuthentication())
+                .principal(accessStrategyPrincipal)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

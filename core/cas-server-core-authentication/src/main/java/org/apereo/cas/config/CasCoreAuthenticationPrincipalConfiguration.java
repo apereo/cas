@@ -16,11 +16,12 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,6 +36,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -45,7 +47,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration
 public class CasCoreAuthenticationPrincipalConfiguration {
 
@@ -59,8 +61,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         public PrincipalResolver defaultPrincipalResolver(
             final ObjectProvider<List<PrincipalResolutionExecutionPlanConfigurer>> configurers,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy) {
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
             val sortedConfigurers = new ArrayList<>(
                 Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
@@ -87,11 +88,10 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategy principalElectionStrategy(
             final List<PrincipalElectionStrategyConfigurer> configurers,
-            final CasConfigurationProperties casProperties) {
+            @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
             val chain = new ChainingPrincipalElectionStrategy();
-            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-            chain.setAttributeMerger(merger);
+            chain.setAttributeMerger(attributeMerger);
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
             configurers.forEach(c -> {
@@ -101,22 +101,27 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             return chain;
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "principalElectionAttributeMerger")
+        public IAttributeMerger principalElectionAttributeMerger(final CasConfigurationProperties casProperties) {
+            return CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        }
+
         @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
+            @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier("principalFactory")
-            final PrincipalFactory principalFactory) {
+            @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
             return chain -> {
-                val strategy = new DefaultPrincipalElectionStrategy(principalFactory,
-                    CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
-                val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
-                strategy.setAttributeMerger(merger);
+                val conflictResolver = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
+                val strategy = new DefaultPrincipalElectionStrategy(principalFactory, conflictResolver);
+                strategy.setAttributeMerger(attributeMerger);
                 chain.registerElectionStrategy(strategy);
             };
         }
-
     }
 
     @Configuration(value = "CasCoreAuthenticationPrincipalFactoryConfiguration", proxyBeanMethods = false)
@@ -140,7 +145,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
                 LOGGER.warn("Caching for the global principal attribute repository is disabled");
                 return new DefaultPrincipalAttributesRepository();
             }
-            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
+            return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(Locale.ENGLISH), cacheTime);
         }
 
     }

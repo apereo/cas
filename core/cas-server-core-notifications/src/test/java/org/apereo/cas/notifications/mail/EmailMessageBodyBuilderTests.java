@@ -32,7 +32,7 @@ public class EmailMessageBodyBuilderTests {
             .locale(Optional.of(Locale.GERMAN))
             .parameters(CollectionUtils.wrap("firstname", "Bob"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertTrue(result.isBlank());
     }
 
@@ -44,7 +44,7 @@ public class EmailMessageBodyBuilderTests {
             .locale(Optional.of(Locale.GERMAN))
             .parameters(CollectionUtils.wrap("firstname", "Bob"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertNotNull(result);
         assertTrue(result.contains("Hallo Bob! Dies ist eine E-Mail-Nachricht"));
     }
@@ -57,21 +57,21 @@ public class EmailMessageBodyBuilderTests {
             .locale(Optional.of(Locale.JAPAN))
             .parameters(CollectionUtils.wrap("firstname", "Bob"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertNotNull(result);
         assertTrue(result.contains("Hello, World! Bob"));
     }
 
     @Test
     public void verifyOperation() {
-        val props = new EmailProperties().setText("%s, %s");
+        val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
             .locale(Optional.of(Locale.ITALIAN))
             .parameters(CollectionUtils.wrap("key1", "Hello"))
             .build()
             .addParameter("key2", "World");
-        val result = results.produce();
+        val result = results.get();
         assertEquals("Hello, World", result);
     }
 
@@ -86,9 +86,27 @@ public class EmailMessageBodyBuilderTests {
                 "lastname", "Smith", "accepted", true,
                 "title", "Advanced Title"))
             .build();
-        val result = results.produce();
+        val result = results.get();
         assertNotNull(result);
         assertTrue(result.startsWith("Dear Bob Smith,"));
+    }
+
+    @Test
+    public void verifyInlineGroovyOperation() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val cacheMgr = new GroovyScriptResourceCacheManager();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(appCtx);
+        val props = new EmailProperties().setText("groovy { key + ', ' + key2 }");
+        val results = EmailMessageBodyBuilder.builder()
+            .properties(props)
+            .locale(Optional.of(Locale.CANADA))
+            .parameters(CollectionUtils.wrap("key", "Hello"))
+            .build()
+            .addParameter("key2", "World");
+        val result = results.get();
+        assertEquals("Hello, World", result);
     }
 
     @Test
@@ -107,7 +125,7 @@ public class EmailMessageBodyBuilderTests {
             .parameters(CollectionUtils.wrap("key", "Hello"))
             .build()
             .addParameter("key2", "World");
-        val result = results.produce();
+        val result = results.get();
         assertEquals("Hello, World", result);
     }
 }

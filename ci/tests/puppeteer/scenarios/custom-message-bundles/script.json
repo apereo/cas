@@ -1,6 +1,0 @@
-{
-  "dependencies": "core",
-  "properties": [
-    "--cas.message-bundle.base-names=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/custom_messages,classpath:messages"
-  ]
-}

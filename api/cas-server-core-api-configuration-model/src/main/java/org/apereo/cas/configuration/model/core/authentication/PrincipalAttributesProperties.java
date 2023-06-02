@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
-import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbasePrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;
@@ -15,6 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +45,9 @@ import java.util.List;
 @JsonFilter("PrincipalAttributesProperties")
 public class PrincipalAttributesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4515569588579072890L;
-    
+
     /**
      * Attribute resolution core/common settings.
      */
@@ -87,19 +88,6 @@ public class PrincipalAttributesProperties implements Serializable {
      * Retrieve attributes from redis repositories.
      */
     private List<RedisPrincipalAttributesProperties> redis = new ArrayList<>(0);
-
-    /**
-     * Retrieve attributes from Couchbase repositories.
-     */
-    @NestedConfigurationProperty
-    private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
-
-    /**
-     * Retrieve attributes from multiple scripted repositories.
-     * @deprecated Since 6.2
-     */
-    @Deprecated(since = "6.2")
-    private List<ScriptedPrincipalAttributesProperties> script = new ArrayList<>(0);
 
     /**
      * Use stubbed attribute definitions as the underlying attribute repository source.

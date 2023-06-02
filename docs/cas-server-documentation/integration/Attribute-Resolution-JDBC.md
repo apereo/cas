@@ -9,11 +9,16 @@ category: Attributes
 # JDBC Attribute Resolution
 
 CAS does allow for attributes to be retrieved from a variety of SQL databases.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-util" %}
+
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.jdbc" %}
 
-JDBC attribute sources can be defined based on the following mechanics:
+JDBC attribute sources can be defined based on the following mechanics.
 
 ## Single Row
 

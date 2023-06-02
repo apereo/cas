@@ -24,8 +24,8 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -44,7 +44,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     private void handleLogoutResponse(final Pair<? extends SignableSAMLObject, MessageContext> pair) {
         val logoutResponse = (LogoutResponse) pair.getKey();
         LOGGER.debug("Received logout response from [{}]", SamlIdPUtils.getIssuerFromSamlObject(logoutResponse.getIssuer()));
-        SamlUtils.logSamlObject(getConfigurationContext().getOpenSamlConfigBean(), logoutResponse);
+        getConfigurationContext().getOpenSamlConfigBean().logObject(logoutResponse);
     }
 
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
@@ -72,7 +72,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             configContext.getSamlObjectSignatureValidator()
                 .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
-        SamlUtils.logSamlObject(configContext.getOpenSamlConfigBean(), logoutRequest);
+        configContext.getOpenSamlConfigBean().logObject(logoutRequest);
 
         val logoutUrls = SingleLogoutUrl.from(registeredService);
         if (!logoutUrls.isEmpty()) {

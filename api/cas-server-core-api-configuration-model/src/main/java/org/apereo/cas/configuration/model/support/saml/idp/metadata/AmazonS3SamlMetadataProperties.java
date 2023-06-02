@@ -12,6 +12,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link AmazonS3SamlMetadataProperties}.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 @JsonFilter("AmazonS3SamlMetadataProperties")
 public class AmazonS3SamlMetadataProperties extends BaseAmazonWebServicesProperties {
+    @Serial
     private static final long serialVersionUID = 352435146313504995L;
 
     /**

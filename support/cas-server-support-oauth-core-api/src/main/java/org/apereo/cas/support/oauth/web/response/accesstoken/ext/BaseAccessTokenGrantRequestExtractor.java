@@ -1,12 +1,14 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.val;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.ProfileManager;
 
 /**
  * This is {@link BaseAccessTokenGrantRequestExtractor}.
@@ -14,10 +16,25 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@EnableTransactionManagement(proxyTargetClass = false)
-@Transactional(transactionManager = "ticketTransactionManager")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseAccessTokenGrantRequestExtractor implements AccessTokenGrantRequestExtractor {
     private final OAuth20ConfigurationContext configurationContext;
+
+    @Override
+    public AccessTokenRequestContext extract(final WebContext webContext) {
+        val request = extractRequest(webContext);
+        new ProfileManager(webContext, configurationContext.getSessionStore())
+            .getProfile().ifPresent(profile -> {
+                if (profile.containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
+                    request.setDpopConfirmation(profile.getAttribute(OAuth20Constants.DPOP_CONFIRMATION).toString());
+                }
+                if (profile.containsAttribute(OAuth20Constants.DPOP)) {
+                    request.setDpop(profile.getAttribute(OAuth20Constants.DPOP).toString());
+                }
+            });
+        return request;
+    }
+
+    protected abstract AccessTokenRequestContext extractRequest(WebContext webContext);
 }

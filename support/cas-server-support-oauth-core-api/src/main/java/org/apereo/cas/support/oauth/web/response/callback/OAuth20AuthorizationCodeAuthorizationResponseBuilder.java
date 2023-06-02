@@ -38,9 +38,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         super(context, authorizationModelAndViewBuilder);
     }
 
-    @Audit(action = AuditableActions.OAUTH2_CODE_RESPONSE,
-        actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
+    @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         val authentication = holder.getAuthentication();
@@ -51,10 +51,10 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             holder.getClientId(), holder.getClaims(),
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        configurationContext.getCentralAuthenticationService().addTicket(code);
+        configurationContext.getTicketRegistry().addTicket(code);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
-            configurationContext.getCentralAuthenticationService().updateTicket(ticket);
+            configurationContext.getTicketRegistry().updateTicket(ticket);
         }, (CheckedFunction<Throwable, TicketGrantingTicket>) throwable -> {
             LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
             return null;

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link PasswordlessAuthenticationLdapAccountsProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("PasswordlessAuthenticationLdapAccountsProperties")
 public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -1102345678378393382L;
 
     /**
@@ -39,4 +42,14 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
      * indicates the user's name.
      */
     private String nameAttribute = "cn";
+
+    /**
+     * Name of the LDAP attribute that
+     * is the passwordless flow to request a password prompt from user.
+     * The attribute value must be a boolean. Acceoted values
+     * are {@code true}, {@code false}, {@code on}, {@code off}, {@code yes}, {@code no},
+     * {@code Y}, {@code T}, {@code F}, {@code N}, etc.
+     * Comparisons are not case sensitive.
+     */
+    private String requestPasswordAttribute = "requestPassword";
 }

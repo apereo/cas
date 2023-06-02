@@ -5,28 +5,21 @@ import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAu
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.digest.DigestProperties;
-import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.GroovyAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.JsonResourceAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
@@ -54,6 +47,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +65,7 @@ import java.util.List;
 @JsonFilter("AuthenticationProperties")
 public class AuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1233126985007049516L;
 
     /**
@@ -126,12 +121,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OktaAuthenticationProperties okta = new OktaAuthenticationProperties();
-
-    /**
-     * Couchbase authentication settings.
-     */
-    @NestedConfigurationProperty
-    private CouchbaseAuthenticationProperties couchbase = new CouchbaseAuthenticationProperties();
 
     /**
      * Redis authentication settings.
@@ -194,16 +183,9 @@ public class AuthenticationProperties implements Serializable {
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
     /**
-     * Digest authentication settings.
-     */
-    @NestedConfigurationProperty
-    private DigestProperties digest = new DigestProperties();
-
-    /**
      * REST-based authentication settings.
      */
-    @NestedConfigurationProperty
-    private RestAuthenticationProperties rest = new RestAuthenticationProperties();
+    private List<RestAuthenticationProperties> rest = new ArrayList<>(0);
 
     /**
      * Collection of settings related to LDAP authentication.
@@ -266,14 +248,6 @@ public class AuthenticationProperties implements Serializable {
     private ShibbolethIdPProperties shibIdp = new ShibbolethIdPProperties();
 
     /**
-     * Shiro-based authentication.
-     * @deprecated This component is deprecated as of 6.6.0 and is scheduled to be removed.
-     */
-    @NestedConfigurationProperty
-    @Deprecated(since = "6.6.0")
-    private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
-
-    /**
      * Trusted authentication.
      */
     @NestedConfigurationProperty
@@ -304,18 +278,6 @@ public class AuthenticationProperties implements Serializable {
     private MongoDbAuthenticationProperties mongo = new MongoDbAuthenticationProperties();
 
     /**
-     * CouchDb authentication settings.
-     */
-    @NestedConfigurationProperty
-    private CouchDbAuthenticationProperties couchDb = new CouchDbAuthenticationProperties();
-
-    /**
-     * NTLM authentication settings.
-     */
-    @NestedConfigurationProperty
-    private NtlmProperties ntlm = new NtlmProperties();
-
-    /**
      * OAuth authentication settings.
      */
     @NestedConfigurationProperty
@@ -326,14 +288,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcProperties oidc = new OidcProperties();
-
-    /**
-     * OpenID authentication settings.
-     * @deprecated 6.2
-     */
-    @NestedConfigurationProperty
-    @Deprecated(since = "6.2.0")
-    private OpenIdProperties openid = new OpenIdProperties();
 
     /**
      * Pac4j delegated authentication settings.
@@ -376,12 +330,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
-
-    /**
-     * Apache Fortress authentication settings.
-     */
-    @NestedConfigurationProperty
-    private FortressAuthenticationProperties fortress = new FortressAuthenticationProperties();
 
     /**
      * Authentication attribute release settings.

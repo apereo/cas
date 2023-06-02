@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
+    @Serial
     private static final long serialVersionUID = 1227390629186486032L;
 
     private final String code;
@@ -31,8 +33,7 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
     private final Serializable[] params;
 
     @JsonCreator
-    public DefaultMessageDescriptor(@JsonProperty("code")
-                                    final String code) {
+    public DefaultMessageDescriptor(@JsonProperty("code") final String code) {
         this(code, code, null);
     }
 }

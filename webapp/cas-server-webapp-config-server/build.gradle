@@ -1,11 +1,22 @@
 apply plugin: "war"
 
-project.ext["mainClassName"] = "org.apereo.cas.CasConfigurationServerWebApplication"
+ext {
+    mainClassName = "org.apereo.cas.CasConfigurationServerWebApplication"
+    publishMetadata = true
+    projectMetadata = [
+            title: "Spring Cloud Configuration Server",
+            facets: ["web"],
+            category: "Web Application"
+    ]
+}
+
 apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Spring Cloud Configuration Web Application Server"
 
 dependencies {
     implementation libraries.springboottomcat
+    implementation libraries.springcloudbootstrap
+    
     implementation project(":webapp:cas-server-webapp-init-config-server")
 }

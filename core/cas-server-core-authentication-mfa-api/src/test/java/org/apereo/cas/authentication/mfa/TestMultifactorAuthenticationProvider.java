@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
+
 /**
  * This is {@link TestMultifactorAuthenticationProvider}.
  *
@@ -19,6 +21,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     public static final String ID = "mfa-dummy";
 
+    @Serial
     private static final long serialVersionUID = -9184556172646207560L;
 
     @Setter

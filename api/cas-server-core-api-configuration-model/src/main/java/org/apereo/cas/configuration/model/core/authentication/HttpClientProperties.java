@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ import java.util.Map;
 @JsonFilter("HttpClientProperties")
 public class HttpClientProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7494946569869245770L;
 
     /**
@@ -35,10 +38,18 @@ public class HttpClientProperties implements Serializable {
     private String connectionTimeout = "PT5S";
 
     /**
-     * Read timeout for all operations that reach out to URL endpoints.
+     * Determines the default socket timeout value for I/O operations.
      */
     @DurationCapable
-    private String readTimeout = "PT5S";
+    private String socketTimeout = "PT5S";
+
+    /**
+     * Determines the timeout until arrival of a response from the opposite endpoint.
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * Please note that response timeout may be unsupported by HTTP transports with message multiplexing.
+     */
+    @DurationCapable
+    private String responseTimeout = "PT5S";
 
     /**
      * Indicates timeout for async operations.
@@ -67,6 +78,7 @@ public class HttpClientProperties implements Serializable {
     /**
      * If specified the regular expression will be used to validate the url's authority.
      */
+    @RegularExpressionCapable
     private String authorityValidationRegex;
 
     /**

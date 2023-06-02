@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +11,14 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
+import java.io.Serial;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 /**
  * This is {@link HttpRequestRegisteredServiceAccessStrategy} that reaches out
@@ -34,11 +39,15 @@ import java.util.Optional;
 @Slf4j
 public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -1108201604115278440L;
 
     private String ipAddress;
 
     private String userAgent;
+
+    @JsonProperty("headers")
+    private Map<String, String> headers = new TreeMap<>();
 
     @Override
     public boolean isServiceAccessAllowed() {
@@ -55,6 +64,17 @@ public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredSe
                     LOGGER.debug("Evaluating user agent [{}] against pattern [{}]",
                         info.getUserAgent(), this.userAgent);
                     match = RegexUtils.find(this.userAgent, info.getUserAgent());
+                }
+                if (match && !headers.isEmpty()) {
+                    LOGGER.debug("Evaluating request headers [{}] against pattern [{}]",
+                        info.getHeaders(), this.headers);
+                    match = headers.entrySet()
+                        .stream()
+                        .filter(header -> info.getHeaders().containsKey(header.getKey()))
+                        .allMatch(header -> {
+                            val headerValue = info.getHeaders().get(header.getKey());
+                            return RegexUtils.find(header.getValue(), headerValue);
+                        });
                 }
                 return match;
             });

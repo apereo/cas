@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
@@ -10,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
@@ -46,10 +48,16 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.ldap[0].use-all-query-attributes=false",
     "cas.authn.attribute-repository.ldap[0].query-attributes.principal=cnuser",
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=DN_ATTRIBUTE_ENTRY",
-    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=MERGE_ENTRIES",
-    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[1].type=ACTIVE_DIRECTORY"
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[1].type=MERGE_ENTRIES",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[2].type=FOLLOW_SEARCH_REFERRAL",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[3].type=FOLLOW_SEARCH_RESULT_REFERENCE",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[4].type=ACTIVE_DIRECTORY",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[5].type=MERGE_ENTRIES",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[6].type=RECURSIVE_ENTRY",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[7].type=RANGE_ENTRY",
+    "cas.authn.attribute-repository.ldap[0].search-entry-handlers[8].type=PRIMARY_GROUP"
 })
-@Tag("Ldap")
+@Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 10389)
 public class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
@@ -59,14 +67,23 @@ public class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+    private AttributeDefinitionStore attributeDefinitionStore;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+    
     @Test
     public void verifyResolver() {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-            this.attributeRepository, attributeMerger, casProperties.getPersonDirectory());
+            this.attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("admin")),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("description"));
         assertTrue(p.getAttributes().containsKey("entryDN"));
@@ -77,18 +94,20 @@ public class PersonDirectoryPrincipalResolverLdapTests {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            servicesManager, attributeDefinitionStore,
             casProperties.getPersonDirectory());
         val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);
         attributes.put("a1", List.of("v1"));
         attributes.put("a2", List.of("v2"));
-        val p = chain.resolve(new UsernamePasswordCredential("admin", "password"),
+        val resolve = chain.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("admin", attributes)),
-            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
-        assertNotNull(p);
-        assertTrue(p.getAttributes().containsKey("cn"));
-        assertTrue(p.getAttributes().containsKey("a1"));
-        assertTrue(p.getAttributes().containsKey("a2"));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
+        assertNotNull(resolve);
+        assertTrue(resolve.getAttributes().containsKey("cn"));
+        assertTrue(resolve.getAttributes().containsKey("a1"));
+        assertTrue(resolve.getAttributes().containsKey("a2"));
     }
 }

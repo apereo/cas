@@ -45,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.scim.target=http://localhost:9666/scim/v2",
         "cas.scim.enabled=false",
-        "cas.scim.version=2",
         "cas.scim.username=scim-user",
         "cas.scim.password=changeit",
         "cas.account-registration.provisioning.scim.enabled=true"
@@ -54,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 9666)
 public class ScimAccountRegistrationProvisionerTests {
     @Autowired
-    @Qualifier("accountMgmtRegistrationProvisioner")
+    @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
     @BeforeEach

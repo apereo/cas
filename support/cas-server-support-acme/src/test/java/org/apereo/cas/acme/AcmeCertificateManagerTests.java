@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -75,6 +77,7 @@ public class AcmeCertificateManagerTests extends BaseAcmeTests {
     }
 
     private static class MockHttp01Challenge extends Http01Challenge {
+        @Serial
         private static final long serialVersionUID = -5555468598931902011L;
 
         private Status status = Status.INVALID;

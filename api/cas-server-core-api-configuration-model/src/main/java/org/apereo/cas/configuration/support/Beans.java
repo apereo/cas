@@ -2,8 +2,12 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -62,9 +66,9 @@ public class Beans {
             val vals = StringUtils.commaDelimitedListToStringArray(value);
             backingMap.put(key, Arrays.stream(vals)
                 .map(v -> {
-                    val bool = BooleanUtils.toBooleanObject(v);
-                    if (bool != null) {
-                        return bool;
+                    val result = BooleanUtils.toBooleanObject(v);
+                    if (result != null) {
+                        return result;
                     }
                     return v;
                 })
@@ -89,16 +93,36 @@ public class Beans {
      * @return the duration
      */
     public static Duration newDuration(final String value) {
-        if ("0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || !StringUtils.hasText(value)) {
+        if (isNeverDurable(value)) {
             return Duration.ZERO;
         }
-        if ("-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value)) {
+        if (isInfinitelyDurable(value)) {
             return Duration.ofDays(Integer.MAX_VALUE);
         }
         if (NumberUtils.isCreatable(value)) {
             return Duration.ofSeconds(Long.parseLong(value));
         }
         return Duration.parse(value);
+    }
+
+    /**
+     * Is infinitely durable?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isInfinitelyDurable(final String value) {
+        return "-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value);
+    }
+
+    /**
+     * Is never durable?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    public static boolean isNeverDurable(final String value) {
+        return "0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value) || !StringUtils.hasText(value);
     }
 
     /**
@@ -110,5 +134,44 @@ public class Beans {
      */
     public static String getTempFilePath(final String prefix, final String suffix) {
         return Unchecked.supplier(() -> File.createTempFile(prefix, suffix).getCanonicalPath()).get();
+    }
+
+    /**
+     * New cache.
+     *
+     * @param <T>              the type parameter
+     * @param <V>              the type parameter
+     * @param cache            the cache
+     * @param expiryAfterWrite the expiry after write
+     * @return the caffeine
+     */
+    public static <T, V> Cache<T, V> newCache(final SimpleCacheProperties cache,
+                                              final Duration expiryAfterWrite) {
+        return newCache(cache)
+            .expireAfterWrite(expiryAfterWrite)
+            .build();
+    }
+
+    /**
+     * New cache.
+     *
+     * @param <T>         the type parameter
+     * @param <V>         the type parameter
+     * @param cache       the cache
+     * @param expiryAfter the expiry after
+     * @return the cache
+     */
+    public static <T, V> Cache<T, V> newCache(final SimpleCacheProperties cache,
+                                              final Expiry<T, V> expiryAfter) {
+        return newCache(cache)
+            .expireAfter(expiryAfter)
+            .build();
+    }
+
+    private static Caffeine newCache(final SimpleCacheProperties cache) {
+        val builder = Caffeine.newBuilder();
+        return builder
+            .initialCapacity(cache.getInitialCapacity())
+            .maximumSize(cache.getCacheSize());
     }
 }

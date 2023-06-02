@@ -6,6 +6,8 @@ import org.apereo.cas.util.ResourceUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -18,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("FileSystem")
+@Tag("Git")
 @Slf4j
 public class GitRepositoryTests {
 
@@ -44,12 +47,15 @@ public class GitRepositoryTests {
         props.setBranchesToClone("master");
         props.setStrictHostKeyChecking(false);
         props.setClearExistingIdentities(true);
-        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
-            FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID()));
+        val cloneDir = FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID();
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(cloneDir));
         val repo = GitRepositoryBuilder.newInstance(props).build();
         assertTrue(repo.pull());
         assertFalse(repo.getObjectsInRepository().isEmpty());
-
+        FileUtils.writeStringToFile(new File(cloneDir, "test.txt"), "test", Charset.defaultCharset());
+        try (val git = Git.open(ResourceUtils.getRawResourceFrom(cloneDir).getFile())) {
+            git.reset().setMode(ResetCommand.ResetType.HARD).setRef("HEAD~1").call();
+        }
         repo.getCredentialsProvider().add(new CredentialsProvider() {
             @Override
             public boolean isInteractive() {
@@ -68,6 +74,14 @@ public class GitRepositoryTests {
         });
         try {
             repo.commitAll("Test");
+            props.setRebase(true);
+            val repo2 = GitRepositoryBuilder.newInstance(props).build();
+            repo2.pull();
+            try (val git = Git.open(ResourceUtils.getRawResourceFrom(cloneDir).getFile())) {
+                var log = git.log().setMaxCount(1).call();
+                var revCommit = log.iterator().next();
+                assertEquals("Test", revCommit.getFullMessage());
+            }
             repo.push();
             fail("Pushing changes should fail");
         } catch (final Exception e) {

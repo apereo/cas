@@ -3,8 +3,9 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -16,6 +17,10 @@ import java.util.Optional;
  * @since 5.0.0
  */
 public interface MultifactorAuthenticationTriggerSelectionStrategy {
+    /**
+     * Default Bean name.
+     */
+    String BEAN_NAME = "defaultMultifactorTriggerSelectionStrategy";
 
     /**
      * Resolve the multifactor authentication provider id.
@@ -38,5 +43,5 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
      *
      * @return the multifactor authentication triggers
      */
-    Collection<MultifactorAuthenticationTrigger> getMultifactorAuthenticationTriggers();
+    Collection<MultifactorAuthenticationTrigger> multifactorAuthenticationTriggers();
 }

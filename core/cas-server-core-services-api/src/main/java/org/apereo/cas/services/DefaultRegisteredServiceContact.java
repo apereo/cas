@@ -9,13 +9,15 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Table;
+
+import java.io.Serial;
 
 /**
  * Contact assigned to a service definition.
- * 
+ *
  * @author Travis Schmidt
  * @since 5.2
  */
@@ -31,6 +33,7 @@ import javax.persistence.Table;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 
+    @Serial
     private static final long serialVersionUID = 1324660891900737066L;
 
     @Column(nullable = false)
@@ -47,5 +50,5 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
 
     @Column
     private String type;
-    
+
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.logout.slo;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.UrlValidator;
 
@@ -13,8 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -41,11 +43,31 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
     protected final UrlValidator urlValidator;
 
     @Override
+    public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
+                                                          final WebApplicationService singleLogoutService,
+                                                          final Optional<HttpServletRequest> httpRequest) {
+        val originalUrl = singleLogoutService.getOriginalUrl();
+        if (registeredService instanceof WebBasedRegisteredService webRegisteredService) {
+            val serviceLogoutUrl = webRegisteredService.getLogoutUrl();
+            if (StringUtils.hasText(serviceLogoutUrl)) {
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
+                return SingleLogoutUrl.from(registeredService);
+            }
+            if (urlValidator.isValid(originalUrl)) {
+                LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
+                return CollectionUtils.wrap(new SingleLogoutUrl(originalUrl, webRegisteredService.getLogoutType()));
+            }
+        }
+        LOGGER.debug("Logout request will not be sent; The URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
+        return new ArrayList<>(0);
+    }
+
+    @Override
     public boolean supports(final RegisteredService registeredService,
                             final WebApplicationService singleLogoutService,
                             final Optional<HttpServletRequest> httpRequest) {
         return registeredService != null && singleLogoutService != null
-            && registeredService.getAccessStrategy().isServiceAccessAllowed();
+               && registeredService.getAccessStrategy().isServiceAccessAllowed();
     }
 
     @Override
@@ -54,23 +76,5 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
                                        final Optional<HttpServletResponse> response) {
         val registeredService = servicesManager.findServiceBy(service);
         return supports(registeredService, service, request);
-    }
-
-    @Override
-    public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
-                                                          final WebApplicationService singleLogoutService,
-                                                          final Optional<HttpServletRequest> httpRequest) {
-        val serviceLogoutUrl = registeredService.getLogoutUrl();
-        if (StringUtils.hasText(serviceLogoutUrl)) {
-            LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
-            return SingleLogoutUrl.from(registeredService);
-        }
-        val originalUrl = singleLogoutService.getOriginalUrl();
-        if (this.urlValidator.isValid(originalUrl)) {
-            LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
-            return CollectionUtils.wrap(new SingleLogoutUrl(originalUrl, registeredService.getLogoutType()));
-        }
-        LOGGER.debug("Logout request will not be sent; The URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
-        return new ArrayList<>(0);
     }
 }

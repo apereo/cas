@@ -4,8 +4,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.joda.time.DateTime;
-import org.joda.time.ReadableInstant;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -22,11 +20,14 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Date/Time utility methods.
+ *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
@@ -67,7 +68,7 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
             } catch (final Exception e) {
                 result = null;
             }
@@ -75,7 +76,7 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
             } catch (final Exception e) {
                 result = null;
             }
@@ -172,17 +173,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return time != null ? time.atZone(ZoneOffset.UTC) : null;
-    }
-
-    /**
-     * Gets ZonedDateTime for ReadableInstant.
-     *
-     * @param time Time object to be converted.
-     * @return ZonedDateTime representing time
-     */
-    public static ZonedDateTime zonedDateTimeOf(final ReadableInstant time) {
-        return zonedDateTimeOf(Instant.ofEpochMilli(time.getMillis()));
+        return Optional.ofNullable(time).map(instant -> instant.atZone(ZoneOffset.UTC)).orElse(null);
     }
 
     /**
@@ -213,7 +204,7 @@ public class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final Date time) {
-        return time != null ? zonedDateTimeOf(Instant.ofEpochMilli(time.getTime())) : null;
+        return Optional.ofNullable(time).map(date -> zonedDateTimeOf(Instant.ofEpochMilli(date.getTime()))).orElse(null);
     }
 
     /**
@@ -224,26 +215,6 @@ public class DateTimeUtils {
      */
     public static ZonedDateTime zonedDateTimeOf(final Calendar time) {
         return ZonedDateTime.ofInstant(time.toInstant(), time.getTimeZone().toZoneId());
-    }
-
-    /**
-     * Gets DateTime for Instant.
-     *
-     * @param time Time object to be converted.
-     * @return DateTime representing time
-     */
-    public static DateTime dateTimeOf(final Instant time) {
-        return new DateTime(time.toEpochMilli());
-    }
-
-    /**
-     * Gets DateTime for ZonedDateTime.
-     *
-     * @param time Time object to be converted.
-     * @return DateTime representing time
-     */
-    public static DateTime dateTimeOf(final ChronoZonedDateTime time) {
-        return dateTimeOf(time.toInstant());
     }
 
     /**
@@ -332,24 +303,16 @@ public class DateTimeUtils {
         if (tu == null) {
             return null;
         }
-        switch (tu) {
-            case DAYS:
-                return TimeUnit.DAYS;
-            case HOURS:
-                return TimeUnit.HOURS;
-            case MINUTES:
-                return TimeUnit.MINUTES;
-            case SECONDS:
-                return TimeUnit.SECONDS;
-            case MICROS:
-                return TimeUnit.MICROSECONDS;
-            case MILLIS:
-                return TimeUnit.MILLISECONDS;
-            case NANOS:
-                return TimeUnit.NANOSECONDS;
-            default:
-                throw new UnsupportedOperationException("Temporal unit is not supported");
-        }
+        return switch (tu) {
+            case DAYS -> TimeUnit.DAYS;
+            case HOURS -> TimeUnit.HOURS;
+            case MINUTES -> TimeUnit.MINUTES;
+            case SECONDS -> TimeUnit.SECONDS;
+            case MICROS -> TimeUnit.MICROSECONDS;
+            case MILLIS -> TimeUnit.MILLISECONDS;
+            case NANOS -> TimeUnit.NANOSECONDS;
+            default -> throw new UnsupportedOperationException("Temporal unit is not supported");
+        };
     }
 
     /**
@@ -362,22 +325,14 @@ public class DateTimeUtils {
         if (tu == null) {
             return null;
         }
-        switch (tu) {
-            case DAYS:
-                return ChronoUnit.DAYS;
-            case HOURS:
-                return ChronoUnit.HOURS;
-            case MINUTES:
-                return ChronoUnit.MINUTES;
-            case MICROSECONDS:
-                return ChronoUnit.MICROS;
-            case MILLISECONDS:
-                return ChronoUnit.MILLIS;
-            case NANOSECONDS:
-                return ChronoUnit.NANOS;
-            case SECONDS:
-            default:
-                return ChronoUnit.SECONDS;
-        }
+        return switch (tu) {
+            case DAYS -> ChronoUnit.DAYS;
+            case HOURS -> ChronoUnit.HOURS;
+            case MINUTES -> ChronoUnit.MINUTES;
+            case MICROSECONDS -> ChronoUnit.MICROS;
+            case MILLISECONDS -> ChronoUnit.MILLIS;
+            case NANOSECONDS -> ChronoUnit.NANOS;
+            case SECONDS -> ChronoUnit.SECONDS;
+        };
     }
 }

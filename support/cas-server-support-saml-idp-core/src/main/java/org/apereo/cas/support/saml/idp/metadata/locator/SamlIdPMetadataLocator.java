@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
@@ -57,7 +58,8 @@ public interface SamlIdPMetadataLocator {
     /**
      * Initialize.
      */
-    default void initialize() {}
+    default void initialize() {
+    }
 
     /**
      * Metadata exists?
@@ -79,10 +81,19 @@ public interface SamlIdPMetadataLocator {
      * Should generate metadata for service?
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     default boolean shouldGenerateMetadataFor(final Optional<SamlRegisteredService> registeredService) {
         return registeredService.isEmpty();
     }
 
+    /**
+     * Gets applies to for.
+     *
+     * @param result the result
+     * @return the applies to for
+     */
+    default String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        return SamlIdPUtils.getSamlIdPMetadataOwner(result);
+    }
 }

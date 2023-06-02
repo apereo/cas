@@ -1,10 +1,11 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+
 import lombok.val;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -21,6 +22,22 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 public class HttpUtilsTests {
+
+    @Test
+    public void verifyExecWithExistingClient() {
+        try (val webServer = new MockWebServer(8081, HttpStatus.OK)) {
+            webServer.start();
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword("password")
+                .basicAuthUsername("user")
+                .method(HttpMethod.GET)
+                .entity("entity")
+                .url("http://localhost:8081")
+                .httpClient(new SimpleHttpClientFactoryBean().getObject())
+                .build();
+            assertNotNull(HttpUtils.execute(exec));
+        }
+    }
 
     @Test
     public void verifyExec() {
@@ -51,14 +68,11 @@ public class HttpUtilsTests {
 
     @Test
     public void verifyClose() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                HttpUtils.close(null);
-                val response = mock(CloseableHttpResponse.class);
-                doThrow(new RuntimeException()).when(response).close();
-                HttpUtils.close(response);
-            }
+        assertDoesNotThrow(() -> {
+            HttpUtils.close(null);
+            val response = mock(CloseableHttpResponse.class);
+            doThrow(new RuntimeException()).when(response).close();
+            HttpUtils.close(response);
         });
     }
 
@@ -70,7 +84,8 @@ public class HttpUtilsTests {
             .build();
         val response = HttpUtils.execute(exec);
         assertNotNull(response);
-        assertTrue(HttpStatus.resolve(response.getStatusLine().getStatusCode()).is5xxServerError());
-        assertTrue(response.getStatusLine().getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
+
+        assertTrue(HttpStatus.valueOf(response.getCode()).is5xxServerError());
+        assertTrue(response.getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
     }
 }

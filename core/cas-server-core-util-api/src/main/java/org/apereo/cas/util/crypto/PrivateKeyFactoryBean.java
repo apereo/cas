@@ -12,6 +12,8 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
+import javax.annotation.Nonnull;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +46,17 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
         return PrivateKey.class;
     }
 
+    @Nonnull
+    @Override
+    protected PrivateKey createInstance() {
+        var key = readPemPrivateKey();
+        if (key == null) {
+            LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);
+            key = readDERPrivateKey();
+        }
+        return key;
+    }
+
     private PrivateKey readPemPrivateKey() {
         LOGGER.trace("Attempting to read as PEM [{}]", this.location);
         try (val in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
@@ -54,8 +67,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
             if (object instanceof PrivateKeyInfo) {
                 return new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) object);
             }
-            if (object instanceof PEMKeyPair) {
-                val pemKeyPair = (PEMKeyPair) object;
+            if (object instanceof PEMKeyPair pemKeyPair) {
                 val kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
                 return kp.getPrivate();
             }
@@ -77,16 +89,6 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
             LOGGER.debug("Unable to read key", e);
             return null;
         }
-    }
-
-    @Override
-    protected PrivateKey createInstance() {
-        var key = readPemPrivateKey();
-        if (key == null) {
-            LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);
-            key = readDERPrivateKey();
-        }
-        return key;
     }
 
 }

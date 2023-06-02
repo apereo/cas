@@ -1,5 +1,6 @@
 package org.apereo.cas.util.function;
 
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.experimental.UtilityClass;
@@ -31,7 +32,7 @@ import java.util.function.Supplier;
 @Slf4j
 @UtilityClass
 public class FunctionUtils {
-    
+
     /**
      * Do if function.
      *
@@ -86,7 +87,7 @@ public class FunctionUtils {
      * @return the consumer
      */
     public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction) {
-        return doIf(condition, trueFunction, t -> {
+        return doIf(condition, trueFunction, __ -> {
         });
     }
 
@@ -145,6 +146,38 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if not blank.
+     *
+     * @param <T>           the type parameter
+     * @param input         the input
+     * @param trueFunction  the true function
+     * @param falseFunction the false function
+     * @return the t
+     */
+    public static <T> T doIfNotBlank(final CharSequence input,
+                                     final CheckedSupplier<T> trueFunction,
+                                     final CheckedSupplier<T> falseFunction) {
+        return doAndHandle(() -> StringUtils.isNotBlank(input) ? trueFunction.get() : falseFunction.get());
+    }
+
+    /**
+     * Do if not blank.
+     *
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    public static void doIfNotBlank(final CharSequence input,
+                                    final CheckedConsumer<CharSequence> trueFunction) {
+        try {
+            if (StringUtils.isNotBlank(input)) {
+                trueFunction.accept(input);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
+    /**
      * Supply if not null supplier.
      *
      * @param <R>           the type parameter
@@ -169,6 +202,7 @@ public class FunctionUtils {
         };
     }
 
+
     /**
      * Do if not null.
      *
@@ -181,6 +215,63 @@ public class FunctionUtils {
         try {
             if (input != null) {
                 trueFunction.accept(input);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
+    /**
+     * Do if not null.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     * @param elseFunction the else function
+     */
+    public static <T> void doIfNotNull(final T input,
+                                       final CheckedConsumer<T> trueFunction,
+                                       final CheckedConsumer<T> elseFunction) {
+        try {
+            if (input != null) {
+                trueFunction.accept(input);
+            } else {
+                elseFunction.accept(null);
+            }
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
+    /**
+     * Do if null.
+     *
+     * @param <T>          the type parameter
+     * @param input        the input
+     * @param trueFunction the true function
+     */
+    public static <T> void doIfNull(final T input,
+                                    final CheckedConsumer<T> trueFunction) {
+        doIfNull(input, trueFunction, t -> {
+        });
+    }
+
+    /**
+     * Do if null.
+     *
+     * @param <T>           the type parameter
+     * @param input         the input
+     * @param trueFunction  the true function
+     * @param falseFunction the false function
+     */
+    public static <T> void doIfNull(final T input,
+                                    final CheckedConsumer<T> trueFunction,
+                                    final CheckedConsumer<T> falseFunction) {
+        try {
+            if (input == null) {
+                trueFunction.accept(null);
+            } else {
+                falseFunction.accept(input);
             }
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
@@ -266,6 +357,24 @@ public class FunctionUtils {
      *
      * @param <R>      the type parameter
      * @param function the function
+     * @return the r
+     */
+    public static <R> R doAndHandle(final CheckedSupplier<R> function) {
+        try {
+            return function.get();
+        } catch (final InvalidTicketException e) {
+            LOGGER.debug(e.getMessage(), e);
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return null;
+    }
+
+    /**
+     * Do and handle.
+     *
+     * @param <R>      the type parameter
+     * @param function the function
      */
     public static <R> void doAndHandle(final CheckedConsumer<R> function) {
         try {
@@ -292,6 +401,9 @@ public class FunctionUtils {
                     LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
+                    if (ex instanceof RuntimeException) {
+                        throw (RuntimeException) ex;
+                    }
                     throw new IllegalArgumentException(ex);
                 }
             }
@@ -406,5 +518,24 @@ public class FunctionUtils {
     public static <T> T doAndReturn(final boolean condition, final Supplier<T> trueTask,
                                     final Supplier<T> falseTask) {
         return condition ? trueTask.get() : falseTask.get();
+    }
+
+    /**
+     * Do and throw exception.
+     *
+     * @param <T>      the type parameter
+     * @param supplier the supplier
+     * @param handler  the handler
+     * @return the t
+     * @throws Exception the exception
+     */
+    public static <T> T doAndThrow(final CheckedSupplier<T> supplier,
+                                   final Function<Throwable, ? extends Exception> handler) throws Exception {
+        try {
+            return supplier.get();
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            throw handler.apply(e);
+        }
     }
 }

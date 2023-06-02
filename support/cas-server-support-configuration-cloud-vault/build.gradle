@@ -1,5 +1,14 @@
 description = "Apereo CAS Configuration - HashiCorp Vault"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Configuration Management",
+            title: "Configuration Management via HashiCorp Vault"
+    ]
+}
 dependencies {
     implementation libraries.springcloudvault
+    implementation libraries.springcloudbootstrap
+
     compileOnly project(":core:cas-server-core-configuration")
 }

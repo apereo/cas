@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
@@ -8,18 +9,19 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
-import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
@@ -33,7 +35,6 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -71,6 +72,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(dao)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
@@ -82,12 +84,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString());
         val builder = new Saml10ObjectBuilder(configBean);
         val samlResponseBuilder = new SamlResponseBuilder(builder, "testIssuer",
-            "whatever", 1000, "PT30S",
+            "whatever", "PT1000S", "PT30S",
             new NoOpProtocolAttributeEncoder(), mgmr);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             mgmr,
             new DefaultArgumentExtractor(new SamlServiceFactory()),
-            StandardCharsets.UTF_8.name(),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,
@@ -111,8 +112,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        val assertion = new DefaultAssertionBuilder(primary).with(List.of(primary)).with(
-            CoreAuthenticationTestUtils.getWebApplicationService()).with(true).build();
+        val assertion = getAssertion(primary);
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -148,12 +148,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", List.of("value"));
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        val assertion = new DefaultAssertionBuilder(primary)
-            .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getWebApplicationService())
-            .with(true)
-            .build();
-
+        val assertion = getAssertion(primary);
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -181,11 +176,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
-        val assertion = new DefaultAssertionBuilder(primary)
-            .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getWebApplicationService())
-            .with(true)
-            .build();
+        val assertion = getAssertion(primary);
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -200,5 +191,17 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         assertTrue(written.contains("authnAttribute2"));
         assertTrue(written.contains(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
         assertTrue(written.contains("urn:oasis:names:tc:SAML:1.0:am:unspecified"));
+    }
+
+    private static Assertion getAssertion(final Authentication primary) {
+        val service = CoreAuthenticationTestUtils.getWebApplicationService();
+        return DefaultAssertionBuilder.builder()
+            .primaryAuthentication(primary)
+            .authentications(List.of(primary))
+            .service(service)
+            .newLogin(true)
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService(service.getId()))
+            .build()
+            .assemble();
     }
 }

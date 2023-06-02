@@ -59,21 +59,23 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         val dt = DateTimeUtils.dateOf(localDate);
         LOGGER.debug("Retrieving audit records since [{}]", dt);
 
-        val keys = whereClause.containsKey(WhereClauseFields.PRINCIPAL)
+        try (val keys = whereClause.containsKey(WhereClauseFields.PRINCIPAL)
             ? getAuditRedisKeys(whereClause.get(WhereClauseFields.PRINCIPAL).toString())
-            : getAuditRedisKeys();
-
-        return keys
-            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-            .filter(Objects::nonNull)
-            .map(AuditActionContext.class::cast)
-            .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
-            .collect(Collectors.toSet());
+            : getAuditRedisKeys()) {
+            return keys
+                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull)
+                .map(AuditActionContext.class::cast)
+                .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
+                .collect(Collectors.toSet());
+        }
     }
 
     @Override
     public void removeAll() {
-        getAuditRedisKeys().forEach(redisTemplate::delete);
+        try (val keys = getAuditRedisKeys()) {
+            keys.forEach(redisTemplate::delete);
+        }
     }
 
     @Override
@@ -83,10 +85,10 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     private Stream<String> getAuditRedisKeys() {
-        return redisTemplate.keys(getPatternAuditRedisKey(), this.scanCount);
+        return redisTemplate.scan(getPatternAuditRedisKey(), this.scanCount);
     }
 
     private Stream<String> getAuditRedisKeys(final String principal) {
-        return redisTemplate.keys(getPatternAuditRedisKey("*", principal), this.scanCount);
+        return redisTemplate.scan(getPatternAuditRedisKey("*", principal), this.scanCount);
     }
 }

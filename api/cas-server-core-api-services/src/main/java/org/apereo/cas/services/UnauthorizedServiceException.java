@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.Serial;
+
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
  *
@@ -29,6 +31,7 @@ public class UnauthorizedServiceException extends RuntimeException {
      **/
     public static final String CODE_EXPIRED_SERVICE = "screen.service.expired.message";
 
+    @Serial
     private static final long serialVersionUID = 3905807495715960369L;
 
     private final String code;

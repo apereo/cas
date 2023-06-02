@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -14,11 +13,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 
+import java.io.StringWriter;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.RSAPublicKeySpec;
@@ -55,10 +56,10 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
      * @throws Exception the exception
      */
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Get public key for signing operations", parameters = {
-        @Parameter(name = "service")
-    })
-    public String fetchPublicKey(@Nullable final String service) throws Exception {
+    @Operation(summary = "Get public key for signing operations", parameters = @Parameter(name = "service"))
+    public String fetchPublicKey(
+        @Nullable
+        final String service) throws Exception {
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {
@@ -73,12 +74,16 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
             }
         }
 
-        if (signingKey instanceof RSAPrivateCrtKey) {
-            val rsaSigningKey = (RSAPrivateCrtKey) signingKey;
+        if (signingKey instanceof RSAPrivateCrtKey rsaSigningKey) {
             val factory = KeyFactory.getInstance("RSA");
             val publicKey = factory.generatePublic(new RSAPublicKeySpec(rsaSigningKey.getModulus(), rsaSigningKey.getPublicExponent()));
-            return EncodingUtils.encodeBase64(publicKey.getEncoded());
+            val writer = new StringWriter();
+            try (val pemWriter = new JcaPEMWriter(writer)) {
+                pemWriter.writeObject(publicKey);
+                pemWriter.flush();
+            }
+            return writer.toString();
         }
-        return null;
+        return StringUtils.EMPTY;
     }
 }

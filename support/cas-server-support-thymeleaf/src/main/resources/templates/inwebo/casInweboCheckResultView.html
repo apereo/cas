@@ -19,11 +19,8 @@
             <input type="hidden" name="_eventId" value="success" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
         </form>
-        <script type="text/javascript" th:inline="javascript">
-        /*<![CDATA[*/
-            setTimeout(function () {
-                $('#pendingCheckResultForm').submit();
-            }, 2500);
+        <script type="text/javascript">
+            setTimeout(() => $('#pendingCheckResultForm').submit(), 2500);
         </script>
     </div>
 </main>

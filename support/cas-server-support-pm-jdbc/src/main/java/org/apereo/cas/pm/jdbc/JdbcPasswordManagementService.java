@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -45,8 +44,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
-                                         @NonNull final DataSource dataSource,
-                                         @NonNull final TransactionOperations transactionTemplate,
+                                         @NonNull
+                                         final DataSource dataSource,
+                                         @NonNull
+                                         final TransactionOperations transactionTemplate,
                                          final PasswordHistoryService passwordHistoryService,
                                          final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
@@ -56,11 +57,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         var result = this.transactionTemplate.execute(action -> {
-            val c = (UsernamePasswordCredential) credential;
-            val password = passwordEncoder.encode(bean.getPassword());
-            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, c.getId());
+            val password = passwordEncoder.encode(bean.toPassword());
+            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, bean.getUsername());
             return count > 0;
         });
         return BooleanUtils.toBoolean(result);
@@ -144,5 +144,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
         query.getSecurityQuestions().forEach((question, values) -> values.forEach(answer ->
             jdbcTemplate.update(properties.getJdbc().getSqlUpdateSecurityQuestions(),
                 query.getUsername(), question, answer)));
+    }
+
+    @Override
+    public boolean unlockAccount(final Credential credential) {
+        return jdbcTemplate.update(properties.getJdbc().getSqlUnlockAccount(), Boolean.TRUE, credential.getId()) > 0;
     }
 }

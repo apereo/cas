@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("PrincipalAttributeMultifactorAuthenticationProperties")
 public class PrincipalAttributeMultifactorAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7426521468929733907L;
 
     /**
@@ -49,6 +52,7 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * Needless to say, the attributes need to have been resolved for the principal prior to this step.
      * Matching and comparison operations are case insensitive.
      */
+    @RegularExpressionCapable
     private String globalPrincipalAttributeNameTriggers;
 
     /**
@@ -56,6 +60,7 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * if the account is qualified for multifactor authentication.
      * Matching and comparison operations are case insensitive.
      */
+    @RegularExpressionCapable
     private String globalPrincipalAttributeValueRegex;
 
     /**

@@ -20,6 +20,7 @@ public class InweboMustEnrollActionTests extends BaseActionTests {
 
     private InweboMustEnrollAction action;
 
+    @Override
     @BeforeEach
     public void setUp() {
         super.setUp();

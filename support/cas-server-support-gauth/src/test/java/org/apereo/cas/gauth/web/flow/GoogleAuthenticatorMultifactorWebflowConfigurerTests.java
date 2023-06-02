@@ -28,10 +28,10 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMu
     @Autowired
     @Qualifier("googleAuthenticatorFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
-
+    
     @Override
     protected String getMultifactorEventId() {
-        return GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID;
+        return casProperties.getAuthn().getMfa().getGauth().getId();
     }
 
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
 @AutoConfiguration
 public class CasSpringBootAdminServerSecurityConfiguration {
     private final AdminServerProperties adminServerProperties;
@@ -33,20 +33,20 @@ public class CasSpringBootAdminServerSecurityConfiguration {
         val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(adminContextPath + '/');
-        http.authorizeRequests()
-            .antMatchers(adminContextPath + "/assets/**").permitAll()
-            .antMatchers(adminContextPath + "/login").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin().loginPage(adminContextPath + "/login").successHandler(successHandler).and()
-            .logout().logoutUrl(adminContextPath + "/logout").and()
-            .httpBasic().and()
-            .csrf()
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .ignoringAntMatchers(
-                adminContextPath + "/instances",
-                adminContextPath + "/actuator/**"
-            );
+
+        http.authorizeHttpRequests(customizer -> customizer
+                .requestMatchers(adminContextPath + "/assets/**", adminContextPath + "/login").permitAll()
+                .anyRequest().authenticated())
+            .formLogin(customizer -> customizer.loginPage(adminContextPath + "/login").successHandler(successHandler))
+            .logout(customizer -> customizer.logoutUrl(adminContextPath + "/logout"))
+            .httpBasic(customizer -> {
+            })
+            .csrf(customizer -> customizer.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                    adminContextPath + "/instances",
+                    adminContextPath + "/actuator/**"
+                ));
+
         return http.build();
     }
 }

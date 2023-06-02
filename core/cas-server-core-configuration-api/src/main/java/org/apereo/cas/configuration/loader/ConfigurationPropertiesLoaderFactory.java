@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +29,16 @@ public class ConfigurationPropertiesLoaderFactory {
     private final Environment environment;
 
     /**
+     * Gets application profiles.
+     *
+     * @param environment the environment
+     * @return the application profiles
+     */
+    public static List<String> getApplicationProfiles(final Environment environment) {
+        return Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList());
+    }
+
+    /**
      * Gets loader based on the given resource.
      *
      * @param resource the resource
@@ -36,7 +47,7 @@ public class ConfigurationPropertiesLoaderFactory {
      */
     public BaseConfigurationPropertiesLoader getLoader(final Resource resource,
                                                        final String name) {
-        val filename = StringUtils.defaultString(resource.getFilename()).toLowerCase();
+        val filename = StringUtils.defaultString(resource.getFilename()).toLowerCase(Locale.ENGLISH);
 
         if (filename.endsWith(".properties")) {
             return new SimpleConfigurationPropertiesLoader(this.configurationCipherExecutor, name, resource);
@@ -49,15 +60,5 @@ public class ConfigurationPropertiesLoaderFactory {
             return new YamlConfigurationPropertiesLoader(this.configurationCipherExecutor, name, resource);
         }
         throw new IllegalArgumentException("Unable to determine configuration loader for " + resource);
-    }
-
-    /**
-     * Gets application profiles.
-     *
-     * @param environment the environment
-     * @return the application profiles
-     */
-    public static List<String> getApplicationProfiles(final Environment environment) {
-        return Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList());
     }
 }

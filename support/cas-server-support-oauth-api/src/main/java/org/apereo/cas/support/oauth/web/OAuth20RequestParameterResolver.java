@@ -7,8 +7,8 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,9 @@ public interface OAuth20RequestParameterResolver {
      * Default bean name.
      */
     String BEAN_NAME = "oauthRequestParameterResolver";
-
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(OAuth20RequestParameterResolver.class);
 
     /**
@@ -56,7 +58,7 @@ public interface OAuth20RequestParameterResolver {
      *
      * @param context           the context
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     boolean isAuthorizedGrantTypeForService(WebContext context,
                                             OAuthRegisteredService registeredService);
@@ -158,18 +160,17 @@ public interface OAuth20RequestParameterResolver {
      *
      * @param context           the context
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     boolean isAuthorizedResponseTypeForService(WebContext context, OAuthRegisteredService registeredService);
 
     /**
      * Resolve client id and client secret pair.
      *
-     * @param webContext   the web context
-     * @param sessionStore the session store
+     * @param callContext the call context
      * @return the pair
      */
-    Pair<String, String> resolveClientIdAndClientSecret(WebContext webContext, SessionStore sessionStore);
+    Pair<String, String> resolveClientIdAndClientSecret(CallContext callContext);
 
     /**
      * Resolve request scopes set.

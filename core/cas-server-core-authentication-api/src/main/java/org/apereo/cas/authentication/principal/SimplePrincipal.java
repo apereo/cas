@@ -13,7 +13,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serial;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,6 +35,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class SimplePrincipal implements Principal {
 
+    @Serial
     private static final long serialVersionUID = -1255260750151385796L;
 
     /**
@@ -64,7 +67,7 @@ public class SimplePrincipal implements Principal {
     @Override
     public int hashCode() {
         val builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id.toLowerCase());
+        builder.append(id.toLowerCase(Locale.ENGLISH));
         return builder.toHashCode();
     }
 
@@ -76,10 +79,9 @@ public class SimplePrincipal implements Principal {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof SimplePrincipal)) {
+        if (!(obj instanceof SimplePrincipal rhs)) {
             return false;
         }
-        val rhs = (SimplePrincipal) obj;
-        return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
+        return StringUtils.equalsIgnoreCase(id, rhs.getId());
     }
 }

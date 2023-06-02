@@ -36,6 +36,7 @@ public class StaticEventExecutionActionTests {
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             StaticEventExecutionAction.SUCCESS.execute(context).getId());
+        assertNull(StaticEventExecutionAction.NULL.execute(context));
     }
 
 }

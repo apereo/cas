@@ -1,8 +1,7 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Statistics endpoint reports back on cas metrics and ticket stats.
+ *
  * @author Scott Battaglia
  * @since 3.3.5
  */
@@ -29,12 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    private final ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+    private final ObjectProvider<TicketRegistry> ticketRegistry;
 
-    public StatisticsEndpoint(final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
+    public StatisticsEndpoint(final ObjectProvider<TicketRegistry> ticketRegistry,
                               final CasConfigurationProperties casProperties) {
         super(casProperties);
-        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
     }
 
     /**
@@ -43,11 +43,11 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
      * @return the availability
      */
     @ReadOperation
-    @Operation(summary = "Get a report of CAS statistics")
+    @Operation(summary = "Get a report of CAS statistics on tickets. Expired tickets will be removed")
     public Map<String, Object> handle() {
         val model = new HashMap<String, Object>();
 
-        val diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
+        val diff = Duration.between(upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
 
         val runtime = Runtime.getRuntime();
@@ -55,35 +55,21 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
         model.put("maxMemory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         model.put("freeMemory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
 
-        val unexpiredTgts = new AtomicInteger();
-        val unexpiredSts = new AtomicInteger();
-        val expiredTgts = new AtomicInteger();
-        val expiredSts = new AtomicInteger();
-
-        val tickets = this.centralAuthenticationService.getObject().getTickets(ticket -> true);
-        tickets.forEach(Unchecked.consumer(ticket -> {
-            if (ticket instanceof ServiceTicket) {
+        val validTickets = new AtomicInteger();
+        val expiredTickets = new AtomicInteger();
+        try (val stream = ticketRegistry.getObject().stream()) {
+            stream.forEach(Unchecked.consumer(ticket -> {
                 if (ticket.isExpired()) {
-                    this.centralAuthenticationService.getObject().deleteTicket(ticket.getId());
-                    expiredSts.incrementAndGet();
+                    ticketRegistry.getObject().deleteTicket(ticket.getId());
+                    expiredTickets.incrementAndGet();
                 } else {
-                    unexpiredSts.incrementAndGet();
+                    validTickets.incrementAndGet();
                 }
-            } else {
-                if (ticket.isExpired()) {
-                    this.centralAuthenticationService.getObject().deleteTicket(ticket.getId());
-                    expiredTgts.incrementAndGet();
-                } else {
-                    unexpiredTgts.incrementAndGet();
-                }
-            }
-        }));
-
-        model.put("unexpiredTgts", unexpiredTgts);
-        model.put("unexpiredSts", unexpiredSts);
-        model.put("expiredTgts", expiredTgts);
-        model.put("expiredSts", expiredSts);
-
+            }));
+        }
+        
+        model.put("expiredTickets", expiredTickets);
+        model.put("validTickets", validTickets);
         return model;
     }
 }

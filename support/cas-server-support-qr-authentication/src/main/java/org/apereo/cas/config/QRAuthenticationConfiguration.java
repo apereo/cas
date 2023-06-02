@@ -1,13 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.qr.QRAuthenticationConstants;
 import org.apereo.cas.qr.authentication.JsonResourceQRAuthenticationDeviceRepository;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
@@ -21,8 +20,10 @@ import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -51,6 +52,10 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.Nonnull;
+
+import java.util.List;
+
 /**
  * This is {@link QRAuthenticationConfiguration}.
  *
@@ -59,7 +64,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableWebSocketMessageBroker
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "qr")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "qr")
 @AutoConfiguration
 public class QRAuthenticationConfiguration {
 
@@ -76,10 +81,10 @@ public class QRAuthenticationConfiguration {
             final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository,
             @Qualifier("tokenTicketJwtBuilder")
             final JwtBuilder tokenTicketJwtBuilder,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry) {
             return new DefaultQRAuthenticationTokenValidatorService(tokenTicketJwtBuilder,
-                centralAuthenticationService, casProperties, qrAuthenticationDeviceRepository);
+                ticketRegistry, casProperties, qrAuthenticationDeviceRepository);
         }
 
         @Bean
@@ -186,21 +191,39 @@ public class QRAuthenticationConfiguration {
     @Configuration(value = "QRAuthenticationMvcConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationMvcConfiguration {
+        private static final String ENDPOINT_QR_WEBSOCKET = "/qr-websocket";
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "qrAuthenticationEndpointConfigurer")
+        public ProtocolEndpointWebSecurityConfigurer<Void> qrAuthenticationEndpointConfigurer() {
+            return new ProtocolEndpointWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of("/qr-websocket");
+                }
+            };
+        }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebSocketMessageBrokerConfigurer qrAuthenticationWebSocketMessageBrokerConfigurer(
             final CasConfigurationProperties casProperties) {
             return new WebSocketMessageBrokerConfigurer() {
                 @Override
-                public void registerStompEndpoints(final StompEndpointRegistry registry) {
-                    registry.addEndpoint("/qr-websocket")
+                public void registerStompEndpoints(
+                    @Nonnull
+                    final StompEndpointRegistry registry) {
+                    registry.addEndpoint(ENDPOINT_QR_WEBSOCKET)
                         .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
                         .addInterceptors(new HttpSessionHandshakeInterceptor())
                         .withSockJS();
                 }
 
                 @Override
-                public void configureMessageBroker(final MessageBrokerRegistry config) {
+                public void configureMessageBroker(
+                    @Nonnull
+                    final MessageBrokerRegistry config) {
                     config.enableSimpleBroker(QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
                     config.setApplicationDestinationPrefixes("/qr");
                 }

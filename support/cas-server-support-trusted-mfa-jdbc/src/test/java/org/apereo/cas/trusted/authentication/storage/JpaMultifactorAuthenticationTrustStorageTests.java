@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
-@Tag("JDBC")
+@Tag("JDBCMFA")
 @Getter
 @TestPropertySource(properties = {
     "cas.jdbc.show-sql=false",

@@ -2,12 +2,13 @@ package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -38,10 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
-    private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
+    private ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext))
             .applicationContext(applicationContext)
+            .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
@@ -52,7 +54,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
     private OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
             new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties),
+            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext),
             oauthRequestParameterResolver);
     }
 
@@ -69,9 +71,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
     @Test
     public void verifyUnsignedRequestParameter() throws Exception {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        val serviceManager = getServicesManager(applicationContext);
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
+        val serviceManager = getServicesManager(ctx);
 
         buildRegisteredService(serviceManager);
 
@@ -82,11 +84,11 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         val context = new JEEContext(request, response);
 
         val authnRequest = "eyJhbGciOiJub25lIn0.eyJzY29wZSI6Im9wZW5pZCIsInJlc3Bvbn"
-            + "NlX3R5cGUiOiJjb2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0"
-            + "cHM6XC9cL3N0YWdpbmcuY2VydGlmaWNhdGlvbi5vcGVua"
-            + "WQubmV0XC90ZXN0XC9hXC9DQVNcL2Nhb"
-            + "GxiYWNrIiwic3RhdGUiOiJ2SU4xYjBZNENrIiwibm9uY2UiOiI"
-            + "xTjltcVBPOWZ0IiwiY2xpZW50X2lkIjoiY2xpZW50In0.";
+                           + "NlX3R5cGUiOiJjb2RlIiwicmVkaXJlY3RfdXJpIjoiaHR0"
+                           + "cHM6XC9cL3N0YWdpbmcuY2VydGlmaWNhdGlvbi5vcGVua"
+                           + "WQubmV0XC90ZXN0XC9hXC9DQVNcL2Nhb"
+                           + "GxiYWNrIiwic3RhdGUiOiJ2SU4xYjBZNENrIiwibm9uY2UiOiI"
+                           + "xTjltcVBPOWZ0IiwiY2xpZW50X2lkIjoiY2xpZW50In0.";
 
         request.setParameter(OAuth20Constants.REQUEST, authnRequest);
         assertTrue(validator.supports(context));
@@ -95,9 +97,9 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
     @Test
     public void verifyValidator() throws Exception {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        val serviceManager = getServicesManager(applicationContext);
+        val ctx = new StaticApplicationContext();
+        ctx.refresh();
+        val serviceManager = getServicesManager(ctx);
         val service = buildRegisteredService(serviceManager);
 
         val validator = getValidator(serviceManager);
@@ -165,14 +167,14 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
 
-        service.getAccessStrategy().setServiceAccessAllowed(false);
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
         assertFalse(validator.supports(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(OAuth20Constants.INVALID_REQUEST, context.getRequestAttribute(OAuth20Constants.ERROR).get().toString());
 
         assertEquals(Ordered.LOWEST_PRECEDENCE, validator.getOrder());
         assertNotNull(validator.getRegisteredServiceAccessStrategyEnforcer());
-        assertEquals(OAuth20ResponseTypes.CODE, validator.getResponseType());
+        assertTrue(validator.getSupportedResponseTypes().contains(OAuth20ResponseTypes.CODE));
         assertNotNull(validator.getServicesManager());
         assertNotNull(validator.getWebApplicationServiceServiceFactory());
     }

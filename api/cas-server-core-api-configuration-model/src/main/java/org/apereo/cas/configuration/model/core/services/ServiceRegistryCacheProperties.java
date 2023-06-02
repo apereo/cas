@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * This is {@link ServiceRegistryCacheProperties}.
@@ -21,7 +22,8 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("ServiceRegistryCacheProperties")
-public class ServiceRegistryCacheProperties implements Serializable {
+public class ServiceRegistryCacheProperties extends SimpleCacheProperties {
+    @Serial
     private static final long serialVersionUID = -368826011744304210L;
 
     /**
@@ -30,14 +32,4 @@ public class ServiceRegistryCacheProperties implements Serializable {
      */
     @DurationCapable
     private String duration = "PT15M";
-
-    /**
-     * Services cache size specifies the maximum number of entries the cache may contain.
-     */
-    private long cacheSize = 5_000L;
-
-    /**
-     * Services cache capacity sets the minimum total size for the internal data structures.
-     */
-    private int initialCapacity = 2_000;
 }

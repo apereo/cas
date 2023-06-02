@@ -1,10 +1,10 @@
+import org.apereo.cas.authentication.Credential
 import org.apereo.cas.pm.*
 
 def change(Object[] args) {
-    def credential = args[0]
-    def passwordChangeBean = args[1]
-    def logger = args[2]
-    switch (credential.username) {
+    def passwordChangeBean = args[0] as PasswordChangeRequest
+    def logger = args[1]
+    switch (passwordChangeBean.username) {
         case "bad-credential":
             return false
         case "error-credential":
@@ -53,4 +53,11 @@ def updateSecurityQuestions(Object[] args) {
     def query = args[0] as PasswordManagementQuery
     def logger = args[1]
     // Execute update...
+}
+
+def unlockAccount(Object[] args) {
+    def query = args[0] as Credential
+    def logger = args[1]
+    // Execute unlock...
+    return true
 }

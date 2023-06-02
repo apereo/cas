@@ -12,8 +12,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -28,13 +29,14 @@ import java.util.Collection;
 @ToString
 public class JpaConsentRepository implements ConsentRepository {
 
+    @Serial
     private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String ENTITY_NAME = "JpaConsentDecision";
 
     private static final String SELECT_QUERY = "SELECT r from " + ENTITY_NAME + " r ";
 
-    @PersistenceContext(unitName = "consentEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaConsentContext")
     private transient EntityManager entityManager;
 
     @Override

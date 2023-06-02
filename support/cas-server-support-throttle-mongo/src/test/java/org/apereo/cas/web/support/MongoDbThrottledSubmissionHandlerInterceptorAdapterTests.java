@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.authn.throttle.core.usernameParameter=username",
+        "cas.authn.throttle.core.username-parameter=username",
         "cas.authn.throttle.failure.range-seconds=5",
         "cas.audit.mongo.database-name=throttle",
         "cas.audit.mongo.host=localhost",
@@ -41,6 +41,6 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
-    @Qualifier("authenticationThrottle")
+    @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 }

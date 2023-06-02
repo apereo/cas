@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -33,6 +34,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -7484490540437793931L;
 
     /**
@@ -46,10 +48,13 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Optional<Serializable> assertion) throws Exception {
         if (this.tryAll) {
-            val sum = authn.getSuccesses().size() + authn.getFailures().size();
-            if (authenticationHandlers.size() != sum) {
-                LOGGER.warn("Credentials count [{}] does not match the sum of authentication successes and failures [{}]",
-                    authn.getCredentials().size(), sum);
+            val match = authenticationHandlers.stream()
+                .allMatch(handler -> authn.getSuccesses().containsKey(handler.getName()));
+            if (!match) {
+                LOGGER.warn("Authentication handlers qualified to handle this transaction, [{}], "
+                            + "have not all completed a successful authentication event. Successful "
+                            + "authentication events recorded currently are [{}]",
+                    authenticationHandlers, authn.getSuccesses().keySet());
                 return AuthenticationPolicyExecutionResult.failure();
             }
             LOGGER.debug("Authentication policy is satisfied with all authentication transactions");

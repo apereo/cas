@@ -1,7 +1,7 @@
 package org.apereo.cas.throttle;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link ThrottledRequestExecutor}.
@@ -17,6 +17,16 @@ public interface ThrottledRequestExecutor {
     String DEFAULT_BEAN_NAME = "throttledRequestExecutor";
 
     /**
+     * NoOp throttled request executor.
+     *
+     * @return the throttled request executor
+     */
+    static ThrottledRequestExecutor noOp() {
+        return new ThrottledRequestExecutor() {
+        };
+    }
+
+    /**
      * Attempts to pre-handle and throttle/stifle the requests
      * based on capacity and configured pools.
      *
@@ -26,15 +36,5 @@ public interface ThrottledRequestExecutor {
      */
     default boolean throttle(final HttpServletRequest request, final HttpServletResponse response) {
         return false;
-    }
-
-    /**
-     * NoOp throttled request executor.
-     *
-     * @return the throttled request executor
-     */
-    static ThrottledRequestExecutor noOp() {
-        return new ThrottledRequestExecutor() {
-        };
     }
 }

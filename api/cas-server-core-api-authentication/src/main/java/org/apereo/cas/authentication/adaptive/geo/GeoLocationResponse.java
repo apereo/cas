@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -27,6 +29,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @NoArgsConstructor
 public class GeoLocationResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4380882448842426005L;
 
     private final Set<String> addresses = new ConcurrentSkipListSet<>();
@@ -41,6 +44,7 @@ public class GeoLocationResponse implements Serializable {
      * @param address the address
      * @return the geo location response
      */
+    @CanIgnoreReturnValue
     public GeoLocationResponse addAddress(final String address) {
         if (StringUtils.isNotBlank(address)) {
             this.addresses.add(address);

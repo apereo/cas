@@ -17,6 +17,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 
+import java.util.EnumSet;
+import java.util.Objects;
+
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
  *
@@ -41,23 +44,32 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     @Override
     public boolean validate(final WebContext context) {
         val clientIdResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID);
-        return clientIdResult.map(clientId -> {
-            if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, getRegisteredServiceByClientId(clientId))) {
-                val responseTypeResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
-                val msg = String.format("Client is not allowed to use the [%s] response type", responseTypeResult.orElse("unknown"));
-                LOGGER.warn(msg);
-                setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
-                return false;
-            }
-            return true;
-        }).orElse(false);
+        return clientIdResult
+            .map(this::getRegisteredServiceByClientId)
+            .filter(Objects::nonNull)
+            .map(registeredService -> {
+                if (!requestParameterResolver.isAuthorizedResponseTypeForService(context, registeredService)) {
+                    val responseTypeResult = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
+                    val msg = String.format("Client is not allowed to use the [%s] response type", responseTypeResult.orElse("unknown"));
+                    LOGGER.warn(msg);
+                    setErrorDetails(context, OAuth20Constants.UNAUTHORIZED_CLIENT, msg, true);
+                    return false;
+                }
+                return true;
+            })
+            .orElse(false);
     }
 
     @Override
     public boolean supports(final WebContext context) throws Exception {
         if (preValidate(context)) {
-            val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
-            return OAuth20Utils.isResponseType(responseType.map(String::valueOf).orElse(StringUtils.EMPTY), getResponseType());
+            val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+                .map(String::valueOf)
+                .orElse(StringUtils.EMPTY);
+            LOGGER.debug("Requested response type is [{}]", responseType);
+            return getSupportedResponseTypes()
+                .stream()
+                .anyMatch(allowedType -> OAuth20Utils.isResponseType(responseType, allowedType));
         }
         return false;
     }
@@ -67,7 +79,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
      *
      * @return the response type
      */
-    public OAuth20ResponseTypes getResponseType() {
-        return OAuth20ResponseTypes.CODE;
+    public EnumSet<OAuth20ResponseTypes> getSupportedResponseTypes() {
+        return EnumSet.of(OAuth20ResponseTypes.CODE);
     }
 }

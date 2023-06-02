@@ -5,15 +5,18 @@ import org.apereo.cas.configuration.model.support.services.stream.StreamingServi
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -42,9 +45,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     @Override
     public void destroy() {
-        if (this.distributedCacheManager != null) {
-            this.distributedCacheManager.close();
-        }
+        FunctionUtils.doIfNotNull(distributedCacheManager, DistributedCacheManager::close);
     }
 
     @Override
@@ -110,10 +111,13 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
-        val cachedServices = distributedCacheManager.getAll();
-
+        val cachedServices = distributedCacheManager.getAll()
+            .stream()
+            .sorted(Comparator.<DistributedCacheObject>comparingLong(DistributedCacheObject::getTimestamp).reversed())
+            .filter(CollectionUtils.distinctByKey(service -> service.getValue().getId()))
+            .toList();
         for (val entry : cachedServices) {
-            val cachedService = entry.getValue();
+            val cachedService = (RegisteredService) entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]",
                 cachedService, distributedCacheManager.getName());
 
@@ -126,7 +130,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             }
 
             val matchingService = services.stream()
-                .filter(s -> s.getId() == cachedService.getId())
+                .filter(svc -> svc.getId() == cachedService.getId())
                 .findFirst()
                 .orElse(null);
 
@@ -136,6 +140,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 updateServiceRegistryWithNoMatchingService(services, cachedService, serviceRegistry);
             }
         }
+        distributedCacheManager.clear();
         return services;
     }
 

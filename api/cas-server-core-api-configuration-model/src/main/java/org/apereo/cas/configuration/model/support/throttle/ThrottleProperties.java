@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("ThrottleProperties")
 public class ThrottleProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6813165633105563813L;
 
     /**
@@ -49,6 +51,12 @@ public class ThrottleProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HazelcastThrottleProperties hazelcast = new HazelcastThrottleProperties();
+
+    /**
+     * Settings related to throttling requests using LDAP.
+     */
+    @NestedConfigurationProperty
+    private LdapThrottleProperties ldap = new LdapThrottleProperties();
 
     /**
      * Core throttling settings.

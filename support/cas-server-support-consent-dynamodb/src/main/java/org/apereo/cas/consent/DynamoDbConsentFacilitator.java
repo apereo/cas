@@ -40,17 +40,11 @@ import java.util.stream.Stream;
  * @since 6.5.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
 @SuppressWarnings("JavaUtilDate")
-public class DynamoDbConsentFacilitator {
+public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-
-    private final DynamoDbConsentProperties dynamoDbProperties;
-
-    private final DynamoDbClient amazonDynamoDBClient;
 
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final ConsentDecision record) {
         val values = new HashMap<String, AttributeValue>();
@@ -90,8 +84,8 @@ public class DynamoDbConsentFacilitator {
             .attributeName(ColumnNames.ID.getColumnName())
             .keyType(KeyType.HASH)
             .build());
-        FunctionUtils.doUnchecked(unused -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                dynamoDbProperties.getTableName(), deleteTables, attributes, schema));
+        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+            dynamoDbProperties.getTableName(), deleteTables, attributes, schema));
     }
 
     /**
@@ -165,7 +159,7 @@ public class DynamoDbConsentFacilitator {
      *
      * @param id        the id
      * @param principal the principal
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final long id, final String principal) {
         val keys = List.of(
@@ -202,7 +196,7 @@ public class DynamoDbConsentFacilitator {
      * Delete.
      *
      * @param principal the principal
-     * @return the boolean
+     * @return true/false
      */
     public boolean delete(final String principal) {
         val keys = List.of(
@@ -256,7 +250,7 @@ public class DynamoDbConsentFacilitator {
         private final String columnName;
     }
 
-    private Stream<ConsentDecision> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
+    private Stream<ConsentDecision> getRecordsByKeys(final List<? extends DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
             dynamoDbProperties.getTableName(),
             queries,

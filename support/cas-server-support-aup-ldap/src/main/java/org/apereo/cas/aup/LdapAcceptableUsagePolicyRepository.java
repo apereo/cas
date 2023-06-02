@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
@@ -17,6 +18,7 @@ import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +36,7 @@ import java.util.Set;
  */
 @Slf4j
 public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final Map<String, ConnectionFactory> connectionFactoryList;
@@ -85,12 +88,11 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         LOGGER.debug("Constructed LDAP filter [{}]", filter);
-        val connectionFactory = connectionFactoryList.get(ldap.getLdapUrl());
-        val response = LdapUtils.executeSearchOperation(connectionFactory,
-            ldap.getBaseDn(), filter, ldap.getPageSize());
+        val connectionFactory = new LdapConnectionFactory(connectionFactoryList.get(ldap.getLdapUrl()));
+        val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
-            return Optional.of(Triple.of(connectionFactory, response, ldap));
+            return Optional.of(Triple.of(connectionFactory.getConnectionFactory(), response, ldap));
         }
         LOGGER.debug("LDAP query could not locate an entry for [{}]", id);
         return Optional.empty();
@@ -112,7 +114,8 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LOGGER.debug("Updating [{}]", currentDn);
             val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),
                 CollectionUtils.wrapSet(result.getRight().getAupAcceptedAttributeValue()));
-            return LdapUtils.executeModifyOperation(currentDn, result.getLeft(), attributes);
+            val factory = new LdapConnectionFactory(result.getLeft());
+            return factory.executeModifyOperation(currentDn, attributes);
         }
         return false;
     }

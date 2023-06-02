@@ -3,13 +3,18 @@ package org.apereo.cas.util.serialization;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +29,30 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 public class JacksonObjectMapperFactoryTests {
+    @Test
+    public void verifyYamlFactory() throws Exception {
+        val mapper = JacksonObjectMapperFactory.builder()
+            .jsonFactory(new YAMLFactory())
+            .build()
+            .toObjectMapper();
+        val payload = new Payload().setFirstName("Bob").setNumber(1000);
+        val results = mapper.writeValueAsString(payload);
+        val read = mapper.readValue(results, Payload.class);
+        assertEquals(read, payload);
+    }
+
+    @Test
+    public void verifyXMLFactory() throws Exception {
+        val mapper = JacksonObjectMapperFactory.builder()
+            .jsonFactory(new XmlFactory())
+            .build()
+            .toObjectMapper();
+        val payload = new Payload().setFirstName("Bob").setNumber(1000);
+        val results = mapper.writeValueAsString(payload);
+        val read = mapper.readValue(results, Payload.class);
+        assertEquals(read, payload);
+    }
+
     @Test
     public void verifyInjectableWithoutValue() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder()
@@ -67,7 +96,10 @@ public class JacksonObjectMapperFactoryTests {
     @Getter
     @Setter
     @NoArgsConstructor
+    @Accessors(chain = true)
+    @EqualsAndHashCode
     private static class Payload implements Serializable {
+        @Serial
         private static final long serialVersionUID = -4319570781108105888L;
 
         @JacksonInject("number")

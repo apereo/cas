@@ -148,8 +148,11 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @return connection factory
      */
     protected ConnectionFactory prepareConnectionFactory(final String ldapURL) {
-        val cc = ConnectionConfig.copy(this.connectionConfig);
-        cc.setLdapUrl(ldapURL);
-        return new DefaultConnectionFactory(cc);
+        val config = ConnectionConfig.copy(this.connectionConfig);
+        if (!config.getLdapUrl().equalsIgnoreCase(ldapURL)) {
+            config.setConnectionInitializers();
+        }
+        config.setLdapUrl(ldapURL);
+        return new DefaultConnectionFactory(config);
     }
 }

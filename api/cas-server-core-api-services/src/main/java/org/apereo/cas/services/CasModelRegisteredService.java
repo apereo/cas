@@ -1,8 +1,11 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import java.util.Set;
 
 /**
  * This is {@link CasModelRegisteredService}.
@@ -51,4 +54,21 @@ public interface CasModelRegisteredService extends WebBasedRegisteredService {
      * @since 6.2
      */
     String getRedirectUrl();
+
+    /**
+     * Indicates the collection of CAS protocol versions that this
+     * application should allow and support.
+     *
+     * @return collection of supported protocol versions.
+     */
+    Set<String> getSupportedProtocols();
+
+    /**
+     * Response determines how CAS should contact the matching service
+     * typically with a ticket id. By default, the strategy is a 302 redirect.
+     *
+     * @return the response type
+     * @see Response.ResponseType
+     */
+    String getResponseType();
 }

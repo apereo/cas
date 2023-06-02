@@ -15,7 +15,7 @@ number. Once located, the CAS-generated token is sent to the user via the config
 strategies (i.e. email, sms, etc) where the user is then expected to 
 provide the token back to CAS in order to proceed. 
 
-<div class="alert alert-info"><strong>No Magic Link</strong><p>
+<div class="alert alert-info">:information_source: <strong>No Magic Link</strong><p>
 Presently, there is no support for magic links that would remove the task of providing the token 
 back to CAS allowing the user to proceed automagically.
 This variant may be worked out in future releases.</p></div>
@@ -48,39 +48,21 @@ User records that qualify for passwordless authentication must
 be found by CAS using one of the following strategies. All strategies may be configured
 using CAS settings and are activated depending on the presence of configuration values.
 
-### Simple
-
-Please [see this guide](Passwordless-Authentication-Storage-Simple.html).
-
-### MongoDb
-
-Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html).
-
-### LDAP
-
-Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).
-
-### JSON
-
-Please [see this guide](Passwordless-Authentication-Storage-JSON.html).
-
-### Groovy
-
-Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).
-
-### REST
-
-Please [see this guide](Passwordless-Authentication-Storage-Rest.html).
-
-### Custom
-
-Please [see this guide](Passwordless-Authentication-Storage-Custom.html).
+| Option  | Description                                                                |
+|---------|----------------------------------------------------------------------------|
+| Simple  | Please [see this guide](Passwordless-Authentication-Storage-Simple.html).  |
+| MongoDb | Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html). |
+| LDAP    | Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).    |
+| JSON    | Please [see this guide](Passwordless-Authentication-Storage-JSON.html).    |
+| Groovy  | Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).  |
+| REST    | Please [see this guide](Passwordless-Authentication-Storage-Rest.html).    |
+| Custom  | Please [see this guide](Passwordless-Authentication-Storage-Custom.html).  |
 
 ## Token Management
 
 The following strategies define how issued tokens may be managed by CAS. 
 
-{% include_cached casproperties.html properties="cas.authn.passwordless.accounts" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens" includes=".core,.crypto" %}
 
 ### Memory
 
@@ -89,22 +71,18 @@ with a configurable expiration period. Needless to say, this option
 is not appropriate in clustered CAS deployments inside there is not a way 
 to synchronize and replicate tokens across CAS nodes.
 
-### JPA
+### Others
 
-Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).
-
-### REST
-
-Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).
-
-### Custom
-
-Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).
-
+| Option  | Description                                                               |
+|---------|---------------------------------------------------------------------------|
+| MongoDb | Please [see this guide](Passwordless-Authentication-Tokens-MongoDb.html). |
+| JPA     | Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).     |
+| REST    | Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).    |
+| Custom  | Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).  |
 
 ### Messaging & Notifications
                                      
-{% include_cached casproperties.html properties="cas.authn.passwordless.tokens.mail,cas.authn.passwordless.tokens.sms" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens" includes=".mail,.sms" %}
 
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
@@ -137,8 +115,7 @@ signal availability and eligibility of an multifactor flow for the given passwor
 its normal passwordless authentication flow in favor of the requested multifactor 
 authentication provider and its flow. If no multifactor providers 
 are available, or if no triggers require the use of multifactor authentication 
-for the verified passwordless user, passwordless 
-authentication flow will commence as usual.
+for the verified passwordless user, passwordless authentication flow will commence as usual.
 
 ## Delegated Authentication Integration
 
@@ -182,6 +159,4 @@ The parameters passed are as follows:
 | `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 The outcome of the script can be `null` to skip delegated authentication for 
-the user, or it could a selection from the available identity providers
-passed into the script.
-
+the user, or it could a selection from the available identity providers passed into the script.

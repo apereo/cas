@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.logout;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -15,8 +15,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link FinishLogoutAction}.
@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 6.4.0
  */
 public class FinishLogoutAction extends AbstractLogoutAction {
-    public FinishLogoutAction(final CentralAuthenticationService centralAuthenticationService,
+    public FinishLogoutAction(final TicketRegistry ticketRegistry,
                               final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                               final ArgumentExtractor argumentExtractor,
                               final ServicesManager servicesManager,
                               final LogoutExecutionPlan logoutExecutionPlan,
                               final CasConfigurationProperties casProperties) {
-        super(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+        super(ticketRegistry, ticketGrantingTicketCookieGenerator,
             argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
     }
 

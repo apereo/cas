@@ -16,11 +16,10 @@ import lombok.val;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class SamlResponseBuilder {
 
     private final String defaultAttributeNamespace;
 
-    private final int issueLength;
+    private final String issueLength;
 
     private final String skewAllowance;
 
@@ -56,9 +55,9 @@ public class SamlResponseBuilder {
      * @return the response
      */
     public Response createResponse(final String serviceId, final WebApplicationService service) {
-        val skew = Beans.newDuration(this.skewAllowance).toSeconds();
-        return this.samlObjectBuilder.newResponse(
-            this.samlObjectBuilder.generateSecureRandomId(),
+        val skew = Beans.newDuration(skewAllowance).toSeconds();
+        return samlObjectBuilder.newResponse(
+            samlObjectBuilder.generateSecureRandomId(),
             ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(skew), serviceId, service);
     }
 
@@ -69,7 +68,7 @@ public class SamlResponseBuilder {
      * @param description the description
      */
     public void setStatusRequestDenied(final Response response, final String description) {
-        response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.REQUEST_DENIED, description));
+        response.setStatus(samlObjectBuilder.newStatus(StatusCode.REQUEST_DENIED, description));
     }
 
     /**
@@ -88,36 +87,37 @@ public class SamlResponseBuilder {
                                           final Map<String, List<Object>> principalAttributes) {
 
         val issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
-        LOGGER.debug("Preparing SAML response for service [{}]", service);
+        LOGGER.debug("Preparing SAML response for service [{}] issued at [{}]", service, issuedAt);
 
-        final Collection<Object> authnMethods = CollectionUtils.toCollection(authentication.getAttributes()
+        val authnMethods = CollectionUtils.toCollection(authentication.getAttributes()
             .get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
         LOGGER.debug("Authentication methods found are [{}]", authnMethods);
 
-        val authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
+        val authnStatement = samlObjectBuilder.newAuthenticationStatement(
             authentication.getAuthenticationDate(), authnMethods, principal.getId());
         LOGGER.debug("Built authentication statement for [{}] dated at [{}]", principal, authentication.getAuthenticationDate());
 
-        val assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
-            this.samlObjectBuilder.generateSecureRandomId());
-        LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", this.issuer, issuedAt);
+        val assertion = samlObjectBuilder.newAssertion(authnStatement, issuer, issuedAt,
+            samlObjectBuilder.generateSecureRandomId());
+        LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", issuer, issuedAt);
 
-        val conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.issueLength);
+        val skewIssueInSeconds = Beans.newDuration(issueLength).toSeconds();
+        val conditions = samlObjectBuilder.newConditions(issuedAt, service.getId(), skewIssueInSeconds);
         assertion.setConditions(conditions);
-        LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", this.issuer, service.getId());
+        LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", issuer, service.getId());
 
-        val subject = this.samlObjectBuilder.newSubject(principal.getId());
+        val subject = samlObjectBuilder.newSubject(principal.getId());
         LOGGER.debug("Built subject for principal [{}]", subject);
 
         val attributesToSend = prepareSamlAttributes(service, authnAttributes, principalAttributes);
         LOGGER.debug("Authentication statement shall include these attributes [{}]", attributesToSend);
 
         if (!attributesToSend.isEmpty()) {
-            assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
-                subject, attributesToSend, this.defaultAttributeNamespace));
+            assertion.getAttributeStatements().add(samlObjectBuilder.newAttributeStatement(
+                subject, attributesToSend, defaultAttributeNamespace));
         }
 
-        response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
+        response.setStatus(samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
         LOGGER.debug("Set response status code to [{}]", response.getStatus());
 
         response.getAssertions().add(assertion);
@@ -133,14 +133,13 @@ public class SamlResponseBuilder {
      */
     public void encodeSamlResponse(final Response samlResponse, final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
+        samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
     }
 
     private Map<String, Object> prepareSamlAttributes(final WebApplicationService service,
                                                       final Map<String, List<Object>> authnAttributes,
                                                       final Map<String, List<Object>> principalAttributes) {
-        val registeredService = this.servicesManager.findServiceBy(service);
-
+        val registeredService = servicesManager.findServiceBy(service);
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
 
         val attributesToReturn = new HashMap<String, Object>();

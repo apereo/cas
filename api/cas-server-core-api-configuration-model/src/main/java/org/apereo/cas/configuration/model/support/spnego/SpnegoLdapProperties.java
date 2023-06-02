@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link SpnegoLdapProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("SpnegoLdapProperties")
 public class SpnegoLdapProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -8835216200501334936L;
 }

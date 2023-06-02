@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ import java.util.UUID;
 @Setter
 public class WsFederationConfiguration implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2310859477512242659L;
 
     private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";

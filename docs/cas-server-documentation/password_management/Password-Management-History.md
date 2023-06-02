@@ -18,7 +18,9 @@ Once password history functionality is enabled, passwords can be tracked
 in history via a Groovy or an in-memory backend. Specific storage 
 options may also provide their own support for password history.
  
-## Groovy
+{% tabs passwordhistory %}
+
+{% tab passwordhistory Groovy %}
 
 Password history tracking, once enabled, can be handed off to an external Groovy script as such:
 
@@ -59,10 +61,12 @@ def removeAll(Object[] args) {
 The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
 
 {% include_cached casproperties.html properties="cas.authn.pm.history.groovy" %}
-  
-## Custom
 
-If you wish to create your own password hisory service, you will need to
+{% endtab %}
+
+{% tab passwordhistory Custom %}
+
+If you wish to create your own password history service, you will need to
 design a component and register it with CAS as such:
 
 ```java
@@ -74,3 +78,8 @@ public PasswordHistoryService passwordHistoryService() {
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
 how to register configurations into the CAS runtime.
+
+{% endtab %}
+
+{% endtabs %}
+

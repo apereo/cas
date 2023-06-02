@@ -67,6 +67,7 @@ public class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSa
         val authnRequest = getAuthnRequestFor(issuer);
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .requestContext(context)
             .build()
             .attribute(AuthnRequest.class.getName(), authnRequest)

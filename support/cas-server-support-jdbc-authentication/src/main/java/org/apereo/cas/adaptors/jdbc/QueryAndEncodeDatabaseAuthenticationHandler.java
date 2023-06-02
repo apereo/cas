@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -43,6 +44,7 @@ import java.util.Map;
  * @author Charles Hasegawa
  * @since 4.1.0
  */
+@Monitorable
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private final QueryEncodeJdbcAuthenticationProperties properties;
@@ -56,8 +58,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential transformedCredential,
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(properties.getSql()) || StringUtils.isBlank(properties.getAlgorithmName()) || getJdbcTemplate() == null) {
@@ -66,8 +69,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         val username = transformedCredential.getUsername();
         try {
-            val values = getJdbcTemplate().queryForMap(properties.getSql(), username);
-            val digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
+            val values = performSqlQuery(username);
+            val digestedPassword = digestEncodedPassword(transformedCredential.toPassword(), values);
 
             if (!values.get(properties.getPasswordFieldName()).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
@@ -94,6 +97,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         } catch (final DataAccessException e) {
             throw new PreventedException(e);
         }
+    }
+
+    protected Map<String, Object> performSqlQuery(final String username) {
+        return getJdbcTemplate().queryForMap(properties.getSql(), username);
     }
 
     /**

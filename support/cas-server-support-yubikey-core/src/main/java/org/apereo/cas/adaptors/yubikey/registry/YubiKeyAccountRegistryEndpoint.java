@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -62,8 +62,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @return the yubi key account
      */
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get Yubikey account for username",
-        parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Get Yubikey account for username", parameters = @Parameter(name = "username", required = true))
     public YubiKeyAccount get(@PathVariable final String username) {
         val result = registry.getObject().getAccount(username);
         return result.orElse(null);
@@ -86,7 +85,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      */
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete Yubikey account for username", parameters = {@Parameter(name = "username", required = true)})
+    @Operation(summary = "Delete Yubikey account for username", parameters = @Parameter(name = "username", required = true))
     public void delete(@PathVariable final String username) {
         registry.getObject().delete(username);
     }
@@ -133,13 +132,13 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Import a Yubikey account as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus importAccount(final HttpServletRequest request) throws Exception {
+    public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
         val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyAccount>() {
         });
         LOGGER.trace("Storing account: [{}]", account);
         registry.getObject().save(account);
-        return HttpStatus.CREATED;
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

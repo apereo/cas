@@ -50,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 }, properties = {
     "server.port=9190",
+    "spring.cloud.compatibility-verifier.enabled=false",
     "cas.authn.mfa.u2f.rest.url=http://localhost:9190"
 }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
@@ -57,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
-    private static List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
+    private static final List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
 
     @Autowired
     @Qualifier("u2fDeviceRepository")

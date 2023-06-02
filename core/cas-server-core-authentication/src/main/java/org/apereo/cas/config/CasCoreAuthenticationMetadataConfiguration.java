@@ -11,12 +11,12 @@ import org.apereo.cas.authentication.metadata.CredentialCustomFieldsAttributeMet
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -39,7 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration
 public class CasCoreAuthenticationMetadataConfiguration {
     private static final BeanCondition CONDITION_CLEARPASS = BeanCondition.on("cas.clearpass.cache-credential").isTrue();
@@ -122,8 +122,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator cacheCredentialsMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("cacheCredentialsCipherExecutor")
-            final CipherExecutor cacheCredentialsCipherExecutor) throws Exception {
+            @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor) throws Exception {
             return BeanSupplier.of(AuthenticationMetaDataPopulator.class)
                 .when(CONDITION_CLEARPASS.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -143,20 +142,13 @@ public class CasCoreAuthenticationMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("authenticationCredentialTypeMetaDataPopulator")
-            final AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator,
-            @Qualifier("credentialCustomFieldsAttributeMetaDataPopulator")
-            final AuthenticationMetaDataPopulator credentialCustomFieldsAttributeMetaDataPopulator,
-            @Qualifier("authenticationDateMetaDataPopulator")
-            final AuthenticationMetaDataPopulator authenticationDateMetaDataPopulator,
-            @Qualifier("clientInfoAuthenticationMetaDataPopulator")
-            final AuthenticationMetaDataPopulator clientInfoAuthenticationMetaDataPopulator,
-            @Qualifier("rememberMeAuthenticationMetaDataPopulator")
-            final AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator,
-            @Qualifier("successfulHandlerMetaDataPopulator")
-            final AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator,
-            @Qualifier("cacheCredentialsMetaDataPopulator")
-            final ObjectProvider<AuthenticationMetaDataPopulator> cacheCredentialsMetaDataPopulator) {
+            @Qualifier("authenticationCredentialTypeMetaDataPopulator") final AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator,
+            @Qualifier("credentialCustomFieldsAttributeMetaDataPopulator") final AuthenticationMetaDataPopulator credentialCustomFieldsAttributeMetaDataPopulator,
+            @Qualifier("authenticationDateMetaDataPopulator") final AuthenticationMetaDataPopulator authenticationDateMetaDataPopulator,
+            @Qualifier("clientInfoAuthenticationMetaDataPopulator") final AuthenticationMetaDataPopulator clientInfoAuthenticationMetaDataPopulator,
+            @Qualifier("rememberMeAuthenticationMetaDataPopulator") final AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator,
+            @Qualifier("successfulHandlerMetaDataPopulator") final AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator,
+            @Qualifier("cacheCredentialsMetaDataPopulator") final ObjectProvider<AuthenticationMetaDataPopulator> cacheCredentialsMetaDataPopulator) {
             return plan -> {
                 plan.registerAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator);
                 plan.registerAuthenticationMetadataPopulator(rememberMeAuthenticationMetaDataPopulator);

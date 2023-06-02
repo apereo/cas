@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 
@@ -16,15 +17,16 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link SearchModeSearchDatabaseAuthenticationHandler}.
@@ -79,19 +81,19 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseData
     public void verifyNotFoundUser() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
     public void verifyFoundUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
-        assertNotNull(handler.authenticate(c));
+        assertNotNull(handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
     public void verifyMultipleUsersFound() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
-        assertNotNull(this.handler.authenticate(c));
+        assertNotNull(this.handler.authenticate(c, mock(Service.class)));
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)

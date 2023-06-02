@@ -64,6 +64,14 @@ public interface Authentication extends Serializable {
     void addAttribute(String name, Object value);
 
     /**
+     * Contains attribute?
+     *
+     * @param name the name
+     * @return true
+     */
+    boolean containsAttribute(String name);
+
+    /**
      * Gets a list of metadata about the credentials supplied at authentication time.
      *
      * @return Non -null list of supplied credentials represented as metadata that should be
@@ -71,7 +79,7 @@ public interface Authentication extends Serializable {
      * The order of items in the returned list SHOULD be the same as the order in which the source credentials
      * were presented and subsequently processed.
      */
-    List<CredentialMetaData> getCredentials();
+    List<Credential> getCredentials();
 
     /**
      * Get a list of authentication warnings that may be considered global
@@ -123,7 +131,7 @@ public interface Authentication extends Serializable {
      * should be destroyed first.
      *
      * @param auth2 the second auth
-     * @return the boolean
+     * @return true/false
      */
     boolean isEqualTo(Authentication auth2);
 }

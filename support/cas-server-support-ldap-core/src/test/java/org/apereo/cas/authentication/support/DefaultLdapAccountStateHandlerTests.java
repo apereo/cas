@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AccountState;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 public class DefaultLdapAccountStateHandlerTests {
     @Test
     public void verifyActiveDirectoryErrors() {
@@ -77,11 +76,8 @@ public class DefaultLdapAccountStateHandlerTests {
         val entry = new LdapEntry();
         when(response.getLdapEntry()).thenReturn(entry);
         when(response.isSuccess()).thenReturn(Boolean.TRUE);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                handler.handle(response, new PasswordPolicyContext());
-            }
+        assertDoesNotThrow(() -> {
+            handler.handle(response, new PasswordPolicyContext());
         });
     }
 
@@ -95,21 +91,15 @@ public class DefaultLdapAccountStateHandlerTests {
         when(response.getAccountState()).thenReturn(accountState);
         when(response.getLdapEntry()).thenReturn(entry);
         when(response.isSuccess()).thenReturn(Boolean.TRUE);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                handler.handle(response, new PasswordPolicyContext());
-            }
+        assertDoesNotThrow(() -> {
+            handler.handle(response, new PasswordPolicyContext());
         });
 
         val warning = mock(AccountState.Warning.class);
         when(accountState.getWarning()).thenReturn(warning);
         when(response.getAccountState()).thenReturn(accountState);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                handler.handle(response, new PasswordPolicyContext());
-            }
+        assertDoesNotThrow(() -> {
+            handler.handle(response, new PasswordPolicyContext());
         });
     }
 

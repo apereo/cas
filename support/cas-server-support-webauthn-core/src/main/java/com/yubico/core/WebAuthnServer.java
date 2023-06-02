@@ -24,6 +24,8 @@
 
 package com.yubico.core;
 
+import org.apereo.cas.util.RandomUtils;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -31,17 +33,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.cache.Cache;
-import com.google.common.io.Closeables;
-import com.upokecenter.cbor.CBORObject;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.data.RegistrationRequest;
 import com.yubico.data.RegistrationResponse;
-import com.yubico.data.U2fRegistrationResponse;
-import com.yubico.data.U2fRegistrationResult;
 import com.yubico.internal.util.CertificateParser;
-import com.yubico.internal.util.ExceptionUtil;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.FinishAssertionOptions;
@@ -51,186 +48,58 @@ import com.yubico.webauthn.RegistrationResult;
 import com.yubico.webauthn.RelyingParty;
 import com.yubico.webauthn.StartAssertionOptions;
 import com.yubico.webauthn.StartRegistrationOptions;
-import com.yubico.webauthn.U2fVerifier;
 import com.yubico.webauthn.attestation.Attestation;
-import com.yubico.webauthn.attestation.AttestationResolver;
-import com.yubico.webauthn.attestation.MetadataObject;
-import com.yubico.webauthn.attestation.MetadataService;
-import com.yubico.webauthn.attestation.StandardMetadataService;
-import com.yubico.webauthn.attestation.TrustResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
-import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
-import com.yubico.webauthn.data.AttestationConveyancePreference;
+import com.yubico.webauthn.attestation.AttestationMetadataSource;
 import com.yubico.webauthn.data.AuthenticatorData;
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria;
+import com.yubico.webauthn.data.AuthenticatorTransport;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.COSEAlgorithmIdentifier;
-import com.yubico.webauthn.data.PublicKeyCredentialDescriptor;
-import com.yubico.webauthn.data.RelyingPartyIdentity;
+import com.yubico.webauthn.data.ResidentKeyRequirement;
 import com.yubico.webauthn.data.UserIdentity;
 import com.yubico.webauthn.exception.AssertionFailedException;
 import com.yubico.webauthn.exception.RegistrationFailedException;
-import com.yubico.webauthn.extension.appid.AppId;
-import com.yubico.webauthn.extension.appid.InvalidAppIdException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public class WebAuthnServer {
-    private static final SecureRandom random = new SecureRandom();
-
-    private static final String PREVIEW_METADATA_PATH = "/preview-metadata.json";
+    private static final SecureRandom random = RandomUtils.getNativeInstance();
 
     private final Clock clock = Clock.systemUTC();
 
     private final ObjectMapper jsonMapper = JacksonCodecs.json();
 
+    private final RegistrationStorage userStorage;
+    private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
+    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
     private final RelyingParty rp;
+    private final SessionManager sessions;
 
-    private Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
-
-    private Cache<ByteArray, RegistrationRequest> registerRequestStorage;
-
-    private RegistrationStorage userStorage;
-
-    private SessionManager sessions = new DefaultSessionManager();
-
-    private TrustResolver trustResolver = new CompositeTrustResolver(Arrays.asList(
-        StandardMetadataService.createDefaultTrustResolver(),
-        createExtraTrustResolver()
-    ));
-
-    private MetadataService metadataService = new StandardMetadataService(
-        new CompositeAttestationResolver(Arrays.asList(
-            StandardMetadataService.createDefaultAttestationResolver(trustResolver),
-            createExtraMetadataResolver(trustResolver)
-        ))
-    );
-
-
-    public WebAuthnServer(final RegistrationStorage userStorage, final Cache<ByteArray, RegistrationRequest> registerRequestStorage,
-                          final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage,
-                          final RelyingPartyIdentity rpIdentity, final Set<String> origins, final Optional<AppId> appId)
-        throws InvalidAppIdException, CertificateException {
-        this.userStorage = userStorage;
-        this.registerRequestStorage = registerRequestStorage;
-        this.assertRequestStorage = assertRequestStorage;
-
-        rp = RelyingParty.builder()
-            .identity(rpIdentity)
-            .credentialRepository(this.userStorage)
-            .origins(origins)
-            .attestationConveyancePreference(Optional.of(AttestationConveyancePreference.DIRECT))
-            .metadataService(Optional.of(metadataService))
-            .allowOriginPort(false)
-            .allowOriginSubdomain(false)
-            .allowUnrequestedExtensions(true)
-            .allowUntrustedAttestation(true)
-            .validateSignatureCounter(true)
-            .appId(appId)
-            .build();
-    }
-
-    public WebAuthnServer(final RelyingParty rpId) throws CertificateException {
-        this.rp = rpId;
-    }
-
-    public WebAuthnServer(final RegistrationStorage userStorage, final Cache<ByteArray, RegistrationRequest> registerRequestStorage,
-                          final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage, final RelyingParty rpId,
-                          final SessionManager sessionManager) throws CertificateException {
-        this.userStorage = userStorage;
-        this.registerRequestStorage = registerRequestStorage;
-        this.assertRequestStorage = assertRequestStorage;
-        this.rp = rpId;
-        this.sessions = sessionManager;
-    }
-
-    private static ByteArray generateRandom(final int length) {
-        var bytes = new byte[length];
+    private static ByteArray generateRandom() {
+        var bytes = new byte[32];
         random.nextBytes(bytes);
         return new ByteArray(bytes);
-    }
-
-    private static MetadataObject readPreviewMetadata() {
-        var is = WebAuthnServer.class.getResourceAsStream(PREVIEW_METADATA_PATH);
-        try {
-            return JacksonCodecs.json().readValue(is, MetadataObject.class);
-        } catch (final IOException e) {
-            throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read metadata from " + PREVIEW_METADATA_PATH, e);
-        } finally {
-            Closeables.closeQuietly(is);
-        }
-    }
-
-    /**
-     * Create a {@link TrustResolver} that accepts attestation certificates that are directly recognised as trust anchors.
-     */
-    private static TrustResolver createExtraTrustResolver() {
-        try {
-            var metadata = readPreviewMetadata();
-            return new SimpleTrustResolverWithEquality(metadata.getParsedTrustedCertificates());
-        } catch (final CertificateException e) {
-            throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read trusted certificate(s)", e);
-        }
-    }
-
-    /**
-     * Create a {@link AttestationResolver} with additional metadata for unreleased YubiKey Preview devices.
-     */
-    private static AttestationResolver createExtraMetadataResolver(final TrustResolver trustResolver) {
-        try {
-            var metadata = readPreviewMetadata();
-            return new SimpleAttestationResolver(Collections.singleton(metadata), trustResolver);
-        } catch (final CertificateException e) {
-            throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read trusted certificate(s)", e);
-        }
-    }
-
-    static ByteArray rawEcdaKeyToCose(final ByteArray key) {
-        final var keyBytes = key.getBytes();
-
-        if (!(keyBytes.length == 64 || (keyBytes.length == 65 && keyBytes[0] == 0x04))) {
-            throw new IllegalArgumentException(String.format(
-                "Raw key must be 64 bytes long or be 65 bytes long and start with 0x04, was %d bytes starting with %02x",
-                keyBytes.length,
-                keyBytes[0]
-            ));
-        }
-
-        final var start = keyBytes.length == 64 ? 0 : 1;
-
-        final Map<Long, Object> coseKey = new HashMap<>();
-
-        coseKey.put(1L, 2L); // Key type: EC
-        coseKey.put(3L, COSEAlgorithmIdentifier.ES256.getId());
-        coseKey.put(-1L, 1L); // Curve: P-256
-        coseKey.put(-2L, Arrays.copyOfRange(keyBytes, start, start + 32)); // x
-        coseKey.put(-3L, Arrays.copyOfRange(keyBytes, start + 32, start + 64)); // y
-
-        return new ByteArray(CBORObject.FromObject(coseKey).EncodeToBytes());
     }
 
     public Either<String, RegistrationRequest> startRegistration(
@@ -238,13 +107,13 @@ public class WebAuthnServer {
         final String username,
         final Optional<String> displayName,
         final Optional<String> credentialNickname,
-        final boolean requireResidentKey,
+        final ResidentKeyRequirement residentKeyRequirement,
         final Optional<ByteArray> sessionToken) throws ExecutionException {
         LOGGER.trace("startRegistration username: {}, credentialNickname: {}", username, credentialNickname);
 
         var registrations = userStorage.getRegistrationsByUsername(username);
         var existingUser = registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
-        final boolean permissionGranted = existingUser
+        val permissionGranted = existingUser
             .map(userIdentity ->
                 sessions.isSessionForUser(userIdentity.getId(), sessionToken))
             .orElse(true);
@@ -254,26 +123,26 @@ public class WebAuthnServer {
                 UserIdentity.builder()
                     .name(username)
                     .displayName(displayName.get())
-                    .id(generateRandom(32))
+                    .id(generateRandom())
                     .build()
             );
 
-            var request = new RegistrationRequest(
+            val request = new RegistrationRequest(
                 username,
                 credentialNickname,
-                generateRandom(32),
+                generateRandom(),
                 rp.startRegistration(
                     StartRegistrationOptions.builder()
                         .user(registrationUserId)
                         .authenticatorSelection(AuthenticatorSelectionCriteria.builder()
-                            .requireResidentKey(requireResidentKey)
+                            .residentKey(residentKeyRequirement)
                             .build()
                         )
                         .build()
                 ),
                 Optional.of(sessions.createSession(registrationUserId.getId()))
             );
-            registerRequestStorage.put(request.getRequestId(), request);
+            registerRequestStorage.put(request.requestId(), request);
             return Either.right(request);
         } else {
             return Either.left("The username \"" + username + "\" is already registered.");
@@ -290,34 +159,34 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        var request = registerRequestStorage.getIfPresent(response.getRequestId());
-        registerRequestStorage.invalidate(response.getRequestId());
+        val request = registerRequestStorage.getIfPresent(response.requestId());
+        registerRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
             LOGGER.debug("fail finishRegistration responseJson: {}", responseJson);
             return Either.left(Arrays.asList("Registration failed!", "No such registration in progress."));
         } else {
             try {
-                var registration = rp.finishRegistration(
+                val registration = rp.finishRegistration(
                     FinishRegistrationOptions.builder()
-                        .request(request.getPublicKeyCredentialCreationOptions())
-                        .response(response.getCredential())
+                        .request(request.publicKeyCredentialCreationOptions())
+                        .response(response.credential())
                         .build()
                 );
 
-                if (userStorage.userExists(request.getUsername())) {
+                if (userStorage.userExists(request.username())) {
                     var permissionGranted = false;
 
-                    final boolean isValidSession = request.getSessionToken().map(token ->
-                        sessions.isSessionForUser(request.getPublicKeyCredentialCreationOptions().getUser().getId(), token)
+                    val isValidSession = request.sessionToken().map(token ->
+                        sessions.isSessionForUser(request.publicKeyCredentialCreationOptions().getUser().getId(), token)
                     ).orElse(false);
 
-                    LOGGER.debug("Session token: {}", request.getSessionToken());
+                    LOGGER.debug("Session token: {}", request.sessionToken());
                     LOGGER.debug("Valid session: {}", isValidSession);
 
                     if (isValidSession) {
                         permissionGranted = true;
-                        LOGGER.info("Session token accepted for user {}", request.getPublicKeyCredentialCreationOptions().getUser().getId());
+                        LOGGER.info("Session token accepted for user {}", request.publicKeyCredentialCreationOptions().getUser().getId());
                     }
 
                     LOGGER.debug("permissionGranted: {}", permissionGranted);
@@ -325,7 +194,7 @@ public class WebAuthnServer {
                     if (!permissionGranted) {
                         throw new RegistrationFailedException(new IllegalArgumentException(String.format(
                             "User %s already exists",
-                            request.getUsername()
+                            request.username()
                         )));
                     }
                 }
@@ -335,92 +204,21 @@ public class WebAuthnServer {
                         request,
                         response,
                         addRegistration(
-                            request.getPublicKeyCredentialCreationOptions().getUser(),
-                            request.getCredentialNickname().orElse(null),
-                            response,
+                            request.publicKeyCredentialCreationOptions().getUser(),
+                            request.credentialNickname(),
                             registration
                         ),
-                        registration.isAttestationTrusted(),
-                        sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
+                        registration.isAttestationTrusted() || rp.isAllowUntrustedAttestation(),
+                        sessions.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );
             } catch (final RegistrationFailedException e) {
                 LOGGER.debug("fail finishRegistration responseJson: {}", responseJson, e);
-                return Either.left(Arrays.asList("Registration failed!", e.getMessage()));
+                return Either.left(Arrays.asList("Registration failed", e.getMessage()));
             } catch (final Exception e) {
                 LOGGER.error("fail finishRegistration responseJson: {}", responseJson, e);
                 return Either.left(Arrays.asList("Registration failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
-        }
-    }
-
-    public Either<List<String>, SuccessfulU2fRegistrationResult> finishU2fRegistration(final String responseJson) throws ExecutionException {
-        LOGGER.trace("finishU2fRegistration responseJson: {}", responseJson);
-        U2fRegistrationResponse response = null;
-        try {
-            response = jsonMapper.readValue(responseJson, U2fRegistrationResponse.class);
-        } catch (final IOException e) {
-            LOGGER.error("JSON error in finishU2fRegistration; responseJson: {}", responseJson, e);
-            return Either.left(Arrays.asList("Registration failed!", "Failed to decode response object.", e.getMessage()));
-        }
-
-        var request = registerRequestStorage.getIfPresent(response.getRequestId());
-        registerRequestStorage.invalidate(response.getRequestId());
-
-        if (request == null) {
-            LOGGER.debug("fail finishU2fRegistration responseJson: {}", responseJson);
-            return Either.left(Arrays.asList("Registration failed!", "No such registration in progress."));
-        } else {
-
-            try {
-                ExceptionUtil.assure(
-                    U2fVerifier.verify(rp.getAppId().get(), request, response),
-                    "Failed to verify signature."
-                );
-            } catch (final Exception e) {
-                LOGGER.debug("Failed to verify U2F signature.", e);
-                return Either.left(Arrays.asList("Failed to verify signature.", e.getMessage()));
-            }
-
-            X509Certificate attestationCert = null;
-            try {
-                attestationCert = CertificateParser.parseDer(response.getCredential().getU2fResponse().getAttestationCertAndSignature().getBytes());
-            } catch (final CertificateException e) {
-                LOGGER.error("Failed to parse attestation certificate: {}", response.getCredential().getU2fResponse().getAttestationCertAndSignature(), e);
-            }
-
-            Optional<Attestation> attestation = Optional.empty();
-            try {
-                if (attestationCert != null) {
-                    attestation = Optional.of(metadataService.getAttestation(Collections.singletonList(attestationCert)));
-                }
-            } catch (final CertificateEncodingException e) {
-                LOGGER.error("Failed to resolve attestation", e);
-            }
-
-            var result = U2fRegistrationResult.builder()
-                .keyId(PublicKeyCredentialDescriptor.builder().id(response.getCredential().getU2fResponse().getKeyHandle()).build())
-                .attestationTrusted(attestation.map(Attestation::isTrusted).orElse(false))
-                .publicKeyCose(rawEcdaKeyToCose(response.getCredential().getU2fResponse().getPublicKey()))
-                .attestationMetadata(attestation)
-                .build();
-
-            return Either.right(
-                new SuccessfulU2fRegistrationResult(
-                    request,
-                    response,
-                    addRegistration(
-                        request.getPublicKeyCredentialCreationOptions().getUser(),
-                        request.getCredentialNickname().orElse(null),
-                        0,
-                        result
-                    ),
-                    result.isAttestationTrusted(),
-                    Optional.of(new AttestationCertInfo(response.getCredential().getU2fResponse().getAttestationCertAndSignature())),
-                    request.getUsername(),
-                    sessions.createSession(request.getPublicKeyCredentialCreationOptions().getUser().getId())
-                )
-            );
         }
     }
 
@@ -431,7 +229,7 @@ public class WebAuthnServer {
             return Either.left(Collections.singletonList("The username \"" + username.get() + "\" is not registered."));
         } else {
             var request = new AssertionRequestWrapper(
-                generateRandom(32),
+                generateRandom(),
                 rp.startAssertion(
                     StartAssertionOptions.builder()
                         .username(username)
@@ -446,8 +244,6 @@ public class WebAuthnServer {
     }
 
     public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final String responseJson) {
-        LOGGER.trace("finishAuthentication responseJson: {}", responseJson);
-
         final AssertionResponse response;
         try {
             response = jsonMapper.readValue(responseJson, AssertionResponse.class);
@@ -456,17 +252,17 @@ public class WebAuthnServer {
             return Either.left(Arrays.asList("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        var request = assertRequestStorage.getIfPresent(response.getRequestId());
-        assertRequestStorage.invalidate(response.getRequestId());
+        val request = assertRequestStorage.getIfPresent(response.requestId());
+        assertRequestStorage.invalidate(response.requestId());
 
         if (request == null) {
             return Either.left(Arrays.asList("Assertion failed!", "No such assertion in progress."));
         } else {
             try {
-                var result = rp.finishAssertion(
+                val result = rp.finishAssertion(
                     FinishAssertionOptions.builder()
                         .request(request.getRequest())
-                        .response(response.getCredential())
+                        .response(response.credential())
                         .build()
                 );
 
@@ -477,7 +273,7 @@ public class WebAuthnServer {
                         LOGGER.error(
                             "Failed to update signature count for user \"{}\", credential \"{}\"",
                             result.getUsername(),
-                            response.getCredential().getId(),
+                            response.credential().getId(),
                             e
                         );
                     }
@@ -488,8 +284,7 @@ public class WebAuthnServer {
                             response,
                             userStorage.getRegistrationsByUsername(result.getUsername()),
                             result.getUsername(),
-                            sessions.createSession(result.getUserHandle()),
-                            result.getWarnings()
+                            sessions.createSession(result.getUserHandle())
                         )
                     );
                 } else {
@@ -503,56 +298,6 @@ public class WebAuthnServer {
                 return Either.left(Arrays.asList("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));
             }
         }
-    }
-
-    public Either<List<String>, DeregisterCredentialResult> deregisterCredential(
-        @NonNull
-        final ByteArray sessionToken,
-        final ByteArray credentialId) {
-        LOGGER.trace("deregisterCredential session: {}, credentialId: {}", sessionToken, credentialId);
-
-        if (credentialId == null || credentialId.getBytes().length == 0) {
-            return Either.left(Collections.singletonList("Credential ID must not be empty."));
-        }
-
-        var session = sessions.getSession(sessionToken);
-        if (session.isPresent()) {
-            var userHandle = session.get();
-            var username = userStorage.getUsernameForUserHandle(userHandle);
-
-            if (username.isPresent()) {
-                var credReg = userStorage.getRegistrationByUsernameAndCredentialId(username.get(), credentialId);
-                if (credReg.isPresent()) {
-                    userStorage.removeRegistrationByUsername(username.get(), credReg.get());
-
-                    return Either.right(new DeregisterCredentialResult(
-                        credReg.get(),
-                        !userStorage.userExists(username.get())
-                    ));
-                } else {
-                    return Either.left(Collections.singletonList("Credential ID not registered:" + credentialId));
-                }
-            } else {
-                return Either.left(Collections.singletonList("Invalid user handle"));
-            }
-        } else {
-            return Either.left(Collections.singletonList("Invalid session"));
-        }
-    }
-
-    public <T> Either<List<String>, T> deleteAccount(final String username, final Supplier<T> onSuccess) {
-        LOGGER.trace("deleteAccount username: {}", username);
-
-        if (username == null || username.isEmpty()) {
-            return Either.left(Collections.singletonList("Username must not be empty."));
-        }
-
-        var removed = userStorage.removeAllRegistrations(username);
-
-        if (removed) {
-            return Either.right(onSuccess.get());
-        }
-        return Either.left(Collections.singletonList("Username not registered:" + username));
     }
 
     @Value
@@ -584,7 +329,7 @@ public class WebAuthnServer {
             this.registration = registration;
             this.attestationTrusted = attestationTrusted;
             attestationCert = Optional.ofNullable(
-                    response.getCredential().getResponse().getAttestation().getAttestationStatement().get("x5c")
+                    response.credential().getResponse().getAttestation().getAttestationStatement().get("x5c")
                 ).map(certs -> certs.get(0))
                 .flatMap((JsonNode certDer) -> {
                     try {
@@ -595,8 +340,8 @@ public class WebAuthnServer {
                     }
                 })
                 .map(AttestationCertInfo::new);
-            this.authData = response.getCredential().getResponse().getParsedAuthenticatorData();
-            this.username = request.getUsername();
+            this.authData = response.credential().getResponse().getParsedAuthenticatorData();
+            this.username = request.username();
             this.sessionToken = sessionToken;
         }
 
@@ -604,9 +349,9 @@ public class WebAuthnServer {
 
     @Value
     public static class AttestationCertInfo {
-        final ByteArray der;
+        ByteArray der;
 
-        final String text;
+        String text;
 
         public AttestationCertInfo(final ByteArray certDer) {
             der = certDer;
@@ -642,19 +387,16 @@ public class WebAuthnServer {
 
         ByteArray sessionToken;
 
-        List<String> warnings;
-
         public SuccessfulAuthenticationResult(final AssertionRequestWrapper request, final AssertionResponse response,
                                               final Collection<CredentialRegistration> registrations,
-                                              final String username, final ByteArray sessionToken, final List<String> warnings) {
+                                              final String username, final ByteArray sessionToken) {
             this(
                 request,
                 response,
                 registrations,
-                response.getCredential().getResponse().getParsedAuthenticatorData(),
+                response.credential().getResponse().getParsedAuthenticatorData(),
                 username,
-                sessionToken,
-                warnings
+                sessionToken
             );
         }
     }
@@ -670,7 +412,8 @@ public class WebAuthnServer {
 
     private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
         @Override
-        public void serialize(final AuthenticatorData value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+        public void serialize(final AuthenticatorData value, final JsonGenerator gen,
+                              final SerializerProvider serializers) throws IOException {
             gen.writeStartObject();
             gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
             gen.writeObjectField("flags", value.getFlags());
@@ -691,71 +434,46 @@ public class WebAuthnServer {
         }
     }
 
-    @Value
-    public static class SuccessfulU2fRegistrationResult {
-        boolean success = true;
-
-        RegistrationRequest request;
-
-        U2fRegistrationResponse response;
-
-        CredentialRegistration registration;
-
-        boolean attestationTrusted;
-
-        Optional<AttestationCertInfo> attestationCert;
-
-        String username;
-
-        ByteArray sessionToken;
-    }
-
     private CredentialRegistration addRegistration(
         final UserIdentity userIdentity,
-        final String nickname,
-        final RegistrationResponse response,
+        final Optional<String> nickname,
         final RegistrationResult result) {
-        return addRegistration(userIdentity, nickname,
-            response.getCredential().getResponse().getAttestation().getAuthenticatorData().getSignatureCounter(),
+
+        return addRegistration(
+            userIdentity,
+            nickname,
             RegisteredCredential.builder()
                 .credentialId(result.getKeyId().getId())
                 .userHandle(userIdentity.getId())
                 .publicKeyCose(result.getPublicKeyCose())
-                .signatureCount(response.getCredential().getResponse().getParsedAuthenticatorData().getSignatureCounter())
+                .signatureCount(result.getSignatureCount())
                 .build(),
-            result.getAttestationMetadata().orElse(null)
-        );
+            result.getKeyId().getTransports().orElseGet(TreeSet::new),
+            result
+                .getAttestationTrustPath()
+                .flatMap(x5c -> x5c.stream().findFirst())
+                .flatMap(cert -> {
+                    if (rp.getAttestationTrustSource().get() instanceof AttestationMetadataSource source) {
+                        return source.findMetadata(cert);
+                    }
+                    return Optional.empty();
+                }));
     }
+
 
     private CredentialRegistration addRegistration(
         final UserIdentity userIdentity,
-        final String nickname,
-        final long signatureCount,
-        final U2fRegistrationResult result) {
-        return addRegistration(userIdentity, nickname, signatureCount,
-            RegisteredCredential.builder()
-                .credentialId(result.getKeyId().getId())
-                .userHandle(userIdentity.getId())
-                .publicKeyCose(result.getPublicKeyCose())
-                .signatureCount(signatureCount)
-                .build(),
-            result.getAttestationMetadata().orElse(null)
-        );
-    }
-
-    private CredentialRegistration addRegistration(
-        final UserIdentity userIdentity,
-        final String nickname,
-        final long signatureCount,
+        final Optional<String> nickname,
         final RegisteredCredential credential,
-        final Attestation attestationMetadata) {
-        var reg = CredentialRegistration.builder()
+        final SortedSet<AuthenticatorTransport> transports,
+        final Optional<Attestation> attestationMetadata) {
+        val reg = CredentialRegistration.builder()
             .userIdentity(userIdentity)
-            .credentialNickname(nickname)
+            .credentialNickname(nickname.orElse(null))
             .registrationTime(clock.instant())
             .credential(credential)
-            .signatureCount(signatureCount)
-            .attestationMetadata(attestationMetadata)
+            .transports(transports)
+            .attestationMetadata(attestationMetadata.orElse(null))
             .build();
         LOGGER.debug("Adding registration: user: {}, nickname: {}, credential: {}", userIdentity, nickname, credential);
         userStorage.addRegistrationByUsername(userIdentity.getName(), reg);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.time.Clock;
+import java.time.ZonedDateTime;
 
 /**
  * Strategy that determines if the ticket is expired. Implementations of the
@@ -65,4 +66,27 @@ public interface ExpirationPolicy extends Serializable {
      */
     @JsonIgnore
     Clock getClock();
+
+
+    /**
+     * Gets maximum expiration time for this ticket.
+     * The ticket will expire at the calculated time.
+     *
+     * @param ticketState the ticket state
+     * @return the maximum expiration time
+     */
+    default ZonedDateTime getMaximumExpirationTime(final Ticket ticketState) {
+        return null;
+    }
+
+    /**
+     * Gets idle expiration time for this ticket.
+     * The ticket will expire at the calculated time if idle.
+     *
+     * @param ticketState the ticket state
+     * @return the idle expiration time
+     */
+    default ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        return null;
+    }
 }

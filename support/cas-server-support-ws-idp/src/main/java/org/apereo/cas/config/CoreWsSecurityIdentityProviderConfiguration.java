@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -21,14 +21,17 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataController;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
+import org.apereo.cas.ws.idp.services.DefaultWSFederationRelyingPartyAttributeWriter;
+import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyAttributeWriter;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
 import org.apereo.cas.ws.idp.services.WsFederationServicesManagerRegisteredServiceLocator;
@@ -39,7 +42,6 @@ import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +66,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
 @AutoConfiguration
 public class CoreWsSecurityIdentityProviderConfiguration {
 
@@ -157,15 +159,25 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultWSFederationRelyingPartyAttributeWriter")
+        public WSFederationRelyingPartyAttributeWriter defaultWSFederationRelyingPartyAttributeWriter(
+            final CasConfigurationProperties casProperties) {
+            val claims = new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims());
+            return new DefaultWSFederationRelyingPartyAttributeWriter(claims);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
+            @Qualifier("defaultWSFederationRelyingPartyAttributeWriter")
+            final WSFederationRelyingPartyAttributeWriter relyingPartyAttributeWriter,
             @Qualifier("securityTokenServiceCredentialCipherExecutor")
             final CipherExecutor securityTokenServiceCredentialCipherExecutor,
             @Qualifier("securityTokenServiceClientBuilder")
-            final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
-            final CasConfigurationProperties casProperties) {
+            final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
             return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
-                securityTokenServiceCredentialCipherExecutor, new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims()));
+                securityTokenServiceCredentialCipherExecutor, relyingPartyAttributeWriter);
         }
 
         @Bean
@@ -174,7 +186,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         public TicketValidator wsFederationTicketValidator(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,

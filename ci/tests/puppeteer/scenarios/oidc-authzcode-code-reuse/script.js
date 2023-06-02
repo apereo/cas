@@ -13,7 +13,7 @@ const assert = require('assert');
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000);
     await cas.click(page, "#allow");
     await page.waitForNavigation();
 
@@ -32,7 +32,6 @@ const assert = require('assert');
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
     }, async res => {
-        console.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
@@ -41,23 +40,22 @@ const assert = require('assert');
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
 
-        assert(decoded.sub !== null)
+        assert(decoded.sub !== null);
         assert(decoded["preferred_username"] == null)
     }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
-    assert(accessToken != null, "Access Token cannot be null")
+    assert(accessToken != null, "Access Token cannot be null");
 
     let profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${accessToken}`;
     console.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
     }, res => {
-        console.log(res.data);
-        assert(res.data.email != null)
-        assert(res.data.gender != null)
-        assert(res.data.name != null)
+        assert(res.data.email != null);
+        assert(res.data.gender != null);
+        assert(res.data.name != null);
         assert(res.data["preferred_username"] != null)
     }, error => {
         throw `Operation failed: ${error}`;
@@ -69,7 +67,7 @@ const assert = require('assert');
     }, () => {
         throw `OAuth code ${code} cannot be used again`;
     }, error => {
-        console.log(error.response.data)
+        console.log(error.response.data);
         assert(error.response.data.error === 'invalid_grant')
     });
 
@@ -81,7 +79,7 @@ const assert = require('assert');
     }, () => {
         throw `Access token ${accessToken} should have been removed and rejected with code reused`;
     }, error => {
-        assert(error.response.status === 401)
+        assert(error.response.status === 401);
         console.log(error.response.data);
         assert(error.response.data.error === "expired_accessToken");
     });

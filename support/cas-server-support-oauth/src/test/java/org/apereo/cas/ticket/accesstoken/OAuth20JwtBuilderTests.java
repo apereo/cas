@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("OAuth")
+@Tag("OAuthToken")
 @SuppressWarnings("JavaUtilDate")
 public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
     @Test
@@ -28,7 +29,7 @@ public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
         val request = JwtBuilder.JwtRequest.builder()
             .issueDate(new Date())
             .jwtId(service.getId())
-            .serviceAudience("clientid-jwt")
+            .serviceAudience(Set.of("clientid-jwt"))
             .subject("casuser")
             .issuer(casProperties.getServer().getPrefix())
             .build();

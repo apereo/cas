@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -68,12 +67,9 @@ public class RestfulYubiKeyAccountRegistryTests {
             val request = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
                 .token(AbstractYubiKeyAccountRegistryTests.OTP).name(UUID.randomUUID().toString()).build();
             assertTrue(getYubiKeyAccountRegistry().registerAccountFor(request));
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() throws Throwable {
-                    getYubiKeyAccountRegistry().delete(request.getUsername());
-                    getYubiKeyAccountRegistry().deleteAll();
-                }
+            assertDoesNotThrow(() -> {
+                getYubiKeyAccountRegistry().delete(request.getUsername());
+                getYubiKeyAccountRegistry().deleteAll();
             });
         }
     }
@@ -99,12 +95,7 @@ public class RestfulYubiKeyAccountRegistryTests {
                 .token(AbstractYubiKeyAccountRegistryTests.OTP).name(UUID.randomUUID().toString()).build();
             assertTrue(getYubiKeyAccountRegistry().isYubiKeyRegisteredFor(request.getUsername()));
 
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() throws Throwable {
-                    getYubiKeyAccountRegistry().delete(account.getUsername(), registeredDevice.getId());
-                }
-            });
+            assertDoesNotThrow(() -> getYubiKeyAccountRegistry().delete(account.getUsername(), registeredDevice.getId()));
         }
     }
 

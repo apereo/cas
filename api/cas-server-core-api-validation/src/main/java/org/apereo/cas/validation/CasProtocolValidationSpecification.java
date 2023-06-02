@@ -2,7 +2,7 @@ package org.apereo.cas.validation;
 
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An interface to impose restrictions and requirements on validations (e.g.
@@ -40,5 +40,24 @@ public interface CasProtocolValidationSpecification extends Ordered {
      * @param value the value
      */
     default void setRenew(boolean value) {
+    }
+
+    enum CasProtocolVersions {
+        /**
+         * CAS v1 protocol.
+         */
+        CAS10,
+        /**
+         * CAS v2 protocol.
+         */
+        CAS20,
+        /**
+         * CAS v3 protocol.
+         */
+        CAS30,
+        /**
+         * SAML v1.1 protocol.
+         */
+        SAML1
     }
 }

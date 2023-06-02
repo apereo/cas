@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.AuthenticatedServicesAwareTicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -48,7 +49,7 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
 
-        val initialService = casProperties.getSso().getRequiredServicePattern();
+        val initialService = casProperties.getSso().getServices().getRequiredServicePattern();
         if (StringUtils.isNotBlank(initialService)) {
             val initialServicePattern = RegexUtils.createPattern(initialService);
             enforceInitialMandatoryService(context, ticketGrantingTicketId, initialServicePattern);
@@ -100,8 +101,8 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
             return true;
         }
 
-        val registeredService = this.servicesManager.findServiceBy(service);
-        return registeredService != null && RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
+        val registeredService = servicesManager.findServiceBy(service);
+        return RegisteredServiceProperties.SKIP_REQUIRED_SERVICE_CHECK.isAssignedTo(registeredService);
     }
 
     /**
@@ -118,8 +119,9 @@ public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
             ? ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId)
             : null;
 
-        if (ticket != null) {
-            servicesToMatch.addAll(ticket.getServices().values());
+        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
+            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
+            servicesToMatch.addAll(services.values());
         }
         return servicesToMatch;
     }

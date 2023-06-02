@@ -18,8 +18,8 @@ import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link BaseHttpServletAwareSamlObjectEncoder}.
@@ -64,7 +64,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
                           final MessageContext messageContext) throws SamlException {
         if (httpResponse != null) {
             val encoder = getMessageEncoderInstance();
-            encoder.setHttpServletResponse(httpResponse);
+            encoder.setHttpServletResponseSupplier(() -> httpResponse);
 
             val ctx = getEncoderMessageContext(request, samlObject, relayState, messageContext);
             encoder.setMessageContext(ctx);
@@ -101,7 +101,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
                                   final T samlResponse,
                                   final String relayState,
                                   final MessageContext messageContext) {
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             encoder.initialize();
             encoder.encode();
         });

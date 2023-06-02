@@ -13,7 +13,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,7 +39,6 @@ public class ChainingAttributeReleasePolicyTests {
     @Autowired
     @Qualifier("scriptResourceCacheManager")
     private ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
-
 
     private ChainingAttributeReleasePolicy chain;
 
@@ -84,14 +82,9 @@ public class ChainingAttributeReleasePolicyTests {
         val repository = chain.getPrincipalAttributesRepository();
         assertTrue(repository instanceof ChainingPrincipalAttributesRepository);
         assertNotNull(repository.getAttributes(releasePolicyContext.getPrincipal(), releasePolicyContext.getRegisteredService()));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                repository.update(releasePolicyContext.getPrincipal().getId(),
-                    releasePolicyContext.getPrincipal().getAttributes(),
-                    releasePolicyContext.getRegisteredService());
-            }
-        });
+        assertDoesNotThrow(() -> repository.update(releasePolicyContext.getPrincipal().getId(),
+            releasePolicyContext.getPrincipal().getAttributes(),
+            releasePolicyContext.getRegisteredService()));
     }
 
     @Test

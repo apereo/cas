@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.x509.web;
 
-import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
-import org.apereo.cas.adaptors.x509.config.X509CertificateExtractorConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.X509AuthenticationWebflowConfiguration;
+import org.apereo.cas.config.X509CertificateExtractorConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = {
-    "server.ssl.key-store=file:/tmp/keystore",
+    "server.ssl.key-store=file:/tmp/keystore-${#randomNumber6}.jks",
     "server.ssl.key-store-password=changeit",
 
     "server.ssl.trust-store=file:/tmp/thekeystore",

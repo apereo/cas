@@ -11,9 +11,11 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileBuilderContext}.
@@ -23,7 +25,6 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @SuperBuilder
-@SuppressWarnings("ObjectToString")
 @ToString(of = {"authenticatedAssertion", "registeredService", "binding"})
 public class SamlProfileBuilderContext {
     private final RequestAbstractType samlRequest;
@@ -32,7 +33,7 @@ public class SamlProfileBuilderContext {
 
     private final HttpServletResponse httpResponse;
 
-    private final AuthenticatedAssertionContext authenticatedAssertion;
+    private final Optional<AuthenticatedAssertionContext> authenticatedAssertion;
 
     @NotNull
     private final SamlRegisteredService registeredService;

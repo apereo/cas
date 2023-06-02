@@ -9,7 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
+import java.util.Objects;
 
 /**
  * Multifactor Bypass provider based on Credentials.
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -1233888418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
@@ -39,7 +43,8 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
     protected static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()
             .stream()
-            .anyMatch(e -> e.getCredentialClass().getName().matches(credentialClassType));
+            .anyMatch(e -> Objects.nonNull(e.getCredentialMetadata())
+                           && e.getCredentialMetadata().getCredentialClass().getName().matches(credentialClassType));
     }
 
     @Override

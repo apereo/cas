@@ -2,11 +2,14 @@ package org.apereo.cas.oidc.web.controllers.introspection;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
-import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.BaseOAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenSuccessResponse;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
@@ -17,8 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -48,7 +51,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(
+    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(
         final HttpServletRequest request,
         final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
@@ -75,16 +78,26 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
     @Override
-    public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
-                                                                                     final HttpServletResponse response) {
+    public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
+                                                                                                   final HttpServletResponse response) {
         return super.handlePostRequest(request, response);
     }
 
     @Override
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20Token ticket) {
-        val r = super.createIntrospectionValidResponse(ticket);
-        r.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.empty()));
-        FunctionUtils.doIf(r.isActive(), o -> r.setScope(String.join(" ", ticket.getScopes()))).accept(r);
-        return r;
+    protected OAuth20IntrospectionAccessTokenSuccessResponse createIntrospectionValidResponse(
+        final String accessTokenId, final OAuth20Token ticket) {
+        val response = super.createIntrospectionValidResponse(accessTokenId, ticket);
+        if (ticket != null) {
+            Optional.ofNullable(ticket.getService())
+                .ifPresent(service -> {
+                    val registeredService = getConfigurationContext().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
+                    response.setIss(getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
+
+                });
+            FunctionUtils.doIf(response.isActive(), o -> response.setScope(String.join(" ", ticket.getScopes()))).accept(response);
+            CollectionUtils.firstElement(ticket.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
+                .ifPresent(dpop -> response.setDPopConfirmation(new OAuth20IntrospectionAccessTokenSuccessResponse.DPopConfirmation(dpop.toString())));
+        }
+        return response;
     }
 }

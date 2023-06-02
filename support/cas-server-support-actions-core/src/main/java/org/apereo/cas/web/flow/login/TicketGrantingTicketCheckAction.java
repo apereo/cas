@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -24,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class TicketGrantingTicketCheckAction extends BaseCasWebflowAction {
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -33,10 +32,10 @@ public class TicketGrantingTicketCheckAction extends BaseCasWebflowAction {
             return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_NOT_EXISTS);
         }
         try {
-            val ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            val ticket = ticketRegistry.getTicket(tgtId, Ticket.class);
             LOGGER.trace("Located ticket with id [{}]", ticket.getId());
             return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID);
-        } catch (final AbstractTicketException e) {
+        } catch (final Exception e) {
             LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
         }
         return new Event(this, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_INVALID);

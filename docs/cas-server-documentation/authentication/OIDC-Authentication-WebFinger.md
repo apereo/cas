@@ -53,7 +53,7 @@ To determine the correct issuer, resources that are provided to
 the `webfinger` discovery endpoint using the `acct` URI scheme
 can be located and fetched using external user repositories via `email` or `username`.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The default repository implementation will
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>The default repository implementation will
 echo back the provided email or username, etc as it is <strong>ONLY</strong> relevant for demo/testing purposes.</p></div>
 
 The following user-info repository choices are available for configuration and production use.
@@ -82,7 +82,7 @@ key-value objects, representing user account details. An empty `Map`
 would indicate the absence of the user record, leading to a `404` 
 response status back to the relying party.
 
-{% include_cached casproperties.html properties="cas.authn.oidc.webfinger.userInfo.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.webfinger.user-info.groovy" %}
 
 ### REST UserInfo Repository
 
@@ -100,10 +100,10 @@ response status back to the relying party.
 ### Custom UserInfo Repository
 
 It is possible to design and inject your own version of webfinger user repositories into CAS. First, you will need to design
-a `@Configuration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
+a `@AutoConfiguration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
 
 ```java
-@Configuration(value = "customWebFingerUserInfoConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CustomWebFingerUserInfoConfiguration {
 

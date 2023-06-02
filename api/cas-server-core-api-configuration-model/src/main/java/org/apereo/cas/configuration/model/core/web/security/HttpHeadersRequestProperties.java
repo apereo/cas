@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("HttpHeadersRequestProperties")
 public class HttpHeadersRequestProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5993704062519851359L;
 
     /**
@@ -80,4 +83,10 @@ public class HttpHeadersRequestProperties implements Serializable {
      * Multiple directives are separated with a semicolon.
      */
     private String contentSecurityPolicy;
+
+    /**
+     * Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.
+     */
+    @RegularExpressionCapable
+    private String cacheControlStaticResources = "css|js|png|txt|jpg|ico|jpeg|bmp|gif";
 }

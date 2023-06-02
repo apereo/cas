@@ -45,6 +45,7 @@ public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthen
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
         jdbcTemplate.execute("create table surrogate_accounts (id int, username varchar(255), surrogateAccount varchar(255));");
+        jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casadmin', '" + SurrogateAuthenticationService.WILDCARD_ACCOUNT + "');");
         jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casuser', 'banderson');");
         jdbcTemplate.execute("insert into surrogate_accounts values (200, 'casuser', 'surrogate2');");
         jdbcTemplate.execute("insert into surrogate_accounts values (300, 'casuser', 'surrogate3');");

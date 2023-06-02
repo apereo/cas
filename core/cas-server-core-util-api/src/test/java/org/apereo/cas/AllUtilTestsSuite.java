@@ -4,6 +4,7 @@ import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
 import org.apereo.cas.util.InetAddressUtilsTests;
+import org.apereo.cas.util.LoggingUtilsSummarizeTests;
 import org.apereo.cas.util.LoggingUtilsTests;
 import org.apereo.cas.util.SocketUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
@@ -19,11 +20,11 @@ import org.apereo.cas.util.io.PathWatcherServiceTests;
 import org.apereo.cas.util.io.TemporaryFileSystemResourceTests;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptorTests;
 import org.apereo.cas.util.jwt.JsonWebTokenSignerTests;
+import org.apereo.cas.util.logging.DisabledLogMessageSummarizerTests;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactoryTests;
-import org.apereo.cas.util.serialization.MessageSanitizationUtilsTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
 import org.apereo.cas.util.spring.ApplicationContextProviderTests;
 import org.apereo.cas.util.spring.ConvertersTests;
@@ -67,15 +68,16 @@ import org.junit.platform.suite.api.Suite;
     SpringAwareMessageMessageInterpolatorTests.class,
     HttpUtilsTests.class,
     ConvertersTests.class,
+    DisabledLogMessageSummarizerTests.class,
     BeanDefinitionStoreFailureAnalyzerTests.class,
     ConditionalOnMatchingHostnameTests.class,
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
+    LoggingUtilsSummarizeTests.class,
     SocketUtilsTests.class,
     BeanContainerTests.class,
     ApplicationContextProviderTests.class,
-    MessageSanitizationUtilsTests.class,
     InetAddressUtilsTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,

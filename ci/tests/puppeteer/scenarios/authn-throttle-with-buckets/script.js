@@ -5,22 +5,22 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
 
-    await cas.logg("Log in attempt: #0 Successful Login")
+    await cas.logg("Log in attempt: #0 Successful Login");
     await submitLogin(page, "casuser", "Mellon");
     await cas.assertCookie(page);
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(1000);
 
-    console.log("Log in attempt: #1")
+    console.log("Log in attempt: #1");
     await submitLogin(page);
 
-    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed")
+    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
-    console.log("Log in attempt: #2")
+    console.log("Log in attempt: #2");
     await submitLogin(page);
 
-    await cas.assertInnerText(page, "#content h2", "Access Denied")
-    await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.")
+    await cas.assertInnerText(page, "#content h2", "Access Denied");
+    await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
 
     // console.log("Closing page and trying again with bad credentials...")
     // await page.close();

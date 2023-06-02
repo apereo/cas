@@ -13,6 +13,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 
 import java.util.Set;
@@ -30,17 +31,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         super(config);
     }
 
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @return true/false
-     */
     protected static boolean isAllowedToGenerateRefreshToken() {
         return true;
     }
 
     @Override
-    public AccessTokenRequestContext extract(final WebContext context) {
+    public AccessTokenRequestContext extractRequest(final WebContext context) {
         val grantType = getConfigurationContext().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
 
@@ -52,7 +48,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val requestedScopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
-        ensureThatTheTicketGrantingTicketIsNotExpired(token);
+        ensureTicketGrantingTicketIsNotExpired(token);
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
@@ -92,10 +88,10 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * Ensure that the ticket-granting-ticket is not expired by retrieving it.
      *
      * @param token the token
-     * @return the boolean
+     * @return true/false
      */
-    protected boolean ensureThatTheTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
-        return token.isCode() && getConfigurationContext().getCentralAuthenticationService()
+    protected boolean ensureTicketGrantingTicketIsNotExpired(final OAuth20Token token) {
+        return token.isCode() && getConfigurationContext().getTicketRegistry()
                                      .getTicket(token.getTicketGrantingTicket().getId()) != null;
     }
 
@@ -162,7 +158,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected OAuth20Token getOAuthTokenFromRequest(final WebContext context) {
         val id = getOAuthParameter(context);
-        return getConfigurationContext().getCentralAuthenticationService().getTicket(id, OAuth20Token.class);
+        return getConfigurationContext().getTicketRegistry().getTicket(id, OAuth20Token.class);
     }
 
     /**
@@ -174,8 +170,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+            .resolveClientIdAndClientSecret(callContext).getLeft();
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = StringUtils.isNotBlank(clientId)
             ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId)

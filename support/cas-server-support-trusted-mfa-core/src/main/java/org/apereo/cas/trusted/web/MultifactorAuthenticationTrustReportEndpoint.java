@@ -66,7 +66,7 @@ public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuato
      * @param key the key
      * @return the integer
      */
-    @Operation(summary = "Remove trusted device using its key", parameters = {@Parameter(name = "key", required = true)})
+    @Operation(summary = "Remove trusted device using its key", parameters = @Parameter(name = "key", required = true))
     @DeleteOperation
     public Integer revoke(
         @Selector

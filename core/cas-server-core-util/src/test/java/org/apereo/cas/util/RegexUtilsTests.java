@@ -26,10 +26,10 @@ public class RegexUtilsTests {
     public void verifyBlankValidRegex() {
         var pattern = RegexUtils.createPattern(StringUtils.EMPTY);
         assertNotNull(pattern);
-        assertEquals(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
+        assertSame(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
         pattern = RegexUtils.createPattern("********");
         assertNotNull(pattern);
-        assertEquals(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
+        assertSame(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
     }
 
     @Test

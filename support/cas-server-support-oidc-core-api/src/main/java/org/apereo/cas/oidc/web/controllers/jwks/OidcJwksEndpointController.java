@@ -28,8 +28,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -61,8 +61,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL,
         "/**/" + OidcConstants.JWKS_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Produces the collection of keys from the keystore",
-        parameters = {@Parameter(name = "state", description = "Filter keys by their state name", required = false)})
+    @Operation(summary = "Produces the collection of keys from the keystore", parameters = @Parameter(name = "state", description = "Filter keys by their state name", required = false))
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         @RequestParam(value = "state", required = false)

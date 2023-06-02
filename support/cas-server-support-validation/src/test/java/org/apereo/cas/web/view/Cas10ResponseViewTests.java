@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+import org.apereo.cas.web.view.attributes.AttributeValuesPerLineProtocolAttributesRenderer;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
@@ -40,9 +41,15 @@ public class Cas10ResponseViewTests {
         this.model = new HashMap<>();
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
-        this.model.put("assertion", new DefaultAssertionBuilder(
-            CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
-            CoreAuthenticationTestUtils.getWebApplicationService("TestService")).with(true).build());
+        val testService = CoreAuthenticationTestUtils.getWebApplicationService("TestService");
+        model.put("assertion", DefaultAssertionBuilder.builder()
+            .primaryAuthentication(CoreAuthenticationTestUtils.getAuthentication())
+            .authentications(list)
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService(testService.getId()))
+            .service(testService)
+            .newLogin(true)
+            .build()
+            .assemble());
     }
 
     @Test
@@ -50,9 +57,9 @@ public class Cas10ResponseViewTests {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, new NoOpProtocolAttributeEncoder(),
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class), new DefaultAuthenticationServiceSelectionPlan(),
-            NoOpProtocolAttributesRenderer.INSTANCE);
-        view.render(this.model, new MockHttpServletRequest(), response);
-        assertEquals("yes\ntest\n", response.getContentAsString());
+            new AttributeValuesPerLineProtocolAttributesRenderer());
+        view.render(model, new MockHttpServletRequest(), response);
+        assertTrue(response.getContentAsString().startsWith("yes\ntest\n"));
     }
 
     @Test
@@ -62,7 +69,7 @@ public class Cas10ResponseViewTests {
             mock(ServicesManager.class), mock(AuthenticationAttributeReleasePolicy.class),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE);
-        view.render(this.model, new MockHttpServletRequest(), response);
+        view.render(model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }
 }

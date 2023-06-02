@@ -17,8 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ import java.util.Optional;
 @Slf4j
 @Getter
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = -2059445756475980894L;
 
     private final String idpServerPrefix;

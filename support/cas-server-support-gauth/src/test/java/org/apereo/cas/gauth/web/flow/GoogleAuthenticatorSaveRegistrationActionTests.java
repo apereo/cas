@@ -5,6 +5,7 @@ import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
+import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -94,7 +95,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "918273");
-        request.addParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, acct.getName());
+        request.addParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, acct.getName());
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);
@@ -117,8 +118,8 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "123456");
-        request.addParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, acct.getName());
-        request.addParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "true");
+        request.addParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, acct.getName());
+        request.addParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "true");
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);

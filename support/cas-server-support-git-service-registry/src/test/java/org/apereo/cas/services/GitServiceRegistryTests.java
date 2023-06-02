@@ -5,8 +5,8 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -68,10 +68,10 @@ import static org.mockito.Mockito.*;
         "cas.service-registry.git.repository-url=file://${java.io.tmpdir}/cas-sample-data"
     })
 @Slf4j
-@Tag("FileSystem")
+@Tag("Git")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
+public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -97,15 +97,17 @@ import static org.mockito.Mockito.*;
                 PathUtils.delete(gitDir.toPath(),
                     StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
-            val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
-            FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            gitSampleRepo.add().addFilepattern("*.txt").call();
-            gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+            try (val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call()) {
+                FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                gitSampleRepo.add().addFilepattern("*.txt").call();
+                gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+            }
 
-            val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            git.add().addFilepattern("*.txt").call();
-            git.commit().setSign(false).setMessage("Initial commit").call();
+            try (val git = Git.init().setDirectory(gitDir).setBare(false).call()) {
+                FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                git.add().addFilepattern("*.txt").call();
+                git.commit().setSign(false).setMessage("Initial commit").call();
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);

@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
@@ -101,17 +102,23 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
      */
     protected String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         val ticket = ticketRegistrySupport.getTicketGrantingTicket(ticketGrantingTicketId);
         if (ticket != null) {
             WebUtils.putTicketGrantingTicketInScopes(context, ticket.getId());
             return ticket.getId();
         }
-        ticketGrantingTicketCookieGenerator.removeCookie(response);
+        clearTicketGrantingCookieFromContext(context, null);
+        return null;
+    }
+
+    protected void clearTicketGrantingCookieFromContext(final RequestContext context, final String ticketGrantingTicketId) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         ticketGrantingTicketCookieGenerator.removeAll(request, response);
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
-        return null;
+        Optional.ofNullable(ticketGrantingTicketId)
+            .ifPresent(Unchecked.consumer(id -> ticketRegistrySupport.getTicketRegistry().deleteTicket(id)));
     }
 
     /**
@@ -158,22 +165,22 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
     }
 
-    /**
-     * Configure the SSO participation in webflow.
-     *
-     * @param context                the webflow context
-     * @param ticketGrantingTicketId the TGT identifier
-     */
     protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .requestContext(context)
+            .httpServletRequest(request)
+            .httpServletResponse(response)
             .build();
         val ssoParticipation = renewalStrategy.supports(ssoRequest) && renewalStrategy.isParticipating(ssoRequest);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
-            val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
+            val auth = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);
             WebUtils.putExistingSingleSignOnSessionPrincipal(context,
                 Optional.ofNullable(auth).map(Authentication::getPrincipal).orElseGet(NullPrincipal::getInstance));
+            WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         }
     }
 
@@ -190,8 +197,8 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
 
         val staticAuthEnabled = (casProperties.getAuthn().getAccept().isEnabled()
-            && StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()))
-            || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers());
+                                 && StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()))
+                                || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers());
         WebUtils.putStaticAuthenticationIntoFlowScope(context, staticAuthEnabled);
 
         if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
@@ -204,6 +211,8 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
                 .collect(Collectors.toList());
             WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
         }
+        context.getFlowScope().put("httpRequestSecure", request.isSecure());
+        context.getFlowScope().put("httpRequestMethod", request.getMethod());
     }
 
     /**

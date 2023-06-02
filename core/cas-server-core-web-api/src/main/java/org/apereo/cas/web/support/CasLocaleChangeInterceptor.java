@@ -1,19 +1,23 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.configuration.model.core.web.LocaleProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -26,20 +30,11 @@ import java.util.Locale;
  */
 @RequiredArgsConstructor
 public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
-    /**
-     * The Locale properties.
-     */
-    protected final LocaleProperties localeProperties;
+    protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
-    /**
-     * The Argument extractor.
-     */
-    protected final ArgumentExtractor argumentExtractor;
+    protected final ObjectProvider<ArgumentExtractor> argumentExtractor;
 
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
     @Setter
     private List<String> supportedFlows = new ArrayList<>();
@@ -67,26 +62,30 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final Object handler) throws ServletException {
+                             @Nonnull final HttpServletResponse response,
+                             @Nonnull final Object handler) throws ServletException {
         val requestUrl = request.getRequestURL().toString();
-        if (localeProperties.isForceDefaultLocale()) {
-            val locale = new Locale(localeProperties.getDefaultValue());
+        if (casProperties.getObject().getLocale().isForceDefaultLocale()) {
+            val locale = Locale.forLanguageTag(casProperties.getObject().getLocale().getDefaultValue());
             configureLocale(request, response, locale);
             return true;
         }
-        val service = this.argumentExtractor.extractService(request);
+        val service = argumentExtractor.getObject().extractService(request);
         if (service != null) {
-            val registeredService = servicesManager.findServiceBy(service);
-            if (registeredService != null && StringUtils.isNotBlank(registeredService.getLocale())) {
-                val locale = new Locale(SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getLocale()));
-                configureLocale(request, response, locale);
+            val registeredService = servicesManager.getObject().findServiceBy(service);
+            if (registeredService instanceof WebBasedRegisteredService webRegisteredService) {
+                if (StringUtils.isNotBlank(webRegisteredService.getLocale())) {
+                    val locale = Locale.forLanguageTag(SpringExpressionLanguageValueResolver.getInstance()
+                        .resolve(webRegisteredService.getLocale()));
+                    configureLocale(request, response, locale);
+                }
             }
         }
 
-        val newLocale = request.getParameter(getParamName());
+        var newLocale = request.getParameter(getParamName());
         if (newLocale != null) {
-            val locale = new Locale(newLocale);
+            newLocale = newLocale.replace('_', '-');
+            val locale = Locale.forLanguageTag(newLocale);
             configureLocale(request, response, locale);
         }
 

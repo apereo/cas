@@ -20,8 +20,9 @@ import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 @RequiredArgsConstructor
 public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements DisposableBean {
 
-    private final transient WatchableGroovyScriptResource watchableScript;
-    private final transient ApplicationContext applicationContext;
+    private final WatchableGroovyScriptResource watchableScript;
+
+    private final ApplicationContext applicationContext;
 
     public GroovyPasswordEncoder(final Resource groovyScript, final ApplicationContext applicationContext) {
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
@@ -29,15 +30,15 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements Di
     }
 
     @Override
-    protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
-        val args = new Object[]{rawPassword, salt, LOGGER, this.applicationContext};
-        return watchableScript.execute(args, byte[].class);
-    }
-
-    @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
         val args = new Object[]{rawPassword, encodedPassword, LOGGER, this.applicationContext};
         return watchableScript.execute("matches", Boolean.class, args);
+    }
+
+    @Override
+    protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
+        val args = new Object[]{rawPassword, salt, LOGGER, this.applicationContext};
+        return watchableScript.execute(args, byte[].class);
     }
 
     @Override

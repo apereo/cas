@@ -10,7 +10,9 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 
 /**
  * This is {@link GroovyMultifactorAuthenticationProviderBypassEvaluator}.
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -4909072898415688377L;
 
     private final transient WatchableGroovyScriptResource watchableScript;

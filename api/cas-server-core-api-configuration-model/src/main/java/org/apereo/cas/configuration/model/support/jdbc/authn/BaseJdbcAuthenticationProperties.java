@@ -4,12 +4,15 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationHand
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serial;
 
 /**
  * This is {@link BaseJdbcAuthenticationProperties}.
@@ -22,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProperties {
+    @Serial
     private static final long serialVersionUID = 8460723293967413501L;
 
     /**
@@ -33,6 +37,7 @@ public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProper
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**

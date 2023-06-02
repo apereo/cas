@@ -16,14 +16,13 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.service-registry.redis.host=localhost",
     "cas.service-registry.redis.port=6379",
-
-    "cas.service-registry.redis.pool.max-active=20",
-    "cas.service-registry.redis.pool.enabled=true",
+    "cas.service-registry.redis.share-native-connections=true",
 
     "cas.service-registry.redis.sentinel.master=mymaster",
     "cas.service-registry.redis.sentinel.node[0]=localhost:26379",
     "cas.service-registry.redis.sentinel.node[1]=localhost:26380",
-    "cas.service-registry.redis.sentinel.node[2]=localhost:26381"
+    "cas.service-registry.redis.sentinel.node[2]=localhost:26381",
+    "cas.service-registry.redis.timeout=5000"
 })
 @EnabledIfListeningOnPort(port = 6379)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

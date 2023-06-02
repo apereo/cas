@@ -5,8 +5,6 @@ import org.apereo.cas.mongo.CasMongoOperations;
 import lombok.val;
 import org.bson.Document;
 
-import java.util.stream.Collectors;
-
 /**
  * This is {@link MongoDbHealthIndicator} where it attempts to collect statistics
  * on all mongodb instances configured inside CAS.
@@ -31,15 +29,14 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
             .map(c -> {
                 val stats = mongoTemplate.executeCommand(new Document("collStats", c));
                 return new MongoDbCacheStatistics(stats, c);
-            })
-            .collect(Collectors.toList());
+            }).toList();
 
         return list.toArray(CacheStatistics[]::new);
     }
 
     @Override
     protected String getName() {
-        val dbName = mongoTemplate.getMongoDbFactory().getMongoDatabase().getName();
+        val dbName = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase().getName();
         return super.getName() + '-' + dbName;
     }
 }

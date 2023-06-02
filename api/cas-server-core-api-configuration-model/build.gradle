@@ -3,6 +3,14 @@ def skipConfigurationMetadata = providers.systemProperty("skipNestedConfigMetada
 
 sourceSets.test.resources.srcDirs += sourceSets.main.resources.srcDirs
 
+sourceSets {
+    configurationMetadata {
+        resources {
+            srcDir 'src/config'
+        }
+    }
+}
+
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle
@@ -15,6 +23,7 @@ dependencies {
     testImplementation libraries.springbootconfigmetadata
     
     compileOnly libraries.javaparser
+    compileOnly libraries.log4j
     
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
@@ -29,8 +38,9 @@ if (!skipConfigurationMetadata) {
                     "metadata for nested and indexed properties. The process starts with the build directory " +
                     "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
         }
+
         mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
-        classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
+        classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath + sourceSets.configurationMetadata.runtimeClasspath
         args buildDir, projectDir.canonicalPath
     }
 

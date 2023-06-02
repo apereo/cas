@@ -1,10 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.scim.v1.ScimV1PrincipalAttributeMapperTests;
 import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapperTests;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisionerTests;
-import org.apereo.cas.web.flow.PrincipalScimV1ProvisionerActionTests;
-import org.apereo.cas.web.flow.PrincipalScimV2ProvisionerActionTests;
 import org.apereo.cas.web.flow.PrincipalScimV2ProvisionerActionWithScimServerTests;
 import org.apereo.cas.web.flow.ScimWebflowConfigurerTests;
 
@@ -21,10 +18,7 @@ import org.junit.platform.suite.api.Suite;
     PrincipalScimV2ProvisionerActionWithScimServerTests.class,
     ScimWebflowConfigurerTests.class,
     ScimV2PrincipalProvisionerTests.class,
-    ScimV1PrincipalAttributeMapperTests.class,
-    ScimV2PrincipalAttributeMapperTests.class,
-    PrincipalScimV1ProvisionerActionTests.class,
-    PrincipalScimV2ProvisionerActionTests.class
+    ScimV2PrincipalAttributeMapperTests.class
 })
 @Suite
 public class AllScimTestsSuite {

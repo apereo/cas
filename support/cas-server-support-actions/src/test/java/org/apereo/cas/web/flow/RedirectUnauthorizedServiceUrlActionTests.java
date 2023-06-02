@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowServiceActions")
 public class RedirectUnauthorizedServiceUrlActionTests {
 
     @Test

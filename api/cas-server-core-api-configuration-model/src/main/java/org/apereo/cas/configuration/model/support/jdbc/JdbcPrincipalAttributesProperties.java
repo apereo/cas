@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 @JsonFilter("JdbcPrincipalAttributesProperties")
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 6915428382578138387L;
 
     /**
@@ -108,7 +110,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
-    
+
     /**
      * Map of attributes to fetch from the database.
      * Attributes are defined using a key-value structure
@@ -128,7 +130,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * Note that the key is not the name of
      * the attribute, but the query attribute that is used in generating the
      * final query clause (i.e. {@code username}). The value can be {@code NONE, LOWER, UPPER}.
-     *
+     * <p>
      * It's also possible to define a list of attributes without a
      * case canonicalization override such as {@code username, attribute2}
      * in which case {@link #caseCanonicalization} will dictate the final outcome.

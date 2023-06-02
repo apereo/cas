@@ -2,17 +2,13 @@ package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-import org.apereo.cas.util.serialization.JacksonInjectableValueSupplier;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.io.Serial;
 
 /**
  * This is {@link BaseRegisteredServiceSerializer}.
@@ -21,6 +17,7 @@ import java.util.stream.Collectors;
  * @since 6.6.0
  */
 public abstract class BaseRegisteredServiceSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
+    @Serial
     private static final long serialVersionUID = -86170670153712101L;
 
     /**
@@ -36,14 +33,6 @@ public abstract class BaseRegisteredServiceSerializer extends AbstractJacksonBac
     @Override
     protected void configureObjectMapper(final ObjectMapper mapper) {
         super.configureObjectMapper(mapper);
-        val serializers = new ArrayList<>(applicationContext.getBeansOfType(RegisteredServiceSerializationCustomizer.class).values());
-        AnnotationAwareOrderComparator.sort(serializers);
-        val injectedValues = (Map) serializers
-            .stream()
-            .map(RegisteredServiceSerializationCustomizer::getInjectableValues)
-            .flatMap(entry -> entry.entrySet().stream())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        mapper.setInjectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
-        serializers.forEach(ser -> ser.customize(mapper));
+        JacksonObjectMapperFactory.configure(applicationContext, mapper);
     }
 }

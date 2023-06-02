@@ -30,7 +30,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 @Slf4j
 public class PathWatcherService implements WatcherService, Runnable, Closeable, DisposableBean {
-    private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
+    private static final WatchEvent.Kind[] KINDS = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final WatchService watcher;
 
@@ -60,7 +60,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
         LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
-        FunctionUtils.doUnchecked(unused -> watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH));
+        FunctionUtils.doUnchecked(__ -> watchablePath.register(this.watcher, KINDS, SensitivityWatchEventModifier.HIGH));
     }
 
     @Override

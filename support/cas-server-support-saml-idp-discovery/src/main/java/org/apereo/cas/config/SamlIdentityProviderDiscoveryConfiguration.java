@@ -1,27 +1,29 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.services.DefaultSamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
-import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,6 +36,9 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlIdentityProviderDiscoveryConfiguration}.
@@ -42,10 +47,21 @@ import java.util.ArrayList;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @AutoConfiguration
 public class SamlIdentityProviderDiscoveryConfiguration {
 
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "identityProviderDiscoveryEndpointConfigurer")
+    public ProtocolEndpointWebSecurityConfigurer<Void> identityProviderDiscoveryEndpointConfigurer() {
+        return new ProtocolEndpointWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getIgnoredEndpoints() {
+                return List.of(StringUtils.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));
+            }
+        };
+    }
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
@@ -72,20 +88,23 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryFeedService")
     public SamlIdentityProviderDiscoveryFeedService identityProviderDiscoveryFeedService(
+        final ObjectProvider<List<DelegatedClientIdentityProviderAuthorizer>> delegatedClientAuthorizers,
         @Qualifier("samlIdentityProviderEntityParser")
         final BeanContainer<SamlIdentityProviderEntityParser> samlIdentityProviderEntityParser,
         final CasConfigurationProperties casProperties,
         @Qualifier("builtClients")
         final Clients builtClients,
-        @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
-        @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
-        final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor) {
-        return new DefaultSamlIdentityProviderDiscoveryFeedService(casProperties, samlIdentityProviderEntityParser.toList(),
-            builtClients, new DelegatedAuthenticationAccessStrategyHelper(servicesManager,
-            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer), argumentExtractor);
+
+        val authorizers = Optional.ofNullable(delegatedClientAuthorizers.getIfAvailable())
+            .orElseGet(ArrayList::new)
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
+        return new DefaultSamlIdentityProviderDiscoveryFeedService(casProperties,
+            samlIdentityProviderEntityParser.toList(),
+            builtClients, argumentExtractor, authorizers);
     }
 
     @Bean
@@ -112,10 +131,12 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
         builtClients.findAllClients()
             .stream()
-            .filter(c -> c instanceof SAML2Client).map(SAML2Client.class::cast)
+            .filter(c -> c instanceof SAML2Client)
+            .map(SAML2Client.class::cast)
             .forEach(c -> {
                 c.init();
                 val entity = new SamlIdentityProviderEntity();
+                c.getIdentityProviderMetadataResolver().resolve();
                 entity.setEntityID(c.getIdentityProviderResolvedEntityId());
                 parsers.add(new SamlIdentityProviderEntityParser(entity));
             });

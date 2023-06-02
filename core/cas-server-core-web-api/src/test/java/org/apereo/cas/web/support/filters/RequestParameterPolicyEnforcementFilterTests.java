@@ -9,8 +9,9 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests the {@link RequestParameterPolicyEnforcementFilter}.
- * <p>
  * <p>
  * First there are test cases for the Filter as a whole against the Filter API.  The advantage of these is that they
  * are testing at the level we care about, the way the filter will actually be used,
@@ -106,13 +106,13 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val filter = new RequestParameterPolicyEnforcementFilter();
 
         val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR);
+        initParameterNames.add(AbstractSecurityFilter.THROW_ON_ERROR);
         val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
 
         val filterConfig = mock(FilterConfig.class);
         when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR)).thenReturn("true");
+        when(filterConfig.getInitParameter(AbstractSecurityFilter.THROW_ON_ERROR)).thenReturn("true");
 
         filter.init(filterConfig);
         assertTrue(AbstractSecurityFilter.isThrowOnErrors());
@@ -124,13 +124,13 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val filter = new RequestParameterPolicyEnforcementFilter();
 
         val initParameterNames = new HashSet<String>();
-        initParameterNames.add(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR);
+        initParameterNames.add(AbstractSecurityFilter.THROW_ON_ERROR);
         val parameterNamesEnumeration = Collections.enumeration(initParameterNames);
 
         val filterConfig = mock(FilterConfig.class);
         when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.THROW_ON_ERROR))
+        when(filterConfig.getInitParameter(AbstractSecurityFilter.THROW_ON_ERROR))
             .thenReturn("false");
 
         filter.init(filterConfig);
@@ -556,7 +556,7 @@ public class RequestParameterPolicyEnforcementFilterTests {
         val response = new MockHttpServletResponse();
         val chain = new MockFilterChain();
         filter.doFilter(request, response, chain);
-        
+
         request.setRequestURI("https://www.example.org?hello=world#fragment");
         request.addParameters(requestParameterMap);
         assertThrows(RuntimeException.class, () -> filter.doFilter(request, response, chain));

@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -13,6 +14,7 @@ import java.util.Set;
  * @since 6.1.0
  */
 public class RefedsRSAttributeReleasePolicy extends InCommonRSAttributeReleasePolicy {
+    @Serial
     private static final long serialVersionUID = 2532960981124784595L;
 
     @JsonIgnore

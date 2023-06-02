@@ -1,4 +1,11 @@
 description = "Apereo CAS Password Management JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Password Management",
+            title: "Password Management via JDBC"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")

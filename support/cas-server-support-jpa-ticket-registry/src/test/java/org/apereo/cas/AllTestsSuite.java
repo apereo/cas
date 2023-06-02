@@ -1,12 +1,13 @@
 package org.apereo.cas;
 
 import org.apereo.cas.monitor.SessionHealthIndicatorJpaTests;
-import org.apereo.cas.ticket.registry.JpaTicketRegistryCleanerTests;
-import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.MariaDbJpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.MicrosoftSqlServerJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.MySQLJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.OracleJpaTicketRegistryTests;
-import org.apereo.cas.ticket.registry.PostgresJpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.PostgresJpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.cleaner.MySQLJpaTicketRegistryCleanerTests;
+import org.apereo.cas.ticket.registry.cleaner.PostgresJpaTicketRegistryCleanerTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -20,10 +21,11 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     SessionHealthIndicatorJpaTests.class,
     PostgresJpaTicketRegistryTests.class,
-    JpaTicketRegistryTests.class,
+    MySQLJpaTicketRegistryCleanerTests.class,
     MySQLJpaTicketRegistryTests.class,
-    JpaTicketRegistryCleanerTests.class,
+    MariaDbJpaTicketRegistryTests.class,
     PostgresJpaTicketRegistryCleanerTests.class,
+    MicrosoftSqlServerJpaTicketRegistryTests.class,
     OracleJpaTicketRegistryTests.class
 })
 @Suite

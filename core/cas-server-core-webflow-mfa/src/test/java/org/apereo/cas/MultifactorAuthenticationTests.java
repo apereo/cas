@@ -57,6 +57,18 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService cas;
 
+    private static UsernamePasswordCredential newUserPassCredentials(final String user,
+                                                                     final String pass) {
+        val userpass = new UsernamePasswordCredential();
+        userpass.setUsername(user);
+        userpass.assignPassword(pass);
+        return userpass;
+    }
+
+    private static Service newService(final String id) {
+        return RegisteredServiceTestUtils.getService(id);
+    }
+
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
@@ -124,17 +136,6 @@ public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAut
         assertTrue(authn.getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(authn.getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
         assertTrue(authn.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-    }
-
-    private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
-        val userpass = new UsernamePasswordCredential();
-        userpass.setUsername(user);
-        userpass.setPassword(pass);
-        return userpass;
-    }
-
-    private static Service newService(final String id) {
-        return RegisteredServiceTestUtils.getService(id);
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {

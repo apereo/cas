@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
-import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -26,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowAuthenticationActions")
-public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+public class SurrogateInitialAuthenticationActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
@@ -44,11 +47,11 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
     @Test
     public void verifySurrogateCredentialsFound() throws Exception {
         val context = new MockRequestContext();
-        val c = new SurrogateUsernamePasswordCredential();
-        c.setUsername("casuser");
-        c.setPassword("Mellon");
-        c.setSurrogateUsername("cassurrogate");
-        WebUtils.putCredential(context, c);
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername("casuser");
+        credential.assignPassword("Mellon");
+        credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
+        WebUtils.putCredential(context, credential);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
     }
@@ -58,12 +61,14 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("+casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         WebUtils.putCredential(context, c);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
         assertTrue(WebUtils.hasSurrogateAuthenticationRequest(context));
-        assertTrue(WebUtils.getCredential(context) instanceof UsernamePasswordCredential);
+        val credential = WebUtils.getCredential(context);
+        assertEquals("casuser", credential.getId());
+        assertTrue(credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isEmpty());
     }
 
     @Test
@@ -71,12 +76,15 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         val c = new UsernamePasswordCredential();
         c.setUsername("cassurrogate+casuser");
-        c.setPassword("Mellon");
+        c.assignPassword("Mellon");
         WebUtils.putCredential(context, c);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
         assertFalse(WebUtils.hasSurrogateAuthenticationRequest(context));
-        assertTrue(WebUtils.getCredential(context) instanceof SurrogateUsernamePasswordCredential);
+        val credential = WebUtils.getCredential(context);
+        assertEquals("casuser", credential.getId());
+        assertEquals("cassurrogate", credential.getCredentialMetadata()
+            .getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
     }
 
     @Test
@@ -84,17 +92,22 @@ public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInit
         val context = new MockRequestContext();
         var credential = new UsernamePasswordCredential();
         credential.setUsername("cassurrogate+casuser");
-        credential.setPassword("badpassword");
+        credential.assignPassword("badpassword");
         WebUtils.putCredential(context, credential);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertNull(initialAuthenticationAction.execute(context));
-        assertTrue(WebUtils.getCredential(context) instanceof SurrogateUsernamePasswordCredential);
+        val credential1 = WebUtils.getCredential(context);
+        assertEquals("casuser", credential1.getId());
+        assertEquals("cassurrogate", credential.getCredentialMetadata()
+            .getTrait(SurrogateCredentialTrait.class).get().getSurrogateUsername());
 
-        val sc = WebUtils.getCredential(context, SurrogateUsernamePasswordCredential.class);
+        val sc = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         sc.setUsername("casuser");
-        sc.setPassword("Mellon");
+        sc.assignPassword("Mellon");
         WebUtils.putCredential(context, sc);
         assertNull(initialAuthenticationAction.execute(context));
-        assertTrue(WebUtils.getCredential(context) instanceof UsernamePasswordCredential);
+        val credential2 = WebUtils.getCredential(context);
+        assertEquals("casuser", credential2.getId());
+        assertTrue(credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isEmpty());
     }
 }

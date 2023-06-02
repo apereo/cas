@@ -25,12 +25,12 @@ import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationReques
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.http.HttpHeaders;
-import org.pac4j.core.context.session.SessionStore;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -43,8 +43,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -105,10 +105,6 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Autowired
     @Qualifier("umaFindPolicyForResourceSetEndpointController")
     protected UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController;
-
-    @Autowired
-    @Qualifier("oauthDistributedSessionStore")
-    protected SessionStore oauthDistributedSessionStore;
 
     @Autowired
     @Qualifier("umaDeletePolicyForResourceSetEndpointController")
@@ -219,6 +215,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.UMA_REGISTRATION_URL);
         mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
+        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         val mockResponse = new MockHttpServletResponse();
         interceptor.preHandle(mockRequest, mockResponse, null);
         return Triple.of(mockRequest, mockResponse, accessToken);

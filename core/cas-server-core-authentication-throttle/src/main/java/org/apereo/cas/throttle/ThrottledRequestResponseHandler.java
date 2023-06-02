@@ -1,7 +1,7 @@
 package org.apereo.cas.throttle;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link ThrottledRequestResponseHandler}.
@@ -11,6 +11,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 @FunctionalInterface
 public interface ThrottledRequestResponseHandler {
+
+    /**
+     * Default Bean name.
+     */
+    String BEAN_NAME = "throttledRequestResponseHandler";
 
     /**
      * Handle.

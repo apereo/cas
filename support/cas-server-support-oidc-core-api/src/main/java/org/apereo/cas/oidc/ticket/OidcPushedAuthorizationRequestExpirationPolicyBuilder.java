@@ -9,10 +9,10 @@ import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link OidcPushedAuthorizationRequestExpirationPolicyBuilder}.
@@ -20,26 +20,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class OidcPushedAuthorizationRequestExpirationPolicyBuilder implements ExpirationPolicyBuilder<OidcPushedAuthorizationRequest> {
+public record OidcPushedAuthorizationRequestExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OidcPushedAuthorizationRequest> {
+    @Serial
     private static final long serialVersionUID = -372536596516253646L;
-
-    /**
-     * The CAS properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<OidcPushedAuthorizationRequest> getTicketType() {
-        return OidcPushedAuthorizationRequest.class;
     }
 
     /**
@@ -56,6 +44,7 @@ public class OidcPushedAuthorizationRequestExpirationPolicyBuilder implements Ex
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     @ToString(callSuper = true)
     public static class OidcPushedAuthorizationRequestExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+        @Serial
         private static final long serialVersionUID = -8814501080268311070L;
 
         @JsonCreator

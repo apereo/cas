@@ -38,3 +38,11 @@ label.mdc-text-field {
     padding: 0;
     margin: 0;
 }
+
+.was-validated .caps-check .btn {
+    align-self: center;
+}
+
+.caps-check .btn {
+    align-self: end;
+}

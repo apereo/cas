@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
 @JsonFilter("PasswordManagementProperties")
 public class PasswordManagementProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -260644582798411176L;
 
     /**
@@ -42,7 +44,7 @@ public class PasswordManagementProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
-    
+
     /**
      * Manage account passwords in LDAP.
      */
@@ -76,7 +78,7 @@ public class PasswordManagementProperties implements Serializable {
      * Settings related to fetching usernames.
      */
     @NestedConfigurationProperty
-    private ForgotUsernamePasswordManagementProperties forgotUsername = 
+    private ForgotUsernamePasswordManagementProperties forgotUsername =
         new ForgotUsernamePasswordManagementProperties();
 
     /**

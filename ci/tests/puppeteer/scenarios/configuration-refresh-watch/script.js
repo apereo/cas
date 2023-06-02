@@ -9,23 +9,23 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    console.log("Attempting to login with default credentials...")
+    console.log("Attempting to login with default credentials...");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "p@$$word");
     await cas.assertCookie(page);
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     let configFilePath = path.join(__dirname, 'config.yml');
-    const file = fs.readFileSync(configFilePath, 'utf8')
+    const file = fs.readFileSync(configFilePath, 'utf8');
     const configFile = YAML.parse(file);
     const users = configFile.cas.authn.accept.users;
     console.log(`Current users: ${users}`);
 
-    console.log("Updating configuration and waiting for changes to reload...")
+    console.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(8000);
 
-    console.log("Attempting to login with new updated credentials...")
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    console.log("Attempting to login with new updated credentials...");
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casrefresh", "p@$$word");
     await cas.assertCookie(page);

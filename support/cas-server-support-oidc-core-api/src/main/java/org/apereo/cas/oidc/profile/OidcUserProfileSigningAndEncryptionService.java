@@ -52,8 +52,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
 
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService svc) {
-        if (svc instanceof OidcRegisteredService) {
-            val service = (OidcRegisteredService) svc;
+        if (svc instanceof OidcRegisteredService service) {
 
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoSigningAlg())
                 && !discoverySettings.getUserInfoSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
@@ -71,8 +70,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
 
     @Override
     public boolean shouldEncryptToken(final OAuthRegisteredService svc) {
-        if (svc instanceof OidcRegisteredService) {
-            val service = (OidcRegisteredService) svc;
+        if (svc instanceof OidcRegisteredService service) {
 
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg())
                 && !discoverySettings.getUserInfoEncryptionAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {

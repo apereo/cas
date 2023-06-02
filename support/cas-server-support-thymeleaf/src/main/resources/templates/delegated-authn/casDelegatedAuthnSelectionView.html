@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.pac4j.credential-selection.title}">Delegated Authentication Profile Selection</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-75">
+        <script>
+            function jqueryReady() {
+                $('table').DataTable();
+            }
+        </script>
+
+        <div class="col-xs-6 col-xs-offset-2 col-sm-offset-3">
+            <h2 th:utext="#{screen.pac4j.credential-selection.title}">Delegated Authentication Profile Selection</h2>
+            <p class="intro" th:utext="#{screen.pac4j.credential-selection.intro}">Please select your profile:</p>
+            <span th:if="${delegatedAuthenticationCredentials}" th:remove="tag">
+                <div class="mdc-data-table table-responsive w-100">
+                    <table id="profilesTable" class="table table-striped w-100">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell">ID</th>
+                            <th class="mdc-data-table__header-cell">Attributes</th>
+                            <th class="mdc-data-table__header-cell"></th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                            <tr th:each="principal : ${delegatedAuthenticationCredentials}" class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell">
+                                    <code><kbd th:utext="${principal.id}"/></code>
+                                </td>
+                                <td class="mdc-data-table__cell">
+                                    <code><kbd th:utext="${principal.attributes}"/></code>
+                                </td>
+                                <td class="mdc-data-table__cell">
+                                   <form method="post" th:id="${'form-' + principal.id}">
+                                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                                        <input type="hidden" name="_eventId" value="select"/>
+                                        <input type="hidden" name="key" th:value="${principal.key}"/>
+                                        <button class="mdc-button mdc-button--raised btn btn-primary me-2">
+                                            <span class="mdc-button__label">Select</span>
+                                        </button>
+                                   </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post" id="clientSelectionCancelForm">
+                    <p/>
+                    <section>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="cancel"/>
+                        <button id="cancelButton" class="mdc-button mdc-button--raised btn btn-primary me-2">
+                            <span class="mdc-button__label">Cancel</span>
+                        </button>
+                    </section>
+                </form>
+            </span>
+        </div>
+    </div>
+</main>
+</body>
+</html>

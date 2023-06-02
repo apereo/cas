@@ -7,12 +7,14 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
@@ -22,8 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link OAuth20RevocationEndpointController}.
@@ -65,7 +67,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
      * @return the response entity
      * @throws Exception the exception
      */
-    @PostMapping(path = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.REVOCATION_URL,
+    @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.REVOCATION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
@@ -77,8 +79,9 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         }
 
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         val clientId = getConfigurationContext().getRequestParameterResolver()
-            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+            .resolveClientIdAndClientSecret(callContext).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
 
         if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
@@ -104,19 +107,13 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         return generateRevocationResponse(token, clientId, response);
     }
 
-    /**
-     * Generate revocation token response.
-     *
-     * @param token    the token to revoke
-     * @param clientId the client who requests the revocation
-     * @param response the response
-     * @return the model and view
-     * @throws Exception the exception
-     */
     protected ModelAndView generateRevocationResponse(final String token,
                                                       final String clientId,
                                                       final HttpServletResponse response) throws Exception {
-        val registryToken = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
+        val registryToken = FunctionUtils.doAndHandle(() -> {
+            val state = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
+            return state == null || state.isExpired() ? null : state;
+        });
         if (registryToken == null) {
             LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
         } else if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
@@ -139,29 +136,18 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         mv.setStatus(HttpStatus.OK);
         return mv;
     }
-
-    /**
-     * Revoke the provided Refresh Token and it's related Access Tokens.
-     *
-     * @param token the token
-     */
+    
     private void revokeToken(final OAuth20RefreshToken token) throws Exception {
         revokeToken(token.getId());
         token.getAccessTokens().forEach(Unchecked.consumer(this::revokeToken));
     }
 
-    private void revokeToken(final String token) throws Exception {
+    protected void revokeToken(final String token) throws Exception {
         LOGGER.debug("Revoking token [{}]", token);
         getConfigurationContext().getTicketRegistry().deleteTicket(token);
     }
 
-    /**
-     * Gets registered service by client id.
-     *
-     * @param clientId the client id
-     * @return the registered service by client id
-     */
-    private OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
+    protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
 

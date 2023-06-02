@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class OidcPhoneScopeAttributeReleasePolicy extends BaseOidcScopeAttribute
      */
     public static final List<String> ALLOWED_CLAIMS = List.of("phone_number", "phone_number_verified");
 
+    @Serial
     private static final long serialVersionUID = 1532960981124784595L;
 
     public OidcPhoneScopeAttributeReleasePolicy() {

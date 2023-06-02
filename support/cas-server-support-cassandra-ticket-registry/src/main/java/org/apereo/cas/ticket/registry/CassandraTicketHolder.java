@@ -1,13 +1,17 @@
 package org.apereo.cas.ticket.registry;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This is {@link CassandraTicketHolder}.
@@ -20,29 +24,25 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@Setter
 public class CassandraTicketHolder implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4308217682209741077L;
 
-    /**
-     * The Id.
-     */
+    @JsonProperty("id")
     private String id;
 
-    /**
-     * The Data.
-     */
+    @JsonProperty("data")
     private String data;
 
-    /**
-     * Ticket type.
-     */
+    @JsonProperty("type")
     private String type;
 
-    @JsonCreator
-    public CassandraTicketHolder(@JsonProperty("id") final String id, @JsonProperty("data") final String data,
-                                 @JsonProperty("type") final String type) {
-        this.id = id;
-        this.data = data;
-        this.type = type;
-    }
+    @JsonProperty("prefix")
+    private String prefix;
+
+    @JsonProperty("attributes")
+    private Map<String, String> attributes;
 }

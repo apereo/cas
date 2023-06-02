@@ -1,8 +1,9 @@
 {
   "dependencies": "oidc",
   "properties": [
+    "--logging.level.org.apereo.cas=info",
+    
     "--cas.audit.engine.enabled=false",
-
     "--cas.ticket.crypto.enabled=true",
 
     "--cas.server.name=https://localhost:8443",
@@ -17,7 +18,7 @@
     "--cas.authn.oauth.core.user-profile-view-type=FLAT",
     
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
-    "--cas.authn.oidc.core.include-id-token-claims=false",
+    "--cas.authn.oidc.id-token.include-id-token-claims=false",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.service-registry.core.init-from-json=true",

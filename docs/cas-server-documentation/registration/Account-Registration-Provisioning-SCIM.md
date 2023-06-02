@@ -10,8 +10,8 @@ category: Registration
 
 {% include_cached casproperties.html properties="cas.account-registration.provisioning.scim" %}
 
-Provisioning tasks can be carried out using the CAS [SCIM integration](../integration/SCIM-Integration.html).
+Provisioning tasks can be carried out using the CAS [SCIM Provisioning](../integration/SCIM-Provisioning.html).
 Once enabled and configured, account registration requests may be provisioned via SCIM to other systems.
 
-<div class="alert alert-info"><strong>Usage</strong><p>SCIM integration support for 
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>SCIM integration support for 
 delegated authentication is only handled via SCIM <code>v2</code>.</p></div>

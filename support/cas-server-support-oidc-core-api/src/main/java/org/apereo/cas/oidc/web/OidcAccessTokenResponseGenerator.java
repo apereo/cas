@@ -43,10 +43,11 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     @Override
-    protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(final OAuth20AccessToken accessToken,
-                                                                                                     final OAuth20AccessTokenResponseResult result) {
+    protected OAuth20JwtAccessTokenEncoder.OAuth20JwtAccessTokenEncoderBuilder getAccessTokenBuilder(
+        final OAuth20AccessToken accessToken,
+        final OAuth20AccessTokenResponseResult result) {
         val builder = super.getAccessTokenBuilder(accessToken, result);
-        val service = Optional.of(result.getRegisteredService())
+        val service = Optional.ofNullable(result.getRegisteredService())
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast);
         return builder.issuer(oidcIssuerService.determineIssuer(service));
@@ -57,13 +58,14 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
         val model = super.getAccessTokenResponseModel(result);
         val accessToken = result.getGeneratedToken().getAccessToken();
         accessToken.ifPresent(Unchecked.consumer(token -> {
-            val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
-            val idToken = idTokenGenerator.generate(accessToken.get(),
-                result.getAccessTokenTimeout(), result.getUserProfile(), result.getResponseType(),
-                result.getGrantType(), oidcRegisteredService);
-
-            LOGGER.debug("Generated ID token [{}]", idToken);
-            model.put(OidcConstants.ID_TOKEN, idToken);
+            if (result.getRegisteredService() instanceof OidcRegisteredService oidcService
+                && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
+                val idToken = idTokenGenerator.generate(accessToken.get(),
+                    result.getUserProfile(), result.getResponseType(),
+                    result.getGrantType(), oidcService);
+                LOGGER.debug("Generated ID token [{}]", idToken);
+                model.put(OidcConstants.ID_TOKEN, idToken);
+            }
         }));
         return model;
     }

@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events.listener;
 
+import org.apereo.cas.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.config.CasCoreBootstrapStandaloneConfiguration;
+import org.apereo.cas.config.CasCoreConfigurationWatchConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentConfiguration;
 import org.apereo.cas.config.CasCoreEventsConfigEnvironmentConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.config.CasCoreConfigurationWatchConfiguration;
-import org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration;
-import org.apereo.cas.configuration.config.standalone.CasCoreBootstrapStandaloneConfiguration;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -58,7 +58,7 @@ public class CasConfigurationEventListenerTests {
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new EnvironmentChangeEvent(Set.of("cas.server.name"))));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
-            new CasConfigurationModifiedEvent(this, true)));
+            new CasConfigurationModifiedEvent(this, true, null)));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new RefreshScopeRefreshedEvent()));
     }

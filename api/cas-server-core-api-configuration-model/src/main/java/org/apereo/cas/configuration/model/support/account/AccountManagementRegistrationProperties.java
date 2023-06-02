@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -27,19 +28,23 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("AccountManagementRegistrationProperties")
 public class AccountManagementRegistrationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4679683905941523034L;
 
     /**
      * Email settings for notifications.
      */
     @NestedConfigurationProperty
-    private EmailProperties mail = new EmailProperties();
+    private EmailProperties mail = new EmailProperties()
+        .setSubject("Account Registration")
+        .setText("Activate your account registration via this link: ${url}");
 
     /**
      * SMS settings for notifications.
      */
     @NestedConfigurationProperty
-    private SmsProperties sms = new SmsProperties();
+    private SmsProperties sms = new SmsProperties()
+        .setText("Activate your account registration via this link: ${url}");
 
     /**
      * The webflow configuration.
@@ -64,11 +69,4 @@ public class AccountManagementRegistrationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AccountManagementRegistrationProvisioningProperties provisioning = new AccountManagementRegistrationProvisioningProperties();
-
-    public AccountManagementRegistrationProperties() {
-        mail.setAttributeName("mail");
-        mail.setText("Activate your account registration via this link: %s");
-        sms.setText("Activate your account registration via this link: %s");
-        mail.setSubject("Account Registration");
-    }
 }

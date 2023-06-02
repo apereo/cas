@@ -7,10 +7,9 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder}.
@@ -18,25 +17,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TransientSessionTicket> {
+public record CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TransientSessionTicket> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<TransientSessionTicket> getTicketType() {
-        return TransientSessionTicket.class;
     }
 
     /**
@@ -46,6 +34,6 @@ public class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder imp
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
-        return new HardTimeoutExpirationPolicy(simple.getTimeToKillInSeconds());
+        return new HardTimeoutExpirationPolicy(simple.getToken().getCore().getTimeToKillInSeconds());
     }
 }

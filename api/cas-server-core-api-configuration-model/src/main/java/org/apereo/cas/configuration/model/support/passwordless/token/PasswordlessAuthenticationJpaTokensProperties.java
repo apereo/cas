@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link PasswordlessAuthenticationJpaTokensProperties}.
  *
@@ -23,11 +25,16 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("PasswordlessAuthenticationJpaTokensProperties")
 public class PasswordlessAuthenticationJpaTokensProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 7647381223153797806L;
 
     /**
      * Settings that control the background cleaner process.
      */
     @NestedConfigurationProperty
-    private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT15S", "PT2M");
+    private ScheduledJobProperties cleaner = new ScheduledJobProperties();
+
+    public PasswordlessAuthenticationJpaTokensProperties() {
+        cleaner.getSchedule().setEnabled(true).setStartDelay("PT1M").setRepeatInterval("PT1M");
+    }
 }

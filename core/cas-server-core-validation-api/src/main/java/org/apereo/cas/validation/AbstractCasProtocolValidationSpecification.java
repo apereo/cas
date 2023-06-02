@@ -13,7 +13,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.function.Function;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks
@@ -23,13 +25,29 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
+    /**
+     * Evaluator that passes true if assertion is defined and not null.
+     */
+    public static final Function<Assertion, Boolean> ASSERTION_ALWAYS_SATISFIED = assertion -> {
+        LOGGER.trace("Assertion is always satisfied");
+        return assertion != null;
+    };
+
+    /**
+     * Evaluator that makes sure chained authentications in the assertion is exactly of length 1.
+     */
+    public static final Function<Assertion, Boolean> ASSERTION_SINGLE_AUTHENTICATION = assertion -> {
+        LOGGER.trace("Number of chained authentications in the assertion [{}]", assertion.getChainedAuthentications().size());
+        return assertion.getChainedAuthentications().size() == 1;
+    };
+
     private final ServicesManager servicesManager;
 
     /**

@@ -28,7 +28,7 @@ public class SimpleConfigurationPropertiesLoader extends BaseConfigurationProper
     public PropertySource load() {
         val props = new Properties();
         try (val is = getResource().getInputStream()) {
-            LOGGER.debug("Located CAS standalone configuration file at [{}]", getResource());
+            LOGGER.debug("Located CAS configuration file at [{}]", getResource());
             props.load(is);
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), getResource());
             props.putAll(decryptProperties(props));

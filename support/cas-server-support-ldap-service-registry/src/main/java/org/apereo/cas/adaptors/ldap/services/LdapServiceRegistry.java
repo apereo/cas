@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -14,6 +15,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
@@ -34,7 +36,7 @@ import java.util.Objects;
 @ToString
 public class LdapServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
 
-    private final ConnectionFactory connectionFactory;
+    private final LdapConnectionFactory connectionFactory;
 
     private final LdapRegisteredServiceMapper ldapServiceMapper;
 
@@ -46,7 +48,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                                final ConfigurableApplicationContext applicationContext,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
-        this.connectionFactory = connectionFactory;
+        this.connectionFactory = new LdapConnectionFactory(connectionFactory);
         this.ldapProperties = ldapProperties;
         this.ldapServiceMapper = Objects.requireNonNullElseGet(ldapServiceMapper,
             () -> new DefaultLdapRegisteredServiceMapper(ldapProperties, new RegisteredServiceJsonSerializer(applicationContext)));
@@ -67,7 +69,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         val response = searchForServiceById(registeredService.getId());
         if (LdapUtils.containsResultEntry(response)) {
             val entry = response.getEntry();
-            return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
+            return connectionFactory.executeDeleteOperation(entry);
         }
         LOGGER.debug("Could not locate registered service by id [{}] to delete", registeredService.getId());
         return false;
@@ -77,8 +79,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     public void deleteAll() {
         val response = getSearchResultResponse();
         if (LdapUtils.containsResultEntry(response)) {
-            response.getEntries()
-                .forEach(entry -> LdapUtils.executeDeleteOperation(this.connectionFactory, entry));
+            response.getEntries().forEach(connectionFactory::executeDeleteOperation);
         }
     }
 
@@ -86,6 +87,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     public Collection<RegisteredService> load() {
         val list = new ArrayList<RegisteredService>();
         val response = getSearchResultResponse();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         if (LdapUtils.containsResultEntry(response)) {
             response.getEntries()
                 .stream()
@@ -94,7 +96,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
                 .forEach(s -> {
-                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo));
                     list.add(s);
                 });
         }
@@ -140,7 +142,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
 
     private RegisteredService insert(final RegisteredService rs) {
         val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
-        LdapUtils.executeAddOperation(this.connectionFactory, entry);
+        connectionFactory.executeAddOperation(entry);
         return rs;
     }
 
@@ -156,7 +158,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
             val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
-            LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, entry);
+            connectionFactory.executeModifyOperation(currentDn, entry);
         } else {
             LOGGER.debug("Cannot locate DN for registered service with id [{}]. Attempting to save the service", rs.getId());
             insert(rs);
@@ -167,7 +169,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     private SearchResponse getSearchResultResponse() {
         return FunctionUtils.doUnchecked(() -> {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
-            return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
+            return connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
         });
     }
 
@@ -175,7 +177,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         return FunctionUtils.doUnchecked(() -> {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
-            return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            return connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
                 filter, ldapProperties.getPageSize());
         });
     }

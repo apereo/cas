@@ -4,6 +4,7 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -79,7 +80,16 @@ public interface BeanCondition {
      * @return the bean condition
      */
     default BeanCondition isTrue() {
-        return havingValue("true");
+        return havingValue(Boolean.TRUE.toString());
+    }
+
+    /**
+     * Is false bean condition.
+     *
+     * @return the bean condition
+     */
+    default BeanCondition isFalse() {
+        return havingValue(Boolean.FALSE.toString());
     }
 
     /**
@@ -147,36 +157,42 @@ public interface BeanCondition {
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanCondition evenIfMissing() {
             conditionList.peek().setMatchIfMissing(true);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanCondition withDefaultValue(final String value) {
             conditionList.peek().setDefaultValue(value);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanCondition havingValue(final Serializable value) {
             conditionList.peek().setHavingValue(value);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanCondition exists() {
             conditionList.peek().setExists(true);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanCondition isUrl() {
             conditionList.peek().setUrl(true);
             return this;
         }
 
         @Override
+        @CanIgnoreReturnValue
         public BeanCondition and(final String name) {
             conditionList.push(new Condition(name));
             return this;

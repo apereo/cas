@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
+    @Serial
     private static final long serialVersionUID = -6215588543966639050L;
 
     public DenyAllAttributeReleasePolicy() {
@@ -29,13 +31,6 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
         setAuthorizedToReleaseAuthenticationAttributes(false);
         setAuthorizedToReleaseCredentialPassword(false);
         setAuthorizedToReleaseProxyGrantingTicket(false);
-    }
-
-    @Override
-    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                           final Map<String, List<Object>> attributes) {
-        LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
-        return new HashMap<>(0);
     }
 
     @Override
@@ -59,6 +54,13 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     public boolean isAuthorizedToReleaseAuthenticationAttributes() {
         LOGGER.trace("CAS will not authorize the release of authentication attributes, given the service is denied access to all attributes.");
         return false;
+    }
+
+    @Override
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attributes) {
+        LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
+        return new HashMap<>(0);
     }
 
     @Override

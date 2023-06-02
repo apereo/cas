@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import lombok.val;
@@ -27,11 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 public class OidcPushedAuthorizationRequestTests extends AbstractOidcTests {
     @Autowired
-    @Qualifier(TicketFactory.BEAN_NAME)
-    private TicketFactory defaultTicketFactory;
-
-    @Autowired
-    @Qualifier("ticketSerializationManager")
+    @Qualifier(TicketSerializationManager.BEAN_NAME)
     private TicketSerializationManager ticketSerializationManager;
 
     @Test

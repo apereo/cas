@@ -1,7 +1,7 @@
 /**********************************
  * Base64 Core
  **********************************/
-(function (root, factory) {
+((root, factory) => {
     if (typeof define === 'function' && define.amd) {
         define(['base64js'], factory);
     } else if (typeof module === 'object' && module.exports) {
@@ -9,7 +9,7 @@
     } else {
         root.base64url = factory(root.base64js);
     }
-})(this, function (base64js) {
+})(this, base64js => {
 
     function ensureUint8Array(arg) {
         if (arg instanceof ArrayBuffer) {
@@ -256,7 +256,7 @@ function addDeviceAttributeAsRow(name, value) {
 }
 
 function addMessage(message) {
-    $('#messages').html("<p>" + message + "</p>");
+    $('#messages').html(`<p>${message}</p>`);
 }
 
 function addMessages(messages) {
@@ -265,7 +265,7 @@ function addMessages(messages) {
 
 function showJson(name, data) {
     if (data != null) {
-        $('#' + name).text(JSON.stringify(data, false, 4));
+        $(`#${name}`).text(JSON.stringify(data, false, 4));
     }
 }
 
@@ -318,7 +318,7 @@ function getWebAuthnUrls() {
     let endpoints = {
         authenticate: "webauthn/authenticate",
         register: "webauthn/register",
-    }
+    };
     return new Promise((resolve, reject) => resolve(endpoints)).then(data => {
         return data;
     });
@@ -437,7 +437,7 @@ function register(username, displayName, credentialNickname, csrfToken,
     let request;
     return performCeremony({
         getWebAuthnUrls,
-        getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),
+        getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey, csrfToken),
         statusStrings: {
             init: 'Initiating registration ceremony with server...',
             authenticatorRequest: 'Asking authenticators to create credential...',
@@ -449,6 +449,7 @@ function register(username, displayName, credentialNickname, csrfToken,
         }
     })
         .then(data => {
+            console.log(`registration data: ${JSON.stringify(data.registration)}`);
             if (data.registration) {
                 const nicknameInfo = {nickname: data.registration.credentialNickname};
 
@@ -464,11 +465,11 @@ function register(username, displayName, credentialNickname, csrfToken,
                 if (!data.attestationTrusted) {
                     addMessage("Attestation cannot be trusted.");
                 } else {
-                    setTimeout(function () {
+                    setTimeout(() => {
                         $('#sessionToken').val(session.sessionToken);
                         console.log("Submitting registration form");
                         $('#form').submit();
-                    }, 1500);
+                    }, 2500);
                 }
             }
         })
@@ -529,7 +530,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         executeRequest: executeAuthenticateRequest,
     }).then(data => {
         $('#divDeviceInfo').show();
-        console.log("Received: " + JSON.stringify(data, undefined, 2));
+        console.log(`Received: ${JSON.stringify(data, undefined, 2)}`);
         if (data.registrations) {
 
             data.registrations.forEach(reg => {
@@ -538,18 +539,23 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                 addDeviceAttributeAsRow("Credential Nickname", reg.credentialNickname);
                 addDeviceAttributeAsRow("Registration Date", reg.registrationTime);
                 addDeviceAttributeAsRow("Session Token", data.sessionToken);
-                addDeviceAttributeAsRow("Device Id", reg.attestationMetadata.deviceProperties.deviceId);
-                addDeviceAttributeAsRow("Device Name", reg.attestationMetadata.deviceProperties.displayName);
+                if (reg.attestationMetadata) {
+                    const deviceProperties = reg.attestationMetadata.deviceProperties;
+                    if (deviceProperties) {
+                        addDeviceAttributeAsRow("Device Id", deviceProperties.deviceId);
+                        addDeviceAttributeAsRow("Device Name", deviceProperties.displayName);
 
-                showDeviceInfo({
-                    "displayName": reg.attestationMetadata.deviceProperties.displayName,
-                    "imageUrl": reg.attestationMetadata.deviceProperties.imageUrl
-                })
+                        showDeviceInfo({
+                            "displayName": deviceProperties.displayName,
+                            "imageUrl": deviceProperties.imageUrl
+                        })
+                    }
+                }
             });
 
             $('#authnButton').hide();
 
-            setTimeout(function () {
+            setTimeout(() => {
                 $('#token').val(data.sessionToken);
                 console.log("Submitting authentication form");
                 $('#webauthnLoginForm').submit();

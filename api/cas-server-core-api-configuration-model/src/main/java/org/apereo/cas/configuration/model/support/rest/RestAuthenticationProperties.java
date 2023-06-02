@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class RestAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6122859176355467060L;
 
     /**
@@ -31,11 +33,6 @@ public class RestAuthenticationProperties implements Serializable {
      */
     @RequiredProperty
     private String uri;
-
-    /**
-     * Charset to encode the credentials sent to the REST endpoint.
-     */
-    private String charset = "US-ASCII";
 
     /**
      * Password encoder settings for REST authentication.

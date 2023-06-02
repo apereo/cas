@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -15,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +38,7 @@ public class HttpRequestRegisteredServiceAccessStrategyTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("192.861.151.163");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome/Mozilla");
+        request.addHeader("CustomHeader", "abcd-12-xyz#");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
@@ -44,6 +47,7 @@ public class HttpRequestRegisteredServiceAccessStrategyTests {
         val strategyWritten = new HttpRequestRegisteredServiceAccessStrategy();
         strategyWritten.setIpAddress("129.+.123.\\d\\d");
         strategyWritten.setUserAgent("Google Chrome (Firefox)");
+        strategyWritten.setHeaders(CollectionUtils.wrap("Header1", "Value.+Pattern"));
         MAPPER.writeValue(JSON_FILE, strategyWritten);
         val read = MAPPER.readValue(JSON_FILE, RegisteredServiceAccessStrategy.class);
         assertEquals(strategyWritten, read);
@@ -54,6 +58,14 @@ public class HttpRequestRegisteredServiceAccessStrategyTests {
     public void verifyAccessByIp() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
+        assertTrue(policy.isServiceAccessAllowed());
+    }
+
+    @Test
+    public void verifyAccessByIpAndHeader() {
+        val policy = new HttpRequestRegisteredServiceAccessStrategy();
+        policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
+        policy.setHeaders(Map.of("CustomHeader", "^abcd-\\d\\d-.+#"));
         assertTrue(policy.isServiceAccessAllowed());
     }
 

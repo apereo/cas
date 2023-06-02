@@ -10,10 +10,12 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.session.JEESessionStore;
 
+import java.io.Serial;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @EnabledIfListeningOnPort(port = 10389)
-@Tag("Ldap")
+@Tag("LdapAttributes")
 public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
 
     @BeforeAll
@@ -56,14 +58,15 @@ public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
         var profile = new CommonProfile();
         profile.setId("casTest");
 
-        val result = generator.generate(mock(WebContext.class), JEESessionStore.INSTANCE, profile);
+        val callContext = new CallContext(mock(WebContext.class), JEESessionStore.INSTANCE);
+        val result = generator.generate(callContext, profile);
         assertFalse(result.isEmpty());
         assertTrue(profile.getAttributes().isEmpty());
         assertTrue(profile.getRoles().isEmpty());
-        assertTrue(profile.getPermissions().isEmpty());
     }
 
     private static class Ldap extends AbstractLdapAuthenticationProperties {
+        @Serial
         private static final long serialVersionUID = 7979417317490698363L;
     }
 }

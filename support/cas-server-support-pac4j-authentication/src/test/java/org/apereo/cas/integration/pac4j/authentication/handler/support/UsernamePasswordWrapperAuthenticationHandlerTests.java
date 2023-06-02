@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -47,7 +48,7 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
         assertThrows(FailedLoginException.class,
-            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"), mock(Service.class)));
     }
 
     @Test
@@ -57,7 +58,7 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
         handler.setPrincipalAttributeId("givenName");
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"), mock(Service.class));
         assertEquals("casuser", result.getPrincipal().getId());
     }
 
@@ -67,13 +68,13 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
-        handler.setProfileCreator((credentials, webContext, sessionStore) -> {
+        handler.setProfileCreator((callContext, credentials) -> {
             val profile = credentials.getUserProfile();
             profile.addAttribute("givenName", List.of("cas-person"));
             return Optional.of(profile);
         });
         handler.setPrincipalAttributeId("givenName");
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"), mock(Service.class));
         assertEquals("cas-person", result.getPrincipal().getId());
     }
 
@@ -83,14 +84,14 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
-        handler.setProfileCreator((credentials, webContext, sessionStore) -> {
+        handler.setProfileCreator((callContext, credentials) -> {
             val profile = credentials.getUserProfile();
             profile.addAttribute("givenName", List.of("cas-person"));
             return Optional.of(profile);
         });
         handler.setTypedIdUsed(true);
         handler.setPrincipalAttributeId("givenName");
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"), mock(Service.class));
         assertEquals("org.pac4j.core.profile.CommonProfile#cas-person", result.getPrincipal().getId());
     }
 
@@ -108,14 +109,14 @@ public class UsernamePasswordWrapperAuthenticationHandlerTests {
                 return super.determinePrincipalIdFrom(profile, mockClient);
             }
         };
-        handler.setProfileCreator((credentials, webContext, sessionStore) -> {
+        handler.setProfileCreator((callContext, credentials) -> {
             val profile = credentials.getUserProfile();
             profile.addAttribute("givenName", List.of("cas-person"));
             return Optional.of(profile);
         });
         handler.setTypedIdUsed(true);
 
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"), mock(Service.class));
         assertEquals("org.pac4j.core.profile.CommonProfile#cas-person", result.getPrincipal().getId());
     }
 

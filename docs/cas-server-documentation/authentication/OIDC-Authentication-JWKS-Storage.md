@@ -29,8 +29,11 @@ of the keystore file is similar to the following:
   ]
 }
 ```
+ 
+The contents of the keystore may be encrypted via CAS 
+configuration security [outlined here](../configuration/Configuration-Properties-Security-CAS.html).
 
-<div class="alert alert-info"><strong>Clustered Deployments</strong><p>
+<div class="alert alert-info">:information_source: <strong>Clustered Deployments</strong><p>
 When deploying CAS in a cluster, you must make sure all CAS server nodes have access to 
 and share an <strong>identical and exact copy</strong> of the keystore file. Keystore differences
 will lead to various validation failures and application integration issues.
@@ -47,7 +50,7 @@ Keystore generation can be outsourced to an external relational database, such a
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-hibernate" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc-jpa" %}
 
 To learn how to configure database drivers and JPA implementation options, please [review this guide](../installation/JDBC-Drivers.html).
 
@@ -59,7 +62,7 @@ Keystore generation can be outsourced to an external MongoDb instance.
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-core" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc-mongo" %}
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks.mongo" %}
 
@@ -111,7 +114,7 @@ def find(Object[] args) {
 ## Custom
 
 It is possible to design and inject your own keystore generation strategy into CAS using the following `@Bean`
-that would be registered in a `@Configuration` class:
+that would be registered in a `@AutoConfiguration` class:
 
 ```java
 @Bean(initMethod = "generate")

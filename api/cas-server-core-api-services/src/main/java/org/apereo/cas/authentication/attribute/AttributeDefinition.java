@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication.attribute;
 
-import org.apereo.cas.services.RegisteredService;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -90,15 +88,29 @@ public interface AttributeDefinition extends Serializable, Comparable<AttributeD
     String getCanonicalizationMode();
 
     /**
+     * A map of regular expression patterns to values.
+     * If an attribute definition is to build its values off of an existing attribute,
+     * each value is examined against patterns defined here. For each match, the linked entry
+     * is used to determine the attribute definition value, either statically or dynamically
+     * which is typically an inlined Groovy script.
+     * @return patterned values map
+     */
+    Map<String, String> getPatterns();
+
+
+    /**
+     * Flatten the final values produced for this definition
+     * into a single value, and separate the results by the assigned delimiter.
+     *
+     * @return the flattened
+     */
+    String getFlattened();
+
+    /**
      * Resolve attribute values as list.
      *
-     * @param attributeValues   the attribute values
-     * @param scope             the scope
-     * @param registeredService the registered service
-     * @param attributes        the attributes
+     * @param context the context
      * @return the list
      */
-    List<Object> resolveAttributeValues(List<Object> attributeValues, String scope,
-                                        RegisteredService registeredService,
-                                        Map<String, List<Object>> attributes);
+    List<Object> resolveAttributeValues(AttributeDefinitionResolutionContext context);
 }

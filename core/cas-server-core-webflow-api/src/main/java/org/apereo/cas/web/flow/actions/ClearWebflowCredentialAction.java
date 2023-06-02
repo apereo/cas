@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -32,7 +33,8 @@ public class ClearWebflowCredentialAction extends BaseCasWebflowAction {
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             return null;
         }
-
+        val credential = WebUtils.getCredential(requestContext);
+        requestContext.getConversationScope().put(Credential.class.getName(), credential);
         WebUtils.removeCredential(requestContext);
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {

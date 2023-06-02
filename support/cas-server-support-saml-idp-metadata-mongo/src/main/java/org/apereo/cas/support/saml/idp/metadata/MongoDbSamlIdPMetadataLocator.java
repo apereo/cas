@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -22,6 +22,7 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @Slf4j
+@Monitorable
 public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final MongoOperations mongoTemplate;
 
@@ -40,7 +41,7 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (registeredService.isPresent()) {
             val query = new Query();
-            val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
+            val appliesTo = getAppliesToFor(registeredService);
             query.addCriteria(Criteria.where("appliesTo").is(appliesTo));
             LOGGER.trace("Fetching SAML IdP metadata document for [{}] from [{}]", appliesTo, this.collectionName);
             val document = mongoTemplate.findOne(query, SamlIdPMetadataDocument.class, this.collectionName);

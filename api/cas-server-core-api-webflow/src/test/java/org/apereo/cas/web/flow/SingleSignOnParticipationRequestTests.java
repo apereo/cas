@@ -34,6 +34,7 @@ public class SingleSignOnParticipationRequestTests {
         requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), httpServletRequest, response));
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(httpServletRequest)
+            .httpServletResponse(response)
             .requestContext(requestContext)
             .attributes(new HashMap<>(Map.of("hello", "world")))
             .build()

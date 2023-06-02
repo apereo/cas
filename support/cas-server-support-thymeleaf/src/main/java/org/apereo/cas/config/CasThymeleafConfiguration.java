@@ -1,18 +1,19 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.services.web.CasThymeleafLoginFormDirector;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
+import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.view.CasProtocolMustacheViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
@@ -29,9 +30,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.view.MustacheViewResolver;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -47,9 +50,9 @@ import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.view.AbstractThymeleafView;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.view.AbstractThymeleafView;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
@@ -68,10 +71,13 @@ import java.util.Set;
  * @since 6.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(value = SpringTemplateEngine.class)
-@ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
+@ConditionalOnClass(SpringTemplateEngine.class)
+@ImportAutoConfiguration({
+    MustacheAutoConfiguration.class,
+    ThymeleafAutoConfiguration.class
+})
 @Slf4j
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Thymeleaf)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Thymeleaf)
 @AutoConfiguration
 public class CasThymeleafConfiguration {
 
@@ -122,20 +128,23 @@ public class CasThymeleafConfiguration {
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(prefix -> {
             try {
-                val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+                val prefixPath = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                        ? prefix
+                        : ResourceUtils.getFile(prefix).getCanonicalPath();
                 val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
                     ? new ThemeClassLoaderTemplateResolver(themeResolver)
                     : new ThemeFileTemplateResolver(casProperties, themeResolver);
                 configureTemplateViewResolver(theme, thymeleafProperties);
-                theme.setPrefix(viewPath + "themes/%s/");
+                theme.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX) + "themes/%s/");
                 chain.addResolver(theme);
                 val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX) ? new ClassLoaderTemplateResolver() : new FileTemplateResolver();
                 configureTemplateViewResolver(template, thymeleafProperties);
-                template.setPrefix(viewPath);
+                template.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX));
                 chain.addResolver(template);
             } catch (final Exception e) {
-                LoggingUtils.warn(LOGGER, String.format("Could not add template prefix '%s' to resolver", prefix), e);
+                LoggingUtils.warn(LOGGER,
+                        String.format("Could not add template prefix '%s' to resolver: [%s]", prefix, e.getMessage()), e);
             }
         });
         val themeCp = new ThemeClassLoaderTemplateResolver(themeResolver);
@@ -179,13 +188,25 @@ public class CasThymeleafConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ThymeleafWebflowConfiguration {
 
-        @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
+        @ConditionalOnMissingBean(name = "casThymeleafTemplatesDirector")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(
+        public CasThymeleafTemplatesDirector casThymeleafTemplatesDirector(
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
             final CasWebflowExecutionPlan webflowExecutionPlan) {
-            return new CasThymeleafLoginFormDirector(webflowExecutionPlan);
+            return new CasThymeleafTemplatesDirector(webflowExecutionPlan);
+        }
+    }
+
+    @Configuration(value = "MustacheViewResolverConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MustacheViewResolverConfiguration {
+
+        @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_MUSTACHE_VIEW_FACTORY)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasProtocolViewFactory casProtocolMustacheViewFactory(final MustacheViewResolver mustacheViewResolver) {
+            return new CasProtocolMustacheViewFactory(mustacheViewResolver);
         }
     }
 
@@ -193,10 +214,11 @@ public class CasThymeleafConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ThymeleafViewResolverConfiguration {
 
-        @ConditionalOnMissingBean(name = "casProtocolViewFactory")
+        @ConditionalOnMissingBean(name = CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasProtocolViewFactory casProtocolViewFactory(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties) {
+        public CasProtocolViewFactory casProtocolThymeleafViewFactory(final SpringTemplateEngine springTemplateEngine,
+                                                                      final ThymeleafProperties thymeleafProperties) {
             return new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         }
 

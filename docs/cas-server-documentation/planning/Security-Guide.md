@@ -14,7 +14,9 @@ broker while transparently providing access to multiple services without repetit
 improves the security environment, but there are several CAS configuration, policy, and deployment concerns that should
 be considered to achieve suitable security.
 
-<div class="alert alert-info"><strong>Reporting Issues</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
+<div class="alert alert-info">:information_source: <strong>Reporting Issues</strong><p>The security team asks that you 
+please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues 
+properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
 
 ## Announcements
      
@@ -67,9 +69,6 @@ Client certification validation can be another good solution for LDAP to bring s
 As stated previously, connections to other systems must be secured. But if the CAS server is deployed on several nodes,
 the same applies to the CAS server itself. If a cache-based ticket registry runs without any security issue on a single
 CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.
-
-Any disk storage is also vulnerable if not properly secured. EhCache overflow to disk may be turned off to increase
-protection whereas advanced encryption data mechanism should be used for the database disk storage.
 
 ## Deployment-Driven Security Features
 
@@ -149,7 +148,7 @@ of which specifies the management controls above. The service registry can be co
 a Web user interface, or both. See the [Service Management](../services/Service-Management.html) section for more
 information.
 
-<div class="alert alert-warning"><strong>Authorized Services</strong><p>
+<div class="alert alert-warning">:warning: <strong>Authorized Services</strong><p>
 As a security best practice, it is <strong>strongly</strong> recommended to limit the service management facility
 to only include the list of known applications that are authorized to use CAS. Leaving the management interface
 open for all applications may create an opportunity for security attacks.
@@ -174,7 +173,7 @@ Please [see this guide](../installation/Password-Policy-Enforcement.html) for mo
 
 Protocol tickets that are issued by CAS and shared with other applications such as service tickets may optionally go through a signing/encryption process. Even though the CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 
-<div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
 
 {% include_cached {{ version }}/signing-encryption-configuration.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
@@ -220,8 +219,7 @@ CAS supports a policy-driven feature to limit successive failed authentication a
 and denial of service attacks. The feature is beneficial in environments where back-end authentication stores lack
 equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
 of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependent
-systems including CAS. See the
-[login throttling configuration](../authentication/Configuring-Authentication-Components.html#login-throttling)
+systems including CAS. See the [login throttling configuration](../authentication/Configuring-Authentication-Throttling.html) 
 section for further information.
 
 ### Credential Encryption
@@ -245,7 +243,7 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-{% include_cached casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request.cors" %}
 
 #### Security Response Headers
 
@@ -253,7 +251,7 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently on by default.
 
-{% include_cached casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request.header" %}
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
@@ -282,12 +280,11 @@ configured for forced authentication, authentication would be required for servi
 long-term session.
 
 Long term authentication support must be explicitly enabled through
-[configuration and UI customization](../authentication/Configuring-Authentication-Components.html#long-term-authentication)
+[configuration and UI customization](../authentication/Configuring-LongTerm-Authentication.html)
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 
-
-### Warn
+### Warning Before Redirect
 
 CAS supports optional notification of service access during an established SSO session. By default CAS
 transparently requests tickets needed for service access and presents them to the target service for validation,

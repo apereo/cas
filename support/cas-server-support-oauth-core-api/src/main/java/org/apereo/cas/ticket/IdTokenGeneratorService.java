@@ -19,7 +19,6 @@ public interface IdTokenGeneratorService {
      * Generate id token.
      *
      * @param accessToken       the access token
-     * @param timeoutInSeconds  the timeoutInSeconds
      * @param userProfile       the user profile
      * @param responseType      the response type
      * @param grantType         the grant type
@@ -28,7 +27,6 @@ public interface IdTokenGeneratorService {
      * @throws Exception the exception
      */
     String generate(OAuth20AccessToken accessToken,
-                    long timeoutInSeconds,
                     UserProfile userProfile,
                     OAuth20ResponseTypes responseType,
                     OAuth20GrantTypes grantType,

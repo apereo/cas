@@ -4,18 +4,12 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.validation.Assertion;
-
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.
@@ -60,110 +54,6 @@ public interface CentralAuthenticationService {
      */
     TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
-
-    /**
-     * Updates the ticket instance in the underlying storage mechanism.
-     * The properties of a given ticket, such as its authentication attributes
-     * may have changed during various legs of the authentication flow.
-     *
-     * @param ticket the ticket
-     * @return the updated ticket
-     * @throws Exception the exception
-     * @since 5.0.0
-     */
-    Ticket updateTicket(Ticket ticket) throws Exception;
-
-    /**
-     * Add the ticket instance in the underlying storage mechanism.
-     *
-     * @param ticket the ticket
-     * @return the updated ticket
-     * @throws Exception the exception
-     * @since 6.2.0
-     */
-    Ticket addTicket(Ticket ticket) throws Exception;
-
-    /**
-     * Obtains the given ticket by its id
-     * and returns the CAS-representative object. Implementations
-     * need to check for the validity of the ticket by making sure
-     * it exists and has not expired yet, etc. This method is specifically
-     * designed to remove the need to access the ticket registry.
-     *
-     * @param ticketId the ticket granting ticket id
-     * @return the ticket object
-     * @throws InvalidTicketException the invalid ticket exception
-     * @since 5.0.0
-     */
-    Ticket getTicket(String ticketId) throws InvalidTicketException;
-
-    /**
-     * Obtains the given ticket by its id and type
-     * and returns the CAS-representative object. Implementations
-     * need to check for the validity of the ticket by making sure
-     * it exists and has not expired yet, etc. This method is specifically
-     * designed to remove the need to access the ticket registry.
-     *
-     * @param <T>      the generic ticket type to return that extends {@link Ticket}
-     * @param ticketId the ticket granting ticket id
-     * @param clazz    the ticket type that is requested to be found
-     * @return the ticket object
-     * @throws InvalidTicketException the invalid ticket exception
-     * @since 4.1.0
-     */
-    <T extends Ticket> T getTicket(String ticketId, Class<T> clazz) throws InvalidTicketException;
-
-    /**
-     * Attempts to delete a ticket from the underlying store
-     * and is allowed to run any number of processing on the ticket
-     * and removal op before invoking it. The ticket id can be associated
-     * with any ticket type that is valid and understood by CAS and the underlying
-     * ticket store; however some special cases require that you invoke the appropriate
-     * operation when destroying tickets.
-     *
-     * @param ticketId the ticket id
-     * @return count of deleted tickets
-     * @throws Exception the exception
-     */
-    int deleteTicket(String ticketId) throws Exception;
-
-    /**
-     * Attempts to delete a ticket from the underlying store
-     * and is allowed to run any number of processing on the ticket
-     * and removal op before invoking it. The ticket id can be associated
-     * with any ticket type that is valid and understood by CAS and the underlying
-     * ticket store.
-     *
-     * @param ticket the ticket id
-     * @throws Exception the exception
-     */
-    default void deleteTicket(final Ticket ticket) throws Exception {
-        deleteTicket(ticket.getId());
-    }
-
-    /**
-     * Retrieve a collection of tickets from the underlying ticket registry.
-     * The retrieval operation must pass the predicate check that is solely
-     * used to filter the collection of tickets received. Implementations
-     * can use the predicate to request a collection of expired tickets,
-     * or tickets whose id matches a certain pattern, etc. The resulting
-     * collection will include tickets that have been evaluated by the predicate.
-     *
-     * @param predicate the predicate
-     * @return the tickets
-     * @since 4.1.0
-     */
-    Collection<Ticket> getTickets(Predicate<Ticket> predicate);
-
-    /**
-     * Gets tickets as a stream.
-     *
-     * @param predicate the predicate
-     * @param from      the from
-     * @param count     the count
-     * @return the tickets
-     */
-    Stream<? extends Ticket> getTickets(Predicate<Ticket> predicate, long from, long count);
 
     /**
      * Grant a {@link ServiceTicket} that may be used to access the given service

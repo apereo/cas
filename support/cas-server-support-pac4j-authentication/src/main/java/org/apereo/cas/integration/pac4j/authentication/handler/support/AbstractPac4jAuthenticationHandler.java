@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -17,11 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
 
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,18 +54,11 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         this.sessionStore = sessionStore;
     }
 
-    /**
-     * Build the handler result.
-     *
-     * @param credentials the provided credentials
-     * @param profile     the retrieved user profile
-     * @param client      the client
-     * @return the built handler result
-     * @throws GeneralSecurityException On authentication failure.
-     */
+
     protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials,
                                                                 final UserProfile profile,
-                                                                final BaseClient client) throws GeneralSecurityException {
+                                                                final BaseClient client,
+                                                                final Service service) throws GeneralSecurityException {
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
         }
@@ -74,38 +70,42 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
         val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
-        val principal = this.principalFactory.createPrincipal(id, attributes);
+        attributes.put(Pac4jConstants.CLIENT_NAME, CollectionUtils.wrap(profile.getClientName()));
+        if (profile instanceof BasicUserProfile bup) {
+            attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(bup.getAuthenticationAttributes()));
+        }
+        val initialPrincipal = principalFactory.createPrincipal(id, attributes);
+        val principal = finalizeAuthenticationPrincipal(initialPrincipal, client, credentials, service);
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
-        return finalizeAuthenticationHandlerResult(credentials, principal, profile, client);
+        return finalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);
     }
 
-    /**
-     * Finalize authentication handler result.
-     *
-     * @param credentials the credentials
-     * @param principal   the principal
-     * @param profile     the profile
-     * @param client      the client
-     * @return the authentication handler execution result
-     */
+    protected Principal finalizeAuthenticationPrincipal(final Principal initialPrincipal, final BaseClient client,
+                                                        final ClientCredential credentials, final Service service) {
+        return initialPrincipal;
+    }
+
     protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials,
                                                                                        final Principal principal,
                                                                                        final UserProfile profile,
-                                                                                       final BaseClient client) {
-        preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client);
-        return createHandlerResult(credentials, principal, new ArrayList<>(0));
+                                                                                       final BaseClient client,
+                                                                                       final Service service) {
+        preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);
+        val result = createHandlerResult(credentials, principal, new ArrayList<>(0));
+        return postFinalizeAuthenticationHandlerResult(result, credentials, principal, client, service);
     }
 
-    /**
-     * Pre finalize authentication handler result.
-     *
-     * @param credentials the credentials
-     * @param principal   the principal
-     * @param profile     the profile
-     * @param client      the client
-     */
+    protected AuthenticationHandlerExecutionResult postFinalizeAuthenticationHandlerResult(final AuthenticationHandlerExecutionResult result,
+                                                                                           final ClientCredential credentials,
+                                                                                           final Principal principal,
+                                                                                           final BaseClient client,
+                                                                                           final Service service) {
+        return result;
+    }
+
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                          final UserProfile profile, final BaseClient client) {
+                                                          final UserProfile profile, final BaseClient client,
+                                                          final Service service) {
     }
 
     /**
@@ -144,8 +144,8 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                 }
             } else {
                 LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
-                    + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
-                    + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
+                            + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
+                            + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
             }
             LOGGER.debug("Authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {

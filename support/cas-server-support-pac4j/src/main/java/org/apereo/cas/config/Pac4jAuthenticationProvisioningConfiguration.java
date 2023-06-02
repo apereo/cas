@@ -1,15 +1,16 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.api.PrincipalProvisioner;
+import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.ScimDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,24 +33,25 @@ import java.util.function.Supplier;
  * @since 6.5.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @AutoConfiguration
 public class Pac4jAuthenticationProvisioningConfiguration {
-
     @Configuration(value = "Pac4jAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnClass(PrincipalProvisioner.class)
+    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "pac4j")
     public static class Pac4jAuthenticationScimProvisioningConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue();
         @Bean
         @ConditionalOnMissingBean(name = "pac4jScimDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final PrincipalProvisioner scimProvisioner) {
+            final PrincipalProvisioner principalProvisioner) {
             return BeanSupplier.of(Supplier.class)
-                .when(BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue().given(applicationContext.getEnvironment()))
-                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(scimProvisioner))
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(principalProvisioner))
                 .otherwiseProxy()
                 .get();
         }

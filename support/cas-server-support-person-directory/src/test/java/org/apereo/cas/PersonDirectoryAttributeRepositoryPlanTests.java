@@ -6,7 +6,6 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 
@@ -27,12 +26,7 @@ public class PersonDirectoryAttributeRepositoryPlanTests {
         val input = mock(PersonDirectoryAttributeRepositoryPlan.class);
         doCallRealMethod().when(input).registerAttributeRepositories();
         doReturn(new ArrayList<>()).when(input).getAttributeRepositories();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                input.registerAttributeRepositories(CoreAuthenticationTestUtils.getAttributeRepository());
-            }
-        });
+        assertDoesNotThrow(() -> input.registerAttributeRepositories(CoreAuthenticationTestUtils.getAttributeRepository()));
     }
 
 }

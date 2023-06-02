@@ -22,6 +22,10 @@ the [CAS service registry](../services/Service-Management.html) similar to the f
 }
 ```
 
+<div class="alert alert-info">:information_source: <strong>Entity ID Patterns</strong><p>The <code>serviceId</code> field here should represent the entity id
+of the SAML2 service provider in form of a proper regular expression, allowing you to authorize and register multiple SAML2 service providers 
+in your metadata file, if necessary. Remember to escape all the right characters when you build the expression pattern.</p></div>
+
 The following fields are available for SAML services:
 
 | Field                                             | Description                                                                                                                                                                                                                                                                                                                                                                              |
@@ -29,7 +33,7 @@ The following fields are available for SAML services:
 | `metadataLocation`                                | Location of service metadata defined from system files, classpath, directories or URL resources.                                                                                                                                                                                                                                                                                         |
 | `metadataProxyLocation`                           | Proxy endpoint (`https://proxy-address:8901`) to fetch service metadata from URL resources.                                                                                                                                                                                                                                                                                              |
 | `metadataSignatureLocation`                       | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.                                                                                                                                                           |
-| `metadataExpirationDuration`                      | If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.                                                                                                                                                                                                                                              |
+| `metadataExpirationDuration`                      | If defined, will expire metadata in the cache after the indicated duration which will force CAS to <br/>retrieve and resolve the metadata again. Default is `60` minutes.                                                                                                                                                                                                                |
 | `requireSignedRoot`                               | Whether incoming metadata's root element is required to be signed. Default is `true`.                                                                                                                                                                                                                                                                                                    |
 | `signUnsolicitedAuthnRequest`                     | When dealing with Unsolicited SSO, determine whether the authentication request should be forcefully signed.                                                                                                                                                                                                                                                                             |
 | `signAssertions`                                  | Whether assertions should be signed. Default is `FALSE`. Accepted values are `TRUE`, `FALSE`, `UNDEFINED`. When set to `UNDEFINED`, CAS will respect the `WantAssertionsSigned` flag in the SAML service provider metadata.                                                                                                                                                              |
@@ -49,13 +53,13 @@ The following fields are available for SAML services:
 | `attributeNameFormats`                            | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.                                                                                                                                                                                                                                                                                   |
 | `attributeFriendlyNames`                          | Map that defines attribute friendly names for a given attribute name to be encoded in the SAML response.                                                                                                                                                                                                                                                                                 |
 | `attributeValueTypes`                             | Map that defines the type of attribute values for a given attribute name.                                                                                                                                                                                                                                                                                                                |
-| `nameIdQualifier`                                 | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id.                                                                                                                                                                                                                                                                                              |
+| `nameIdQualifier`                                 | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id. Use `none` to skip.                                                                                                                                                                                                                                                                          |
 | `logoutResponseBinding`                           | If defined, will overwrite the binding used to prepare logout responses for the service provider.                                                                                                                                                                                                                                                                                        |
 | `logoutResponseEnabled`                           | Control whether SAML2 logout responses should be generated and sent for this SAML2 service provider.                                                                                                                                                                                                                                                                                     |
 | `issuerEntityId`                                  | If defined, will override the issue value with the given identity provider entity id. This may be useful in cases where CAS needs to maintain multiple identity provider entity ids.                                                                                                                                                                                                     |
-| `assertionAudiences`                              | Comma-separated list of audience urls to include in the assertion, in the addition to the entity id.                                                                                                                                                                                                                                                                                     |
+| `assertionAudiences`                              | Comma-separated list of audience urls to include in the assertion. Will override the entity id.                                                                                                                                                                                                                                                                                          |
 | `subjectLocality`                                 | If defined, will overwrite the `SubjectLocality` attribute of the SAML2 authentication statement.                                                                                                                                                                                                                                                                                        |
-| `serviceProviderNameIdQualifier`                  | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id.                                                                                                                                                                                                                                                                                            |
+| `serviceProviderNameIdQualifier`                  | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id. Use `none` to skip.                                                                                                                                                                                                                                                                        |
 | `skipValidatingAuthnRequest`                      | Skip validating the SAML2 authentication request and its signature in particular. Default is `false`.                                                                                                                                                                                                                                                                                    |
 | `skipGeneratingAssertionNameId`                   | Whether generation of a name identifier should be skipped for assertions. Default is `false`.                                                                                                                                                                                                                                                                                            |
 | `skipGeneratingTransientNameId`                   | Whether transient name identifier generation should be skipped. Default is `false`.                                                                                                                                                                                                                                                                                                      |
@@ -64,6 +68,9 @@ The following fields are available for SAML services:
 | `skipGeneratingSubjectConfirmationRecipient`      | Whether generation of the `Recipient` element should be skipped for subject confirmations. Default is `false`.                                                                                                                                                                                                                                                                           |
 | `skipGeneratingSubjectConfirmationNotBefore`      | Whether generation of the `NotBefore` element should be skipped for subject confirmations. Default is `true`.                                                                                                                                                                                                                                                                            |
 | `skipGeneratingSubjectConfirmationNameId`         | Whether generation of the `NameID` element should be skipped for subject confirmations. Default is `true`.                                                                                                                                                                                                                                                                               |
+| `skipGeneratingServiceProviderNameIdQualifier`    | Whether generation of the `SPNameQualifier` element should be skipped. Default is `false`.                                                                                                                                                                                                                                                                                               |
+| `skipGeneratingNameIdQualifier`                   | Whether generation of the `NameIdQualifier` element should be skipped. Default is `false`.                                                                                                                                                                                                                                                                                               |
+| `skipGeneratingSessionNotOnOrAfter`               | Whether generation of the `SessionNotOnOrAfter` element should be skipped. Default is `false`.                                                                                                                                                                                                                                                                                           |
 | `signingCredentialFingerprint`                    | `SHA-1` digest of the signing credential's public key, parsed as a regular expression, used for the purposes of key rotation when dealing with multiple credentials.                                                                                                                                                                                                                     |
 | `signingCredentialType`                           | Acceptable values are `BASIC` and `X509`. This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in `PEM` format inside a `X509Data` block while the former encodes the signature based on the resolved public key under a `DEREncodedKeyValue` block.                     |
 | `signingSignatureReferenceDigestMethods`          | Collection of signing signature reference digest methods, if any, to override the global defaults.                                                                                                                                                                                                                                                                                       |
@@ -78,7 +85,7 @@ The following fields are available for SAML services:
 | `encryptionWhiteListedAlgorithms`                 | Collection of allowed encryption algorithms, if any, to override the global defaults.                                                                                                                                                                                                                                                                                                    |
 | `whiteListBlackListPrecedence`                    | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `INCLUDE` or `EXCLUDE`. Default is `INCLUDE`.                                                                                                                                                                                                              |
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
+<div class="alert alert-info">:information_source: <strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 
 you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy 
 deployment at that.</p></div>
@@ -92,39 +99,5 @@ please [review this guide](../integration/Configuring-SAML-SP-Integrations.html)
 
 ## Service Provider Metadata
 
-If the SP you wish to integrate with does not produce SAML metadata, you may be able to
-use [this service](https://www.samltool.com/sp_metadata.php) to create the metadata,
-save it in an XML file and then reference and register it with CAS for the SP.
-
-Alternatively, you may take advantage of a standalone `saml-sp-metadata.json` file that may be found in the same directory
-as the CAS metadata artifacts. The contents of this file may be as follows:
-
-```json
-{
-  "https://example.org/saml": {
-    "entityId": "https://example.org/saml",
-    "certificate": "MIIDUj...",
-    "assertionConsumerServiceUrl": "https://example.org/sso/"
-  }
-}
-```
-
-Each entry in the file is identified by the service provider entity id, allowing CAS to dynamically locate and build the required metadata on the fly
-to resume the authentication flow. This may prove easier for those service providers that only present a URL and a signing certificate for the
-integration relieving you from creating and managing XML metadata files separately.
-
-The service providers are registered with the CAS service registry as such:
-
-```json
-{
-  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "https://example.org/saml",
-  "name" : "SAMLService",
-  "id" : 10000003,
-  "metadataLocation" : "json://"
-}
-```
-
-<div class="alert alert-info"><strong>Metadata Location</strong><p>The metadata location 
-in the registration record above needs to be specified as <code>json://</code> to signal 
-to CAS that SAML metadata for registered service provider must be fetched from the designated JSON file.</p></div>
+SAML2 service provider metadata can be registered with and managed by CAS in several ways. To learn more, 
+please [review this guide](../installation/SAML2-ServiceProvider-Metadata.html).

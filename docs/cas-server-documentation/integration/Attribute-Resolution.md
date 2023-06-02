@@ -15,7 +15,7 @@ declaring an additional dependency will not be required.
 This Person Directory project supports both LDAP and JDBC attribute resolution,
 caching, attribute aggregation from multiple attribute sources, etc.
 
-<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default,
+<div class="alert alert-info">:information_source: <strong>Default Caching Policy</strong><p>By default,
 attributes are cached to the length of the SSO session.
 This means that while the underlying component provided by Person Directory may have
 a different caching model, attributes by default and from
@@ -47,7 +47,7 @@ all but a selection of attribute repository sources, *deferring* the task
 of attribute retrieval for later phases in the authentication process, 
 such as [releasing attributes](Attribute-Release-Caching.html).
 
-<div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases,
+<div class="alert alert-info">:information_source: <strong>Principal Resolution</strong><p>Note that in most if not all cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication source, which would
 eliminate the need for configuring a separate resolver specially if 
 both the authentication and the attribute source are the same.
@@ -82,7 +82,7 @@ and their results are cached and merged.
 
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.core" %}
 
-<div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
+<div class="alert alert-info">:information_source: <strong>Remember This</strong><p>Note that in certain cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication 
 source in the same authentication request, which would
 eliminate the need for configuring a separate attribute repository specially 
@@ -125,17 +125,15 @@ when multiple attribute repository sources are defined to fetch data:
 
 The following options may be used to fetch attributes in CAS.
 
-| Source         | Reference                                           
-|---------------------------------------------------------------------------------
-| Stub           | [See this guide](Attribute-Resolution-Stub.html).   
-| LDAP           | [See this guide](Attribute-Resolution-LDAP.html).   
-| Groovy         | [See this guide](Attribute-Resolution-Groovy.html).   
-| REST           | [See this guide](Attribute-Resolution-REST.html).   
-| Grouper        | [See this guide](Attribute-Resolution-Grouper.html).   
-| Couchbase      | [See this guide](Attribute-Resolution-Couchbase.html).   
-| Redis          | [See this guide](Attribute-Resolution-Redis.html).   
-| JDBC           | [See this guide](Attribute-Resolution-JDBC.html).
-| OKTA           | [See this guide](Attribute-Resolution-Okta.html).
-| Custom         | [See this guide](Attribute-Resolution-Custom.html).
-| Python/Javascript/Groovy          | [See this guide](Attribute-Resolution-Scripted.html).   
-| Microsoft Azure Active Directory  | [See this guide](Attribute-Resolution-AzureAD.html).   
+| Source                           | Reference                                              |
+|----------------------------------|--------------------------------------------------------|
+| Stub                             | [See this guide](Attribute-Resolution-Stub.html).      |
+| LDAP                             | [See this guide](Attribute-Resolution-LDAP.html).      |
+| Groovy                           | [See this guide](Attribute-Resolution-Groovy.html).    |
+| REST                             | [See this guide](Attribute-Resolution-REST.html).      |
+| Grouper                          | [See this guide](Attribute-Resolution-Grouper.html).   |
+| Redis                            | [See this guide](Attribute-Resolution-Redis.html).     |
+| JDBC                             | [See this guide](Attribute-Resolution-JDBC.html).      |
+| OKTA                             | [See this guide](Attribute-Resolution-Okta.html).      |
+| Custom                           | [See this guide](Attribute-Resolution-Custom.html).    |
+| Microsoft Azure Active Directory | [See this guide](Attribute-Resolution-AzureAD.html).   |

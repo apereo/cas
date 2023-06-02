@@ -15,6 +15,7 @@ import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ import java.util.Objects;
  * @since 5.2.0
  */
 public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
+    @Serial
     private static final long serialVersionUID = -5582616946993706815L;
 
     public SamlProfileAttributeQueryResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
@@ -50,7 +52,7 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);
+        openSamlConfigBean.logObject(envelope);
 
         map.remove(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE);
         return encodeFinalResponse(context, envelope);

@@ -1,13 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.config.RestMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.keys.DefaultMultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.trusted.config.RestMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -21,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {
@@ -88,12 +89,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
             webServer.start();
 
             mfaTrustEngine.save(r);
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    mfaTrustEngine.remove(r.getRecordKey());
-                }
-            });
+            assertDoesNotThrow(() -> mfaTrustEngine.remove(r.getRecordKey()));
         }
     }
 
@@ -102,12 +98,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
         try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    mfaTrustEngine.remove(ZonedDateTime.now(ZoneOffset.UTC));
-                }
-            });
+            assertDoesNotThrow(() -> mfaTrustEngine.remove(ZonedDateTime.now(ZoneOffset.UTC)));
         }
     }
 

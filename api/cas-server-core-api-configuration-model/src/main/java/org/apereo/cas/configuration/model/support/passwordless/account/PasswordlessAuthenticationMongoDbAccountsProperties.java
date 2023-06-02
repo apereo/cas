@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link PasswordlessAuthenticationMongoDbAccountsProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("PasswordlessAuthenticationMongoDbAccountsProperties")
 public class PasswordlessAuthenticationMongoDbAccountsProperties extends SingleCollectionMongoDbProperties {
+    @Serial
     private static final long serialVersionUID = -6304734732383722585L;
 }

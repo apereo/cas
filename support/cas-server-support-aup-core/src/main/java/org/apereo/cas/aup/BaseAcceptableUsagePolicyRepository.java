@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 1883808902502739L;
 
     /**
@@ -135,7 +137,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      * Is usage policy accepted by.
      *
      * @param attributes the attributes
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isUsagePolicyAcceptedBy(final Map<String, List<Object>> attributes) {
         val core = aupProperties.getCore();

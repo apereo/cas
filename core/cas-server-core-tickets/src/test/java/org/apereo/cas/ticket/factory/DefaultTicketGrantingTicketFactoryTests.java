@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -9,6 +11,10 @@ import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.io.Serial;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,17 +30,40 @@ public class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTe
     @Test
     public void verifyNoExpirationPolicy() {
         val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
-        val factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);
+        val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service, TicketGrantingTicket.class);
-        assertEquals(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds(), tgt.getExpirationPolicy().getTimeToLive());
+        val seconds = Beans.newDuration(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds()).toSeconds();
+        assertEquals(seconds, tgt.getExpirationPolicy().getTimeToLive());
     }
 
     @Test
     public void verifyBadTicketType() {
         val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
-        val factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);
+        val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         assertThrows(ClassCastException.class,
             () -> factory.create(RegisteredServiceTestUtils.getAuthentication(), service, BaseMockTicketGrantingTicket.class));
+    }
+
+    @Test
+    public void verifyExpirationPolicyPerAuthenticationAsSeconds() {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("someTgtExpirationPolicy", CasRegisteredService.class);
+        servicesManager.save(registeredService);
+        val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+        val authentication = RegisteredServiceTestUtils.getAuthentication("casuser",
+            Map.of(AuthenticationManager.AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE, List.of(600)));
+        val tgt = factory.create(authentication, RegisteredServiceTestUtils.getService(registeredService.getServiceId()), TicketGrantingTicket.class);
+        assertEquals(600, tgt.getExpirationPolicy().getTimeToLive());
+    }
+
+    @Test
+    public void verifyExpirationPolicyPerAuthenticationAsDuration() {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("durationTgtExpirationPolicy", CasRegisteredService.class);
+        servicesManager.save(registeredService);
+        val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+        val authentication = RegisteredServiceTestUtils.getAuthentication("casuser",
+            Map.of(AuthenticationManager.AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE, List.of("PT10S")));
+        val tgt = factory.create(authentication, RegisteredServiceTestUtils.getService(registeredService.getServiceId()), TicketGrantingTicket.class);
+        assertEquals(10, tgt.getExpirationPolicy().getTimeToLive());
     }
 
     @Test
@@ -51,6 +80,7 @@ public class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTe
     }
 
     abstract static class BaseMockTicketGrantingTicket implements TicketGrantingTicket {
+        @Serial
         private static final long serialVersionUID = 6712185629825357896L;
     }
 

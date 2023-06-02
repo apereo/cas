@@ -1,5 +1,7 @@
 package com.duosecurity.duoweb;
 
+import javax.annotation.Nonnull;
+
 public class Base64 {
 
 	/*  ******** P U B L I C F I E L D S ******** */
@@ -649,7 +651,7 @@ public class Base64 {
 	 * <p>
 	 * Example:
 	 * <code>encodeBytes( myData, Base64.GZIP | Base64.DO_BREAK_LINES )</code>
-	 * 
+	 * <p>
 	 * 
 	 * <p>
 	 * As of v 2.3, if there is an error with the GZIP stream, the method will
@@ -730,7 +732,7 @@ public class Base64 {
 	 * <p>
 	 * Example:
 	 * <code>encodeBytes( myData, Base64.GZIP | Base64.DO_BREAK_LINES )</code>
-	 * 
+	 * <p>
 	 * 
 	 * <p>
 	 * As of v 2.3, if there is an error with the GZIP stream, the method will
@@ -777,7 +779,7 @@ public class Base64 {
 	 * Similar to {@link #encodeBytes(byte[])} but returns a byte array instead
 	 * of instantiating a String. This is more efficient if you're working with
 	 * I/O streams and have large data sets to encode.
-	 * 
+	 * <p>
 	 * 
 	 * @param source
 	 *            The data to convert
@@ -802,7 +804,7 @@ public class Base64 {
 	 * Similar to {@link #encodeBytes(byte[], int, int, int)} but returns a byte
 	 * array instead of instantiating a String. This is more efficient if you're
 	 * working with I/O streams and have large data sets to encode.
-	 * 
+	 * <p>
 	 * 
 	 * @param source
 	 *            The data to convert
@@ -1419,7 +1421,9 @@ public class Base64 {
 		 * @since 1.3
 		 */
 		@Override
-		public void write(byte[] theBytes, int off, int len)
+		public void write(
+			@Nonnull
+			byte[] theBytes, int off, int len)
 				throws java.io.IOException {
 			// Encoding suspended?
 			if (suspendEncoding) {

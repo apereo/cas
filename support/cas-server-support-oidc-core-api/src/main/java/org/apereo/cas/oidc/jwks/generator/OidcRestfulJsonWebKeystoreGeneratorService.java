@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.core.Ordered;
@@ -49,12 +50,12 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             .url(rest.getUrl())
             .build();
         val response = HttpUtils.execute(exec);
-        if (response == null || !HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+        if (response == null || !HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
             LOGGER.warn("Unable to successfully fetch JWKS resource from [{}]", rest.getUrl());
             return null;
         }
 
-        val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+        val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
         LOGGER.debug("Received payload result from [{}] as [{}]", rest.getUrl(), result);
         return new ByteArrayResource(result.getBytes(StandardCharsets.UTF_8), "OIDC JWKS");
     }
@@ -62,7 +63,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @Override
     public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
         val rest = oidcProperties.getJwks().getRest();
-        val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(rest.getHeaders());
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())
@@ -75,7 +76,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val response = HttpUtils.execute(exec);
         FunctionUtils.doIfNotNull(response,
             httpResponse -> LOGGER.debug("Storing JWKS resource via [{}] returned [{}]",
-                rest.getUrl(), response.getStatusLine()));
+                rest.getUrl(), response.getReasonPhrase()));
         return jsonWebKeySet;
     }
 }

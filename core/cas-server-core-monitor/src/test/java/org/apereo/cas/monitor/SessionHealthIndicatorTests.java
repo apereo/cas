@@ -3,13 +3,19 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.DefaultServiceTicketSessionTrackingPolicy;
+import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -22,6 +28,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link TicketRegistryHealthIndicator} class.
@@ -33,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SessionHealthIndicatorTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
+
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private TicketRegistry defaultRegistry;
@@ -47,8 +55,15 @@ public class SessionHealthIndicatorTests {
         if (ticket[0] != null) {
             val testService = getService("junit");
             IntStream.range(0, stCount).forEach(Unchecked.intConsumer(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                testService, TEST_EXP_POLICY, false, true))));
+                testService, TEST_EXP_POLICY, false, getTrackingPolicy()))));
         }
+    }
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy() {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(true);
+        return new DefaultServiceTicketSessionTrackingPolicy(props,
+            new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
     }
 
     public static AbstractWebApplicationService getService(final String name) {
@@ -59,13 +74,13 @@ public class SessionHealthIndicatorTests {
 
     @BeforeEach
     public void initialize() {
-        this.defaultRegistry = new DefaultTicketRegistry();
+        this.defaultRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
     }
 
     @Test
     public void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
-        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, -1, -1);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), -1, -1);
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
@@ -73,7 +88,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
-        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, 0, 5);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 0, 5);
         val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
@@ -81,7 +96,7 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
-        val monitor = new TicketRegistryHealthIndicator(defaultRegistry, 5, 0);
+        val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 5, 0);
         val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }

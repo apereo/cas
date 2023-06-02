@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.val;
 import org.pac4j.core.profile.UserProfile;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,20 +29,17 @@ public class UmaResourceRegistrationRequest implements Serializable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    @Serial
     private static final long serialVersionUID = 3614209506339611242L;
-
-    @JsonProperty("_id")
+    @JsonProperty("id")
     private long id;
 
     @JsonProperty
     private String uri;
-
     @JsonProperty
     private String type;
-
     @JsonProperty("icon_uri")
     private String iconUri;
-
     @JsonProperty
     private String name;
 

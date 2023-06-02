@@ -135,6 +135,18 @@ public interface OidcConstants {
      * Registration endpoint URL.
      */
     String REGISTRATION_URL = "register";
+
+    /**
+     * Registration endpoint URL to issue initial access tokens.
+     */
+    String REGISTRATION_INITIAL_TOKEN_URL = "initToken";
+
+    /**
+     * The registration scope assigned to the initial access token,
+     * required to register clients.
+     */
+    String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
+
     /**
      * Client configuration endpoint URL.
      */
@@ -167,15 +179,15 @@ public interface OidcConstants {
     String WELL_KNOWN_OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
 
     /**
+     * .well-known/oauth-authorization-server path url.
+     */
+    String WELL_KNOWN_OAUTH_AUTHORIZATION_SERVER_URL = WELL_KNOWN_URL + "/oauth-authorization-server";
+
+    /**
      * Scope assigned to access token internally
      * to access client config urls and look up relying parties.
      */
-    String CLIENT_REGISTRATION_SCOPE = "client_registration_scope";
-
-    /**
-     * Parameter used to look up clients by their id.
-     */
-    String CLIENT_REGISTRATION_CLIENT_ID = "clientId";
+    String CLIENT_CONFIGURATION_SCOPE = "client_configuration_scope";
 
     /**
      * Authenticator used to verify access to client configuration endpoint.
@@ -185,10 +197,7 @@ public interface OidcConstants {
      * Authenticator used to verify access using private key jwts.
      */
     String CAS_OAUTH_CLIENT_PRIVATE_KEY_JWT_AUTHN = "ClientPrivateKeyJwtClient";
-    /**
-     * Authenticator used to verify access using client secret jwts.
-     */
-    String CAS_OAUTH_CLIENT_CLIENT_SECRET_JWT_AUTHN = "ClientSecretJwtClient";
+
     /**
      * This is a standard label for a custom scope which will have a scope name.
      * This should not be added to StandardScopes enumeration because it isn't standard.

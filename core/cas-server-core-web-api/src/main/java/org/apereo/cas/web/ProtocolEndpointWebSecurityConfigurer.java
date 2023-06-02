@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
      *
      * @return the order.
      */
+    @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
@@ -35,8 +37,10 @@ public interface ProtocolEndpointWebSecurityConfigurer<T> extends Ordered {
      *
      * @param object the object
      * @return the protocol endpoint configurer
+     * @throws Exception the exception
      */
-    default ProtocolEndpointWebSecurityConfigurer<T> configure(T object) {
+    @CanIgnoreReturnValue
+    default ProtocolEndpointWebSecurityConfigurer<T> configure(T object) throws Exception {
         return this;
     }
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasCoreNotificationsConfigurationTests;
-import org.apereo.cas.notifications.CommunicationsManagerTests;
+import org.apereo.cas.notifications.DefaultCommunicationsManagerTests;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilderTests;
 import org.apereo.cas.notifications.push.DefaultNotificationSenderTests;
 import org.apereo.cas.notifications.sms.GroovySmsSenderTests;
@@ -17,7 +17,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.3.0
  */
 @SelectClasses({
-    CommunicationsManagerTests.class,
+    DefaultCommunicationsManagerTests.class,
     DefaultNotificationSenderTests.class,
     GroovySmsSenderTests.class,
     EmailMessageBodyBuilderTests.class,

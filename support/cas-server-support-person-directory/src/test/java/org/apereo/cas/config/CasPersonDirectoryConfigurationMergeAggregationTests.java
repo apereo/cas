@@ -4,7 +4,6 @@ import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
     "cas.authn.attribute-repository.json[0].order=2",
 
-    "cas.authn.attribute-repository.script[0].location=classpath:/GroovyAttributeRepository.groovy",
-    "cas.authn.attribute-repository.script[0].order=2",
-
     "cas.authn.attribute-repository.core.aggregation=MERGE",
     "cas.authn.attribute-repository.core.merger=MULTIVALUED",
     
@@ -47,7 +43,7 @@ public class CasPersonDirectoryConfigurationMergeAggregationTests {
     @Test
     public void verifyOperation() {
         assertNotNull(aggregatingAttributeRepository);
-        val person = aggregatingAttributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = aggregatingAttributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributeValue("uid"));
         assertNotNull(person.getAttributeValue("givenName"));

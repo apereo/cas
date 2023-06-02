@@ -8,11 +8,12 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link U2FJpaDeviceRegistration}.
@@ -28,6 +29,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class U2FJpaDeviceRegistration extends U2FDeviceRegistration {
+    @Serial
     private static final long serialVersionUID = 171500798004450561L;
 
     @Id

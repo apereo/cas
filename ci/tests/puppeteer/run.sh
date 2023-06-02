@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-20}
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -39,6 +40,41 @@ function printred() {
   printf "${RED}$1${ENDCOLOR}\n"
 }
 
+function progressbar() {
+    current="$1"
+    total="$2"
+
+    bar_size=60
+    bar_char_done="#"
+    bar_char_todo="-"
+    bar_percentage_scale=2
+    
+    # calculate the progress in percentage
+    percent=$(bc <<< "scale=$bar_percentage_scale; 100 * $current / $total" )
+    # The number of done and todo characters
+    done=$(bc <<< "scale=0; $bar_size * $percent / 100" )
+    todo=$(bc <<< "scale=0; $bar_size - $done" )
+
+    # build the done and todo sub-bars
+    done_sub_bar=$(printf "%${done}s" | tr " " "${bar_char_done}")
+    todo_sub_bar=$(printf "%${todo}s" | tr " " "${bar_char_todo}")
+
+    # output the bar
+    echo -ne "\rProgress: [${done_sub_bar}${todo_sub_bar}] ${percent}%"
+    if [ $total -eq $current ]; then
+        echo -e "\n"
+    fi
+}
+
+function sleepfor() {
+  tasks_in_total="$1"
+  for current_task in $(seq "$tasks_in_total")
+  do
+    sleep 1
+    progressbar "$current_task" "$tasks_in_total"
+  done
+}
+
 casVersion=($(cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2))
 echo -n "Running Puppeteer tests for Apereo CAS Server: " && printcyan "${casVersion}"
 
@@ -48,10 +84,11 @@ DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
 CLEAR="true"
+INITONLY="false"
 
 while (( "$#" )); do
   case "$1" in
-  --scenario)
+  --scenario|--sc)
     scenario="$2"
     shift 2
     ;;
@@ -79,22 +116,53 @@ while (( "$#" )); do
     DRYRUN="true"
     shift 1
     ;;
-  --bo)
+  --bo|-bo)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --ho)
+  --ho|-ho)
     export HEADLESS="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
-  --hr)
+  --hr|-hr)
     export HEADLESS="true"
     RERUN="true"
     shift 1;
     ;;
-  --hbo)
+  --hd|--hdo)
+    export HEADLESS="true"
+    DEBUG="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
+  --hb|-hb)
+    export HEADLESS="true"
+    REBUILD="true"
+    shift 1;
+    ;;
+  --bod|--dob)
+    REBUILD="true"
+    DEBUG="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
+  --hbdo)
+    export HEADLESS="true"
+    REBUILD="true"
+    DEBUG="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
+  --hbod|-hbod)
+    export HEADLESS="true"
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DEBUG="true"
+    shift 1;
+    ;;
+  --hbo|-hbo)
     export HEADLESS="true"
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
@@ -115,13 +183,21 @@ while (( "$#" )); do
     DEBUG="true"
     shift 1;
     ;;
-  --boy)
+  --boy|-boy)
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     DRYRUN="true"
     shift 1;
     ;;
-  --noclear|--nc)
+  --initonly|--io)
+    REBUILD="false"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DRYRUN="true"
+    INITONLY="true"
+    export HEADLESS="true"
+    shift 1;
+    ;;
+  --noclear|--nc|--ncl|--no-clear)
     CLEAR=""
     shift 1;
     ;;
@@ -182,6 +258,10 @@ if [[ "${dockerRequired}" == "true" ]]; then
     printred "Docker engine is not running. Skipping running test since the test requires Docker."
     exit 0
   fi
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Docker engine is available"
+    docker --version
+  fi  
 fi
 
 
@@ -194,6 +274,7 @@ fi
 
 export SCENARIO="${scenarioName}"
 export SCENARIO_PATH="${scenario}"
+export SCENARIO_FOLDER=$( cd -- "${SCENARIO_PATH}" &> /dev/null && pwd )
 
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
@@ -206,8 +287,12 @@ if [[ "${RERUN}" == "true" ]]; then
   REBUILD="false"
 fi
 
+if [[ "${INITONLY}" == "true" ]]; then
+  REBUILD="false"
+fi
+
 if [[ "${DRYRUN}" == "true" ]]; then
-  printyellow "Skipping execution of test scenario while in dry-run mode."
+  printyellow "Skipping execution of test scenario while in dry-run/initialize-only mode."
 fi
 
 #echo "Installing jq"
@@ -232,19 +317,25 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 keystore="${PUPPETEER_DIR}/overlay/thekeystore"
+public_cert="${PUPPETEER_DIR}/overlay/server.crt"
 export CAS_KEYSTORE="${keystore}"
+export CAS_CERT="${public_cert}"
 
-if [[ "${RERUN}" != "true" ]]; then
+if [[ "${RERUN}" != "true" && "${INITONLY}" != "true" ]]; then
   dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
+  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
   printgreen "\nGenerating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
   [ -f "${keystore}" ] && rm "${keystore}"
+  [ -f "${public_cert}" ] && rm "${public_cert}"
   keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-    -keystore "${keystore}" -dname "${dname}"
+    -keystore "${keystore}" -dname "${dname}" -ext "SAN=$subjectAltName"
   [ -f "${keystore}" ] && echo "Created ${keystore}"
+  printgreen "\nExporting cert for adding to trust bundles if needed by test"
+  keytool -export -noprompt -alias cas -keypass changeit -storepass changeit \
+    -keystore "${keystore}" -file "${public_cert}" -rfc
 fi
 
-project=$(jq -j '.project // "tomcat"' "${config}")
+project=$(jq -j '.server // "tomcat"' "${config}")
 projectType=war
 if [[ $project == starter* ]]; then
   projectType=jar
@@ -269,56 +360,77 @@ if [[ -n "${buildScript}" ]]; then
 fi
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
+  if [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
+    # remote gradle cache employed
+    DEFAULT_PUPPETEER_BUILD_CTR=20
+  else
+    DEFAULT_PUPPETEER_BUILD_CTR=30
+  fi
+  PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-$DEFAULT_PUPPETEER_BUILD_CTR}
+
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
-  printcyan "Launching build in background to make observing slow builds easier..."
   targetArtifact=./webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}
   if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
     rm -rf ./webapp/cas-server-webapp-${project}/build/libs
   fi
+
   buildcmd=$(printf '%s' \
       "./gradlew :webapp:cas-server-webapp-${project}:build \
       -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   echo $buildcmd
-  $buildcmd > build.log 2>&1 &
-  pid=$!
-  sleep 25
-  printgreen "Current Java processes found for PID ${pid}"
-  ps -ef | grep $pid | grep java
-  if [[ $? -ne 0 ]]; then
-    # This check is mainly for running on windows in CI
-    printcyan "Java not running 20 seconds after starting gradlew ... trying again"
-    cat build.log
-    kill $pid
+
+  if [[ "${CI}" == "true" ]]; then
+    printcyan "Launching build in background to make observing slow builds easier..."
     $buildcmd > build.log 2>&1 &
     pid=$!
-  fi
-  printcyan "Waiting for build to finish. Process id is ${pid} - Waiting for ${targetArtifact}"
-  counter=0
-  until [[ -f ${targetArtifact} ]]; do
-     let counter++
-     if [[ $counter -gt 60 ]]; then
-        printred "\nBuild taking longer then 15 minutes, aborting."
-        printred "Build log"
-        cat build.log
-        printred "Build thread dump"
-        jstack $pid || true
-        exit 3
-     fi
-     echo -n '.'
-     sleep 15
-  done
-  wait $pid
-  if [ $? -ne 0 ]; then
-    printred "\nFailed to build CAS web application. Examine the build output."
-    cat build.log
-    exit 2
+    sleepfor 25
+    printgreen "Current Java processes found for PID ${pid}"
+    ps -ef | grep $pid | grep java
+    if [[ $? -ne 0 ]]; then
+      # This check is mainly for running on windows in CI
+      printcyan "Java not running 20 seconds after starting gradlew ... trying again"
+      cat build.log
+      kill $pid
+      $buildcmd > build.log 2>&1 &
+      pid=$!
+    fi
+    printcyan "Waiting for build to finish. Process id is ${pid} - Waiting for ${targetArtifact}"
+    counter=0
+    until [[ -f ${targetArtifact} ]]; do
+       let counter++
+       if [[ $counter -gt $PUPPETEER_BUILD_CTR ]]; then
+          printred "\nBuild is taking too long; aborting."
+          printred "Build log"
+          cat build.log
+          printred "Build thread dump"
+          jstack $pid || true
+          exit 3
+       fi
+       echo -n '.'
+       sleepfor 30
+    done
+    wait $pid
+    if [ $? -ne 0 ]; then
+      printred "\nFailed to build CAS web application. Examine the build output."
+      cat build.log
+      exit 2
+    else
+      printgreen "\nBackground build successful. Build output was:"
+      cat build.log
+      rm build.log
+    fi
   else
-    printgreen "\nBackground build successful. Build output was:"
-    cat build.log
-    rm build.log
+    printcyan "Launching CAS build in a non-CI environment..."
+    $buildcmd
+    pid=$!
+    wait $pid
+    if [ $? -ne 0 ]; then
+      printred "\nFailed to build CAS web application."
+      exit 2
+    fi
   fi
 fi
 
@@ -331,6 +443,31 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  environmentVariables=$(jq -j '.environmentVariables // empty | join(";")' "$config");
+  IFS=';' read -r -a variables <<< "$environmentVariables"
+  for env in "${variables[@]}"
+  do
+      cmd="export \"$env\""
+      if [[ "${CI}" != "true" ]]; then
+        echo "$cmd"
+      fi
+      eval "$cmd"
+  done
+  
+  bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
+  bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
+  bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"
+
+  if [[ -n "${bootstrapScript}" ]]; then
+    printgreen "Running bootstrap script: ${bootstrapScript}"
+    chmod +x "${bootstrapScript}"
+    eval "${bootstrapScript}"
+    if [[ $? -ne 0 ]]; then
+      printred "Bootstrap script [${bootstrapScript}] failed."
+      exit 1
+    fi
+  fi
+
   serverPort=8443
   processIds=()
   instances=$(jq -j '.instances // 1' "${config}")
@@ -356,61 +493,91 @@ if [[ "${RERUN}" != "true" ]]; then
       fi
     done
 
-    runArgs=$(jq -j '.jvmArgs // empty' "${config}")
-    runArgs="${runArgs//\$\{PWD\}/${PWD}}"
-    runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
-    [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
+    if [[ "${INITONLY}" == "false" ]]; then
+      runArgs=$(jq -j '.jvmArgs // empty' "${config}")
+      runArgs="${runArgs//\$\{PWD\}/${PWD}}"
+      runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
+      [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
-    properties=$(jq -j '.properties // empty | join(" ")' "${config}")
+      properties=$(jq -j '.properties // empty | join(" ")' "${config}")
 
-    filter=".instance$c.properties // empty | join(\" \")"
-    echo "$filter" > $TMPDIR/filter.jq
-    properties="$properties $(cat $config | jq -j -f $TMPDIR/filter.jq)"
-    rm $TMPDIR/filter.jq
-    properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
-    properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
-    properties="${properties//\%\{random\}/${random}}"
-    properties="${properties//\$\{TMPDIR\}/${PORTABLE_TMPDIR}}"
+      filter=".instance$c.properties // empty | join(\" \")"
+      echo "$filter" > $TMPDIR/filter.jq
+      properties="$properties $(cat $config | jq -j -f $TMPDIR/filter.jq)"
+      rm $TMPDIR/filter.jq
+      properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
+      properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
+      properties="${properties//\%\{random\}/${random}}"
+      properties="${properties//\$\{TMPDIR\}/${PORTABLE_TMPDIR}}"
 
-    if [[ "$DEBUG" == "true" ]]; then
-      printgreen "Remote debugging is enabled on port $DEBUG_PORT"
-      runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
-    fi
-    runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
-    printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
+      if [[ "$DEBUG" == "true" ]]; then
+        printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+        runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
+      fi
+      runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
+      printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
-    springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
-    [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
+      springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
+      [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
-    printcyan "Launching CAS instance #${c} under port ${serverPort}"
-    java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-       -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
-       --spring.profiles.active=none --server.ssl.key-store="$keystore" \
-       ${properties} &
-    pid=$!
-    printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-    until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
-       echo -n '.'
-       sleep 1
-    done
-    processIds+=( $pid )
-    serverPort=$((serverPort + 1))
-    if [[ "$DEBUG" == "true" ]]; then
-      DEBUG_PORT=$((DEBUG_PORT + 1))
+      printcyan "Cleaning leftover artifacts from previous runs..."
+      rm -rf "$TMPDIR/keystore.jwks"
+      rm -rf "$TMPDIR/cas"
+
+      printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
+      java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
+         -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort} \
+         --spring.profiles.active=none --server.ssl.key-store="$keystore" \
+         ${properties} &
+      pid=$!
+      printcyan "Waiting for CAS instance #${c} under process id ${pid}"
+      casLogin="https://localhost:${serverPort}/cas/login"
+
+      if [[ "${CI}" == "true" ]]; then
+        timeout=$(jq -j '.timeout // 80' "${config}")
+        sleepfor $timeout
+
+        printcyan "Checking CAS server's status @ ${casLogin}"
+        curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin
+        RC=$?
+      else
+        # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
+        until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+           echo -n '.'
+           sleep 1
+        done
+        RC=0
+      fi
+
+      if [[ $RC -ne 0 ]]; then
+        printred "\nUnable to launch CAS instance #${c} under process id ${pid}."
+        printred "Killing process id $pid and exiting"
+        kill -9 "$pid"
+        exit 3
+      fi
+      printcyan "CAS server ${casLogin} is up and running under process id ${pid}"
+      
+      processIds+=( $pid )
+      serverPort=$((serverPort + 1))
+      if [[ "$DEBUG" == "true" ]]; then
+        DEBUG_PORT=$((DEBUG_PORT + 1))
+      fi
     fi
   done
 
   printgreen "\nReady!"
-  readyScript=$(jq -j '.readyScript // empty' < "${config}")
-  readyScript="${readyScript//\$\{PWD\}/${PWD}}"
-  readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
-  scripts=$(echo "$readyScript" | tr ',' '\n')
+  if [[ "${INITONLY}" == "false" ]]; then
+    readyScript=$(jq -j '.readyScript // empty' < "${config}")
+    readyScript="${readyScript//\$\{PWD\}/${PWD}}"
+    readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
+    scripts=$(echo "$readyScript" | tr ',' '\n')
 
-  for script in ${scripts}; do
-    printgreen "Running ready script: ${script}"
-    chmod +x "${script}"
-    eval "${script}"
-  done
+    for script in ${scripts}; do
+      printgreen "Running ready script: ${script}"
+      chmod +x "${script}"
+      eval "${script}"
+    done
+  fi
 fi
 
 RC=-1
@@ -419,7 +586,7 @@ if [[ "${DRYRUN}" != "true" ]]; then
     clear
   fi
   scriptPath="${scenario}/script.js"
-  echo -e "*************************************"
+  echo -e "**************************************************************************"
   echo -e "Running ${scriptPath}\n"
   export NODE_TLS_REJECT_UNAUTHORIZED=0
   node --unhandled-rejections=strict ${scriptPath} ${config}
@@ -427,21 +594,30 @@ if [[ "${DRYRUN}" != "true" ]]; then
   if [[ $RC -ne 0 ]]; then
     printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
   fi
-  echo -e "*************************************\n"
+  echo -e "**************************************************************************\n"
 
   exitScript=$(jq -j '.exitScript // empty' "${config}")
   exitScript="${exitScript//\$\{PWD\}/${PWD}}"
   exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
 
   [ -n "${exitScript}" ] && \
-    printgreen "Exit script: ${exitScript}" && \
+    printcyan "Exit script: ${exitScript}" && \
     chmod +x "${exitScript}" && \
-    eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
+    eval "${exitScript}"
 
-  printgreen "Done!\n"
+  if [[ $RC -ne 0 ]]; then
+    printred "Test scenario [${scenarioName}] has failed.\n"
+  else
+    printgreen "Test scenario [${scenarioName}] has passed successfully!\n"
+  fi
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
+  if [[ "${INITONLY}" == "true" ]]; then
+    printyellow "Test scenario is running in initialization-only mode."
+    printyellow "This allows for the bootstrapping and initialization of the test scenario without actually running the test suite"
+  fi
+
   if [[ "${CI}" != "true" ]]; then
     printgreen "Hit enter to clean up scenario ${scenario}\n"
     read -r
@@ -454,7 +630,8 @@ if [[ "${RERUN}" != "true" ]]; then
   
   printgreen "Removing previous build artifacts..."
   rm "$PWD"/cas.${projectType}
-  rm "${PUPPETEER_DIR}/overlay/thekeystore"
+  rm "${keystore}"
+  rm "${public_cert}"
   rm -Rf "${PUPPETEER_DIR}/overlay"
 
   if [[ "${CI}" == "true" && $dockerInstalled -eq 0 ]]; then

@@ -8,6 +8,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -15,9 +16,6 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
-import org.ehcache.Status;
-import org.ehcache.UserManagedCache;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.net.MalformedURLException;
@@ -30,6 +28,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -45,26 +44,21 @@ import java.util.stream.IntStream;
  * @since 3.4.6
  */
 @Slf4j
-public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker implements DisposableBean, AutoCloseable {
+public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
-    private final UserManagedCache<URI, byte[]> crlCache;
+    private final Cache<URI, byte[]> crlCache;
 
     private final CRLFetcher fetcher;
 
     private final boolean throwOnFetchFailure;
 
-    public CRLDistributionPointRevocationChecker(
-        final UserManagedCache<URI, byte[]> crlCache, final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
-        this(false, null, null, crlCache, fetcher, throwOnFetchFailure);
-    }
-
-    public CRLDistributionPointRevocationChecker(final UserManagedCache<URI, byte[]> crlCache,
+    public CRLDistributionPointRevocationChecker(final Cache<URI, byte[]> crlCache,
                                                  final RevocationPolicy<X509CRL> expiredCRLPolicy,
                                                  final RevocationPolicy<Void> unavailableCRLPolicy) {
         this(crlCache, expiredCRLPolicy, unavailableCRLPolicy, false);
     }
 
-    public CRLDistributionPointRevocationChecker(final UserManagedCache<URI, byte[]> crlCache,
+    public CRLDistributionPointRevocationChecker(final Cache<URI, byte[]> crlCache,
                                                  final RevocationPolicy<X509CRL> expiredCRLPolicy,
                                                  final RevocationPolicy<Void> unavailableCRLPolicy,
                                                  final boolean throwOnFetchFailure) {
@@ -73,32 +67,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
     public CRLDistributionPointRevocationChecker(final boolean checkAll, final RevocationPolicy<Void> unavailableCRLPolicy,
                                                  final RevocationPolicy<X509CRL> expiredCRLPolicy,
-                                                 final UserManagedCache<URI, byte[]> crlCache,
+                                                 final Cache<URI, byte[]> crlCache,
                                                  final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
         super(checkAll, unavailableCRLPolicy, expiredCRLPolicy);
         this.crlCache = crlCache;
-        if (Status.UNINITIALIZED.equals(this.crlCache.getStatus())) {
-            this.crlCache.init();
-        }
         this.fetcher = fetcher;
         this.throwOnFetchFailure = throwOnFetchFailure;
     }
-    
-    @Override
-    public void destroy() {
-        try {
-            if (!Status.UNINITIALIZED.equals(this.crlCache.getStatus())) {
-                this.crlCache.close();
-            }
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-    }
 
-    @Override
-    public void close() {
-        destroy();
-    }
 
     /**
      * Gets the distribution points.
@@ -109,7 +85,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private static URI[] getDistributionPoints(final X509Certificate cert) {
         try {
             val points = new ExtensionReader(cert).readCRLDistributionPoints();
-            val urls = new ArrayList<URI>(points == null ? 0 : points.size());
+            val urls = new ArrayList<URI>(Optional.ofNullable(points).map(List::size).orElse(0));
             if (points != null) {
                 points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
                     val nameSequence = ASN1Sequence.getInstance(pointName.getName());
@@ -134,8 +110,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     /**
      * Adds the url to the list.
      * Build URI by components to facilitate proper encoding of querystring.
-     * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
-     * <p>
+     * e.g. {@code http://example.com:8085/ca?action=crl&issuer=CN=CAS} Test User CA
      * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
      * first before it's added to the list.</p>
      *
@@ -145,7 +120,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private static void addURL(final List<URI> list, final String uriString) {
         try {
             try {
-                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
+                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
                 list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
             } catch (final MalformedURLException e) {
                 list.add(new URI(uriString));
@@ -168,7 +143,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
         for (var index = 0; !stopFetching && index < urls.length; index++) {
             val url = urls[index];
-            val item = this.crlCache.get(url);
+            val item = this.crlCache.asMap().get(url);
 
             if (item != null) {
                 LOGGER.debug("Found CRL in cache for [{}]", CertUtils.toString(cert));
@@ -213,12 +188,12 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             var uri = (URI) id;
             if (crl == null) {
                 LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
-                this.crlCache.remove(uri);
+                this.crlCache.invalidate(uri);
                 return false;
             }
 
             this.crlCache.put(uri, crl.getEncoded());
-            return this.crlCache.containsKey(uri);
+            return this.crlCache.asMap().containsKey(uri);
         });
     }
 }

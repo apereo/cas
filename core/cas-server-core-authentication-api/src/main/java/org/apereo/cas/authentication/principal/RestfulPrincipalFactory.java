@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import java.util.Map;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
+    @Serial
     private static final long serialVersionUID = -1344968589212057694L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -45,7 +48,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
             val current = super.createPrincipal(id, attributes);
             val entity = MAPPER.writeValueAsString(current);
 
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -57,8 +60,8 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(((HttpEntityContainer) response).getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Principal factory response received: [{}]", result);
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), SimplePrincipal.class);
             }

@@ -8,9 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import java.io.Serial;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -28,6 +29,7 @@ import javax.persistence.Entity;
 @Deprecated(since = "6.2.0")
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
+    @Serial
     private static final long serialVersionUID = 6678711809842282833L;
 
     @Column

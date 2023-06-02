@@ -38,10 +38,8 @@ public class InitPasswordChangeActionTests extends BasePasswordManagementActionT
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-
         val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.TRANSITION_ID_ERROR, new FailedLoginException());
-        attributes.put(Credential.class.getName(),
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        attributes.put(Credential.class.getName(), RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         context.setCurrentEvent(new Event(this, "eventId", attributes));
         assertNull(initPasswordChangeAction.execute(context));
         assertNotNull(WebUtils.getPasswordPolicyPattern(context));

@@ -32,7 +32,9 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
-        <module name="LambdaParameterName"/>
+        <module name="LambdaParameterName">
+            <property name="format" value="__|^[a-z]([a-zA-Z1-9]+)*$"/>
+        </module>
         <module name="HiddenField">
             <property name="tokens" value="VARIABLE_DEF"/>
             <property name="ignoreSetter" value="true"/>
@@ -60,10 +62,10 @@
             <property name="allowMissingParamTags" value="true"/>
         </module>
         <module name="JavadocVariable">
-            <property name="id" value="javadocForAllProtectedAndPublicFields"/>
+            <property name="id" value="javadocForAllPublicFields"/>
             <property name="severity" value="error"/>
-            <property name="scope" value="protected"/>
-            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+            <property name="scope" value="public"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER|casProperties"/>
         </module>
         <module name="JavadocVariable">
             <property name="id" value="javadocForPropertyFields"/>
@@ -336,9 +338,6 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MissingSwitchDefault">
-            <property name="severity" value="info"/>
-        </module>
         <module name="SimplifyBooleanExpression">
             <property name="severity" value="error"/>
         </module>
@@ -509,7 +508,7 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Empty String constants"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
+            <property name="format" value="(?&lt;!&quot;)(?&lt;!\\)&quot;{2}(?!&quot;)"/>
             <property name="message" value="Consider using StringUtils.EMPTY instead"/>
         </module>
 
@@ -521,16 +520,17 @@
             <property name="message" value="Invalid JavaDoc @version tag."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="slf4jLogging"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Logging framework selection"/>
             <property name="severity" value="error"/>
             <property name="format" value="LogFactory\.getLog"/>
-            <property name="message" value="CAS uses the slf4j logging framework."/>
+            <property name="message" value="CAS uses the Slf4j logging framework."/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Logger as non-static"/>
             <property name="severity" value="error"/>
             <property name="format" value="(protected|public)\s+(final\s)*Logger"/>
-            <property name="message" value="Non-static logger must be declared as static to avoid serialization issues."/>
+            <property name="message" value="Non-static logger must be declared as static."/>
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="sysOutConsoleLogs"/>
@@ -646,7 +646,7 @@
             <property name="severity" value="error"/>
             <property name="customImportOrderRules"
                       value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
-            <property name="specialImportsRegExp" value="^javax\."/>
+            <property name="specialImportsRegExp" value="(javax|jakarta)\."/>
             <property name="standardPackageRegExp" value="^java\."/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
@@ -696,7 +696,10 @@
     <module name="Translation">
         <property name="severity" value="ignore"/>
     </module>
-    <module name="FileLength"/>
+    <module name="FileLength">
+        <property name="severity" value="error"/>
+        <property name="max" value="2500"/>
+    </module>
     <module name="FileTabCharacter">
         <property name="severity" value="error"/>
     </module>
@@ -767,11 +770,11 @@
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.RandomUtils for random-number generation"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.util.RandomUtils for random-number generation"/>
         <property name="severity" value="error"/>
         <property name="format"
                   value="RandomStringUtils\.(randomAlphanumeric|randomNumeric|randomAlphabetic|randomAscii|nextLong|nextInt|nextDouble|nextFloat)"/>
-        <property name="message" value="Use org.apereo.cas.RandomUtils for random-number generation instead."/>
+        <property name="message" value="Use org.apereo.cas.util.RandomUtils for random-number generation instead."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
@@ -788,6 +791,13 @@
         <property name="minimum" value="1"/>
         <property name="fileExtensions" value="java,groovy"/>
         <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Formatting stream() operations"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="(stream|filter|map|collect|findFirst|findAny|flatMap|reduce)\(\)\.$"/>
+        <property name="fileExtensions" value="java,groovy"/>
+        <property name="message" value="Stream operations should be separated individually on each line preceded with '.'"/>
     </module>
     <module name="SuppressionFilter">
         <property name="file" value="${checkstyle.suppressions.file}"/>

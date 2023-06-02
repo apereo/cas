@@ -18,8 +18,9 @@ import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,7 +28,6 @@ import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link TimedMultifactorAuthenticationTrigger}.
@@ -84,8 +84,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         val now = LocalDateTime.now(ZoneId.systemDefault());
         val dow = DayOfWeek.from(now);
         val dayNamesForToday = Arrays.stream(TextStyle.values())
-            .map(style -> dow.getDisplayName(style, Locale.getDefault()))
-            .collect(Collectors.toList());
+            .map(style -> dow.getDisplayName(style, Locale.getDefault())).toList();
 
         val timed = timedMultifactor.stream()
             .filter(t -> {

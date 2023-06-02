@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -14,9 +17,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,6 +42,9 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     }
 
     @Override
+    @Audit(action = AuditableActions.OAUTH2_AUTHORIZATION_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_AUTHORIZATION_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_AUTHORIZATION_RESPONSE_RESOURCE_RESOLVER)
     public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         val result = configurationContext.getAccessTokenGenerator().generate(holder);
@@ -52,16 +59,6 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.TOKEN.getType());
     }
 
-    /**
-     * Build callback url response type string.
-     *
-     * @param holder       the holder
-     * @param accessToken  the access token
-     * @param params       the params
-     * @param refreshToken the refresh token
-     * @return the string
-     * @throws Exception the exception
-     */
     protected ModelAndView buildCallbackUrlResponseType(
         final AccessTokenRequestContext holder,
         final OAuth20AccessToken accessToken,
@@ -71,7 +68,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val builder = new URIBuilder(holder.getRedirectUri());
+        val builder = UriComponentsBuilder.fromUriString(holder.getRedirectUri());
         val stringBuilder = new StringBuilder();
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
@@ -81,7 +78,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
             .accessTokenJwtBuilder(configurationContext.getAccessTokenJwtBuilder())
             .casProperties(configurationContext.getCasProperties())
             .build()
-            .encode();
+            .encode(accessToken.getId());
 
         val expiresIn = accessToken.getExpiresIn();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
@@ -120,8 +117,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
                 .append('=')
                 .append(nonce);
         }
-        builder.setFragment(stringBuilder.toString());
-        val url = builder.toString();
+        val url = builder.fragment(stringBuilder.toString()).build().toUriString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(

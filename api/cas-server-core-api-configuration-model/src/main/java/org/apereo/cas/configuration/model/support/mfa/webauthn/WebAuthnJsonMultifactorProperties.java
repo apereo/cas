@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link WebAuthnJsonMultifactorProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("WebAuthnJsonMultifactorProperties")
 public class WebAuthnJsonMultifactorProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = -1283660787308509919L;
 }

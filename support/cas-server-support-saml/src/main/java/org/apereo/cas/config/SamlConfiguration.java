@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -22,10 +22,13 @@ import org.apereo.cas.support.saml.web.SamlValidateEndpoint;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.CasProtocolVersionValidationSpecification;
+import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
@@ -50,8 +53,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary OpenSAML context and beans.
@@ -60,7 +63,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAML)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAML)
 @AutoConfiguration
 public class SamlConfiguration {
 
@@ -140,10 +143,10 @@ public class SamlConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new Saml10SuccessResponseView(protocolAttributeEncoder, servicesManager,
-                argumentExtractor, StandardCharsets.UTF_8.name(), authenticationAttributeReleasePolicy,
+                argumentExtractor, authenticationAttributeReleasePolicy,
                 authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
         }
 
@@ -161,10 +164,10 @@ public class SamlConfiguration {
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("authenticationAttributeReleasePolicy")
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             return new Saml10FailureResponseView(protocolAttributeEncoder, servicesManager,
-                argumentExtractor, StandardCharsets.UTF_8.name(), authenticationAttributeReleasePolicy,
+                argumentExtractor, authenticationAttributeReleasePolicy,
                 authenticationServiceSelectionPlan, NoOpProtocolAttributesRenderer.INSTANCE, samlResponseBuilder);
         }
     }
@@ -203,11 +206,23 @@ public class SamlConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return new SamlValidateEndpoint(casProperties, servicesManager,
                 authenticationSystemSupport, webApplicationServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
                 samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlValidateControllerValidationSpecification")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasProtocolValidationSpecification samlValidateControllerValidationSpecification(
+            @Qualifier("casSingleAuthenticationProtocolValidationSpecification")
+            final CasProtocolValidationSpecification casSingleAuthenticationProtocolValidationSpecification) {
+            val validationChain = new ChainingCasProtocolValidationSpecification();
+            validationChain.addSpecification(casSingleAuthenticationProtocolValidationSpecification);
+            validationChain.addSpecification(new CasProtocolVersionValidationSpecification(Set.of(CasProtocolValidationSpecification.CasProtocolVersions.SAML1)));
+            return validationChain;
         }
 
         @Bean
@@ -222,18 +237,21 @@ public class SamlConfiguration {
             final ProxyHandler proxy20Handler,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+            @Qualifier("samlValidateControllerValidationSpecification")
+            final CasProtocolValidationSpecification samlValidateControllerValidationSpecification,
             @Qualifier("serviceValidationAuthorizers")
             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
             val context = ServiceValidateConfigurationContext.builder()
-                .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
+                .ticketRegistry(ticketRegistry)
+                .validationSpecifications(CollectionUtils.wrapSet(samlValidateControllerValidationSpecification))
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)

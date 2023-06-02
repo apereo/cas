@@ -5,9 +5,9 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.Closeable;
+import java.io.Serial;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("JDBC")
+@Tag("Hibernate")
 public class DefaultCloseableDataSourceTests {
     @Test
     public void verifyOperation() {
@@ -27,17 +27,15 @@ public class DefaultCloseableDataSourceTests {
             .setUrl("jdbc:hsqldb:mem:cas");
 
         val ds = JpaBeans.newDataSource(props);
-        assertTrue(ds.getTargetDataSource() instanceof Closeable);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                ds.close();
-                ds.destroy();
-            }
+        assertTrue(ds.targetDataSource() instanceof Closeable);
+        assertDoesNotThrow(() -> {
+            ds.close();
+            ds.destroy();
         });
     }
 
     public static class Jpa extends AbstractJpaProperties {
+        @Serial
         private static final long serialVersionUID = 1210163210567513705L;
     }
 }

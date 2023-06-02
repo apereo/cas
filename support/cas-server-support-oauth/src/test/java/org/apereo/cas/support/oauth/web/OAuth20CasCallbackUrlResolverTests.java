@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.val;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.http.url.UrlResolver;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("OAuth")
+@Tag("OAuthWeb")
 public class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
@@ -34,9 +34,11 @@ public class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() throws Exception {
+        val registeredService = addRegisteredService();
+
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.NONCE, UUID.randomUUID().toString());

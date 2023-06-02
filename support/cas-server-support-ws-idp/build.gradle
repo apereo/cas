@@ -1,4 +1,12 @@
-description = "Apereo CAS WS-Security IdP"
+description = "Apereo CAS WS-Security Identity Provider"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WSFED Protocol",
+            title: "WS Federation Identity Provider"
+    ]
+}
+
 dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard
@@ -6,7 +14,7 @@ dependencies {
     implementation libraries.apachecxf
     implementation libraries.apachefediz
     implementation libraries.wss4j
-    implementation libraries.casclient
+
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")

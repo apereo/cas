@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -14,12 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.LoginException;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Marvin S. Addison
@@ -53,23 +56,27 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     public void verifyWithAlternativeRealm() {
         handler.setRealm("TEST");
         assertThrows(LoginException.class,
-            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1")));
+            () -> handler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));
     }
 
     @Test
     public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         handler.setRealm("TEST");
-        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME)));
+        assertNotNull(handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME), mock(Service.class)));
     }
 
     @Test
     public void verifyWithValidCredentials() throws Exception {
-        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertNotNull(handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
     public void verifyWithInvalidCredentials() {
         assertThrows(LoginException.class,
-            () -> this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1")));
+            () -> handler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));
     }
 }

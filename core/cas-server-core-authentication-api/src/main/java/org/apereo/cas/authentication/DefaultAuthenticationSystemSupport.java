@@ -28,16 +28,6 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final AuthenticationResultBuilderFactory authenticationResultBuilderFactory;
 
     private final AuthenticationTransactionFactory authenticationTransactionFactory;
-    
-    @Override
-    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
-                                                                              final Credential... credential) throws AuthenticationException {
-        val builder = authenticationResultBuilderFactory.newBuilder();
-        if (credential != null) {
-            Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
-        }
-        return this.handleAuthenticationTransaction(service, builder, credential);
-    }
 
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
@@ -51,13 +41,23 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
+                                                                              final Credential... credential) throws AuthenticationException {
+        val builder = authenticationResultBuilderFactory.newBuilder();
+        if (credential != null) {
+            Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
+        }
+        return this.handleAuthenticationTransaction(service, builder, credential);
+    }
+
+    @Override
     public AuthenticationResultBuilder handleAuthenticationTransaction(final Service service,
                                                                        final AuthenticationResultBuilder authenticationResultBuilder,
                                                                        final Credential... credentials) throws AuthenticationException {
 
         val transaction = authenticationTransactionFactory.newTransaction(service, credentials);
         transaction.collect(authenticationResultBuilder.getAuthentications());
-        this.authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
+        authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
         return authenticationResultBuilder;
     }
 

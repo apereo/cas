@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("RememberMeTicketExpirationPolicyProperties")
 public class RememberMeAuthenticationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1899959269597512610L;
 
     /**
@@ -41,6 +44,7 @@ public class RememberMeAuthenticationProperties implements Serializable {
      * If left undefined, remember-me authentication
      * will proceed with the default CAS behavior.
      */
+    @RegularExpressionCapable
     private String supportedUserAgents;
 
     /**
@@ -51,5 +55,6 @@ public class RememberMeAuthenticationProperties implements Serializable {
      * If left undefined, remember-me authentication
      * will proceed with the default CAS behavior.
      */
+    @RegularExpressionCapable
     private String supportedIpAddresses;
 }

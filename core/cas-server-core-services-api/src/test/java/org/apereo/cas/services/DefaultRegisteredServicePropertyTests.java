@@ -22,6 +22,6 @@ public class DefaultRegisteredServicePropertyTests {
         val prop = new DefaultRegisteredServiceProperty(List.of("p1", "p2"));
         prop.setValues(null);
         assertFalse(prop.contains("p2"));
-        assertNull(prop.getValue());
+        assertNull(prop.value());
     }
 }

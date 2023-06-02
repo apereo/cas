@@ -1,9 +1,10 @@
 package org.apereo.cas.services.domain;
 
-import org.apereo.cas.services.AbstractServicesManager;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import org.apereo.cas.services.mgmt.AbstractServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
+@Monitorable
 public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
     private final Map<String, TreeSet<RegisteredService>> domains = new ConcurrentHashMap<>();
 
@@ -46,16 +48,6 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected void deleteInternal(final RegisteredService service) {
-        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
-        val entries = this.domains.get(domain);
-        entries.remove(service);
-        if (entries.isEmpty()) {
-            this.domains.remove(domain);
-        }
-    }
-
-    @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
         LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
@@ -69,6 +61,16 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
             return new ArrayList<>(0);
         }
         return registeredServices;
+    }
+
+    @Override
+    protected void deleteInternal(final RegisteredService service) {
+        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
+        val entries = this.domains.get(domain);
+        entries.remove(service);
+        if (entries.isEmpty()) {
+            this.domains.remove(domain);
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.metadata;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -18,6 +19,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -72,7 +74,9 @@ public class ConfigurationMetadataGenerator {
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
 
-    private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
+    private static final Pattern NESTED_TYPE_PATTERN1 = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
+
+    private static final Pattern NESTED_TYPE_PATTERN2 = Pattern.compile("java\\.util\\.(List|Set)<(.+Properties)>");
 
     private static final Pattern MAP_TYPE_STRING_KEY_OBJECT_PATTERN =
         Pattern.compile("java\\.util\\.Map<java\\.lang\\.String,\\s*(org\\.apereo\\.cas\\..+)>");
@@ -96,78 +100,84 @@ public class ConfigurationMetadataGenerator {
         generator.adjustConfigurationMetadata();
     }
 
-    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
-                                                               final Collection<ConfigurationMetadataProperty> groups) {
+    protected static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+                                                                 final Collection<ConfigurationMetadataProperty> groups) {
 
         var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
         val allValidProps = props.stream()
             .filter(p -> p.getDeprecation() == null
-                         || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
-            .collect(Collectors.toList());
+                         || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel())).toList();
 
         for (val entry : allValidProps) {
-            try {
-                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
-                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
-                val grp = groups
-                    .stream()
-                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
+            val propName = StringUtils.substringAfterLast(entry.getName(), ".");
+            val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+            groups
+                .stream()
+                .filter(g -> g.getName().equalsIgnoreCase(groupName))
+                .findFirst()
+                .ifPresent(grp -> {
+                    try {
+                        val matcher = PATTERN_GENERICS.matcher(grp.getType());
+                        val className = matcher.find() ? matcher.group(1) : grp.getType();
+                        val clazz = ClassUtils.getClass(className);
 
-                val matcher = PATTERN_GENERICS.matcher(grp.getType());
-                val className = matcher.find() ? matcher.group(1) : grp.getType();
-                val clazz = ClassUtils.getClass(className);
+                        val hint = new ConfigurationMetadataHint();
+                        hint.setName(entry.getName());
 
-                val hint = new ConfigurationMetadataHint();
-                hint.setName(entry.getName());
+                        val annotation = Arrays.stream(clazz.getAnnotations())
+                            .filter(a -> a.annotationType().equals(RequiresModule.class))
+                            .findFirst()
+                            .map(RequiresModule.class::cast)
+                            .orElseThrow(() -> new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule"));
 
-                val annotation = Arrays.stream(clazz.getAnnotations())
-                    .filter(a -> a.annotationType().equals(RequiresModule.class))
-                    .findFirst()
-                    .map(RequiresModule.class::cast)
-                    .orElseThrow(() -> new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule"));
+                        val valueHint = new ValueHint();
+                        valueHint.setValue(toJson(Map.of("module", annotation.name(), "automated", annotation.automated())));
+                        valueHint.setDescription(RequiresModule.class.getName());
+                        hint.getValues().add(valueHint);
 
-                val valueHint = new ValueHint();
-                valueHint.setValue(toJson(Map.of("module", annotation.name(), "automated", annotation.automated())));
-                valueHint.setDescription(RequiresModule.class.getName());
-                hint.getValues().add(valueHint);
+                        val grpHint = new ValueHint();
+                        grpHint.setValue(toJson(Map.of("owner", clazz.getCanonicalName())));
+                        grpHint.setDescription(PropertyOwner.class.getName());
+                        hint.getValues().add(grpHint);
 
-                val grpHint = new ValueHint();
-                grpHint.setValue(toJson(Map.of("owner", clazz.getCanonicalName())));
-                grpHint.setDescription(PropertyOwner.class.getName());
-                hint.getValues().add(grpHint);
+                        val names = RelaxedPropertyNames.forCamelCase(propName);
+                        names.getValues().forEach(Unchecked.consumer(name -> {
+                            val f = ReflectionUtils.findField(clazz, name);
+                            if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setValue(toJson(Map.of("owner", clazz.getName())));
+                                propertyHint.setDescription(RequiredProperty.class.getName());
+                                hint.getValues().add(propertyHint);
+                            }
+                            if (f != null && f.isAnnotationPresent(DurationCapable.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setDescription(DurationCapable.class.getName());
+                                propertyHint.setValue(toJson(List.of(DurationCapable.class.getName())));
+                                hint.getValues().add(propertyHint);
+                            }
 
-                val names = RelaxedPropertyNames.forCamelCase(propName);
-                names.getValues().forEach(Unchecked.consumer(name -> {
-                    val f = ReflectionUtils.findField(clazz, name);
-                    if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
-                        val propertyHint = new ValueHint();
-                        propertyHint.setValue(toJson(Map.of("owner", clazz.getName())));
-                        propertyHint.setDescription(RequiredProperty.class.getName());
-                        hint.getValues().add(propertyHint);
+                            if (f != null && f.isAnnotationPresent(ExpressionLanguageCapable.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setDescription(ExpressionLanguageCapable.class.getName());
+                                propertyHint.setValue(toJson(List.of(ExpressionLanguageCapable.class.getName())));
+                                hint.getValues().add(propertyHint);
+                            }
+
+                            if (f != null && f.isAnnotationPresent(RegularExpressionCapable.class)) {
+                                val propertyHint = new ValueHint();
+                                propertyHint.setDescription(RegularExpressionCapable.class.getName());
+                                propertyHint.setValue(toJson(List.of(RegularExpressionCapable.class.getName())));
+                                hint.getValues().add(propertyHint);
+                            }
+                        }));
+
+                        if (!hint.getValues().isEmpty()) {
+                            hints.add(hint);
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
-                    if (f != null && f.isAnnotationPresent(DurationCapable.class)) {
-                        val propertyHint = new ValueHint();
-                        propertyHint.setDescription(DurationCapable.class.getName());
-                        propertyHint.setValue(toJson(List.of(DurationCapable.class.getName())));
-                        hint.getValues().add(propertyHint);
-                    }
-
-                    if (f != null && f.isAnnotationPresent(ExpressionLanguageCapable.class)) {
-                        val propertyHint = new ValueHint();
-                        propertyHint.setDescription(ExpressionLanguageCapable.class.getName());
-                        propertyHint.setValue(toJson(List.of(ExpressionLanguageCapable.class.getName())));
-                        hint.getValues().add(propertyHint);
-                    }
-                }));
-
-                if (!hint.getValues().isEmpty()) {
-                    hints.add(hint);
-                }
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+                });
         }
         return hints;
     }
@@ -213,60 +223,8 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    /**
-     * Execute.
-     *
-     * @throws Exception the exception
-     */
-    private void adjustConfigurationMetadata() throws Exception {
-        val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
-        if (!jsonFile.exists()) {
-            throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
-        }
-        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
-        };
-        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
-        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
-        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
-
-        processMappableProperties(properties, groups);
-        processNestedTypes(properties, groups);
-
-        val hints = processHints(properties, groups);
-        processNestedEnumProperties(properties, groups);
-        processDeprecatedProperties(properties);
-
-        removeNestedConfigurationPropertyGroups(properties, groups);
-
-        jsonMap.put("properties", properties);
-        jsonMap.put("groups", groups);
-        jsonMap.put("hints", hints);
-        MAPPER.writeValue(jsonFile, jsonMap);
-        MAPPER.writeValue(new File(buildDir, jsonFile.getName()), jsonMap);
-    }
-
-    private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
-
-        properties.stream()
-            .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
-            .forEach(Unchecked.consumer(p -> {
-                val matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
-                val indexBrackets = matcher.matches();
-                val typeName = matcher.group(1);
-                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
-
-                val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
-                parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
-            }));
-
-        properties.addAll(collectedProps);
-        groups.addAll(collectedGroups);
-    }
-
-    private void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
-                                           final Set<ConfigurationMetadataProperty> groups) {
+    protected void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
+                                             final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
 
@@ -293,8 +251,8 @@ public class ConfigurationMetadataGenerator {
         groups.addAll(collectedGroups);
     }
 
-    private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
-                                             final Set<ConfigurationMetadataProperty> groups) {
+    protected void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
+                                               final Set<ConfigurationMetadataProperty> groups) {
         val propertiesToProcess = properties.stream()
             .filter(e -> {
                 val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
@@ -354,7 +312,7 @@ public class ConfigurationMetadataGenerator {
                                         } else if (exp instanceof BooleanLiteralExpr) {
                                             value = ((BooleanLiteralExpr) exp).getValue();
                                         } else if (exp instanceof FieldAccessExpr) {
-                                            value = ((FieldAccessExpr) exp).getNameAsString();
+                                            value = ((NodeWithSimpleName<FieldAccessExpr>) exp).getNameAsString();
                                         }
                                         prop.setDefaultValue(value);
                                     });
@@ -401,5 +359,105 @@ public class ConfigurationMetadataGenerator {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    /**
+     * Execute.
+     *
+     * @throws Exception the exception
+     */
+    private void adjustConfigurationMetadata() throws Exception {
+        val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
+        if (!jsonFile.exists()) {
+            throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
+        }
+        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
+        };
+        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
+        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
+        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
+
+        processMappableProperties(properties, groups);
+        processNestedTypes(properties, groups);
+
+        val hints = processHints(properties, groups);
+        processNestedEnumProperties(properties, groups);
+        processDeprecatedProperties(properties);
+        processTopLevelEnumTypes(properties);
+
+        removeNestedConfigurationPropertyGroups(properties, groups);
+
+        jsonMap.put("properties", properties);
+        jsonMap.put("groups", groups);
+        jsonMap.put("hints", hints);
+
+        LOGGER.info("Final results is written to [{}]", jsonFile.getAbsolutePath());
+        MAPPER.writeValue(jsonFile, jsonMap);
+
+        val copy = new File(buildDir, jsonFile.getName());
+        LOGGER.info("A copy of the results is written to [{}]", copy.getAbsolutePath());
+        MAPPER.writeValue(copy, jsonMap);
+    }
+
+    private void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
+        for (val property : properties) {
+            var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, property.getType());
+            var typeFile = new File(typePath);
+            if (!typeFile.exists() && !property.getType().contains(".")) {
+                val clazz = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(property.getType(), "org.apereo.cas");
+                if (clazz.isPresent()) {
+                    typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, clazz.get().getName());
+                    typeFile = new File(typePath);
+                }
+            }
+
+            if (typeFile.exists()) {
+                val cu = StaticJavaParser.parse(new File(typePath));
+                for (val type : cu.getTypes()) {
+                    if (type.isEnumDeclaration()) {
+                        val enumMem = type.asEnumDeclaration();
+                        val builder = ConfigurationMetadataPropertyCreator.collectJavadocsEnumFields(property, enumMem);
+                        property.setDescription(builder.toString());
+                    }
+                }
+            }
+        }
+    }
+
+    private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
+        LOGGER.trace("Processing nested configuration types...");
+        properties
+            .forEach(Unchecked.consumer(p -> {
+                var indexBrackets = false;
+                var typeName = StringUtils.EMPTY;
+
+                if (NESTED_TYPE_PATTERN1.matcher(p.getType()).matches()) {
+                    val matcher = NESTED_TYPE_PATTERN1.matcher(p.getType());
+                    indexBrackets = matcher.matches();
+                    typeName = matcher.group(1);
+                } else if (NESTED_TYPE_PATTERN2.matcher(p.getType()).matches()) {
+                    val matcher = NESTED_TYPE_PATTERN2.matcher(p.getType());
+                    indexBrackets = matcher.matches();
+                    typeName = matcher.group(2);
+
+                    val result = org.apereo.cas.util.ReflectionUtils.findClassBySimpleNameInPackage(typeName, "org.apereo.cas");
+                    if (result.isPresent()) {
+                        typeName = result.get().getName();
+                    }
+
+                }
+
+                if (!typeName.isEmpty()) {
+                    val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, typeName);
+                    LOGGER.debug("Matched Type [{}], Property [{}], Type: [{}], Path [{}]", typeName, p.getName(), p.getType(), typePath);
+                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
+                }
+            }));
+
+        properties.addAll(collectedProps);
+        groups.addAll(collectedGroups);
     }
 }

@@ -8,13 +8,14 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML2")
+@Tag("SAMLResponse")
 public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
@@ -48,7 +49,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -78,7 +79,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
@@ -107,12 +108,12 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
 
-        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        service.setRequiredNameIdFormat(NameIDType.ENCRYPTED);
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
             .httpRequest(request)
             .httpResponse(response)
-            .authenticatedAssertion(assertion)
+            .authenticatedAssertion(Optional.of(assertion))
             .registeredService(service)
             .adaptor(adaptor)
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)

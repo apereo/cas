@@ -2,8 +2,11 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -23,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -32,10 +36,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TicketGrantingTicketImplTests {
 
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
+
     private static final String TGT_ID = "test";
+
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private ObjectMapper mapper;
+
+    private static ServiceTicketSessionTrackingPolicy getTrackingPolicy(final boolean trackMostRecent) {
+        val props = new CasConfigurationProperties();
+        props.getTicket().getTgt().getCore().setOnlyTrackMostRecentSession(trackMostRecent);
+        return new DefaultServiceTicketSessionTrackingPolicy(props,
+            new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog()));
+    }
 
     @BeforeEach
     public void initialize() {
@@ -162,7 +175,7 @@ public class TicketGrantingTicketImplTests {
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         val s = (RenewableServiceTicket) t.grantServiceTicket(ID_GENERATOR
                 .getNewTicketId(ServiceTicket.PREFIX), RegisteredServiceTestUtils.getService(),
-            NeverExpiresExpirationPolicy.INSTANCE, false, true);
+            NeverExpiresExpirationPolicy.INSTANCE, false, getTrackingPolicy(true));
         assertTrue(s.isFromNewLogin());
     }
 
@@ -176,13 +189,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         val s = (RenewableServiceTicket) t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         assertFalse(s.isFromNewLogin());
     }
 
@@ -193,7 +206,7 @@ public class TicketGrantingTicketImplTests {
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         t.grantServiceTicket(ID_GENERATOR
                 .getNewTicketId(ServiceTicket.PREFIX), testService,
-            NeverExpiresExpirationPolicy.INSTANCE, false, true);
+            NeverExpiresExpirationPolicy.INSTANCE, false, getTrackingPolicy(true));
         val services = t.getServices();
         assertEquals(1, services.size());
         val ticketId = services.keySet().iterator().next();
@@ -210,7 +223,7 @@ public class TicketGrantingTicketImplTests {
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         t.grantServiceTicket(ID_GENERATOR
                 .getNewTicketId(ServiceTicket.PREFIX), testService,
-            NeverExpiresExpirationPolicy.INSTANCE, false, true);
+            NeverExpiresExpirationPolicy.INSTANCE, false, getTrackingPolicy(true));
         assertFalse(t.isExpired());
         t.markTicketExpired();
         assertTrue(t.isExpired());
@@ -226,13 +239,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
 
         assertEquals(1, t.getServices().size());
     }
@@ -247,13 +260,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService("http://host.com?test"),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService("http://host.com;JSESSIONID=xxx"),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
 
         assertEquals(1, t.getServices().size());
     }
@@ -268,13 +281,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService("http://host.com/webapp1"),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService("http://host.com/webapp1?test=true"),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
 
         assertEquals(1, t.getServices().size());
     }
@@ -289,13 +302,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            false);
+            getTrackingPolicy(false));
 
         assertEquals(2, t.getServices().size());
     }
@@ -310,13 +323,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService2(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
 
         assertEquals(2, t.getServices().size());
     }
@@ -331,13 +344,13 @@ public class TicketGrantingTicketImplTests {
             RegisteredServiceTestUtils.getService("http://host.com/webapp1"),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
         t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService("http://host.com/webapp2"),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
-            true);
+            getTrackingPolicy(true));
 
         assertEquals(2, t.getServices().size());
     }

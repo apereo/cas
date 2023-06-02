@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -52,7 +52,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleRequestInternal(
-        @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID)
+        @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
 
@@ -63,9 +63,9 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         }
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
-        if (service instanceof OidcRegisteredService) {
+        if (service instanceof OidcRegisteredService oidcRegisteredService) {
             val prefix = getConfigurationContext().getCasProperties().getServer().getPrefix();
-            val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse((OidcRegisteredService) service, prefix);
+            val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, prefix);
             return new ResponseEntity<>(regResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -86,7 +86,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleUpdates(
-        @RequestParam(name = OidcConstants.CLIENT_REGISTRATION_CLIENT_ID)
+        @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         @RequestBody(required = false)
         final String jsonInput,
@@ -104,7 +104,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                     .getClientRegistrationRequestSerializer().from(jsonInput);
                 LOGGER.debug("Received client registration request [{}]", registrationRequest);
-                service = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+                service = getConfigurationContext().getClientRegistrationRequestTranslator()
                     .translate(registrationRequest, Optional.of(service));
             }
             val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()

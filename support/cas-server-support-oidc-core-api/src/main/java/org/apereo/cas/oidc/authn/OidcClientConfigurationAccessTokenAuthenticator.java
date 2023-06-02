@@ -9,7 +9,7 @@ import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -21,18 +21,20 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
-    public OidcClientConfigurationAccessTokenAuthenticator(final TicketRegistry ticketRegistry,
-                                                           final JwtBuilder accessTokenJwtBuilder) {
+    public OidcClientConfigurationAccessTokenAuthenticator(
+        final TicketRegistry ticketRegistry,
+        final JwtBuilder accessTokenJwtBuilder) {
         super(ticketRegistry, accessTokenJwtBuilder);
     }
 
     @Override
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
-        final WebContext webContext, final OAuth20AccessToken accessToken) {
+                                             final CallContext callContext,
+                                             final OAuth20AccessToken accessToken) {
         try {
-            val profile = super.buildUserProfile(tokenCredentials, webContext, accessToken);
-            LOGGER.trace("Examining access token [{}] for required scope [{}]", accessToken, OidcConstants.CLIENT_REGISTRATION_SCOPE);
-            if (accessToken.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
+            val profile = super.buildUserProfile(tokenCredentials, callContext, accessToken);
+            LOGGER.trace("Examining access token [{}] for required scope [{}]", accessToken, OidcConstants.CLIENT_CONFIGURATION_SCOPE);
+            if (accessToken.getScopes().contains(OidcConstants.CLIENT_CONFIGURATION_SCOPE)) {
                 return profile;
             }
         } catch (final Exception e) {

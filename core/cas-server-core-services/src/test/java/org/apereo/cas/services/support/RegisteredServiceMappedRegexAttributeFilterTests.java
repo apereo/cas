@@ -1,6 +1,5 @@
 package org.apereo.cas.services.support;
 
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -12,8 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -52,9 +48,6 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
 
     private RegisteredServiceMappedRegexAttributeFilter filter;
 
-    @Mock
-    private RegisteredService registeredService;
-
     public RegisteredServiceMappedRegexAttributeFilterTests() {
         givenAttributesMap = new HashMap<>();
         givenAttributesMap.put(UID, List.of("loggedInTestUid"));
@@ -68,10 +61,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.openMocks(this);
         this.filter = new RegisteredServiceMappedRegexAttributeFilter();
-        when(this.registeredService.getName()).thenReturn("sample test service");
-        when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
     }
 
     @Test

@@ -11,11 +11,12 @@ import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,8 @@ import java.util.stream.Collectors;
 public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private static final String ENTITY_NAME = JpaGoogleAuthenticatorAccount.class.getSimpleName();
 
-    @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaGoogleAuthenticatorContext")
+    private EntityManager entityManager;
 
     public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
         final CipherExecutor<Number, Number> scratchCodesCipher, final IGoogleAuthenticator googleAuthenticator) {
@@ -50,7 +51,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     public OneTimeTokenAccount get(final String username, final long id) {
         return entityManager.createQuery("SELECT r FROM "
             + ENTITY_NAME + " r WHERE r.id=:id AND r.username = :username", JpaGoogleAuthenticatorAccount.class)
-            .setParameter("username", username.toLowerCase().trim())
+            .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
             .setParameter("id", id)
             .getSingleResult();
     }
@@ -133,7 +134,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     public long count(final String username) {
         val count = (Number) entityManager.createQuery(
             "SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r WHERE r.username=:username")
-            .setParameter("username", username.toLowerCase().trim())
+            .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
             .getSingleResult();
         LOGGER.debug("Counted [{}] record(s) for [{}]", count, username);
         return count.longValue();
@@ -142,7 +143,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
         return entityManager.createQuery("SELECT r FROM "
             + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)
-            .setParameter("username", username.toLowerCase().trim())
+            .setParameter("username", username.toLowerCase(Locale.ENGLISH).trim())
             .getResultList();
     }
 }

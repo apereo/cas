@@ -2,12 +2,14 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -25,6 +27,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class DefaultAuthenticationTransaction implements AuthenticationTransaction {
 
+    @Serial
     private static final long serialVersionUID = 6213904009424725484L;
 
     private final Service service;
@@ -34,6 +37,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
     private final Collection<Authentication> authentications = new ArrayList<>();
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationTransaction collect(final Collection<Authentication> authentications) {
         this.authentications.addAll(authentications);
         return this;

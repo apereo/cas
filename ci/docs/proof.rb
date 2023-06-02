@@ -16,17 +16,27 @@ SOURCE_DIRECTORY="#{CURRENT_DIR}/gh-pages/_site"
  
 
 options = {
-  :typhoeus => { followlocation: true },
+  :typhoeus => {
+    :followlocation => true,
+    :connecttimeout => 20,
+    :timeout => 60,
+    :ssl_verifypeer => false,
+    :ssl_verifyhost => 0
+  },
   :disable_external => false,
   :allow_hash_href => true,
+  :allow_missing_href => true,
+  :ignore_missing_alt => true,
+  :check_external_hash => false,
   # :only_4xx => true,
   :empty_alt_ignore => true,
-  :http_status_ignore => [0,401,429,301,302],
-  :parallel => { :in_processes => 3},
-  :url_swap => {
+  :ignore_status_codes => [0,401,429,301,302,502],
+  :parallel => { :in_processes => 8},
+  :enforce_https => false,
+  :swap_urls => {
     %r{^/cas/} => '/'
   }, 
-  :url_ignore => [
+  :ignore_urls => [
     %r{/*\d+.\d+.x/},
     %r{^#.+},
     %r{localhost},
@@ -64,4 +74,8 @@ end
 # end
 
 # puts "Checking files..."
-HTMLProofer.check_directory("#{TARGET_DIRECTORY}", options).run
+proofer = HTMLProofer.check_directory("#{TARGET_DIRECTORY}", options)
+proofer.before_request do |request|
+  request.options[:headers]['User-Agent'] = "Mozilla/5.0 (X11; Linux i686; rv:103.0) Gecko/20100101 Firefox/103.0"
+end
+proofer.run

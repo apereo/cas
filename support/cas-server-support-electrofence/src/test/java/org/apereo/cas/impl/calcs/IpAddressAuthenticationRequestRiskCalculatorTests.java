@@ -41,6 +41,6 @@ public class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthe
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
-        assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold()));
+        assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getCore().getThreshold()));
     }
 }

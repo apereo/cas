@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.soap.generated.GetSoapAuthenticationResponse;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -72,7 +73,7 @@ public class SoapAuthenticationHandlerTests {
     @Test
     public void verifyAction() throws Exception {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        val result = soapAuthenticationAuthenticationHandler.authenticate(creds);
+        val result = soapAuthenticationAuthenticationHandler.authenticate(creds, mock(Service.class));
         assertNotNull(result);
         assertEquals("CAS", result.getPrincipal().getId());
         assertEquals(1, result.getPrincipal().getAttributes().size());
@@ -98,6 +99,6 @@ public class SoapAuthenticationHandlerTests {
         when(client.sendRequest(any())).thenReturn(response);
         val result = new SoapAuthenticationHandler("Handler", servicesManager,
             PrincipalFactoryUtils.newPrincipalFactory(), 0, client);
-        assertThrows(clazz, () -> result.authenticate(creds));
+        assertThrows(clazz, () -> result.authenticate(creds, mock(Service.class)));
     }
 }

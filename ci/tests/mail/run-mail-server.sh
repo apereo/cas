@@ -9,8 +9,8 @@ docker run --rm -d -p25000:25000 -p8282:8282 --name "email-server" mmoayyed/mock
 docker ps | grep "email-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "MockMock docker image is running."
+    echo "MockMock docker container is running."
 else
-    echo "MockMock docker image failed to start."
+    echo "MockMock docker container failed to start."
     exit $retVal
 fi

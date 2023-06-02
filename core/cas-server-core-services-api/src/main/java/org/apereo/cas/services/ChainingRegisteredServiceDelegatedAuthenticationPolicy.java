@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,11 +29,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JsonIgnoreProperties("order")
 public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = -2127874606493954025L;
 
     private List<RegisteredServiceDelegatedAuthenticationPolicy> strategies = new ArrayList<>();
 
-    private RegisteredServiceChainOperatorTypes operator = RegisteredServiceChainOperatorTypes.AND;
+    private LogicalOperatorTypes operator = LogicalOperatorTypes.AND;
 
     /**
      * Add policy/strategy.
@@ -65,7 +67,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isExclusive() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceDelegatedAuthenticationPolicy::isExclusive);
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isExclusive);
@@ -74,7 +76,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isPermitUndefined() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceDelegatedAuthenticationPolicy::isPermitUndefined);
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isPermitUndefined);
@@ -83,7 +85,7 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(policy -> policy.isProviderAllowed(provider, registeredService));
         }
         return strategies.stream().allMatch(policy -> policy.isProviderAllowed(provider, registeredService));
@@ -93,9 +95,18 @@ public class ChainingRegisteredServiceDelegatedAuthenticationPolicy implements R
     @Override
     @JsonIgnore
     public boolean isProviderRequired() {
-        if (operator == RegisteredServiceChainOperatorTypes.OR) {
+        if (operator == LogicalOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceDelegatedAuthenticationPolicy::isProviderRequired);
         }
         return strategies.stream().allMatch(RegisteredServiceDelegatedAuthenticationPolicy::isProviderRequired);
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isExclusiveToProvider(final String name) {
+        if (operator == LogicalOperatorTypes.OR) {
+            return strategies.stream().anyMatch(strategy -> strategy.isExclusiveToProvider(name));
+        }
+        return strategies.stream().allMatch(strategy -> strategy.isExclusiveToProvider(name));
     }
 }

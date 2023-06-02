@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
      */
     public static final String FRIENDLY_NAME = "SAML2 Service Provider";
 
+    @Serial
     private static final long serialVersionUID = 1218757374062931021L;
 
     @ExpressionLanguageCapable
@@ -87,7 +89,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     private String signingKeyAlgorithm;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
-    @JacksonInject(value = "signAssertions")
+    @JacksonInject("signAssertions")
     private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
     private boolean signUnsolicitedAuthnRequest;
@@ -110,7 +112,15 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private boolean skipValidatingAuthnRequest;
 
-    private boolean signResponses = true;
+    private boolean skipGeneratingServiceProviderNameIdQualifier;
+
+    private boolean skipGeneratingNameIdQualifier;
+
+    private boolean skipGeneratingSessionNotOnOrAfter;
+    
+    @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
+    @JacksonInject("signResponses")
+    private TriStateBoolean signResponses = TriStateBoolean.TRUE;
 
     private boolean encryptAssertions;
 

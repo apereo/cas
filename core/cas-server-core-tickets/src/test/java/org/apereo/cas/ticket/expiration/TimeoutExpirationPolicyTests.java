@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link TimeoutExpirationPolicy}.
+ *
  * @author Scott Battaglia
  * @since 3.0.0
  */
@@ -28,8 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeoutExpirationPolicy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
     private static final long TIMEOUT = 1;
 
     private ExpirationPolicy expirationPolicy;

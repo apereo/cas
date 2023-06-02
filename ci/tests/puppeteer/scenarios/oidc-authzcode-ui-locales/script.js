@@ -9,11 +9,11 @@ const cas = require('../../cas.js');
     console.log(`Navigating to ${url}`);
     await cas.goto(page, url);
 
-    await cas.assertInnerText(page, "#content #fm1 button[name=submit]", "ANMELDEN")
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
     
     await cas.loginWith(page, "casuser", "Mellon");
-    await cas.assertInnerText(page, "#allow", "ERLAUBEN")
-    await cas.assertInnerText(page, "#cancel", "VERBIETEN")
+    await cas.assertInnerText(page, "#allow", "ERLAUBEN");
+    await cas.assertInnerText(page, "#cancel", "VERBIETEN");
 
     await browser.close();
 })();

@@ -4,12 +4,12 @@ import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.NoArgsConstructor;
-import lombok.val;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableDiscoveryClient
 @SpringBootApplication(proxyBeanMethods = false, exclude = {
     DataSourceAutoConfiguration.class,
+    HibernateJpaAutoConfiguration.class,
     MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class
 })
@@ -42,10 +43,9 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        CasEmbeddedContainerUtils.getLoggingInitialization().ifPresent(init -> init.setMainArguments(args));
-        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().forEach(init -> init.initialize(args));
         new SpringApplicationBuilder(CasWebApplication.class)
-            .banner(banner)
+            .banner(CasEmbeddedContainerUtils.getCasBannerInstance())
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
             .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())

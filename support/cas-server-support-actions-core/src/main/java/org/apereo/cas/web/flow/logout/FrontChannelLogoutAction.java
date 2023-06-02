@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.logout;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutHttpMessage;
@@ -8,6 +7,7 @@ import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -19,8 +19,9 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -33,13 +34,13 @@ import java.util.HashMap;
 @Slf4j
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
-    public FrontChannelLogoutAction(final CentralAuthenticationService centralAuthenticationService,
+    public FrontChannelLogoutAction(final TicketRegistry ticketRegistry,
                                     final CasCookieBuilder ticketGrantingTicketCookieGenerator,
                                     final ArgumentExtractor argumentExtractor,
                                     final ServicesManager servicesManager,
                                     final LogoutExecutionPlan logoutExecutionPlan,
                                     final CasConfigurationProperties casProperties) {
-        super(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+        super(ticketRegistry, ticketGrantingTicketCookieGenerator,
             argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
     }
 
@@ -68,8 +69,8 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                     .stream()
                     .sorted(Comparator.comparing(SingleLogoutServiceMessageHandler::getOrder))
                     .filter(handler -> handler.supports(r.getExecutionRequest(), r.getService()))
-                    .forEach(handler -> {
-                        val logoutMessage = handler.createSingleLogoutMessage(r);
+                    .map(handler -> handler.createSingleLogoutMessage(r))
+                    .forEach(logoutMessage -> {
                         LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", r.getLogoutUrl(), logoutMessage);
                         val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage.getPayload(), true);
                         logoutUrls.put(r, msg);

@@ -1,4 +1,11 @@
 description = "Apereo CAS MongoDb Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via MongoDb"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     

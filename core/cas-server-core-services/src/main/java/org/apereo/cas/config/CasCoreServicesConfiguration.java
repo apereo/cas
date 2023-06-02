@@ -9,25 +9,27 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
-import org.apereo.cas.services.DefaultChainingServicesManager;
 import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
+import org.apereo.cas.services.DefaultRegisteredServicesTemplatesManager;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
-import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
+import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -39,17 +41,20 @@ import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.domain.DefaultDomainAwareServicesManager;
 import org.apereo.cas.services.domain.DefaultRegisteredServiceDomainExtractor;
+import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
+import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +73,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
@@ -91,7 +97,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableAsync(proxyTargetClass = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry)
 @AutoConfiguration
 public class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesResponseLocatorConfiguration", proxyBeanMethods = false)
@@ -114,6 +120,7 @@ public class CasCoreServicesConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -157,13 +164,29 @@ public class CasCoreServicesConfiguration {
             return new RegisteredServicePublicKeyCipherExecutor();
         }
 
-        @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
+        @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditableExecution registeredServiceAccessStrategyEnforcer(final CasConfigurationProperties casProperties) {
-            return new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties);
+        public AuditableExecution registeredServiceAccessStrategyEnforcer(final ConfigurableApplicationContext applicationContext) {
+            return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext);
         }
 
+        @ConditionalOnMissingBean(name = "groovyRegisteredServiceAccessStrategyEnforcer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RegisteredServiceAccessStrategyEnforcer groovyRegisteredServiceAccessStrategyEnforcer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(RegisteredServiceAccessStrategyEnforcer.class)
+                .when(BeanCondition.on("cas.access-strategy.groovy.location").exists()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val location = casProperties.getAccessStrategy().getGroovy().getLocation();
+                    return new GroovyRegisteredServiceAccessStrategyEnforcer(new WatchableGroovyScriptResource(location));
+                })
+                .otherwiseProxy()
+                .get();
+        }
     }
 
     @Configuration(value = "CasCoreServicesStrategyConfiguration", proxyBeanMethods = false)
@@ -259,6 +282,8 @@ public class CasCoreServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
+            @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
+            final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry,
             @Qualifier("servicesManagerCache")
@@ -273,6 +298,7 @@ public class CasCoreServicesConfiguration {
                 .applicationContext(applicationContext)
                 .environments(activeProfiles)
                 .servicesCache(servicesManagerCache)
+                .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
                 .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
                 .build();
         }
@@ -283,7 +309,7 @@ public class CasCoreServicesConfiguration {
         public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("servicesManagerConfigurationContext")
-            final ServicesManagerConfigurationContext configurationContext) throws Exception {
+            final ServicesManagerConfigurationContext configurationContext) {
             return BeanSupplier.of(ServicesManagerExecutionPlanConfigurer.class)
                 .alwaysMatch()
                 .supply(() -> {
@@ -309,13 +335,24 @@ public class CasCoreServicesConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureAfter(CasCoreServiceRegistryConfiguration.class)
     public static class CasCoreServicesManagerConfiguration {
+
+        @ConditionalOnMissingBean(name = RegisteredServicesTemplatesManager.BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RegisteredServicesTemplatesManager registeredServicesTemplatesManager(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(),
+                new RegisteredServiceJsonSerializer(applicationContext));
+        }
+
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ChainingServicesManager servicesManager(final List<ServicesManagerExecutionPlanConfigurer> configurers) {
             val chain = new DefaultChainingServicesManager();
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
-            configurers.forEach(c -> chain.registerServiceManager(c.configureServicesManager()));
+            configurers.forEach(cfg -> chain.registerServiceManager(cfg.configureServicesManager()));
             return chain;
         }
 
@@ -324,13 +361,8 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "servicesManagerCache")
         public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
             val cacheProperties = casProperties.getServiceRegistry().getCache();
-            val builder = Caffeine.newBuilder();
             val duration = Beans.newDuration(cacheProperties.getDuration());
-            return builder
-                .initialCapacity(cacheProperties.getInitialCapacity())
-                .maximumSize(cacheProperties.getCacheSize())
-                .expireAfterWrite(duration)
-                .build();
+            return Beans.newCache(casProperties.getServiceRegistry().getCache(), duration);
         }
 
         @EventListener
@@ -347,6 +379,7 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesSchedulingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
         public Runnable servicesManagerScheduledLoader(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryExecutionPlan")

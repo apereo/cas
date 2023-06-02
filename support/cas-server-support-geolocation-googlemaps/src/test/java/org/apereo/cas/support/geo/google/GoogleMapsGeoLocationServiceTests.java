@@ -2,7 +2,7 @@ package org.apereo.cas.support.geo.google;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationConfiguration;
-import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.config.GoogleMapsGeoCodingConfiguration;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.GeocodingResult;
@@ -10,7 +10,6 @@ import com.google.maps.model.LatLng;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,17 +39,14 @@ public class GoogleMapsGeoLocationServiceTests {
 
     @Test
     public void verifyOperation() {
-        assertNotNull(geoLocationService);
+        assertNull(geoLocationService.locate("8.8.8.8"));
         assertNull(geoLocationService.locate(null, 12.123));
         val resp = geoLocationService.locate(40.689060, -74.044636);
         assertEquals(40.689060, resp.getLatitude());
         assertEquals(-74.044636, resp.getLongitude());
         assertTrue(resp.getAddresses().isEmpty());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                geoLocationService.locate(InetAddress.getByName("www.github.com"));
-            }
+        assertDoesNotThrow(() -> {
+            geoLocationService.locate(InetAddress.getByName("www.github.com"));
         });
     }
 

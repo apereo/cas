@@ -59,7 +59,7 @@ The below example demonstrates a reasonable outline of a custom event resolver:
 ```java
 package org.apereo.cas.custom.config;
 
-@Configuration(value = "SomethingConfiguration", proxyBeanMethods = false)
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
 

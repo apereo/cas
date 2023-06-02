@@ -5,7 +5,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.crypto.WsFederationCertificateProvider;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.util.DateTimeUtils;
@@ -18,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -80,6 +79,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WsFederationHelper {
 
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     private final OpenSamlConfigBean openSamlConfigBean;
 
     private final ServicesManager servicesManager;
@@ -90,7 +93,6 @@ public class WsFederationHelper {
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
         val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
-        Security.addProvider(new BouncyCastleProvider());
         LOGGER.debug("Parsing credential private key");
         try (val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();
@@ -288,7 +290,7 @@ public class WsFederationHelper {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, "Failed to validate assertion signature", e);
         }
-        SamlUtils.logSamlObject(this.openSamlConfigBean, assertion);
+        openSamlConfigBean.logObject(assertion);
         LOGGER.error("Signature doesn't match any signing credential and cannot be validated.");
         return false;
     }
@@ -308,7 +310,7 @@ public class WsFederationHelper {
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
                 LOGGER.debug("Determined relying party identifier from service [{}] to be [{}]", service, relyingPartyIdentifier);
                 val propertyValue = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService);
-                return propertyValue != null ? propertyValue.getValue() : relyingPartyIdentifier;
+                return propertyValue != null ? propertyValue.value() : relyingPartyIdentifier;
             }
         }
         LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);

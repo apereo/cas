@@ -11,8 +11,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,10 +26,11 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core", automated = true)
 @Getter
 @Setter
-@Accessors(chain = true) 
+@Accessors(chain = true)
 @JsonFilter("CasServerProperties")
 public class CasServerProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7876382696803430817L;
 
     /**
@@ -44,7 +47,7 @@ public class CasServerProperties implements Serializable {
      */
     @RequiredProperty
     @ExpressionLanguageCapable
-    private String prefix = name.concat("/cas");
+    private String prefix;
 
     /**
      * The CAS Server scope.
@@ -58,6 +61,10 @@ public class CasServerProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasEmbeddedApacheTomcatProperties tomcat = new CasEmbeddedApacheTomcatProperties();
+
+    public CasServerProperties() {
+        setPrefix(StringUtils.appendIfMissing(getName(), "/").concat("cas"));
+    }
 
     @JsonIgnore
     public String getLoginUrl() {

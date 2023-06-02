@@ -19,11 +19,11 @@ import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolic
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -44,7 +44,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication)
 @AutoConfiguration(after = CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationSupportConfiguration {
 
@@ -68,10 +68,8 @@ public class CasCoreAuthenticationSupportConfiguration {
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
         public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
             final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
             val resolver = new RegisteredServiceAuthenticationHandlerResolver(servicesManager,
                 authenticationServiceSelectionPlan);
             resolver.setOrder(casProperties.getAuthn().getCore().getServiceAuthenticationResolution().getOrder());
@@ -84,8 +82,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) throws Exception {
             return BeanSupplier.of(AuthenticationHandlerResolver.class)
                 .when(BeanCondition.on("cas.authn.core.groovy-authentication-resolution.location").exists()
                     .given(applicationContext.getEnvironment()))
@@ -118,14 +115,10 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
-            @Qualifier("authenticationTransactionManager")
-            final AuthenticationTransactionManager authenticationTransactionManager,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy,
-            @Qualifier("authenticationResultBuilderFactory")
-            final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
-            @Qualifier("authenticationTransactionFactory")
-            final AuthenticationTransactionFactory authenticationTransactionFactory) {
+            @Qualifier("authenticationTransactionManager") final AuthenticationTransactionManager authenticationTransactionManager,
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy,
+            @Qualifier("authenticationResultBuilderFactory") final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
+            @Qualifier("authenticationTransactionFactory") final AuthenticationTransactionFactory authenticationTransactionFactory) {
             return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
                 principalElectionStrategy, authenticationResultBuilderFactory,
                 authenticationTransactionFactory);
@@ -139,10 +132,8 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
         public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
             return new RegisteredServiceAuthenticationPolicyResolver(servicesManager,
                 authenticationServiceSelectionPlan);
         }
@@ -155,14 +146,10 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer(
-            @Qualifier("byCredentialSourceAuthenticationHandlerResolver")
-            final ObjectProvider<AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
-            @Qualifier("registeredServiceAuthenticationHandlerResolver")
-            final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
-            @Qualifier("registeredServiceAuthenticationPolicyResolver")
-            final AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver,
-            @Qualifier("groovyAuthenticationHandlerResolver")
-            final ObjectProvider<AuthenticationHandlerResolver> groovyAuthenticationHandlerResolver) {
+            @Qualifier("byCredentialSourceAuthenticationHandlerResolver") final ObjectProvider<AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
+            @Qualifier("registeredServiceAuthenticationHandlerResolver") final AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver,
+            @Qualifier("registeredServiceAuthenticationPolicyResolver") final AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver,
+            @Qualifier("groovyAuthenticationHandlerResolver") final ObjectProvider<AuthenticationHandlerResolver> groovyAuthenticationHandlerResolver) {
             return plan -> {
                 byCredentialSourceAuthenticationHandlerResolver.ifAvailable(plan::registerAuthenticationHandlerResolver);
                 plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver);

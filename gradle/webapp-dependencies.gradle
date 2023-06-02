@@ -22,8 +22,8 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-pm-webflow")
+    implementation project(":support:cas-server-support-webconfig")
 
-    implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
 
@@ -44,9 +44,15 @@ dependencies {
         }
     }
 
-    implementation libraries.springcloudconfigclient
-    if (!rootProject.publishFlag) {
-        runtimeOnly libraries.springbootdevtools
+    if (!project.hasProperty("casNativeWebApplication") || !project.ext.casNativeWebApplication) {
+        implementation libraries.springcloudconfigclient
+        implementation libraries.springcloudbootstrap
+        implementation libraries.springbootpropertymigrator
+        if (!rootProject.publishFlag) {
+            runtimeOnly libraries.springbootdevtools
+        }
+    } else {
+        ansi.green("Building CAS native web application...")
     }
 }
 

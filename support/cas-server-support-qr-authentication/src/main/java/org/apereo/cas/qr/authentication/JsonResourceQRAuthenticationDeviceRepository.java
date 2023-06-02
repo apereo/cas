@@ -37,7 +37,7 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
     public JsonResourceQRAuthenticationDeviceRepository(final Resource jsonResource) {
         this.jsonResource = jsonResource;
         if (ResourceUtils.isFile(jsonResource) && !ResourceUtils.doesResourceExist(jsonResource)) {
-            FunctionUtils.doUnchecked(u -> {
+            FunctionUtils.doUnchecked(__ -> {
                 val res = jsonResource.getFile().createNewFile();
                 if (res) {
                     LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
@@ -82,12 +82,12 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
     }
 
     private void writeToJsonResource() {
-        FunctionUtils.doUnchecked(u -> MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), devices));
+        FunctionUtils.doUnchecked(__ -> MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), devices));
     }
 
     private void readFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            FunctionUtils.doUnchecked(u -> {
+            FunctionUtils.doUnchecked(__ -> {
                 try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                     val personList = new TypeReference<Map<String, String>>() {
                     };

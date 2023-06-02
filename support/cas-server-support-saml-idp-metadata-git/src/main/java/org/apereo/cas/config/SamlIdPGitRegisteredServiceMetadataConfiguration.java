@@ -1,18 +1,22 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.GitSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,7 +24,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * This is {@link SamlIdPGitRegisteredServiceMetadataConfiguration}.
@@ -29,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "git")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLServiceProviderMetadata, module = "git")
 @AutoConfiguration
 public class SamlIdPGitRegisteredServiceMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.git.repository-url");
@@ -82,5 +88,38 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
             .supply(() -> plan -> plan.registerMetadataResolver(gitSamlRegisteredServiceMetadataResolver))
             .otherwiseProxy()
             .get();
+    }
+
+    @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceRepositoryScheduler")
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Lazy(false)
+    public Runnable gitSamlRegisteredServiceRepositoryScheduler(
+        @Qualifier("gitSamlRegisteredServiceRepositoryInstance")
+        final GitRepository gitSamlRegisteredServiceRepositoryInstance,
+        final ConfigurableApplicationContext applicationContext) {
+        return BeanSupplier.of(Runnable.class)
+            .when(BeanCondition.on("cas.authn.saml-idp.metadata.git.schedule.enabled")
+                .isTrue().given(applicationContext.getEnvironment()))
+            .supply(() -> new GitSamlRegisteredServiceRepositoryScheduler(gitSamlRegisteredServiceRepositoryInstance))
+            .otherwiseProxy()
+            .get();
+    }
+
+    @RequiredArgsConstructor
+    @Slf4j
+    public static class GitSamlRegisteredServiceRepositoryScheduler implements Runnable {
+        private final GitRepository gitRepository;
+
+        @Scheduled(initialDelayString = "${cas.authn.saml-idp.metadata.git.schedule.start-delay:PT60S}",
+            fixedDelayString = "${cas.authn.saml-idp.metadata.git.schedule.repeat-interval:PT2H}")
+        @Override
+        public void run() {
+            FunctionUtils.doUnchecked(__ -> {
+                val origin = StringUtils.defaultString(gitRepository.getRepositoryRemote("origin"), "default");
+                LOGGER.debug("Starting to pull SAML registered services...", origin);
+                gitRepository.pull();
+            });
+        }
     }
 }

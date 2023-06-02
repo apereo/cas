@@ -51,12 +51,13 @@ public class RegisteredServiceJsonSerializerTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
-        val json = "    {\n"
-                   + "        \"@class\" : \"org.apereo.cas.services.CasRegisteredService\",\n"
-                   + "            \"serviceId\" : \"^https://xyz.*\",\n"
-                   + "            \"name\" : \"XYZ\",\n"
-                   + "            \"id\" : \"20161214\"\n"
-                   + "    }";
+        val json = """
+            {
+                "@class" : "org.apereo.cas.services.CasRegisteredService",
+                    "serviceId" : "^https://xyz.*",
+                    "name" : "XYZ",
+                    "id" : "20161214"
+            }""".indent(4);
 
         val s = (CasRegisteredService) zer.from(json);
         assertNotNull(s);
@@ -94,20 +95,18 @@ public class RegisteredServiceJsonSerializerTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
-        val json = "    {\n"
-                   + "        \"@class\" : \"org.apereo.cas.services.CasRegisteredService\",\n"
-                   + "            \"serviceId\" : \"^https://xyz.*\",\n"
-                   + "            \"name\" : \"XYZ\",\n"
-                   + "            \"id\" : \"20161214\"\n"
-                   + "  \"authenticationPolicy\" : {\n"
-                   + "    \"@class\" : \"org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy\",\n"
-                   + "    \"criteria\":\"\""
-                   + "  }"
-                   + "    }";
+        val json = """
+              {
+                  "@class" : "org.apereo.cas.services.CasRegisteredService",
+                      "serviceId" : "^https://xyz.*",
+                      "name" : "XYZ",
+                      "id" : "20161214"
+            "authenticationPolicy" : {
+              "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy"}}""".indent(2);
 
-        val s = zer.from(json);
-        assertNotNull(s);
-        assertNotNull(s.getAuthenticationPolicy());
-        assertNull(s.getAuthenticationPolicy().getCriteria());
+        val serialized = zer.from(json);
+        assertNotNull(serialized);
+        assertNotNull(serialized.getAuthenticationPolicy());
+        assertNull(serialized.getAuthenticationPolicy().getCriteria());
     }
 }

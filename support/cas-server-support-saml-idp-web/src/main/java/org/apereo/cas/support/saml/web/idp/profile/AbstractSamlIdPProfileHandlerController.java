@@ -5,14 +5,14 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
@@ -23,7 +23,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
@@ -35,12 +37,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
+import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -59,8 +60,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -89,14 +91,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      *
      * @param assertion the assertion
      */
-    protected static void logCasValidationAssertion(final Assertion assertion) {
-        LOGGER.debug("CAS Assertion Valid: [{}]", assertion.isValid());
-        LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
-        LOGGER.debug("CAS Assertion authentication Date: [{}]", assertion.getAuthenticationDate());
-        LOGGER.debug("CAS Assertion ValidFrom Date: [{}]", assertion.getValidFromDate());
-        LOGGER.debug("CAS Assertion ValidUntil Date: [{}]", assertion.getValidUntilDate());
-        LOGGER.debug("CAS Assertion Attributes: [{}]", assertion.getAttributes());
-        LOGGER.debug("CAS Assertion Principal Attributes: [{}]", assertion.getPrincipal().getAttributes());
+    protected static void logCasValidationAssertion(final TicketValidator.ValidationResult assertion) {
+        LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal());
+        LOGGER.debug("CAS Assertion Authentication Attributes: [{}]", assertion.getAttributes());
+        LOGGER.debug("CAS Assertion Service: [{}]", assertion.getService());
     }
 
     /**
@@ -200,8 +198,13 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .principal(authentication.getPrincipal())
             .build();
         val attributes = registeredService.getAttributeReleasePolicy().getAttributes(context);
-        val principalId = registeredService.getUsernameAttributeProvider()
-            .resolveUsername(authentication.getPrincipal(), service, registeredService);
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(authentication.getPrincipal())
+            .build();
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         attributes.putAll(attributesToCombine);
 
         val authnAttributes = configurationContext.getAuthenticationAttributeReleasePolicy()
@@ -250,13 +253,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
         val properties = configurationContext.getCasProperties();
-        val urlToRedirectTo = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
-            CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
-            authnRequest.isPassive());
+        val urlToRedirectTo = constructRedirectUrl(properties.getServer().getLoginUrl(),
+            serviceUrl, authnRequest.isForceAuthn(), authnRequest.isPassive());
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SamlIdPCoreProperties.SessionStorageTypes.BROWSER_SESSION_STORAGE) {
+        if (type == SessionStorageTypes.BROWSER_SESSION_STORAGE) {
             val context = new JEEContext(request, response);
             val sessionStorage = configurationContext.getSessionStore()
                 .getTrackableSession(context).map(BrowserSessionStorage.class::cast)
@@ -269,6 +271,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val mv = new ModelAndView(new RedirectView(urlToRedirectTo));
         mv.setStatus(HttpStatus.FOUND);
         return mv;
+    }
+
+    private static String constructRedirectUrl(final String casServerLoginUrl,
+                                               final String serviceUrl, final boolean renew,
+                                               final boolean gateway) {
+        return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
+               + EncodingUtils.urlEncode(serviceUrl)
+               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+               + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
     }
 
     /**
@@ -288,16 +299,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val builder = new URLBuilder(configurationContext.getCallbackService().getId());
 
         builder.getQueryParams().add(
-            new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
+            new net.shibboleth.shared.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
         storeAuthenticationRequest(request, response, pair);
         val url = builder.buildURL();
-
         LOGGER.trace("Built service callback url [{}]", url);
-        return CommonUtils.constructServiceUrl(request, response,
-            url, configurationContext.getCasProperties().getServer().getName(),
-            CasProtocolConstants.PARAMETER_SERVICE,
-            CasProtocolConstants.PARAMETER_TICKET, false);
+        return url;
     }
 
     /**
@@ -368,24 +375,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val st = factory.create(ticketGrantingTicket, service, false, ServiceTicket.class);
         getConfigurationContext().getTicketRegistry().addTicket(st);
         getConfigurationContext().getTicketRegistry().updateTicket(ticketGrantingTicket);
-        buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        buildSamlResponse(response, request, authenticationContext, Optional.of(assertion), binding);
     }
 
-    /**
-     * Build saml response.
-     *
-     * @param response              the response
-     * @param request               the request
-     * @param authenticationContext the authentication context
-     * @param casAssertion          the cas assertion
-     * @param binding               the binding
-     * @throws Exception the exception
-     */
-    protected void buildSamlResponse(final HttpServletResponse response,
-                                     final HttpServletRequest request,
-                                     final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
-                                     final AuthenticatedAssertionContext casAssertion,
-                                     final String binding) throws Exception {
+
+    protected XMLObject buildSamlResponse(final HttpServletResponse response,
+                                          final HttpServletRequest request,
+                                          final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
+                                          final Optional<AuthenticatedAssertionContext> casAssertion,
+                                          final String binding) throws Exception {
         val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);
 
@@ -401,8 +399,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .binding(binding)
             .messageContext(authenticationContext.getValue())
             .build();
-        configurationContext.getResponseBuilder().build(buildContext);
+        val samlResponse = configurationContext.getResponseBuilder().build(buildContext);
         LOGGER.info("Built the SAML2 response for [{}]", entityId);
+        return samlResponse;
     }
 
     /**
@@ -429,7 +428,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param pair     the pair
      * @param request  the request
      * @param response the response
-     * @return the boolean
+     * @return true/false
      */
     protected Optional<TicketGrantingTicket> singleSignOnSessionExists(
         final Pair<? extends SignableSAMLObject, MessageContext> pair,
@@ -452,18 +451,19 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             return Optional.empty();
         }
 
-        val authn = ticketGrantingTicket.getAuthentication();
-        LOGGER.debug("Located single sign-on authentication for principal [{}]", authn.getPrincipal());
+        val authentication = ticketGrantingTicket.getAuthentication();
+        LOGGER.debug("Located single sign-on authentication for principal [{}]", authentication.getPrincipal());
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(issuer);
         val registeredService = configurationContext.getServicesManager().findServiceBy(service);
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)
+            .httpServletResponse(response)
             .build()
             .attribute(Service.class.getName(), service)
             .attribute(RegisteredService.class.getName(), registeredService)
             .attribute(Issuer.class.getName(), issuer)
-            .attribute(Authentication.class.getName(), authn)
+            .attribute(Authentication.class.getName(), authentication)
             .attribute(TicketGrantingTicket.class.getName(), cookie)
             .attribute(AuthnRequest.class.getName(), authnRequest);
         val ssoStrategy = configurationContext.getSingleSignOnParticipationStrategy();
@@ -504,7 +504,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Determined SAML2 endpoint for authentication request as [{}]",
             StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()));
 
-        SamlUtils.logSamlObject(configurationContext.getOpenSamlConfigBean(), authnRequest);
+        configurationContext.getOpenSamlConfigBean().logObject(authnRequest);
         return Pair.of(registeredService, facade);
     }
 
@@ -590,7 +590,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             public MessageContext get() throws Throwable {
                 val decoder = new HTTPSOAP11Decoder();
                 decoder.setParserPool(configurationContext.getOpenSamlConfigBean().getParserPool());
-                decoder.setHttpServletRequest(request);
+                decoder.setHttpServletRequestSupplier(() -> request);
 
                 val binding = new BindingDescriptor();
                 binding.setId(getClass().getName());
@@ -613,9 +613,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected void autoConfigureCookiePath(final HttpServletRequest request) {
         val casProperties = configurationContext.getCasProperties();
-        val sessionStorageType = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (sessionStorageType == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY
-            && casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
+        val core = casProperties.getAuthn().getSamlIdp().getCore();
+        val sessionStorageType = core.getSessionStorageType();
+        if (sessionStorageType == SessionStorageTypes.TICKET_REGISTRY
+            && core.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
 
             val contextPath = request.getContextPath();
             val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
@@ -632,14 +633,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
     }
 
-    /**
-     * Handle profile request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @param decoder  the decoder
-     * @return the model and view
-     */
     protected ModelAndView handleSsoPostProfileRequest(final HttpServletResponse response,
                                                        final HttpServletRequest request,
                                                        final BaseHttpServletRequestXMLMessageDecoder decoder) {
@@ -652,13 +645,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }, WebUtils::produceErrorView).get();
     }
 
-    /**
-     * Retrieve authentication request.
-     *
-     * @param response the response
-     * @param request  the request
-     * @return the authn request
-     */
     @Synchronized
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(final HttpServletResponse response,
                                                                                                       final HttpServletRequest request) {
@@ -669,14 +655,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 
-    /**
-     * Store authentication request.
-     *
-     * @param request  the request
-     * @param response the response
-     * @param context  the pair
-     * @throws Exception the exception
-     */
     @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
@@ -685,12 +663,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             configurationContext.getSessionStore(), context);
     }
 
-    /**
-     * Determine profile binding.
-     *
-     * @param authenticationContext the authentication context
-     * @return the string
-     */
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
         val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         val pair = getRegisteredServiceAndFacade(authnRequest);

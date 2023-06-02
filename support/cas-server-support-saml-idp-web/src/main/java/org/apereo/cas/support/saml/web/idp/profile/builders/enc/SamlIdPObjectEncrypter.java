@@ -17,10 +17,9 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -63,8 +62,8 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.KeyInfoReferenceProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 
-import java.security.Security;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,11 +76,6 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class SamlIdPObjectEncrypter {
-
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
-
     private final SamlIdPProperties samlIdPProperties;
 
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
@@ -176,7 +170,6 @@ public class SamlIdPObjectEncrypter {
                          final SamlRegisteredService service,
                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         try {
-            Security.addProvider(new BouncyCastleProvider());
             val config = configureDecryptionSecurityConfiguration(service);
             configureKeyDecryptionCredential(adaptor.getEntityId(), adaptor, service, config);
             val parameters = resolveDecryptionParameters(service, config);
@@ -202,7 +195,7 @@ public class SamlIdPObjectEncrypter {
         LOGGER.trace("Calculating encryption security configuration for [{}] based on service [{}]", entityId, service.getName());
         val encryptionConfiguration = configureEncryptionSecurityConfiguration(service);
 
-        FunctionUtils.doUnchecked(u -> {
+        FunctionUtils.doUnchecked(__ -> {
             LOGGER.trace("Fetching key encryption credential for [{}] based on service [{}]", entityId, service.getName());
             configureKeyEncryptionCredential(entityId, adaptor, service, encryptionConfiguration);
         });
@@ -259,16 +252,18 @@ public class SamlIdPObjectEncrypter {
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
         final BasicEncryptionConfiguration encryptionConfiguration) {
-        try {
+
+        return FunctionUtils.doAndHandle(() -> {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
-            if (params != null) {
-                return new DataEncryptionParameters(params);
-            }
-            LOGGER.debug("No data encryption parameters could be determined");
-            return null;
-        } catch (final Exception e) {
+            return Optional.of(params)
+                .map(param -> new DataEncryptionParameters(params))
+                .orElseGet(() -> {
+                    LOGGER.debug("No data encryption parameters could be determined");
+                    return null;
+                });
+        }, e -> {
             throw new SamlException(e.getMessage(), e);
-        }
+        }).get();
     }
 
     /**
@@ -285,16 +280,18 @@ public class SamlIdPObjectEncrypter {
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
         final BasicEncryptionConfiguration encryptionConfiguration) {
-        try {
+
+        return FunctionUtils.doAndHandle(() -> {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
-            if (params != null) {
-                return new KeyEncryptionParameters(params, adaptor.getEntityId());
-            }
-            LOGGER.debug("No key encryption parameters could be determined");
-            return null;
-        } catch (final Exception e) {
+            return Optional.of(params)
+                .map(param -> new KeyEncryptionParameters(params, adaptor.getEntityId()))
+                .orElseGet(() -> {
+                    LOGGER.debug("No key encryption parameters could be determined");
+                    return null;
+                });
+        }, e -> {
             throw new IllegalArgumentException(e);
-        }
+        }).get();
     }
 
     /**
@@ -420,7 +417,7 @@ public class SamlIdPObjectEncrypter {
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
-                service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+                service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;
@@ -507,7 +504,6 @@ public class SamlIdPObjectEncrypter {
         return credential;
     }
 
-
     /**
      * Configure decryption security configuration basic decryption configuration.
      *
@@ -539,7 +535,7 @@ public class SamlIdPObjectEncrypter {
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
             val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(
-                service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+                service.getWhiteListBlackListPrecedence().trim().toUpperCase(Locale.ENGLISH));
             config.setIncludeExcludePrecedence(precedence);
         }
         return config;

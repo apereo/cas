@@ -1,8 +1,10 @@
 package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
+
+import java.util.Optional;
 
 
 /**
@@ -42,12 +46,12 @@ public class ThreadLocalAuditPrincipalResolver implements PrincipalResolver {
 
     private String getCurrentPrincipal(final JoinPoint auditTarget, final Object returnValue, final Exception exception) {
         val authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
-        val principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authn, returnValue, exception);
-        val id = FunctionUtils.doIfNull(principal,
-            AuthenticationCredentialsThreadLocalBinder::getCurrentCredentialIdsAsString,
-            () -> principal)
-            .get();
-
+        val principal = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authn, returnValue, exception);
+        val id = Optional.ofNullable(principal)
+            .or(() -> (returnValue instanceof AuditableExecutionResult result)
+                ? result.getAuthentication().map(Authentication::getPrincipal).map(Principal::getId)
+                : Optional.empty())
+            .orElseGet(AuthenticationCredentialsThreadLocalBinder::getCurrentCredentialIdsAsString);
         return StringUtils.defaultIfBlank(id, UNKNOWN_USER);
     }
 }

@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
+
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +40,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      */
     public static final String DEFAULT_IDENTIFIER = "mfa-yubikey";
 
+    @Serial
     private static final long serialVersionUID = 9138057706201201089L;
 
     /**
@@ -59,7 +62,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      * or register new devices/accounts automatically.
      */
     private boolean multipleDeviceRegistrationEnabled;
-    
+
     /**
      * Keep device registration records inside a static JSON resource.
      */
@@ -81,12 +84,6 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
-
-    /**
-     * Keep device registration records inside a CouchDb resource.
-     */
-    @NestedConfigurationProperty
-    private YubiKeyCouchDbMultifactorProperties couchDb = new YubiKeyCouchDbMultifactorProperties();
 
     /**
      * Keep device registration records inside a JDBC resource.

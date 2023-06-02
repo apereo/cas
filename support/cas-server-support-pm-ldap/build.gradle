@@ -1,4 +1,11 @@
 description = "Apereo CAS Password Management LDAP Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Password Management",
+            title: "Password Management via LDAP & Active Directory"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")
@@ -23,4 +30,6 @@ dependencies {
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

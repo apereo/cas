@@ -26,8 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -71,8 +72,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
                 .getClientRegistrationRequestSerializer().from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
-            val registeredService = new OidcClientRegistrationRequestTranslator(getConfigurationContext())
+            val registeredService = getConfigurationContext().getClientRegistrationRequestTranslator()
                 .translate(registrationRequest, Optional.empty());
+            registeredService.markAsDynamicallyRegistered();
+            
             val savedService = (OidcRegisteredService) getConfigurationContext().getServicesManager().save(registeredService);
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(savedService,
                 getConfigurationContext().getCasProperties().getServer().getPrefix());
@@ -84,9 +87,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
                 .casProperties(getConfigurationContext().getCasProperties())
                 .build()
-                .encode();
+                .encode(accessToken.getId());
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
-            registeredService.setDynamicallyRegistered(true);
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -121,7 +123,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
 
         val factory = (OAuth20AccessTokenFactory) getConfigurationContext().getTicketFactory().get(OAuth20AccessToken.class);
         val accessToken = factory.create(service, authn,
-            List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
+            List.of(OidcConstants.CLIENT_CONFIGURATION_SCOPE),
             registeredService.getClientId(),
             OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
         getConfigurationContext().getTicketRegistry().addTicket(accessToken);

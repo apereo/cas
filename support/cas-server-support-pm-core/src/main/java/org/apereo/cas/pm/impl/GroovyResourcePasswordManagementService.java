@@ -26,7 +26,7 @@ import java.util.Map;
 @Getter
 public class GroovyResourcePasswordManagementService extends BasePasswordManagementService {
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                                    final String issuer,
@@ -38,8 +38,8 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
-    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeRequest bean) {
-        return watchableScript.execute("change", Boolean.class, new Object[]{credential, bean, LOGGER});
+    public boolean changeInternal(final @NonNull PasswordChangeRequest bean) {
+        return watchableScript.execute("change", Boolean.class, new Object[]{bean, LOGGER});
     }
 
     @Override
@@ -60,6 +60,11 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         return watchableScript.execute("getSecurityQuestions", Map.class, new Object[]{query, LOGGER});
+    }
+
+    @Override
+    public boolean unlockAccount(final Credential credential) {
+        return watchableScript.execute("unlockAccount", Boolean.class, new Object[]{credential, LOGGER});
     }
 
     @Override

@@ -13,17 +13,30 @@ function printgreen() {
   printf "${GREEN}$1${ENDCOLOR}\n"
 }
 
-jmeterVersion=5.4.3
+jmeterVersion=5.5
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 "
+gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
 webAppServerType="$1"
 testCategory="${2:-cas}"
 
 casProperties=""
 case "$testCategory" in
+  saml)
+    rm -Rf "${PWD}"/ci/tests/perf/saml/md/*
+    casProperties="--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp"
+    casProperties="${casProperties} --cas.authn.saml-idp.metadata.file-system.location=file://${PWD}/ci/tests/perf/saml/md"
+    casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/saml/services"
+    casProperties="${casProperties} --cas.http-client.host-name-verifier=none "
+    casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true --spring.main.lazy-initialization=false "
+    jmeterScript="etc/loadtests/jmeter/CAS_SAML2.jmx"
+    casModules="saml-idp,reports"
+    ;;
   oidc)
-    casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services"
+    casProperties="--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc "
+    casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
+    casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
+    casProperties="${casProperties} --spring.main.lazy-initialization=false "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;
@@ -33,18 +46,15 @@ case "$testCategory" in
 esac
 
 retVal=0
-if [[ ! -f webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war ]]; then
-  echo -e "***********************************************"
-  echo -e "Build started at $(date)"
-  echo -e "***********************************************"
-  gradleBuild="$gradleBuild :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc
-  -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
-  tasks="$gradle $gradleBuildOptions $gradleBuild"
-  echo $tasks
-  echo -e "***************************************************************************************"
-  eval $tasks
-  retVal=$?
-fi
+echo -e "**********************************************************"
+echo -e "Build started at $(date) for test category ${testCategory}"
+echo -e "**********************************************************"
+gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+tasks="$gradle $gradleBuildOptions $gradleBuild"
+echo "$tasks"
+echo -e "***************************************************************************************"
+eval "$tasks"
+retVal=$?
 
 if [ $retVal == 0 ]; then
   printgreen "Gradle build finished successfully.\nPreparing CAS web application WAR artifact..."
@@ -69,22 +79,41 @@ if [ $retVal == 0 ]; then
   casOutput="/tmp/cas.log"
 
   # -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n
+  echo "Properties: ${casProperties}"
   java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
-      --server.ssl.key-store=${keystore} --cas.service-registry.core.init-from-json=true \
-      --cas.server.name=https://localhost:8443 --cas.server.prefix=https://localhost:8443/cas \
-      --cas.audit.engine.enabled=true --spring.profiles.active=none \
+      --server.ssl.key-store=${keystore} \
+      --cas.service-registry.core.init-from-json=true \
+      --cas.server.name=https://localhost:8443 \
+      --cas.server.prefix=https://localhost:8443/cas \
+      --cas.audit.engine.enabled=true \
+      --spring.profiles.active=none \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
       --management.endpoints.enabled-by-default=true \
       --logging.level.org.apereo.cas=warn ${casProperties} &
   pid=$!
-  printgreen "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
+  printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
     sleep 2
   done
-  printgreen -e "\n\nReady!"
+  printgreen "\n\nReady!"
 
+  case "$testCategory" in
+    saml)
+      metadataDirectory=""
+      cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-signing.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
+      export IDP_SIGNING_CERTIFICATE=$cert
+      echo -e "Using signing certificate:\n$IDP_SIGNING_CERTIFICATE"
+      cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-encryption.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
+      export IDP_ENCRYPTION_CERTIFICATE=$cert
+      echo -e "Using encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
+      "${PWD}/ci/tests/saml2/run-saml-server.sh"
+      ;;
+  esac
+  
+#  read -r
+  
   if [[ ! -f "/tmp/apache-jmeter-${jmeterVersion}.zip" ]]; then
       printgreen "Downloading JMeter ${jmeterVersion}..."
       curl -o /tmp/apache-jmeter-${jmeterVersion}.zip \
@@ -94,7 +123,7 @@ if [ $retVal == 0 ]; then
       printgreen "Unzipped /tmp/apache-jmeter-${jmeterVersion}.zip rc=$?"
       chmod +x /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter
   fi
-  
+  clear
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
   export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"

@@ -25,8 +25,11 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 @RequiredArgsConstructor
 public class WebflowExecutorFactory {
     private final WebflowProperties webflowProperties;
+
     private final FlowDefinitionRegistry flowDefinitionRegistry;
+
     private final CipherExecutor webflowCipherExecutor;
+
     private final FlowExecutionListener[] executionListeners;
 
     /**
@@ -43,7 +46,7 @@ public class WebflowExecutorFactory {
 
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
         val conversationManager = new SessionBindingConversationManager();
-        val session = webflowProperties.getSession();
+        val session = webflowProperties.getSession().getServer();
         conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).getSeconds());
         conversationManager.setMaxConversations(session.getMaxConversations());
 
