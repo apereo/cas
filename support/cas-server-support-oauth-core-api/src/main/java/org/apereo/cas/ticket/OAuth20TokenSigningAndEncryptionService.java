@@ -1,8 +1,11 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.EllipticCurveJsonWebKey;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 
 import java.util.Optional;
@@ -41,7 +44,11 @@ public interface OAuth20TokenSigningAndEncryptionService {
      */
     default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
                                                  final JsonWebKey signingKey) {
-        return signingKey.getAlgorithm();
+        var defaultAlgorithm = AlgorithmIdentifiers.RSA_USING_SHA256;
+        if (signingKey instanceof EllipticCurveJsonWebKey) {
+            defaultAlgorithm = AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256;
+        }
+        return StringUtils.defaultString(signingKey.getAlgorithm(), defaultAlgorithm);
     }
 
     /**

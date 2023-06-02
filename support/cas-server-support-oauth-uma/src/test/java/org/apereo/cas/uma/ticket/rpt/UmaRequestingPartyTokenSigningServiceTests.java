@@ -29,7 +29,7 @@ public class UmaRequestingPartyTokenSigningServiceTests extends BaseUmaEndpointC
         val jwks = new ClassPathResource("nothing.jwks");
         props.getAuthn().getOauth().getUma().getRequestingPartyToken().getJwksFile().setLocation(jwks);
         val signingService = new UmaRequestingPartyTokenSigningService(props);
-        assertNull(signingService.getJsonWebKeySigningKey(Optional.empty()));
+        assertThrows(IllegalArgumentException.class, () -> signingService.getJsonWebKeySigningKey(Optional.empty()));
         val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         assertEquals(JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE, signingService.getAllowedSigningAlgorithms(service));
     }
