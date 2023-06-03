@@ -89,3 +89,8 @@ and maneuvering to function:
 
 If you find a library which doesn’t work with GraalVM, please discuss that issue
 on the [reachability metadata project](https://github.com/oracle/graalvm-reachability-metadata).
+
+Note while the startup time is orders of magnitude faster than on the traditional JVM, 
+the actual latency and throughput may be worse on the native image - there is no JIT compiler that optimizes 
+code execution paths in runtime. Ideally, you should run performance tests to find out how CAS behaves 
+as a native image vs a traditional JVM application.
