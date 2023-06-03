@@ -35,5 +35,9 @@ const assert = require("assert");
     await page.waitForTimeout(1000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
 
+    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://anything-matches-here");
+    await cas.assertVisibility(page, "#wildcardService");
+
     await browser.close();
 })();

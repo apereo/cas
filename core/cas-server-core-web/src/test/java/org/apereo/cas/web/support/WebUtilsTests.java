@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaPropert
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockServletContext;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -72,6 +71,7 @@ public class WebUtilsTests {
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));
 
         assertDoesNotThrow(() -> {
+            WebUtils.putWildcardedRegisteredService(context, true);
             WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);
             WebUtils.putInitialHttpRequestPostParameters(context);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, true);

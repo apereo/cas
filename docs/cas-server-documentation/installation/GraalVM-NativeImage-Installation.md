@@ -28,10 +28,10 @@ There are some key differences between native and JVM-based CAS deployments. The
 - The CAS server application classpath is fixed at build time and cannot change.
 - There is no lazy class loading and everything shipped in the final executable will be loaded in memory on startup.
 
-During the AOT processing phase, the CAS web application is started up to the point that bean definitions 
-are available. Bean instances are not created during the AOT processing phase. 
+During the AOT processing phase, the CAS web application is started up to the point that *bean definitions* 
+are available. *Bean instances* are NOT created during the AOT processing phase. 
 
-The AOT process, integrated directly into the CAS build will typically generate:
+The AOT process, integrated directly into the CAS build, will typically generate:
 
 - Java source code under `build/generated/aotSources`
 - Bytecode (for dynamic proxies etc) under `build/generated/aotClasses`
@@ -50,7 +50,7 @@ Generated hint files can typicallt be found in `build/generated/aotResources`.
 
 ## System Requirements
 
-A GraalVM distribution compatible with the overall [CAS requirements](../planning/Installation-Requirements.html) must be present on the build machine.
+A GraalVM distribution compatible with [CAS requirements](../planning/Installation-Requirements.html) must be present on the build machine.
 Presently and at a minimum, you will need to have GraalVM installed with 
 the [native image tool](https://www.graalvm.org/latest/reference-manual/native-image/) in place.
      
@@ -61,18 +61,18 @@ When building a CAS GraalVM native image, an embedded server container will be a
 ## Installation
 
 The ability to build GraalVM native images is built directly into the CAS installation process. The installation script
-can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html). The produced project will
+can be downloaded and prepped using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html). The produced project will
 contain a `README` file with instructions on how to build and run CAS native images.
 
-<div class="alert alert-info">:warning: <strong>Build Time</strong><p>
+<div class="alert alert-info">:information_source: <strong>Build Time</strong><p>
 Building CAS GraalVM native images can be quite resource intensive and time consuming. Depending on the number of modules
 included in the build, CAS configuration options and the horsepower of the build machine, the build time can vary greatly
 and typically is in the neighborhood of <code>5~15</code> minutes and perhaps longer.</p></div>
 
 Since in AOT and native mode, configuration is being processed and the context is being optimised at build time,
-any properties that would influence bean creation (such as the ones used within bootstrap context) should be set
-to the same values at build time and runtime to avoid unexpected behaviour. While building a CAS deployment that contains Spring Cloud Config Client, 
-you must make sure that the configuration data source that it connects to is available at build time. 
+any properties that would influence bean creation (such as the ones used within the bootstrap context) should be set
+to the same values at build time and runtime to avoid unexpected behaviour. While building a CAS deployment that contains 
+the Spring Cloud Config Client, you must make sure that the configuration data source that it connects to is available at build time. 
 For example, if you retrieve configuration data from Spring Cloud Config Server, make sure you have its 
 instance running and available at the port indicated in the Config Client setup.
 
@@ -86,7 +86,6 @@ and maneuvering to function:
 - Libraries and dependencies written in Groovy or other dynamic languages will be extremely challenging to support.
 - All capabilities and features that load CAS configuration properties from external sources that are backed by Spring Cloud.
 - Refresh scope and dynamically refreshing the application context is not supported with CAS native images.
-
 
 If you find a library which doesn’t work with GraalVM, please discuss that issue
 on the [reachability metadata project](https://github.com/oracle/graalvm-reachability-metadata).

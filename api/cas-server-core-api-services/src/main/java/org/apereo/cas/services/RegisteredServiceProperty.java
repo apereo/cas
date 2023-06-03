@@ -326,14 +326,11 @@ public interface RegisteredServiceProperty extends Serializable {
             RegisteredServicePropertyGroups.JWT_AUTHENTICATION, RegisteredServicePropertyTypes.BOOLEAN,
             "Determine whether secrets are Base64 encoded."),
         /**
-         * Whether interrupt notifications should be skipped.
-         *
-         * @deprecated Since 6.5.0
+         * Whether this service definition is one that is tagged as wildcarded (catch-all) entry.
          **/
-        @Deprecated(since = "6.5.0")
-        SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false",
-            RegisteredServicePropertyGroups.INTERRUPTS, RegisteredServicePropertyTypes.BOOLEAN,
-            "Whether interrupt notifications should be skipped."),
+        WILDCARDED_SERVICE_DEFINITION("wildcardedServiceDefinition", "false",
+            RegisteredServicePropertyGroups.REGISTERED_SERVICES, RegisteredServicePropertyTypes.BOOLEAN,
+            "Whether this service definition is one that is tagged as wildcarded (catch-all) entry."),
         /**
          * Whether this service should skip qualification for required-service pattern checks.
          **/

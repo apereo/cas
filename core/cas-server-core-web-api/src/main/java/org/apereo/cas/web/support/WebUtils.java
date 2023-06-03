@@ -1833,5 +1833,13 @@ public class WebUtils {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 
-
+    /**
+     * Put wildcarded registered service.
+     *
+     * @param context the context
+     * @param result  the result
+     */
+    public static void putWildcardedRegisteredService(final RequestContext context, final boolean result) {
+        context.getFlowScope().put("wildcardedRegisteredService", result);
+    }
 }
