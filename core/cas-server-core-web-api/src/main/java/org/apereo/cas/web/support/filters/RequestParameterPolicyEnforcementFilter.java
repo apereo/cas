@@ -398,10 +398,6 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
         chain.doFilter(request, response);
     }
 
-    @Override
-    public void destroy() {
-    }
-
     private void blockRequestIfNecessary(final HttpServletRequest httpServletRequest) {
         if (patternToBlock != null && StringUtils.isNotBlank(httpServletRequest.getRequestURI())) {
             val uri = UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(httpServletRequest))
