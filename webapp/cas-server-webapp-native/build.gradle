@@ -4,17 +4,18 @@ ext {
     casNativeWebApplication = true
     publishMetadata = true
     projectMetadata = [
-            facets: ["web"],
-            category: "Web Application",
-            title: "GraalVM Native Image Web Application",
-            aliases: ["graalvmwebapp"]
+        facets: ["web"],
+        category: "Web Application",
+        title: "GraalVM Native Image Web Application",
+        aliases: ["graalvmwebapp"]
     ]
 }
 
 configurations.configureEach {
     /*
-    Log4j does not support GraalVM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
-    Defining hidden classes at runtime is not supported.
+        Log4j does not support GraalVM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
+        Defining hidden classes at runtime is not supported.
+        We use logback instead.
      */
     exclude(group: "org.apache.logging.log4j", module: "log4j-api")
     exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
@@ -23,7 +24,10 @@ configurations.configureEach {
     exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
     exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
     exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
-    
+
+    /*
+        DevTools and Spring Cloud Bootstrap do not support native images.
+     */
     exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
     exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-bootstrap")
 }
