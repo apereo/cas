@@ -1,7 +1,6 @@
 description = "Apereo CAS Native GraalVM Web Application"
 
 ext {
-    casNativeWebApplication = true
     publishMetadata = true
     projectMetadata = [
         facets: ["web"],
@@ -68,5 +67,22 @@ dependencies {
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm-webflow")
 
+    def casModules = providers.systemProperty("casModules").getOrNull()
+    if (casModules != null) {
+        def dependencies = casModules.split(",")
+        dependencies.each {
+            def projectsToAdd = rootProject.subprojects.findAll {project ->
+                def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
+                logger.debug("Matching ${pattern} against CAS module ${project.name}")
+                project.name.matches(pattern)
+            }
+
+            ansi.green("Including CAS module(s): ${projectsToAdd} in native web application")
+            projectsToAdd.each {
+                implementation it
+            }
+        }
+    }
+    
     testImplementation libraries.graalvmsdk
 }
