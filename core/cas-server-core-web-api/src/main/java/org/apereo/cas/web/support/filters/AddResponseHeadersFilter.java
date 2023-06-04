@@ -61,8 +61,4 @@ public class AddResponseHeadersFilter extends AbstractSecurityFilter implements 
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
-
-    @Override
-    public void destroy() {
-    }
 }
