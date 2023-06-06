@@ -12,14 +12,15 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   JDK_CURRENT: 17
   JDK_LATEST: 21-ea
+  GRAALVM_CURRENT: 22.3.2
 
 ##########################################################################
 
 on:
   schedule:
     - cron: '0 0 * * *'
-#  push:
-#    branches: [ master ]
+  push:
+    branches: [ master ]
 #  pull_request:
 #    types: [ labeled ]
 #    branches: [ master ]
@@ -51,8 +52,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      #      - name: Gradle Wrapper Validation
-      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
@@ -73,8 +72,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      #      - name: Gradle Wrapper Validation
-      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
@@ -99,8 +96,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      #      - name: Setup tmate session
-      #        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -111,8 +106,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      #      - name: Gradle Wrapper Validation
-      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
@@ -148,8 +141,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      #      - name: Gradle Wrapper Validation
-      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -164,20 +155,19 @@ jobs:
   ##########################################################################
 
   build-graalvm:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [cache]
     continue-on-error: false
     steps:
       - uses: actions/checkout@v3
       - uses: graalvm/setup-graalvm@v1
         with:
-          version: 'latest'
+          version: ${{ env.GRAALVM_CURRENT }}
           java-version: ${{ env.JDK_CURRENT }}
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
-          native-image-musl: 'true'
       - name: GraalVM Versions
         run: |
           echo "GRAALVM_HOME: $GRAALVM_HOME"
@@ -190,8 +180,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      #      - name: Gradle Wrapper Validation
-      #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v3
@@ -201,4 +189,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
+        timeout-minutes: 20
+        run: ./ci/tests/native/build.sh
