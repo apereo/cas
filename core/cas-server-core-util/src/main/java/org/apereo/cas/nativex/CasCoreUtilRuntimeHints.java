@@ -38,10 +38,7 @@ import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -70,6 +67,12 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerJdkProxy(CorsConfigurationSource.class);
 
         hints.serialization()
+            .registerType(Boolean.class)
+            .registerType(Double.class)
+            .registerType(Integer.class)
+            .registerType(Long.class)
+            .registerType(String.class)
+
             .registerType(ZonedDateTime.class)
             .registerType(LocalDateTime.class)
             .registerType(LocalDate.class)
@@ -128,6 +131,13 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
                 MemberCategory.DECLARED_FIELDS,
                 MemberCategory.INVOKE_DECLARED_METHODS)
+            .registerType(Callable.class,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS,
+                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+                MemberCategory.DECLARED_FIELDS)
             .registerType(Map.class,
                 MemberCategory.INTROSPECT_DECLARED_METHODS,
                 MemberCategory.INTROSPECT_PUBLIC_METHODS,
