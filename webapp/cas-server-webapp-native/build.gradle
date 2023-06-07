@@ -116,7 +116,7 @@ graalvmNative {
             
             configurationFileDirectories.from(file('src/graal'))
 
-            buildArgs.add('--allow-incomplete-classpath')
+            buildArgs.add('--native-image-info')
             buildArgs.add('-H:+ReportExceptionStackTraces')
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
@@ -130,6 +130,7 @@ graalvmNative {
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
+            buildArgs.add('--initialize-at-build-time=org.apache.xerces.impl.dv.xs.TypeValidator')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws,org.codehaus.groovy.control.XStreamUtils,org.codehaus.groovy.vmplugin.v8.Java8\$LookupHolder,groovy.grape.GrapeIvy')
             buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default,org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
@@ -137,10 +138,6 @@ graalvmNative {
             buildArgs.add('--features=org.apereo.cas.nativex.features.BouncyCastleProviderFeature')
 
             buildArgs.add('--enable-url-protocols=jar')
-
-            buildArgs.add("-g")
-            buildArgs.add("-O0")
-
         }
     }
 }

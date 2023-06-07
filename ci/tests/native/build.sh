@@ -17,7 +17,8 @@ function printyellow() {
 
 printgreen "Building CAS Native Image. This may take several minutes..."
 ./gradlew :webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile \
-  --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache
+  --no-daemon -x check -x test -x javadoc --configure-on-demand \
+  --max-workers=8 --no-configuration-cache -DskipNestedConfigMetadataGen=true
 
 if [[ $? -ne 0 ]]; then
   printred "CAS native image build failed"
@@ -28,17 +29,21 @@ printgreen "CAS native image build is successfully built"
 cd ./webapp/cas-server-webapp-native || exit
 ls -al ./build/native
 
-dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
 keystore="/etc/cas/thekeystore"
-sudo mkdir -p /etc/cas
-printgreen "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
-[ -f "${keystore}" ] && sudo rm "${keystore}"
-sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-  -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
-if [[ $? -ne 0 ]]; then
-  printred "Unable to create CAS keystore ${keystore}"
-  exit 1
+if [[ -f "${keystore}" ]]; then
+  printyellow "Keystore ${keystore} already exists and will not be created again"
+else
+  dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
+  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
+  sudo mkdir -p /etc/cas
+  printgreen "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
+  [ -f "${keystore}" ] && sudo rm "${keystore}"
+  sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
+    -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
+  if [[ $? -ne 0 ]]; then
+    printred "Unable to create CAS keystore ${keystore}"
+    exit 1
+  fi
 fi
 
 printgreen "Launching CAS native image..."
