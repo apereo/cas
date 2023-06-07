@@ -57,6 +57,9 @@ the [native image tool](https://www.graalvm.org/latest/reference-manual/native-i
 Needless to say, the ability to work with GraalVM native image is and will only be available in CAS deployments
 that run with an [embedded server container](../installation/Configuring-Servlet-Container-Embedded.html) that ships with CAS directly.
 When building a CAS GraalVM native image, an embedded server container will be automatically provided.
+ 
+The build machine that ultimate produces the CAS GraalVM native image is preferred be running Linux 
+with at least 16GB of memory and 4 CPU cores.
 
 ## Installation
 
@@ -81,7 +84,8 @@ instance running and available at the port indicated in the Config Client setup.
 CAS GraalVM native images are an evolving technology. Not all libraries used by CAS and not all modules offered by CAS
 provide support for native images. Additionally, the following scenarios are unsupported or do require a lot of finesse
 and maneuvering to function:
-         
+   
+- Apache Log4j does not support native images; [Logback](../logging/Logging-Logback.html) is used instead by default.      
 - All capabilities and features that load, parse and execute Groovy scripts, or load dynamic code constructs.
 - Libraries and dependencies written in Groovy or other dynamic languages will be extremely challenging to support.
 - All capabilities and features that load CAS configuration properties from external sources that are backed by Spring Cloud.

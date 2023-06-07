@@ -190,4 +190,4 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         timeout-minutes: 20
-        run: ./ci/tests/native/build.sh
+        run: chmod +x ./ci/tests/native/build.sh && ./ci/tests/native/build.sh
