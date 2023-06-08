@@ -57,6 +57,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         super(configurationContext);
         val casProperties = getConfigurationContext().getCasProperties();
         val oidcProperties = casProperties.getAuthn().getOidc();
+
         if (oidcProperties.getRegistration().getDynamicClientRegistrationMode().isProtected()) {
             val authProfile = new CommonProfile();
             val registration = getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration();
@@ -66,9 +67,12 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
             accessTokenClient.setCredentialsExtractor(new BasicAuthExtractor());
             val authenticator = new InMemoryProfileService<>(objects -> authProfile);
             authenticator.setPasswordEncoder(new SpringSecurityPasswordEncoder(NoOpPasswordEncoder.getInstance()));
+            authenticator.init();
             authenticator.create(authProfile,
                 StringUtils.defaultIfBlank(registration.getInitialAccessTokenPassword(),
                     RandomUtils.randomAlphabetic(8)));
+
+
             accessTokenClient.setAuthenticator(authenticator);
             accessTokenClient.setName(UUID.randomUUID().toString());
             accessTokenClient.init();

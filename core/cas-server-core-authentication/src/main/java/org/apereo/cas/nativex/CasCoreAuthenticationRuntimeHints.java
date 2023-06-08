@@ -1,31 +1,30 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.DefaultMessageDescriptor;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationTransactionManager;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceResponse;
-import org.apereo.cas.authentication.credential.AbstractCredential;
-import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
-import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
-import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
+import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.TypeReference;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,49 +40,44 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             .registerType(IPAddressIntelligenceResponse.class)
             .registerType(GeoLocationRequest.class)
             .registerType(GeoLocationResponse.class)
-
             .registerType(DefaultAuthentication.class)
             .registerType(SimplePrincipal.class)
             .registerType(DefaultAuthenticationHandlerExecutionResult.class)
-
-            .registerType(AbstractWebApplicationService.class)
-            .registerType(SimpleWebApplicationServiceImpl.class)
-
-            .registerType(DefaultMessageDescriptor.class)
-            .registerType(PasswordExpiringWarningMessageDescriptor.class)
-
-            .registerType(AbstractCredential.class)
-            .registerType(UsernamePasswordCredential.class)
-            .registerType(BasicCredentialMetadata.class)
-            .registerType(BasicIdentifiableCredential.class)
-            .registerType(RememberMeUsernamePasswordCredential.class)
-            .registerType(HttpBasedServiceCredential.class)
-            .registerType(OneTimePasswordCredential.class)
             .registerType(ValidationResponseType.class);
 
+        findSubclassesInPackage(WebApplicationService.class, CentralAuthenticationService.NAMESPACE)
+            .forEach(el -> hints.serialization().registerType(el));
+        findSubclassesInPackage(MessageDescriptor.class, CentralAuthenticationService.NAMESPACE)
+            .forEach(el -> hints.serialization().registerType(el));
+
+        val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);
+        credentials.forEach(el -> hints.serialization().registerType(el));
+        registerReflectionHints(hints, credentials);
+
         hints.proxies()
+            .registerJdkProxy(AuthenticationMetaDataPopulator.class)
+            .registerJdkProxy(AuthenticationAccountStateHandler.class)
             .registerJdkProxy(AuthenticationEventExecutionPlanConfigurer.class)
-            .registerJdkProxy(AuthenticationMetaDataPopulator.class);
+            .registerJdkProxy(PrincipalElectionStrategyConflictResolver.class)
+            .registerJdkProxy(PrincipalElectionStrategy.class)
+            .registerJdkProxy(AuthenticationTransactionManager.class)
+            .registerJdkProxy(AuthenticationHandlerResolver.class);
 
-        hints.reflection()
-            .registerType(UsernamePasswordCredential.class,
-                MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INTROSPECT_PUBLIC_METHODS)
-            .registerType(SimplePrincipal.class,
-                MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
-            .registerType(DefaultAuthentication.class,
-                MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS);
+        registerReflectionHints(hints,
+            List.of(
+                CacheCredentialsCipherExecutor.class,
+                SimplePrincipal.class,
+                DefaultAuthentication.class));
+    }
 
-        List.of(CacheCredentialsCipherExecutor.class).forEach(el ->
-            hints.reflection().registerType(TypeReference.of(el),
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS));
+    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
+        entries.forEach(el -> hints.reflection().registerType((Class) el,
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_FIELDS));
     }
 
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,17 +10,17 @@ import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link Pac4jCoreRuntimeHintsTests}.
+ * This is {@link DelegatedClientsRuntimeHintsTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Tag("Native")
-public class Pac4jCoreRuntimeHintsTests {
+public class DelegatedClientsRuntimeHintsTests {
     @Test
     public void verifyHints() {
         val hints = new RuntimeHints();
-        new Pac4jCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(DelegatedAuthenticationCandidateProfile.class).test(hints));
+        new DelegatedClientsRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DelegatedClientFactory.class).test(hints));
     }
 }

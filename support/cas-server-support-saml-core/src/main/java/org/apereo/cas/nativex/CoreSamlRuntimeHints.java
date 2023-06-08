@@ -1,6 +1,5 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
@@ -45,11 +44,11 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerPattern("soap11-config.xml");
 
         registerReflectionHint(hints,
-            ReflectionUtils.findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
+            findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
         registerReflectionHint(hints,
-            ReflectionUtils.findSubclassesInPackage(Marshaller.class, "org.opensaml"));
+            findSubclassesInPackage(Marshaller.class, "org.opensaml"));
         registerReflectionHint(hints,
-            ReflectionUtils.findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
+            findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
         val list = List.of(
             XIncludeAwareParserConfiguration.class,
             SecurityManager.class,

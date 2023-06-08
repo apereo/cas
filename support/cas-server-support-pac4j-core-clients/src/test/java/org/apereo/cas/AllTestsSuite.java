@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.DelegatedClientsRuntimeHintsTests;
 import org.apereo.cas.support.pac4j.DelegatedClientJacksonModuleTests;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverterTests;
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 5.1.0
  */
 @SelectClasses({
+    DelegatedClientsRuntimeHintsTests.class,
     GroovyAttributeConverterTests.class,
     DelegatedClientAuthenticationHandlerTests.class,
     DelegatedClientJacksonModuleTests.class,

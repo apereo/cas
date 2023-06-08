@@ -166,7 +166,6 @@ public class SerializationUtils {
      * @since 4.2
      */
     public static <T extends Serializable> T deserializeAndCheckObject(final byte[] object, final Class<T> type) {
-        val result = deserialize(object, type);
-        return result;
+        return deserialize(object, type);
     }
 }

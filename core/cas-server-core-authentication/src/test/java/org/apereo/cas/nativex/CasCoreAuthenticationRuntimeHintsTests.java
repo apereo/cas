@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.DefaultAuthentication;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import lombok.val;
@@ -30,6 +31,7 @@ public class CasCoreAuthenticationRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.serialization().onType(SimplePrincipal.class).test(hints));
         assertTrue(RuntimeHintsPredicates.serialization().onType(DefaultAuthentication.class).test(hints));
         assertTrue(RuntimeHintsPredicates.serialization().onType(UsernamePasswordCredential.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.serialization().onType(AbstractCredential.class).test(hints));
 
         assertTrue(RuntimeHintsPredicates.reflection().onType(SimplePrincipal.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onType(UsernamePasswordCredential.class).test(hints));

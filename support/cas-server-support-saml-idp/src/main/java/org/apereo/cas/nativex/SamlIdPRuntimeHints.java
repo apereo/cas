@@ -1,12 +1,12 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.support.saml.idp.SamlIdPDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
-import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -35,17 +35,18 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHints(hints,
             List.of(
+                SamlIdPDistributedSessionCookieCipherExecutor.class,
                 SamlRegisteredService.class,
                 SamlIdPMetadataGenerator.class,
                 SamlIdPMetadataLocator.class
             ));
         registerReflectionHints(hints,
-            ReflectionUtils.findSubclassesInPackage(MetadataResolver.class,
+            findSubclassesInPackage(MetadataResolver.class,
                 "org.opensaml.saml.metadata", CentralAuthenticationService.NAMESPACE));
         registerReflectionHints(hints,
-            ReflectionUtils.findSubclassesInPackage(SamlIdPMetadataLocator.class, CentralAuthenticationService.NAMESPACE));
+            findSubclassesInPackage(SamlIdPMetadataLocator.class, CentralAuthenticationService.NAMESPACE));
         registerReflectionHints(hints,
-            ReflectionUtils.findSubclassesInPackage(SamlIdPMetadataGenerator.class, CentralAuthenticationService.NAMESPACE));
+            findSubclassesInPackage(SamlIdPMetadataGenerator.class, CentralAuthenticationService.NAMESPACE));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection clazzes) {

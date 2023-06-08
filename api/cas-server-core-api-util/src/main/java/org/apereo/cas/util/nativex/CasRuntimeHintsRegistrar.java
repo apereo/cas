@@ -1,8 +1,10 @@
 package org.apereo.cas.util.nativex;
 
+import org.apereo.cas.util.ReflectionUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.aop.SpringProxy;
 import org.springframework.aop.framework.Advised;
@@ -13,6 +15,7 @@ import org.springframework.core.DecoratingProxy;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,4 +85,29 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         proxies.add(DecoratingProxy.class);
     }
 
+
+    /**
+     * Find subclasses in packages and exclude tests.
+     *
+     * @param parentClass the parent class
+     * @param packages    the packages
+     * @return the collection
+     */
+    default Collection<Class> findSubclassesInPackage(final Class parentClass, final String... packages) {
+        val results = (Collection<Class>) ReflectionUtils.findSubclassesInPackage(parentClass, packages);
+        return results
+            .stream()
+            .filter(clazz -> {
+                var host = clazz.getCanonicalName();
+                if (clazz.isMemberClass()) {
+                    var entry = clazz;
+                    while (entry.isMemberClass()) {
+                        entry = clazz.getNestHost();
+                    }
+                    host = entry.getCanonicalName();
+                }
+                return StringUtils.isNotBlank(host) && !host.endsWith("Tests");
+            })
+            .collect(Collectors.toList());
+    }
 }
