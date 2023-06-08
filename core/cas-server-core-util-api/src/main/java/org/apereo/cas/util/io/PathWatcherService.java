@@ -9,7 +9,6 @@ import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.io.Closeable;
 import java.io.File;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
@@ -29,7 +28,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * @since 5.2.0
  */
 @Slf4j
-public class PathWatcherService implements WatcherService, Runnable, Closeable, DisposableBean {
+public class PathWatcherService implements WatcherService, Runnable, DisposableBean {
     private static final WatchEvent.Kind[] KINDS = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final WatchService watcher;
