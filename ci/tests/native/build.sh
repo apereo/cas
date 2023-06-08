@@ -53,6 +53,7 @@ sleep 15
 curl -k -L --connect-timeout 10 --output /dev/null --silent --fail https://localhost:8443/cas/login
 if [[ $? -ne 0 ]]; then
   printred "CAS native image failed to launch"
+  kill -9 $pid
   exit 1
 fi
 kill -9 $pid

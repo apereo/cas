@@ -25,7 +25,6 @@ import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -105,10 +104,7 @@ import org.ldaptive.ssl.DefaultTrustManager;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.context.ApplicationContext;
-
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 import java.net.URL;
@@ -121,7 +117,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -508,7 +503,8 @@ public class LdapUtils {
                 compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
                 pooledCf.setValidator(compareValidator);
             }
-            case "none" -> LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
+            case "none" ->
+                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
             case "search" -> {
                 val searchRequest = new SearchRequest();
                 searchRequest.setBaseDn(validator.getBaseDn());
@@ -539,8 +535,8 @@ public class LdapUtils {
                             .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                             .collect(Collectors.toList());
                         LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
-                                    + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
-                                    + "set the pool passivator setting to one of [{}]",
+                                + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
+                                + "set the pool passivator setting to one of [{}]",
                             l.getPoolPassivator(), l.getLdapUrl(), values);
                     }
                     break;
@@ -631,7 +627,7 @@ public class LdapUtils {
                 }
             }
         }
-        
+
         if (StringUtils.isNotBlank(properties.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", properties.getSaslMechanism());
 
@@ -766,8 +762,10 @@ public class LdapUtils {
         val searchResultHandlers = new ArrayList<SearchResultHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
-                case FOLLOW_SEARCH_REFERRAL -> searchResultHandlers.add(new FollowSearchReferralHandler(h.getSearchReferral().getLimit()));
-                case FOLLOW_SEARCH_RESULT_REFERENCE -> searchResultHandlers.add(new FollowSearchResultReferenceHandler(h.getSearchResult().getLimit()));
+                case FOLLOW_SEARCH_REFERRAL ->
+                    searchResultHandlers.add(new FollowSearchReferralHandler(h.getSearchReferral().getLimit()));
+                case FOLLOW_SEARCH_RESULT_REFERENCE ->
+                    searchResultHandlers.add(new FollowSearchResultReferenceHandler(h.getSearchResult().getLimit()));
                 case PRIMARY_GROUP -> {
                     val ehp = new PrimaryGroupIdHandler();
                     val primaryGroupId = h.getPrimaryGroupId();
@@ -917,40 +915,22 @@ public class LdapUtils {
     }
 
     /**
-     * Create ldap authentication factory bean set factory bean.
-     *
-     * @return the set factory bean
-     */
-    public static SetFactoryBean createLdapAuthenticationFactoryBean() {
-        val bean = new SetFactoryBean() {
-            @Override
-            protected void destroyInstance(final Set set) {
-                set.forEach(Unchecked.consumer(handler ->
-                    ((DisposableBean) handler).destroy()
-                ));
-            }
-        };
-        bean.setSourceSet(new HashSet<>());
-        return bean;
-    }
-
-    /**
      * Create ldap password policy handling strategy.
      *
-     * @param l                  the lDAP properties
+     * @param properties         the lDAP properties
      * @param applicationContext the application context
      * @return the authentication password policy handling strategy
      */
     public static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
-        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l,
-                                             final ApplicationContext applicationContext) {
-        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
+        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties properties,
+                                                final ApplicationContext applicationContext) {
+        if (properties.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
         }
 
-        val location = l.getPasswordPolicy().getGroovy().getLocation();
-        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+        val location = properties.getPasswordPolicy().getGroovy().getLocation();
+        if (properties.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyPasswordPolicyHandlingStrategy(location, applicationContext);
         }

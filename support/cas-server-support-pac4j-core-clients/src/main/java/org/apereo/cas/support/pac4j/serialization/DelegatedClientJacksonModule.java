@@ -28,6 +28,7 @@ public class DelegatedClientJacksonModule extends SimpleModule {
 
     public DelegatedClientJacksonModule() {
         addSerializer(OidcProfile.class, new CommonProfileSerializer(OidcProfile.class));
+        addSerializer(CommonProfile.class, new CommonProfileSerializer(CommonProfile.class));
     }
 
     @RequiredArgsConstructor

@@ -36,12 +36,12 @@ public class ReflectionUtils {
             .acceptPackages(packageName)
             .ignoreClassVisibility()
             .enableClassInfo()
+            .removeTemporaryFilesAfterScan()
+            .enableAnnotationInfo()
             .scan()) {
-            if (superclass.isInterface()) {
-                return new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass));
-            }
-            return new ArrayList<>(scanResult.getSubclasses(superclass).loadClasses(superclass));
-
+            return superclass.isInterface()
+                ? new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass))
+                : new ArrayList<>(scanResult.getSubclasses(superclass).loadClasses(superclass));
         }
     }
 

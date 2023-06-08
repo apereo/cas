@@ -3,25 +3,19 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -45,10 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
-    private SetFactoryBean ldapAuthenticationHandlerSetFactoryBean;
 
     protected String getLdif(final String user) {
         val baseDn = casProperties.getAuthn().getLdap().get(0).getBaseDn();
@@ -83,12 +73,5 @@ public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHa
         val rs = new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8));
         LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
         return uid;
-    }
-
-
-    @Test
-    public void verifyOperation() throws Exception {
-        var factory = (LdapAuthenticationHandler) ldapAuthenticationHandlerSetFactoryBean.getObject().iterator().next();
-        assertNotNull(factory.getAuthenticator());
     }
 }

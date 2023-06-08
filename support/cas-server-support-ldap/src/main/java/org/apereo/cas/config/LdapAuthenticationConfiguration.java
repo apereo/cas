@@ -11,12 +11,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,18 +40,15 @@ import java.util.HashSet;
 @AutoConfiguration
 public class LdapAuthenticationConfiguration {
 
-    @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PrincipalFactory ldapPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "ldapAuthenticationHandlerSetFactoryBean")
-    public SetFactoryBean ldapAuthenticationHandlerSetFactoryBean() {
-        return LdapUtils.createLdapAuthenticationFactoryBean();
+    @Configuration(value = "LdapCoreAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class LdapCoreAuthenticationConfiguration {
+        @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PrincipalFactory ldapPrincipalFactory() {
+            return PrincipalFactoryUtils.newPrincipalFactory();
+        }
     }
 
     @Configuration(value = "LdapAuthenticationPlanConfiguration", proxyBeanMethods = false)
@@ -63,14 +58,12 @@ public class LdapAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "ldapAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers(
-            @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
-            final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("ldapPrincipalFactory")
             final PrincipalFactory ldapPrincipalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             val handlers = new HashSet<AuthenticationHandler>();
             casProperties.getAuthn().getLdap().stream().filter(prop -> {
                 if (prop.getType() == null || StringUtils.isBlank(prop.getLdapUrl())) {
@@ -79,11 +72,11 @@ public class LdapAuthenticationConfiguration {
                 }
                 return true;
             }).forEach(prop -> {
-                val handler = LdapUtils.createLdapAuthenticationHandler(prop, applicationContext, servicesManager, ldapPrincipalFactory);
+                val handler = LdapUtils.createLdapAuthenticationHandler(prop,
+                    applicationContext, servicesManager, ldapPrincipalFactory);
                 handler.setState(prop.getState());
                 handlers.add(handler);
             });
-            ldapAuthenticationHandlerSetFactoryBean.getObject().addAll(handlers);
             return BeanContainer.of(handlers);
         }
 

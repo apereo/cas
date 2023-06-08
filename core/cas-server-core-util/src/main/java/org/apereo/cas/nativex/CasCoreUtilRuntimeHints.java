@@ -1,7 +1,6 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.CasVersion;
-import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -195,10 +194,10 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         FunctionUtils.doAndHandle(__ -> {
             var clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.Node", false);
             registerReflectionHintForConstructors(hints,
-                ReflectionUtils.findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+                findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
             clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.LocalCache", false);
             registerReflectionHintForConstructors(hints,
-                ReflectionUtils.findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+                findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
         });
 
         IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx ->
@@ -213,7 +212,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         FunctionUtils.doAndHandle(__ -> {
             val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
             registerReflectionHintForAll(hints,
-                ReflectionUtils.findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
+                findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
         });
 
         registerReflectionHintForAll(hints,
