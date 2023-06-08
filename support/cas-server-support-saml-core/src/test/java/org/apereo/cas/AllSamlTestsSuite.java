@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CoreSamlConfigurationTests;
+import org.apereo.cas.nativex.CoreSamlRuntimeHintsTests;
 import org.apereo.cas.support.saml.SamlUtilsTests;
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactoryTests;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilderTests;
@@ -21,6 +22,7 @@ import org.junit.platform.suite.api.Suite;
     CoreSamlConfigurationTests.class,
     SamlRestServiceTicketResourceEntityResponseFactoryTests.class,
     SamlUtilsTests.class,
+    CoreSamlRuntimeHintsTests.class,
     Saml10ObjectBuilderTests.class,
     NonInflatingSaml20ObjectBuilderTests.class,
     BasicResourceCredentialFactoryBeanTests.class,

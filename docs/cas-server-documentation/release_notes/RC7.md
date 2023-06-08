@@ -59,9 +59,9 @@ as a [GraalVM native image](../installation/GraalVM-NativeImage-Installation.htm
 
 ## Other Stuff
 
-- LDAP direct binds are now able to resolve person attributes.
+- LDAP direct binds are now able to resolve person attributes after authentication.
 - Logout events are now sent to the CAS audit log.
-- OpenID Connect JWKS stores are now able to support an arbitrary number of keys for signing operations.
+- OpenID Connect JWKS are now able to support an arbitrary number of keys for signing operations.
 
 ## Library Upgrades
 
@@ -70,3 +70,4 @@ as a [GraalVM native image](../installation/GraalVM-NativeImage-Installation.htm
 - Gradle
 - Spring Boot
 - Apache Tomcat
+- Sentry
