@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 
 import lombok.Getter;
 import lombok.val;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ import java.util.Optional;
  * @since 6.3.0
  */
 @Getter
-public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenerator implements InitializingBean {
+public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenerator {
     private final GitRepository gitRepository;
 
     public GitSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,

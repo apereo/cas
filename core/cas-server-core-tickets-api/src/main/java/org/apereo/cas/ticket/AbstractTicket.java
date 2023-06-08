@@ -40,7 +40,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "id")
 @Setter
 @Slf4j
-public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicket, TicketGrantingTicketAwareTicket {
+public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket {
 
     @Serial
     private static final long serialVersionUID = -8506442397878267555L;

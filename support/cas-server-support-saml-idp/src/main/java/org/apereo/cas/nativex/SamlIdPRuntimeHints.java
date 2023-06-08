@@ -1,13 +1,19 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
+import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import lombok.val;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.TypeReference;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,18 +25,43 @@ import java.util.List;
 public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        hints.resources()
+            .registerPattern("metadata/*.xml");
+
         hints.serialization()
             .registerType(SamlRegisteredService.class)
             .registerType(SamlArtifactTicketImpl.class)
             .registerType(SamlAttributeQueryTicketImpl.class);
 
-        List.of(SamlRegisteredService.class).forEach(el ->
-            hints.reflection().registerType(TypeReference.of(el),
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS));
+        registerReflectionHints(hints,
+            List.of(
+                SamlRegisteredService.class,
+                SamlIdPMetadataGenerator.class,
+                SamlIdPMetadataLocator.class
+            ));
+        registerReflectionHints(hints,
+            ReflectionUtils.findSubclassesInPackage(MetadataResolver.class,
+                "org.opensaml.saml.metadata", CentralAuthenticationService.NAMESPACE));
+        registerReflectionHints(hints,
+            ReflectionUtils.findSubclassesInPackage(SamlIdPMetadataLocator.class, CentralAuthenticationService.NAMESPACE));
+        registerReflectionHints(hints,
+            ReflectionUtils.findSubclassesInPackage(SamlIdPMetadataGenerator.class, CentralAuthenticationService.NAMESPACE));
+    }
+
+    private static void registerReflectionHints(final RuntimeHints hints, final Collection clazzes) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_FIELDS
+        };
+        clazzes.forEach(entry -> {
+            if (entry instanceof Class clazz) {
+                hints.reflection().registerType(clazz, memberCategories);
+            }
+        });
+
     }
 }

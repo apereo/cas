@@ -1,16 +1,21 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.util.ReflectionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import lombok.val;
 import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.ExtendedSchemaDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.SchemaDVFactoryImpl;
+import org.apache.xerces.impl.dv.xs.XSSimpleTypeDecl;
 import org.apache.xerces.parsers.XIncludeAwareParserConfiguration;
 import org.apache.xerces.util.SecurityManager;
-import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.opensaml.core.xml.schema.impl.*;
-import org.opensaml.saml.saml1.core.impl.ActionBuilder;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.Unmarshaller;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,60 +31,45 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerResourceBundle("org/apache/xml/security/resource/xmlsecurity")
             .registerResourceBundle("org/apache/xerces/impl/msg/XMLSchemaMessages")
             .registerResourceBundle("org/apache/xerces/impl/xpath/regex/message")
-            .registerResourceBundle("org/apache/xerces/impl/xpath/regex/message")
+            .registerPattern("templates/*.vm")
+            .registerPattern("entitydescriptor-criterion-predicate-registry.properties")
+            .registerPattern("roledescriptor-criterion-predicate-registry.properties")
             .registerPattern("schema/*.xsd")
-            .registerPattern("saml1-*-config.xml")
-            .registerPattern("saml2-*-config.xml")
+            .registerPattern("xacml*-config.xml")
+            .registerPattern("ws*-config.xml")
+            .registerPattern("saml*-config.xml")
             .registerPattern("default-config.xml")
-            .registerPattern("schema-config.xml");
+            .registerPattern("schema-config.xml")
+            .registerPattern("signature-config.xml")
+            .registerPattern("encryption-config.xml")
+            .registerPattern("soap11-config.xml");
 
-        List.of(
-            org.opensaml.saml.saml1.core.impl.ActionBuilder.class,
-            org.opensaml.saml.saml2.core.impl.ActionBuilder.class,
-            
+        registerReflectionHint(hints,
+            ReflectionUtils.findSubclassesInPackage(XMLObjectBuilder.class, "org.opensaml"));
+        registerReflectionHint(hints,
+            ReflectionUtils.findSubclassesInPackage(Marshaller.class, "org.opensaml"));
+        registerReflectionHint(hints,
+            ReflectionUtils.findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
+        val list = List.of(
             XIncludeAwareParserConfiguration.class,
             SecurityManager.class,
             XSSimpleTypeDecl.class,
-
-            XSAnyBuilder.class,
-            XSBase64BinaryBuilder.class,
-            XSDateTimeBuilder.class,
-            XSStringBuilder.class,
-            XSIntegerBuilder.class,
-            XSBooleanBuilder.class,
-            XSQNameBuilder.class,
-            XSURIBuilder.class,
-
-            XSDateTimeMarshaller.class,
-            XSStringMarshaller.class,
-            XSAnyMarshaller.class,
-            XSBooleanMarshaller.class,
-            XSQNameMarshaller.class,
-            XSBase64BinaryMarshaller.class,
-            XSURIMarshaller.class,
-            XSIntegerMarshaller.class,
-
-            XSBooleanUnmarshaller.class,
-            XSQNameUnmarshaller.class,
-            XSStringUnmarshaller.class,
-            XSAnyUnmarshaller.class,
-            XSIntegerUnmarshaller.class,
-            XSURIUnmarshaller.class,
-            XSBase64BinaryUnmarshaller.class,
-            XSDateTimeUnmarshaller.class,
-
             ExtendedSchemaDVFactoryImpl.class,
             SchemaDVFactoryImpl.class,
-            DTDDVFactoryImpl.class
-        )
-        .forEach(clazz -> hints.reflection().registerType(clazz,
-            MemberCategory.INTROSPECT_DECLARED_METHODS,
-            MemberCategory.INTROSPECT_PUBLIC_METHODS,
-            MemberCategory.DECLARED_FIELDS,
-            MemberCategory.PUBLIC_FIELDS,
-            MemberCategory.INVOKE_PUBLIC_METHODS,
-            MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
+            DTDDVFactoryImpl.class);
+        registerReflectionHint(hints, list);
+    }
+
+    private static void registerReflectionHint(final RuntimeHints hints, final Collection clazzes) {
+        clazzes.forEach(clazz ->
+            hints.reflection().registerType((Class) clazz,
+                MemberCategory.INTROSPECT_DECLARED_METHODS,
+                MemberCategory.INTROSPECT_PUBLIC_METHODS,
+                MemberCategory.DECLARED_FIELDS,
+                MemberCategory.PUBLIC_FIELDS,
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
     }
 }

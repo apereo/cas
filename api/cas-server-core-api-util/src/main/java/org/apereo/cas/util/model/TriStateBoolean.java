@@ -8,7 +8,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * This is {@link TriStateBoolean}.
@@ -17,7 +16,7 @@ import java.io.Serializable;
  * @since 6.2.0
  */
 @RequiredArgsConstructor
-public enum TriStateBoolean implements Serializable {
+public enum TriStateBoolean {
     /**
      * Constant to represent the true state.
      */

@@ -31,9 +31,10 @@ public class ReflectionUtils {
      * @return The - possibly empty - collection of subclasses.
      */
     @NonNull
-    public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String packageName) {
+    public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
+            .ignoreClassVisibility()
             .enableClassInfo()
             .scan()) {
             if (superclass.isInterface()) {
@@ -52,7 +53,7 @@ public class ReflectionUtils {
      * @return The - possibly empty - collection of annotated classes.
      */
     public Collection<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations,
-                                                                    final String packageName) {
+                                                                    final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableAnnotationInfo()
@@ -71,7 +72,7 @@ public class ReflectionUtils {
      * @param packageName The base package to look in.
      * @return The found class.
      */
-    public static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String packageName) {
+    public static Optional<Class<?>> findClassBySimpleNameInPackage(final String simpleName, final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()
