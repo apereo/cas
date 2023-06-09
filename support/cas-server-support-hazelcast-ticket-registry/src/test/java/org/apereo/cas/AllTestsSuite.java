@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.HazelcastTicketRegistryRuntimeHintsTests;
 import org.apereo.cas.ticket.registry.DefaultHazelcastInstanceConfigurationTests;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistryTests;
 
@@ -14,7 +15,8 @@ import org.junit.platform.suite.api.Suite;
  */
 @SelectClasses({
     DefaultHazelcastInstanceConfigurationTests.class,
-    HazelcastTicketRegistryTests.class
+    HazelcastTicketRegistryTests.class,
+    HazelcastTicketRegistryRuntimeHintsTests.class
 })
 @Suite
 public class AllTestsSuite {
