@@ -189,5 +189,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        timeout-minutes: 20
+        timeout-minutes: 35
         run: chmod +x ./ci/tests/native/build.sh && ./ci/tests/native/build.sh

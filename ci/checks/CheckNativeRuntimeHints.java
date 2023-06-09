@@ -64,8 +64,8 @@ public class CheckNativeRuntimeHints {
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isDirectory(file) && file.toFile().getAbsolutePath().endsWith("src/main/resources/META-INF/spring"))
             .forEach(dir -> {
+                var projectPath = dir.getParent().getParent().getParent().getParent().getParent().toFile().getPath();
                 try {
-                    var projectPath = dir.getParent().getParent().getParent().getParent().getParent().toFile().getPath();
                     var factoriesFile = new File(dir.toFile(), "aot.factories");
 
                     if (factoriesFile.exists()) {
