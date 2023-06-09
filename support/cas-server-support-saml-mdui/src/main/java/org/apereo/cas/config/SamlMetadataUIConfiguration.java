@@ -81,6 +81,7 @@ public class SamlMetadataUIConfiguration {
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
                 val filter = new RequiredValidUntilFilter();
                 filter.setMaxValidityInterval(Duration.ofSeconds(casProperties.getSamlMetadataUi().getMaxValidity()));
+                filter.initialize();
                 filters.add(filter);
             }
             var addResource = true;
@@ -88,6 +89,7 @@ public class SamlMetadataUIConfiguration {
                 val sigFilter = SamlUtils.buildSignatureValidationFilter(applicationContext, signingKey);
                 if (sigFilter != null) {
                     sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
+                    sigFilter.initialize();
                     filters.add(sigFilter);
                 } else {
                     LOGGER.warn("Failed to locate the signing key [{}] for [{}]", signingKey, metadataFile);

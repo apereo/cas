@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="5 seconds">
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%white(%d{yyyy-MM-dd HH:mm:ss}) %highlight(%-5level) %cyan(%logger{15}) - %msg%n</Pattern>
+        </layout>
+    </appender>
+    
+    <logger name="org.apereo.cas" level="info" />
+    <logger name="org.apereo.inspektr.audit.support" level="info" />
+    <logger name="org.springframework.boot" level="info" />
+    <logger name="org.springframework.security" level="warn" />
+    <logger name="org.pac4j" level="info" />
+    <logger name="org.apache.catalina" level="warn" />
+    <logger name="org.apache.tomcat" level="warn" />
+    <logger name="PROTOCOL_MESSAGE" level="info" />
+
+    <root level="warn">
+        <appender-ref ref="console" />
+    </root>
+</configuration>

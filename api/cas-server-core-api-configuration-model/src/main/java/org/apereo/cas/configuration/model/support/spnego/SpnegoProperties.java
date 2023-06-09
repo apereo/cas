@@ -37,6 +37,7 @@ public class SpnegoProperties implements Serializable {
     /**
      * Spnego settings that apply as system properties.
      */
+    @NestedConfigurationProperty
     private final SpnegoSystemProperties system = new SpnegoSystemProperties();
 
     /**

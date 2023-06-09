@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepositoryTests;
+import org.apereo.cas.nativex.CasCoreRuntimeHintsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -16,6 +17,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,
+    CasCoreRuntimeHintsTests.class,
     DefaultCentralAuthenticationServiceLockingTests.class,
     DefaultPrincipalAttributesRepositoryTests.class,
     CachingPrincipalAttributesRepositoryTests.class

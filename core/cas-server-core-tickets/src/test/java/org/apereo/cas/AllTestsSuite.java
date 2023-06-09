@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.CasCoreTicketsRuntimeHintsTests;
 import org.apereo.cas.ticket.DefaultEncodedTicketTests;
 import org.apereo.cas.ticket.DefaultTicketCatalogTests;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
@@ -87,6 +88,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultMessageSanitizerTests.class,
     InternalTicketValidatorTests.class,
     Cas20ProxyHandlerTests.class,
+    CasCoreTicketsRuntimeHintsTests.class,
     GroovyUniqueTicketIdGeneratorTests.class,
     DefaultTicketCatalogTests.class
 })

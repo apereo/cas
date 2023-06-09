@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasInfoEndpointContributorTests {
     @Test
     public void verifyAction() {
-        val c = new CasInfoEndpointContributor(new DefaultCasRuntimeModuleLoader());
+        val contributor = new CasInfoEndpointContributor(new DefaultCasRuntimeModuleLoader());
         val builder = new Info.Builder();
-        c.contribute(builder);
+        contributor.contribute(builder);
         val info = builder.build();
         assertFalse(info.getDetails().isEmpty());
     }

@@ -10,7 +10,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +73,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         }
     }
 
-    private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+    private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service,
+                                                     final List<MetadataFilter> metadataFilterList) throws Exception {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
             && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
             && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
@@ -85,7 +85,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
             val filter = new PredicateFilter(dir, entityDescriptor ->
                 StringUtils.isNotBlank(entityDescriptor.getEntityID())
-                && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+                    && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+            filter.initialize();
 
             metadataFilterList.add(filter);
             LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
@@ -95,9 +96,12 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                              final SignatureValidationFilter signatureValidationFilter,
-                                                             final List<MetadataFilter> metadataFilterList) {
+                                                             final List<MetadataFilter> metadataFilterList) throws Exception {
         if (signatureValidationFilter != null) {
-            signatureValidationFilter.setRequireSignedRoot(false);
+            if (!signatureValidationFilter.isInitialized()) {
+                signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
+                signatureValidationFilter.initialize();
+            }
             metadataFilterList.add(signatureValidationFilter);
             LOGGER.debug("Added metadata SignatureValidationFilter for [{}]", service.getServiceId());
         } else {
@@ -137,7 +141,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                                                  final String metadataSignatureResource) throws Exception {
         LOGGER.debug("Building SAML2 signature validation filter based on [{}]", metadataSignatureResource);
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
-        signatureValidationFilter.setRequireSignedRoot(service.isRequireSignedRoot());
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
@@ -193,7 +196,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                         final List<MetadataFilter> metadataFilterList) throws Exception {
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
-
         buildEntityRoleFilterIfNeeded(service, metadataFilterList);
         buildPredicateFilterIfNeeded(service, metadataFilterList);
 
@@ -217,10 +219,12 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param service            the service
      * @param metadataFilterList the metadata filter list
      */
-    protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+    protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service,
+                                                         final List<MetadataFilter> metadataFilterList) throws Exception {
         if (service.getMetadataMaxValidity() > 0) {
             val filter = new RequiredValidUntilFilter();
             filter.setMaxValidityInterval(Duration.ofSeconds(service.getMetadataMaxValidity()));
+            filter.initialize();
             metadataFilterList.add(filter);
             LOGGER.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {

@@ -13,8 +13,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import static org.mockito.Mockito.*;
-
 /**
  * This is {@link CasConfigurationWatchServiceTests}.
  *
@@ -31,28 +29,16 @@ public class CasConfigurationWatchServiceTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperationByDirectory() {
-        val manager = mock(CasConfigurationPropertiesEnvironmentManager.class);
-        when(manager.getStandaloneProfileConfigurationDirectory(any())).thenReturn(FileUtils.getTempDirectory());
-        val service = new CasConfigurationWatchService(manager, applicationContext);
-        service.initialize();
-        service.close();
-    }
-
-    @Test
     public void verifyOperationByFile() throws Exception {
-        val manager = mock(CasConfigurationPropertiesEnvironmentManager.class);
         val cas = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(cas, "server.port=0", StandardCharsets.UTF_8);
-        when(manager.getStandaloneProfileConfigurationFile(any())).thenReturn(cas);
-        val service = new CasConfigurationWatchService(manager, applicationContext);
+        val service = new CasConfigurationWatchService(applicationContext);
         service.initialize();
 
         val newFile = new File(cas.getParentFile(), "something");
         FileUtils.writeStringToFile(newFile, "helloworld", StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(newFile, "helloworld-update", StandardCharsets.UTF_8, true);
         FileUtils.deleteQuietly(newFile);
-
         service.close();
     }
 }

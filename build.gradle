@@ -6,6 +6,7 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
         maven {
@@ -25,7 +26,7 @@ buildscript {
         classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-
+        classpath "org.graalvm.buildtools:native-gradle-plugin:${gradleGraalVmNativePluginVersion}"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "com.github.johnrengelman:shadow:$gradleShadowVersion"
@@ -65,7 +66,6 @@ ext {
         '**/net/jradius/**',
         '**/com/yubico/**',
         '**/saml/sts/SamlToken**',
-        '**/nativex/**',
         '**/**ConfigurationMetadata**',
         '**/**NimbusOAuthJacksonModule**',
         '**/**Application**',

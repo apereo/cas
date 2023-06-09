@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
@@ -81,7 +80,6 @@ public class CasLoggingConfiguration {
         }
 
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServletListenerRegistrationBean<Log4jServletContextListener> log4jServletContextListener() {
             val bean = new ServletListenerRegistrationBean<Log4jServletContextListener>();
             bean.setEnabled(true);

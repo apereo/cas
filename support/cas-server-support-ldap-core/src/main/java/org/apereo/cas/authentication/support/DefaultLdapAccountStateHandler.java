@@ -53,7 +53,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     /**
      * Map of account state error to CAS authentication exception.
      */
-    protected Map<AccountState.Error, LoginException> errorMap;
+    protected final Map<AccountState.Error, LoginException> errorMap;
 
     @Setter
     private Map<String, Class<? extends LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);

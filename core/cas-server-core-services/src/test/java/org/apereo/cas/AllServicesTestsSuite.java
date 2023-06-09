@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests
 import org.apereo.cas.config.CasCoreServicesMonitoringConfigurationTests;
 import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
 import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
+import org.apereo.cas.nativex.CasCoreServicesRuntimeHintsTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.CasRegisteredServiceTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
@@ -113,6 +114,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultRegisteredServiceAuthenticationPolicyTests.class,
     UnauthorizedProxyingExceptionTests.class,
     RegisteredServiceTests.class,
+    CasCoreServicesRuntimeHintsTests.class,
     CasCoreServicesMonitoringConfigurationTests.class,
     DefaultRegisteredServicesTemplatesManagerTests.class,
     OpenFGARegisteredServiceAccessStrategyTests.class,

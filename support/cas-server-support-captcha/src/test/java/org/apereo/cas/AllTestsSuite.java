@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.CasCaptchaRuntimeHintsTests;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurerTests;
 import org.apereo.cas.web.flow.InitializeCaptchaActionTests;
 import org.apereo.cas.web.flow.ValidateCaptchaActionTests;
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  */
 @SelectClasses({
     CasCaptchaWebflowConfigurerTests.class,
+    CasCaptchaRuntimeHintsTests.class,
     InitializeCaptchaActionTests.class,
     ValidateCaptchaActionTests.class
 })

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationRegistrationProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +26,7 @@ import java.io.Serial;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
 public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
     implements DuoSecurityMultifactorAuthenticationProvider {

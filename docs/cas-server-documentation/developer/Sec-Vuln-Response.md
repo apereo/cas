@@ -34,9 +34,17 @@ attack window and fixes, etc it is generally best to keep security releases rese
 concrete use case or those that truly and in practice affect the inner workings of the CAS software in a real way. If you could have such a 
 use case at some point, please be sure to **supply details to reproduce issues**. Supposed *vulnerabilities* that are picked up and 
 reported by security scanners, static code analyzers and such affecting a third party library used by CAS generally do not qualify, unless 
-there is solid evidence provided by the reporter to indicate a real, practical issue affecting CAS daily ops. Such warnings often appear 
+there is solid evidence **provided by the reporter** to indicate a real, practical issue affecting CAS daily ops. Such warnings often appear 
 superficial in the context of a CAS deployment. Usually, the best course of action would be to make the upgrades either locally to the 
 installation script or switch to a more recent CAS version that might remove such warnings.
+       
+CAS generally tends to upgrade dependencies for [feature (minor) and major releases](Release-Policy.html), and does so rather frequently. Dependency
+versions are not typically upgraded for patch and security fixes unless and until, as stated above, there is solid evidence to demonstrate and require
+the need and the effort for an upgrade. If you have tools, audit reports and processes in place that scan your CAS deployment and report back libraries
+and dependencies with known CVEs and your policies require a build without such CVEs, we recommend that you modify
+your CAS build to substitute, remove, upgrade or replace affected libraries and remove the warnings as you see best. Please note that doing so
+may jeopardize the stability of your CAS build and deployment and most likely will make your upgrades quite difficult
+as you might run into various dependency and library conflicts with newer versions. 
 
 ### Security Bounty
 

@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -11,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link EDIPIX509AttributeExtractor}.

@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.boot.CasBanner;
 
 import lombok.NoArgsConstructor;
 import org.springframework.boot.WebApplicationType;
@@ -45,7 +46,7 @@ public class CasWebApplication {
     public static void main(final String[] args) {
         CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().forEach(init -> init.initialize(args));
         new SpringApplicationBuilder(CasWebApplication.class)
-            .banner(CasEmbeddedContainerUtils.getCasBannerInstance())
+            .banner(CasBanner.getInstance())
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
             .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())

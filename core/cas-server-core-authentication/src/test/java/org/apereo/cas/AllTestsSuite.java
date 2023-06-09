@@ -37,6 +37,7 @@ import org.apereo.cas.authentication.principal.SimplePrincipalFactoryTests;
 import org.apereo.cas.authentication.principal.SimplePrincipalTests;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtilsTests;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfigurationTests;
+import org.apereo.cas.nativex.CasCoreAuthenticationRuntimeHintsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -51,6 +52,7 @@ import org.junit.platform.suite.api.Suite;
     SimplePrincipalTests.class,
     ChainingPrincipalResolverTests.class,
     NullPrincipalTests.class,
+    CasCoreAuthenticationRuntimeHintsTests.class,
     DefaultAuthenticationEventExecutionPlanTests.class,
     JaasAuthenticationHandlersConfigurationTests.class,
     PasswordEncoderUtilsTests.class,

@@ -13,6 +13,7 @@ import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.principal.ThreadLocalAuditPrincipalResolver;
 import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolver;
+import org.apereo.cas.audit.spi.resource.LogoutRequestResourceResolver;
 import org.apereo.cas.audit.spi.resource.ProtocolSpecificationValidationAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolver;
@@ -26,7 +27,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -188,6 +188,12 @@ public class CasCoreAuditConfiguration {
             return new ServiceAccessEnforcementAuditResourceResolver(casProperties.getAudit().getEngine());
         }
 
+        @ConditionalOnMissingBean(name = "logoutRequestResourceResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditResourceResolver logoutRequestResourceResolver() {
+            return new LogoutRequestResourceResolver();
+        }
     }
 
     @Configuration(value = "CasCoreAuditActionsConfiguration", proxyBeanMethods = false)
@@ -245,6 +251,12 @@ public class CasCoreAuditConfiguration {
             return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED);
         }
 
+        @ConditionalOnMissingBean(name = "logoutAuditActionResolver")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditActionResolver logoutAuditActionResolver() {
+            return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED);
+        }
     }
 
     @Configuration(value = "CasCoreAuditEventsConfiguration", proxyBeanMethods = false)
@@ -389,7 +401,9 @@ public class CasCoreAuditConfiguration {
             @Qualifier("ticketValidationResourceResolver")
             final AuditResourceResolver ticketValidationResourceResolver,
             @Qualifier("protocolSpecificationValidationResourceResolver")
-            final AuditResourceResolver protocolSpecificationValidationResourceResolver) {
+            final AuditResourceResolver protocolSpecificationValidationResourceResolver,
+            @Qualifier("logoutRequestResourceResolver")
+            final AuditResourceResolver logoutRequestResourceResolver) {
             return plan -> {
                 plan.registerAuditResourceResolver(AuditResourceResolvers.AUTHENTICATION_RESOURCE_RESOLVER, credentialsAsFirstParameterResourceResolver);
                 plan.registerAuditResourceResolver(AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER, nullableReturnValueResourceResolver);
@@ -414,6 +428,8 @@ public class CasCoreAuditConfiguration {
                     AuditResourceResolvers.DELETE_SERVICE_RESOURCE_RESOLVER);
 
                 plan.registerAuditResourceResolver(AuditResourceResolvers.SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER, serviceAccessEnforcementAuditResourceResolver);
+
+                plan.registerAuditResourceResolver(AuditResourceResolvers.LOGOUT_RESOURCE_RESOLVER, logoutRequestResourceResolver);
             };
         }
 
@@ -434,7 +450,9 @@ public class CasCoreAuditConfiguration {
             @Qualifier("ticketValidationActionResolver")
             final AuditActionResolver ticketValidationActionResolver,
             @Qualifier("booleanActionResolver")
-            final AuditActionResolver booleanActionResolver) {
+            final AuditActionResolver booleanActionResolver,
+            @Qualifier("logoutAuditActionResolver")
+            final AuditActionResolver logoutAuditActionResolver) {
             return plan -> {
                 plan.registerAuditActionResolvers(authenticationActionResolver,
                     AuditActionResolvers.AUTHENTICATION_RESOLVER,
@@ -458,6 +476,8 @@ public class CasCoreAuditConfiguration {
 
                 plan.registerAuditActionResolver(AuditActionResolvers.VALIDATE_SERVICE_TICKET_RESOLVER, ticketValidationActionResolver);
                 plan.registerAuditActionResolver(AuditActionResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER, booleanActionResolver);
+
+                plan.registerAuditActionResolver(AuditActionResolvers.LOGOUT_ACTION_RESOLVER, logoutAuditActionResolver);
             };
         }
     }
