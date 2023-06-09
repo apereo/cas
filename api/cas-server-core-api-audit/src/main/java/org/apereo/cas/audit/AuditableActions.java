@@ -32,10 +32,6 @@ public interface AuditableActions {
      */
     String TICKET_GRANTING_TICKET = "TICKET_GRANTING_TICKET";
     /**
-     * Auditable action {@code TICKET_DESTROYED}.
-     */
-    String TICKET_DESTROYED = "TICKET_DESTROYED";
-    /**
      * Auditable action {@code PROXY_GRANTING_TICKET}.
      */
     String PROXY_GRANTING_TICKET = "PROXY_GRANTING_TICKET";
