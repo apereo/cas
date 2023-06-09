@@ -1,0 +1,47 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "clientRS256",
+  "clientSecret": "secretRS256",
+  "serviceId": "^(http|https)://.+",
+  "name": "Sample",
+  "id": 2,
+  "bypassApprovalPrompt": true,
+  "generateRefreshToken": true,
+  "renewRefreshToken": true,
+  "idTokenSigningAlg": "RS256",
+  "jwksKeyId": "RSA",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "password", "authorization_code", "implicit", "refresh_token" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code", "id_token token" ] ],
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "jwtAsServiceTicket" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    },
+    "httpHeaderEnableXFrameOptions" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "order": 1,
+          "allowedAttributes" : {
+            "@class" : "java.util.TreeMap",
+            "custom:roles" : "roles"
+          }
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "firstName", "lastName" ] ],
+          "order": 2
+        }
+      ]
+    ]
+  }
+}
