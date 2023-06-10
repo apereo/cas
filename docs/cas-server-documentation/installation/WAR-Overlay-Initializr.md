@@ -97,8 +97,8 @@ the CAS Initializr, the following strategies can be used.
 
 ### Heroku
 
-The CAS projects provides a public **paid-for-by-Apereo-members** instance of the CAS Initializr on [Heroku][initializr], paid for by the
-Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
+The CAS projects provides a public instance of the CAS Initializr on [Heroku][initializr], **paid for by the
+Apereo CAS support subscribers**. To get started with this instance, a simple way might be to include the following function in your bash profile:
 
 ```bash
 function getcas() {

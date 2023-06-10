@@ -71,3 +71,5 @@ as a [GraalVM native image](../installation/GraalVM-NativeImage-Installation.htm
 - Spring Boot
 - Apache Tomcat
 - Sentry
+- Apache CXF
+- Oshi

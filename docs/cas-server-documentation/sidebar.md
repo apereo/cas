@@ -471,7 +471,7 @@ layout: null
                 *   [Device Authorization](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
                 *   [Implicit](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-Implicit.html)
                 *   [Refresh Token](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-RefreshToken.html)
-                *   [ResourceOwner](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-ResourceOwner.html)
+                *   [Resource Owner](/cas/{{ version }}/authentication/OAuth-ProtocolFlow-ResourceOwner.html)
             *   [Clients](/cas/{{ version }}/authentication/OAuth-Authentication-Clients.html)
             *   [Response/Grant Types](/cas/{{ version }}/authentication/OAuth-Authentication-Clients-ResponsesGrants.html)
             *   [CSRF](/cas/{{ version }}/authentication/OAuth-Authentication-CSRF.html)

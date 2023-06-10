@@ -69,8 +69,8 @@ contain a `README` file with instructions on how to build and run CAS native ima
 
 <div class="alert alert-info">:information_source: <strong>Build Time</strong><p>
 Building CAS GraalVM native images can be quite resource intensive and time consuming. Depending on the number of modules
-included in the build, CAS configuration options and the horsepower of the build machine, the build time can vary greatly
-and typically is in the neighborhood of <code>5~15</code> minutes and perhaps longer.</p></div>
+included in the build, CAS configuration options and the horsepower of the build machine and available memory, the build time can vary greatly
+and typically is in the neighborhood of <code>10~20</code> minutes and perhaps longer.</p></div>
 
 Since in AOT and native mode, configuration is being processed and the context is being optimised at build time,
 any properties that would influence bean creation (such as the ones used within the bootstrap context) should be set
