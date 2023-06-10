@@ -5,6 +5,22 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
+BUILD="true"
+RUN="true"
+
+while (( "$#" )); do
+  case "$1" in
+  --build)
+    BUILD="$2"
+    shift 2
+    ;;
+  --run)
+      RUN="$2"
+      shift 2
+      ;;
+  esac
+done
+
 function printred() {
   printf "${RED}$1${ENDCOLOR}\n"
 }

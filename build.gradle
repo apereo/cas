@@ -50,6 +50,7 @@ ext {
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
+    terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
@@ -353,13 +354,12 @@ subprojects {
         it.options.incremental = true
 
         def casCompilerArgs = ["-parameters"]
-
-        def terminateCompilerOnWarning = project.ext.properties.get("terminateCompilerOnWarning", true)
-        if (terminateCompilerOnWarning) {
+        if (rootProject.ext.terminateCompilerOnWarning) {
             casCompilerArgs.add("-Werror")
         }
 
         if (!rootProject.skipErrorProneCompiler) {
+            it.options.errorprone.disableAllChecks = !rootProject.ext.terminateCompilerOnWarning
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"

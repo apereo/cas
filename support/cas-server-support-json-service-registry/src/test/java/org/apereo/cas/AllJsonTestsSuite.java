@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.JsonServiceRegistryRuntimeHintsTests;
 import org.apereo.cas.services.JsonServiceRegistryConfigurationTests;
 import org.apereo.cas.services.JsonServiceRegistryTests;
 
@@ -13,6 +14,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 4.1.0
  */
 @SelectClasses({
+    JsonServiceRegistryRuntimeHintsTests.class,
     JsonServiceRegistryConfigurationTests.class,
     JsonServiceRegistryTests.class
 })

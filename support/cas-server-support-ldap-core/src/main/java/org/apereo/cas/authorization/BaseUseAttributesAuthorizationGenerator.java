@@ -3,6 +3,7 @@ package org.apereo.cas.authorization;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +13,9 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.UserProfile;
+
 import java.util.Locale;
 import java.util.Optional;
 
@@ -64,8 +65,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     }
 
     @Override
-    public Optional<UserProfile> generate(final WebContext context,
-                                          final SessionStore sessionStore,
+    public Optional<UserProfile> generate(final CallContext context,
                                           final UserProfile profile) {
         val username = profile.getId();
         LOGGER.debug("Attempting to get details for user [{}].", username);

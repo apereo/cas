@@ -49,7 +49,7 @@ the above libraries and dependencies will be pulled into the final web applicati
 
 <div class="alert alert-info">:information_source: <strong>Ownership</strong><p>
 Please note that the above listed dependencies are generally those that are explicitly requested, owned and controlled
-by the CAS software. There are of course many other modules and dependencies that would be <i>transitively</i> pulled on
+by the CAS software. There are of course many other modules and dependencies that would be <i>transitively</i> pulled in
 whose specifics and versions are not directly controlled by CAS. In such scenarios, the specific feature module or library itself is
 responsible for pulling its own dependencies correctly into the build. What is listed above should mainly serve as a helpful guide
 and not a comprehensive reference.
