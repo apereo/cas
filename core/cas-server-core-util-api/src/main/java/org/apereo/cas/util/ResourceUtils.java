@@ -222,12 +222,12 @@ public class ResourceUtils {
             return null;
         }
 
-        if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
+        if (isFileURL(resource.getURL())) {
             return resource;
         }
 
-        val url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
-        val file = org.springframework.util.ResourceUtils.getFile(url);
+        val url = extractArchiveURL(resource.getURL());
+        val file = getFile(url);
 
         val destination = new File(FileUtils.getTempDirectory(), Objects.requireNonNull(resource.getFilename()));
         if (isDirectory) {

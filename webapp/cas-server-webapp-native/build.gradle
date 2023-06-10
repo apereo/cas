@@ -121,11 +121,14 @@ graalvmNative {
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
 
+            buildArgs.add('-J-Xmx16G')
+            buildArgs.add('-J-Xms4G')
+            buildArgs.add('--no-server')
+            buildArgs.add('--native-image-info')
+            
             buildArgs.add('--initialize-at-build-time=org.hibernate.internal.util.ReflectHelper')
-
             buildArgs.add('--initialize-at-build-time=java.beans.Introspector')
             buildArgs.add('--initialize-at-build-time=com.sun.beans')
-
             buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
@@ -137,7 +140,7 @@ graalvmNative {
 
             buildArgs.add('--features=org.apereo.cas.nativex.features.BouncyCastleProviderFeature')
 
-            buildArgs.add('--enable-url-protocols=jar')
+            buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
         }
     }
 }
