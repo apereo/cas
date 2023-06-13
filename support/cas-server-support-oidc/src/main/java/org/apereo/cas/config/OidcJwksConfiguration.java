@@ -17,6 +17,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -171,7 +172,7 @@ public class OidcJwksConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyOidcJsonWebKeystoreGeneratorService")
-        @SuppressWarnings("unchecked")
+        @ConditionalOnMissingGraalVMNativeImage
         public Supplier<OidcJsonWebKeystoreGeneratorService> groovyOidcJsonWebKeystoreGeneratorService(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BUILD_OPTIONS="-x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache -DskipNestedConfigMetadataGen=true"
+
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -31,48 +33,66 @@ function printyellow() {
   printf "${YELLOW}$1${ENDCOLOR}\n"
 }
 
-printgreen "Building CAS Native Image. This may take several minutes..."
-./gradlew :webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile \
-  --no-daemon -x check -x test -x javadoc --configure-on-demand \
-  --max-workers=8 --no-configuration-cache -DskipNestedConfigMetadataGen=true
+if [[ "${BUILD}" == "true" ]]; then
+  if [[ "${CI}" == "true" ]]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} --no-daemon"
+  fi
+  printgreen "Building CAS native image with options..."
+  export GRAALVM_BUILDTOOLS_MAX_PARALLEL_BUILDS=8
+  tasks="./gradlew :webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile ${BUILD_OPTIONS}"
+  echo "$tasks"
+  echo -e "***************************************************************************************"
+  eval "$tasks"
 
-if [[ $? -ne 0 ]]; then
-  printred "CAS native image build failed"
-  exit 1
+  if [[ $? -ne 0 ]]; then
+    printred "CAS native image build failed"
+    exit 1
+  fi
 fi
 
 printgreen "CAS native image build is successfully built"
 cd ./webapp/cas-server-webapp-native || exit
 ls -al ./build/native
 
-keystore="/etc/cas/thekeystore"
-if [[ -f "${keystore}" ]]; then
-  printyellow "Keystore ${keystore} already exists and will not be created again"
-else
-  dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-  subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
-  sudo mkdir -p /etc/cas
-  printgreen "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
-  [ -f "${keystore}" ] && sudo rm "${keystore}"
-  sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-    -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
-  if [[ $? -ne 0 ]]; then
-    printred "Unable to create CAS keystore ${keystore}"
-    exit 1
+if [[ "${RUN}" == "true" ]]; then
+  keystore="/etc/cas/thekeystore"
+  if [[ -f "${keystore}" ]]; then
+    printyellow "Keystore ${keystore} already exists and will not be created again!"
+  else
+    dname="${dname:-CN=mmoayyed.unicon.net,OU=Example,OU=Org,C=US}"
+    subjectAltName="${subjectAltName:-dns:unicon.net,dns:localhost,ip:127.0.0.1}"
+    sudo mkdir -p /etc/cas
+    printgreen "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
+    [ -f "${keystore}" ] && sudo rm "${keystore}"
+    sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
+      -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
+    if [[ $? -ne 0 ]]; then
+      printred "Unable to create CAS keystore ${keystore}"
+      exit 1
+    fi
   fi
-fi
 
-printgreen "Launching CAS native image..."
-./build/native/nativeCompile/cas --spring.profiles.active=native &
-pid=$!
-sleep 15
-curl -k -L --connect-timeout 10 --output /dev/null --silent --fail https://localhost:8443/cas/login
-if [[ $? -ne 0 ]]; then
-  printred "CAS native image failed to launch"
+  printgreen "Launching CAS native image..."
+  ./build/native/nativeCompile/cas --spring.profiles.active=native &
+  pid=$!
+  sleep 20
+  
+  if [[ "${CI}" == "true" ]]; then
+    curl -k -L --connect-timeout 10 --output /dev/null --silent --fail https://localhost:8443/cas/login
+    if [[ $? -ne 0 ]]; then
+      printred "CAS native image failed to launch"
+      kill -9 $pid
+      exit 1
+    fi
+  else
+    # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
+    until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail https://localhost:8443/cas/login; do
+       echo -n '.'
+       sleep 1
+    done
+  fi
   kill -9 $pid
-  exit 1
+  [ "$CI" = "true" ] && pkill cas
 fi
-kill -9 $pid
-[ "$CI" = "true" ] && pkill java
 printgreen "Built and validated CAS native image successfully."
 exit 0

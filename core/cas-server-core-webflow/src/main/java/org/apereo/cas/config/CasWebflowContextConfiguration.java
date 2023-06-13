@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
@@ -268,6 +269,7 @@ public class CasWebflowContextConfiguration {
         @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public CasWebflowConfigurer groovyWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -291,7 +293,7 @@ public class CasWebflowContextConfiguration {
             @Qualifier("defaultLogoutWebflowConfigurer")
             final CasWebflowConfigurer defaultLogoutWebflowConfigurer,
             @Qualifier("groovyWebflowConfigurer")
-            final CasWebflowConfigurer groovyWebflowConfigurer,
+            final ObjectProvider<CasWebflowConfigurer> groovyWebflowConfigurer,
             @Qualifier("localeChangeInterceptor")
             final HandlerInterceptor localeChangeInterceptor,
             @Qualifier("resourceUrlProviderExposingInterceptor")
@@ -303,7 +305,7 @@ public class CasWebflowContextConfiguration {
             return plan -> {
                 plan.registerWebflowConfigurer(defaultWebflowConfigurer);
                 plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer);
-                plan.registerWebflowConfigurer(groovyWebflowConfigurer);
+                groovyWebflowConfigurer.ifAvailable(plan::registerWebflowConfigurer);
 
                 plan.registerWebflowInterceptor(localeChangeInterceptor);
                 plan.registerWebflowInterceptor(resourceUrlProviderExposingInterceptor);

@@ -18,13 +18,13 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CasFeatureEnabledConditionTests}.
+ * This is {@link CasFeatureEnabledPropertyPropertyConditionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
  */
 @Tag("Simple")
-public class CasFeatureEnabledConditionTests {
+public class CasFeatureEnabledPropertyPropertyConditionTests {
     @ConditionalOnFeaturesEnabled({
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature3"),
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature4")

@@ -109,14 +109,14 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         serviceRegistry = getNewServiceRegistry();
         clearServiceRegistry();
         initializeServiceRegistry();
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws Exception {
         clearServiceRegistry();
         tearDownServiceRegistry();
     }
@@ -636,15 +636,19 @@ public abstract class AbstractServiceRegistryTests {
     /**
      * Method to prepare the service registry for testing.
      * Implementing classes may override this if more is necessary.
+     *
+     * @throws Exception the exception
      */
-    protected void initializeServiceRegistry() {
+    protected void initializeServiceRegistry() throws Exception {
     }
 
     /**
      * Method to shut down the service registry after testing.
      * Implementing classes may override this if more is necessary.
+     *
+     * @throws Exception the exception
      */
-    protected void tearDownServiceRegistry() {
+    protected void tearDownServiceRegistry() throws Exception {
     }
 
     protected void clearServiceRegistry() {

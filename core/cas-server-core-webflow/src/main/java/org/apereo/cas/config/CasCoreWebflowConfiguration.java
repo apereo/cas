@@ -33,6 +33,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
@@ -303,6 +304,7 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) throws Exception {
@@ -474,6 +476,7 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "groovyLoginWebflowDecorator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public WebflowDecorator groovyLoginWebflowDecorator(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

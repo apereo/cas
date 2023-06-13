@@ -12,6 +12,7 @@ import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigur
 import org.apereo.cas.notifications.sms.GroovySmsSender;
 import org.apereo.cas.notifications.sms.RestfulSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,7 @@ public class CasCoreNotificationsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val groovy = casProperties.getSmsProvider().getGroovy();
-        if (groovy.getLocation() != null) {
+        if (groovy.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
             return new GroovySmsSender(groovy.getLocation());
         }
         val rest = casProperties.getSmsProvider().getRest();

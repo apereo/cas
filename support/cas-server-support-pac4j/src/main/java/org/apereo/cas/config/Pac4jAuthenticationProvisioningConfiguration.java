@@ -11,6 +11,7 @@ import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,6 +64,7 @@ public class Pac4jAuthenticationProvisioningConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public Supplier<DelegatedClientUserProfileProvisioner> groovyDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

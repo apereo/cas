@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.WebAuthnRuntimeHintsTests;
 import org.apereo.cas.webauthn.metadata.CompositeAttestationTrustSourceTests;
 import org.apereo.cas.webauthn.storage.InMemoryWebAuthnCredentialRepositoryTests;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepositoryTests;
@@ -25,6 +26,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    WebAuthnRuntimeHintsTests.class,
     WebAuthnControllerMvcTests.class,
     CompositeAttestationTrustSourceTests.class,
     WebAuthnMultifactorWebflowConfigurerTests.class,

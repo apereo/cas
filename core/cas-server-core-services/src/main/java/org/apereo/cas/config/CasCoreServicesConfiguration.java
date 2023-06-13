@@ -52,6 +52,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -174,6 +175,7 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "groovyRegisteredServiceAccessStrategyEnforcer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public RegisteredServiceAccessStrategyEnforcer groovyRegisteredServiceAccessStrategyEnforcer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

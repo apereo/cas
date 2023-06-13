@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "generic")
 @AutoConfiguration
+@ConditionalOnMissingGraalVMNativeImage
 public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyPrincipalFactory")

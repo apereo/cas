@@ -13,6 +13,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.client.config.BaseClientConfiguration;
+import org.pac4j.core.credentials.Credentials;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 
@@ -29,6 +30,7 @@ public class Pac4jCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.serialization()
+            .registerType(Credentials.class)
             .registerType(DelegatedClientIdentityProviderConfiguration.class)
             .registerType(DelegatedAuthenticationCandidateProfile.class);
         registerReflectionHints(hints,

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.WiringConfigurationTests;
+import org.apereo.cas.nativex.CasWebAppRuntimeHintsTests;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapterTests;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapterWebTests;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProviderDefaultRolesTests;
@@ -22,6 +23,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     EndpointLdapAuthenticationProviderDefaultRolesTests.class,
     WiringConfigurationTests.class,
+    CasWebAppRuntimeHintsTests.class,
     IpAddressAuthorizationManagerTests.class,
     CasWebSecurityConfigurerAdapterWebTests.class,
     CasWebflowServerSessionContextConfigurationTests.class,

@@ -9,6 +9,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +57,7 @@ public class CasGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "groovyGeoLocationService")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public GeoLocationService groovyGeoLocationService(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
@@ -72,6 +74,7 @@ public class CasGeoLocationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyGeoLocationServiceConfigurer")
+        @ConditionalOnMissingGraalVMNativeImage
         public GeoLocationServiceConfigurer groovyGeoLocationServiceConfigurer(
             @Qualifier("groovyGeoLocationService")
             final GeoLocationService groovyGeoLocationService) {

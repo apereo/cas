@@ -24,6 +24,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -79,6 +80,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
+        @ConditionalOnMissingGraalVMNativeImage
         public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -161,6 +163,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties) {
             return plan -> {
