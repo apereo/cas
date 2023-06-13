@@ -1,31 +1,17 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.ticket.AbstractTicket;
-import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
-import org.apereo.cas.ticket.ProxyTicketImpl;
-import org.apereo.cas.ticket.ServiceTicketImpl;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.TransientSessionTicketImpl;
-import org.apereo.cas.ticket.expiration.AbstractCasExpirationPolicy;
-import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
-import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
-import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
-import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
-import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -42,37 +28,28 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerSpringProxy(hints, QueueableTicketRegistry.class, TicketRegistry.class);
 
-        List.of(
-                TicketGrantingCookieCipherExecutor.class,
-                MultiTimeUseOrTimeoutExpirationPolicy.class,
-                MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy.class,
-                MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class,
-                MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class)
-            .forEach(el -> hints.reflection().registerType(el,
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS));
+        registerSerializationHints(hints, findSubclassesInPackage(Ticket.class, CentralAuthenticationService.NAMESPACE));
+        var clazzes = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
+        registerSerializationHints(hints, clazzes);
+        registerReflectionHints(hints, clazzes);
+    }
 
-        hints.serialization()
-            .registerType(AbstractTicket.class)
-            .registerType(TicketGrantingTicketImpl.class)
-            .registerType(ServiceTicketImpl.class)
-            .registerType(ProxyGrantingTicketImpl.class)
-            .registerType(ProxyTicketImpl.class)
-            .registerType(TransientSessionTicketImpl.class)
-            .registerType(AbstractCasExpirationPolicy.class)
-            .registerType(AlwaysExpiresExpirationPolicy.class)
-            .registerType(RememberMeDelegatingExpirationPolicy.class)
-            .registerType(NeverExpiresExpirationPolicy.class)
-            .registerType(ThrottledUseAndTimeoutExpirationPolicy.class)
-            .registerType(TicketGrantingTicketExpirationPolicy.class)
-            .registerType(TimeoutExpirationPolicy.class)
-            .registerType(BaseDelegatingExpirationPolicy.class)
-            .registerType(HardTimeoutExpirationPolicy.class)
-            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.class)
-            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class)
-            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class)
-            .registerType(MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy.class);
+    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INTROSPECT_DECLARED_CONSTRUCTORS,
+            MemberCategory.INTROSPECT_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INTROSPECT_DECLARED_METHODS,
+            MemberCategory.INTROSPECT_PUBLIC_METHODS,
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_FIELDS};
+        entries.forEach(el -> hints.reflection().registerType((Class) el, memberCategories));
+    }
+
+    private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {
+        entries.forEach(el -> hints.serialization().registerType(el));
     }
 }

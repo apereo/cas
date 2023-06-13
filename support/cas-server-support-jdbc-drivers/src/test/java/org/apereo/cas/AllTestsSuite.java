@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.nativex.JdbcDriversRuntimeHintsTests;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -9,7 +10,10 @@ import org.junit.platform.suite.api.Suite;
  * @author leeyc0
  * @since 6.2.0
  */
-@SelectClasses(JdbcServletContextListenerTests.class)
+@SelectClasses({
+    JdbcDriversRuntimeHintsTests.class,
+    JdbcServletContextListenerTests.class
+})
 @Suite
 public class AllTestsSuite {
 }
