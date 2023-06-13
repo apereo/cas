@@ -39,7 +39,8 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     @SneakyThrows
     @Override
     public ResourceBasedServiceRegistry getNewServiceRegistry() {
-        return buildResourceBasedServiceRegistry(RESOURCE);
+        this.newServiceRegistry = buildResourceBasedServiceRegistry(RESOURCE);
+        return newServiceRegistry;
     }
 
     @Test
