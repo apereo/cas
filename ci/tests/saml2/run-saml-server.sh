@@ -27,12 +27,12 @@ openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
 
 echo "SP certificate..."
-chmod 777 ${TMPDIR}/saml.crt
-cat ${TMPDIR}/saml.crt
+chmod 777 "${TMPDIR}"/saml.crt
+cat "${TMPDIR}"/saml.crt
 
 echo "SP private key..."
 chmod 777 ${TMPDIR}/saml.pem
-cat ${TMPDIR}/saml.pem
+cat "${TMPDIR}"/saml.pem
 
 if [[ -z "${IDP_ENTITYID}" ]]; then
   export IDP_ENTITYID="https://cas.apereo.org/saml/idp"
@@ -60,3 +60,5 @@ docker run --name=simplesamlphp-idp -p 9443:8080 \
   -v $PWD/ci/tests/saml2/config.php:/var/www/simplesamlphp/config/config.php \
   -v $PWD/ci/tests/saml2/php.ini-production:/usr/local/etc/php/php.ini \
   -d kenchan0130/simplesamlphp
+
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh

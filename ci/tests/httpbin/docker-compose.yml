@@ -3,6 +3,8 @@ version: '3'
 services:
   httpbin:
     image: kennethreitz/httpbin
+    ports:
+      - "9889:80"
   proxy:
     image: fsouza/docker-ssl-proxy
     environment:
