@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
@@ -32,6 +33,9 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         var clazzes = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
         registerSerializationHints(hints, clazzes);
         registerReflectionHints(hints, clazzes);
+
+        registerReflectionHints(hints,
+            findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
