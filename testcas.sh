@@ -193,6 +193,7 @@ while (( "$#" )); do
                 task+="testGCP "
                 ;;
             web)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh
                 task+="testWeb "
                 ;;
             scim)
