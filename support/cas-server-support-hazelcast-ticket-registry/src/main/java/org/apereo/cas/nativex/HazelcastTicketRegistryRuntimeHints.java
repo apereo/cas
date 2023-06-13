@@ -1,8 +1,17 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.ticket.registry.HazelcastTicketHolder;
+import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import com.hazelcast.internal.serialization.DataSerializerHook;
+import com.hazelcast.jet.sql.impl.connector.SqlConnector;
+import com.hazelcast.jet.sql.impl.connector.SqlConnectorCache;
+import com.hazelcast.jet.sql.impl.opt.metadata.HazelcastRelMdBoundedness;
+import com.hazelcast.jet.sql.impl.opt.metadata.HazelcastRelMdRowCount;
+import com.hazelcast.jet.sql.impl.opt.metadata.HazelcastRelMdWatermarkedFields;
 import com.hazelcast.logging.LoggerFactory;
+import com.hazelcast.map.IMap;
+import com.hazelcast.query.extractor.ValueExtractor;
 import com.hazelcast.shaded.org.apache.calcite.DataContext;
 import com.hazelcast.shaded.org.apache.calcite.adapter.enumerable.AggregateLambdaFactory;
 import com.hazelcast.shaded.org.apache.calcite.adapter.enumerable.EnumUtils;
@@ -30,10 +39,12 @@ import com.hazelcast.shaded.org.apache.calcite.rel.metadata.BuiltInMetadata;
 import com.hazelcast.shaded.org.apache.calcite.rel.metadata.Metadata;
 import com.hazelcast.shaded.org.apache.calcite.rel.metadata.MetadataDef;
 import com.hazelcast.shaded.org.apache.calcite.rel.metadata.MetadataHandler;
+import com.hazelcast.shaded.org.apache.calcite.rel.metadata.RelMdRowCount;
 import com.hazelcast.shaded.org.apache.calcite.rel.metadata.RelMetadataProvider;
 import com.hazelcast.shaded.org.apache.calcite.rel.metadata.UnboundMetadata;
 import com.hazelcast.shaded.org.apache.calcite.runtime.BinarySearch;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Bindable;
+import com.hazelcast.shaded.org.apache.calcite.runtime.CalciteResource;
 import com.hazelcast.shaded.org.apache.calcite.runtime.CompressionFunctions;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Enumerables;
 import com.hazelcast.shaded.org.apache.calcite.runtime.FlatLists;
@@ -42,6 +53,7 @@ import com.hazelcast.shaded.org.apache.calcite.runtime.JsonFunctions;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Matcher;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Pattern;
 import com.hazelcast.shaded.org.apache.calcite.runtime.RandomFunction;
+import com.hazelcast.shaded.org.apache.calcite.runtime.Resources;
 import com.hazelcast.shaded.org.apache.calcite.runtime.SortedMultiMap;
 import com.hazelcast.shaded.org.apache.calcite.runtime.SpatialTypeFunctions;
 import com.hazelcast.shaded.org.apache.calcite.runtime.SqlFunctions;
@@ -59,9 +71,9 @@ import com.hazelcast.shaded.org.apache.calcite.schema.Table;
 import com.hazelcast.sql.SqlService;
 import com.hazelcast.sql.impl.type.converter.Converter;
 import lombok.val;
-import org.apache.commons.lang3.ClassUtils;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.List;
 
@@ -122,53 +134,83 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
                 LazyAggregateLambdaFactory.LazyAccumulator.class,
                 EnumUtils.class,
                 UnboundMetadata.class,
-                MetadataDef.class
+                MetadataDef.class,
+
+                SqlConnectorCache.class,
+                HazelcastRelMdRowCount.class,
+                HazelcastRelMdBoundedness.class,
+                HazelcastRelMdWatermarkedFields.class,
+                RelMdRowCount.class,
+
+                MapAttributeValueExtractor.class
             )
         );
-        var classes = findSubclassesInPackage(Converter.class, "com.hazelcast.sql");
+        val classes = findSubclassesInPackage(Converter.class, "com.hazelcast.sql");
         registerReflectionHints(hints, classes);
         registerSerializationHints(hints, classes);
 
         registerReflectionHints(hints,
-            findSubclassesInPackage(Function.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Function.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(ModifiableView.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(ModifiableView.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(ModifiableTable.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(ModifiableTable.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Table.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Table.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Bindable.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Bindable.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Schema.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Schema.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Enumerable.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Enumerable.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(AggregateLambdaFactory.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(AggregateLambdaFactory.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(LazyAggregateLambdaFactory.LazyAccumulator.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(LazyAggregateLambdaFactory.LazyAccumulator.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Metadata.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Metadata.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(MetadataHandler.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(MetadataHandler.class, "com.hazelcast"));
         registerReflectionHints(hints,
             findSubclassesInPackage(SqlService.class, "com.hazelcast.sql"));
         registerReflectionHints(hints,
             findSubclassesInPackage(LoggerFactory.class, "com.hazelcast.logging"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Pattern.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Pattern.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(Queryable.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(Queryable.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(RelMetadataProvider.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(RelMetadataProvider.class, "com.hazelcast"));
         registerReflectionHints(hints,
-            findSubclassesInPackage(RelNode.class, "com.hazelcast.shaded.org.apache.calcite"));
+            findSubclassesInPackage(RelNode.class, "com.hazelcast"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(Resources.Element.class, "com.hazelcast"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(IMap.class, "com.hazelcast"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(AbstractQueue.class, "com.hazelcast"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(SqlConnector.class, "com.hazelcast"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(DataSerializerHook.class, "com.hazelcast"));
+        registerReflectionHints(hints,
+            findSubclassesInPackage(ValueExtractor.class, "com.hazelcast"));
 
-        FunctionUtils.doAndHandle(__ -> {
-            var clazz = ClassUtils.getClass("com.hazelcast.shaded.org.jctools.queues.ConcurrentCircularArrayQueueL0Pad", false);
-            registerReflectionHints(hints,
-                findSubclassesInPackage(clazz, "com.hazelcast.shaded.org.jctools"));
-        });
+        registerProxyHints(hints, List.of(IMap.class));
+        registerProxyHints(hints,
+            findSubclassesInPackage(CalciteResource.class, "com.hazelcast"));
+
+        registerSerializationHints(hints, List.of(HazelcastTicketHolder.class));
+
+        hints.resources()
+            .registerPattern("com.hazelcast.shaded.org.codehaus.commons.compiler.properties")
+            .registerPattern("META-INF/services/com.hazelcast.DataSerializerHook")
+            .registerPattern("META-INF/services/com.hazelcast.shaded.com.fasterxml.jackson.core.ObjectCodec")
+            .registerPattern("META-INF/services/com.hazelcast.sql.Connectors");
+    }
+
+    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
     }
 
     private static void registerSerializationHints(final RuntimeHints hints, final Collection<Class> entries) {

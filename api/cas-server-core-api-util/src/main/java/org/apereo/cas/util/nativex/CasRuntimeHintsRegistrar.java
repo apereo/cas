@@ -114,7 +114,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      */
     default Collection<Class> findSubclassesInPackage(final Class parentClass, final String... packages) {
         val results = (Collection<Class>) ReflectionUtils.findSubclassesInPackage(parentClass, packages);
-        return results
+        val filteredResults = results
             .stream()
             .filter(clazz -> {
                 var host = clazz.getCanonicalName();
@@ -128,6 +128,8 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
                 return StringUtils.isNotBlank(host) && !host.endsWith("Tests");
             })
             .collect(Collectors.toList());
+        filteredResults.add(parentClass);
+        return filteredResults;
     }
 
     /**

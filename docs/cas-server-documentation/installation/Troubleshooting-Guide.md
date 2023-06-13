@@ -146,7 +146,7 @@ CATALINA_OPTS=-Xms1000m -Xmx2000m
 You will want to profile your server with something like [JVisualVM](https://visualvm.github.io/). This will help you see what is actually 
 going on with your memory.
 
-You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](http://www.yourkit.com/java/profiler/) 
+You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](https://www.yourkit.com/java/profiler/) 
 and analyzing offline using some analysis tool. 
 
 Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 
