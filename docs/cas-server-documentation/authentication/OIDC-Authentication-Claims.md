@@ -293,6 +293,47 @@ and internally defined for the standard `email` scope.
 
 {% endtab %}
 
+{% tab oidcclaimrelease Filter Claims %}
+
+It is possible to control the release of standard claims, i.e. `name`, that are connect to a standard scope, such as `profile`.
+Typically when the release policy references a standard scope, all claims available and resolved that belong to that scope
+are then released to the relying party. The configuration below allows direct and fine-tuned control over the set of claims
+that could be released as part of the larger claim bundle that is tied to a standard scope.
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "...",
+  "name": "Sample",
+  "id": 1,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ]],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ]],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "locale", "name" ] ]
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "email" ] ]
+        }
+      ]
+    ]
+  }
+}
+```
+
+If all claims available to the `profile` and `email` scopes are resolved and available to CAS for attribute release,
+the configuration above will only authorize the release of `locale`, `name` and `email` out of the entire set of
+available claims.
+
+{% endtab %}
+
 {% endtabs %}
 
 To learn more about attribute release policies and the chain of 
