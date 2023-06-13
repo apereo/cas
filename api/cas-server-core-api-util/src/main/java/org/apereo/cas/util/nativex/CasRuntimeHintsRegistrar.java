@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.graalvm.nativeimage.ImageInfo;
 import org.jooq.lambda.Unchecked;
 import org.springframework.aop.SpringProxy;
 import org.springframework.aop.framework.Advised;
@@ -36,8 +35,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     String PROPERTY_IMAGE_CODE_KEY = "org.graalvm.nativeimage.imagecode";
 
     /**
-     * Holds the string that will be returned by the system property for
-     * {@link ImageInfo#PROPERTY_IMAGE_CODE_KEY} if code is executing in the context of image
+     * Holds the string that will be returned by the system property code is executing in the context of image
      * building (e.g. in a static initializer of class that will be contained in the image).
      *
      * @since 19.0
