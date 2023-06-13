@@ -26,7 +26,7 @@
     <logger name="org.apache.http" level="warn" />
 
     <logger name="org.springframework.security.config.annotation.web.builders" level="error" />
-    <Logger name="org.springframework.boot.diagnostics" level="trace"/>
+    <Logger name="org.springframework.boot.diagnostics" level="debug"/>
 
     <root level="warn">
         <appender-ref ref="console" />

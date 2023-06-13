@@ -325,7 +325,7 @@ to enable clients to correlate the user's activities without permission.
 ## Subject Identifier Claim
 
 To control and modify the value of the `sub` claim for each OpenID Connect relying party, you may change the application 
-definition to returns an attribute that is already resolved for the principal as the `sub` claim value for this service. 
+definition to return an attribute that is already resolved for the principal as the `sub` claim value for this service. 
 
 ```json
 {
