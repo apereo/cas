@@ -28,10 +28,12 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.DelegatedAuthenticationCookieGenerator;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
@@ -210,6 +212,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyDelegatedClientAuthenticationCredentialResolver")
+        @ConditionalOnMissingGraalVMNativeImage
         public DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -252,6 +255,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             return BeanSupplier.of(DelegatedClientIdentityProviderConfigurationPostProcessor.class)
                 .when(BeanCondition.on("cas.authn.pac4j.core.groovy-provider-post-processor.location")
                     .exists().given(applicationContext.getEnvironment()))
+                .and(CasRuntimeHintsRegistrar::notInNativeImage)
                 .supply(() -> {
                     val resource = casProperties.getAuthn().getPac4j().getCore().getGroovyProviderPostProcessor().getLocation();
                     return new DelegatedClientIdentityProviderConfigurationGroovyPostProcessor(new WatchableGroovyScriptResource(resource));
@@ -297,6 +301,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyDelegatedClientAuthenticationRequestCustomizer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public DelegatedClientAuthenticationRequestCustomizer groovyDelegatedClientAuthenticationRequestCustomizer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

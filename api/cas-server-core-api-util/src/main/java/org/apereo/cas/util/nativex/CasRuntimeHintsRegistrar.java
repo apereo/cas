@@ -4,6 +4,7 @@ import org.apereo.cas.util.ReflectionUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.graalvm.nativeimage.ImageInfo;
 import org.jooq.lambda.Unchecked;
@@ -47,6 +48,11 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * Holds the string that will be returned if code is executing at image runtime.
      */
     String PROPERTY_IMAGE_CODE_VALUE_RUNTIME = "runtime";
+
+    /**
+     * System property set to true during spring AOT processing phase.
+     */
+    String SYSTEM_PROPERTY_SPRING_AOT_PROCESSING = "spring.aot.processing";
 
     /**
      * Register spring proxies.
@@ -125,12 +131,23 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Determine if code is existing in a GraalVM native image.
+     * Determine if code is executing or being aot-rocessed in a GraalVM native image.
      *
      * @return true/false
      */
     static boolean inNativeImage() {
-        return inImageBuildtimeCode() || inImageRuntimeCode();
+        return inImageBuildtimeCode()
+            || inImageRuntimeCode()
+            || BooleanUtils.toBoolean(System.getProperty(SYSTEM_PROPERTY_SPRING_AOT_PROCESSING));
+    }
+
+    /**
+     * Determine if code is NOT executing or being aot-rocessed in a GraalVM native image.
+     *
+     * @return true/false
+     */
+    static boolean notInNativeImage() {
+        return !inNativeImage();
     }
 
     /**

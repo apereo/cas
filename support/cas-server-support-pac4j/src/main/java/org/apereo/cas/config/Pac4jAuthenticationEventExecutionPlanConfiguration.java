@@ -41,6 +41,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -211,6 +212,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public Supplier<DelegatedClientUserProfileProvisioner> groovyDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

@@ -28,6 +28,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -110,6 +111,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyScriptAuthenticationPolicyWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public CasWebflowEventResolver groovyScriptAuthenticationPolicyWebflowEventResolver(
             @Qualifier("groovyScriptMultifactorAuthenticationTrigger") final MultifactorAuthenticationTrigger groovyScriptMultifactorAuthenticationTrigger,
             @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -437,7 +439,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             @Qualifier("globalAuthenticationPolicyWebflowEventResolver") final CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver,
             @Qualifier("httpRequestAuthenticationPolicyWebflowEventResolver") final CasWebflowEventResolver httpRequestAuthenticationPolicyWebflowEventResolver,
             @Qualifier("restEndpointAuthenticationPolicyWebflowEventResolver") final CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver,
-            @Qualifier("groovyScriptAuthenticationPolicyWebflowEventResolver") final CasWebflowEventResolver groovyScriptAuthenticationPolicyWebflowEventResolver,
+            @Qualifier("groovyScriptAuthenticationPolicyWebflowEventResolver") final ObjectProvider<CasWebflowEventResolver> groovyScriptAuthenticationPolicyWebflowEventResolver,
             @Qualifier("scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver") final CasWebflowEventResolver scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver,
             @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
             final CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver,
@@ -454,7 +456,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             resolver.addDelegate(globalAuthenticationPolicyWebflowEventResolver);
             resolver.addDelegate(httpRequestAuthenticationPolicyWebflowEventResolver);
             resolver.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver);
-            resolver.addDelegate(groovyScriptAuthenticationPolicyWebflowEventResolver);
+            groovyScriptAuthenticationPolicyWebflowEventResolver.ifAvailable(resolver::addDelegate);
             resolver.addDelegate(scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver);
             resolver.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver);
             resolver.addDelegate(predicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver);

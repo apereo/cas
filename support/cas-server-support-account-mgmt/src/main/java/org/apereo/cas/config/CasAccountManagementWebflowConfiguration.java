@@ -40,6 +40,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -159,6 +160,7 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) throws Exception {

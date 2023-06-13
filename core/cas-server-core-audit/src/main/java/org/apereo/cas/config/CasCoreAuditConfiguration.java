@@ -26,6 +26,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.util.text.MessageSanitizer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -523,6 +524,7 @@ public class CasCoreAuditConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casGroovyAuditTrailExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingGraalVMNativeImage
         public AuditTrailExecutionPlanConfigurer casGroovyAuditTrailExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

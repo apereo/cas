@@ -9,13 +9,13 @@ import org.springframework.mock.env.MockEnvironment;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link BeanConditionTests}.
+ * This is {@link BeanPropertyPropertyConditionTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Tag("Utility")
-public class BeanConditionTests {
+public class BeanPropertyPropertyConditionTests {
 
     @Test
     public void verifyExpressionLanguageEmbedded() {

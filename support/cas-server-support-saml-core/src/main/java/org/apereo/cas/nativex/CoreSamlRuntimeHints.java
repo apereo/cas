@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
+import net.shibboleth.shared.resolver.Criterion;
 import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.ExtendedSchemaDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.SchemaDVFactoryImpl;
@@ -33,6 +34,7 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerPattern("templates/*.vm")
             .registerPattern("entitydescriptor-criterion-predicate-registry.properties")
             .registerPattern("roledescriptor-criterion-predicate-registry.properties")
+            .registerPattern("credential-criteria-registry.properties")
             .registerPattern("schema/*.xsd")
             .registerPattern("xacml*-config.xml")
             .registerPattern("ws*-config.xml")
@@ -49,6 +51,8 @@ public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
             findSubclassesInPackage(Marshaller.class, "org.opensaml"));
         registerReflectionHint(hints,
             findSubclassesInPackage(Unmarshaller.class, "org.opensaml"));
+        registerReflectionHint(hints,
+            findSubclassesInPackage(Criterion.class, "org.opensaml"));
         val list = List.of(
             XIncludeAwareParserConfiguration.class,
             SecurityManager.class,

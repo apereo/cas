@@ -25,6 +25,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -173,7 +174,7 @@ public class PasswordManagementConfiguration {
                         passwordHistoryService);
                 }
                 val groovyScript = pm.getGroovy().getLocation();
-                if (groovyScript != null) {
+                if (groovyScript != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                     LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
                     return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor,
                         casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(),

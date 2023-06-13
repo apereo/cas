@@ -615,6 +615,8 @@ ext.libraries = [
                 dependencies.create("com.hazelcast:hazelcast-sql:$hazelcastVersion") {
                     exclude(group: "com.hazelcast", module: "hazelcast")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.apiguardian:apiguardian-api:$apiGuardianVersion") {
                 }
         ],
         hazelcastzookeeper         : [

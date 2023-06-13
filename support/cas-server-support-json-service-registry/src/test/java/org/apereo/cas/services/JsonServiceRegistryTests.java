@@ -3,10 +3,11 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.io.WatcherService;
-
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -15,12 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
+import org.springframework.core.io.Resource;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Handles test cases for {@link JsonServiceRegistry}.
@@ -37,27 +39,17 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     @SneakyThrows
     @Override
     public ResourceBasedServiceRegistry getNewServiceRegistry() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        newServiceRegistry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            appCtx,
-            new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy(),
-            new ArrayList<>());
-        return newServiceRegistry;
+        return buildResourceBasedServiceRegistry(RESOURCE);
     }
 
     @Test
-    public void verifyRegistry() throws Exception {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        val registry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            appCtx,
-            new NoOpRegisteredServiceReplicationStrategy(),
-            new DefaultRegisteredServiceResourceNamingStrategy(),
-            new ArrayList<>());
-        assertNotNull(registry.getName());
-        assertNotNull(registry.getExtensions());
+    public void verifyNativeImageServicesDirectory() throws Exception {
+        System.setProperty(CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, "true");
+        val resource = mock(Resource.class);
+        when(resource.getURI()).thenReturn(new URI("resource:/services"));
+        val registry = buildResourceBasedServiceRegistry(resource);
+        val location = registry.getServiceRegistryDirectory();
+        assertEquals(AbstractResourceBasedServiceRegistry.FALLBACK_REGISTERED_SERVICES_LOCATION.getCanonicalPath(), location.toFile().getCanonicalPath());
     }
 
     @Test
@@ -124,5 +116,15 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
             .build();
         val username = service.getUsernameAttributeProvider().resolveUsername(usernameContext);
         assertEquals("casuser", username);
+    }
+
+    private static AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        return new JsonServiceRegistry(location, WatcherService.noOp(),
+            appCtx,
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy(),
+            new ArrayList<>());
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourcePatternUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.jar.JarFile;
-
 import static org.springframework.util.ResourceUtils.*;
 
 /**
@@ -57,6 +54,7 @@ public class ResourceUtils {
     public static final Resource NULL_RESOURCE = new DescriptiveResource("Unknown Resource");
 
     private static final String HTTP_URL_PREFIX = "http";
+    private static final String RESOURCE_URL_PREFIX = "resource:";
 
     /**
      * Gets resource from a String location.
@@ -76,6 +74,18 @@ public class ResourceUtils {
             return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
         return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
+    }
+
+    /**
+     * An embedded resource typically is a resource on the classpath
+     * that is picked up by the GraalVM native image.
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public boolean isEmbeddedResource(final String resource) {
+        val lowerCase = resource.toLowerCase(Locale.ENGLISH);
+        return lowerCase.startsWith(RESOURCE_URL_PREFIX);
     }
 
     /**
@@ -313,7 +323,7 @@ public class ResourceUtils {
     public static boolean isJarResource(final Resource resource) {
         try {
             return (resource instanceof ClassPathResource cp && cp.getPath().startsWith("jar:"))
-                   || "jar".equals(resource.getURI().getScheme());
+                || "jar".equals(resource.getURI().getScheme());
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }

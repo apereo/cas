@@ -23,6 +23,8 @@ import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcesso
 import org.springframework.web.cors.CorsConfigurationSource;
 import java.lang.module.Configuration;
 import java.lang.module.ResolvedModule;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -51,6 +53,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -142,6 +146,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHintForMethods(hints,
             List.of(
+                BigDecimal.class,
+                BigInteger.class,
                 Math.class,
                 URL.class,
                 URI.class,
@@ -163,6 +169,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 ResultSet.class,
                 Calendar.class,
                 Date.class,
+                SortedMap.class,
+                SortedSet.class,
                 TimeZone.class,
                 BiPredicate.class,
                 BiFunction.class,

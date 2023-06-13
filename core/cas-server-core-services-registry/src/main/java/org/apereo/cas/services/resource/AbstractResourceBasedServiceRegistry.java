@@ -1,5 +1,6 @@
 package org.apereo.cas.services.resource;
 
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ResourceBasedServiceRegistry;
@@ -16,8 +17,8 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.io.WatcherService;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.StringSerializer;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,9 +30,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,6 +62,12 @@ import java.util.stream.Stream;
 @ToString
 public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry
     implements ResourceBasedServiceRegistry, DisposableBean {
+    /**
+     * Fallback location to use if the given location is determined as invalid.
+     */
+    public static final File FALLBACK_REGISTERED_SERVICES_LOCATION =
+        new File(CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES.get(0), "services");
+    
     /**
      * The Service registry directory.
      */
@@ -142,16 +149,35 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                    final WatcherService serviceRegistryConfigWatcher) {
         super(applicationContext, serviceRegistryListeners);
         LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
-        val pattern = String.join("|", getExtensions());
-        val servicesDirectory = Objects.requireNonNull(ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern),
-            () -> "Could not determine the services configuration directory from " + configDirectory);
+
         FunctionUtils.doAndHandle(__ -> {
+            val servicesDirectory = prepareRegisteredServicesDirectory(configDirectory);
             val file = servicesDirectory.getFile();
             LOGGER.trace("Prepared service registry directory is specified at [{}]", file);
 
             initializeRegistry(Paths.get(file.getCanonicalPath()), serializers,
                 registeredServiceReplicationStrategy, resourceNamingStrategy, serviceRegistryConfigWatcher);
         });
+    }
+
+    private Resource prepareRegisteredServicesDirectory(final Resource configDirectory) throws IOException {
+        val externalForm = configDirectory.getURI().toASCIIString();
+        if (CasRuntimeHintsRegistrar.inNativeImage() && ResourceUtils.isEmbeddedResource(externalForm)) {
+            val servicesDirecvory = CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES
+                .stream()
+                .map(directory -> new File(directory, "services"))
+                .filter(File::exists)
+                .findFirst()
+                .orElse(FALLBACK_REGISTERED_SERVICES_LOCATION);
+            LOGGER.warn("""
+                GraalVM native image executable is unable to discover embedded resources at [{}]. The services directory location is changed to use [{}] instead. \
+                To adjust this behavior, update your CAS settings to use a directory location outside the CAS native executable."""
+                .stripIndent(), externalForm, servicesDirecvory);
+            return new FileSystemResource(servicesDirecvory);
+        }
+        val pattern = String.join("|", getExtensions());
+        return Objects.requireNonNull(ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern),
+            () -> "Could not determine the services configuration directory from " + configDirectory);
     }
 
     /**
@@ -273,9 +299,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
-                        + "While CAS tries to be forgiving as much as possible, it's recommended "
-                        + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
-                        + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
+                    + "While CAS tries to be forgiving as much as possible, it's recommended "
+                    + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
+                    + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 fileName, this.serviceFileNamePattern.pattern());
         }
 

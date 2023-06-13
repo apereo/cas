@@ -10,6 +10,7 @@ import org.apereo.cas.mfa.simple.validation.RestfulCasSimpleMultifactorAuthentic
 import org.apereo.cas.mfa.simple.web.CasSimpleMultifactorAuthenticationEndpointTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenActionTests;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurerTests;
+import org.apereo.cas.nativex.CasSimpleMultifactorAuthenticationRuntimeHintsTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -29,6 +30,7 @@ import org.junit.platform.suite.api.Suite;
     CasSimpleMultifactorRestHttpRequestCredentialFactoryTests.class,
     RestfulCasSimpleMultifactorAuthenticationServiceTests.class,
     CasSimpleMultifactorAuthenticationHandlerTests.class,
+    CasSimpleMultifactorAuthenticationRuntimeHintsTests.class,
     CasSimpleMultifactorAuthenticationTicketFactoryTests.class,
     CasSimpleMultifactorWebflowConfigurerTests.class
 })
