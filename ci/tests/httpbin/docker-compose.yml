@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  httpbin:
+    image: kennethreitz/httpbin
+  proxy:
+    image: fsouza/docker-ssl-proxy
+    environment:
+      DOMAIN: localhost
+      TARGET_HOST: httpbin
+    links:
+      - httpbin
+    ports:
+      - "9859:443"
