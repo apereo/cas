@@ -17,6 +17,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -27,6 +28,7 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
+import org.apereo.cas.web.report.ConfigurationJasyptCipherEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
@@ -157,6 +159,16 @@ public class CasReportsConfiguration {
     @Configuration(value = "SystemInfoEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SystemInfoEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint(
+            @Qualifier("casConfigurationCipherExecutor")
+            final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+            return new ConfigurationJasyptCipherEndpoint(casConfigurationCipherExecutor);
+        }
+
+
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
