@@ -18,6 +18,6 @@ public class CasNativeBannerContributor implements BannerContributor {
     @Override
     public void contribute(final Formatter formatter, final Environment environment) {
         val version = Version.getCurrent().toString();
-        formatter.format("GraalVM Version: %s%n", version);
+        formatter.format("Graal VM SDK Version: %s%n", version);
     }
 }

@@ -10,7 +10,7 @@ ext {
 }
 
 dependencies {
-    implementation libraries.graalvmsdk
+    compileOnly libraries.graalvmsdk
 
     testImplementation libraries.graalvmsdk
     
