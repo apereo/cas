@@ -40,7 +40,7 @@ class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyNewSamlServiceProvider() throws Exception {
+    void verifyNewSamlServiceProvider() throws Exception {
         val entity = mock(EntityDescriptor.class);
         when(entity.getEntityID()).thenReturn(RegisteredServiceTestUtils.CONST_TEST_URL);
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);

@@ -26,7 +26,7 @@ class DefaultServiceRegistryInitializerTests {
     }
 
     @Test
-    public void ensureInitFromJsonDoesNotCreateDuplicates() {
+    void ensureInitFromJsonDoesNotCreateDuplicates() {
         val initialService = newService();
 
         val servicesManager = mock(ServicesManager.class);

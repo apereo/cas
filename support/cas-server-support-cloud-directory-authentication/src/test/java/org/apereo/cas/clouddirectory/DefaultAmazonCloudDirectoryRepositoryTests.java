@@ -57,7 +57,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
@@ -67,7 +67,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyNoAttachment() {
+    void verifyNoAttachment() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().indexAttachments(List.of()).build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
@@ -76,7 +76,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyNoAttributeRequest() {
+    void verifyNoAttributeRequest() {
         val cloud = mock(CloudDirectoryClient.class);
         val attachment = IndexAttachment.builder().objectIdentifier(UUID.randomUUID().toString()).build();
         val result = ListIndexResponse.builder().indexAttachments(List.of(attachment)).build();
@@ -86,7 +86,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    public void verifyNoAttributeResult() {
+    void verifyNoAttributeResult() {
         val cloud = mock(CloudDirectoryClient.class);
         val attachment = IndexAttachment.builder().objectIdentifier(UUID.randomUUID().toString()).build();
         val result = ListIndexResponse.builder().indexAttachments(List.of(attachment)).build();

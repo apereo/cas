@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
-    public void verifyExcludeOperationForAllActions() {
+    void verifyExcludeOperationForAllActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of("TES.+"));
@@ -45,7 +45,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    public void verifyOperationForAllActions() {
+    void verifyOperationForAllActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of());
@@ -54,7 +54,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    public void verifyOperationForAllSupportedActions() {
+    void verifyOperationForAllSupportedActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
@@ -63,7 +63,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    public void verifyOperationForUnmatchedActions() {
+    void verifyOperationForUnmatchedActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"), List.of());
@@ -72,7 +72,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    public void verifyAuditRecordsSinceDate() {
+    void verifyAuditRecordsSinceDate() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS",
             DateTimeUtils.dateOf(LocalDateTime.now(ZoneOffset.UTC).plusDays(1)),

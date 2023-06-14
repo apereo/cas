@@ -25,27 +25,27 @@ import static org.mockito.Mockito.*;
 class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
 
     @Test
-    public void verifyNotFound() {
+    void verifyNotFound() {
         val entity = oidcWebFingerDiscoveryService.handleRequest("resource", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCode().value());
     }
 
     @Test
-    public void verifyAccountMismatch() {
+    void verifyAccountMismatch() {
         val entity = oidcWebFingerDiscoveryService.handleRequest(
             "okta:acct:joe.stormtrooper@example.com", "whatever");
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCode().value());
     }
 
     @Test
-    public void verifyAccount() {
+    void verifyAccount() {
         val entity = oidcWebFingerDiscoveryService.handleRequest(
             "okta:acct:joe.stormtrooper@sso.example.org", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_OK, entity.getStatusCode().value());
     }
 
     @Test
-    public void verifyNoAccount() {
+    void verifyNoAccount() {
         val repository = mock(OidcWebFingerUserInfoRepository.class);
         when(repository.findByEmailAddress(anyString())).thenReturn(Map.of());
         when(repository.findByUsername(anyString())).thenReturn(Map.of());
@@ -57,7 +57,7 @@ class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyMismatchResource() {
+    void verifyMismatchResource() {
         val entity = oidcWebFingerDiscoveryService.handleRequest(
             StringUtils.EMPTY, OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCode().value());

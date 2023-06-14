@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 class ConfigurationMetadataSearchResultTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val repository = new CasConfigurationMetadataRepository();
         val properties = repository.getRepository().getAllProperties();
         val prop = properties.get("server.port");

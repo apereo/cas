@@ -58,7 +58,7 @@ class ProxyValidateControllerTests {
     private ProxyValidateController proxyValidateController;
 
     @Test
-    public void verifyValidServiceTicket() throws Exception {
+    void verifyValidServiceTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

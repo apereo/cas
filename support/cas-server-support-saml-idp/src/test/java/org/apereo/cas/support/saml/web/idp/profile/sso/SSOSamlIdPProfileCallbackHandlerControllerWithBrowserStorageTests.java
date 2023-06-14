@@ -66,7 +66,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     @Test
-    public void verifyReadFromStorage() throws Exception {
+    void verifyReadFromStorage() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -83,7 +83,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     }
 
     @Test
-    public void verifyResumeFromStorage() throws Exception {
+    void verifyResumeFromStorage() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authn = getAuthnRequest();

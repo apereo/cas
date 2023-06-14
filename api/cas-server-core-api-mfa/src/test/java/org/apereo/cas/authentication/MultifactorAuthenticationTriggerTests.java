@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class MultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(MultifactorAuthenticationTrigger.class);
         when(input.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());

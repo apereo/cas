@@ -43,7 +43,7 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySerialization() throws IOException {
+    void verifySerialization() throws IOException {
         val strategyWritten = new HttpRequestRegisteredServiceAccessStrategy();
         strategyWritten.setIpAddress("129.+.123.\\d\\d");
         strategyWritten.setUserAgent("Google Chrome (Firefox)");
@@ -55,14 +55,14 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyAccessByIp() {
+    void verifyAccessByIp() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyAccessByIpAndHeader() {
+    void verifyAccessByIpAndHeader() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("192.\\d\\d\\d.\\d\\d\\d.163");
         policy.setHeaders(Map.of("CustomHeader", "^abcd-\\d\\d-.+#"));
@@ -70,27 +70,27 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyUserAgentAccess() {
+    void verifyUserAgentAccess() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyMatchFailsByIp() {
+    void verifyMatchFailsByIp() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setIpAddress("123.456.789.111");
         assertFalse(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyUndefinedValues() {
+    void verifyUndefinedValues() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         assertTrue(policy.isServiceAccessAllowed());
     }
 
     @Test
-    public void verifyAllFieldsPresent() {
+    void verifyAllFieldsPresent() {
         val policy = new HttpRequestRegisteredServiceAccessStrategy();
         policy.setUserAgent(".*moz.*");
         policy.setIpAddress(".*861.*");

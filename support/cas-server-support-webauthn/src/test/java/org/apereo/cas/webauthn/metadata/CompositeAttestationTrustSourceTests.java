@@ -50,7 +50,7 @@ class CompositeAttestationTrustSourceTests {
     private AttestationTrustSource webAuthnMetadataService;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val map = MAPPER.readValue(casProperties.getAuthn().getMfa().getWebAuthn().getCore()
             .getTrustSource().getTrustedDeviceMetadata().getLocation().getInputStream(), Map.class);
         val cert = CertUtils.readCertificate(new ByteArrayInputStream(((List) map.get("trustedCertificates")).get(0)

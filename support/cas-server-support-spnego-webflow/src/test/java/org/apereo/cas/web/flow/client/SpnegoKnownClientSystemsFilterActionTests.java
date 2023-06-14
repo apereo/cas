@@ -29,7 +29,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";
 
     @Test
-    public void ensureRemoteIpShouldBeChecked() throws Exception {
+    void ensureRemoteIpShouldBeChecked() throws Exception {
         val action =new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
             StringUtils.EMPTY, 0);
 
@@ -46,7 +46,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     }
 
     @Test
-    public void ensureRemoteIpShouldNotBeChecked() throws Exception {
+    void ensureRemoteIpShouldNotBeChecked() throws Exception {
         val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
                 StringUtils.EMPTY, 0);
 
@@ -63,7 +63,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     }
 
     @Test
-    public void ensureAltRemoteIpHeaderShouldBeChecked() throws Exception {
+    void ensureAltRemoteIpHeaderShouldBeChecked() throws Exception {
         val action = new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^74\\.125\\..+"),
                 "alternateRemoteIp", 120);
 
@@ -81,7 +81,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     }
 
     @Test
-    public void ensureHostnameShouldDoSpnego() throws Exception {
+    void ensureHostnameShouldDoSpnego() throws Exception {
         val action = new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(".+"),
                 StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
 
@@ -98,7 +98,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     }
 
     @Test
-    public void ensureHostnameAndIpShouldDoSpnego() throws Exception {
+    void ensureHostnameAndIpShouldDoSpnego() throws Exception {
         val action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("74\\..+"),
                 StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");
@@ -117,7 +117,7 @@ class SpnegoKnownClientSystemsFilterActionTests {
     }
 
     @Test
-    public void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Exception {
+    void verifyIpMismatchWhenCheckingHostnameForSpnego() throws Exception {
         val action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
                 StringUtils.EMPTY, 0, "\\w+\\.\\w+\\.\\w+");

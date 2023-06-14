@@ -63,7 +63,7 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyServiceUnauthz() throws Exception {
+    void verifyServiceUnauthz() throws Exception {
         assertTrue(handler.supports(new UnauthorizedAuthenticationException("failure"), context));
 
         WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, new URI("https://github.com"));
@@ -75,7 +75,7 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() {
         val ex = new AuthenticationException(new InvalidLoginLocationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);
@@ -83,7 +83,7 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyAuthUnauthz() {
+    void verifyAuthUnauthz() {
         val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);

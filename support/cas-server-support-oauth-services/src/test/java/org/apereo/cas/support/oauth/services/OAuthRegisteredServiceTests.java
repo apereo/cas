@@ -33,7 +33,7 @@ class OAuthRegisteredServiceTests {
 
     private final ServiceRegistry dao;
 
-    OAuthRegisteredServiceTests() throws Exception {
+    public OAuthRegisteredServiceTests() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -48,7 +48,7 @@ class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void checkSaveMethod() {
+    void checkSaveMethod() {
         val r = new OAuthRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
@@ -67,7 +67,7 @@ class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeOAuthRegisteredServiceToJson() {
+    void verifySerializeOAuthRegisteredServiceToJson() {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");

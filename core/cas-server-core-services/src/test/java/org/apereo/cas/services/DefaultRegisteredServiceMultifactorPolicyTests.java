@@ -27,7 +27,7 @@ class DefaultRegisteredServiceMultifactorPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
+    void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");

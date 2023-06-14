@@ -44,19 +44,19 @@ class Cas20ProxyHandlerTests {
     }
 
     @Test
-    public void verifyValidProxyTicketWithoutQueryString() throws Exception {
+    void verifyValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/"),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    public void verifyValidProxyTicketWithQueryString() throws Exception {
+    void verifyValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/?test=test"),
             CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
-    public void verifyNonValidProxyTicket() throws Exception {
+    void verifyNonValidProxyTicket() throws Exception {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
 

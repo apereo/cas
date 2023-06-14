@@ -122,7 +122,7 @@ class CasJdbcAuthenticationConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(), credential);
         val result = authenticationManager.authenticate(transaction);

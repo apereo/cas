@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RequiredHandlerAuthenticationPolicyFactoryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new RequiredHandlerAuthenticationPolicyFactory();
         val policy = input.createPolicy(new ServiceContext(CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService()));

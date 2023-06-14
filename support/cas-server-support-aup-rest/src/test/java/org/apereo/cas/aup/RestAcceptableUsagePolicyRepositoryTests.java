@@ -43,7 +43,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verify() {
+    void verify() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.GERMAN));
@@ -70,7 +70,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.GERMAN));
@@ -97,7 +97,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
     }
 
     @Test
-    public void verifyFetch() throws Exception {
+    void verifyFetch() throws Exception {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9198");

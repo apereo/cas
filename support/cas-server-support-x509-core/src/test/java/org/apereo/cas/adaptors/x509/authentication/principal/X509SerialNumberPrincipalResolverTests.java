@@ -65,7 +65,7 @@ class X509SerialNumberPrincipalResolverTests {
     }
 
     @Test
-    public void verifyResolvePrincipalInternal() {
+    void verifyResolvePrincipalInternal() {
         val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         credential.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(),
@@ -75,18 +75,18 @@ class X509SerialNumberPrincipalResolverTests {
     }
 
     @Test
-    public void verifySupport() {
+    void verifySupport() {
         val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(credential));
     }
 
     @Test
-    public void verifySupportFalse() {
+    void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
     @Test
-    public void verifyHexPrincipalOdd() {
+    void verifyHexPrincipalOdd() {
         val r = new X509SerialNumberPrincipalResolver(resolutionContext);
         r.setRadix(16);
         r.setZeroPadding(true);
@@ -98,7 +98,7 @@ class X509SerialNumberPrincipalResolverTests {
     }
 
     @Test
-    public void verifyHexPrincipalOddFalse() {
+    void verifyHexPrincipalOddFalse() {
         val r = new X509SerialNumberPrincipalResolver(resolutionContext);
         r.setRadix(16);
         val mockCert = mock(X509Certificate.class);
@@ -109,7 +109,7 @@ class X509SerialNumberPrincipalResolverTests {
     }
 
     @Test
-    public void verifyHexPrincipalEven() {
+    void verifyHexPrincipalEven() {
         val r = new X509SerialNumberPrincipalResolver(resolutionContext);
         r.setRadix(16);
         r.setZeroPadding(true);

@@ -25,7 +25,7 @@ class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         val keyset = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
 

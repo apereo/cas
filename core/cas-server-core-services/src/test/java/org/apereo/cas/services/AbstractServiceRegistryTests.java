@@ -161,7 +161,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyNonExistingService() {
+    void verifyNonExistingService() {
         assertNull(serviceRegistry.findServiceById(9999991));
     }
 

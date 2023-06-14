@@ -101,7 +101,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkAnyPolicy() {
+    void checkAnyPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
@@ -114,7 +114,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkAllPolicy() {
+    void checkAllPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
@@ -127,7 +127,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkDefaultPolicy() {
+    void checkDefaultPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val service = RegisteredServiceTestUtils.getService("serviceid2");
@@ -144,7 +144,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkNotPreventedPolicy() {
+    void checkNotPreventedPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
@@ -157,7 +157,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkGroovyPolicy() {
+    void checkGroovyPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
@@ -170,7 +170,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkDisabledPolicy() {
+    void checkDisabledPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("not-found-service"),
@@ -179,7 +179,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    public void checkRestPolicy() {
+    void checkRestPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("serviceid6"),

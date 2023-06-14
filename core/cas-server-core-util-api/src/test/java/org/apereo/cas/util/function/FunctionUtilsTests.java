@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionUtilsTests {
 
     @Test
-    public void verifyDoIf0() {
+    void verifyDoIf0() {
         val result = new AtomicBoolean();
         FunctionUtils.doIf(true, input -> result.set(true), (Consumer<String>) s -> result.set(false)).accept("input");
         assertTrue(result.get());
@@ -32,7 +32,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoIf1() {
+    void verifyDoIf1() {
         assertFalse(FunctionUtils.doIf(input -> {
                 throw new IllegalArgumentException();
             },
@@ -40,7 +40,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoIf2() {
+    void verifyDoIf2() {
         val trueFunction = new Supplier<Boolean>() {
             @Override
             public Boolean get() {
@@ -52,7 +52,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoIf3() {
+    void verifyDoIf3() {
         assertThrows(IllegalArgumentException.class, () -> FunctionUtils.doIf(input -> {
                 throw new IllegalArgumentException();
             },
@@ -63,7 +63,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoIfNull() {
+    void verifyDoIfNull() {
         var supplier = FunctionUtils.doIfNotNull(new Object(), () -> {
             throw new IllegalArgumentException();
         }, Suppliers.ofInstance(Boolean.FALSE));
@@ -76,7 +76,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoIfNull1() {
+    void verifyDoIfNull1() {
         assertDoesNotThrow(() -> FunctionUtils.doIfNotNull(Boolean.TRUE, result -> {
             throw new IllegalArgumentException();
         }));
@@ -90,14 +90,14 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoIfNull2() {
+    void verifyDoIfNull2() {
         assertTrue(FunctionUtils.doIfNull(new Object(), () -> {
             throw new IllegalArgumentException();
         }, Suppliers.ofInstance(Boolean.TRUE)).get());
     }
 
     @Test
-    public void verifyDoAndHandle() {
+    void verifyDoAndHandle() {
         assertThrows(IllegalArgumentException.class,
             () -> FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) o -> {
                 throw new IllegalArgumentException();
@@ -111,7 +111,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoAndHandle2() {
+    void verifyDoAndHandle2() {
         var supplier = FunctionUtils.doAndHandle(
             () -> {
                 throw new IllegalArgumentException();
@@ -127,7 +127,7 @@ class FunctionUtilsTests {
     }
 
     @Test
-    public void verifyDoWithoutThrows() {
+    void verifyDoWithoutThrows() {
         val supplier = FunctionUtils.doWithoutThrows(o -> {
             throw new IllegalArgumentException();
         });

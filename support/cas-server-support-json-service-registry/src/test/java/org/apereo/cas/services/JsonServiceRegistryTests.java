@@ -44,7 +44,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    public void verifyNativeImageServicesDirectory() throws Exception {
+    void verifyNativeImageServicesDirectory() throws Exception {
         System.setProperty(CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, "true");
         val resource = mock(Resource.class);
         when(resource.getURI()).thenReturn(new URI("resource:/services"));
@@ -54,7 +54,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    public void verifyRequiredHandlersServiceDefinition() throws Exception {
+    void verifyRequiredHandlersServiceDefinition() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
@@ -64,7 +64,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    public void verifyExistingDefinitionForCompatibility2() throws Exception {
+    void verifyExistingDefinitionForCompatibility2() throws Exception {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -78,7 +78,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    public void verifyExistingDefinitionForCompatibility1() throws Exception {
+    void verifyExistingDefinitionForCompatibility1() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
@@ -92,7 +92,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     }
 
     @Test
-    public void verifyUsernameProviderWithAttributeReleasePolicy() throws Exception {
+    void verifyUsernameProviderWithAttributeReleasePolicy() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val resource = new ClassPathResource("UsernameAttrRelease-100.json");

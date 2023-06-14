@@ -34,31 +34,31 @@ class IpAddressAuthorizationManagerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperationBadPattern() {
+    void verifyOperationBadPattern() {
         val results = getAuthorizationDecision(List.of(".***"), "127.0.0.1");
         assertFalse(results.isGranted());
     }
 
     @Test
-    public void verifyOperationFails() {
+    void verifyOperationFails() {
         val results = getAuthorizationDecision(List.of("192.+"), "127.0.0.1");
         assertFalse(results.isGranted());
     }
 
     @Test
-    public void verifyOperationPassesPattern() {
+    void verifyOperationPassesPattern() {
         val results = getAuthorizationDecision(List.of("127.+"), "127.0.0.1");
         assertTrue(results.isGranted());
     }
 
     @Test
-    public void verifyOperationPasses() {
+    void verifyOperationPasses() {
         val results = getAuthorizationDecision(List.of("127.0.0.1"), "127.0.0.1");
         assertTrue(results.isGranted());
     }
 
     @Test
-    public void verifyOperationCIDR() {
+    void verifyOperationCIDR() {
         val results = getAuthorizationDecision(List.of("192.168.0.0/24"), "192.168.0.1");
         assertTrue(results.isGranted());
     }

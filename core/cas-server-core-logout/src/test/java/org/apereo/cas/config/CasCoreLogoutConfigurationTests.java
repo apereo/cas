@@ -70,7 +70,7 @@ class CasCoreLogoutConfigurationTests {
     private ProtocolEndpointWebSecurityConfigurer<Void> casProtocolEndpointConfigurer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);

@@ -51,7 +51,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     public static final String CASUSER = "casuser";
 
     @Test
-    public void verifyTokenSave() {
+    void verifyTokenSave() {
         val token = new OneTimeToken(1234, CASUSER);
         val repository = getRepository();
         repository.store(token);

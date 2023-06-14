@@ -74,7 +74,7 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         private Action determineMultifactorPasswordlessAuthenticationAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
             val context = new MockRequestContext(exec);
             val request = new MockHttpServletRequest();

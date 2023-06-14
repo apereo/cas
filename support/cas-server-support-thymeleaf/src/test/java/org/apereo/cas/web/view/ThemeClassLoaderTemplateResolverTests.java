@@ -43,7 +43,7 @@ class ThemeClassLoaderTemplateResolverTests {
     }
 
     @Test
-    public void verifyOperationByDefaultValue() {
+    void verifyOperationByDefaultValue() {
         verifyThemeFile("test");
     }
 }

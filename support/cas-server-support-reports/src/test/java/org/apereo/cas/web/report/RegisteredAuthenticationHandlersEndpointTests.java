@@ -25,7 +25,7 @@ class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointT
     private RegisteredAuthenticationHandlersEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(endpoint.handle().isEmpty());
         assertNotNull(endpoint.fetchAuthnHandler(HttpBasedServiceCredentialsAuthenticationHandler.class.getSimpleName()));
     }

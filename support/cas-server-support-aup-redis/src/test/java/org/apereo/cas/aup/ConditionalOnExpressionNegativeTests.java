@@ -33,7 +33,7 @@ class ConditionalOnExpressionNegativeTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyConfigClassLoaded() {
+    void verifyConfigClassLoaded() {
         val beans = applicationContext.getBeanDefinitionNames();
         assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyTemplate"::equalsIgnoreCase));
         assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyConnectionFactory"::equalsIgnoreCase));

@@ -81,7 +81,7 @@ class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
         assertEquals("Example", casProperties.getAuthn().getAccept().getName());
     }

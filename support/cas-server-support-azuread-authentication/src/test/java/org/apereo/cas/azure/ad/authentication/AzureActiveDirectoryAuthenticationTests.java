@@ -43,7 +43,7 @@ class AzureActiveDirectoryAuthenticationTests {
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        public void verifyOperationFails() {
+        void verifyOperationFails() {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@onmicrosoft.com", "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
@@ -63,7 +63,7 @@ class AzureActiveDirectoryAuthenticationTests {
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@misaghmoayyedhotmail.onmicrosoft.com", "Tuwa2565");
             val result = microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class));
@@ -71,7 +71,7 @@ class AzureActiveDirectoryAuthenticationTests {
         }
 
         @Test
-        public void verifyOperationFails() {
+        void verifyOperationFails() {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@onmicrosoft.com", "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
@@ -92,7 +92,7 @@ class AzureActiveDirectoryAuthenticationTests {
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@misaghmoayyedhotmail.onmicrosoft.com", "zVh86iUtwQLP");
             val result = microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class));
@@ -113,7 +113,7 @@ class AzureActiveDirectoryAuthenticationTests {
         protected List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val repository = microsoftAzureActiveDirectoryAttributeRepositories.get(0);
             val person = repository.getPerson("castest@misaghmoayyedhotmail.onmicrosoft.com");
             assertNotNull(person);

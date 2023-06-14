@@ -101,7 +101,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val instant = Instant.now(Clock.systemUTC()).plus(10, ChronoUnit.DAYS);
         val formatted = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC)
@@ -119,7 +119,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoPrincipal() {
+    void verifyNoPrincipal() {
         try (val webServer = new MockWebServer(8081, StringUtils.EMPTY)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
@@ -128,7 +128,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDisabledAccount() {
+    void verifyDisabledAccount() {
         try (val webServer = new MockWebServer(8081, HttpStatus.FORBIDDEN)) {
             webServer.start();
             assertThrows(AccountDisabledException.class,
@@ -137,7 +137,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyUnauthorized() {
+    void verifyUnauthorized() {
         try (val webServer = new MockWebServer(8081, HttpStatus.UNAUTHORIZED)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
@@ -146,7 +146,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyOther() {
+    void verifyOther() {
         try (val webServer = new MockWebServer(8081, HttpStatus.REQUEST_TIMEOUT)) {
             webServer.start();
             assertThrows(FailedLoginException.class,
@@ -155,7 +155,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyLocked() {
+    void verifyLocked() {
         try (val webServer = new MockWebServer(8081, HttpStatus.LOCKED)) {
             webServer.start();
             assertThrows(AccountLockedException.class,
@@ -164,7 +164,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyConditionReq() {
+    void verifyConditionReq() {
         try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_REQUIRED)) {
             webServer.start();
             assertThrows(AccountPasswordMustChangeException.class,
@@ -173,7 +173,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyConditionFail() {
+    void verifyConditionFail() {
         try (val webServer = new MockWebServer(8081, HttpStatus.PRECONDITION_FAILED)) {
             webServer.start();
             assertThrows(AccountExpiredException.class,
@@ -182,7 +182,7 @@ class RestAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNotFound() {
+    void verifyNotFound() {
         try (val webServer = new MockWebServer(8081, HttpStatus.NOT_FOUND)) {
             webServer.start();
             assertThrows(AccountNotFoundException.class,

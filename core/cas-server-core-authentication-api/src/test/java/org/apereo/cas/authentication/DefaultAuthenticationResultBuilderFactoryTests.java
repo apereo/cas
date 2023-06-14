@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class DefaultAuthenticationResultBuilderFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(new DefaultAuthenticationResultBuilderFactory().newBuilder());
     }
 }

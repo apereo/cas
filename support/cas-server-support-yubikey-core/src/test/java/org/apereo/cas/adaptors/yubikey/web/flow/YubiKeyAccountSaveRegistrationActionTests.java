@@ -49,7 +49,7 @@ class YubiKeyAccountSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyActionSuccess() throws Exception {
+    void verifyActionSuccess() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
         val request = new MockHttpServletRequest();
@@ -64,7 +64,7 @@ class YubiKeyAccountSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyActionFails() throws Exception {
+    void verifyActionFails() throws Exception {
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());

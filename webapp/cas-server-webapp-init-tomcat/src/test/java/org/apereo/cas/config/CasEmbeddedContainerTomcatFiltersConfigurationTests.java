@@ -53,7 +53,7 @@ class CasEmbeddedContainerTomcatFiltersConfigurationTests {
     private FilterRegistrationBean tomcatRemoteAddressFilter;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(tomcatCsrfPreventionFilter.getFilter());
         assertNotNull(tomcatRemoteAddressFilter.getFilter());
 

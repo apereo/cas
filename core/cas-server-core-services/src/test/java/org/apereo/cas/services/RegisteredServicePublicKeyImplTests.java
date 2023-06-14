@@ -25,7 +25,7 @@ class RegisteredServicePublicKeyImplTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAX509CertificateCredentialToJson() throws Exception {
+    void verifySerializeAX509CertificateCredentialToJson() throws Exception {
         val publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
         MAPPER.writeValue(JSON_FILE, publicKeyWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, RegisteredServicePublicKeyImpl.class);
@@ -33,7 +33,7 @@ class RegisteredServicePublicKeyImplTests {
     }
 
     @Test
-    public void verifyInstance() {
+    void verifyInstance() {
         val key1 = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         assertNotNull(key1.createInstance());
 

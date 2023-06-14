@@ -42,7 +42,7 @@ class CasSimpleMultifactorSendTokenActionTests {
     @Import(BaseCasSimpleMultifactorAuthenticationTests.CasSimpleMultifactorTestConfiguration.class)
     class DefaultCasSimpleMultifactorSendTokenActionTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val theToken = createToken("casuser").getKey();
             assertNotNull(this.ticketRegistry.getTicket(theToken));
             val token = new CasSimpleMultifactorTokenCredential(theToken);
@@ -52,7 +52,7 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
 
         @Test
-        public void verifyReusingExistingTokens() throws Exception {
+        void verifyReusingExistingTokens() throws Exception {
             val pair = createToken("casuser");
 
             val theToken = pair.getKey();
@@ -68,7 +68,7 @@ class CasSimpleMultifactorSendTokenActionTests {
         }
 
         @Test
-        public void verifyFailsForUser() throws Exception {
+        void verifyFailsForUser() throws Exception {
             val theToken1 = createToken("casuser1");
             assertNotNull(theToken1);
 
@@ -84,7 +84,7 @@ class CasSimpleMultifactorSendTokenActionTests {
     @Nested
     class NoCommunicationStrategyTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val context = buildRequestContextFor("casuser");
             val event = mfaSimpleMultifactorSendTokenAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());

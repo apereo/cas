@@ -30,7 +30,7 @@ class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCom
     }
 
     @Test
-    public void verifyDeleteTicket() throws Exception {
+    void verifyDeleteTicket() throws Exception {
         val ticket = new TicketGrantingTicketImpl("TGT-665500",
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);

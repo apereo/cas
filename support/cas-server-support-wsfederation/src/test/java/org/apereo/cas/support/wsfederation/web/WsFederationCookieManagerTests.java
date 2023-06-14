@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WSFederation")
 class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -55,7 +55,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyNoContext() {
+    void verifyNoContext() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyNoCookieValue() {
+    void verifyNoCookieValue() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

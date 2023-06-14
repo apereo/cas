@@ -80,7 +80,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyMultipleProvidersWithPrincipalAttributes() {
+    void verifyMultipleProvidersWithPrincipalAttributes() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -98,7 +98,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyInvalidPrincipalAttributes() {
+    void verifyInvalidPrincipalAttributes() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val casProperties = new CasConfigurationProperties();
@@ -109,7 +109,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyMultipleProvidersWithAuthenticationAttributes() {
+    void verifyMultipleProvidersWithAuthenticationAttributes() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -123,7 +123,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyResolutionByAuthenticationAttribute() {
+    void verifyResolutionByAuthenticationAttribute() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -145,7 +145,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyResolutionByPrincipalAttribute() {
+    void verifyResolutionByPrincipalAttribute() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -176,7 +176,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -191,7 +191,7 @@ class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     @Test
-    public void verifyNoMatch() {
+    void verifyNoMatch() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

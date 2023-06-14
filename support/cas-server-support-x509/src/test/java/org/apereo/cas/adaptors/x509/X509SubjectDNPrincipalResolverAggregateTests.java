@@ -38,7 +38,7 @@ class X509SubjectDNPrincipalResolverAggregateTests {
     private AuthenticationManager authenticationManager;
 
     @Test
-    public void verifyResolverAsAggregate() {
+    void verifyResolverAsAggregate() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         val result = authenticationManager.authenticate(

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 class ConsumerExecutionActionTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -39,7 +39,7 @@ class ConsumerExecutionActionTests {
     }
 
     @Test
-    public void verifyNoContentOperation() throws Exception {
+    void verifyNoContentOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

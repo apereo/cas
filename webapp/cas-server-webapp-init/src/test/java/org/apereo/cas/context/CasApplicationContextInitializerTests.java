@@ -34,7 +34,7 @@ class CasApplicationContextInitializerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(applicationContext);
         assertEquals(Boolean.FALSE.toString(),
             System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));

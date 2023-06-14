@@ -82,7 +82,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
     }
 
     @Test
-    public void verifyServiceInserted() {
+    void verifyServiceInserted() {
         val registeredService = buildRegisteredServiceInstance(998877, CasRegisteredService.class);
         registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
         getServiceRegistry().save(registeredService);

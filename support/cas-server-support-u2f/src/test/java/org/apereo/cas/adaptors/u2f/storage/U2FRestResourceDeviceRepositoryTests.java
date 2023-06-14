@@ -71,7 +71,7 @@ class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTe
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 

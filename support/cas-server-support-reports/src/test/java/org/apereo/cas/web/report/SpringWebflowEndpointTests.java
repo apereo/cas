@@ -47,7 +47,7 @@ class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
     private SpringWebflowEndpoint springWebflowEndpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val login = springWebflowEndpoint.getReport("login", null);
         assertNotNull(login);
 

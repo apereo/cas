@@ -35,7 +35,7 @@ class BlockingRadiusServerRadSecTransportTests {
     private CasSSLContext casSslContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = RadiusClientFactory.builder()
             .authenticationPort(1234)
             .authenticationPort(5678)

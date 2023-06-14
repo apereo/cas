@@ -32,7 +32,7 @@ class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
     protected ConsentRepository repository;
 
     @Test
-    public void verifyConsentDecisionId() throws Exception {
+    void verifyConsentDecisionId() throws Exception {
         val user = UUID.randomUUID().toString();
         val repo = getRepository();
         val decision = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
@@ -43,7 +43,7 @@ class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyDisposedRepository() throws Exception {
+    void verifyDisposedRepository() throws Exception {
         val repo = new JsonConsentRepository(new FileSystemResource(File.createTempFile("records", ".json")));
         assertNotNull(repo.getWatcherService());
         assertDoesNotThrow(repo::destroy);

@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.view.custom-login-form-fields.field1.required=false")
 class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());
@@ -63,7 +63,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyRenderAction() {
+    void verifyRenderAction() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -90,7 +90,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyWebflowConfigError() {
+    void verifyWebflowConfigError() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val stopState = (EndState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
         val context = new MockRequestControlContext(flow);

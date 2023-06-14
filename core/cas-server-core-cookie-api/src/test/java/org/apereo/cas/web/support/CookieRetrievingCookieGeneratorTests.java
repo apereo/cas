@@ -52,7 +52,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookiePathNotModified() {
+    void verifyCookiePathNotModified() {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
         var gen1 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext("/custom/path/"));
@@ -65,7 +65,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyRemoveAllCookiesByName() {
+    void verifyRemoveAllCookiesByName() {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
 
@@ -86,7 +86,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyExistingCookieInResponse() {
+    void verifyExistingCookieInResponse() {
         val context = getCookieGenerationContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -106,7 +106,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyOtherSetCookieHeaderIsNotDiscarded() {
+    void verifyOtherSetCookieHeaderIsNotDiscarded() {
         val context = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(context);
@@ -129,7 +129,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookieValueMissing() {
+    void verifyCookieValueMissing() {
         val context = getCookieGenerationContext();
         context.setName(StringUtils.EMPTY);
 
@@ -141,7 +141,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookieSameSiteLax() {
+    void verifyCookieSameSiteLax() {
         val ctx = getCookieGenerationContext();
         ctx.setSameSitePolicy("lax");
 
@@ -159,7 +159,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookieValueByHeader() {
+    void verifyCookieValueByHeader() {
         val context = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(context);
@@ -171,7 +171,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookieForRememberMeByAuthnRequest() {
+    void verifyCookieForRememberMeByAuthnRequest() {
         val ctx = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);
@@ -188,7 +188,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    public void verifyCookieForRememberMeByRequestContext() {
+    void verifyCookieForRememberMeByRequestContext() {
         val ctx = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(ctx);

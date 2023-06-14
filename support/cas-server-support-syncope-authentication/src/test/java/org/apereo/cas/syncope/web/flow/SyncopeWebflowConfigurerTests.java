@@ -58,7 +58,7 @@ class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private Action syncopePrincipalProvisionerAction;
 
     @Test
-    public void verifyCreateUpdateOperation() throws Exception {
+    void verifyCreateUpdateOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

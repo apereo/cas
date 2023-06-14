@@ -62,7 +62,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -82,7 +82,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -94,7 +94,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         }
 
         @Test
-        public void verifyActionAccepted() throws Exception {
+        void verifyActionAccepted() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -108,7 +108,7 @@ class AcceptableUsagePolicyVerifyActionTests {
 
 
         @Test
-        public void verifyActionWithService() throws Exception {
+        void verifyActionWithService() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -134,7 +134,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         private Action acceptableUsagePolicyVerifyAction;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val user = UUID.randomUUID().toString();
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
@@ -146,7 +146,7 @@ class AcceptableUsagePolicyVerifyActionTests {
         }
 
         @Test
-        public void verifyNoOpRepository() {
+        void verifyNoOpRepository() {
             val context = new MockRequestContext();
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             assertTrue(acceptableUsagePolicyRepository.fetchPolicy(context).isEmpty());

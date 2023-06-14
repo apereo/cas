@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 class CasJettyBannerTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val banner = new CasJettyBanner();
         val writer = new StringWriter();
         val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);

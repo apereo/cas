@@ -39,7 +39,7 @@ class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfiguration
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new AttributeQueryAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("a", "b"));
         MAPPER.writeValue(JSON_FILE, filter);
@@ -49,7 +49,7 @@ class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    public void verifyReleasesAttributes() {
+    void verifyReleasesAttributes() {
         val filter = new AttributeQueryAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "cn"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();

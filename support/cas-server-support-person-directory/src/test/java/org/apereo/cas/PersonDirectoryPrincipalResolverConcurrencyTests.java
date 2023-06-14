@@ -131,7 +131,7 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
      * @throws Exception concurrency assertion failed
      */
     @Test
-    public void validatePersonDirConcurrency() throws Exception {
+    void validatePersonDirConcurrency() throws Exception {
         val userList = IntStream.range(0, NUM_USERS).mapToObj(i -> "user_" + i)
             .collect(Collectors.toCollection(ArrayList::new));
 

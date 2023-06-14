@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationMetaDataPopulatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = mock(AuthenticationMetaDataPopulator.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, policy.getOrder());

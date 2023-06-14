@@ -86,7 +86,7 @@ class DelegatedClientAuthenticationActionTests {
     class CredentialSelectionTests extends BaseDelegatedClientAuthenticationActionTests {
 
         @Test
-        public void verifyCredentialSelectionStart() throws Exception {
+        void verifyCredentialSelectionStart() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -110,7 +110,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifyCredentialSelectionFinish() throws Exception {
+        void verifyCredentialSelectionFinish() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -140,19 +140,19 @@ class DelegatedClientAuthenticationActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
         @Test
-        public void verifyStartAuthenticationNoService() throws Exception {
+        void verifyStartAuthenticationNoService() throws Exception {
             assertStartAuthentication(null);
         }
 
         @Test
-        public void verifyStartAuthenticationWithService() throws Exception {
+        void verifyStartAuthenticationWithService() throws Exception {
             val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
             assertStartAuthentication(service);
         }
 
         @Test
-        public void verifyExecutionFailureWithUnauthzResponse() throws Exception {
+        void verifyExecutionFailureWithUnauthzResponse() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
@@ -176,7 +176,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifyFinishAuthenticationAuthzFailure() throws Exception {
+        void verifyFinishAuthenticationAuthzFailure() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -200,7 +200,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifySaml2LogoutResponse() throws Exception {
+        void verifySaml2LogoutResponse() throws Exception {
             val client = builtClients.findClient("SAML2Client").get();
 
             val request = new MockHttpServletRequest();
@@ -229,7 +229,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifyFinishAuthentication() throws Exception {
+        void verifyFinishAuthentication() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
@@ -267,7 +267,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifyFailedAuthentication() throws Exception {
+        void verifyFailedAuthentication() throws Exception {
             val mockRequest = new MockHttpServletRequest();
             mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             mockRequest.setParameter("error_message", "bad authn");
@@ -287,7 +287,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifySsoAuthenticationWithUnauthorizedSso() throws Exception {
+        void verifySsoAuthenticationWithUnauthorizedSso() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -320,7 +320,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifySsoAuthentication() throws Exception {
+        void verifySsoAuthentication() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -347,7 +347,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifySsoAuthenticationWithInvalidTicketFails() throws Exception {
+        void verifySsoAuthenticationWithInvalidTicketFails() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("error_message", "Auth+failed");
@@ -375,7 +375,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifyLogoutRequestWithOkAction() throws Exception {
+        void verifyLogoutRequestWithOkAction() throws Exception {
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "LogoutClient");
@@ -394,7 +394,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifyServerSideRedirectAuthentication() throws Exception {
+        void verifyServerSideRedirectAuthentication() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
@@ -419,7 +419,7 @@ class DelegatedClientAuthenticationActionTests {
         }
 
         @Test
-        public void verifySsoAuthenticationUnauthz() throws Exception {
+        void verifySsoAuthenticationUnauthz() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");

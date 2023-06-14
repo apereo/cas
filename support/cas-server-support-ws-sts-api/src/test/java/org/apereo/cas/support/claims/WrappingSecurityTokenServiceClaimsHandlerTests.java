@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class WrappingSecurityTokenServiceClaimsHandlerTests {
 
     @Test
-    public void verifySupportedClaims() {
+    void verifySupportedClaims() {
         val handler = new WrappingSecurityTokenServiceClaimsHandler("CAS", "https://apereo.org/cas");
         assertFalse(handler.getSupportedClaimTypes().isEmpty());
         assertTrue(handler.getSupportedClaimTypes().contains(WSFederationClaims.COMMON_NAME.getUri()));
@@ -32,7 +32,7 @@ class WrappingSecurityTokenServiceClaimsHandlerTests {
     }
 
     @Test
-    public void verifyClaimMatchesRealm() {
+    void verifyClaimMatchesRealm() {
         val claims = new ClaimCollection();
 
         val claim = new Claim();
@@ -47,7 +47,7 @@ class WrappingSecurityTokenServiceClaimsHandlerTests {
     }
 
     @Test
-    public void verifyClaimNoPrincipal() {
+    void verifyClaimNoPrincipal() {
         val claims = new ClaimCollection();
 
         val claim = new Claim();
@@ -62,7 +62,7 @@ class WrappingSecurityTokenServiceClaimsHandlerTests {
     }
 
     @Test
-    public void verifyClaimNoClaims() {
+    void verifyClaimNoClaims() {
         val claims = new ClaimCollection();
 
         val parameters = new ClaimsParameters();
@@ -74,7 +74,7 @@ class WrappingSecurityTokenServiceClaimsHandlerTests {
     }
 
     @Test
-    public void verifyClaims() {
+    void verifyClaims() {
         val claims = new ClaimCollection();
         val claim = new Claim();
         claim.setClaimType(WSFederationClaims.COMMON_NAME.getUri());

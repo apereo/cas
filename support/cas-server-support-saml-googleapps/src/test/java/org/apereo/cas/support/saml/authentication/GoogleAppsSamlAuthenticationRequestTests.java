@@ -53,7 +53,7 @@ class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void ensureInflation() {
+    void ensureInflation() {
         val deflator = CompressionUtils.deflate(SAML_REQUEST);
         val builder = new GoogleSaml20ObjectBuilder(configBean);
         val msg = builder.decodeSamlAuthnRequest(deflator);

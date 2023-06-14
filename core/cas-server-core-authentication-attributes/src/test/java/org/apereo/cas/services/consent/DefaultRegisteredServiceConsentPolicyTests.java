@@ -29,7 +29,7 @@ class DefaultRegisteredServiceConsentPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("attr1", "attr2"),
             CollectionUtils.wrapSet("ex-attr1", "ex-attr2"));
         policyWritten.setStatus(TriStateBoolean.TRUE);

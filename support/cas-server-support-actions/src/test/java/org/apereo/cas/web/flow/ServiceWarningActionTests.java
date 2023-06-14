@@ -36,7 +36,7 @@ class ServiceWarningActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");

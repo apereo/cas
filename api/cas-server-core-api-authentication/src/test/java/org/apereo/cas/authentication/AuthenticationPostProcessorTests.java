@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class AuthenticationPostProcessorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val p = new AuthenticationPostProcessor() {
             @Override
             public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction)

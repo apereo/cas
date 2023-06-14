@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class CasMultifactorWebflowCustomizerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(CasMultifactorWebflowCustomizer.class);
         when(input.getCandidateStatesForMultifactorAuthentication()).thenCallRealMethod();
         when(input.getOrder()).thenCallRealMethod();
@@ -30,7 +30,7 @@ class CasMultifactorWebflowCustomizerTests {
     }
 
     @Test
-    public void verifyDefaultOperation() {
+    void verifyDefaultOperation() {
         val input = mock(CasWebflowCustomizer.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.getWebflowAttributeMappings()).thenCallRealMethod();

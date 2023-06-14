@@ -52,7 +52,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     }
 
     @Test
-    public void verifyInvalidFileLoad() {
+    void verifyInvalidFileLoad() {
         val file = mock(File.class);
         when(file.canRead()).thenReturn(Boolean.FALSE);
         assertTrue(newServiceRegistry.load(file).isEmpty());
@@ -71,7 +71,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     }
 
     @Test
-    public void verify() {
+    void verify() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

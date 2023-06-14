@@ -24,7 +24,7 @@ class AuthenticationDateAttributeMetaDataPopulatorTests {
         new AuthenticationDateAttributeMetaDataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
@@ -35,7 +35,7 @@ class AuthenticationDateAttributeMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyPopulatorMultipleTimes() {
+    void verifyPopulatorMultipleTimes() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         IntStream.range(1, 5)

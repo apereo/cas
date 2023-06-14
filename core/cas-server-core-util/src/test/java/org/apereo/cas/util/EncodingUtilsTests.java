@@ -49,7 +49,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyAesKeyForJwtSigning() {
+    void verifyAesKeyForJwtSigning() {
         val secret = EncodingUtils.generateJsonWebKey(512);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val value = "ThisValue";
@@ -60,7 +60,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyRsaKeyForJwtSigning() {
+    void verifyRsaKeyForJwtSigning() {
         val value = "ThisValue";
         val signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
@@ -69,7 +69,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyAesKeyForJwtEncryption() {
+    void verifyAesKeyForJwtEncryption() {
         val secret = EncodingUtils.generateJsonWebKey(256);
         val key = EncodingUtils.generateJsonWebKey(secret);
         val value = "ThisValue";
@@ -81,7 +81,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyRsaKeyForJwtEncryption() {
+    void verifyRsaKeyForJwtEncryption() {
         val value = "ThisValue";
         val found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
         val jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
@@ -89,7 +89,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyHex() {
+    void verifyHex() {
         assertNull(EncodingUtils.hexDecode("one"));
         assertNull(EncodingUtils.hexDecode(StringUtils.EMPTY));
         assertNull(EncodingUtils.hexEncode((byte[]) null));
@@ -99,7 +99,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyEncoding() {
+    void verifyEncoding() {
         assertNull(EncodingUtils.urlDecode(null));
 
         assertTrue(EncodingUtils.encodeBase64(ArrayUtils.EMPTY_BYTE_ARRAY, true).isEmpty());

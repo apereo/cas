@@ -32,7 +32,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     @Qualifier("samlProfileSamlAttributeStatementBuilder")
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
     @Test
-    public void verifyNoEncryption() throws Exception {
+    void verifyNoEncryption() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
@@ -62,7 +62,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    public void verifyEncryptionDisabledIfAssertionEncrypted() throws Exception {
+    void verifyEncryptionDisabledIfAssertionEncrypted() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.setEncryptAssertions(true);
@@ -87,7 +87,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    public void verifyEncryptionForAllUndefined() throws Exception {
+    void verifyEncryptionForAllUndefined() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
@@ -110,7 +110,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    public void verifyEncryptionForAll() throws Exception {
+    void verifyEncryptionForAll() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("*");
@@ -133,7 +133,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
     }
 
     @Test
-    public void verifyEncryptionForSome() throws Exception {
+    void verifyEncryptionForSome() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("uid");

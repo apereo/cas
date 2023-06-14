@@ -28,39 +28,39 @@ class DefaultServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyServicesAsNull() {
+    void verifyServicesAsNull() {
         assertFalse(strategy.matches(null, null));
     }
 
     @Test
-    public void verifyServicesMatch() {
+    void verifyServicesMatch() {
         val service = getService("https://www.google.org");
         assertTrue(strategy.matches(service, service));
     }
 
     @Test
-    public void verifyServicesDifferById() {
+    void verifyServicesDifferById() {
         val service1 = getService("https://www.google.org/");
         val service2 = getService("https://www.google.org");
         assertFalse(strategy.matches(service1, service2));
     }
 
     @Test
-    public void verifyServicesDifferByWWW() {
+    void verifyServicesDifferByWWW() {
         val service1 = getService("https://google.org");
         val service2 = getService("https://www.google.org");
         assertFalse(strategy.matches(service1, service2));
     }
 
     @Test
-    public void verifyServicesMatchByFragmentEncoded() {
+    void verifyServicesMatchByFragmentEncoded() {
         val service1 = getService("https://google.org");
         val service2 = getService("https://google.org%23/A/B/C");
         assertTrue(strategy.matches(service1, service2));
     }
 
     @Test
-    public void verifyServicesMatchByFragmentDecoded() {
+    void verifyServicesMatchByFragmentDecoded() {
         val service1 = getService("https://google.org");
         val service2 = getService("https://google.org#/A/B/C");
         assertTrue(strategy.matches(service1, service2));

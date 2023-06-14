@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.PROFILE.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -43,7 +43,7 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val policy = new OidcProfileScopeAttributeReleasePolicy();

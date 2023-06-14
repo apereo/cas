@@ -55,7 +55,7 @@ class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyEntityIdUIInfoExists() throws Exception {
+    void verifyEntityIdUIInfoExists() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
@@ -68,7 +68,7 @@ class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyEntityIdUIInfoExistsEmbedded() throws Exception {
+    void verifyEntityIdUIInfoExistsEmbedded() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -86,7 +86,7 @@ class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyEntityIdUIInfoNoParam() throws Exception {
+    void verifyEntityIdUIInfoNoParam() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");

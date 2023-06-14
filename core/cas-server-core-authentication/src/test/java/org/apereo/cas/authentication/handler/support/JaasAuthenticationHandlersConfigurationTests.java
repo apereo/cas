@@ -85,7 +85,7 @@ class JaasAuthenticationHandlersConfigurationTests {
     private BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(jaasAuthenticationHandlers.isEmpty());
         assertFalse(jaasPersonDirectoryPrincipalResolvers.isEmpty());
     }

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFA")
 class MultifactorAuthenticationProviderBeanTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new MultifactorAuthenticationProviderBean(
             mock(MultifactorAuthenticationProviderFactoryBean.class),
             mock(SingletonBeanRegistry.class), List.of());

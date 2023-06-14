@@ -27,12 +27,12 @@ import static org.mockito.Mockito.*;
 class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
 
     @Test
-    public void verifyPromptNone() {
+    void verifyPromptNone() {
         verifyBuild("=none");
     }
 
     @Test
-    public void verifyPromptLogin() {
+    void verifyPromptLogin() {
         verifyBuild("=login");
     }
 

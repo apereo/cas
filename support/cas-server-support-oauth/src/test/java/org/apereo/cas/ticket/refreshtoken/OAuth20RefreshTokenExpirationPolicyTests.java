@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuthToken")
 class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
-    public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
+    void verifyRefreshTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);
@@ -30,7 +30,7 @@ class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPoli
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);
@@ -38,7 +38,7 @@ class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPoli
     }
 
     @Test
-    public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
+    void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
         val policyWritten = new OAuth20RefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, OAuth20RefreshTokenExpirationPolicy.class);

@@ -34,7 +34,7 @@ class MultifactorAuthenticationTrustReportEndpointTests extends AbstractCasEndpo
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(endpoint);
         var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         record = mfaTrustEngine.save(record);

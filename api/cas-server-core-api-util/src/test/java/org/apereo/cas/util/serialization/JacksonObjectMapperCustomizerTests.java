@@ -19,7 +19,7 @@ class JacksonObjectMapperCustomizerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val customizer = JacksonObjectMapperCustomizer.noOp();
         assertEquals(Ordered.LOWEST_PRECEDENCE, customizer.getOrder());
         assertDoesNotThrow(() -> customizer.customize(MAPPER));

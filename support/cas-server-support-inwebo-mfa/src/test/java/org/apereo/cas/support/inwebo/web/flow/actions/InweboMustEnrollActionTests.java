@@ -29,7 +29,7 @@ class InweboMustEnrollActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifySuccess() {
+    void verifySuccess() {
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertTrue((Boolean) requestContext.getFlowScope().get(WebflowConstants.MUST_ENROLL));

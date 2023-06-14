@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.pm.history.core.enabled=true")
 class JdbcPasswordHistoryServiceTests extends BaseJdbcPasswordManagementServiceTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));

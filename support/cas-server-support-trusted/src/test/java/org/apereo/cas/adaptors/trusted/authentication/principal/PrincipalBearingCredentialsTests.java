@@ -35,12 +35,12 @@ class PrincipalBearingCredentialsTests {
     }
 
     @Test
-    public void verifyGetOfPrincipal() {
+    void verifyGetOfPrincipal() {
         assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
     }
 
     @Test
-    public void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
+    void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, principalBearingCredentials);
         val credentialRead = MAPPER.readValue(JSON_FILE, PrincipalBearingCredential.class);
         assertEquals(principalBearingCredentials, credentialRead);

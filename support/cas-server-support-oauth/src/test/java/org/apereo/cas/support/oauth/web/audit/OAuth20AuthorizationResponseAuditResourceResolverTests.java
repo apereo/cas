@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20AuthorizationResponseAuditResourceResolverTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val r = new OAuth20AuthorizationResponseAuditResourceResolver(
             new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val modelAndView = new ModelAndView("dummyView",

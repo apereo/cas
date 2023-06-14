@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class ProtocolSpecificationValidationAuditResourceResolverTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new CasConfigurationProperties();
         props.getAudit().getEngine().setIncludeValidationAssertion(true);
 
@@ -42,7 +42,7 @@ class ProtocolSpecificationValidationAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyNoOp() {
+    void verifyNoOp() {
         val props = new CasConfigurationProperties();
         props.getAudit().getEngine().setIncludeValidationAssertion(true);
 

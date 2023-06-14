@@ -44,7 +44,7 @@ class GroovyAuditTrailManagerTests {
     private AuditTrailManager auditTrailManager;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val ctx = new AuditActionContext("casuser",
             "TEST", "TEST", "CAS", new Date(),
             "1.2.3.4", "1.2.3.4",

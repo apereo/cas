@@ -40,7 +40,7 @@ class GitRepositoryBuilderTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyTestPrivateKey() throws Exception {
+    void verifyTestPrivateKey() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
@@ -55,7 +55,7 @@ class GitRepositoryBuilderTests {
     }
 
     @Test
-    public void verifyBuild() throws Exception {
+    void verifyBuild() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setUsername("casuser");
@@ -79,7 +79,7 @@ class GitRepositoryBuilderTests {
      * Uses the file:// prefix rather than file: because it should work on windows or linux.
      */
     @Test
-    public void verifyBuildWithFilePrefix() throws Exception {
+    void verifyBuildWithFilePrefix() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
@@ -98,7 +98,7 @@ class GitRepositoryBuilderTests {
      * @throws IOException IO error
      */
     @Test
-    public void verifyBuildWithHttpClientOptions() throws Exception {
+    void verifyBuildWithHttpClientOptions() throws Exception {
         val readonlyDeployToken = "ST8hSZUWDs7ujS83EVnk";
         for (BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
             val props = casProperties.getServiceRegistry().getGit();

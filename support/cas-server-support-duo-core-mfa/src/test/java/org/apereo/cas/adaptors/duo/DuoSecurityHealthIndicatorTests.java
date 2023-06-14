@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class DuoSecurityHealthIndicatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

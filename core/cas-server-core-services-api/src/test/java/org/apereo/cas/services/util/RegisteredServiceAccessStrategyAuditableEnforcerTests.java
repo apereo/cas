@@ -86,7 +86,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
     
     @Test
-    public void verifyRegisteredServicePresentAndEnabled() {
+    void verifyRegisteredServicePresentAndEnabled() {
         val service = createRegisteredService(true);
         val context = AuditableContext.builder().registeredService(service).build();
         val result = executeAccessStrategy(context);
@@ -95,7 +95,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyRegisteredServicePresentButDisabled() {
+    void verifyRegisteredServicePresentButDisabled() {
         val service = createRegisteredService(false);
         val context = AuditableContext.builder().registeredService(service).build();
         val result = executeAccessStrategy(context);
@@ -104,7 +104,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyServiceAndRegisteredServicePresentAndEnabled() {
+    void verifyServiceAndRegisteredServicePresentAndEnabled() {
         val service = createRegisteredService(true);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -116,7 +116,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyServiceAndRegisteredServicePresentButDisabled() {
+    void verifyServiceAndRegisteredServicePresentButDisabled() {
         val service = createRegisteredService(false);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -128,7 +128,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyAuthAndServiceAndRegisteredServicePresentAndEnabled() {
+    void verifyAuthAndServiceAndRegisteredServicePresentAndEnabled() {
         val service = createRegisteredService(true);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -141,7 +141,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyAuthAndServiceAndRegisteredServicePresentButDisabled() {
+    void verifyAuthAndServiceAndRegisteredServicePresentButDisabled() {
         val service = createRegisteredService(false);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -154,7 +154,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyRejectedPrincipalAttributes() {
+    void verifyRejectedPrincipalAttributes() {
         val service = createRegisteredService(true);
         ((DefaultRegisteredServiceAccessStrategy) service.getAccessStrategy()).setRejectedAttributes(reject(false));
         val context = AuditableContext.builder()
@@ -168,7 +168,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyRejectedPrincipalAttributesNoFail() {
+    void verifyRejectedPrincipalAttributesNoFail() {
         val service = createRegisteredService(true);
         ((DefaultRegisteredServiceAccessStrategy) service.getAccessStrategy()).setRejectedAttributes(reject(true));
         val context = AuditableContext.builder()
@@ -182,7 +182,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyTgtAndServiceAndRegisteredServicePresentAndEnabled() {
+    void verifyTgtAndServiceAndRegisteredServicePresentAndEnabled() {
         val service = createRegisteredService(true);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -195,7 +195,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyTgtAndServiceAndRegisteredServicePresentButDisabled() {
+    void verifyTgtAndServiceAndRegisteredServicePresentButDisabled() {
         val service = createRegisteredService(false);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -208,7 +208,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyTgtRejectedPrincipalAttributes() {
+    void verifyTgtRejectedPrincipalAttributes() {
         val service = createRegisteredService(true);
         ((DefaultRegisteredServiceAccessStrategy) service.getAccessStrategy()).setRejectedAttributes(reject(false));
         val context = AuditableContext.builder()
@@ -222,7 +222,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyTgtRejectedPrincipalAttributesNoFail() {
+    void verifyTgtRejectedPrincipalAttributesNoFail() {
         val service = createRegisteredService(true);
         ((DefaultRegisteredServiceAccessStrategy) service.getAccessStrategy()).setRejectedAttributes(reject(true));
         val context = AuditableContext.builder()
@@ -236,7 +236,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyStAndServiceAndRegisteredServicePresentAndEnabled() {
+    void verifyStAndServiceAndRegisteredServicePresentAndEnabled() {
         val service = createRegisteredService(true);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -249,7 +249,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyStAndServiceAndRegisteredServicePresentButDisabled() {
+    void verifyStAndServiceAndRegisteredServicePresentButDisabled() {
         val service = createRegisteredService(false);
         val context = AuditableContext.builder()
             .registeredService(service)
@@ -262,7 +262,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyStRejectedPrincipalAttributes() {
+    void verifyStRejectedPrincipalAttributes() {
         val service = createRegisteredService(true);
         ((DefaultRegisteredServiceAccessStrategy) service.getAccessStrategy()).setRejectedAttributes(reject(false));
         val context = AuditableContext.builder()
@@ -276,7 +276,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyStRejectedPrincipalAttributesNoFail() {
+    void verifyStRejectedPrincipalAttributesNoFail() {
         val service = createRegisteredService(true);
         ((DefaultRegisteredServiceAccessStrategy) service.getAccessStrategy()).setRejectedAttributes(reject(true));
         val context = AuditableContext.builder()
@@ -290,7 +290,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
     }
 
     @Test
-    public void verifyExceptionNotThrown() {
+    void verifyExceptionNotThrown() {
         val context = AuditableContext.builder().build();
         val result = executeAccessStrategy(context);
         assertTrue(result.isExecutionFailure());

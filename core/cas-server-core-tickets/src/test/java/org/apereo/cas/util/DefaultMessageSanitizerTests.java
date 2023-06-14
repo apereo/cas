@@ -46,7 +46,7 @@ class DefaultMessageSanitizerTests {
     private MessageSanitizer messageSanitizer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         var results = messageSanitizer.sanitize("ticket TGT-1-abcdefg created");
         assertTrue(results.contains("TGT-1-********"));
         results = messageSanitizer.sanitize("ticket PGT-1-abcdefg created");

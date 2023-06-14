@@ -84,7 +84,7 @@ class OidcIdTokenGeneratorServiceTests {
     })
     class IgnoringResponseTypeTests extends AbstractOidcTests {
         @Test
-        public void verifyTokenGenerationWithClaimsForCodeResponseType() throws Exception {
+        void verifyTokenGenerationWithClaimsForCodeResponseType() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -137,7 +137,7 @@ class OidcIdTokenGeneratorServiceTests {
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyTokenGeneration() throws Exception {
+        void verifyTokenGeneration() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -190,7 +190,7 @@ class OidcIdTokenGeneratorServiceTests {
         }
 
         @Test
-        public void verifyTokenGenerationWithoutClaimsForCodeResponseType() throws Exception {
+        void verifyTokenGenerationWithoutClaimsForCodeResponseType() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -234,7 +234,7 @@ class OidcIdTokenGeneratorServiceTests {
         }
 
         @Test
-        public void verifyTokenGenerationWithOutClaimsForAuthzCodeGrantType() throws Exception {
+        void verifyTokenGenerationWithOutClaimsForAuthzCodeGrantType() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -278,7 +278,7 @@ class OidcIdTokenGeneratorServiceTests {
         }
 
         @Test
-        public void verifyTokenGenerationWithoutCallbackService() throws Exception {
+        void verifyTokenGenerationWithoutCallbackService() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -303,7 +303,7 @@ class OidcIdTokenGeneratorServiceTests {
         }
         
         @Test
-        public void verifyUnknownServiceType() {
+        void verifyUnknownServiceType() {
             assertThrows(IllegalArgumentException.class, () -> {
                 val accessToken = mock(OAuth20AccessToken.class);
                 oidcIdTokenGenerator.generate(accessToken, new CommonProfile(),

@@ -18,20 +18,20 @@ class UnauthorizedSsoServiceExceptionTests {
     private static final String MESSAGE = "GG";
 
     @Test
-    public void verifyGetCode() {
+    void verifyGetCode() {
         val e = new UnauthorizedSsoServiceException();
         assertEquals(CODE, e.getMessage());
     }
 
     @Test
-    public void verifyCodeConstructor() {
+    void verifyCodeConstructor() {
         val e = new UnauthorizedSsoServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    public void verifyThrowableConstructorWithCode() {
+    void verifyThrowableConstructorWithCode() {
         val r = new RuntimeException();
         val e = new UnauthorizedSsoServiceException(MESSAGE, r);
 

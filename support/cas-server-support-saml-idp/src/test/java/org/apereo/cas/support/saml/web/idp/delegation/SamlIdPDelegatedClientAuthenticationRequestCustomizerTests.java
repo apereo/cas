@@ -50,7 +50,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
     private DelegatedClientAuthenticationRequestCustomizer customizer;
 
     @Test
-    public void verifyAuthorization() throws Exception {
+    void verifyAuthorization() throws Exception {
         val saml2Client = mock(SAML2Client.class);
 
         val request = new MockHttpServletRequest();

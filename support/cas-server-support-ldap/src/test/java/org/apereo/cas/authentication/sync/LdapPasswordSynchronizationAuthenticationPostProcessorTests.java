@@ -31,7 +31,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        public void verifySyncFindsNoUser() {
+        void verifySyncFindsNoUser() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown123456", "password");
@@ -42,7 +42,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         }
 
         @Test
-        public void verifyBadCredential() {
+        void verifyBadCredential() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().get(0));
                 val credentials = mock(Credential.class);
@@ -62,7 +62,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     })
     class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        public void verifySyncFailsWithUnicodePswd() {
+        void verifySyncFailsWithUnicodePswd() {
             assertDoesNotThrow(() -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casTest", "password");
@@ -77,7 +77,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @TestPropertySource(properties = "cas.authn.password-sync.ldap[0].password-attribute=st")
     class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val sync = ldapPasswordSynchronizers.first();
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password");
             assertTrue(sync.supports(credentials));

@@ -54,7 +54,7 @@ class ClientFlowExecutionRepositoryTests {
     private FlowExecutor flowExecutor;
 
     @Test
-    public void verifyBadKey() {
+    void verifyBadKey() {
         val factory = new ClientFlowExecutionRepository(mock(FlowExecutionFactory.class), mock(FlowDefinitionLocator.class), mock(Transcoder.class));
         factory.removeFlowExecutionSnapshot(mock(FlowExecution.class));
         factory.removeAllFlowExecutionSnapshots(mock(FlowExecution.class));
@@ -67,7 +67,7 @@ class ClientFlowExecutionRepositoryTests {
     }
 
     @Test
-    public void verifyLaunchAndResumeFlow() {
+    void verifyLaunchAndResumeFlow() {
         assertNotNull(flowExecutor);
         val launchResult = flowExecutor.launchExecution("test-flow", new LocalAttributeMap<>(), new MockExternalContext());
         assertNotNull(launchResult.getPausedKey());

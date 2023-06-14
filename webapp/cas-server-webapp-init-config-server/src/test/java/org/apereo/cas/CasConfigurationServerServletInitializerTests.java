@@ -26,7 +26,7 @@ class CasConfigurationServerServletInitializerTests {
     }
 
     @Test
-    public void verifyInitializer() {
+    void verifyInitializer() {
         val servletContext = new MockServletContext();
         val servletInitializer = new CasConfigurationServerServletInitializer();
         assertDoesNotThrow(() -> servletInitializer.onStartup(servletContext));

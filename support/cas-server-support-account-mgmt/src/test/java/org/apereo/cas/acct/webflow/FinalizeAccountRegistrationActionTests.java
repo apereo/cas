@@ -59,13 +59,13 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
     }
 
     @Test
-    public void verifyOperationFailsWithMissingRequest() throws Exception {
+    void verifyOperationFailsWithMissingRequest() throws Exception {
         val results = finalizeAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }
 
     @Test
-    public void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         AccountRegistrationUtils.putAccountRegistrationRequest(context, registrationRequest);
         val results = finalizeAccountRegistrationAction.execute(context);

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProtocolEndpointWebSecurityConfigurerTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val cfg = new ProtocolEndpointWebSecurityConfigurer<>() {
         };
         assertEquals(cfg, cfg.configure(new Object()));

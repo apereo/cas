@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PasswordManagementQueryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val uid = UUID.randomUUID().toString();
         val query = PasswordManagementQuery.builder().username(uid).build();
         query.attribute("address1", "Some Address");

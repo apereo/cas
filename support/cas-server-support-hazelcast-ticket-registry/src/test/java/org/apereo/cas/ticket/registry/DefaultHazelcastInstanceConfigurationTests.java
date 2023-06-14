@@ -82,7 +82,7 @@ class DefaultHazelcastInstanceConfigurationTests {
     private HazelcastInstance hzInstance;
 
     @Test
-    public void correctHazelcastInstanceIsCreated() {
+    void correctHazelcastInstanceIsCreated() {
         assertNotNull(this.hzInstance);
         val config = this.hzInstance.getConfig();
         assertFalse(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());

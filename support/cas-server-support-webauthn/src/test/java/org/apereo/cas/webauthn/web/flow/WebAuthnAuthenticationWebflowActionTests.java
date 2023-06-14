@@ -68,7 +68,7 @@ class WebAuthnAuthenticationWebflowActionTests {
     }
 
     @Test
-    public void verifyFailsNoAuthn() throws Exception {
+    void verifyFailsNoAuthn() throws Exception {
         val context = getRequestContext();
         WebUtils.putCredential(context, new WebAuthnCredential(EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8))));
         RequestContextHolder.setRequestContext(context);
@@ -78,7 +78,7 @@ class WebAuthnAuthenticationWebflowActionTests {
     }
 
     @Test
-    public void verifyFailsNoReg() throws Exception {
+    void verifyFailsNoReg() throws Exception {
         val context = getRequestContext();
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
@@ -91,7 +91,7 @@ class WebAuthnAuthenticationWebflowActionTests {
     }
 
     @Test
-    public void verifyToken() throws Exception {
+    void verifyToken() throws Exception {
         val context = getRequestContext();
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());

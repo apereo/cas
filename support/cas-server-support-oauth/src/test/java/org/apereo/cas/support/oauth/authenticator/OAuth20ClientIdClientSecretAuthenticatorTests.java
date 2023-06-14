@@ -62,7 +62,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithGrantTypePassword() {
+        void verifyAuthenticationWithGrantTypePassword() {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -72,7 +72,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithBadSecret() throws Exception {
+        void verifyAuthenticationWithBadSecret() throws Exception {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -87,7 +87,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithCodeChallengePkce() throws Exception {
+        void verifyAuthenticationWithCodeChallengePkce() throws Exception {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -107,7 +107,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithGrantTypeRefreshToken() throws Exception {
+        void verifyAuthenticationWithGrantTypeRefreshToken() throws Exception {
             val refreshToken = getRefreshToken(serviceWithoutSecret);
             ticketRegistry.addTicket(refreshToken);
 
@@ -144,7 +144,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithAttributesMapping() {
+        void verifyAuthenticationWithAttributesMapping() {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -162,7 +162,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
-        public void verifyAuthenticationWithoutResolvedPrincipal() {
+        void verifyAuthenticationWithoutResolvedPrincipal() {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
             val registeredService = new OAuthRegisteredService();

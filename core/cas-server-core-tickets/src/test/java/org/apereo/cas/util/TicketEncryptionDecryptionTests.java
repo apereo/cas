@@ -31,14 +31,14 @@ class TicketEncryptionDecryptionTests {
     };
 
     @Test
-    public void checkSerializationOfTgt() {
+    void checkSerializationOfTgt() {
         val bytes = SerializationUtils.serializeAndEncodeObject(cipher, tgt);
         val obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
-    public void checkSerializationOfSt() {
+    void checkSerializationOfSt() {
         val st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
         val bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
         val obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
@@ -46,7 +46,7 @@ class TicketEncryptionDecryptionTests {
     }
 
     @Test
-    public void checkSerializationOfStBase64Encode() {
+    void checkSerializationOfStBase64Encode() {
         val st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
         val bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
         val string = EncodingUtils.encodeBase64(bytes);
@@ -57,7 +57,7 @@ class TicketEncryptionDecryptionTests {
     }
 
     @Test
-    public void checkSerializationOfTgtByteSource() throws Exception {
+    void checkSerializationOfTgtByteSource() throws Exception {
         val bytes = ByteSource.wrap(SerializationUtils.serializeAndEncodeObject(cipher, tgt));
         val obj = SerializationUtils.decodeAndDeserializeObject(bytes.read(), cipher, Ticket.class);
         assertNotNull(obj);

@@ -85,7 +85,7 @@ class HazelcastHealthIndicatorTests {
     private HealthIndicator hazelcastHealthIndicator;
 
     @Test
-    public void verifyMonitor() {
+    void verifyMonitor() {
         val health = hazelcastHealthIndicator.health();
         val status = health.getStatus();
         assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(status),
@@ -107,7 +107,7 @@ class HazelcastHealthIndicatorTests {
     }
 
     @Test
-    public void verifyFreeHeapPercentageCalculation() {
+    void verifyFreeHeapPercentageCalculation() {
         val memoryStats = mock(MemoryStats.class);
         when(memoryStats.getFreeHeap()).thenReturn(125_555_248L);
         when(memoryStats.getCommittedHeap()).thenReturn(251_658_240L);

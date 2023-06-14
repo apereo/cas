@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 class EmailMessageBodyBuilderTests {
     @Test
-    public void verifyNoBody() {
+    void verifyNoBody() {
         val props = new EmailProperties();
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -37,7 +37,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyLocalizedFileFound() {
+    void verifyLocalizedFileFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -50,7 +50,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyLocalizedFileNotFound() {
+    void verifyLocalizedFileNotFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -63,7 +63,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -76,7 +76,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyTemplateOperation() {
+    void verifyTemplateOperation() {
         val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
@@ -92,7 +92,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyInlineGroovyOperation() {
+    void verifyInlineGroovyOperation() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val cacheMgr = new GroovyScriptResourceCacheManager();
@@ -110,7 +110,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    public void verifyGroovyOperation() {
+    void verifyGroovyOperation() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

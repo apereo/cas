@@ -59,7 +59,7 @@ class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(CN, "Mellon");
         val principal = personDirectoryPrincipalResolver.resolve(creds);
         assertNotNull(principal);

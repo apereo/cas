@@ -73,7 +73,7 @@ public abstract class BaseConsentRepositoryTests {
     public abstract ConsentRepository getRepository();
     
     @Test
-    public void verifyConsentDecisionIsNotFound() throws Exception {
+    void verifyConsentDecisionIsNotFound() throws Exception {
         val user = getUser();
         val repo = getRepository();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -86,7 +86,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentDecisionIsFound() throws Exception {
+    void verifyConsentDecisionIsFound() throws Exception {
         val user = getUser();
         val repo = getRepository();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -107,7 +107,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyDeleteRecordsForPrincipal() throws Exception {
+    void verifyDeleteRecordsForPrincipal() throws Exception {
         val user = getUser();
         val repo = getRepository();
         repo.deleteAll();

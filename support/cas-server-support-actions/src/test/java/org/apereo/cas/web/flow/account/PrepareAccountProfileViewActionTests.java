@@ -55,7 +55,7 @@ class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
     private Action prepareAccountProfileViewAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registeredService1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         registeredService1.setEvaluationOrder(200);
         val registeredService2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());

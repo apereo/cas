@@ -37,7 +37,7 @@ class SurrogateAuthenticationPostProcessorTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         assertFalse(surrogateAuthenticationPostProcessor.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         val credential = new UsernamePasswordCredential();
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("something"));
@@ -45,7 +45,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    public void verifySurrogateCredentialNotFound() {
+    void verifySurrogateCredentialNotFound() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -58,7 +58,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    public void verifyProcessorWorks() {
+    void verifyProcessorWorks() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -70,7 +70,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    public void verifyNoPrimaryCredential() {
+    void verifyNoPrimaryCredential() {
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(
             RegisteredServiceTestUtils.getService("service"), new Credential[0]);
         val builder = mock(AuthenticationBuilder.class);
@@ -81,7 +81,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    public void verifyAuthN() {
+    void verifyAuthN() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -98,7 +98,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    public void verifyFailAuthN() {
+    void verifyFailAuthN() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");

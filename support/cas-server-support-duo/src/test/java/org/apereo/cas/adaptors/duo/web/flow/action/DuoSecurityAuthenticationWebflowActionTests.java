@@ -48,7 +48,7 @@ class DuoSecurityAuthenticationWebflowActionTests extends BaseCasWebflowMultifac
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val event = duoAuthenticationWebflowAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

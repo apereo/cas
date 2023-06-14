@@ -67,7 +67,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     private ResourceLoader resourceLoader;
 
     @Test
-    public void verifyLocator() {
+    void verifyLocator() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
 
@@ -79,7 +79,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    public void verifyPriority() {
+    void verifyPriority() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
@@ -92,7 +92,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    public void verifyGroovySlurper() {
+    void verifyGroovySlurper() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
@@ -101,14 +101,14 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    public void verifyYamlLoaderThrows() {
+    void verifyYamlLoaderThrows() {
         val loader = configurationPropertiesLoaderFactory.getLoader(
             resourceLoader.getResource("classpath:/badyaml.yml"), "test");
         assertThrows(YAMLException.class, loader::load);
     }
 
     @Test
-    public void verifySystemPropertiesOverrideCasConfiguration() {
+    void verifySystemPropertiesOverrideCasConfiguration() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
 

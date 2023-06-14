@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class JsonWebTokenSignerTests {
     @Test
-    public void verifySignClaims() throws Exception {
+    void verifySignClaims() throws Exception {
         val claims = new JwtClaims();
         claims.setSubject("casuser");
         claims.setIssuedAtToNow();
@@ -46,7 +46,7 @@ class JsonWebTokenSignerTests {
     }
 
     @Test
-    public void verifyNotAllowedAlgorithm() {
+    void verifyNotAllowedAlgorithm() {
         val secret = EncodingUtils.generateJsonWebKey(256);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
 
@@ -62,7 +62,7 @@ class JsonWebTokenSignerTests {
     }
 
     @Test
-    public void verifySignByteArray() throws Exception {
+    void verifySignByteArray() throws Exception {
         val secret = EncodingUtils.generateJsonWebKey(256);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
 
@@ -76,7 +76,7 @@ class JsonWebTokenSignerTests {
     }
 
     @Test
-    public void verifyDisallowNoneAlgorithm() throws Exception {
+    void verifyDisallowNoneAlgorithm() throws Exception {
         val result = JsonWebTokenSigner.builder()
             .headers(Map.of("name", "value"))
             .algorithm(AlgorithmIdentifiers.NONE)

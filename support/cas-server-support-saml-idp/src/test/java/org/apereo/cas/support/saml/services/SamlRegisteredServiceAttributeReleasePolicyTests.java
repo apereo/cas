@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAMLAttributes")
 class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
-    public void verifyNoSamlService() {
+    void verifyNoSamlService() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -48,7 +48,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyNoAppContext() {
+    void verifyNoAppContext() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -61,7 +61,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyBadHttpRequest() {
+    void verifyBadHttpRequest() {
         val registeredService = new SamlRegisteredService();
         registeredService.setId(100);
         registeredService.setName("SAML");
@@ -79,7 +79,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyEntityIdAndService() {
+    void verifyEntityIdAndService() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val request = MockHttpServletRequest.class.cast(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
         Objects.requireNonNull(request).removeParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
@@ -98,7 +98,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyBadServiceProvider() {
+    void verifyBadServiceProvider() {
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
         when(resolver.resolve(any(), any()))
             .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mock(MetadataResolver.class)).build());
@@ -141,7 +141,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyWildcardEntityIdAndService() throws Exception {
+    void verifyWildcardEntityIdAndService() throws Exception {
         setupApplicationContext();
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();

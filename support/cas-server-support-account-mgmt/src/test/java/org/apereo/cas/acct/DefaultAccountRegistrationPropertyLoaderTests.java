@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("FileSystem")
 class DefaultAccountRegistrationPropertyLoaderTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val map = new HashMap<String, AccountRegistrationProperty>();
         map.put("username", AccountRegistrationProperty.builder()
             .name("username")

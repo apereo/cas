@@ -30,7 +30,7 @@ class YubiKeyConfigurationAllowedDevicesTests extends BaseYubiKeyTests {
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuseryubikey"));
     }
 

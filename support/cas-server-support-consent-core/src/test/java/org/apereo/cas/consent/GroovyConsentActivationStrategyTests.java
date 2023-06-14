@@ -29,7 +29,7 @@ class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategy
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyDestroyOperation() throws Exception {
+    void verifyDestroyOperation() throws Exception {
         assertNotNull(consentActivationStrategy);
         applicationContext.getBeanFactory().destroyBean(consentActivationStrategy);
     }

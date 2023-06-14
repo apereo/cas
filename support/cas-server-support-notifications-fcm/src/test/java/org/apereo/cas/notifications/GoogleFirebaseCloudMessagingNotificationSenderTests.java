@@ -65,7 +65,7 @@ class GoogleFirebaseCloudMessagingNotificationSenderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(firebaseCloudMessagingNotificationSender);
         assertNotNull(notificationSender);
         val id = UUID.randomUUID().toString();

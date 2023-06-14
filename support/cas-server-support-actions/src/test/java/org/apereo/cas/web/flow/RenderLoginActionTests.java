@@ -46,7 +46,7 @@ class RenderLoginActionTests {
         private Action renderLoginAction;
 
         @Test
-        public void verifyNoRender() throws Exception {
+        void verifyNoRender() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -66,7 +66,7 @@ class RenderLoginActionTests {
         private Action renderLoginAction;
 
         @Test
-        public void verifyGroovyRender() throws Exception {
+        void verifyGroovyRender() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -87,7 +87,7 @@ class RenderLoginActionTests {
         private Action renderLoginAction;
 
         @Test
-        public void verifyRestfulRender() throws Exception {
+        void verifyRestfulRender() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

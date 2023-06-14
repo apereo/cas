@@ -92,7 +92,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyTrustEngine() {
+    void verifyTrustEngine() {
         var record = getMultifactorAuthenticationTrustRecord();
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));

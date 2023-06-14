@@ -54,7 +54,7 @@ class LdapUserGraphicalAuthenticationRepositoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val ldap = casProperties.getAuthn().getGua().getLdap();
         val factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val cn = createLdapEntry(factory);

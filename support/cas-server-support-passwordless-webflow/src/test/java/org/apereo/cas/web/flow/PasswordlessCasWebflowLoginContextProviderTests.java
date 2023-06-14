@@ -32,7 +32,7 @@ class PasswordlessCasWebflowLoginContextProviderTests extends BasePasswordlessAu
     private CasWebflowLoginContextProvider passwordlessCasWebflowLoginContextProvider;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

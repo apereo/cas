@@ -54,23 +54,23 @@ class GroovyResourcePasswordManagementServiceTests {
     private PasswordManagementService passwordChangeService;
 
     @Test
-    public void verifyFindEmail() {
+    void verifyFindEmail() {
         assertNotNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
     }
 
     @Test
-    public void verifyFindUser() {
+    void verifyFindUser() {
         assertNotNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser@example.org").build()));
     }
 
     @Test
-    public void verifyChangePassword() {
+    void verifyChangePassword() {
         val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray());
         assertTrue(passwordChangeService.change(request));
     }
 
     @Test
-    public void verifySecurityQuestions() {
+    void verifySecurityQuestions() {
         val query = PasswordManagementQuery.builder().username("casuser@example.org").build();
         assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
         query.securityQuestion("Q1", "A1");

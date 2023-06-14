@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 class CompositeX509TrustManagerTests {
     @Test
-    public void verifyIssuers() throws Exception {
+    void verifyIssuers() throws Exception {
         val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore) null);
 
@@ -41,7 +41,7 @@ class CompositeX509TrustManagerTests {
     }
 
     @Test
-    public void verifyCert() throws Exception {
+    void verifyCert() throws Exception {
         val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore) null);
 

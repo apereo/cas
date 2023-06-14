@@ -29,7 +29,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val store = new ConcurrentThrottledSubmissionsStore(casProperties);
         val key = UUID.randomUUID().toString();
         store.put(ThrottledSubmission.builder().key(key).build());

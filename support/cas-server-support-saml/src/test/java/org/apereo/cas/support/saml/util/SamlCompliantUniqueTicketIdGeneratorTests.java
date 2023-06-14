@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test
-    public void verifySaml1Compliant() {
+    void verifySaml1Compliant() {
         val g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         assertNotNull(g.getNewTicketId("TT"));
     }
 
     @Test
-    public void verifySaml2Compliant() {
+    void verifySaml2Compliant() {
         val g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         g.setSaml2compliant(true);
         assertNotNull(g.getNewTicketId("TT"));

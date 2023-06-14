@@ -104,7 +104,7 @@ class MongoDbHealthIndicatorTests {
     }
 
     @Test
-    public void verifyMonitor() {
+    void verifyMonitor() {
         val health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
         val details = (Map) health.getDetails().get(MongoDbHealthIndicator.class.getSimpleName() + "-monitor");

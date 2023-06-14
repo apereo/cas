@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 class DefaultEncodedTicketTests {
     @Test
-    public void verifyDefaults() {
+    void verifyDefaults() {
         val id = UUID.randomUUID().toString();
         val ticket1 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);

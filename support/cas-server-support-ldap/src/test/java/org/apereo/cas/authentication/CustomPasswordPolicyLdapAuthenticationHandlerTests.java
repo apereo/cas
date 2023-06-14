@@ -31,7 +31,7 @@ class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ValidPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(ldapAuthenticationHandlers);
             val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
             assertTrue(Arrays.stream(handler.getAuthenticator()
@@ -48,7 +48,7 @@ class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     @Nested
     class UnknownPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(ldapAuthenticationHandlers);
             val handler = (LdapAuthenticationHandler) ldapAuthenticationHandlers.toList().iterator().next();
             assertTrue(Arrays.stream(handler.getAuthenticator()

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RememberMePasswordCredentialTests {
 
     @Test
-    public void verifyGettersAndSetters() {
+    void verifyGettersAndSetters() {
         val c = new RememberMeUsernamePasswordCredential();
         c.assignPassword("password");
         c.setUsername("username");

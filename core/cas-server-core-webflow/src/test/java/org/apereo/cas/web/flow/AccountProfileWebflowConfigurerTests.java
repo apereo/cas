@@ -29,7 +29,7 @@ class AccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     protected FlowDefinitionRegistry accountProfileFlowRegistry;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val flow = (Flow) accountProfileFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
     }

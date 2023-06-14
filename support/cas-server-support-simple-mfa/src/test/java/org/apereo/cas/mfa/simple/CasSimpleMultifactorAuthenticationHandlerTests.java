@@ -72,7 +72,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyFailsToFindToken() {
+    void verifyFailsToFindToken() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -89,7 +89,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsPrincipal() throws Exception {
+    void verifyFailsPrincipal() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -109,7 +109,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsExpiredToken() throws Exception {
+    void verifyFailsExpiredToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -135,7 +135,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Exception {
+    void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

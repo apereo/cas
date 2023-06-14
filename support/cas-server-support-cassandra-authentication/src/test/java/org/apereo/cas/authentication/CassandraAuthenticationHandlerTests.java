@@ -83,19 +83,19 @@ class CassandraAuthenticationHandlerTests {
     private AuthenticationHandler cassandraAuthenticationHandler;
 
     @Test
-    public void verifyUserNotFound() {
+    void verifyUserNotFound() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
         assertThrows(AccountNotFoundException.class, () -> cassandraAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    public void verifyUserBadPassword() {
+    void verifyUserBadPassword() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
         assertThrows(FailedLoginException.class, () -> cassandraAuthenticationHandler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    public void verifyUser() throws Exception {
+    void verifyUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = cassandraAuthenticationHandler.authenticate(c, mock(Service.class));
         assertNotNull(result);

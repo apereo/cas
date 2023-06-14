@@ -73,7 +73,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val sql = "SELECT * FROM CAS_NAMED_USERS where username=:username";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
 
@@ -90,7 +90,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     }
 
     @Test
-    public void verifySuccessWithCount() throws Exception {
+    void verifySuccessWithCount() throws Exception {
         val sql = "SELECT count(*) as total FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql);
@@ -106,7 +106,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     }
 
     @Test
-    public void verifyFailsWithMissingTotalField() {
+    void verifyFailsWithMissingTotalField() {
         val sql = "SELECT count(*) FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword("password");
         properties.setName("namedHandler");

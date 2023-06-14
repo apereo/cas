@@ -54,7 +54,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     }
 
     @Test
-    public void verifyClientNameFromAuth() throws Exception {
+    void verifyClientNameFromAuth() throws Exception {
         val client = builtClients.findClient("FacebookClient").get();
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
             Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
@@ -71,7 +71,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     }
 
     @Test
-    public void verifyAuthzByService() {
+    void verifyAuthzByService() {
         verifyAuthzForService(new MockHttpServletRequest(), new MockRequestContext());
     }
 

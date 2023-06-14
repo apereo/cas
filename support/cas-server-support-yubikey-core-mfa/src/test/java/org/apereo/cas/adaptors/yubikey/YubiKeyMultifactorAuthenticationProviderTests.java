@@ -37,7 +37,7 @@ class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifac
     }
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val client = mock(YubicoClient.class);
         when(client.getWsapiUrls()).thenThrow(new RuntimeException());
         val http = mock(HttpClient.class);

@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class CasEmbeddedContainerUtilsTests {
     @Test
-    public void verifyMainArgs() {
+    void verifyMainArgs() {
         assertFalse(CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().isEmpty());
     }
 
     @Test
-    public void verifyCasBanner() {
+    void verifyCasBanner() {
         val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
@@ -39,7 +39,7 @@ class CasEmbeddedContainerUtilsTests {
     }
 
     @Test
-    public void verifyStartup() {
+    void verifyStartup() {
         assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
         System.setProperty("CAS_APP_STARTUP", "buffering");
         assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
@@ -48,7 +48,7 @@ class CasEmbeddedContainerUtilsTests {
     }
 
     @Test
-    public void verifyCustomBanner() {
+    void verifyCustomBanner() {
         val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();

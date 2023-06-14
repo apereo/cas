@@ -30,7 +30,7 @@ class OidcPushedAuthorizationRequestTests extends AbstractOidcTests {
     private TicketSerializationManager ticketSerializationManager;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val profile = new CommonProfile();
         profile.setId("casuser");
 

@@ -65,7 +65,7 @@ class TicketSerializersTests {
     private TicketSerializationManager ticketSerializationManager;
 
     @Test
-    public void verifyTicketGrantingTicketSerialization() {
+    void verifyTicketGrantingTicketSerialization() {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -73,14 +73,14 @@ class TicketSerializersTests {
     }
 
     @Test
-    public void verifyTransientSessionTicketSerialization() {
+    void verifyTransientSessionTicketSerialization() {
         val factory = (TransientSessionTicketFactory) this.defaultTicketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), CollectionUtils.wrap("key", "value"));
         verifySerialization(ticket);
     }
 
     @Test
-    public void verifyServiceTicketSerialization() {
+    void verifyServiceTicketSerialization() {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -91,7 +91,7 @@ class TicketSerializersTests {
     }
 
     @Test
-    public void verifyProxyGrantingTicketSerialization() {
+    void verifyProxyGrantingTicketSerialization() {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -106,7 +106,7 @@ class TicketSerializersTests {
     }
 
     @Test
-    public void verifyProxyTicketSerialization() {
+    void verifyProxyTicketSerialization() {
         val tgtFactory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);

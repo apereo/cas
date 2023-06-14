@@ -70,7 +70,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    protected void verifyOperation() throws Exception {
         val id = getUsername();
         val registration = getCredentialRegistration(id.toLowerCase(Locale.ENGLISH));
 

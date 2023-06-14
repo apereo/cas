@@ -72,7 +72,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void checkExpiredCachedAttributes() throws Exception {
+    void checkExpiredCachedAttributes() throws Exception {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, principal.getAttributes().size());
         try (val repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
@@ -90,7 +90,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void ensureCachedAttributesWithUpdate() {
+    void ensureCachedAttributesWithUpdate() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             assertEquals(1, repository.getAttributes(this.principal, svc).size());
@@ -101,7 +101,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void verifyMergingStrategyWithNoncollidingAttributeAdder() {
+    void verifyMergingStrategyWithNoncollidingAttributeAdder() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
@@ -113,7 +113,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void verifyMergingStrategyWithReplacingAttributeAdder() {
+    void verifyMergingStrategyWithReplacingAttributeAdder() {
         val svc = CoreAuthenticationTestUtils.getRegisteredService();
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
@@ -125,7 +125,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     }
 
     @Test
-    public void verifyMergingStrategyWithMultivaluedAttributeMerger() {
+    void verifyMergingStrategyWithMultivaluedAttributeMerger() {
         try (val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFAProvider")
 class InweboMultifactorAuthenticationProviderTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val provider = new InweboMultifactorAuthenticationProvider();
         assertNotNull(provider.getId());
         assertNotNull(provider.getFriendlyName());

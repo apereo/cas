@@ -74,7 +74,7 @@ class CasSimpleMultifactorWebflowConfigurerTests {
         }
 
         @Test
-        public void verifySurrogateOperation() {
+        void verifySurrogateOperation() {
             val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             var state = (TransitionableState) flow.getState(getMultifactorEventId());
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());

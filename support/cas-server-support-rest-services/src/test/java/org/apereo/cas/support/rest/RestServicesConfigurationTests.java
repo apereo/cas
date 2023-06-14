@@ -71,7 +71,7 @@ class RestServicesConfigurationTests {
     private RegisteredServiceResource registeredServiceResourceRestController;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(registeredServiceResourceRestController);
     }
 }

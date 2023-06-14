@@ -60,7 +60,7 @@ class RestfulYubiKeyAccountRegistryTests {
     private CipherExecutor yubikeyAccountCipherExecutor;
 
     @Test
-    public void verifyRegistration() {
+    void verifyRegistration() {
         try (val webServer = new MockWebServer(6591,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
             webServer.start();
@@ -75,7 +75,7 @@ class RestfulYubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyAccount() throws Exception {
+    void verifyAccount() throws Exception {
         val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(AbstractYubiKeyAccountRegistryTests.OTP);
         val registeredDevice = YubiKeyRegisteredDevice.builder()
             .id(System.currentTimeMillis())
@@ -100,7 +100,7 @@ class RestfulYubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyAccounts() throws Exception {
+    void verifyAccounts() throws Exception {
         val pubKey = getYubiKeyAccountRegistry().getAccountValidator().getTokenPublicId(AbstractYubiKeyAccountRegistryTests.OTP);
         val registeredDevice = YubiKeyRegisteredDevice.builder()
             .id(System.currentTimeMillis())
@@ -121,7 +121,7 @@ class RestfulYubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyFailsAccount() {
+    void verifyFailsAccount() {
         try (val webServer = new MockWebServer(6591,
             new ByteArrayResource("...".getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
             webServer.start();

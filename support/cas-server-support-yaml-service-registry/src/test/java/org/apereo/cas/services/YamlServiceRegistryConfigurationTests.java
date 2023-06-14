@@ -39,7 +39,7 @@ class YamlServiceRegistryConfigurationTests {
     private ServiceRegistry serviceRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(this.serviceRegistry);
     }
 }

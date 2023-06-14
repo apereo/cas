@@ -48,7 +48,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyNoWebKeys() {
+    void verifyNoWebKeys() {
         val jwks = new JsonWebKeySet();
         val loader = mock(OidcDefaultJsonWebKeystoreCacheLoader.class);
         when(loader.buildJsonWebKeySet(any(OidcJsonWebKeyCacheKey.class))).thenReturn(Optional.of(jwks));
@@ -60,7 +60,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadKeyCount() throws Exception {
+    void verifyBadKeyCount() throws Exception {
         val jwks = new JsonWebKeySet();
         val jsonWebKey = mock(PublicJsonWebKey.class);
         jwks.getJsonWebKeys().add(jsonWebKey);
@@ -77,7 +77,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val publicJsonWebKey1 = oidcDefaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey("https://sso.example.org/cas/oidc", OidcJsonWebKeyUsage.SIGNING));
         assertNotNull(publicJsonWebKey1);
@@ -90,7 +90,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyNullResource() throws Exception {
+    void verifyNullResource() throws Exception {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         when(gen.generate()).thenReturn(null);
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
@@ -98,7 +98,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyEmptyFile() throws Exception {
+    void verifyEmptyFile() throws Exception {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         when(gen.generate()).thenReturn(ResourceUtils.EMPTY_RESOURCE);
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
@@ -111,7 +111,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadKeys() throws Exception {
+    void verifyBadKeys() throws Exception {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         val keys = "{ \"keys\": [ {\"kty\":\"EC\","
                    + "\"x\":\"sPlKwAgSxxOE\",\"y\":\"6AyisnUKM"

@@ -47,7 +47,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyAccessTokenAsDefault() {
+    void verifyAccessTokenAsDefault() {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(false);
         servicesManager.save(registeredService);
@@ -66,7 +66,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyAccessTokenAsJwt() throws Exception {
+    void verifyAccessTokenAsJwt() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
@@ -80,7 +80,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyDPoPAccessTokenAsJwt() throws Exception {
+    void verifyDPoPAccessTokenAsJwt() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
 
         val registeredService = getRegisteredService("example", UUID.randomUUID().toString(), "secret");
@@ -111,7 +111,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
 
 
     @Test
-    public void verifyAccessTokenAsJwtPerService() throws Exception {
+    void verifyAccessTokenAsJwtPerService() throws Exception {
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
 

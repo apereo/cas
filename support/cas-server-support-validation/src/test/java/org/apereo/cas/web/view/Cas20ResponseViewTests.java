@@ -88,7 +88,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyValidationFailsInvalidTicket() throws Exception {
+    void verifyValidationFailsInvalidTicket() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         getServicesManager().save(registeredService);
@@ -104,7 +104,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyValidationTicketAuthzFails() throws Exception {
+    void verifyValidationTicketAuthzFails() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("not-authorized");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
@@ -124,7 +124,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyValidationFailsBadProxy() throws Exception {
+    void verifyValidationFailsBadProxy() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
@@ -146,7 +146,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyValidationFailsBadAccess() throws Exception {
+    void verifyValidationFailsBadAccess() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
@@ -169,7 +169,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyView() throws Exception {
+    void verifyView() throws Exception {
         val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl(
             RegisteredServiceTestUtils.getService("https://www.casinthecloud.com"));
         val req = new MockHttpServletRequest(new MockServletContext());

@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
         policy.setMaxTimeToLiveInSeconds(10);
         assertFalse(policy.toExpirationPolicy().isEmpty());
     }
 
     @Test
-    public void verifyNoPolicy() {
+    void verifyNoPolicy() {
         val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
         assertTrue(policy.toExpirationPolicy().isEmpty());
     }

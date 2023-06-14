@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResourceSetTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val set = new ResourceSet();
         assertThrows(InvalidResourceSetException.class,
             () -> set.validate(new CommonProfile()));

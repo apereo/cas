@@ -33,7 +33,7 @@ class OpenFGARegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val strategyWritten = new OpenFGARegisteredServiceAccessStrategy();
         strategyWritten.setApiUrl("https://localhost:8080");
         strategyWritten.setRelation("owner");
@@ -45,7 +45,7 @@ class OpenFGARegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val strategy = new OpenFGARegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");

@@ -99,7 +99,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    public void normalCreationOfST() throws Exception {
+    void normalCreationOfST() throws Exception {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -110,7 +110,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    public void normalCreationOfSTWithRenew() throws Exception {
+    void normalCreationOfSTWithRenew() throws Exception {
         configureCasMockToCreateValidST();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -126,7 +126,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithInvalidTicketException() throws Exception {
+    void creationOfSTWithInvalidTicketException() throws Exception {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -135,7 +135,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithGeneralException() throws Exception {
+    void creationOfSTWithGeneralException() throws Exception {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -145,7 +145,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithBadRequestException() throws Exception {
+    void creationOfSTWithBadRequestException() throws Exception {
         configureCasMockToCreateValidST();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
@@ -157,7 +157,7 @@ class ServiceTicketResourceTests {
     }
 
     @Test
-    public void creationOfSTWithAuthenticationException() throws Exception {
+    void creationOfSTWithAuthenticationException() throws Exception {
         configureCasMockSTCreationToThrowAuthenticationException();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")

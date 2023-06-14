@@ -61,7 +61,7 @@ class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     }
 
     @Test
-    public void verifyResolvePrincipalInternal() {
+    void verifyResolvePrincipalInternal() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         val value = "SERIALNUMBER="
@@ -74,13 +74,13 @@ class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     }
 
     @Test
-    public void verifySupport() {
+    void verifySupport() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    public void verifySupportFalse() {
+    void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 

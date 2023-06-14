@@ -57,7 +57,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyNoRequestedAuthenticationContext() {
+    void verifyNoRequestedAuthenticationContext() {
         val applicationContext = buildApplicationContext();
 
         val servicesManager = mock(ServicesManager.class);
@@ -72,7 +72,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyExecutionIgnoredPerService() {
+    void verifyExecutionIgnoredPerService() {
         val applicationContext = buildApplicationContext();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -103,7 +103,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyRequestedAuthenticationContextChained() {
+    void verifyRequestedAuthenticationContextChained() {
         val applicationContext = buildApplicationContext();
 
         val casProperties = new CasConfigurationProperties();
@@ -134,7 +134,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyRequestedAuthenticationContextBypassed() {
+    void verifyRequestedAuthenticationContextBypassed() {
         val applicationContext = buildApplicationContext();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -154,7 +154,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyRequestedAuthenticationContextNotBypassed() {
+    void verifyRequestedAuthenticationContextNotBypassed() {
         val applicationContext = buildApplicationContext();
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -175,7 +175,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyRequestedAuthenticationIsAlreadyBypass() {
+    void verifyRequestedAuthenticationIsAlreadyBypass() {
         val applicationContext = buildApplicationContext();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -203,7 +203,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyRequestedAuthenticationContextNoProvider() {
+    void verifyRequestedAuthenticationContextNoProvider() {
         val applicationContext = buildApplicationContext();
 
         val servicesManager = mock(ServicesManager.class);
@@ -220,7 +220,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyGlobalFailureModeFailsOpen() {
+    void verifyGlobalFailureModeFailsOpen() {
         val applicationContext = buildApplicationContext();
 
         val provider = TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -243,7 +243,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyGlobalFailureModeFailsClosed() {
+    void verifyGlobalFailureModeFailsClosed() {
         val applicationContext = buildApplicationContext();
 
         TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -269,7 +269,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyServiceFailureModeFailsOpen() {
+    void verifyServiceFailureModeFailsOpen() {
         val applicationContext = buildApplicationContext();
 
         val provider = TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -294,7 +294,7 @@ class DefaultRequestedAuthenticationContextValidatorTests {
     }
 
     @Test
-    public void verifyServiceFailureModeFailsClosed() {
+    void verifyServiceFailureModeFailsClosed() {
         val applicationContext = buildApplicationContext();
 
         val provider = TestUnavailableMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

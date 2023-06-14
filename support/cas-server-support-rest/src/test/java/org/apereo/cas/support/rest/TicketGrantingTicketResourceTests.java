@@ -157,7 +157,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void verifyNormalCreationOfTGT() throws Exception {
+    void verifyNormalCreationOfTGT() throws Exception {
         val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 CREATED</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
@@ -176,7 +176,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void defaultCreationOfTGT() throws Throwable {
+    void defaultCreationOfTGT() throws Throwable {
         val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 CREATED</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
@@ -195,7 +195,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void verifyHtmlCreationOfTGT() throws Throwable {
+    void verifyHtmlCreationOfTGT() throws Throwable {
         val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 CREATED</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
@@ -214,7 +214,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void verifyJsonCreationOfTGT() throws Throwable {
+    void verifyJsonCreationOfTGT() throws Throwable {
         val expectedReturnEntityBody = "TGT-1";
 
         configureCasMockToCreateValidTGT();
@@ -229,7 +229,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void verifyCreateTgtWithMfa() throws Exception {
+    void verifyCreateTgtWithMfa() throws Exception {
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
         when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
@@ -248,7 +248,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void creationOfTGTWithAuthenticationException() throws Exception {
+    void creationOfTGTWithAuthenticationException() throws Exception {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
         val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -260,7 +260,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void creationOfTGTWithUnexpectedRuntimeException() throws Exception {
+    void creationOfTGTWithUnexpectedRuntimeException() throws Exception {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -271,7 +271,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void creationOfTGTWithBadPayload() throws Exception {
+    void creationOfTGTWithBadPayload() throws Exception {
         configureCasMockTGTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -281,7 +281,7 @@ class TicketGrantingTicketResourceTests {
     }
 
     @Test
-    public void deletionOfTGT() throws Exception {
+    void deletionOfTGT() throws Exception {
         when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any()))
             .thenReturn(new MockTicketGrantingTicket("casuser"));
         this.mockMvc.perform(delete(TICKETS_RESOURCE_URL + "/TGT-1")).andExpect(status().isOk());

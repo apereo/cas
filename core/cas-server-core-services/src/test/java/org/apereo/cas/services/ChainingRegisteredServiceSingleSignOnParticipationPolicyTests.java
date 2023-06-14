@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(RegisteredServiceSingleSignOnParticipationPolicy.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.getCreateCookieOnRenewedAuthentication()).thenCallRealMethod();
@@ -34,7 +34,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    public void verifySsoParticipationByAuthenticationDateFails() {
+    void verifySsoParticipationByAuthenticationDateFails() {
         val authn = mock(Authentication.class);
         when(authn.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(10));
 
@@ -47,7 +47,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    public void verifySsoParticipationByAuthenticationDatePasses() {
+    void verifySsoParticipationByAuthenticationDatePasses() {
         val authn = mock(Authentication.class);
         when(authn.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(5));
 
@@ -60,7 +60,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    public void verifySsoParticipationByLastUsedTimeFails() {
+    void verifySsoParticipationByLastUsedTimeFails() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(10));
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -69,7 +69,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    public void verifySsoParticipationByLastUsedTimePasses() {
+    void verifySsoParticipationByLastUsedTimePasses() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(5));
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -79,7 +79,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    public void verifyPolicies() {
+    void verifyPolicies() {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicies(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
         assertFalse(chain.getPolicies().isEmpty());

@@ -35,7 +35,7 @@ class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
             + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
 
     @Test
-    public void decodeNonInflatedSamlAuthnRequest() {
+    void decodeNonInflatedSamlAuthnRequest() {
         val builder = new NonInflatingSaml20ObjectBuilder(this.configBean);
         val decoded = builder.decodeSamlAuthnRequest(BASE64_SAML_AUTHN_REQUEST);
         assertEquals(SAML_AUTHN_REQUEST, decoded);

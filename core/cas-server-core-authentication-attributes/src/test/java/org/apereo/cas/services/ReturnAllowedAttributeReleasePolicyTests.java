@@ -71,7 +71,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         private AttributeDefinitionStore attributeDefinitionStore;
 
         @Test
-        public void verifyUnresolvedAttributes() {
+        void verifyUnresolvedAttributes() {
             assertNotNull(attributeDefinitionStore);
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
@@ -87,7 +87,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyVirtualAttributesInChain() {
+        void verifyVirtualAttributesInChain() {
             assertNotNull(attributeDefinitionStore);
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
@@ -125,7 +125,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         private CasConfigurationProperties casProperties;
 
         @Test
-        public void verifySerialization() throws IOException {
+        void verifySerialization() throws IOException {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("attributeOne");
             val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
@@ -136,7 +136,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyInlineGroovy() {
+        void verifyInlineGroovy() {
             buildApplicationContext();
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
@@ -167,7 +167,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyConsentable() {
+        void verifyConsentable() {
             buildApplicationContext();
 
             val allowedAttributes = new ArrayList<String>();
@@ -192,7 +192,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyRequestedDefinitions() {
+        void verifyRequestedDefinitions() {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("cn");
@@ -208,7 +208,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyRequestedDefinitionsWithExistingPrincipalAttribute() {
+        void verifyRequestedDefinitionsWithExistingPrincipalAttribute() {
             val applicationContext = buildApplicationContext();
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("custom-name");
@@ -234,7 +234,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyRequestedDefinitionsWithoutPrincipalAttribute() {
+        void verifyRequestedDefinitionsWithoutPrincipalAttribute() {
             val applicationContext = new StaticApplicationContext();
             applicationContext.refresh();
 
@@ -270,7 +270,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyDefaultAttributes() {
+        void verifyDefaultAttributes() {
             buildApplicationContext();
 
             val policy = new ReturnAllowedAttributeReleasePolicy();

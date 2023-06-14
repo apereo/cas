@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("Native")
 class CasNativeApplicationRunListenerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factories = SpringFactoriesLoader.loadFactories(SpringApplicationRunListener.class, getClass().getClassLoader());
         assertFalse(factories.isEmpty());
         val listener = factories.stream()

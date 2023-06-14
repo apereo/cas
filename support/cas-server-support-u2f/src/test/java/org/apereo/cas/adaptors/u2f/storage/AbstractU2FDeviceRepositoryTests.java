@@ -35,7 +35,7 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     }
 
     @Test
-    public void verifyDeviceSaved() {
+    void verifyDeviceSaved() {
         val deviceRepository = getDeviceRepository();
         registerDevices(deviceRepository);
         var devices = deviceRepository.getRegisteredDevices(CASUSER);
@@ -46,7 +46,7 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     }
 
     @Test
-    public void verifyDevicesDeleted() {
+    void verifyDevicesDeleted() {
         val deviceRepository = getDeviceRepository();
         registerDevices(deviceRepository);
         val devices = new ArrayList<>(deviceRepository.getRegisteredDevices(CASUSER));

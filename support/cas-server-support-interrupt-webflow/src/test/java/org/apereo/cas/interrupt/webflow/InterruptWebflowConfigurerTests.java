@@ -49,7 +49,7 @@ class InterruptWebflowConfigurerTests {
     class InterruptAfterAuthentication extends BaseWebflowConfigurerTests {
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -70,7 +70,7 @@ class InterruptWebflowConfigurerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class InterruptAfterSingleSignOn extends BaseWebflowConfigurerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);

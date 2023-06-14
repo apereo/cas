@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cipher = new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor();
         assertTrue(cipher.getSigningKey(RegisteredServiceTestUtils.getRegisteredService()).isEmpty());
         assertTrue(cipher.getEncryptionKey(RegisteredServiceTestUtils.getRegisteredService()).isEmpty());

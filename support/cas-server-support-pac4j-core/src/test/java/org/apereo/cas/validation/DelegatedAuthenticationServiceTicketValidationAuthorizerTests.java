@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Tag("Tickets")
 class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class AddPropertiesToConfigurationCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var file = File.createTempFile("cas", ".properties");
         exportProperties(file);
         file = File.createTempFile("cas", ".yml");

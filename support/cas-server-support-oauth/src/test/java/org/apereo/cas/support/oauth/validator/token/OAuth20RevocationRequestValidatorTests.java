@@ -55,7 +55,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyOperationClientSecretPost() throws Exception {
+    void verifyOperationClientSecretPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -78,7 +78,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyOperationClientSecretBasic() throws Exception {
+    void verifyOperationClientSecretBasic() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

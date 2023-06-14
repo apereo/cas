@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @Tag("Mail")
 class ValidatePasswordResetTokenActionTests extends BasePasswordManagementActionTests {
     @Test
-    public void verifyInvalidTickeeditpt() throws Exception {
+    void verifyInvalidTickeeditpt() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -42,7 +42,7 @@ class ValidatePasswordResetTokenActionTests extends BasePasswordManagementAction
     }
 
     @Test
-    public void verifyNoParam() throws Exception {
+    void verifyNoParam() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -51,7 +51,7 @@ class ValidatePasswordResetTokenActionTests extends BasePasswordManagementAction
     }
 
     @Test
-    public void verifyInvalidToken() throws Exception {
+    void verifyInvalidToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -68,7 +68,7 @@ class ValidatePasswordResetTokenActionTests extends BasePasswordManagementAction
     }
 
     @Test
-    public void verifyDoChangeWithValidSession() throws Exception {
+    void verifyDoChangeWithValidSession() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

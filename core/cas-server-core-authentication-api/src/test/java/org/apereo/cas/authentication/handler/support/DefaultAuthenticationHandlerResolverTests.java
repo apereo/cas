@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 class DefaultAuthenticationHandlerResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val h1 = new SimpleTestUsernamePasswordAuthenticationHandler("h1");
         val h2 = new SimpleTestUsernamePasswordAuthenticationHandler("h2");
         h2.setState(AuthenticationHandlerStates.STANDBY);
@@ -38,7 +38,7 @@ class DefaultAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void verifyNoOp() {
+    void verifyNoOp() {
         assertFalse(noOp().supports(Set.of(), mock(AuthenticationTransaction.class)));
         assertTrue(noOp().resolve(Set.of(), mock(AuthenticationTransaction.class)).isEmpty());
     }

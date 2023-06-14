@@ -155,12 +155,12 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     }
 
     @Test
-    public void verifyExecutorsAreBeans() {
+    void verifyExecutorsAreBeans() {
         assertNotNull(getFlowExecutor());
     }
 
     @Test
-    public void verifyFlowExecutorByClient() {
+    void verifyFlowExecutorByClient() {
         val ctx = getMockRequestContext();
         val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());

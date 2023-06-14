@@ -48,7 +48,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Test
-    public void verifyDefaultOperation() {
+    void verifyDefaultOperation() {
         val input = mock(ServicesManagerRegisteredServiceLocator.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.getRegisteredServiceIndexes()).thenCallRealMethod();
@@ -59,7 +59,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(defaultServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
@@ -70,7 +70,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    public void verifyExtendedServices() {
+    void verifyExtendedServices() {
         val service = new ExtendedRegisteredService();
         service.setServiceId("https://\\w+.org.+");
         service.setId(100);
@@ -80,7 +80,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    public void verifyUnmatchedExtendedServices() {
+    void verifyUnmatchedExtendedServices() {
         val service = new ExtendedRegisteredService() {
             @Serial
             private static final long serialVersionUID = 3435937253967470900L;

@@ -37,7 +37,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     private AccessTokenGrantRequestExtractor extractor;
 
     @Test
-    public void verifyNoToken() {
+    void verifyNoToken() {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         servicesManager.save(service);
 
@@ -55,7 +55,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyDPoPRequest() throws Exception {
+    void verifyDPoPRequest() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         service.setGenerateRefreshToken(true);
         servicesManager.save(service);
@@ -90,7 +90,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyExtraction() throws Exception {
+    void verifyExtraction() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         service.setGenerateRefreshToken(true);
         servicesManager.save(service);
@@ -112,7 +112,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyExpiredCode() throws Exception {
+    void verifyExpiredCode() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         service.setGenerateRefreshToken(true);
         servicesManager.save(service);
@@ -135,7 +135,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyExpiredTgt() throws Exception {
+    void verifyExpiredTgt() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         service.setGenerateRefreshToken(true);
         servicesManager.save(service);
@@ -158,7 +158,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyUnknownService() throws Exception {
+    void verifyUnknownService() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         servicesManager.save(service);
 
@@ -178,7 +178,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     }
 
     @Test
-    public void verifyNoClientIdOrRedirectUri() throws Exception {
+    void verifyNoClientIdOrRedirectUri() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         servicesManager.save(service);
 

@@ -39,49 +39,49 @@ class ConditionalOnMatchingHostnameTests {
     }
 
     @Test
-    public void regexMatch() {
+    void regexMatch() {
         load(ConfigurationBeansDependOnHost.class, "hostname=.*");
         assertThat(this.context.containsBean("foo")).isTrue();
     }
 
     @Test
-    public void exactMatch() {
+    void exactMatch() {
         load(ConfigurationBeansDependOnHost.class, "hostname=" + HOSTNAME);
         assertThat(this.context.containsBean("foo")).isTrue();
     }
 
     @Test
-    public void blankMatch() {
+    void blankMatch() {
         load(ConfigurationBeansDependOnHost.class, "hostname=");
         assertThat(this.context.containsBean("foo")).isTrue();
     }
 
     @Test
-    public void doesNotMatch() {
+    void doesNotMatch() {
         load(ConfigurationBeansDependOnHost.class, "hostname=notright");
         assertThat(this.context.containsBean("foo")).isFalse();
     }
 
     @Test
-    public void doesNotMatch2() {
+    void doesNotMatch2() {
         load(ConfigurationBeansDependOnHost.class, "hostname=" + HOSTNAME + '2');
         assertThat(this.context.containsBean("foo")).isFalse();
     }
 
     @Test
-    public void exactMatchAndPropertyTrue() {
+    void exactMatchAndPropertyTrue() {
         load(ConfigurationBeansDependOnHostAndProperty.class, "hostname=" + HOSTNAME, "someproperty=true");
         assertThat(this.context.containsBean("bar")).isTrue();
     }
 
     @Test
-    public void exactMatchAndPropertyFalse() {
+    void exactMatchAndPropertyFalse() {
         load(ConfigurationBeansDependOnHostAndProperty.class, "hostname=" + HOSTNAME, "someproperty=false");
         assertThat(this.context.containsBean("bar")).isFalse();
     }
 
     @Test
-    public void hostnamePropertyNotSet() {
+    void hostnamePropertyNotSet() {
         load(ConfigurationBeansDependOnHostAndProperty.class, "someproperty=true");
         assertThat(this.context.containsBean("bar")).isTrue();
     }

@@ -68,7 +68,7 @@ class WebAuthnRegisteredDevicesEndpointTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val id1 = UUID.randomUUID().toString();
         register(RegisteredServiceTestUtils.getAuthentication(id1));
 
@@ -92,7 +92,7 @@ class WebAuthnRegisteredDevicesEndpointTests {
     }
 
     @Test
-    public void verifyImportExport() throws Exception {
+    void verifyImportExport() throws Exception {
         val id1 = UUID.randomUUID().toString();
         register(RegisteredServiceTestUtils.getAuthentication(id1));
         val export = webAuthnRegisteredDevicesEndpoint.export();

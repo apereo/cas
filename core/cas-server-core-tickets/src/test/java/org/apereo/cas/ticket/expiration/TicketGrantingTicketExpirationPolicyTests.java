@@ -64,7 +64,7 @@ class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTgtIsExpiredByHardTimeOut() {
+    void verifyTgtIsExpiredByHardTimeOut() {
         val creationTime = this.ticketGrantingTicket.getCreationTime();
 
         this.expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
@@ -77,7 +77,7 @@ class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTgtIsExpiredBySlidingWindow() {
+    void verifyTgtIsExpiredBySlidingWindow() {
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(),
             expirationPolicy, false, getTrackingPolicy());
 
@@ -89,7 +89,7 @@ class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerializeAnExpirationPolicyToJson() throws IOException {
+    void verifySerializeAnExpirationPolicyToJson() throws IOException {
         val policy = new TicketGrantingTicketExpirationPolicy(100, 100);
         MAPPER.writeValue(JSON_FILE, policy);
         val policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
@@ -97,7 +97,7 @@ class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

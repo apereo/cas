@@ -64,7 +64,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyDelete() {
+    void verifyDelete() {
         var results = singleSignOnSessionsEndpoint.destroySsoSessions(
             new SingleSignOnSessionsEndpoint.SsoSessionsRequest().withType(null),
             new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -91,7 +91,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
             .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
         assertFalse(results.isEmpty());
@@ -120,7 +120,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyProxies() throws Exception {
+    void verifyProxies() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         ticketRegistry.addTicket(tgt);
@@ -132,7 +132,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyDirect() throws Exception {
+    void verifyDirect() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         ticketRegistry.addTicket(tgt);
@@ -145,7 +145,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyDeleteFails() throws Exception {
+    void verifyDeleteFails() throws Exception {
         val registry = mock(TicketRegistry.class);
         when(registry.getTickets(any(Predicate.class))).thenReturn(Stream.of(new MockTicketGrantingTicket("casuser")));
         when(registry.deleteTicket(anyString())).thenThrow(new RuntimeException());

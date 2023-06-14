@@ -27,7 +27,7 @@ class CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilderTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyTicketType() {
+    void verifyTicketType() {
         val builder = new CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder(casProperties);
        assertNotNull(builder.toTicketExpirationPolicy());
     }

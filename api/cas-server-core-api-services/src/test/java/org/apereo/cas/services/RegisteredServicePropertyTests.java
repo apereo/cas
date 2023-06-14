@@ -23,21 +23,21 @@ import static org.mockito.Mockito.*;
 class RegisteredServicePropertyTests {
 
     @Test
-    public void verifyNull() {
+    void verifyNull() {
         val p1 = new DefaultRegisteredServiceProperty(null);
         assertNull(p1.getValue(String.class));
         assertFalse(p1.getBooleanValue());
     }
 
     @Test
-    public void verifyValue() {
+    void verifyValue() {
         val p1 = new DefaultRegisteredServiceProperty("true");
         assertEquals("true", p1.getValue(String.class));
         assertTrue(p1.getBooleanValue());
     }
 
     @Test
-    public void verifyTypedValue() {
+    void verifyTypedValue() {
         val service = mock(RegisteredService.class);
         val properties = (Map) Map.of(
             RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE.getPropertyName(), new DefaultRegisteredServiceProperty("ENCRYPT_AND_SIGN"),

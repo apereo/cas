@@ -44,7 +44,7 @@ class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyNoRedirect() {
+    void verifyNoRedirect() {
         val request = new MockHttpServletRequest();
         request.setRequestURI(CasProtocolConstants.ENDPOINT_LOGOUT);
         val context = getMockRequestContext(request);
@@ -65,7 +65,7 @@ class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyRedirectToTrustedUrl() {
+    void verifyRedirectToTrustedUrl() {
         val request = new MockHttpServletRequest();
         WebUtils.putLogoutRedirectUrl(request, "https://github.com/apereo/cas");
         val context = getMockRequestContext(request);
@@ -79,7 +79,7 @@ class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyRedirectToService() {
+    void verifyRedirectToService() {
         val props = new CasConfigurationProperties();
         props.getLogout().setFollowServiceRedirects(true).setRedirectParameter(List.of("targetParam"));
         val request = new MockHttpServletRequest();
@@ -97,7 +97,7 @@ class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyRedirectToDefaultServiceInConfig() {
+    void verifyRedirectToDefaultServiceInConfig() {
         val props = new CasConfigurationProperties();
         props.getView().setDefaultRedirectUrl("https://google.com");
         props.getLogout().setFollowServiceRedirects(true);
@@ -115,7 +115,7 @@ class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyRedirectToServiceDisabledInConfig() {
+    void verifyRedirectToServiceDisabledInConfig() {
         val props = new CasConfigurationProperties();
         props.getLogout().setFollowServiceRedirects(false).setRedirectParameter(List.of("targetParam"));
         val request = new MockHttpServletRequest();
@@ -133,7 +133,7 @@ class DefaultLogoutRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyRedirectToUnauthzService() {
+    void verifyRedirectToUnauthzService() {
         val props = new CasConfigurationProperties();
         props.getLogout().setFollowServiceRedirects(true).setRedirectParameter(List.of("targetParam"));
 

@@ -63,18 +63,18 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketIsNotExpired() {
+    void verifyTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void verifyTicketIsExpired() {
+    void verifyTicketIsExpired() {
         expirationPolicy.setTimeToKillInSeconds(-TIMEOUT);
         assertTrue(this.ticket.isExpired());
     }
 
     @Test
-    public void verifyTicketUsedButWithTimeout() {
+    void verifyTicketUsedButWithTimeout() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             getTrackingPolicy());
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
@@ -83,7 +83,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyThrottleNotTriggeredWithinOneSecond() {
+    void verifyThrottleNotTriggeredWithinOneSecond() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             getTrackingPolicy());
         val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusMillis(999), ZoneOffset.UTC);
@@ -92,7 +92,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyNotWaitingEnoughTime() {
+    void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
             getTrackingPolicy());
         val clock = Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(1), ZoneOffset.UTC);
@@ -101,14 +101,14 @@ class ThrottledUseAndTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+    void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, ThrottledUseAndTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, ThrottledUseAndTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

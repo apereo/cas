@@ -55,7 +55,7 @@ class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflo
     private DuoSecurityAdminApiEndpoint duoAdminApiEndpoint;
 
     @Test
-    public void verifyAdminEndpoint() {
+    void verifyAdminEndpoint() {
         assertNotNull(duoAdminApiEndpoint);
     }
 

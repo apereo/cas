@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @Tag("LdapAuthentication")
 class DefaultLdapAccountStateHandlerTests {
     @Test
-    public void verifyActiveDirectoryErrors() {
+    void verifyActiveDirectoryErrors() {
         val handler = new DefaultLdapAccountStateHandler();
 
         val response = mock(AuthenticationResponse.class);
@@ -55,7 +55,7 @@ class DefaultLdapAccountStateHandlerTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val handler = new DefaultLdapAccountStateHandler();
         handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));
 
@@ -69,7 +69,7 @@ class DefaultLdapAccountStateHandlerTests {
     }
 
     @Test
-    public void verifyNoAttrs() {
+    void verifyNoAttrs() {
         val handler = new DefaultLdapAccountStateHandler();
         val response = mock(AuthenticationResponse.class);
         handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));
@@ -82,7 +82,7 @@ class DefaultLdapAccountStateHandlerTests {
     }
 
     @Test
-    public void verifyNoWarning() {
+    void verifyNoWarning() {
         val handler = new DefaultLdapAccountStateHandler();
         val response = mock(AuthenticationResponse.class);
         handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));

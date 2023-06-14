@@ -29,7 +29,7 @@ class SamlCompliantLogoutMessageCreatorTests {
     private final SingleLogoutMessageCreator builder = new DefaultSingleLogoutMessageCreator();
 
     @Test
-    public void verifyMessageBuilding() throws Exception {
+    void verifyMessageBuilding() throws Exception {
 
         val service = RegisteredServiceTestUtils.getService(TEST_URL);
         val logoutUrl = new URL(service.getOriginalUrl());

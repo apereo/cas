@@ -48,7 +48,7 @@ class CasCoreNotificationsConfigurationTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(notificationSender);
         assertNotNull(smsSender);
         assertNotNull(communicationsManager);

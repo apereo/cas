@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFATrustedDevices")
 class UserAgentDeviceFingerprintComponentManagerTests {
     @Test
-    public void verifyAgentFingerprintNotFound() {
+    void verifyAgentFingerprintNotFound() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         ClientInfoHolder.setClientInfo(null);
@@ -35,7 +35,7 @@ class UserAgentDeviceFingerprintComponentManagerTests {
     }
 
     @Test
-    public void verifyAgentFingerprintFound() {
+    void verifyAgentFingerprintFound() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         request.setRemoteAddr("1.2.3.4");

@@ -39,7 +39,7 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
     private Action acceptableUsagePolicyVerifyAction;
 
     @Test
-    public void verifyNoService() throws Exception {
+    void verifyNoService() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -47,7 +47,7 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
     }
 
     @Test
-    public void verifyDisabledService() throws Exception {
+    void verifyDisabledService() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -67,7 +67,7 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
     }
 
     @Test
-    public void verifyMustAccept() throws Exception {
+    void verifyMustAccept() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

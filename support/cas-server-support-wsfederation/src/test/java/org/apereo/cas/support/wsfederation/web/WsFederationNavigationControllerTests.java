@@ -43,7 +43,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
     private WsFederationNavigationController wsFederationNavigationController;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -71,7 +71,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyMissingId() {
+    void verifyMissingId() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

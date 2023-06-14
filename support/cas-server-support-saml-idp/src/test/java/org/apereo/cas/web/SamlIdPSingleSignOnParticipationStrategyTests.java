@@ -46,7 +46,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
         private SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy;
 
         @Test
-        public void verifyParticipation() {
+        void verifyParticipation() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -69,7 +69,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
         }
 
         @Test
-        public void verifyForcedAuthn() {
+        void verifyForcedAuthn() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -101,7 +101,7 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
         private SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy;
 
         @Test
-        public void verifyMfaProviderFailsContext() {
+        void verifyMfaProviderFailsContext() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

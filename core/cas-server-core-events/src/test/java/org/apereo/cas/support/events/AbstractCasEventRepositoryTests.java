@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractCasEventRepositoryTests {
 
     @Test
-    public void verifyLoadOps() throws Exception {
+    protected void verifyLoadOps() throws Exception {
         val eventRepository = getEventRepository();
         eventRepository.removeAll();
         
@@ -45,7 +45,7 @@ public abstract class AbstractCasEventRepositoryTests {
     }
 
     @Test
-    public void verifySave() throws Exception {
+    protected void verifySave() throws Exception {
         getEventRepository().removeAll();
         
         val dto1 = getCasEvent("casuser");

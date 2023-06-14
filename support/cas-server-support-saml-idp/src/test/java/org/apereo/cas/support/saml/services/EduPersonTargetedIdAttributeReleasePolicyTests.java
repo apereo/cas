@@ -39,7 +39,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyEduPersonTargetedId() {
+    void verifyEduPersonTargetedId() {
         val filter = new EduPersonTargetedIdAttributeReleasePolicy();
         filter.setSalt("OqmG80fEKBQt");
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -57,7 +57,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new EduPersonTargetedIdAttributeReleasePolicy();
         filter.setSalt("OqmG80fEKBQt");
         filter.setAttribute("something");
@@ -67,7 +67,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyEduPersonTargetedIdViaInCommon() {
+    void verifyEduPersonTargetedIdViaInCommon() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val filter = new InCommonRSAttributeReleasePolicy();
         filter.setOrder(1);
@@ -90,7 +90,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyEduPersonTargetedIdDefinitions() {
+    void verifyEduPersonTargetedIdDefinitions() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         policy.setSalt("OqmG80fEKBQt");

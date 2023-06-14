@@ -94,7 +94,7 @@ class RadiusConfigurationTests {
     private RadiusServer radiusServer;
 
     @Test
-    public void emptyAddress() {
+    void emptyAddress() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("  ");
         val ips = RadiusConfiguration.getClientIps(clientProperties);
@@ -102,7 +102,7 @@ class RadiusConfigurationTests {
     }
 
     @Test
-    public void someAddressesWithSpaces() {
+    void someAddressesWithSpaces() {
         val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("localhost,  localguest  ");
         val ips = RadiusConfiguration.getClientIps(clientProperties);
@@ -112,19 +112,19 @@ class RadiusConfigurationTests {
     }
 
     @Test
-    public void radiusServer() {
+    void radiusServer() {
         assertNotNull(this.radiusServer);
     }
 
     @Test
-    public void radiusServers() {
+    void radiusServers() {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
         assertNotNull(radiusServers);
         assertEquals(2, radiusServers.size());
     }
 
     @Test
-    public void verifyAccessChallengedWebflowEventResolver() {
+    void verifyAccessChallengedWebflowEventResolver() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

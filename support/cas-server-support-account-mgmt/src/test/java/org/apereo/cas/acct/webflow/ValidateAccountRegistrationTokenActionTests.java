@@ -65,7 +65,7 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
     private Action submitAccountRegistrationAction;
 
     @Test
-    public void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -76,7 +76,7 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
     }
 
     @Test
-    public void verifyPassRegistrationRequest() throws Exception {
+    void verifyPassRegistrationRequest() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

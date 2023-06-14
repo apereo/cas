@@ -42,7 +42,7 @@ class SamlIdPDelegatedAuthenticationConfigurationTests extends BaseSamlIdPConfig
     private DelegatedClientAuthenticationRequestCustomizer customizer;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val service = getSamlRegisteredServiceFor("https://cassp.example.org");
         service.setId(2000);
         val authnRequest = SamlIdPTestUtils.getAuthnRequest(openSamlConfigBean, service);

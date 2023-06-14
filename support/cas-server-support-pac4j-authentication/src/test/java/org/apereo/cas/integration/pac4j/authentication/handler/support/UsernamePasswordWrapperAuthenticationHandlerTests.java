@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 class UsernamePasswordWrapperAuthenticationHandlerTests {
 
     @Test
-    public void verifyTypes() {
+    void verifyTypes() {
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
         assertNotNull(handler.getCasCredentialsType());
@@ -44,7 +44,7 @@ class UsernamePasswordWrapperAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthWithNoContext() {
+    void verifyAuthWithNoContext() {
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, JEESessionStore.INSTANCE);
         assertThrows(FailedLoginException.class,
@@ -52,7 +52,7 @@ class UsernamePasswordWrapperAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthWithNoPrincipalAttr() throws Exception {
+    void verifyAuthWithNoPrincipalAttr() throws Exception {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
@@ -63,7 +63,7 @@ class UsernamePasswordWrapperAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthWithWithPrincipalAttr() throws Exception {
+    void verifyAuthWithWithPrincipalAttr() throws Exception {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
@@ -79,7 +79,7 @@ class UsernamePasswordWrapperAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthWithWithPrincipalAttrTyped() throws Exception {
+    void verifyAuthWithWithPrincipalAttrTyped() throws Exception {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),
@@ -96,7 +96,7 @@ class UsernamePasswordWrapperAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthWithWithClientPrincipalAttrTyped() throws Exception {
+    void verifyAuthWithWithClientPrincipalAttrTyped() throws Exception {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val handler = new UsernamePasswordWrapperAuthenticationHandler("Handler1", mock(ServicesManager.class),

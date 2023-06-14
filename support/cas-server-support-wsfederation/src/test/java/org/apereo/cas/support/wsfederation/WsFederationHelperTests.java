@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
-    public void verifyEncryptedToken() throws Exception {
+    void verifyEncryptedToken() throws Exception {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val wresult = IOUtils.toString(new ClassPathResource("encryptedToken.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
@@ -42,7 +42,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyParseTokenString() throws Exception {
+    void verifyParseTokenString() throws Exception {
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val result = wsFederationHelper.buildAndVerifyAssertion(token, wsFederationConfigurations.toList(), RegisteredServiceTestUtils.getService());
@@ -50,7 +50,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyCreateCredentialFromToken() throws Exception {
+    void verifyCreateCredentialFromToken() throws Exception {
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token, wsFederationConfigurations.toList(),
@@ -74,14 +74,14 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyGetSigningCredential() throws Exception {
+    void verifyGetSigningCredential() throws Exception {
         val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.toList().get(0), configBean);
         assertFalse(provider.getSigningCredentials().isEmpty());
         assertNotNull(provider);
     }
 
     @Test
-    public void verifyValidateSignatureGoodToken() throws Exception {
+    void verifyValidateSignatureGoodToken() throws Exception {
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
@@ -91,7 +91,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyValidateSignatureBadInput() {
+    void verifyValidateSignatureBadInput() {
         assertFalse(wsFederationHelper.validateSignature(null));
         assertFalse(wsFederationHelper.validateSignature(Pair.of(null, null)));
         val config = wsFederationConfigurations.toList().get(0);
@@ -102,7 +102,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyValidateSignatureModifiedAttribute() throws Exception {
+    void verifyValidateSignatureModifiedAttribute() throws Exception {
         val wresult = IOUtils.toString(new ClassPathResource("badTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
@@ -112,7 +112,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyValidateSignatureModifiedSignature() throws Exception {
+    void verifyValidateSignatureModifiedSignature() throws Exception {
         val wresult = IOUtils.toString(new ClassPathResource("badTokenSignature.txt").getInputStream(), StandardCharsets.UTF_8);
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,

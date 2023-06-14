@@ -28,7 +28,7 @@ class DefaultRegisteredServiceAcceptableUsagePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policyWritten.setEnabled(true);
         policyWritten.setMessageCode("example.code");

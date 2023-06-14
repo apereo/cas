@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("UMA")
 class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyOp() throws Exception {
+    void verifyOp() throws Exception {
         val id = UUID.randomUUID().toString();
         val service = getRegisteredService(id, "secret");
         servicesManager.save(service);
@@ -46,7 +46,7 @@ class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaE
     }
 
     @Test
-    public void verifyInvalidRedirect() throws Exception {
+    void verifyInvalidRedirect() throws Exception {
         val id = UUID.randomUUID().toString();
         val service = getRegisteredService(id, "secret");
         servicesManager.save(service);
@@ -67,7 +67,7 @@ class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaE
     }
 
     @Test
-    public void verifyInvalidTicket() throws Exception {
+    void verifyInvalidTicket() throws Exception {
         val id = UUID.randomUUID().toString();
         val service = getRegisteredService(id, "secret");
         servicesManager.save(service);

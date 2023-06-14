@@ -32,7 +32,7 @@ class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
     private OidcJwksRotationEndpoint jwksRotationEndpoint;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(jwksRotationEndpoint.handleRotation());
         assertNotNull(jwksRotationEndpoint.handleRevocation());
     }

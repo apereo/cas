@@ -32,7 +32,7 @@ class CasTomcatBannerTests {
     private Environment environment;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val banner = new CasTomcatBanner();
         val writer = new StringWriter();
         val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);

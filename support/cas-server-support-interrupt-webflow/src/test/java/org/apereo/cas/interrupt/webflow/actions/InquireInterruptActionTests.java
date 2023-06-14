@@ -51,7 +51,7 @@ class InquireInterruptActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyInterrupted() {
+    void verifyInterrupted() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -85,7 +85,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    public void verifyInterruptedAlready() {
+    void verifyInterruptedAlready() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -110,7 +110,7 @@ class InquireInterruptActionTests {
 
 
     @Test
-    public void verifyInterruptFinalized() {
+    void verifyInterruptFinalized() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -134,7 +134,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    public void verifyNotInterrupted() {
+    void verifyNotInterrupted() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -157,7 +157,7 @@ class InquireInterruptActionTests {
     }
 
     @Test
-    public void verifyNotInterruptedAsFinalized() {
+    void verifyNotInterruptedAsFinalized() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

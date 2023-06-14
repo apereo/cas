@@ -26,7 +26,7 @@ class OidcIdTokenExpirationPolicyBuilderTests extends AbstractOidcTests {
     private ExpirationPolicyBuilder oidcIdTokenExpirationPolicy;
 
     @Test
-    public void verifyTicketType() {
+    void verifyTicketType() {
         assertNotNull(oidcIdTokenExpirationPolicy.buildTicketExpirationPolicy());
     }
 }

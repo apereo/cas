@@ -71,7 +71,7 @@ class X509SubjectDNPrincipalResolverTests {
     }
 
     @Test
-    public void verifyResolvePrincipalInternal() {
+    void verifyResolvePrincipalInternal() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c,
@@ -81,7 +81,7 @@ class X509SubjectDNPrincipalResolverTests {
     }
 
     @Test
-    public void verifyResolvePrincipalInternalRFC2253() {
+    void verifyResolvePrincipalInternalRFC2253() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSubjectX500Principal().getName(X500Principal.RFC2253), this.resolverRFC2253.resolve(c,
@@ -92,13 +92,13 @@ class X509SubjectDNPrincipalResolverTests {
 
 
     @Test
-    public void verifySupport() {
+    void verifySupport() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    public void verifySupportFalse() {
+    void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 }

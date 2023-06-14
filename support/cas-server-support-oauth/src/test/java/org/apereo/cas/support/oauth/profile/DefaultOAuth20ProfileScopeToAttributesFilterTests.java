@@ -27,7 +27,7 @@ class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractOAuth20T
     private OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val input = profileScopeToAttributesFilter.filter(
             RegisteredServiceTestUtils.getService(),

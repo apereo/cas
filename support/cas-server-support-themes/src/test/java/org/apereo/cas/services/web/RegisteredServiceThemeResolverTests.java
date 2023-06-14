@@ -48,7 +48,7 @@ class RegisteredServiceThemeResolverTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ExternalThemeTests extends BaseThemeTests {
         @Test
-        public void verifyCustomSource() {
+        void verifyCustomSource() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -73,7 +73,7 @@ class RegisteredServiceThemeResolverTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ExampleThemeTests extends BaseThemeTests {
         @Test
-        public void verifyNoAccess() {
+        void verifyNoAccess() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addHeader("User-Agent", "Mozilla");
@@ -92,7 +92,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        public void verifyNoTheme() {
+        void verifyNoTheme() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -109,7 +109,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        public void verifyGroovyTheme() throws Exception {
+        void verifyGroovyTheme() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -129,7 +129,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        public void verifyUrlTheme() {
+        void verifyUrlTheme() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -151,7 +151,7 @@ class RegisteredServiceThemeResolverTests {
         }
 
         @Test
-        public void verifyCustomTheme() {
+        void verifyCustomTheme() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

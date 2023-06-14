@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationHandler")
 class SuccessfulHandlerMetaDataPopulatorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new SuccessfulHandlerMetaDataPopulator();
         val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getWebApplicationService(),
             List.of(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("cas")));

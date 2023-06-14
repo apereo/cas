@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 class ResourceCRLFetcherTests {
     @Test
-    public void verifyFetchByUrl() throws Exception {
+    void verifyFetchByUrl() throws Exception {
         val fetcher = new ResourceCRLFetcher();
         assertNull(fetcher.fetch("https://httpbin.org/get"));
     }
 
     @Test
-    public void verifyFetchByResource() throws Exception {
+    void verifyFetchByResource() throws Exception {
         val fetcher = new ResourceCRLFetcher();
         assertNull(fetcher.fetch(new UrlResource("https://httpbin.org/get")));
     }

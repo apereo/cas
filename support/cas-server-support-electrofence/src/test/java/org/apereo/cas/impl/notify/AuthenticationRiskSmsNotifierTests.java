@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SMS")
 class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

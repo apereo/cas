@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JcifsConfigTests {
 
     @Test
-    public void verifyKerbSysConfig() throws Exception {
+    void verifyKerbSysConfig() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -32,7 +32,7 @@ class JcifsConfigTests {
     }
 
     @Test
-    public void verifyJcifsConfig() {
+    void verifyJcifsConfig() {
         assertDoesNotThrow(() -> {
             val settings = new JcifsConfig.JcifsSettings();
             settings.setJcifsDomain("DOMAIN");

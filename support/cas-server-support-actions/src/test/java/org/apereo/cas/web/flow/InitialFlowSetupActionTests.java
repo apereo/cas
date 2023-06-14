@@ -112,7 +112,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifySettingContextPath() {
+        void verifySettingContextPath() {
             val request = new MockHttpServletRequest();
             request.setContextPath(CONST_CONTEXT_PATH);
             val context = new MockRequestContext();
@@ -125,7 +125,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyResettingContextPath() {
+        void verifyResettingContextPath() {
             val request = new MockHttpServletRequest();
             request.setContextPath(CONST_CONTEXT_PATH);
             val context = new MockRequestContext();
@@ -159,7 +159,7 @@ class InitialFlowSetupActionTests {
         private Action action;
 
         @Test
-        public void verifyResponseStatusAsError() throws Exception {
+        void verifyResponseStatusAsError() throws Exception {
             val context = new MockRequestContext();
             var response = new MockHttpServletResponse();
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -169,7 +169,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyNoServiceFound() throws Exception {
+        void verifyNoServiceFound() throws Exception {
             val context = new MockRequestContext();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -179,7 +179,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyServiceFound() throws Exception {
+        void verifyServiceFound() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
@@ -193,7 +193,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyServiceStrategy() throws Exception {
+        void verifyServiceStrategy() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod(HttpMethod.POST.name());
@@ -214,7 +214,7 @@ class InitialFlowSetupActionTests {
         }
 
         @Test
-        public void verifyTgtNoSso() throws Exception {
+        void verifyTgtNoSso() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
 

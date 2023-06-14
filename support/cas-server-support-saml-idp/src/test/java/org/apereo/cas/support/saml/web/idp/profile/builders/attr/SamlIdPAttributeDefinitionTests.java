@@ -28,7 +28,7 @@ class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @Test
-    public void verifyStoreIsLoaded() throws Exception {
+    void verifyStoreIsLoaded() throws Exception {
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonUniqueId").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("organizationName").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("displayName").isPresent());
@@ -40,7 +40,7 @@ class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyEduPersonTargetedID() throws Exception {
+    void verifyEduPersonTargetedID() throws Exception {
         val defn = attributeDefinitionStore.locateAttributeDefinition("eduPersonTargetedID", SamlIdPAttributeDefinition.class)
             .get().withSalt(UUID.randomUUID().toString());
         val values = defn.resolveAttributeValues(getAttributeDefinitionResolutionContext());

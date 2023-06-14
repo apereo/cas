@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class InternalTicketValidatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cas = mock(CentralAuthenticationService.class);
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());

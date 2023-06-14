@@ -20,14 +20,14 @@ class JdbcServletContextListenerTests {
     private final JdbcServletContextListener listener = new JdbcServletContextListener();
 
     @Test
-    public void verifyContextInitialized() {
+    void verifyContextInitialized() {
         listener.contextInitialized(null);
         assertFalse(DriverManager.getDrivers().hasMoreElements());
     }
 
     @Test
 
-    public void verifyContextDestroyed() throws Exception {
+    void verifyContextDestroyed() throws Exception {
         /* registers all drivers */
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
         Class.forName("org.postgresql.Driver");

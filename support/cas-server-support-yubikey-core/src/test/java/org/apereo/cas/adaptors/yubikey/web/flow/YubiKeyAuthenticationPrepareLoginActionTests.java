@@ -36,7 +36,7 @@ class YubiKeyAuthenticationPrepareLoginActionTests {
     }
     
     @Test
-    public void verifyActionSuccess() throws Exception {
+    void verifyActionSuccess() throws Exception {
         val context = new MockRequestContext();
         val casProperties = new CasConfigurationProperties();
         val action = new YubiKeyAuthenticationPrepareLoginAction(casProperties);

@@ -37,7 +37,7 @@ class GroovyCasWebflowAuthenticationExceptionHandlerTests {
     private CasWebflowExceptionHandler groovyCasWebflowAuthenticationExceptionHandler;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(groovyCasWebflowAuthenticationExceptionHandler);
 
         val context = new MockRequestContext();

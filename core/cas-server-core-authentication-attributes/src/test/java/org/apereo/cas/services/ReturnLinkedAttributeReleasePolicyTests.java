@@ -56,7 +56,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val policy = new ReturnLinkedAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrap("uid", List.of("cn", "givenName", "unknown", "firstName")));
         MAPPER.writeValue(JSON_FILE, policy);
@@ -65,7 +65,7 @@ class ReturnLinkedAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyMappedToMultipleAttributes() {
+    void verifyMappedToMultipleAttributes() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", List.of("cn", "givenName", "unknown", "firstName"));
         val p1 = new ReturnLinkedAttributeReleasePolicy().setAllowedAttributes(allowed1);
         val service1 = CoreAttributesTestUtils.getRegisteredService();

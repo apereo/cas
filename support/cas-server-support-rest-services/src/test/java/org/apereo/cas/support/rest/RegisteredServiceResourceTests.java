@@ -51,33 +51,33 @@ class RegisteredServiceResourceTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void checkNoCredentials() throws Exception {
+    void checkNoCredentials() throws Exception {
         runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
         runTest("memberOf", "something", ":", status().isBadRequest());
     }
 
     @Test
-    public void checkRegisteredServiceNotAuthorized() throws Exception {
+    void checkRegisteredServiceNotAuthorized() throws Exception {
         runTest("memberOf", "something", "test:test", status().isForbidden());
     }
 
     @Test
-    public void checkRegisteredServiceNormal() throws Exception {
+    void checkRegisteredServiceNormal() throws Exception {
         runTest("memberOf", "admin", "test:test", status().isOk());
     }
 
     @Test
-    public void checkRegisteredServiceNoAuthn() throws Exception {
+    void checkRegisteredServiceNoAuthn() throws Exception {
         runTest("memberOf", "something", "testfail:something", status().isUnauthorized());
     }
 
     @Test
-    public void checkRegisteredServiceNoAttributeValue() throws Exception {
+    void checkRegisteredServiceNoAttributeValue() throws Exception {
         runTest("memberOf", null, "test:test", status().isForbidden());
     }
 
     @Test
-    public void checkRegisteredServiceNoAttribute() throws Exception {
+    void checkRegisteredServiceNoAttribute() throws Exception {
         runTest(null, null, "test:test", status().isForbidden());
     }
 

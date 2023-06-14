@@ -55,7 +55,7 @@ class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerT
     private Action initCaptchaAction;
     
     @Test
-    public void verifyCaptcha() throws Exception {
+    void verifyCaptcha() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -67,7 +67,7 @@ class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerT
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);

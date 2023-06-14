@@ -38,7 +38,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
     })
     class WithLockingEnabled extends AbstractCentralAuthenticationServiceTests {
         @Test
-        public void verifyGrantServiceTicketConcurrency() {
+        void verifyGrantServiceTicketConcurrency() {
             val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -82,7 +82,7 @@ class DefaultCentralAuthenticationServiceLockingTests {
     })
     class WithoutLockingEnabled extends AbstractCentralAuthenticationServiceTests {
         @Test
-        public void verifyGrantServiceTicketConcurrency() {
+        void verifyGrantServiceTicketConcurrency() {
             val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

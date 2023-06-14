@@ -50,7 +50,7 @@ class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
     private ConsentRepository consentRepository;
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val uid = UUID.randomUUID().toString();
         val desc = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,

@@ -61,7 +61,7 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkNoAuthN() {
+    void checkNoAuthN() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -79,13 +79,13 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkDefaultAccountRegistry() {
+    void checkDefaultAccountRegistry() {
         val handler = getHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
         assertNotNull(handler.getRegistry());
     }
 
     @Test
-    public void checkSuccessAuthn() throws Exception {
+    void checkSuccessAuthn() throws Exception {
         val client = mock(YubicoClient.class);
         val response = mock(VerificationResponse.class);
         when(response.getStatus()).thenReturn(ResponseStatus.OK);
@@ -96,7 +96,7 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkFailsVerificationAuthn() throws Exception {
+    void checkFailsVerificationAuthn() throws Exception {
         val client = mock(YubicoClient.class);
         when(client.verify(anyString())).thenThrow(new YubicoVerificationException("fails"));
         val handler = getHandler(client);
@@ -105,19 +105,19 @@ class YubiKeyAuthenticationHandlerTests {
 
 
     @Test
-    public void checkReplayedAuthn() {
+    void checkReplayedAuthn() {
         val handler = getHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
     }
 
     @Test
-    public void checkBadConfigAuthn() {
+    void checkBadConfigAuthn() {
         val handler = getHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential("casuser"), mock(Service.class)));
     }
 
     @Test
-    public void checkAccountNotFound() {
+    void checkAccountNotFound() {
         val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(),
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
@@ -129,7 +129,7 @@ class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkEncryptedAccount() {
+    void checkEncryptedAccount() {
         val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(), (uid, token) -> true);
         assertNotNull(registry.save(YubiKeyAccount.builder().username(UUID.randomUUID().toString()).build()));
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(

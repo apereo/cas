@@ -39,7 +39,7 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     private Action delegatedAuthenticationStoreWebflowAction;
 
     @Test
-    public void verifyMissingClient() throws Exception {
+    void verifyMissingClient() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -51,7 +51,7 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     }
 
     @Test
-    public void verifyClient() throws Exception {
+    void verifyClient() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");

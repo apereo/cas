@@ -85,7 +85,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyCacheControl() throws Exception {
+    void verifyCacheControl() throws Exception {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -99,7 +99,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyCacheControlDisabled() throws Exception {
+    void verifyCacheControlDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL, "false"));
         filter.setEnableCacheControl(true);
         val response = new MockHttpServletResponse();
@@ -110,7 +110,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyContentSecurityPolicy() throws Exception {
+    void verifyContentSecurityPolicy() throws Exception {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -122,7 +122,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyContentSecurityPolicyDisabled() throws Exception {
+    void verifyContentSecurityPolicyDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY, "false"));
         filter.setContentSecurityPolicy(null);
         val response = new MockHttpServletResponse();
@@ -135,7 +135,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyStrictTransport() throws Exception {
+    void verifyStrictTransport() throws Exception {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -147,7 +147,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyStrictTransportDisabled() throws Exception {
+    void verifyStrictTransportDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY, "false"));
         filter.setEnableStrictTransportSecurity(true);
         val response = new MockHttpServletResponse();
@@ -160,7 +160,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyXContentOptions() throws Exception {
+    void verifyXContentOptions() throws Exception {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -170,7 +170,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyXContentOptionsDisabled() throws Exception {
+    void verifyXContentOptionsDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS, "false"));
         filter.setEnableXContentTypeOptions(true);
         val response = new MockHttpServletResponse();
@@ -181,7 +181,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyOptionForUnknownService() throws Exception {
+    void verifyOptionForUnknownService() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS, "false"));
         filter.setEnableXContentTypeOptions(true);
         val response = new MockHttpServletResponse();
@@ -192,7 +192,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyXframeOptions() throws Exception {
+    void verifyXframeOptions() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS, "true"),
             Pair.of(RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS, "sameorigin"));
 
@@ -212,7 +212,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyXframeOptionsDisabled() throws Exception {
+    void verifyXframeOptionsDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS, "false"));
 
         filter.setXframeOptions("some-other-value");
@@ -231,7 +231,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyXssProtection() throws Exception {
+    void verifyXssProtection() throws Exception {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -241,7 +241,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    public void verifyXssProtectionDisabled() throws Exception {
+    void verifyXssProtectionDisabled() throws Exception {
         val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION, "false"));
         filter.setEnableXSSProtection(true);
         val response = new MockHttpServletResponse();

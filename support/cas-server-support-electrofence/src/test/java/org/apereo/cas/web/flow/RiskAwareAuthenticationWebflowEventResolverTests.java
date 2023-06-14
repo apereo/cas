@@ -52,7 +52,7 @@ class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfig
     private CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver;
     
     @Test
-    public void verifyNoResolution() {
+    void verifyNoResolution() {
         assertNotNull(riskAwareAuthenticationWebflowEventResolver);
 
         val context = new MockRequestContext();
@@ -65,7 +65,7 @@ class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfig
     }
 
     @Test
-    public void verifyResolution() {
+    void verifyResolution() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

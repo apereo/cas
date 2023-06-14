@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemcachedUtilsTests {
 
     @Test
-    public void verifySerial() {
+    void verifySerial() {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.SERIAL);
         val coder = MemcachedUtils.newTranscoder(props);
@@ -26,7 +26,7 @@ class MemcachedUtilsTests {
     }
 
     @Test
-    public void verifyWhalin() {
+    void verifyWhalin() {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.WHALIN);
         val coder = MemcachedUtils.newTranscoder(props);
@@ -34,7 +34,7 @@ class MemcachedUtilsTests {
     }
 
     @Test
-    public void verifyWhalinv1() {
+    void verifyWhalinv1() {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.WHALINV1);
         val coder = MemcachedUtils.newTranscoder(props);
@@ -42,7 +42,7 @@ class MemcachedUtilsTests {
     }
 
     @Test
-    public void verifyKryo() {
+    void verifyKryo() {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.KRYO);
         val coder = MemcachedUtils.newTranscoder(props);

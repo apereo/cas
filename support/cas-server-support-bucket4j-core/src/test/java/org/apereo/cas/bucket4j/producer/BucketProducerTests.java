@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class BucketProducerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val limit1 = new Bucket4jBandwidthLimitProperties()
             .setDuration("PT15S")
             .setInitialTokens(100)
@@ -39,7 +39,7 @@ class BucketProducerTests {
     }
 
     @Test
-    public void verifyNoBucket() {
+    void verifyNoBucket() {
         val limit1 = new Bucket4jBandwidthLimitProperties()
             .setDuration("PT15S")
             .setInitialTokens(100)

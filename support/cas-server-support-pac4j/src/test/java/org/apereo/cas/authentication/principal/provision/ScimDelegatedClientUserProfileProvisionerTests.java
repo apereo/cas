@@ -47,7 +47,7 @@ class ScimDelegatedClientUserProfileProvisionerTests extends BaseCasCoreTests {
     private Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val provisioner = pac4jScimDelegatedClientUserProfileProvisioner.get();
         assertNotNull(provisioner);
         var profile = new CommonProfile();

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WebjarValidationTests {
 
     @Test
-    public void verifyValidation() throws IOException {
+    void verifyValidation() throws IOException {
         val compositePropertySource = new CompositePropertySource("webjars");
         compositePropertySource.addPropertySource(new PropertiesPropertySource("messages",
             PropertiesLoaderUtils.loadProperties(new ClassPathResource("cas_common_messages.properties"))));

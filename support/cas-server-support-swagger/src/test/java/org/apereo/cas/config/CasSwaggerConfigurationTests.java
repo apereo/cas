@@ -23,7 +23,7 @@ class CasSwaggerConfigurationTests {
     private OpenAPI swaggerOpenApi;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(swaggerOpenApi);
     }
 }

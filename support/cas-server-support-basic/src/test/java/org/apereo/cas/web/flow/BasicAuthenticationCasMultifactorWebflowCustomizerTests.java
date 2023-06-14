@@ -31,7 +31,7 @@ class BasicAuthenticationCasMultifactorWebflowCustomizerTests extends BaseWebflo
     private CasMultifactorWebflowCustomizer customizer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(customizer.getCandidateStatesForMultifactorAuthentication().isEmpty());
     }
 }

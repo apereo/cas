@@ -60,7 +60,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
         googleAuthenticatorAccountRegistry.deleteAll();
     }
     @Test
-    public void verifyMultipleRegDisabled(@Autowired final CasConfigurationProperties casProperties) throws Exception {
+    void verifyMultipleRegDisabled(@Autowired final CasConfigurationProperties casProperties) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -83,7 +83,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyAccountValidationFails() throws Exception {
+    void verifyAccountValidationFails() throws Exception {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())
@@ -106,7 +106,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     }
 
     @Test
-    public void verifyAccountValidationOnly() throws Exception {
+    void verifyAccountValidationOnly() throws Exception {
         val acct = GoogleAuthenticatorAccount.builder()
             .username("casuser")
             .name(UUID.randomUUID().toString())

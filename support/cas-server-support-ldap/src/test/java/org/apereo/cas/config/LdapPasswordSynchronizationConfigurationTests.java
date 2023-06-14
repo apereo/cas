@@ -63,7 +63,7 @@ class LdapPasswordSynchronizationConfigurationTests {
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val transaction = new DefaultAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertFalse(authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction).isEmpty());

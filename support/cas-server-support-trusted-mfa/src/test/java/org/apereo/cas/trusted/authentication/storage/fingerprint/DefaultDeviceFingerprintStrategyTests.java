@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();

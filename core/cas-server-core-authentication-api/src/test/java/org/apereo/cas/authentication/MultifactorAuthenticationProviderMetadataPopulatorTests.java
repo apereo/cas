@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationMetadata")
 class MultifactorAuthenticationProviderMetadataPopulatorTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val provider = mock(MultifactorAuthenticationProvider.class);
         when(provider.getFailureMode()).thenReturn(MultifactorAuthenticationProviderFailureModes.PHANTOM);
         when(provider.getId()).thenReturn("mfa-dummy");

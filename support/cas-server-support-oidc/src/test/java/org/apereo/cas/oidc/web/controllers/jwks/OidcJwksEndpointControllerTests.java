@@ -32,7 +32,7 @@ class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     protected OidcJwksEndpointController oidcJwksEndpointController;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.JWKS_URL);
         val response = new MockHttpServletResponse();
 
@@ -42,7 +42,7 @@ class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadEndpointRequest() {
+    void verifyBadEndpointRequest() {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -52,7 +52,7 @@ class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val request = getHttpRequestForEndpoint(OidcConstants.JWKS_URL);
         val response = mock(HttpServletResponse.class);
         doThrow(new RuntimeException()).when(response).setContentType(anyString());

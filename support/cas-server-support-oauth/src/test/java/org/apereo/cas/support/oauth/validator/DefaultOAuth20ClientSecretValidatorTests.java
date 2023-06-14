@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     @Test
-    public void verifyClientSecretCheck() {
+    void verifyClientSecretCheck() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val encodedSecret = oauth20ClientSecretValidator.getCipherExecutor().encode(secret);
         val registeredService = new OAuthRegisteredService();
@@ -33,7 +33,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyClientSecretIsWrong() {
+    void verifyClientSecretIsWrong() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val encodedSecret = oauth20ClientSecretValidator.getCipherExecutor().encode(secret);
         val registeredService = new OAuthRegisteredService();
@@ -44,7 +44,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyClientSecretCheckWithoutCipher() {
+    void verifyClientSecretCheckWithoutCipher() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
@@ -54,7 +54,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyClientSecretUndefined() {
+    void verifyClientSecretUndefined() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
@@ -63,7 +63,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyClientSecretUrlEncoded() {
+    void verifyClientSecretUrlEncoded() {
         val secret = "!@#$%^&^&*()";
         val encodedSecret = EncodingUtils.urlEncode(secret);
         val registeredService = new OAuthRegisteredService();
@@ -74,7 +74,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyNullClientSecretUrlEncoded() {
+    void verifyNullClientSecretUrlEncoded() {
         val secret = "!@#$%^&^&*()";
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");

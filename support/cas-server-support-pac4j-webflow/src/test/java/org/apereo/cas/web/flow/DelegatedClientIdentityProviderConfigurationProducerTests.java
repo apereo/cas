@@ -42,7 +42,7 @@ class DelegatedClientIdentityProviderConfigurationProducerTests {
     private ServicesManager servicesManager;
     
     @Test
-    public void verifyOperationAutoRedirect() {
+    void verifyOperationAutoRedirect() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ class DelegatedClientIdentityProviderConfigurationProducerTests {
     }
 
     @Test
-    public void verifyOperationPrimaryProvider() {
+    void verifyOperationPrimaryProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

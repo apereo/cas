@@ -57,7 +57,7 @@ class GroovyAccountRegistrationProvisionerTests {
     }
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
         val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
         assertTrue(results.isSuccess());

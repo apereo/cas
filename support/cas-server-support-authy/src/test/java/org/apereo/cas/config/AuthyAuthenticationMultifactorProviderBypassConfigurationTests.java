@@ -35,7 +35,7 @@ class AuthyAuthenticationMultifactorProviderBypassConfigurationTests {
     private MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(authyBypassEvaluator);
         assertEquals(8, authyBypassEvaluator.size());
     }

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 class AccountRegistrationProvisionerConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val configurer = mock(AccountRegistrationProvisionerConfigurer.class);
         when(configurer.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, configurer.getOrder());

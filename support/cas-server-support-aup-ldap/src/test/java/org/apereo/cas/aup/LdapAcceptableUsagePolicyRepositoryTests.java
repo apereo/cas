@@ -77,7 +77,7 @@ class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicy
     }
 
     @Test
-    public void verifyMissingUser() throws Exception {
+    void verifyMissingUser() throws Exception {
         val actualPrincipalId = UUID.randomUUID().toString();
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, Map.of(), c);
@@ -85,7 +85,7 @@ class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicy
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(acceptableUsagePolicyRepository);
         verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));

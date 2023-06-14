@@ -54,7 +54,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     private TicketFactory defaultTicketFactory;
 
     @Test
-    public void verifyGenerateToken() throws Exception {
+    void verifyGenerateToken() throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
@@ -74,7 +74,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyStoreToken() throws Exception {
+    void verifyStoreToken() throws Exception {
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
         try (val webServer = new MockWebServer(9229,
@@ -96,7 +96,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyValidateTokenFails() throws Exception {
+    void verifyValidateTokenFails() throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         try (val webServer = new MockWebServer(9229,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
@@ -108,7 +108,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyValidateTokenOK() throws Exception {
+    void verifyValidateTokenOK() throws Exception {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         try (val webServer = new MockWebServer(9229,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())

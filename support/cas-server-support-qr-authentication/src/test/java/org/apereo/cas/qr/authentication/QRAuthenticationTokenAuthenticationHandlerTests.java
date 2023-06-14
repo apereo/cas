@@ -64,14 +64,14 @@ class QRAuthenticationTokenAuthenticationHandlerTests {
 
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val credential = new QRAuthenticationTokenCredential("token", UUID.randomUUID().toString());
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(credential));
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(QRAuthenticationTokenCredential.class));
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(qrAuthenticationTokenAuthenticationHandler);
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -96,7 +96,7 @@ class QRAuthenticationTokenAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 

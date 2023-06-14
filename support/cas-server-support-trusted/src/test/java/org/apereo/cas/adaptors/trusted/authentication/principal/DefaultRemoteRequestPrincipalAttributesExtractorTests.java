@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultRemoteRequestPrincipalAttributesExtractorTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val extractor = getExtractor(Map.of("AJP_(.+)", "^@.+_(.+);"));
         val request = new MockHttpServletRequest();
         request.addHeader("AJP_CAS", "@SSO_OSS;");

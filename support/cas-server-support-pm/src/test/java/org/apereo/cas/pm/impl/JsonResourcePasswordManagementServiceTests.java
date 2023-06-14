@@ -92,44 +92,44 @@ class JsonResourcePasswordManagementServiceTests {
     private PasswordValidationService passwordValidationService;
 
     @Test
-    public void verifyUserEmailCanBeFound() {
+    void verifyUserEmailCanBeFound() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("casuser@example.org", email);
     }
 
     @Test
-    public void verifyUserCanBeFound() {
+    void verifyUserCanBeFound() {
         val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
         assertEquals("casuser", user);
     }
 
     @Test
-    public void verifyUserPhoneCanBeFound() {
+    void verifyUserPhoneCanBeFound() {
         val phone = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("1234567890", phone);
     }
 
     @Test
-    public void verifyUserEmailCanNotBeFound() {
+    void verifyUserEmailCanNotBeFound() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casusernotfound").build());
         assertNull(email);
     }
 
     @Test
-    public void verifyUnlock() {
+    void verifyUnlock() {
         val credentials = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         assertTrue(passwordChangeService.unlockAccount(credentials));
     }
 
     @Test
-    public void verifyUserQuestionsCanBeFound() {
+    void verifyUserQuestionsCanBeFound() {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals(2, questions.size());
         assertTrue(passwordChangeService.getSecurityQuestions(
             PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build()).isEmpty());
     }
     @Test
-    public void verifyUserPasswordChange() {
+    void verifyUserPasswordChange() {
         val bean = new PasswordChangeRequest();
         bean.setUsername("casuser");
         bean.setConfirmedPassword("newPassword".toCharArray());
@@ -138,7 +138,7 @@ class JsonResourcePasswordManagementServiceTests {
         assertTrue(res);
     }
     @Test
-    public void verifyUserPasswordChangeFail() {
+    void verifyUserPasswordChangeFail() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("newPassword".toCharArray());
@@ -155,7 +155,7 @@ class JsonResourcePasswordManagementServiceTests {
         assertFalse(res);
     }
     @Test
-    public void verifyPasswordValidationService() {
+    void verifyPasswordValidationService() {
         val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeRequest();
         bean.setUsername(c.getUsername());
@@ -165,7 +165,7 @@ class JsonResourcePasswordManagementServiceTests {
         assertTrue(isValid);
     }
     @Test
-    public void verifySecurityQuestions() {
+    void verifySecurityQuestions() {
         val query = PasswordManagementQuery.builder().username("casuser").build();
         assertDoesNotThrow(() -> {
             query.securityQuestion("Q1", "A1");

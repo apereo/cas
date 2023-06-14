@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 class CasEurekaServerBannerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val banner = new CasEurekaServerBanner();
         assertNotNull(banner.getTitle());
 

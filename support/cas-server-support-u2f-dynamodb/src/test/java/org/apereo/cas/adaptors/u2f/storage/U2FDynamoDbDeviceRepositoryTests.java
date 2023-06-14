@@ -51,7 +51,7 @@ class U2FDynamoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests 
     }
     
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 }

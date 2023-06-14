@@ -38,7 +38,7 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
     }
 
     @Test
-    public void verifyChain() {
+    void verifyChain() {
         val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
         p.addMultifactorAuthenticationProviderBypassEvaluator(
             new MultifactorAuthenticationProviderBypassEvaluator[]{NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance()});
@@ -46,7 +46,7 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
     }
 
     @Test
-    public void verifyEmptyChainOperation() {
+    void verifyEmptyChainOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -62,7 +62,7 @@ class DefaultChainingMultifactorAuthenticationBypassProviderTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

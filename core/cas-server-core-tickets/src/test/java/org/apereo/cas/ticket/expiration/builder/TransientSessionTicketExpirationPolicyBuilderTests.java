@@ -32,7 +32,7 @@ class TransientSessionTicketExpirationPolicyBuilderTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyType() {
+    void verifyType() {
         val builder = new TransientSessionTicketExpirationPolicyBuilder(casProperties);
         val policy = builder.buildTicketExpirationPolicy();
         assertNotNull(policy);

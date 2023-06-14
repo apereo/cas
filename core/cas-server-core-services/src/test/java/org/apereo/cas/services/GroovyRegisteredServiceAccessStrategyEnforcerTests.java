@@ -44,7 +44,7 @@ class GroovyRegisteredServiceAccessStrategyEnforcerTests {
     private RegisteredServiceAccessStrategyEnforcer groovyRegisteredServiceAccessStrategyEnforcer;
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(groovyRegisteredServiceAccessStrategyEnforcer);
         
         val context = AuditableContext.builder()

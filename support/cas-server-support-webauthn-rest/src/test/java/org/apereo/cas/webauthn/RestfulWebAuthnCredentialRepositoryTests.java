@@ -32,21 +32,21 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
 
     @Test
     @Override
-    public void verifyOperation() throws Exception {
+    protected void verifyOperation() throws Exception {
         assertRegistrationIsFound();
         assertRegistrationBadStatus();
         assertRegistrationBadInput();
     }
 
     @Test
-    public void verifyLoadOperation() throws Exception {
+    void verifyLoadOperation() throws Exception {
         assertLoadIsFound();
         assertLoadBadStatus();
         assertLoadBadInput();
     }
 
     @Test
-    public void verifyUpdate() {
+    void verifyUpdate() {
         try (val webServer = new MockWebServer(9559, HttpStatus.OK)) {
             webServer.start();
             webAuthnCredentialRepository.removeAllRegistrations("casuser");

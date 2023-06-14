@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("JavaUtilDate")
 class AuditActionContextJsonSerializerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4", UUID.randomUUID().toString(), Map.of());

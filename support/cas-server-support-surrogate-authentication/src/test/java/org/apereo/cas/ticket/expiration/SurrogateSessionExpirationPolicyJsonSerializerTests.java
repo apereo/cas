@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ExpirationPolicy")
 class SurrogateSessionExpirationPolicyJsonSerializerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = new SurrogateSessionExpirationPolicy();
         val serializer = new SurrogateSessionExpirationPolicyJsonSerializer();
         val result = serializer.toString(policy);

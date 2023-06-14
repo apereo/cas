@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @Tag("DynamoDb")
 class DynamoDbTableUtilsTests {
     @Test
-    public void verifyCreateTable() {
+    void verifyCreateTable() {
         val client = mock(DynamoDbClient.class);
         when(client.createTable(any(CreateTableRequest.class)))
             .thenThrow(ResourceInUseException.create("error", new IllegalArgumentException()));
@@ -44,7 +44,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    public void verifyWaitUntilTable() {
+    void verifyWaitUntilTable() {
         val client = mock(DynamoDbClient.class);
         val description = TableDescription.builder().tableStatus(TableStatus.CREATING).build();
         val table = DescribeTableResponse.builder().table(description).build();
@@ -54,7 +54,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    public void verifyWaitUntilTableNotFound() {
+    void verifyWaitUntilTableNotFound() {
         val client = mock(DynamoDbClient.class);
         when(client.describeTable(any(DescribeTableRequest.class)))
             .thenThrow(ResourceNotFoundException.create("fail", new IllegalArgumentException()));
@@ -64,7 +64,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    public void verifyCreateTableWithBillingModeProvisioned() {
+    void verifyCreateTableWithBillingModeProvisioned() {
         val client = mock(DynamoDbClient.class);
         val readCapacity = 7L;
         val writeCapacity = 9L;
@@ -95,7 +95,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    public void verifyCreateTableWithBillingModePayPerRequest() {
+    void verifyCreateTableWithBillingModePayPerRequest() {
         val client = mock(DynamoDbClient.class);
 
         val createTableArgMatcher = new CreateTableRequestArgumentMatcher();

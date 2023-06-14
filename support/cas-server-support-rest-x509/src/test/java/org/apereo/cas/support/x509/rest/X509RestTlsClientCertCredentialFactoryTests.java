@@ -29,7 +29,7 @@ class X509RestTlsClientCertCredentialFactoryTests {
     private final X509RestTlsClientCertCredentialFactory factory = new X509RestTlsClientCertCredentialFactory();
 
     @Test
-    public void createX509Credential() throws Exception {
+    void createX509Credential() throws Exception {
         val request = new MockHttpServletRequest();
 
         try (val inStream = new FileInputStream(new ClassPathResource("ldap-crl.crt").getFile())) {
@@ -42,7 +42,7 @@ class X509RestTlsClientCertCredentialFactoryTests {
     }
 
     @Test
-    public void createDefaultCredential() {
+    void createDefaultCredential() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");

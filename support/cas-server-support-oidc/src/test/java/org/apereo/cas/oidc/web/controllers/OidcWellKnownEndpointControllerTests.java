@@ -32,7 +32,7 @@ class OidcWellKnownEndpointControllerTests extends AbstractOidcTests {
     protected OidcWellKnownEndpointController oidcWellKnownController;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var request = getHttpRequestForEndpoint("unknown/" + OidcConstants.WELL_KNOWN_URL);
         request.setRequestURI("unknown/issuer");
         var entity = oidcWellKnownController.getWellKnownDiscoveryConfiguration(request, new MockHttpServletResponse());

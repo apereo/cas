@@ -27,7 +27,7 @@ class DefaultX509AttributeExtractorTests {
     }
 
     @Test
-    public void verifyExtractedAttributes() {
+    void verifyExtractedAttributes() {
         val extractor = new DefaultX509AttributeExtractor();
         val attributes = extractor.extractPersonAttributes(getCertificate("classpath:/x509-san-upn-resolver.crt"));
         assertEquals(CollectionUtils.wrapList("1.2.840.113549.1.1.11"), attributes.get("sigAlgOid"));

@@ -43,7 +43,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyDefaultRequestForUrl() throws Exception {
+    void verifyDefaultRequestForUrl() throws Exception {
         val request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.FRENCH));
         request.setRequestURI("/login");
@@ -57,7 +57,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyServiceHasLocaleAssigned() throws Exception {
+    void verifyServiceHasLocaleAssigned() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val resolver = new SessionLocaleResolver();
@@ -72,7 +72,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyRequestHeaderBeatsCasDefault() throws Exception {
+    void verifyRequestHeaderBeatsCasDefault() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -83,7 +83,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyRequestParamBeatsCasDefault() throws Exception {
+    void verifyRequestParamBeatsCasDefault() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "it");
         val response = new MockHttpServletResponse();
@@ -94,7 +94,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyRequestParamWithRegion() throws Exception {
+    void verifyRequestParamWithRegion() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "pt-BR");
         val response = new MockHttpServletResponse();
@@ -105,7 +105,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyRequestParamWithRegionUnderscore() throws Exception {
+    void verifyRequestParamWithRegionUnderscore() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "pt_BR");
         val response = new MockHttpServletResponse();
@@ -116,7 +116,7 @@ class CasLocaleChangeInterceptorTests {
     }
 
     @Test
-    public void verifyForcedCasDefaultBeatsAll() throws Exception {
+    void verifyForcedCasDefaultBeatsAll() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "it");
         val response = new MockHttpServletResponse();

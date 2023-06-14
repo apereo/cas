@@ -26,7 +26,7 @@ class DistributedCacheObjectTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
@@ -39,7 +39,7 @@ class DistributedCacheObjectTests {
 
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
@@ -55,7 +55,7 @@ class DistributedCacheObjectTests {
     }
 
     @Test
-    public void verifyNullValue() {
+    void verifyNullValue() {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())

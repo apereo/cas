@@ -54,7 +54,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     protected ServiceRegistry newServiceRegistry;
 
     @Test
-    public void verifyLargeDataset() {
+    void verifyLargeDataset() {
         newServiceRegistry.save(
             () -> {
                 val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
@@ -72,7 +72,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyCompatibilityWithRegex() {
+    void verifyCompatibilityWithRegex() {
         val service = new RegexRegisteredService();
         service.setId(2020);
         service.setServiceId("http://localhost:8080");
@@ -94,7 +94,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifySaveInStreams() {
+    void verifySaveInStreams() {
         var servicesToImport = Stream.<RegisteredService>empty();
         for (int i = 0; i < 1000; i++) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);

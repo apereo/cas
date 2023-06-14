@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Events")
 class CasConfigurationDeletedEventTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {

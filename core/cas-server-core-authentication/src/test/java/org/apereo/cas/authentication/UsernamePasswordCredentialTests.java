@@ -41,7 +41,7 @@ class UsernamePasswordCredentialTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential("casuser", "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
         assertTrue(input.isValid());
@@ -59,7 +59,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void verifyInvalidEvent() {
+    void verifyInvalidEvent() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val input = new UsernamePasswordCredential(null, "Mellon".toCharArray(), StringUtils.EMPTY, Map.of());
 
@@ -74,7 +74,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void verifySetGetUsername() {
+    void verifySetGetUsername() {
         val credential = new UsernamePasswordCredential();
         val userName = "test";
         credential.setUsername(userName);
@@ -82,7 +82,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void verifySetGetPassword() {
+    void verifySetGetPassword() {
         val credential = new UsernamePasswordCredential();
         val password = "test";
 
@@ -91,7 +91,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    public void verifyEquals() {
+    void verifyEquals() {
         val c1 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         assertNotEquals(null, c1);
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");

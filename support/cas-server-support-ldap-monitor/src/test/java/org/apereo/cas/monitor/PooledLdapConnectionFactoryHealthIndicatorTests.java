@@ -45,7 +45,7 @@ class PooledLdapConnectionFactoryHealthIndicatorTests {
     private ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean;
 
     @Test
-    public void verifyObserve() throws Exception {
+    void verifyObserve() throws Exception {
         val results = monitor.stream()
             .map(it -> HealthIndicator.class.cast(it.getContributor()))
             .map(it -> it.health().getStatus()).toList();

@@ -56,7 +56,7 @@ class CasServiceRegistryInitializationConfigurationTests {
     @Nested
     public class WithoutServiceRegistryLocation {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(serviceRegistryInitializer);
             assertNotNull(embeddedJsonServiceRegistry);
             assertEquals(1, servicesManager.count());
@@ -70,7 +70,7 @@ class CasServiceRegistryInitializationConfigurationTests {
     @TestPropertySource(properties = "cas.service-registry.json.location=unknown-bad-location")
     public class WithUnknownServiceRegistryLocation {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertNotNull(serviceRegistryInitializer);
             assertNotNull(embeddedJsonServiceRegistry);
             assertEquals(1, servicesManager.count());

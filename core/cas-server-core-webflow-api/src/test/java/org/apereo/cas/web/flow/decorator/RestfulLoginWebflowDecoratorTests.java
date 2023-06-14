@@ -33,7 +33,7 @@ class RestfulLoginWebflowDecoratorTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new RestfulWebflowLoginDecoratorProperties();
         props.setUrl("http://localhost:9465");
 

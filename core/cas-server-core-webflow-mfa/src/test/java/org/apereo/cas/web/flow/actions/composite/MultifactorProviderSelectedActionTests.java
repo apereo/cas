@@ -32,7 +32,7 @@ class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAu
     private Action action;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("mfaProvider", TestMultifactorAuthenticationProvider.ID);

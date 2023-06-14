@@ -96,7 +96,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponse() throws Exception {
+    void verifyResponse() throws Exception {
         val model = new HashMap<String, Object>();
 
         val attributes = new HashMap<String, List<Object>>();
@@ -136,7 +136,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponseWithNoAttributes() throws Exception {
+    void verifyResponseWithNoAttributes() throws Exception {
         val model = new HashMap<String, Object>();
 
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(PRINCIPAL_ID);
@@ -162,7 +162,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponseWithoutAuthMethod() throws Exception {
+    void verifyResponseWithoutAuthMethod() throws Exception {
         val model = new HashMap<String, Object>();
 
         val attributes = new HashMap<String, List<Object>>();

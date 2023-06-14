@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("Logout")
 class DefaultSingleLogoutMessageCreatorTests {
     @Test
-    public void verifyFrontChannel() {
+    void verifyFrontChannel() {
         val input = new DefaultSingleLogoutMessageCreator();
 
         val exec = SingleLogoutExecutionRequest.builder()

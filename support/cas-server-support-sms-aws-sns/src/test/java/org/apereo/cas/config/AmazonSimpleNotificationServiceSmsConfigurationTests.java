@@ -35,7 +35,7 @@ class AmazonSimpleNotificationServiceSmsConfigurationTests {
     private SmsSender smsSender;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(smsSender);
     }
 }

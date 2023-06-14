@@ -23,7 +23,7 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     private OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.EMAIL));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.ADDRESS));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.PHONE));

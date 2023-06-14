@@ -50,7 +50,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurati
     private LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy;
 
     @Test
-    public void verifyOperationForPostBinding() throws Exception {
+    void verifyOperationForPostBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -82,7 +82,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifyOperationForRedirectBinding() throws Exception {
+    void verifyOperationForRedirectBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -111,7 +111,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifyNoLogoutResponse() throws Exception {
+    void verifyNoLogoutResponse() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,
@@ -126,7 +126,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurati
     }
 
     @Test
-    public void verifyLogoutForNonSamlService() {
+    void verifyLogoutForNonSamlService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());

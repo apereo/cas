@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class ByCredentialTypeAuthenticationHandlerResolverTests {
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val resolver = new ByCredentialTypeAuthenticationHandlerResolver(UsernamePasswordCredential.class);
         assertTrue(resolver.supports(CollectionUtils.wrapSet(new SimpleTestUsernamePasswordAuthenticationHandler()),
             new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
     }
 
     @Test
-    public void verifyResolves() {
+    void verifyResolves() {
         val resolver = new ByCredentialTypeAuthenticationHandlerResolver(UsernamePasswordCredential.class);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         c.setSource("TestHandler");

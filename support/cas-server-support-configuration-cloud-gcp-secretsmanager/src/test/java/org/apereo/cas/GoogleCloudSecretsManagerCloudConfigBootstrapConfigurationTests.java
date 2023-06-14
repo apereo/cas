@@ -34,7 +34,7 @@ class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends BaseGoogleCloudSecretsManagerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val source = propertySourceLocator.locate(environment);
             val propertyValue = source.getProperty("sm://projects/1234567890/secrets/cas_authn_accept_users");
             assertNull(propertyValue);
@@ -46,7 +46,7 @@ class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
     @Import(MockTests.GoogleCloudSecretsManagerTestConfiguration.class)
     class MockTests extends BaseGoogleCloudSecretsManagerTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val source = propertySourceLocator.locate(environment);
             val propertyValue = source.getProperty("sm://projects/1234567890/secrets/cas_authn_accept_users");
             assertEquals("casuser::Mellon", propertyValue);

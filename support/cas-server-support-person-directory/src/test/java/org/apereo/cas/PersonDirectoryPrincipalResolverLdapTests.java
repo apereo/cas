@@ -76,7 +76,7 @@ class PersonDirectoryPrincipalResolverLdapTests {
     private ServicesManager servicesManager;
     
     @Test
-    public void verifyResolver() {
+    void verifyResolver() {
         val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository, attributeMerger, servicesManager, attributeDefinitionStore, casProperties.getPersonDirectory());
@@ -90,7 +90,7 @@ class PersonDirectoryPrincipalResolverLdapTests {
     }
 
     @Test
-    public void verifyChainedResolver() {
+    void verifyChainedResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),

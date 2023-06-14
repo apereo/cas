@@ -32,7 +32,7 @@ class CasUndertowBannerTests {
     private Environment environment;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val banner = new CasUndertowBanner();
         val writer = new StringWriter();
         val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);

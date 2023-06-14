@@ -133,7 +133,7 @@ class CasRegisteredServiceTests {
     }
 
     @Test
-    public void verifyDefaultMatchingStrategy() {
+    void verifyDefaultMatchingStrategy() {
         val service = new CasRegisteredService();
         service.setMatchingStrategy(null);
         service.setServiceId("\\d\\d\\d");
@@ -141,7 +141,7 @@ class CasRegisteredServiceTests {
     }
 
     @Test
-    public void verifyDefaults() {
+    void verifyDefaults() {
         val service = mock(RegisteredService.class);
         when(service.getDescription()).thenCallRealMethod();
         when(service.getFriendlyName()).thenCallRealMethod();

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
-    public void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
         val dir = new FileSystemResource(FileUtils.getTempDirectory());
         props.getMetadata().getFileSystem().setLocation(dir.getFile().getCanonicalPath());
@@ -56,7 +56,7 @@ class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
      * Make sure default file:/etc/cas/saml URI syntax is parsed correctly.
      */
     @Test
-    public void verifyResolverResolvesWithFileUri() {
+    void verifyResolverResolvesWithFileUri() {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation("file:/etc/cas/saml");
         val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);

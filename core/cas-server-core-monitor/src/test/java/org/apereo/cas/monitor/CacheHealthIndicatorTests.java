@@ -37,7 +37,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveOk() {
+    void verifyObserveOk() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -52,7 +52,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveWarn() {
+    void verifyObserveWarn() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -68,7 +68,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveError() {
+    void verifyObserveError() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -83,7 +83,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveError2() {
+    void verifyObserveError2() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -97,13 +97,13 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyToString() {
+    void verifyToString() {
         val stat = new SimpleCacheStatistics(100, 110, 0, "test");
         assertNotNull(stat.toString(new StringBuilder()));
     }
 
     @Test
-    public void verifyOut() {
+    void verifyOut() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {
@@ -114,7 +114,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyDown() {
+    void verifyDown() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {
@@ -132,7 +132,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    public void verifyError() {
+    void verifyError() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SMS")
 class TextMagicSmsSenderTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val props = new TextMagicProperties();
         props.setUsername("casuser");
         props.setPassword("password");

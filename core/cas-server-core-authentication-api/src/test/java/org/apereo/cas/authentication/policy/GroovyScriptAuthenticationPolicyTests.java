@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class GroovyScriptAuthenticationPolicyTests {
 
     @Test
-    public void verifyActionExternalScript() throws Exception {
+    void verifyActionExternalScript() throws Exception {
         val script = """
             import org.apereo.cas.authentication.*
             def run(Object[] args) { def principal = args[0]
@@ -46,7 +46,7 @@ class GroovyScriptAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyResumeOnFailureExternal() throws Exception {
+    void verifyResumeOnFailureExternal() throws Exception {
         val script = """
             def shouldResumeOnFailure(Object[] args) { def failure = args[0]\s
              return failure != null\s
@@ -59,14 +59,14 @@ class GroovyScriptAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyResumeOnFailureClasspath() {
+    void verifyResumeOnFailureClasspath() {
         val p = new GroovyScriptAuthenticationPolicy("classpath:/GroovyAuthenticationPolicy.groovy");
         assertFalse(p.shouldResumeOnFailure(new RuntimeException()));
         assertTrue(p.shouldResumeOnFailure(new AccountNotFoundException()));
     }
 
     @Test
-    public void verifyBadFile() {
+    void verifyBadFile() {
         val script = """
             def shouldResumeOnFailure(Object[] args) { def failure = args[0]\s
              return failure != null\s

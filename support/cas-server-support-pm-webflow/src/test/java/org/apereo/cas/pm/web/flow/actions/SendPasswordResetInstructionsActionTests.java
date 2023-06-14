@@ -69,7 +69,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
@@ -82,7 +82,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        public void verifyNoPhoneOrEmail() throws Exception {
+        void verifyNoPhoneOrEmail() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "none");
@@ -92,7 +92,7 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
-        public void verifyNoUsername() throws Exception {
+        void verifyNoUsername() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
@@ -120,7 +120,7 @@ class SendPasswordResetInstructionsActionTests {
     class MultiUseTests extends BasePasswordManagementActionTests {
 
         @Test
-        public void verifyActionMultiUse() throws Exception {
+        void verifyActionMultiUse() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "casuser");
@@ -139,7 +139,7 @@ class SendPasswordResetInstructionsActionTests {
     class WithoutTokens extends BasePasswordManagementActionTests {
 
         @Test
-        public void verifyNoLinkAction() throws Exception {
+        void verifyNoLinkAction() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             request.addParameter("username", "unknown");

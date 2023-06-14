@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2")
 class SamlResponseAuditPrincipalIdProviderTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val r = new SamlResponseAuditPrincipalIdProvider();
         val response = mock(Response.class);
         val issuer = mock(Issuer.class);
@@ -47,7 +47,7 @@ class SamlResponseAuditPrincipalIdProviderTests {
     }
 
     @Test
-    public void verifyDefaultAction() {
+    void verifyDefaultAction() {
         val r = new SamlResponseAuditPrincipalIdProvider();
         val response = mock(Response.class);
         when(response.getAssertions()).thenReturn(CollectionUtils.wrapList());

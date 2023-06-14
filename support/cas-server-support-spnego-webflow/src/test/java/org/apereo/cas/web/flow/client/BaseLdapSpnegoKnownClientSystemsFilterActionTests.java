@@ -30,7 +30,7 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
     protected Action ldapSpnegoClientAction;
 
     @Test
-    public void ensureLdapAttributeShouldDoSpnego() throws Exception {
+    void ensureLdapAttributeShouldDoSpnego() throws Exception {
         val ctx = new MockRequestContext();
         val req = new MockHttpServletRequest();
         req.setRemoteAddr("localhost");

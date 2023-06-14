@@ -19,12 +19,12 @@ class DefaultRandomStringGeneratorTests {
         LENGTH);
 
     @Test
-    public void verifyDefaultLength() {
+    void verifyDefaultLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getDefaultLength());
     }
 
     @Test
-    public void verifyRandomString() {
+    void verifyRandomString() {
         assertNotSame(this.randomStringGenerator.getNewString(),
             this.randomStringGenerator.getNewString());
     }

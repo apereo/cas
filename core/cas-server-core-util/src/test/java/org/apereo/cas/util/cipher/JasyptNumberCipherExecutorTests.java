@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JasyptNumberCipherExecutorTests {
 
     @Test
-    public void verifyLongOperation() {
+    void verifyLongOperation() {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         assertEquals("My Cipher", cipher.getName());
         val randomNumber = RandomUtils.nextLong(0, 999999999);
@@ -31,7 +31,7 @@ class JasyptNumberCipherExecutorTests {
     }
 
     @Test
-    public void verifyIntOperation() {
+    void verifyIntOperation() {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         val randomNumber = RandomUtils.nextInt(0, 9999999);
         val encoded = cipher.encode(randomNumber);
@@ -39,7 +39,7 @@ class JasyptNumberCipherExecutorTests {
     }
 
     @Test
-    public void verifyDecodeTwice() {
+    void verifyDecodeTwice() {
         val cipher = new JasyptNumberCipherExecutor(UUID.randomUUID().toString(), "My Cipher");
         val randomNumber = RandomUtils.nextInt(0, 9999999);
         val encoded = cipher.encode(randomNumber);

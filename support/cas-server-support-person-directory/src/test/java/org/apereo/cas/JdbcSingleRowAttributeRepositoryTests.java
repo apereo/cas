@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    public void verifySingleRowAttributeRepository() {
+    void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -45,7 +45,7 @@ class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryT
 
 
     @Test
-    public void verifyPeopleSingleRowAttributeRepository() {
+    void verifyPeopleSingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val people = attributeRepository.getPeople(Map.of("username", List.of("CASUSER")));
         val person = people.iterator().next();

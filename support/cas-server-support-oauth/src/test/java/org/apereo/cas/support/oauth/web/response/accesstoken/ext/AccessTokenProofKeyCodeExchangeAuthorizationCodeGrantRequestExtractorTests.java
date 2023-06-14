@@ -32,7 +32,7 @@ class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test
-    public void verifyExtraction() throws Exception {
+    void verifyExtraction() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         servicesManager.save(service);
 

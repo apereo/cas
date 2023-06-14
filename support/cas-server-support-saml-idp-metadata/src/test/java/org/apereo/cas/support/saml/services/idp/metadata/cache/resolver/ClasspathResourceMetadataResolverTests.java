@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
-    public void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Exception {
         val resolver = getClasspathResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
@@ -34,7 +34,7 @@ class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Exception {
         val resolver = getClasspathResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setName("TestShib");
@@ -45,7 +45,7 @@ class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverFails() throws Exception {
+    void verifyResolverFails() throws Exception {
         val resolver = getClasspathResourceMetadataResolver();
         val service = new SamlRegisteredService();
         service.setName("TestShib");

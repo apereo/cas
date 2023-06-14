@@ -52,7 +52,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     }
 
     @Test
-    public void verifySave() {
+    void verifySave() {
         val id = UUID.randomUUID().toString();
         assertNull(registry.get(654321));
         assertNull(registry.get(id, 654321));
@@ -73,7 +73,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
     }
 
     @Test
-    public void verifyDelete() {
+    void verifyDelete() {
         val id = UUID.randomUUID().toString();
         val toSave = OneTimeTokenAccount.builder()
             .username(id)
@@ -89,7 +89,7 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
 
     @Override
     @Test
-    public void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() {
         val id = UUID.randomUUID().toString();
         val toSave = OneTimeTokenAccount.builder()
             .username(id)

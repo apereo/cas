@@ -116,7 +116,7 @@ class RedisAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccessful() throws Exception {
+    void verifySuccessful() throws Exception {
         val result = authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "caspassword"), mock(Service.class));
         assertNotNull(result);
         val principal = result.getPrincipal();
@@ -127,31 +127,31 @@ class RedisAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNotFound() {
+    void verifyNotFound() {
         assertThrows(AccountNotFoundException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("123456", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    public void verifyInvalid() {
+    void verifyInvalid() {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "badpassword"), mock(Service.class)));
     }
 
     @Test
-    public void verifyExpired() {
+    void verifyExpired() {
         assertThrows(AccountExpiredException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casexpired", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    public void verifyLocked() {
+    void verifyLocked() {
         assertThrows(AccountLockedException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caslocked", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    public void verifyChangePsw() {
+    void verifyChangePsw() {
         assertThrows(AccountPasswordMustChangeException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caschangepsw", "caspassword"), mock(Service.class)));
     }

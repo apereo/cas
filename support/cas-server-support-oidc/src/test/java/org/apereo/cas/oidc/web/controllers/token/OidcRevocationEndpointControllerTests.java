@@ -27,7 +27,7 @@ class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
     protected OidcRevocationEndpointController oidcRevocationEndpointController;
 
     @Test
-    public void verifyGivenAccessTokenInRegistry() throws Exception {
+    void verifyGivenAccessTokenInRegistry() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.REVOCATION_URL);
         val response = new MockHttpServletResponse();
         val mv = oidcRevocationEndpointController.handleRequest(request, response);
@@ -36,7 +36,7 @@ class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();

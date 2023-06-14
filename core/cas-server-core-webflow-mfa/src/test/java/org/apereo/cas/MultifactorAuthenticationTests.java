@@ -70,7 +70,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    public void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
+    void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -79,7 +79,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    public void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
+    void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -88,7 +88,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    public void verifyDeniesAccessToHighSecurityServiceWithPassword() {
+    void verifyDeniesAccessToHighSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -96,7 +96,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    public void verifyDeniesAccessToHighSecurityServiceWithOTP() {
+    void verifyDeniesAccessToHighSecurityServiceWithOTP() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -104,7 +104,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
+    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE,
             newUserPassCredentials(ALICE, ALICE),
             new OneTimePasswordCredential(ALICE, PASSWORD_31415));
@@ -116,7 +116,7 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     @Test
-    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
+    void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
         val ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
             new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 

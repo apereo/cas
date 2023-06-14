@@ -47,21 +47,21 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyRemovePrompt() {
+    void verifyRemovePrompt() {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT;
         val request = OidcRequestSupport.removeOidcPromptFromAuthorizationRequest(url, OidcConstants.PROMPT_CONSENT);
         assertFalse(request.contains(OAuth20Constants.PROMPT));
     }
 
     @Test
-    public void verifyOidcPrompt() {
+    void verifyOidcPrompt() {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=login";
         val authorizationRequest = oauthRequestParameterResolver.resolveSupportedPromptValues(url);
         assertEquals("login", authorizationRequest.toArray()[0]);
     }
 
     @Test
-    public void verifyOidcPromptFromContext() {
+    void verifyOidcPromptFromContext() {
         val url = "https://tralala.whapi.com/something?" + OAuth20Constants.PROMPT + "=login";
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn(url);
@@ -70,7 +70,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOidcMaxAgeTooOld() {
+    void verifyOidcMaxAgeTooOld() {
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1");
         val authenticationDate = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5);
@@ -87,7 +87,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOidcMaxAgeTooOldForContext() {
+    void verifyOidcMaxAgeTooOldForContext() {
         val authenticationDate = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(5);
         val authn = CoreAuthenticationTestUtils.getAuthentication("casuser", authenticationDate);
 
@@ -105,7 +105,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOidcMaxAge() {
+    void verifyOidcMaxAge() {
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
         val age = OidcRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
@@ -123,7 +123,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyAuthnProfile() {
+    void verifyAuthnProfile() {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://www.example.org");
         request.setQueryString("param=value");
@@ -135,7 +135,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyGetRedirectUrlWithError() {
+    void verifyGetRedirectUrlWithError() {
         val request = new MockHttpServletRequest();
         request.setScheme("https");
         request.setServerName("example.org");
@@ -148,7 +148,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void validateStaticIssuer() {
+    void validateStaticIssuer() {
         val staticIssuer = "https://sso.example.org:8443/cas/oidc";
         val properties = new CasConfigurationProperties().getAuthn().getOidc();
         properties.getCore().setIssuer(staticIssuer);
@@ -160,7 +160,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void validateDynamicIssuer() {
+    void validateDynamicIssuer() {
         val staticIssuer = "https://sso.example.org:8443/cas/oidc/custom/fawnoos/issuer";
         val properties = new CasConfigurationProperties().getAuthn().getOidc();
         properties.getCore().setIssuer(staticIssuer);
@@ -172,7 +172,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void validateDynamicIssuerForLogout() {
+    void validateDynamicIssuerForLogout() {
         val staticIssuer = "https://sso.example.org:8443/cas/oidc";
         val properties = new CasConfigurationProperties().getAuthn().getOidc();
         properties.getCore().setIssuer(staticIssuer);
@@ -181,7 +181,7 @@ class OidcRequestSupportTests extends AbstractOidcTests {
     }
 
     @Test
-    public void validateIssuerMismatch() {
+    void validateIssuerMismatch() {
         val staticIssuer = "https://sso.example.org:8443/cas/openid-connect";
         val properties = new CasConfigurationProperties().getAuthn().getOidc();
         properties.getCore().setIssuer(staticIssuer);

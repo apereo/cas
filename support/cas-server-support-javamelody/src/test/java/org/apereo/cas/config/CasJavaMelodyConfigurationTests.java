@@ -36,7 +36,7 @@ class CasJavaMelodyConfigurationTests {
     private MonitoringSpringAdvisor monitorableComponentsAdvisor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(monitoringSpringServiceAdvisor);
         assertNotNull(monitorableComponentsAdvisor);
     }

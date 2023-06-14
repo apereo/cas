@@ -54,7 +54,7 @@ class CloudDirectoryAuthenticationConfigurationTests {
     private CloudDirectoryClient amazonCloudDirectory;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(amazonCloudDirectory);
     }
 }

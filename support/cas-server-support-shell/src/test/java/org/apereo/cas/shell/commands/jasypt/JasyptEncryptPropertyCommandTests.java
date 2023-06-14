@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "
                                                       + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }
 
     @Test
-    public void verifyFileEncryption() throws Exception {
+    void verifyFileEncryption() throws Exception {
         val file = File.createTempFile("file", ".txt");
         FileUtils.write(file, UUID.randomUUID().toString(), StandardCharsets.UTF_8);
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --file " + file.getAbsolutePath() + " --password "
@@ -38,7 +38,7 @@ class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     }
 
     @Test
-    public void verifyOperationWithInitVector() {
+    void verifyOperationWithInitVector() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "
                                                       + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }

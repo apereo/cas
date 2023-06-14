@@ -38,7 +38,7 @@ class MetadataRegistrationAuthorityAttributeReleasePolicyTests extends BaseSamlI
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyNoMatch() {
+    void verifyNoMatch() {
         val filter = new MetadataRegistrationAuthorityAttributeReleasePolicy();
         filter.setRegistrationAuthority("^nothing.+");
         filter.setAllowedAttributes(List.of("sn"));
@@ -55,7 +55,7 @@ class MetadataRegistrationAuthorityAttributeReleasePolicyTests extends BaseSamlI
     }
 
     @Test
-    public void verifyMatch() {
+    void verifyMatch() {
         val filter = new MetadataRegistrationAuthorityAttributeReleasePolicy();
         filter.setRegistrationAuthority("urn:mace:.+");
         filter.setAllowedAttributes(List.of("sn"));
@@ -79,7 +79,7 @@ class MetadataRegistrationAuthorityAttributeReleasePolicyTests extends BaseSamlI
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new MetadataRegistrationAuthorityAttributeReleasePolicy();
         filter.setRegistrationAuthority("urn:mace:.+");
         MAPPER.writeValue(JSON_FILE, filter);

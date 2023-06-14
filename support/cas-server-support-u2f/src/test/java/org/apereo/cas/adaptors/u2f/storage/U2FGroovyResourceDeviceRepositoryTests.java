@@ -39,7 +39,7 @@ class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepository
     private U2FDeviceRepository deviceRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 }

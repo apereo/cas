@@ -28,7 +28,7 @@ class CasAcceptableUsagePolicyRestConfigurationTests {
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
     }
 }

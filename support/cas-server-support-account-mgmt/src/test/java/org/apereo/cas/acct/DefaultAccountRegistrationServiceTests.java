@@ -56,7 +56,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingIssuer() throws Exception {
+    void verifyMissingIssuer() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer("unknown");
         val token = claims.toJson();
@@ -64,7 +64,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingAudience() throws Exception {
+    void verifyMissingAudience() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience("unknown");
@@ -73,7 +73,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingSubject() throws Exception {
+    void verifyMissingSubject() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());
@@ -82,7 +82,7 @@ class DefaultAccountRegistrationServiceTests {
     }
 
     @Test
-    public void verifyMissingClientInfo() throws Exception {
+    void verifyMissingClientInfo() throws Exception {
         val claims = new JwtClaims();
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());

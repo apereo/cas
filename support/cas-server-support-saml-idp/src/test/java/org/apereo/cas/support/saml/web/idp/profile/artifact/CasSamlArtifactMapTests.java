@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
     @Test
-    public void verifyOperationByParam() throws Exception {
+    void verifyOperationByParam() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val request = new MockHttpServletRequest();
@@ -41,7 +41,7 @@ class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyOperationByStore() throws Exception {
+    void verifyOperationByStore() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val response = new MockHttpServletResponse();

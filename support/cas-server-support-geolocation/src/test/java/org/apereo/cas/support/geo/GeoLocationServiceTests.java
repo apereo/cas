@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("GeoLocation")
 class GeoLocationServiceTests {
     @Test
-    public void verifyLocate() {
+    void verifyLocate() {
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
         val svc = new DummyGeoLocationService();
@@ -32,7 +32,7 @@ class GeoLocationServiceTests {
     }
 
     @Test
-    public void verifyLocateFails() {
+    void verifyLocateFails() {
         val svc = mock(AbstractGeoLocationService.class);
         when(svc.locate(anyString())).thenReturn(null);
         when(svc.locate(anyString(), any(GeoLocationRequest.class))).thenCallRealMethod();

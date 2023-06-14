@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class DefaultTicketRegistryCleanerTests {
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -41,7 +41,7 @@ class DefaultTicketRegistryCleanerTests {
 
 
     @Test
-    public void verifyCleanFail() {
+    void verifyCleanFail() {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
@@ -50,7 +50,7 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyNoCleaner() {
+    void verifyNoCleaner() {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry) {

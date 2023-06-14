@@ -53,7 +53,7 @@ class DefaultCommunicationsManagerTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    public void verifyMailSender() {
+    void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         var props = new EmailProperties();
@@ -76,7 +76,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    public void verifyEmailWithLocalizedSubject() {
+    void verifyEmailWithLocalizedSubject() {
         val props = new EmailProperties();
         props.setText("Hello World");
         props.setSubject("#{my.subject}");
@@ -89,7 +89,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    public void verifyMailSenderWithTemplateBody() throws Exception {
+    void verifyMailSenderWithTemplateBody() throws Exception {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         val tempFile = Files.createTempFile("prefix", "postfix").toFile();
@@ -108,7 +108,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    public void verifyMailNoAtr() {
+    void verifyMailNoAtr() {
         assertTrue(communicationsManager.isMailSenderDefined());
         val emailRequest = EmailMessageRequest.builder()
             .principal(mock(Principal.class))
@@ -119,7 +119,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    public void verifySmsNoAtr() {
+    void verifySmsNoAtr() {
         assertFalse(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder()
             .principal(mock(Principal.class))
@@ -130,13 +130,13 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    public void verifyNoSmsSender() {
+    void verifyNoSmsSender() {
         assertFalse(communicationsManager.isSmsSenderDefined());
         assertFalse(communicationsManager.sms(SmsRequest.builder().build()));
     }
 
     @Test
-    public void verifyValidate() {
+    void verifyValidate() {
         assertTrue(communicationsManager.validate());
     }
 }

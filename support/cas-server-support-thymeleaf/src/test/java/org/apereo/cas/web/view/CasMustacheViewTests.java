@@ -45,21 +45,21 @@ class CasMustacheViewTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyCas3FailureView() throws Exception {
+    void verifyCas3FailureView() throws Exception {
         renderView(casProperties.getView().getCas3().getFailure(),
             Map.of("code", CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                 "description", "Invalid request"));
     }
 
     @Test
-    public void verifyCasProxyFailureView() throws Exception {
+    void verifyCasProxyFailureView() throws Exception {
         renderView(casProperties.getView().getCas2().getProxy().getFailure(),
             Map.of("code", CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                 "description", "Invalid request"));
     }
 
     @Test
-    public void verifyCas2FailureView() throws Exception {
+    void verifyCas2FailureView() throws Exception {
         renderView(casProperties.getView().getCas2().getFailure(),
             Map.of("code", CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                 "description", "Invalid request"));

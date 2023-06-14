@@ -82,7 +82,7 @@ class ZooKeeperCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val zk = curatorFramework.getZookeeperClient().getZooKeeper();
         assertNotNull(zk);
         assertEquals("apereocas", casProperties.getServer().getName());

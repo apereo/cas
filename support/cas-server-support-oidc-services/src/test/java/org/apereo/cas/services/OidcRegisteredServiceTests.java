@@ -36,7 +36,7 @@ class OidcRegisteredServiceTests {
 
     private final ServiceRegistry dao;
 
-    OidcRegisteredServiceTests() throws Exception {
+    public OidcRegisteredServiceTests() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -52,7 +52,7 @@ class OidcRegisteredServiceTests {
     }
 
     @Test
-    public void checkSaveMethod() {
+    void checkSaveMethod() {
         val r = new OidcRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
@@ -70,7 +70,7 @@ class OidcRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
+    void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
         val serviceWritten = new OidcRegisteredService();
         serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");

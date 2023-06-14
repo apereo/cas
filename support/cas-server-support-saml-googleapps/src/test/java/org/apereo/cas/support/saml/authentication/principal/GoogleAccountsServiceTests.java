@@ -104,7 +104,7 @@ class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyResponse() {
+    void verifyResponse() {
         val resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
             CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(DefaultResponse.ResponseType.POST, resp.responseType());
@@ -126,7 +126,7 @@ class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void serializeGoogleAccountService() throws Exception {
+    void serializeGoogleAccountService() throws Exception {
         val service = getGoogleAccountsService();
         MAPPER.writeValue(FILE, service);
         val service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);

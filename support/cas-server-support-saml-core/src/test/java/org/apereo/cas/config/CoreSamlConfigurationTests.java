@@ -56,7 +56,7 @@ public class CoreSamlConfigurationTests {
     protected UnmarshallerFactory unmarshallerFactory;
 
     @Test
-    public void verify() {
+    void verify() {
         assertNotNull(velocityEngineFactoryBean);
         assertNotNull(openSamlConfigBean);
         assertNotNull(parserPool);
