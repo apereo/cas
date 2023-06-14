@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("WebflowAuthenticationActions")
-public class AuthenticationExceptionHandlerActionTests {
+class AuthenticationExceptionHandlerActionTests {
 
     private static RequestContext getMockRequestContext() {
         val ctx = mock(RequestContext.class);

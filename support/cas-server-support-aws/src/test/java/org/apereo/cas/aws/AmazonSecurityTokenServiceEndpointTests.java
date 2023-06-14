@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("AmazonWebServices")
 @EnabledIfListeningOnPort(port = 4566)
-public class AmazonSecurityTokenServiceEndpointTests {
+class AmazonSecurityTokenServiceEndpointTests {
     @TestPropertySource(properties = {
         "cas.amazon-sts.endpoint=http://127.0.0.1:4566",
         "cas.amazon-sts.region=us-east-1",
@@ -60,7 +60,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.authn.attribute-repository.stub.attributes.groupMembership=some-value"
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithMissingAuthorizationAttributeValues extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithMissingAuthorizationAttributeValues extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -90,7 +90,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
     @Tag("AmazonWebServices")
     @TestPropertySource(properties = "cas.amazon-sts.principal-attribute-name=unknown")
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithMissingAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithMissingAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -123,7 +123,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.principal-attribute-value="
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithoutAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithoutAuthorizationAttributes extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -195,7 +195,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.rbac-enabled=true",
         "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role"
     })
-    public class WithRoleRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithRoleRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
@@ -230,7 +230,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.rbac-enabled=true",
         "cas.authn.attribute-repository.stub.attributes.awsroles=arn:aws:iam::223873472255:role/adminuser-iam-role,arn:aws:iam::123873472251:role/superuser-iam-role"
     })
-    public class WithMultipleRolesRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
+    class WithMultipleRolesRequest extends BaseAmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class UnauthorizedAuthenticationExceptionTests {
+class UnauthorizedAuthenticationExceptionTests {
     @Test
     public void verifyOpsErrorsAndMessage() {
         val ex = new UnauthorizedAuthenticationException("message", Map.of("error", new RuntimeException()));

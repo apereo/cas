@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-public class FinishLogoutActionTests extends AbstractWebflowActionsTests {
+class FinishLogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String URL = "https://ww.google.com";
 

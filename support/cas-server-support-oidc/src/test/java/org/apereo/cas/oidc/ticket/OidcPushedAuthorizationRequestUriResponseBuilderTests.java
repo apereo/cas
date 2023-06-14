@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.par.max-time-to-live-in-seconds=5",
     "cas.authn.oidc.par.number-of-uses=1"
 })
-public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidcTests {
+class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizationRequestResponseBuilder")
     private OAuth20AuthorizationResponseBuilder oidcPushedAuthorizationRequestResponseBuilder;

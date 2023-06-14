@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.core.enable-locking=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ZookeeperLockRegistryTests {
+class ZookeeperLockRegistryTests {
 
     @Autowired
     @Qualifier("casTicketRegistryLockRepository")

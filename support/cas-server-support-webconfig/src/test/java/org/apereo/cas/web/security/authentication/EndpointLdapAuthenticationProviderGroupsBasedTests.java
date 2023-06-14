@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("LdapAuthentication")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
+class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
     public void verifyAuthorizedByGroup() {

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.ticket.tgt.remember-me.enabled=true")
-public class DefaultLoginWebflowConfigurerRememberMeTests extends BaseWebflowConfigurerTests {
+class DefaultLoginWebflowConfigurerRememberMeTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         val context = new MockRequestContext();

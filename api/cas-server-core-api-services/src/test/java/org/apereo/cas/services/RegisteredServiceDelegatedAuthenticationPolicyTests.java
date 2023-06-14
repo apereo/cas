@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceDelegatedAuthenticationPolicyTests {
+class RegisteredServiceDelegatedAuthenticationPolicyTests {
 
     @Test
     public void verifyOperation() {

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
-public class SQSAppenderTests {
+class SQSAppenderTests {
     @Test
     public void verifyOperation() throws Exception {
         val context = LoggerContext.getContext(false);

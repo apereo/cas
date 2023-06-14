@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationHandler")
-public class OktaAuthenticationStateHandlerAdapterTests {
+class OktaAuthenticationStateHandlerAdapterTests {
     @Test
     public void handleSuccessWithoutToken() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(

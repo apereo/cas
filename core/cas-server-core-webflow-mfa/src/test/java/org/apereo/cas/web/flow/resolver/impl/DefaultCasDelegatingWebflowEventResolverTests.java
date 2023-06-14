@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowEvents")
-public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;

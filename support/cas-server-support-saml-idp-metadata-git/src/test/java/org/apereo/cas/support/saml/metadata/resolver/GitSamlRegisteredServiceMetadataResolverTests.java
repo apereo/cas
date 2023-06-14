@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 @Tag("Git")
-public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
+class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
     @Autowired
     @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
     private Runnable gitSamlRegisteredServiceRepositoryScheduler;

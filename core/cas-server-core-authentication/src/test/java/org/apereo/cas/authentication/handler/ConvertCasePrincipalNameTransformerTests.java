@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("Authentication")
-public class ConvertCasePrincipalNameTransformerTests {
+class ConvertCasePrincipalNameTransformerTests {
 
     @Test
     public void verifyUpperCaseTransformerWithTrimAndDelegate() {

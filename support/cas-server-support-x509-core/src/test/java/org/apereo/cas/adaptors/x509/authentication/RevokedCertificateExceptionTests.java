@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("X509")
 @SuppressWarnings("JavaUtilDate")
-public class RevokedCertificateExceptionTests {
+class RevokedCertificateExceptionTests {
     @Test
     public void verifyReason() {
         val entry = mock(X509CRLEntry.class);

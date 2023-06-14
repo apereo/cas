@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Web")
-public class ProtocolEndpointWebSecurityConfigurerTests {
+class ProtocolEndpointWebSecurityConfigurerTests {
 
     @Test
     public void verifyOperation() throws Exception {

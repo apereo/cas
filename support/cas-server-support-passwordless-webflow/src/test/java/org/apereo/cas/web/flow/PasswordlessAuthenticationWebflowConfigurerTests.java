@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
     PasswordlessAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
-public class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     public void verifyOperation() {

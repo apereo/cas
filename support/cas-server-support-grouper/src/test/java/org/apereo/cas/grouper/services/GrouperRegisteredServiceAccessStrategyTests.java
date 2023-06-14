@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("RegisteredService")
-public class GrouperRegisteredServiceAccessStrategyTests {
+class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 

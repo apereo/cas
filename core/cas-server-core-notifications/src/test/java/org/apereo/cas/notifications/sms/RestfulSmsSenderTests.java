@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("RestfulApi")
-public class RestfulSmsSenderTests {
+class RestfulSmsSenderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")

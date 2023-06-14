@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SAML2")
 @Deprecated(since = "6.2.0")
-public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
+class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory factory;

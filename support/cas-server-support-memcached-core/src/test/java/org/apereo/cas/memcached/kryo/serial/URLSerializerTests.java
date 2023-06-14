@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class URLSerializerTests {
+class URLSerializerTests {
     @Test
     public void verifyTranscoderWorks() throws Exception {
         val pool = new CasKryoPool();

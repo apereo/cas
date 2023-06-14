@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
+class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
     @BeforeEach
     public void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';

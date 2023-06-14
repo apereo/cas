@@ -83,7 +83,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationComponentSerializationConfiguration.class,
     CasCoreUtilSerializationConfiguration.class
 })
-public class CasKryoTranscoderTests {
+class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
 
     private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";

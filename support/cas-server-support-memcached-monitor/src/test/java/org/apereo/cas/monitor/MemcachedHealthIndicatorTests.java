@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class MemcachedHealthIndicatorTests {
+class MemcachedHealthIndicatorTests {
     @Autowired
     @Qualifier("memcachedHealthIndicator")
     private HealthIndicator monitor;

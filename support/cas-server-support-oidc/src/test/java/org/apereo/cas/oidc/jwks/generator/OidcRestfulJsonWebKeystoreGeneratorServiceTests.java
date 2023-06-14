@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.rest.basic-auth-username=casuser",
     "cas.authn.oidc.jwks.rest.basic-auth-password=123456"
 })
-public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
+class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static MockWebServer SERVER;
 
     @BeforeAll

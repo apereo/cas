@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OAuth")
-public class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
+class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier(ServiceTicketSessionTrackingPolicy.BEAN_NAME)
     protected ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;

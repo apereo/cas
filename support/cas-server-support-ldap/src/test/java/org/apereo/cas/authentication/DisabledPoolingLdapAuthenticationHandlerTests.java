@@ -14,5 +14,5 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = "cas.authn.ldap[0].disable-pooling=true")
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAuthentication")
-public class DisabledPoolingLdapAuthenticationHandlerTests extends AuthenticatedLdapAuthenticationHandlerTests {
+class DisabledPoolingLdapAuthenticationHandlerTests extends AuthenticatedLdapAuthenticationHandlerTests {
 }

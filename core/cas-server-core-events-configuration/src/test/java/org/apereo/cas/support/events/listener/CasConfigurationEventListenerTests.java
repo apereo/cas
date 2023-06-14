@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasConfigurationEventListenerTests {
+class CasConfigurationEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

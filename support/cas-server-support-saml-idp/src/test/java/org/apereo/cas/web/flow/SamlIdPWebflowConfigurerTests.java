@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-public class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
+class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier("samlIdPProtocolEndpointConfigurer")
     private ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer;

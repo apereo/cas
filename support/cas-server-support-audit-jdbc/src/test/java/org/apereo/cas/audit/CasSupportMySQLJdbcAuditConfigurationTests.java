@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
+class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

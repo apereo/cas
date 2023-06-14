@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAML2")
-public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void before() {

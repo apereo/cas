@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.sign-metadata=true",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
-public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTests {
+class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void setup() throws Exception {

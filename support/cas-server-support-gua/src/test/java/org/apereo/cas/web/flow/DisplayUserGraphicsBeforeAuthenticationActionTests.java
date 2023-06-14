@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowAuthenticationActions")
-public class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
+class DisplayUserGraphicsBeforeAuthenticationActionTests extends AbstractGraphicalAuthenticationTests {
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();

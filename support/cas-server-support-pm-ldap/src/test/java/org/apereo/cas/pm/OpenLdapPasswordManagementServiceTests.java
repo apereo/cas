@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber"
 })
 @EnabledIfListeningOnPort(port = 11389)
-public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 11389;
 
     @BeforeAll

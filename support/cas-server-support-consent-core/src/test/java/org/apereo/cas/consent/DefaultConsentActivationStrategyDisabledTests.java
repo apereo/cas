@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Getter
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class,
     properties = "cas.consent.core.active=false")
-public class DefaultConsentActivationStrategyDisabledTests {
+class DefaultConsentActivationStrategyDisabledTests {
 
     @Autowired
     @Qualifier(ConsentActivationStrategy.BEAN_NAME)

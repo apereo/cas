@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("duoAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;

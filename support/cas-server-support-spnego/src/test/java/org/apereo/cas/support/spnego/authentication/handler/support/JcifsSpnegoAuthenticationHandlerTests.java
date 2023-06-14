@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 4.2.0
  */
 @Tag("Spnego")
-public class JcifsSpnegoAuthenticationHandlerTests {
+class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";
 

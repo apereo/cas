@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("FileSystem")
-public class PathWatcherServiceTests {
+class PathWatcherServiceTests {
     private PathWatcherService watcher1;
 
     private FileWatcherService watcher2;

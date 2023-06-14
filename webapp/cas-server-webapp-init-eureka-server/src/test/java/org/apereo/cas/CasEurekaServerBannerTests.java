@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebApp")
-public class CasEurekaServerBannerTests {
+class CasEurekaServerBannerTests {
     @Test
     public void verifyOperation() throws Exception {
         val banner = new CasEurekaServerBanner();

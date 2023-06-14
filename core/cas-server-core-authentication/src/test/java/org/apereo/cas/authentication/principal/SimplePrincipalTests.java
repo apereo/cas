@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Authentication")
-public class SimplePrincipalTests {
+class SimplePrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simplePrincipal.json");
 

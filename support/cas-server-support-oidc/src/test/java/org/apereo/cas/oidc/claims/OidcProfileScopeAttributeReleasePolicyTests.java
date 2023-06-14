@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
+class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() {

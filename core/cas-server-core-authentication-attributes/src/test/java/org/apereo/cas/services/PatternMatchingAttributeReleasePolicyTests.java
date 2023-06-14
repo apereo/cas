@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Attributes")
-public class PatternMatchingAttributeReleasePolicyTests {
+class PatternMatchingAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "PatternMatchingAttributeReleasePolicyTests.json");
 

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceMutantRegexAttributeFilterTests {
+class RegisteredServiceMutantRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RegisteredServiceMutantRegexAttributeFilterTests.json");
 

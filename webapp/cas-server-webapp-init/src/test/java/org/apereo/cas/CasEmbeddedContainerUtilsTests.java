@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Utility")
-public class CasEmbeddedContainerUtilsTests {
+class CasEmbeddedContainerUtilsTests {
     @Test
     public void verifyMainArgs() {
         assertFalse(CasEmbeddedContainerUtils.getApplicationEntrypointInitializers().isEmpty());

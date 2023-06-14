@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
     "cas.http-web-request.cors.max-age=1600",
     "cas.http-web-request.cors.exposed-headers[0]=*"
 })
-public class RegisteredServiceCorsConfigurationSourceTests {
+class RegisteredServiceCorsConfigurationSourceTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

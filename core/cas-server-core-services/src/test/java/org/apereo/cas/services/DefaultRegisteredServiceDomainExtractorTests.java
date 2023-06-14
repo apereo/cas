@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceDomainExtractorTests {
+class DefaultRegisteredServiceDomainExtractorTests {
 
     @Test
     public void verifyDomains() {

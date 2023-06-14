@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("GroovyServices")
-public class GroovyRegisteredServiceAccessStrategyTests {
+class GroovyRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceAccessStrategyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
-public class OAuth20LogoutDontReplicateSessionTests extends AbstractOAuth20Tests {
+class OAuth20LogoutDontReplicateSessionTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier(LogoutExecutionPlan.BEAN_NAME)

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("X509")
-public class X509RestMultipartBodyCredentialFactoryTests {
+class X509RestMultipartBodyCredentialFactoryTests {
 
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();
 

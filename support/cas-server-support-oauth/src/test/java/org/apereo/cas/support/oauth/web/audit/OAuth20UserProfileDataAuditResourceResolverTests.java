@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OAuth")
-public class OAuth20UserProfileDataAuditResourceResolverTests {
+class OAuth20UserProfileDataAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new OAuth20UserProfileDataAuditResourceResolver();

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("RegisteredService")
-public class TimeBasedRegisteredServiceAccessStrategyTests {
+class TimeBasedRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeBasedRegisteredServiceAccessStrategy.json");
 

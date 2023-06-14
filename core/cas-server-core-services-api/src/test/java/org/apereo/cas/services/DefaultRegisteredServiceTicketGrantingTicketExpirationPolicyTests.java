@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
+class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifyOperation() {

@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ActuatorEndpoint")
-public class CasEventsReportEndpointTests {
+class CasEventsReportEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

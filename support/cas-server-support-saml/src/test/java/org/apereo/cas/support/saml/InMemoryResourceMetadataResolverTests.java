@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
     properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("SAMLMetadata")
-public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
+class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyValidMetadataResource() throws Exception {

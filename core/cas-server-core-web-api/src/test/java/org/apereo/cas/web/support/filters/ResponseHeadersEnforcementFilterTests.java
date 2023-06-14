@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Web")
-public class ResponseHeadersEnforcementFilterTests {
+class ResponseHeadersEnforcementFilterTests {
     private ResponseHeadersEnforcementFilter filter;
 
     private MockFilterConfig filterConfig;

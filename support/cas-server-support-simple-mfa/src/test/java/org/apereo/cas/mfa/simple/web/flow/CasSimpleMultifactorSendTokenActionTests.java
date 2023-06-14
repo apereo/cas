@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 25000)
 @Tag("Mail")
-public class CasSimpleMultifactorSendTokenActionTests {
+class CasSimpleMultifactorSendTokenActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = {
@@ -40,7 +40,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
         "cas.authn.mfa.simple.sms.from=347746512"
     })
     @Import(BaseCasSimpleMultifactorAuthenticationTests.CasSimpleMultifactorTestConfiguration.class)
-    public class DefaultCasSimpleMultifactorSendTokenActionTests extends BaseCasSimpleMultifactorSendTokenActionTests {
+    class DefaultCasSimpleMultifactorSendTokenActionTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
         public void verifyOperation() throws Exception {
             val theToken = createToken("casuser").getKey();
@@ -82,7 +82,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
 
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class NoCommunicationStrategyTests extends BaseCasSimpleMultifactorSendTokenActionTests {
+    class NoCommunicationStrategyTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
         public void verifyOperation() throws Exception {
             val context = buildRequestContextFor("casuser");

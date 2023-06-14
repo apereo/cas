@@ -34,13 +34,13 @@ import static org.mockito.Mockito.*;
  * @since 3.4.0
  */
 @Tag("WebflowActions")
-public class SendTicketGrantingTicketActionTests {
+class SendTicketGrantingTicketActionTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class PublicWorkstationCookie extends AbstractWebflowActionsTests {
+    class PublicWorkstationCookie extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
         private Action action;
@@ -79,7 +79,7 @@ public class SendTicketGrantingTicketActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class CreateSsoCookieOnRenew extends AbstractWebflowActionsTests {
+    class CreateSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
         private Action action;
@@ -141,7 +141,7 @@ public class SendTicketGrantingTicketActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.sso.create-sso-cookie-on-renew-authn=false")
-    public class IgnoreSsoCookieOnRenew extends AbstractWebflowActionsTests {
+    class IgnoreSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
         private Action action;

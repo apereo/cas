@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests {
+class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator;

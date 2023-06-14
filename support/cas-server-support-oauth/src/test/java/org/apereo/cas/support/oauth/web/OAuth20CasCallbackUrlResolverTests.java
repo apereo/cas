@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthWeb")
-public class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
+class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
     private UrlResolver casCallbackUrlResolver;

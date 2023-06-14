@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
+class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         val service = getOidcRegisteredService(UUID.randomUUID().toString());

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
+class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     @Test
     public void verifyNonCompatibleService() {
         val provider = new PairwiseOidcRegisteredServiceUsernameAttributeProvider();

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceAccessStrategyTests {
+class DefaultRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceAccessStrategyTests.json");
 

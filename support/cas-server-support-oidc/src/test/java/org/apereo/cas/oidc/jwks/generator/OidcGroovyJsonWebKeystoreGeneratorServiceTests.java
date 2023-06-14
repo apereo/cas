@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @TestPropertySource(properties = "cas.authn.oidc.jwks.groovy.location=classpath:GroovyJwksService.groovy")
-public class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
+class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() throws Exception {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();

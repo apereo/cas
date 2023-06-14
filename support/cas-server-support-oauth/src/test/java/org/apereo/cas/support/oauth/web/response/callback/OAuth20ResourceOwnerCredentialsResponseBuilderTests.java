@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
+class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() throws Exception {

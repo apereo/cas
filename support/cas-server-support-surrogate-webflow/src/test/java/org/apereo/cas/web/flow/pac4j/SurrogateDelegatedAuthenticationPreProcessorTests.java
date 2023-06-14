@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateDelegatedAuthenticationPreProcessorTests {
+class SurrogateDelegatedAuthenticationPreProcessorTests {
     @Autowired
     @Qualifier("surrogateDelegatedAuthenticationPreProcessor")
     private DelegatedAuthenticationPreProcessor surrogateDelegatedAuthenticationPreProcessor;

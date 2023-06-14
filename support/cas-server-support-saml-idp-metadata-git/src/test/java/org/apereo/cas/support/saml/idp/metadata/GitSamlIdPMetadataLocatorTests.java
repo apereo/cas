@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Git")
 @Slf4j
-public class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
+class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
 
     @BeforeAll
     public static void setup() {

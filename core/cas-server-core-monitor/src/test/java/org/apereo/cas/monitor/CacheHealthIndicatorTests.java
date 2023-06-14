@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
-public class CacheHealthIndicatorTests {
+class CacheHealthIndicatorTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

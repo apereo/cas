@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Cipher")
-public class SecurityTokenServiceCredentialCipherExecutorTests {
+class SecurityTokenServiceCredentialCipherExecutorTests {
 
     @Test
     public void verifyOperation() {

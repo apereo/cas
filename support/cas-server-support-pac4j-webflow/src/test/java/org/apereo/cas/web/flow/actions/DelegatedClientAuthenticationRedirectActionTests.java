@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedClientAuthenticationRedirectActionTests {
+class DelegatedClientAuthenticationRedirectActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT)
     private Action delegatedAuthenticationRedirectToClientAction;

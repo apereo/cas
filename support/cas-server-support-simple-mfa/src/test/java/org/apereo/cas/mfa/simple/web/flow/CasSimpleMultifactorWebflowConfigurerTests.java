@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaConfig")
-public class CasSimpleMultifactorWebflowConfigurerTests {
+class CasSimpleMultifactorWebflowConfigurerTests {
 
     @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class,
         properties = {
@@ -42,7 +42,7 @@ public class CasSimpleMultifactorWebflowConfigurerTests {
     @Getter
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseMultifactorWebflowConfigurerTests {
+    class DefaultTests extends BaseMultifactorWebflowConfigurerTests {
         @Autowired
         @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
         private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
@@ -63,7 +63,7 @@ public class CasSimpleMultifactorWebflowConfigurerTests {
     @Getter
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SurrogateTests extends BaseMultifactorWebflowConfigurerTests {
+    class SurrogateTests extends BaseMultifactorWebflowConfigurerTests {
         @Autowired
         @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
         private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

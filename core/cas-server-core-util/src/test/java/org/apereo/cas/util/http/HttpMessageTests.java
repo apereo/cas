@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Web")
-public class HttpMessageTests {
+class HttpMessageTests {
 
     @Test
     public void verifyAsyncArgIsTakenIntoAccount() throws Exception {

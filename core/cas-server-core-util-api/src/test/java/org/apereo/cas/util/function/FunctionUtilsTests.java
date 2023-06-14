@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class FunctionUtilsTests {
+class FunctionUtilsTests {
 
     @Test
     public void verifyDoIf0() {

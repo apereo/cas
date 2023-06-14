@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Simple")
-public class PasswordlessAuthenticationPreProcessorTests {
+class PasswordlessAuthenticationPreProcessorTests {
     @Test
     public void verifyOperation() throws Exception {
         val processor = mock(PasswordlessAuthenticationPreProcessor.class);

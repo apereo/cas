@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class TransientSessionTicketImplTests {
+class TransientSessionTicketImplTests {
     @Test
     public void verifyOperation() {
         val ticket = new TransientSessionTicketImpl("TST-1", NeverExpiresExpirationPolicy.INSTANCE,

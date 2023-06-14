@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Hazelcast")
-public class HazelcastAzureDiscoveryStrategyTests {
+class HazelcastAzureDiscoveryStrategyTests {
     @Test
     public void verifyOperation() {
         val cluster = new HazelcastClusterProperties();

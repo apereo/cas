@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.new-relic.name-id-attribute=cn",
     "cas.saml-sp.new-relic.name-id-format=transient"
 })
-public class CasSamlSPNewRelicConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPNewRelicConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

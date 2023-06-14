@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class WebAuthnAccountSaveRegistrationActionTests {
+class WebAuthnAccountSaveRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION)
     private Action webAuthnSaveAccountRegistrationAction;

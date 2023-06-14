@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.core.password-policy-pattern=^Th!.+{8,10}"
 })
 @Tag("PasswordOps")
-public class DefaultPasswordValidationServiceTests {
+class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")
     private PasswordValidationService passwordValidationService;

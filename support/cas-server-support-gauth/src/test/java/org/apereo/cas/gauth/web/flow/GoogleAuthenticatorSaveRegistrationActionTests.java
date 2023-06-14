@@ -46,7 +46,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
     BaseGoogleAuthenticatorTests.SharedTestConfiguration.class
 })
 @Tag("WebflowMfaActions")
-public class GoogleAuthenticatorSaveRegistrationActionTests {
+class GoogleAuthenticatorSaveRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION)
     private Action googleSaveAccountRegistrationAction;

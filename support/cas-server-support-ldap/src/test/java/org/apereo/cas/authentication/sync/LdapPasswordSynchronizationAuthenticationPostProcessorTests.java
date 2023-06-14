@@ -25,11 +25,11 @@ import static org.mockito.Mockito.*;
 
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
+class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseLdapPasswordSynchronizationTests {
+    class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
         public void verifySyncFindsNoUser() {
             assertThrows(AuthenticationException.class, () -> {
@@ -60,7 +60,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         "cas.authn.password-sync.ldap[0].password-synchronization-failure-fatal=false",
         "cas.authn.password-sync.ldap[0].password-attribute=unicodePwd"
     })
-    public class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
+    class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
         public void verifySyncFailsWithUnicodePswd() {
             assertDoesNotThrow(() -> {
@@ -75,7 +75,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.password-sync.ldap[0].password-attribute=st")
-    public class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
+    class UnknownAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
         public void verifyOperation() {
             val sync = ldapPasswordSynchronizers.first();

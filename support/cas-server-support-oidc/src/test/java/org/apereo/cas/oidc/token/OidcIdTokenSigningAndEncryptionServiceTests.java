@@ -24,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcIdTokenSigningAndEncryptionServiceTests {
+class OidcIdTokenSigningAndEncryptionServiceTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:multiple-keys.jwks")
-    public class KeystoreWithMultipleKeysTests extends AbstractOidcTests {
+    class KeystoreWithMultipleKeysTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() {
             val claims = getClaims();
@@ -60,7 +60,7 @@ public class OidcIdTokenSigningAndEncryptionServiceTests {
         "cas.authn.oidc.discovery.id-token-signing-alg-values-supported=RS256,RS384,RS512",
         "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"
     })
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() {
             val claims = getClaims();

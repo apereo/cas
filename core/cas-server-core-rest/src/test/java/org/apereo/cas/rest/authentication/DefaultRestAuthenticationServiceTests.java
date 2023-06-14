@@ -88,7 +88,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultRestAuthenticationServiceTests {
+class DefaultRestAuthenticationServiceTests {
     @Autowired
     @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
     private RestAuthenticationService restAuthenticationService;

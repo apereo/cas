@@ -39,7 +39,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-public class DynamoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+class DynamoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

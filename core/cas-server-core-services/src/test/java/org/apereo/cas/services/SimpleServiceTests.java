@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Authentication")
-public class SimpleServiceTests {
+class SimpleServiceTests {
 
     @Test
     public void verifyProperId() {

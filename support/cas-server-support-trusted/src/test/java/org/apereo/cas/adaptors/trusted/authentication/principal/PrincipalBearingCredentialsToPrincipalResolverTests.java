@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Attributes")
-public class PrincipalBearingCredentialsToPrincipalResolverTests {
+class PrincipalBearingCredentialsToPrincipalResolverTests {
     private PrincipalBearingPrincipalResolver resolver;
 
     @Mock

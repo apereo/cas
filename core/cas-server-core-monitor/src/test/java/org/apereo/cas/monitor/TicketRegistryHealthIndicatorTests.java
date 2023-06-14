@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class TicketRegistryHealthIndicatorTests {
+class TicketRegistryHealthIndicatorTests {
 
     @Test
     public void verifyUnknown() {

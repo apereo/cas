@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.web-authn.core.relying-party-id=example.org"
     })
 @Tag("MFAProvider")
-public class CompositeAttestationTrustSourceTests {
+class CompositeAttestationTrustSourceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .build().toObjectMapper();
 

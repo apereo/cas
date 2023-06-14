@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("X509")
-public class CompositeX509KeyManagerTests {
+class CompositeX509KeyManagerTests {
     @Test
     public void verifyOperation() throws Exception {
         val kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());

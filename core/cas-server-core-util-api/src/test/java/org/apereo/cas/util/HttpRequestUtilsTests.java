@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class HttpRequestUtilsTests {
+class HttpRequestUtilsTests {
 
     @Test
     public void verifyNoRequest() {

@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pm.core.password-policy-pattern=^Test1.+"
     })
 @Tag("FileSystem")
-public class JsonResourcePasswordManagementServiceTests {
+class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;

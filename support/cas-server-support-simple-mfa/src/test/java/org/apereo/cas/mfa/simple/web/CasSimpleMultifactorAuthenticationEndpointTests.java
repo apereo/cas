@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class
 })
-public class CasSimpleMultifactorAuthenticationEndpointTests extends AbstractCasEndpointTests {
+class CasSimpleMultifactorAuthenticationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("mfaSimpleMultifactorEndpoint")
     private CasSimpleMultifactorAuthenticationEndpoint endpoint;

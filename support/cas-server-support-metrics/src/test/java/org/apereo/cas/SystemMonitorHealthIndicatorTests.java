@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
-public class SystemMonitorHealthIndicatorTests {
+class SystemMonitorHealthIndicatorTests {
 
     @Autowired
     @Qualifier("metricsEndpoint")

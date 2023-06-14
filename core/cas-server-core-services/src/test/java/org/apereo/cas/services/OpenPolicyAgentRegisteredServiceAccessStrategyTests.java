@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
+class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OpenPolicyAgentRegisteredServiceAccessStrategy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

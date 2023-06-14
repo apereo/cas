@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
+class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAccessTokenController")
     protected OidcAccessTokenEndpointController oidcAccessTokenEndpointController;

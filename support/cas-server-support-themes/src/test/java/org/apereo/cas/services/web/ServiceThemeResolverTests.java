@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
         "cas.theme.default-theme-name=test"
     })
 @Tag("Web")
-public class ServiceThemeResolverTests {
+class ServiceThemeResolverTests {
     private static final String MOZILLA = "Mozilla";
 
     private static final String DEFAULT_THEME_NAME = "test";

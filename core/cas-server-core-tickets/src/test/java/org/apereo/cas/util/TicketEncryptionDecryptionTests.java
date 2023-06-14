@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("Tickets")
-public class TicketEncryptionDecryptionTests {
+class TicketEncryptionDecryptionTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
 

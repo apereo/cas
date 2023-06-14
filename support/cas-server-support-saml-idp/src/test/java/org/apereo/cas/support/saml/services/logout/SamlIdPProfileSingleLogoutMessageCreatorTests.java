@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=http://www.w3.org/2001/10/xml-exc-c14n#"
 )
-public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyOperation() throws Exception {

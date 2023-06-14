@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @Tag("CAS")
 @Getter
-public class LegacyValidateControllerTests extends AbstractServiceValidateControllerTests {
+class LegacyValidateControllerTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")
     private ServiceValidationViewFactory serviceValidationViewFactory;

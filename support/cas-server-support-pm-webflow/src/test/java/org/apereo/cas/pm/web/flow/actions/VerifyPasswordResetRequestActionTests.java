@@ -39,12 +39,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 25000)
 @Tag("Mail")
-public class VerifyPasswordResetRequestActionTests {
+class VerifyPasswordResetRequestActionTests {
 
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = "cas.ticket.tst.number-of-uses=2")
-    public class PasswordResetTokenMultiUse extends BasePasswordManagementActionTests {
+    class PasswordResetTokenMultiUse extends BasePasswordManagementActionTests {
         @Test
         public void verifyAction() throws Exception {
             val context = new MockRequestContext();
@@ -73,7 +73,7 @@ public class VerifyPasswordResetRequestActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @TestPropertySource(properties = "cas.authn.pm.reset.security-questions-enabled=false")
-    public class SecurityQuestionsDisabled extends BasePasswordManagementActionTests {
+    class SecurityQuestionsDisabled extends BasePasswordManagementActionTests {
         @Test
         public void verifyAction() throws Exception {
             val context = new MockRequestContext();
@@ -99,7 +99,7 @@ public class VerifyPasswordResetRequestActionTests {
 
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class SecurityQuestionsEnabled extends BasePasswordManagementActionTests {
+    class SecurityQuestionsEnabled extends BasePasswordManagementActionTests {
         @Test
         public void verifyInvalidToken() throws Exception {
             val context = new MockRequestContext();

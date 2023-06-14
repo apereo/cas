@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml1ArtifactResolutionController")
     private SamlIdPSaml1ArtifactResolutionProfileHandlerController controller;

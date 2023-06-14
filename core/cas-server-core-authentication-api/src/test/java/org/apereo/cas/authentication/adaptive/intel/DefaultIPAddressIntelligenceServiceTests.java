@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultIPAddressIntelligenceServiceTests {
+class DefaultIPAddressIntelligenceServiceTests {
     @Test
     public void verifyOperation() {
         val context = new MockRequestContext();

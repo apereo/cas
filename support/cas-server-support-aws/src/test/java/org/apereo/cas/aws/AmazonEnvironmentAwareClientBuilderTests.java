@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("AmazonWebServices")
-public class AmazonEnvironmentAwareClientBuilderTests {
+class AmazonEnvironmentAwareClientBuilderTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");

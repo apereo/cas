@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(
     properties = "cas.authn.oidc.discovery.claims=sub,name,given_name,family_name,middle_name,preferred_username,email,mail,groups")
 @Tag("OIDC")
-public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
+class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));

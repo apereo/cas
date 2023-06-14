@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("SCIM")
-public class ScimV2PrincipalAttributeMapperTests {
+class ScimV2PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {
         val user = new User();

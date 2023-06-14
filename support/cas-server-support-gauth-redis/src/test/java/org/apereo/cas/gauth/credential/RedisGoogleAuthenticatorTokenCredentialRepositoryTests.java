@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;

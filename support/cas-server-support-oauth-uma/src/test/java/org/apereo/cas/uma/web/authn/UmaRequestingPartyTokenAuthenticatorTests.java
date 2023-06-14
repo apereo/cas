@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointControllerTests {
+class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointControllerTests {
 
     @Test
     public void verifyOperation() throws Exception {

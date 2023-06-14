@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasInterruptConfigurationTests {
+class CasInterruptConfigurationTests {
     @Autowired
     @Qualifier("interruptInquirer")
     private InterruptInquiryExecutionPlan interruptInquirer;

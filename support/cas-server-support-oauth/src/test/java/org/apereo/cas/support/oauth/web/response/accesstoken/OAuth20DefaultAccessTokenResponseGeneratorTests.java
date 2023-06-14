@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuth")
-public class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     public void initialize() {

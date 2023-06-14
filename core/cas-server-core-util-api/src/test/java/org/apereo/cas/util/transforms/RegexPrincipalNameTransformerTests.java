@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Authentication")
-public class RegexPrincipalNameTransformerTests {
+class RegexPrincipalNameTransformerTests {
     @Test
     public void verifyOperation() {
         val chain = new ChainingPrincipalNameTransformer();

@@ -37,7 +37,7 @@ import static org.springframework.http.HttpStatus.*;
  * @since 6.3.0
  */
 @Tag("Web")
-public class RegisteredServiceThemeResolverTests {
+class RegisteredServiceThemeResolverTests {
 
     @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class,
         properties = {
@@ -46,7 +46,7 @@ public class RegisteredServiceThemeResolverTests {
         })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ExternalThemeTests extends BaseThemeTests {
+    class ExternalThemeTests extends BaseThemeTests {
         @Test
         public void verifyCustomSource() {
             val context = new MockRequestContext();
@@ -71,7 +71,7 @@ public class RegisteredServiceThemeResolverTests {
         properties = "cas.theme.default-theme-name=example")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ExampleThemeTests extends BaseThemeTests {
+    class ExampleThemeTests extends BaseThemeTests {
         @Test
         public void verifyNoAccess() {
             val context = new MockRequestContext();

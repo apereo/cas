@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.3
  */
 @Tag("OAuth")
-public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
+class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
     private static final String STATE = "%123=";
 
     private static final String NONCE = "%123=";

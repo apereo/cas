@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class BaseWsFederationWebflowTests {
+class BaseWsFederationWebflowTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,

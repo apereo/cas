@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.authn.mfa.gauth.json.location=file:${java.io.tmpdir}/repository.json")
 @Getter
 @Tag("MFAProvider")
-public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
 
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")

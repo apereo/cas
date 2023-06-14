@@ -73,7 +73,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
+class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     private static final String TGT_ID = "tgt-id";
 
     private static final String TGT2_ID = "tgt2-id";

@@ -42,7 +42,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("Redis")
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisAuditTrailManagerTests extends BaseAuditConfigurationTests {
+class RedisAuditTrailManagerTests extends BaseAuditConfigurationTests {
     @Autowired
     @Qualifier("redisAuditTrailManager")
     private AuditTrailManager auditTrailManager;

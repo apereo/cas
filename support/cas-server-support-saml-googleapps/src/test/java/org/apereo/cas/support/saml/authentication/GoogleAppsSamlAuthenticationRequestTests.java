@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
 @Deprecated(since = "6.2.0")
-public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
+class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
 

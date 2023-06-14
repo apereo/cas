@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
+class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     @Test
     public void verifyClientSecretCheck() {
         val secret = RandomUtils.randomAlphanumeric(12);

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Cipher")
-public class JasyptNumberCipherExecutorTests {
+class JasyptNumberCipherExecutorTests {
 
     @Test
     public void verifyLongOperation() {

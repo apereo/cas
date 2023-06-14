@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Hibernate")
 @EnableTransactionManagement(proxyTargetClass = false)
-public class CasHibernateJpaBeanFactoryTests {
+class CasHibernateJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

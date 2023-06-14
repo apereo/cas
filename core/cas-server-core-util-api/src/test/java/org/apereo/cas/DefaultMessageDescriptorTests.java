@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Simple")
-public class DefaultMessageDescriptorTests {
+class DefaultMessageDescriptorTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

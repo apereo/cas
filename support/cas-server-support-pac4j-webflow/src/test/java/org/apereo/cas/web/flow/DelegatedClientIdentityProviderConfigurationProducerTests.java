@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderConfigurationProducerTests {
+class DelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
     @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
     private DelegatedClientIdentityProviderConfigurationProducer producer;

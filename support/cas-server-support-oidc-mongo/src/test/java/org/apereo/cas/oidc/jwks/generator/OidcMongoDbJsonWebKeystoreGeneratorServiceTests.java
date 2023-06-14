@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 27017)
 @Import(OidcJwksMongoDbConfiguration.class)
-public class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
+class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() throws Exception {
         val resource1 = oidcJsonWebKeystoreGeneratorService.generate();

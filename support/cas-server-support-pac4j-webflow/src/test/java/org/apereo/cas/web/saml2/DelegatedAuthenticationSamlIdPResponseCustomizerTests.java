@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
     })
 @Tag("SAML2Web")
-public class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
+class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     @Autowired
     @Qualifier("delegatedSaml2IdPResponseCustomizer")
     private SamlIdPResponseCustomizer delegatedSaml2IdPResponseCustomizer;

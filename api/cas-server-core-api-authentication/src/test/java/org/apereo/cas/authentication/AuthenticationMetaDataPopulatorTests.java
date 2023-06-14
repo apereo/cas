@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationMetadata")
-public class AuthenticationMetaDataPopulatorTests {
+class AuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyOperation() {

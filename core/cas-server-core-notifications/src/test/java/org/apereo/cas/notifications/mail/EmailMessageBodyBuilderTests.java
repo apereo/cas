@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Mail")
-public class EmailMessageBodyBuilderTests {
+class EmailMessageBodyBuilderTests {
     @Test
     public void verifyNoBody() {
         val props = new EmailProperties();

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.response.skew-allowance=0",
     "cas.saml-core.skew-allowance=3000"
 })
-public class SamlProfileSamlConditionsBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSamlConditionsBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyWithSkew() throws Exception {
         val service = getSamlRegisteredServiceForTestShib(true, true);

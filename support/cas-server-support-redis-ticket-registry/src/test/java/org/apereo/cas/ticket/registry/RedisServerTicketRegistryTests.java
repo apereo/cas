@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 @Slf4j
-public class RedisServerTicketRegistryTests {
+class RedisServerTicketRegistryTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -57,7 +57,7 @@ public class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
-    public class WithoutCachingTests extends BaseRedisSentinelTicketRegistryTests {
+    class WithoutCachingTests extends BaseRedisSentinelTicketRegistryTests {
         @RepeatedTest(2)
         public void verifyTrackingUsersAndPrefixes() {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
@@ -129,7 +129,7 @@ public class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
-    public class WithoutRediModulesTests extends BaseRedisSentinelTicketRegistryTests {
+    class WithoutRediModulesTests extends BaseRedisSentinelTicketRegistryTests {
 
     }
 
@@ -144,7 +144,7 @@ public class RedisServerTicketRegistryTests {
         "cas.ticket.registry.redis.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
         "cas.ticket.registry.redis.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
     })
-    public class DefaultTests extends BaseRedisSentinelTicketRegistryTests {
+    class DefaultTests extends BaseRedisSentinelTicketRegistryTests {
 
         private static final int COUNT = 100;
 

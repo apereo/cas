@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MongoDb")
-public class ConvertersTests {
+class ConvertersTests {
 
     @Test
     public void verifyOperation() {

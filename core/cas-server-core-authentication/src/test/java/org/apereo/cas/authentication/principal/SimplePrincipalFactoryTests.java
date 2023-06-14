@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Authentication")
-public class SimplePrincipalFactoryTests {
+class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {
         val fact = PrincipalFactoryUtils.newPrincipalFactory();

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
+class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"

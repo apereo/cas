@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Authentication")
-public class DefaultRemoteRequestPrincipalAttributesExtractorTests {
+class DefaultRemoteRequestPrincipalAttributesExtractorTests {
 
     @Test
     public void verifyOperation() throws Exception {

@@ -69,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.ldap[0].principal-attribute-list=sn,cn"
     })
 @Tag("Simple")
-public class CasServerProfileRegistrarTests {
+class CasServerProfileRegistrarTests {
     @Autowired
     @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
     private CasServerProfileRegistrar casServerProfileRegistrar;

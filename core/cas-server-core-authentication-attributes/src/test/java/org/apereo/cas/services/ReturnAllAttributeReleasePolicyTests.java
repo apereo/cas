@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
-public class ReturnAllAttributeReleasePolicyTests {
+class ReturnAllAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllAttributeReleasePolicy.json");
 

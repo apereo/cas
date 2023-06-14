@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapUtilsTests {
+class LdapUtilsTests {
 
     @Test
     public void verifyGetBoolean() {

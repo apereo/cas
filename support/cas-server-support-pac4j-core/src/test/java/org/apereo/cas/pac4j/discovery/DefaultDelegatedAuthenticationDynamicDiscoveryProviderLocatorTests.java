@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
+class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
     private CasConfigurationProperties properties;
 
     @BeforeEach

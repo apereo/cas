@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.sms.from=3477562310",
     "cas.account-registration.core.registration-properties.location=classpath:/custom-registration.json"
 })
-public class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerTests {
+class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN)
     private Action validateAction;

@@ -74,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.id=" + TestMultifactorAuthenticationProvider.ID
     })
 @Tag("Radius")
-public class RadiusConfigurationTests {
+class RadiusConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

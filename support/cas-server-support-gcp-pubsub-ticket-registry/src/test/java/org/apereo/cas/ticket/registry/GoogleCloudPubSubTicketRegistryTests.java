@@ -71,7 +71,7 @@ import static org.mockito.Mockito.*;
     "spring.cloud.gcp.pubsub.health.look-up-interval=2"
 })
 @EnabledIfListeningOnPort(port = 8085)
-public class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
+class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

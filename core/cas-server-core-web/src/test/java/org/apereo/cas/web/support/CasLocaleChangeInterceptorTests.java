@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Web")
-public class CasLocaleChangeInterceptorTests {
+class CasLocaleChangeInterceptorTests {
     private ServicesManager servicesManager;
 
     private ArgumentExtractor argumentExtractor;

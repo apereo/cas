@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
+class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Autowired
     @Qualifier("mongoDbSamlMetadataResolverTemplate")
     private MongoOperations mongoDbSamlIdPMetadataTemplate;

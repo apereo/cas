@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml")
-public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     public static final String MDQ_URL = "https://mdq.incommon.org/entities/{0}";
     
     

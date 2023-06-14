@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @Tag("Tickets")
-public class DefaultTicketStringSerializationManagerTests {
+class DefaultTicketStringSerializationManagerTests {
     @Autowired
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     private TicketSerializationManager ticketSerializationManager;

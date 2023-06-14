@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
-public class CasSimpleMultifactorAuthenticationTicketFactoryTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class CasSimpleMultifactorAuthenticationTicketFactoryTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
     private CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;

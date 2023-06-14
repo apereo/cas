@@ -68,7 +68,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Delegation")
 @Slf4j
-public class DelegatedClientAuthenticationActionTests {
+class DelegatedClientAuthenticationActionTests {
 
     @TestConfiguration(proxyBeanMethods = false)
     public static class CredentialTestConfiguration {
@@ -83,7 +83,7 @@ public class DelegatedClientAuthenticationActionTests {
     @Import(CredentialTestConfiguration.class)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class CredentialSelectionTests extends BaseDelegatedClientAuthenticationActionTests {
+    class CredentialSelectionTests extends BaseDelegatedClientAuthenticationActionTests {
 
         @Test
         public void verifyCredentialSelectionStart() throws Exception {
@@ -138,7 +138,7 @@ public class DelegatedClientAuthenticationActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
+    class DefaultTests extends BaseDelegatedClientAuthenticationActionTests {
         @Test
         public void verifyStartAuthenticationNoService() throws Exception {
             assertStartAuthentication(null);

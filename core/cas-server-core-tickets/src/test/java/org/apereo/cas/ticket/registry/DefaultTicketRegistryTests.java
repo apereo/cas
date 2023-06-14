@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
+class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

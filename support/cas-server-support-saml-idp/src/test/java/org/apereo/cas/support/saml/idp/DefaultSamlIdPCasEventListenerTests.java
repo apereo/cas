@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAMLMetadata")
 @Import(DefaultSamlIdPCasEventListenerTests.SamlIdPLocatorFailsTestConfiguration.class)
-public class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests {
+class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

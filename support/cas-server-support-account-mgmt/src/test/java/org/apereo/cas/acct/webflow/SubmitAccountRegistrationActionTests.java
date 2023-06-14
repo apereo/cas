@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
     "cas.account-registration.sms.from=3477562310",
     "cas.account-registration.core.registration-properties.location=classpath:/custom-registration.json"
 })
-public class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
+class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
     private Action submitAccountRegistrationAction;

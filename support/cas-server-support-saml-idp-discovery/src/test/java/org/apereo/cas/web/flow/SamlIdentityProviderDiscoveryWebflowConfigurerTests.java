@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdentityProviderDiscoveryConfiguration.class
 })
 @Tag("SAML2Web")
-public class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

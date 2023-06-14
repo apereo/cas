@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 8800)
 @EnableAspectJAutoProxy
 @Tag("Elastic")
-public class ElasticApmAgentInitializerTests {
+class ElasticApmAgentInitializerTests {
     static {
         System.setProperty(ElasticApmAgentInitializer.SETTING_ELASTIC_APM_AGENT_ENABLED, "yes");
     }

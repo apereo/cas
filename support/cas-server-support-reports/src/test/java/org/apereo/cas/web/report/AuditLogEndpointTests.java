@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.audit.engine.number-of-days-in-history=30"
 })
 @Tag("ActuatorEndpoint")
-public class AuditLogEndpointTests extends AbstractCasEndpointTests {
+class AuditLogEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("auditLogEndpoint")
     private AuditLogEndpoint auditLogEndpoint;

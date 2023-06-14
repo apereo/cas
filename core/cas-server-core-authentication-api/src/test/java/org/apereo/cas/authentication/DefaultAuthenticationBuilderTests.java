@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationBuilderTests {
+class DefaultAuthenticationBuilderTests {
     private static MutableCredential getCredential() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");

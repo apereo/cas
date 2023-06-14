@@ -28,10 +28,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLResponse")
-public class SamlProfileAuthnContextClassRefBuilderTests {
+class SamlProfileAuthnContextClassRefBuilderTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseSamlIdPConfigurationTests {
+    class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
         public void verifyGroovyOperationByService() throws Exception {
             val service = getSamlRegisteredServiceForTestShib();
@@ -116,7 +116,7 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->" + TestMultifactorAuthenticationProvider.ID)
-    public class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
+    class MappedToMfaProviderTests extends BaseSamlIdPConfigurationTests {
 
         @Test
         public void verifyRefedsContext() throws Exception {
@@ -149,7 +149,7 @@ public class SamlProfileAuthnContextClassRefBuilderTests {
         "cas.authn.mfa.core.authentication-context-attribute=amr",
         "cas.authn.saml-idp.core.authentication-context-class-mappings[0]=https://refeds.org/profile/mfa->mfa"
     })
-    public class MappedToValueTests extends BaseSamlIdPConfigurationTests {
+    class MappedToValueTests extends BaseSamlIdPConfigurationTests {
 
         @Test
         public void verifyRefedsContextWithPrincipalAttribute() throws Exception {

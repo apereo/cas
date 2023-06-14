@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.risk.response.sms.from=3487244312"
 })
 @Tag("SMS")
-public class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyOperation() {
         authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());

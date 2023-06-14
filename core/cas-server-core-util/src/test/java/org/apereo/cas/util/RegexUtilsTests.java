@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("Utility")
-public class RegexUtilsTests {
+class RegexUtilsTests {
 
     @Test
     public void verifyNotValidRegex() {

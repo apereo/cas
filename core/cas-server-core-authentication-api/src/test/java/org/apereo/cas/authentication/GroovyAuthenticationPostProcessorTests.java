@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("GroovyAuthentication")
-public class GroovyAuthenticationPostProcessorTests {
+class GroovyAuthenticationPostProcessorTests {
     @Test
     public void verifyAction() {
         val g = new GroovyAuthenticationPostProcessor(new ClassPathResource("GroovyPostProcessor.groovy"));

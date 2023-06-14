@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Getter
 @Tag("JDBC")
-public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
     @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;

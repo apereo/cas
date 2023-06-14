@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFAProvider")
-public class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class YubiKeyMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
 
     @Override
     @SneakyThrows

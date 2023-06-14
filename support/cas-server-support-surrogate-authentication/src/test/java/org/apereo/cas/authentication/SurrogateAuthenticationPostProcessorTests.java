@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @Tag("Impersonation")
-public class SurrogateAuthenticationPostProcessorTests {
+class SurrogateAuthenticationPostProcessorTests {
     @Autowired
     @Qualifier("surrogateAuthenticationPostProcessor")
     private AuthenticationPostProcessor surrogateAuthenticationPostProcessor;

@@ -29,10 +29,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("CasConfiguration")
 @Slf4j
-public class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
+class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseGoogleCloudSecretsManagerTests {
+    class DefaultTests extends BaseGoogleCloudSecretsManagerTests {
         @Test
         public void verifyOperation() {
             val source = propertySourceLocator.locate(environment);
@@ -44,7 +44,7 @@ public class GoogleCloudSecretsManagerCloudConfigBootstrapConfigurationTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(MockTests.GoogleCloudSecretsManagerTestConfiguration.class)
-    public class MockTests extends BaseGoogleCloudSecretsManagerTests {
+    class MockTests extends BaseGoogleCloudSecretsManagerTests {
         @Test
         public void verifyOperation() {
             val source = propertySourceLocator.locate(environment);

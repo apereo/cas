@@ -35,7 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
-public class RedisYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+class RedisYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
 
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")

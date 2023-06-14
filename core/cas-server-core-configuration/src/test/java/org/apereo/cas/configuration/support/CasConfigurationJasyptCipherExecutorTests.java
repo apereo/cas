@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 })
 @Tag("Cipher")
-public class CasConfigurationJasyptCipherExecutorTests {
+class CasConfigurationJasyptCipherExecutorTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.INITIALIZATION_VECTOR.getPropertyName(), "true");

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
+class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
     @Test
     public void verifyAccessTokenResponseAsCode() throws Exception {
         val token = OAuth20TokenGeneratedResult.builder()

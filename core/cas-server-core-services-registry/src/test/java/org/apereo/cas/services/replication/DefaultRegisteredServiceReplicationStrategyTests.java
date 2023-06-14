@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.service-registry.stream.core.replication-mode=ACTIVE")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceReplicationStrategyTests {
+class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

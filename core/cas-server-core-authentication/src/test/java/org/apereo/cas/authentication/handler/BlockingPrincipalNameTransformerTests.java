@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-public class BlockingPrincipalNameTransformerTests {
+class BlockingPrincipalNameTransformerTests {
     @Test
     public void verifyBlocked() {
         val pt = new BlockingPrincipalNameTransformer("[abc]");

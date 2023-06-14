@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("RegisteredService")
-public class RegisteredServiceAttributeReleasePolicyTests {
+class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
 

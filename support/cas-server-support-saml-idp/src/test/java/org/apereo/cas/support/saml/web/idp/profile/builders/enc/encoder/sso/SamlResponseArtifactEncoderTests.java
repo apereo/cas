@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
-public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
+class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();

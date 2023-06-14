@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("WSFederation")
-public class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

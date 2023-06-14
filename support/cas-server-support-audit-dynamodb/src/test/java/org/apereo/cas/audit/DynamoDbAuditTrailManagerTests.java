@@ -44,7 +44,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @Tag("DynamoDb")
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
-public class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
+class DynamoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

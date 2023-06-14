@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-public class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_SERVICE_TICKET = "RT-SUPPORTING";
 
     @Autowired

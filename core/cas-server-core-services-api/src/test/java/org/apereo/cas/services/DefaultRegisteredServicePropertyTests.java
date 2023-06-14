@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServicePropertyTests {
+class DefaultRegisteredServicePropertyTests {
 
     @Test
     public void verifyOperation() {

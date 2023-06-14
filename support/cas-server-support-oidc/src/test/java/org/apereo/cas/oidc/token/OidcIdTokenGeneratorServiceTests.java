@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcIdTokenGeneratorServiceTests {
+class OidcIdTokenGeneratorServiceTests {
 
     private static final String OIDC_CLAIM_EMAIL = "email";
 
@@ -82,7 +82,7 @@ public class OidcIdTokenGeneratorServiceTests {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.id-token.include-id-token-claims=true"
     })
-    public class IgnoringResponseTypeTests extends AbstractOidcTests {
+    class IgnoringResponseTypeTests extends AbstractOidcTests {
         @Test
         public void verifyTokenGenerationWithClaimsForCodeResponseType() throws Exception {
             val request = new MockHttpServletRequest();
@@ -135,7 +135,7 @@ public class OidcIdTokenGeneratorServiceTests {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.core.claims-map.preferred_username=custom-attribute"
     })
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyTokenGeneration() throws Exception {
             val request = new MockHttpServletRequest();

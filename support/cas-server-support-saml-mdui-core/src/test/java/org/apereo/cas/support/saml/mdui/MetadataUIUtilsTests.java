@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class MetadataUIUtilsTests {
+class MetadataUIUtilsTests {
     @Test
     public void verifyNoDescriptor() {
         val entity = mock(EntityDescriptor.class);

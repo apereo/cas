@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("RegisteredService")
-public class HttpRequestRegisteredServiceAccessStrategyTests {
+class HttpRequestRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "HttpRequestRegisteredServiceAccessStrategy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

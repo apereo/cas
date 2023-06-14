@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Webflow")
-public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests {
+class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests {
     private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService svc,
                                                                              final TicketRegistry ticketRegistry) {
         val appCtx = new StaticApplicationContext();

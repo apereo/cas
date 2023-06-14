@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
-public class AMQPTicketRegistryQueueReceiverTests extends AbstractTicketMessageQueueCommandTests {
+class AMQPTicketRegistryQueueReceiverTests extends AbstractTicketMessageQueueCommandTests {
     @Test
     public void verifyOperation() {
         val receiver = new DefaultQueueableTicketRegistryMessageReceiver(ticketRegistry,

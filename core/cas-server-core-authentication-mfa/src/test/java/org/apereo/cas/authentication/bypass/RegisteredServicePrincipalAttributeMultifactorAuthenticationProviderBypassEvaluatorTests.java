@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests {
+class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
     public void verifyMissingPrincipalAttribute() {

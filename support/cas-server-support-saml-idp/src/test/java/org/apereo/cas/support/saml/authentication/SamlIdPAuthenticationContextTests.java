@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAML")
-public class SamlIdPAuthenticationContextTests {
+class SamlIdPAuthenticationContextTests {
     @Test
     public void verifyOperation() {
         val messageContext = new MessageContext();

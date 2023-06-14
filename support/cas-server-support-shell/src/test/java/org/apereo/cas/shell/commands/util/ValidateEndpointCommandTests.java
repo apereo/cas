@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
+class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-endpoint --url http://http.badssl.com/"));

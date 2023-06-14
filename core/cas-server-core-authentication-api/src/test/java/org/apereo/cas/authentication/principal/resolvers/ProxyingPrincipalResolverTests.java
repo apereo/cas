@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class ProxyingPrincipalResolverTests {
+class ProxyingPrincipalResolverTests {
     @Test
     public void verifyOperation() {
         val resolver = new ProxyingPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory());

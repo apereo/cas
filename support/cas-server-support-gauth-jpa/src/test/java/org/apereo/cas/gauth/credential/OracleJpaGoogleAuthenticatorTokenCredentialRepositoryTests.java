@@ -20,5 +20,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
-public class OracleJpaGoogleAuthenticatorTokenCredentialRepositoryTests extends JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
+class OracleJpaGoogleAuthenticatorTokenCredentialRepositoryTests extends JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
 }

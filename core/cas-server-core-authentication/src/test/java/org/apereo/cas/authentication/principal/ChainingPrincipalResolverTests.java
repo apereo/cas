@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ChainingPrincipalResolverTests {
+class ChainingPrincipalResolverTests {
 
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 

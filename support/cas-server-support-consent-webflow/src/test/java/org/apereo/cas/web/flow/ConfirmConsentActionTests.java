@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class ConfirmConsentActionTests extends BaseConsentActionTests {
+class ConfirmConsentActionTests extends BaseConsentActionTests {
 
     @Test
     public void verifyOperation() throws Exception {

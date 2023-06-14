@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuthWeb")
-public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
+class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tests {
 
     private static final String PUBLIC_CLIENT_ID = "clientWithoutSecret";
 

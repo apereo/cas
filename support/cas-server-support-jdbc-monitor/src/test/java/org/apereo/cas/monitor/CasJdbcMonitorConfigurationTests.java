@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("JDBC")
-public class CasJdbcMonitorConfigurationTests {
+class CasJdbcMonitorConfigurationTests {
 
     @Autowired
     @Qualifier("dataSourceHealthIndicator")

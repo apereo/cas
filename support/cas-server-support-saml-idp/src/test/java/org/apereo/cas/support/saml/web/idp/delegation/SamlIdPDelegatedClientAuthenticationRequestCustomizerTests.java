@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2")
 @Import(SamlIdPDelegatedAuthenticationConfiguration.class)
-public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml2DelegatedClientAuthenticationRequestCustomizer")
     private DelegatedClientAuthenticationRequestCustomizer customizer;

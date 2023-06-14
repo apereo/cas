@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-public class U2FDynamoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FDynamoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;

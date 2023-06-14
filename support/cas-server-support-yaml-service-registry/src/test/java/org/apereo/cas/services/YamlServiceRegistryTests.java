@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @since 5.0.0
  */
 @Tag("FileSystem")
-public class YamlServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
+class YamlServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Override
     @SneakyThrows

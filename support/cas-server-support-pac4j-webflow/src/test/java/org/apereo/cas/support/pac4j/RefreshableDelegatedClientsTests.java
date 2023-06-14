@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
-public class RefreshableDelegatedClientsTests {
+class RefreshableDelegatedClientsTests {
     @Test
     public void verifyOperation() {
         val delegatedFactory = mock(DelegatedClientFactory.class);

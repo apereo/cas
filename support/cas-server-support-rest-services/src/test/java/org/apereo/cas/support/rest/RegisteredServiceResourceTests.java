@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("RegisteredService")
-public class RegisteredServiceResourceTests {
+class RegisteredServiceResourceTests {
 
     @Mock
     private ServicesManager servicesManager;

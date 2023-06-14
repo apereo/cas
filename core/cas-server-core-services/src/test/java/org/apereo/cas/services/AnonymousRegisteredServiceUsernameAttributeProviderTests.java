@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("RegisteredService")
-public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
+class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "anonymousRegisteredServiceUsernameAttributeProvider.json");
 

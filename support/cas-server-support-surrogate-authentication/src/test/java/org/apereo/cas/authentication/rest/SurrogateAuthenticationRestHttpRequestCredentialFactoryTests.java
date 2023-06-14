@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Impersonation")
-public class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
+class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

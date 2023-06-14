@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("JDBCAuthentication")
 @Import(NamedQueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
-public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
+class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("dataSource")

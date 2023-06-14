@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Web")
-public class WebjarValidationTests {
+class WebjarValidationTests {
 
     @Test
     public void verifyValidation() throws IOException {

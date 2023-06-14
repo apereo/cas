@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("RegisteredService")
-public class DefaultServiceRegistryInitializerTests {
+class DefaultServiceRegistryInitializerTests {
 
     private static RegisteredService newService() {
         val service = mock(RegisteredService.class);

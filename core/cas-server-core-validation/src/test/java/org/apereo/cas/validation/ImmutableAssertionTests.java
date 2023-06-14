@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class ImmutableAssertionTests {
+class ImmutableAssertionTests {
 
     @Test
     public void verifyGettersForChainedPrincipals() {

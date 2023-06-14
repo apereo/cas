@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Cipher")
-public class RestfulSamlIdPMetadataCipherExecutorTests {
+class RestfulSamlIdPMetadataCipherExecutorTests {
     @Test
     public void verifyAction() {
         val cipher = new RestfulSamlIdPMetadataCipherExecutor(null, null,

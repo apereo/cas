@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 @Slf4j
-public class LogMessageSummarizerTests {
+class LogMessageSummarizerTests {
     @Test
     public void verifyOperation() throws Exception {
         val summarizer = new DisabledLogMessageSummarizer();

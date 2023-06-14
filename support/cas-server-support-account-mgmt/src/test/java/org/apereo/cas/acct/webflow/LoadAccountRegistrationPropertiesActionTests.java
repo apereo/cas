@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowAccountActions")
 @Import(CasAccountManagementWebflowConfiguration.class)
-public class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
+class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_ACCOUNT_REGISTRATION_PROPERTIES)

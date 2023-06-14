@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
+class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
     private static final String SAMPLE_ENCRYPTION_KEY = "AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M";
 
     private static final String SAMPLE_SIGNING_KEY = "cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ";

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("CAS")
 @Getter
-public class ProxyValidateControllerTests {
+class ProxyValidateControllerTests {
     protected static final String SUCCESS = "Success";
 
     protected static final Service SERVICE = RegisteredServiceTestUtils.getService("https://www.casinthecloud.com");

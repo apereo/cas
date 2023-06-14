@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceRegexAttributeFilterTests {
+class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
 
@@ -55,7 +55,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     private final Map<String, List<Object>> givenAttributesMap;
 
-    public RegisteredServiceRegexAttributeFilterTests() {
+    RegisteredServiceRegexAttributeFilterTests() {
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
         this.givenAttributesMap = new HashMap<>();

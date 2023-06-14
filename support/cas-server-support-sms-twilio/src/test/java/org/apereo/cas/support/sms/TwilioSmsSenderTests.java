@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("SMS")
-public class TwilioSmsSenderTests {
+class TwilioSmsSenderTests {
     @Test
     public void verifyAction() {
         val s = new TwilioSmsSender("accountid", "token");

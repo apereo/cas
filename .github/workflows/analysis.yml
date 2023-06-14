@@ -169,7 +169,6 @@ jobs:
           - CheckFunctionalConditionUsage
           - CheckDuplicateTestConfiguration
           - CheckMissingClassInTestsSuite
-          - CheckMissingTestsSuiteClassAnnotation
           - CheckMissingUtilityClassAnnotation
           - CheckRedundantTestConfigurationInheritance
           - CheckSpringConfigurationBeanProxying

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("SAMLMetadata")
-public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTests {
+class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
     public void verifyResolverSupports() throws Exception {

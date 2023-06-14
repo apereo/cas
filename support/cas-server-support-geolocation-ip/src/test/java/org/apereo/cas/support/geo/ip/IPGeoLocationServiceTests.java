@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.geo-location.ip-geo-location.api-key=babbec2c1dd94f5899e25f8808e01aed")
 @Tag("GeoLocation")
-public class IPGeoLocationServiceTests {
+class IPGeoLocationServiceTests {
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoints.web.exposure.include=*",
     "management.endpoint.samlIdPRegisteredServiceMetadataCache.enabled=true"
 })
-public class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlRegisteredServiceCachedMetadataEndpoint")
     private SamlRegisteredServiceCachedMetadataEndpoint endpoint;

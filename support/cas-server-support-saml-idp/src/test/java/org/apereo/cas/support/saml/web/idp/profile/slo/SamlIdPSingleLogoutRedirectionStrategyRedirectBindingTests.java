@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.logout.logout-response-binding=" + SAMLConstants.SAML2_REDIRECT_BINDING_URI,
     "cas.authn.saml-idp.logout.sign-logout-response=false"
 })
-public class SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")
     private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;

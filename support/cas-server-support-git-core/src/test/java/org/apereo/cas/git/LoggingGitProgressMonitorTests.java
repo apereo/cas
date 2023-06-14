@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Git")
-public class LoggingGitProgressMonitorTests {
+class LoggingGitProgressMonitorTests {
     @Test
     public void verifyOperation() {
         val monitor = new LoggingGitProgressMonitor();

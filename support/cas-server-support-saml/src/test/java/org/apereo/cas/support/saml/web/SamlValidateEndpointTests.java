@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.samlValidate.enabled=true"
     })
 @Tag("SAML1")
-public class SamlValidateEndpointTests extends AbstractCasEndpointTests {
+class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("samlValidateEndpoint")
     private SamlValidateEndpoint samlValidateEndpoint;

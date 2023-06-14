@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-public class SurrogateAuthenticationEventListenerTests {
+class SurrogateAuthenticationEventListenerTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

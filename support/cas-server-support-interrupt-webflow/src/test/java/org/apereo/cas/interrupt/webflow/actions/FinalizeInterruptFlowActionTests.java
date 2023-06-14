@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("WebflowActions")
-public class FinalizeInterruptFlowActionTests {
+class FinalizeInterruptFlowActionTests {
 
     @Test
     public void verifyFinalizedInterruptBlocked() {

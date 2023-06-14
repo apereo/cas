@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Groovy")
-public class ScriptingUtilsTests {
+class ScriptingUtilsTests {
 
     @Test
     public void verifyInlineGroovyScript() {

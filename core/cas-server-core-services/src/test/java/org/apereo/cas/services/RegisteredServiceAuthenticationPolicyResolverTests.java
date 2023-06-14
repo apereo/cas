@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAuthenticationPolicyResolverTests {
+class RegisteredServiceAuthenticationPolicyResolverTests {
     private ServicesManager servicesManager;
 
     @BeforeEach

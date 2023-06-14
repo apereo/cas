@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.account-registration.provisioning.rest.url=http://localhost:5002")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RestfulApi")
-public class RestfulAccountRegistrationProvisionerTests {
+class RestfulAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;

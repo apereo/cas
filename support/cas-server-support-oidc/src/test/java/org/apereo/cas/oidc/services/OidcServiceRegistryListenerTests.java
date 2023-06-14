@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.oidc.core.user-defined-scopes.SomeCustomScope=name"
 )
-public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
+class OidcServiceRegistryListenerTests extends AbstractOidcTests {
 
     @Test
     public void verifyMatchingScopeWithPolicyAsChain() {

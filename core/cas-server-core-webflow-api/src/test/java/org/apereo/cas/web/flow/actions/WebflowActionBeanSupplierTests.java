@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class WebflowActionBeanSupplierTests {
+class WebflowActionBeanSupplierTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

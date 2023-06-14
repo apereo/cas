@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("AmazonWebServices")
-public class CloudDirectoryAuthenticationConfigurationTests {
+class CloudDirectoryAuthenticationConfigurationTests {
     @Autowired
     @Qualifier("amazonCloudDirectory")
     private CloudDirectoryClient amazonCloudDirectory;

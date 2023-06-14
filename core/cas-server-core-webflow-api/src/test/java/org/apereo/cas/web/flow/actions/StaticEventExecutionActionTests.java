@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowActions")
-public class StaticEventExecutionActionTests {
+class StaticEventExecutionActionTests {
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();

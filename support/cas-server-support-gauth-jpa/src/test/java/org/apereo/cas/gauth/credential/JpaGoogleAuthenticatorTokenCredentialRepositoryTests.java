@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Getter
 @Tag("JDBCMFA")
-public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired(required = false)
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;

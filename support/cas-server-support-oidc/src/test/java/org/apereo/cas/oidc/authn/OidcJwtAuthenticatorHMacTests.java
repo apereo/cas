@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
     "cas.authn.oauth.code.time-to-kill-in-seconds=60"
 )
-public class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
+class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwtClientProvider")
     private OAuth20AuthenticationClientProvider oidcJwtClientProvider;

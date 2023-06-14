@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("MFATrustedDevices")
-public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyAction() {

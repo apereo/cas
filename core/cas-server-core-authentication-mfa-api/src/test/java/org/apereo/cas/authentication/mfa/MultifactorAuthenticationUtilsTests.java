@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  */
 
 @Tag("MFA")
-public class MultifactorAuthenticationUtilsTests {
+class MultifactorAuthenticationUtilsTests {
 
     @Test
     public void verifyMissingTransition() {

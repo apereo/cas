@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcJwksEndpointControllerTests extends AbstractOidcTests {
+class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwksController")
     protected OidcJwksEndpointController oidcJwksEndpointController;

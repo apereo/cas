@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestPasswordManagementServiceTests {
+class RestPasswordManagementServiceTests {
 
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,

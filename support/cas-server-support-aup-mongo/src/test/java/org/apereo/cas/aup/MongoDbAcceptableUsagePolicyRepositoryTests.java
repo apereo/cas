@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Getter
-public class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)

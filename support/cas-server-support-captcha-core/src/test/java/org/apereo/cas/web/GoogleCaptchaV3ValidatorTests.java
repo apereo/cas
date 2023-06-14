@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Simple")
-public class GoogleCaptchaV3ValidatorTests {
+class GoogleCaptchaV3ValidatorTests {
     @Test
     public void verifyOperation() {
         val props = new GoogleRecaptchaProperties()

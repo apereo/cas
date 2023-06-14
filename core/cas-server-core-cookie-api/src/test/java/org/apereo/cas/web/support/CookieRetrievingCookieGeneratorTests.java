@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Cookie")
-public class CookieRetrievingCookieGeneratorTests {
+class CookieRetrievingCookieGeneratorTests {
 
     private static CookieGenerationContext getCookieGenerationContext(final String path) {
         return CookieGenerationContext

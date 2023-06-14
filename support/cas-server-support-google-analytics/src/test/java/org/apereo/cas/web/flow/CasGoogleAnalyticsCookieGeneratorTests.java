@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cookie")
-public class CasGoogleAnalyticsCookieGeneratorTests {
+class CasGoogleAnalyticsCookieGeneratorTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

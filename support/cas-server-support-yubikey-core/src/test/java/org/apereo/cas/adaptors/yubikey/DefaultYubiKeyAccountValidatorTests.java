@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFAProvider")
 @SuppressWarnings("JavaUtilDate")
-public class DefaultYubiKeyAccountValidatorTests {
+class DefaultYubiKeyAccountValidatorTests {
     @Test
     public void verifyAction() throws Exception {
         val client = mock(YubicoClient.class);

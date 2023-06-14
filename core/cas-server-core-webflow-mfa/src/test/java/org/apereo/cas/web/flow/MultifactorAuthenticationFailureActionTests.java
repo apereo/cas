@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationFailureActionTests {
+class MultifactorAuthenticationFailureActionTests {
     private static class BaseMultifactorActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
@@ -66,7 +66,7 @@ public class MultifactorAuthenticationFailureActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class UnavailableModes extends BaseMultifactorActionTests {
+    class UnavailableModes extends BaseMultifactorActionTests {
         @Test
         public void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
@@ -77,7 +77,7 @@ public class MultifactorAuthenticationFailureActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class OpenMode extends BaseMultifactorActionTests {
+    class OpenMode extends BaseMultifactorActionTests {
         @Test
         public void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.OPEN, null, CasWebflowConstants.TRANSITION_ID_BYPASS);
@@ -86,7 +86,7 @@ public class MultifactorAuthenticationFailureActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class PhantomMode extends BaseMultifactorActionTests {
+    class PhantomMode extends BaseMultifactorActionTests {
         @Test
         public void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED,

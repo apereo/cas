@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
 @Tag("JDBCAuthentication")
 @Import(SearchModeSearchDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
-public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
+class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private SearchModeSearchDatabaseAuthenticationHandler handler;
 
     @Autowired

@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.consent.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
-public class MySQLJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
+class MySQLJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
 }

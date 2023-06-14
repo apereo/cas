@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Hazelcast")
-public class HazelcastConfigurationFactoryTests {
+class HazelcastConfigurationFactoryTests {
     @Test
     public void verifyReplicationMaps() {
         val hz = new BaseHazelcastProperties();

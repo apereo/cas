@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class SingleSignOnParticipationStrategyTests {
+class SingleSignOnParticipationStrategyTests {
 
     @Test
     public void verifyOperation() {

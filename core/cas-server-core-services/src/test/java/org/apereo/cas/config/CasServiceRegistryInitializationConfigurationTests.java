@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.service-registry.core.init-from-json=true"
 )
-public class CasServiceRegistryInitializationConfigurationTests {
+class CasServiceRegistryInitializationConfigurationTests {
     @Autowired
     @Qualifier("serviceRegistryInitializer")
     private ServiceRegistryInitializer serviceRegistryInitializer;

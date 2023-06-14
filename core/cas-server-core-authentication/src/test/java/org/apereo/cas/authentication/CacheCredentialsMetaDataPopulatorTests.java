@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("AuthenticationMetadata")
-public class CacheCredentialsMetaDataPopulatorTests {
+class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
     public void verifyPasswordAsAuthenticationAttribute() {

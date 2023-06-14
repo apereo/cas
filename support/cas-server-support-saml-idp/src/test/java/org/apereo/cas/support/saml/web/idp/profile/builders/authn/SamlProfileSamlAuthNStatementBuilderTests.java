@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAMLResponse")
-public class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlAuthNStatementBuilder")
     private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;

@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 @Tag("Impersonation")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogatePrincipalResolverTests {
+class SurrogatePrincipalResolverTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

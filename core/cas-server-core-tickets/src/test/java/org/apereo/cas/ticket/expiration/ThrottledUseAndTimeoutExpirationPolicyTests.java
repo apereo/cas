@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("ExpirationPolicy")
-public class ThrottledUseAndTimeoutExpirationPolicyTests {
+class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "throttleUseAndTimeoutExpirationPolicy.json");
 

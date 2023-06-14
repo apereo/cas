@@ -69,7 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableWebSecurity
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
-public class WebAuthnControllerMvcTests {
+class WebAuthnControllerMvcTests {
     @Autowired
     private WebApplicationContext webApplicationContext;
 

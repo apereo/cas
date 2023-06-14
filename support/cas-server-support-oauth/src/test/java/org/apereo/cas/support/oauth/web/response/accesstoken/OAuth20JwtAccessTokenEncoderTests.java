@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuthToken")
-public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
+class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyAccessTokenHeaderService() {
         val accessToken = getAccessToken();

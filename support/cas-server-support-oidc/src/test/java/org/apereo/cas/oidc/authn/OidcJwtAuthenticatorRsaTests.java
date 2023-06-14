@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.code.time-to-kill-in-seconds=60",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
 })
-public class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
+class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcJwtClientProvider")

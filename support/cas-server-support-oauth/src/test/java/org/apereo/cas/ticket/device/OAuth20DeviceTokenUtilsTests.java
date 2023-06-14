@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthToken")
-public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
+class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     @Override
     @BeforeEach
     public void setup() {

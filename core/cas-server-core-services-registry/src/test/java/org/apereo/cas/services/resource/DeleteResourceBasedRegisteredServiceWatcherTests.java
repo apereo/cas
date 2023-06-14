@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RegisteredService")
-public class DeleteResourceBasedRegisteredServiceWatcherTests {
+class DeleteResourceBasedRegisteredServiceWatcherTests {
 
     @Test
     public void verifyOperationNotFound() throws Exception {

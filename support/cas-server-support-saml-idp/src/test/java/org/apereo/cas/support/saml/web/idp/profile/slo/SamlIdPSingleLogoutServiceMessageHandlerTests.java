@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAMLLogout")
-public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler;

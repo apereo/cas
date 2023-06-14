@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1
  */
 @Tag("Webflow")
-public class EncryptedTranscoderTests {
+class EncryptedTranscoderTests {
 
     public static Stream<Arguments> getParameters() throws Exception {
         val ksFactory = new KeyStoreFactoryBean();

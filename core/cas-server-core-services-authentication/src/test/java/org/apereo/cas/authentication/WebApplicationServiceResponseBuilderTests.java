@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class WebApplicationServiceResponseBuilderTests {
+class WebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyServiceUrlRedirectOverride() {

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Tag("Web")
-public class SimpleHttpClientTests {
+class SimpleHttpClientTests {
     private static SimpleHttpClient getHttpClient() {
         return new SimpleHttpClientFactoryBean().getObject();
     }
@@ -58,7 +58,7 @@ public class SimpleHttpClientTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests {
+    class DefaultTests {
         @Test
         public void verifyMessageRejected() {
             val msg = mock(HttpMessage.class);
@@ -144,7 +144,7 @@ public class SimpleHttpClientTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @EnabledIfListeningOnPort(port = 9859)
-    public class HttpBinTests {
+    class HttpBinTests {
         @Test
         public void verifyMessage() throws Exception {
             val clientFactory = new SimpleHttpClientFactoryBean();

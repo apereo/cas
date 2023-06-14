@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationGenerateCodeActionTests {
+class QRAuthenticationGenerateCodeActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE)
     private Action qrAuthenticationGenerateCodeAction;

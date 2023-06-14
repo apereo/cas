@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultMessageSanitizerTests {
+class DefaultMessageSanitizerTests {
 
     @Autowired
     @Qualifier(MessageSanitizer.BEAN_NAME)

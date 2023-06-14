@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("CAS")
-public class CasProtocolVersionValidationSpecificationTests extends BaseCasCoreTests {
+class CasProtocolVersionValidationSpecificationTests extends BaseCasCoreTests {
     @Test
     public void verifyOperation() throws Exception {
         val spec = new CasProtocolVersionValidationSpecification(

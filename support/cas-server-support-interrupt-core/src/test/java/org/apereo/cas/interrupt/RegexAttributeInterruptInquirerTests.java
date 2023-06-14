@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Attributes")
-public class RegexAttributeInterruptInquirerTests {
+class RegexAttributeInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromAttributes() {
         val q = new RegexAttributeInterruptInquirer("member..", "CA.|system");

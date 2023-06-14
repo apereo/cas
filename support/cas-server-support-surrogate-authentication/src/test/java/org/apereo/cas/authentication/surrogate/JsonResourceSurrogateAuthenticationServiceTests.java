@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.json.location=classpath:/surrogates.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;

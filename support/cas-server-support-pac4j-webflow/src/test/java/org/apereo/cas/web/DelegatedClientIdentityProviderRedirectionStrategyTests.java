@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.groovy-redirection-strategy.location=classpath:/GroovyClientRedirectStrategy.groovy")
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderRedirectionStrategyTests {
+class DelegatedClientIdentityProviderRedirectionStrategyTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderRedirectionStrategy")
     private DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy;

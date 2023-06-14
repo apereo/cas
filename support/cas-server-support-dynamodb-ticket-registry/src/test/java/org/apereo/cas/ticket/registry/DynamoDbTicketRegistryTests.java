@@ -69,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
+class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;
 
     static {

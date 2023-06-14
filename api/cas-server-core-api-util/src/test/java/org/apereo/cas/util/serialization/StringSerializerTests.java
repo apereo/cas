@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class StringSerializerTests {
+class StringSerializerTests {
     @Test
     public void verifyOperation() {
         val input = mock(StringSerializer.class);

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasConsentWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
-public class ConsentWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ConsentWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @Import(CheckConsentRequiredActionTests.ConsentTestConfiguration.class)
-public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
+class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @BeforeEach
     public void beforeEach() {

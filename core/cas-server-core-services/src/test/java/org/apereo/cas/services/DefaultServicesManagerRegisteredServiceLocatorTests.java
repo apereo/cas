@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class
 })
-public class DefaultServicesManagerRegisteredServiceLocatorTests {
+class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Autowired
     @Qualifier("defaultServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator;

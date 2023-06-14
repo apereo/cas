@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=MSIE")
 @Tag("WebflowEvents")
 @Import(AdaptiveMultifactorAuthenticationPolicyEventResolverTests.AdaptiveMultifactorTestConfiguration.class)
-public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicyWebflowEventResolver")
     protected CasWebflowEventResolver resolver;

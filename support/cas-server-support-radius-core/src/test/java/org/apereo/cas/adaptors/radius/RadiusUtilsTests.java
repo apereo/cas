@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Radius")
-public class RadiusUtilsTests {
+class RadiusUtilsTests {
     @Test
     public void verifyActionPasses() throws Exception {
         val server = mock(RadiusServer.class);

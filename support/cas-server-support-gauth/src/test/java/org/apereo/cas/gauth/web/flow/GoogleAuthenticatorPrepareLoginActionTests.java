@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class GoogleAuthenticatorPrepareLoginActionTests {
+class GoogleAuthenticatorPrepareLoginActionTests {
 
     @Test
     public void verifyOperation() throws Exception {

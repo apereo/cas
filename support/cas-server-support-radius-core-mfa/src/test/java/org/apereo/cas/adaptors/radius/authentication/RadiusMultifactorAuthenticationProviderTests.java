@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Radius")
-public class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class RadiusMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         return new RadiusMultifactorAuthenticationProvider(CollectionUtils.wrapList(mock(RadiusServer.class)));

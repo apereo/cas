@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.par.max-time-to-live-in-seconds=PT45S")
-public class OidcPushedAuthorizationRequestExpirationPolicyBuilderTests extends AbstractOidcTests {
+class OidcPushedAuthorizationRequestExpirationPolicyBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("pushedAuthorizationUriExpirationPolicy")
     private ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy;

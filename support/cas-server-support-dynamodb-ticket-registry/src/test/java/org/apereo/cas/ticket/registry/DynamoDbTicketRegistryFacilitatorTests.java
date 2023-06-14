@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("DynamoDb")
-public class DynamoDbTicketRegistryFacilitatorTests {
+class DynamoDbTicketRegistryFacilitatorTests {
 
     @Nested
     @EnabledIfListeningOnPort(port = 8000)
     @SuppressWarnings("ClassCanBeStatic")
-    public class OriginalDynamoDbTicketRegistryFacilitatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
+    class OriginalDynamoDbTicketRegistryFacilitatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
         public void verifyBuildAttributeMap() {
             val ticket = new MockTicketGrantingTicket("casuser",

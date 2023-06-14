@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
 @Deprecated(since = "6.2.0")
-public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
+class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

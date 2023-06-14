@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaWellKnownEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaWellKnownEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyOp() throws Exception {
         val responseEntity = umaWellKnownEndpointController.getWellKnownDiscoveryConfiguration();

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     U2FAuthenticationMultifactorProviderBypassConfiguration.class,
     U2FWebflowConfiguration.class
 })
-public class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests {
+class U2FRegisteredDevicesEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("u2fRegisteredDevicesEndpoint")

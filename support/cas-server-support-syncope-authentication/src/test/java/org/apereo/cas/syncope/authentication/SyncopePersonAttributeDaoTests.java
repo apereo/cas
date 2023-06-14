@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Syncope")
-public class SyncopePersonAttributeDaoTests {
+class SyncopePersonAttributeDaoTests {
 
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = {
@@ -43,7 +43,7 @@ public class SyncopePersonAttributeDaoTests {
     @Nested
     @EnabledIfListeningOnPort(port = 18080)
     @SuppressWarnings("ClassCanBeStatic")
-    public class SyncopeCoreServerTests extends BaseSyncopeTests {
+    class SyncopeCoreServerTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         private IPersonAttributeDao attributeRepository;
@@ -79,7 +79,7 @@ public class SyncopePersonAttributeDaoTests {
         })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class MockSyncopePersonTests extends BaseSyncopeTests {
+    class MockSyncopePersonTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopePersonAttributeDaos")
         private BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos;

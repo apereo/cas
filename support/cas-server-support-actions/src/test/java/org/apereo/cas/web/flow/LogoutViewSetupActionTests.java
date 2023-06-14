@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-public class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
+class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
     private Action logoutViewSetupAction;

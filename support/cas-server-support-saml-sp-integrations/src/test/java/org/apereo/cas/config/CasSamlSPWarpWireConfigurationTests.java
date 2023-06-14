@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.warp-wire.name-id-attribute=cn",
     "cas.saml-sp.warp-wire.name-id-format=transient"
 })
-public class CasSamlSPWarpWireConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPWarpWireConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

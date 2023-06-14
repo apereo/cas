@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.6
  */
 @Tag("RestfulApi")
-public class RestResourceUtilsTests {
+class RestResourceUtilsTests {
     @Test
     public void verifyCreateResponseEntityForAuthnFailure() {
         val request = new MockHttpServletRequest();

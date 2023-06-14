@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OAuthToken")
-public class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20Tests {
+class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20Tests {
     @Mock
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 

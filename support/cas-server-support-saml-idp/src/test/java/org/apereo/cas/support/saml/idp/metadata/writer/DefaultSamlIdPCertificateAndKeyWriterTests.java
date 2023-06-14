@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("SAMLMetadata")
-public class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfigurationTests {
+class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfigurationTests {
     @Nested
     @Tag("SAMLMetadata")
     @SuppressWarnings("ClassCanBeStatic")
@@ -31,7 +31,7 @@ public class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfi
         "cas.authn.saml-idp.metadata.core.certificate-algorithm=SHA512withRSA",
         "cas.authn.saml-idp.metadata.core.key-size=4096"
     })
-    public class Sha512Settings extends BaseSamlIdPConfigurationTests {
+    class Sha512Settings extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlSelfSignedCertificateWriter")
         private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
@@ -55,7 +55,7 @@ public class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfi
         "cas.authn.saml-idp.metadata.core.certificate-algorithm=SHA256withRSA",
         "cas.authn.saml-idp.metadata.core.key-size=2048"
     })
-    public class Sha256Settings extends BaseSamlIdPConfigurationTests {
+    class Sha256Settings extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlSelfSignedCertificateWriter")
         private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;

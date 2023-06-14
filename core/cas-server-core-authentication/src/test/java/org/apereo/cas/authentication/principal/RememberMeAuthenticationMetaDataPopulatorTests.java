@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.2.1
  */
 @Tag("AuthenticationMetadata")
-public class RememberMeAuthenticationMetaDataPopulatorTests {
+class RememberMeAuthenticationMetaDataPopulatorTests {
 
     private static AuthenticationBuilder newBuilder(final Credential credential,
                                                     final RememberMeAuthenticationProperties properties) {

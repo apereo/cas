@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
-public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
+class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     private static final String SUPPORTING_CLIENT_ID = UUID.randomUUID().toString();
 
     private static final String NON_SUPPORTING_CLIENT_ID = UUID.randomUUID().toString();
@@ -62,7 +62,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oauth.code.remove-related-access-tokens=true")
-    public class RemovingInvalidTokenTests extends AbstractOAuth20Tests {
+    class RemovingInvalidTokenTests extends AbstractOAuth20Tests {
         @Autowired
         @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
         private OAuth20TokenRequestValidator validator;
@@ -102,7 +102,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOAuth20Tests {
+    class DefaultTests extends AbstractOAuth20Tests {
         private OAuth20Code supportingServiceTicket;
 
         private OAuth20Code nonSupportingServiceTicket;

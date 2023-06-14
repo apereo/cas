@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
-public class FetchTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
+class FetchTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FETCH_TICKET_GRANTING_TICKET)
     private Action action;

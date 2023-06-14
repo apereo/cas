@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RedisCoreConfiguration.class,
     RedisTicketRegistryConfiguration.class
 })
-public class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
+class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("redisTicketRegistryCacheEndpoint")
     private RedisTicketRegistryCacheEndpoint endpoint;

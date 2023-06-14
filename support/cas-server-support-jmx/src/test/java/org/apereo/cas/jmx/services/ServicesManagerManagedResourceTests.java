@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseCasJmxTests.SharedTestConfiguration.class)
 @Tag("JMX")
-public class ServicesManagerManagedResourceTests {
+class ServicesManagerManagedResourceTests {
 
     @Autowired
     @Qualifier("servicesManagerManagedResource")

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.jdbc.show-sql=false")
 @Tag("Hibernate")
 @EnableTransactionManagement(proxyTargetClass = false)
-public class CasEclipseLinkJpaBeanFactoryTests {
+class CasEclipseLinkJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

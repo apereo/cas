@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultServiceRegistryInitializerEventListenerTests {
+class DefaultServiceRegistryInitializerEventListenerTests {
 
     @Test
     public void verifyOperation() {

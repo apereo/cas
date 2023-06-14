@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.adaptive.risk.agent.enabled=true")
 @Tag("Authentication")
-public class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {

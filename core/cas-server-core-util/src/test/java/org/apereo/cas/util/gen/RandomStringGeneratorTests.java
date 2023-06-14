@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Simple")
-public class RandomStringGeneratorTests {
+class RandomStringGeneratorTests {
 
     private static final int LENGTH = 36;
 

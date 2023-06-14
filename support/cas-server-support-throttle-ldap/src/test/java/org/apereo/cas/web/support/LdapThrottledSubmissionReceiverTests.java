@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 11389)
-public class LdapThrottledSubmissionReceiverTests {
+class LdapThrottledSubmissionReceiverTests {
     private static final int LDAP_PORT = 11389;
 
     @Autowired

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("FileSystem")
-public class RegisteredServiceJsonSerializerTests {
+class RegisteredServiceJsonSerializerTests {
 
     @Test
     public void verifyPrinter() {

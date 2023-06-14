@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("WebflowActions")
-public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
+class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
 
     @BeforeEach
     public void setup() {

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("X509")
 @SpringBootTest(classes = BaseX509Tests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RequestHeaderX509CertificateExtractorTests {
+class RequestHeaderX509CertificateExtractorTests {
     @Autowired
     @Qualifier("x509CertificateExtractor")
     private X509CertificateExtractor x509CertificateExtractor;

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
-public class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
+class DynamoDbHealthIndicatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
 
     @Autowired
     @Qualifier("dynamoDbHealthIndicator")

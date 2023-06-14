@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
-public class CasWebApplicationReadyTests {
+class CasWebApplicationReadyTests {
     @Test
     public void verifyOperation() {
         assertEquals(Boolean.FALSE.toString(), System.getProperty(CasWebApplicationReady.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));

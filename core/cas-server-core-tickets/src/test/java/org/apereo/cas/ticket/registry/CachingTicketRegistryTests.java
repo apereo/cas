@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Tickets")
-public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
+class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "logging.config=file:${java.io.tmpdir}/log4j2.xml"
 })
 @Tag("ActuatorEndpoint")
-public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
+class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("loggingConfigurationEndpoint")
     private LoggingConfigurationEndpoint loggingConfigurationEndpoint;

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @Tag("Delegation")
-public class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogateAuthenticationTests {
+class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogateAuthenticationTests {
 
     @Autowired
     @Qualifier("surrogatePasswordlessAuthenticationPreProcessor")

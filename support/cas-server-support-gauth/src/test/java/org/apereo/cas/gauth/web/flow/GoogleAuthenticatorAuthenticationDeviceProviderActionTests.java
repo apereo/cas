@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Tag("WebflowMfaActions")
-public class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
+class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     @Autowired
     @Qualifier("googleAccountDeviceProviderAction")
     private MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction;

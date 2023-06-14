@@ -77,7 +77,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
+class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     @Autowired
     @Qualifier("amazonCognitoAuthenticationHandler")
     private AuthenticationHandler amazonCognitoAuthenticationHandler;

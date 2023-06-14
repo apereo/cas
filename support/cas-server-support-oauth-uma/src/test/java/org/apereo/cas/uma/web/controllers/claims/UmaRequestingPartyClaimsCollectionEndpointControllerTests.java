@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyOp() throws Exception {
         val id = UUID.randomUUID().toString();

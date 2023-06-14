@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Groovy")
-public class GroovyAttributeConverterTests {
+class GroovyAttributeConverterTests {
     @Test
     public void verifyUnknownType() {
         val c = new GroovyAttributeConverter();

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("MFATrustedDevices")
-public class DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests {
+class DefaultMultifactorAuthenticationTrustRecordKeyGeneratorTests {
     @Test
     public void verifyOperation() {
         val gen = new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();

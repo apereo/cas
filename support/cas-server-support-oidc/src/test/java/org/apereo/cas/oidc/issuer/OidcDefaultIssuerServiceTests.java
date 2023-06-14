@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=https:..sso.example.org.*")
-public class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
+class OidcDefaultIssuerServiceTests extends AbstractOidcTests {
     protected static JEEContext getContextForEndpoint(final String endpoint) {
         val request = new MockHttpServletRequest();
         request.setScheme("https");

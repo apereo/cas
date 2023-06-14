@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationBypassActionTests {
+class MultifactorAuthenticationBypassActionTests {
 
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
@@ -54,7 +54,7 @@ public class MultifactorAuthenticationBypassActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
-    public class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
         private Action mfaBypassAction;
@@ -103,7 +103,7 @@ public class MultifactorAuthenticationBypassActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
-    public class FailureModeBypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    class FailureModeBypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
         private Action mfaBypassAction;

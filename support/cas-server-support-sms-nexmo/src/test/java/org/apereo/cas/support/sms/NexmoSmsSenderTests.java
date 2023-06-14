@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.sms-provider.nexmo.signature-secret=123456"
 })
 @Tag("SMS")
-public class NexmoSmsSenderTests {
+class NexmoSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;

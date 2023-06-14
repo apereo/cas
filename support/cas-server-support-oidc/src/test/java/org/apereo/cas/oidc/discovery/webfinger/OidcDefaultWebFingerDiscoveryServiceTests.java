@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
+class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
 
     @Test
     public void verifyNotFound() {

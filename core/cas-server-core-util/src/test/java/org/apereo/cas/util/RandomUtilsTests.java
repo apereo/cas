@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Utility")
-public class RandomUtilsTests {
+class RandomUtilsTests {
 
     @BeforeEach
     public void beforeEach() {

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestResponseEntityAuditResourceResolverTests {
+class RestResponseEntityAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new RestResponseEntityAuditResourceResolver(true);

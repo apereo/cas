@@ -12,7 +12,7 @@ import org.springframework.aot.hint.RuntimeHints;
  * @since 7.0.0
  */
 @Tag("Native")
-public class JsonServiceRegistryRuntimeHintsTests {
+class JsonServiceRegistryRuntimeHintsTests {
     @Test
     public void verifyHints() {
         val hints = new RuntimeHints();

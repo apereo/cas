@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.bypass.rest.url=http://localhost:8080/bypass"
     })
 @Tag("Radius")
-public class RadiusTokenAuthenticationMultifactorProviderBypassConfigurationTests {
+class RadiusTokenAuthenticationMultifactorProviderBypassConfigurationTests {
     @Autowired
     @Qualifier("radiusBypassEvaluator")
     private MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator;

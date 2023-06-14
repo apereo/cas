@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Attributes")
-public class ProtocolAttributeEncoderTests {
+class ProtocolAttributeEncoderTests {
     @Test
     public void verifyEncoder() {
         val encoder = new ProtocolAttributeEncoder() {

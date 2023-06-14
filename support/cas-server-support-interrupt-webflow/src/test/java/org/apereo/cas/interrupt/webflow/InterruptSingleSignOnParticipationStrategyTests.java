@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 }, properties = "cas.interrupt.json.location=classpath:/interrupt.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class InterruptSingleSignOnParticipationStrategyTests {
+class InterruptSingleSignOnParticipationStrategyTests {
     @Autowired
     @Qualifier("interruptSingleSignOnParticipationStrategy")
     private SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy;

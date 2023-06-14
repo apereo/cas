@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
-public class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
+class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Groovy")
-public class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class GroovyResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     @Test
     public void verifyResolverSupports() throws Exception {
         val resolver = getGroovyResourceMetadataResolver();

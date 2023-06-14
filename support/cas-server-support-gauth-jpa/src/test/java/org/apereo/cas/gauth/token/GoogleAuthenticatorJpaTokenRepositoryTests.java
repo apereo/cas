@@ -90,5 +90,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Getter
 @Tag("JDBCMFA")
 @EnableRetry
-public class GoogleAuthenticatorJpaTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+class GoogleAuthenticatorJpaTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 }

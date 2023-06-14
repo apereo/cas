@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class LdapUserGraphicalAuthenticationRepositoryTests {
+class LdapUserGraphicalAuthenticationRepositoryTests {
 
     @Autowired
     @Qualifier("userGraphicalAuthenticationRepository")

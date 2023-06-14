@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("Audits")
-public class AccountRegistrationRequestAuditPrincipalIdResolverTests {
+class AccountRegistrationRequestAuditPrincipalIdResolverTests {
     @Test
     public void verifySupports() {
         val context = new MockRequestContext();

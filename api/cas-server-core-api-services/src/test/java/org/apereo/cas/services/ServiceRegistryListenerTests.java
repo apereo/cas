@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ServiceRegistryListenerTests {
+class ServiceRegistryListenerTests {
     @Test
     public void verifyOperation() {
         val listener = ServiceRegistryListener.noOp();

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
+class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
 
     @Test
     public void verifyRedirect() {

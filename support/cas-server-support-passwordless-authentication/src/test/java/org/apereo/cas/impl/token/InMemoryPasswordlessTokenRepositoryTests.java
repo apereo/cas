@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("PasswordOps")
-public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
+class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     private static final String CAS_USER = "casuser";
 
     @Autowired

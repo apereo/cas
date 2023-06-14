@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("WebflowActions")
-public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
+class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
 
     @Autowired
     @Qualifier("principalFromRemoteUserAction")

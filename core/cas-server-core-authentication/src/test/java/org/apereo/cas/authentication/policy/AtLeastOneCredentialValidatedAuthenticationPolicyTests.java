@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationPolicy")
-public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
+class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
     @Test
     public void verifyOperationPrevented() throws Exception {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();

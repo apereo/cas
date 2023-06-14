@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @Slf4j
-public class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
+class AmazonSecretsManagerCloudConfigBootstrapConfigurationTests {
 
     static final String ENDPOINT = "http://localhost:4566";
 

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityAuthenticationWebflowActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityAuthenticationWebflowActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_AUTHENTICATION_WEBFLOW)
     private Action duoAuthenticationWebflowAction;

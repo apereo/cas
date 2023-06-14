@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowConfig")
-public class InterruptWebflowConfigurerTests {
+class InterruptWebflowConfigurerTests {
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class
@@ -46,7 +46,7 @@ public class InterruptWebflowConfigurerTests {
     @Nested
     @Tag("WebflowConfig")
     @SuppressWarnings("ClassCanBeStatic")
-    public class InterruptAfterAuthentication extends BaseWebflowConfigurerTests {
+    class InterruptAfterAuthentication extends BaseWebflowConfigurerTests {
 
         @Test
         public void verifyOperation() {
@@ -68,7 +68,7 @@ public class InterruptWebflowConfigurerTests {
     @Nested
     @Tag("WebflowConfig")
     @SuppressWarnings("ClassCanBeStatic")
-    public class InterruptAfterSingleSignOn extends BaseWebflowConfigurerTests {
+    class InterruptAfterSingleSignOn extends BaseWebflowConfigurerTests {
         @Test
         public void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

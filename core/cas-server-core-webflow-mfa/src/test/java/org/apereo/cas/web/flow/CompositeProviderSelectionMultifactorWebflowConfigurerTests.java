@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection-enabled=true")
 @Tag("WebflowMfaConfig")
-public class CompositeProviderSelectionMultifactorWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class CompositeProviderSelectionMultifactorWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

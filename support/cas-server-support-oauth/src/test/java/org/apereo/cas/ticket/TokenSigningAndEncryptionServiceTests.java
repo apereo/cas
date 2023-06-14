@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
+class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
     @Test
     public void verifyOperation() {
         val publicKey = mock(PublicJsonWebKey.class);

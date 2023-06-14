@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
+class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

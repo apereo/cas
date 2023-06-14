@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("MFAProvider")
-public class GoogleAuthenticatorServiceTests {
+class GoogleAuthenticatorServiceTests {
 
     @Test
     public void verifyOperation() {

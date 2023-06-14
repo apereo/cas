@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("SAML2")
-public class SamlIdentityProviderEntityParserTests {
+class SamlIdentityProviderEntityParserTests {
     @Test
     public void verifyResource() throws Exception {
         val parser = new SamlIdentityProviderEntityParser(new ClassPathResource("disco-feed.json"));

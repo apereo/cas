@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
     }
 )
 @Tag("MFAProvider")
-public class U2FAuthenticationHandlerTests {
+class U2FAuthenticationHandlerTests {
     @Autowired
     @Qualifier("u2fAuthenticationHandler")
     private AuthenticationHandler u2fAuthenticationHandler;

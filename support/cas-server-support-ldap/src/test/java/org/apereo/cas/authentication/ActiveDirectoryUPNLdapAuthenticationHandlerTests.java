@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 10390)
 @Tag("ActiveDirectory")
-public class ActiveDirectoryUPNLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
+class ActiveDirectoryUPNLdapAuthenticationHandlerTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     /**
      * This dnFormat can authenticate but it isn't bringing back any attributes.

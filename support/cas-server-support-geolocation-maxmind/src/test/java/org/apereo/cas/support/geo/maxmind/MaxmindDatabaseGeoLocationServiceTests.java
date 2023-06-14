@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("GeoLocation")
-public class MaxmindDatabaseGeoLocationServiceTests {
+class MaxmindDatabaseGeoLocationServiceTests {
 
     @Test
     public void verifyWebServices() throws Exception {

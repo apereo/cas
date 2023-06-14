@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderConfigurationFactoryTests {
+class DelegatedClientIdentityProviderConfigurationFactoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

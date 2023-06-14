@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
 @Tag("Simple")
-public class SentryMonitoringAspectTests {
+class SentryMonitoringAspectTests {
 
     @Autowired
     @Qualifier("greeter")

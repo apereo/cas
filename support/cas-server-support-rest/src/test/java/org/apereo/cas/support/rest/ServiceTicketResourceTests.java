@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("RestfulApi")
-public class ServiceTicketResourceTests {
+class ServiceTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
     private static final String OTHER_EXCEPTION = "Other exception";

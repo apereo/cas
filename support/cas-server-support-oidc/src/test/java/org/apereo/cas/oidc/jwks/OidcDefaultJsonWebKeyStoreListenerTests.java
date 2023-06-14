@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
+class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
     @Autowired
     private ConfigurableApplicationContext realApplicationContext;
 

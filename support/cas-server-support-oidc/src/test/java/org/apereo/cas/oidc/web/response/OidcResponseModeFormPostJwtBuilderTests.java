@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcResponseModeFormPostJwtBuilderTests {
+class OidcResponseModeFormPostJwtBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyResponseModeForService() throws Exception {
             val registeredService = getOidcRegisteredService("client");

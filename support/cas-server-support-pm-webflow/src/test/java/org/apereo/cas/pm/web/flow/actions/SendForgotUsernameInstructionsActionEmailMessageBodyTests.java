@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 25000)
 @Tag("Mail")
-public class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePasswordManagementActionTests {
+class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePasswordManagementActionTests {
 
     private static RequestContext getRequestContext(final MockHttpServletRequest request,
                                                     final MockHttpServletResponse response) {
@@ -51,7 +51,7 @@ public class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends B
     @Nested
     @TestPropertySource(properties = "cas.authn.pm.forgot-username.mail.text=classpath:ForgotUsernameEmailBody.groovy")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BasePasswordManagementActionTests {
+    class DefaultTests extends BasePasswordManagementActionTests {
 
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
@@ -89,7 +89,7 @@ public class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends B
     @Nested
     @TestPropertySource(properties = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled=false")
     @SuppressWarnings("ClassCanBeStatic")
-    public class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
+    class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
 
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)

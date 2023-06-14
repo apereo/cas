@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.logout.redirect-url=https://github.com"
 })
 @Tag("WebflowActions")
-public class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests {
+class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     private Action action;

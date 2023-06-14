@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-public class ServiceAuditResourceResolverTests {
+class ServiceAuditResourceResolverTests {
     @Test
     public void verifyOperation() {
         val jp = mock(JoinPoint.class);

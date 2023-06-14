@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class LogoutExecutionPlanTests {
+class LogoutExecutionPlanTests {
     @Test
     public void verifyOperation() {
         val plan = new LogoutExecutionPlan() {

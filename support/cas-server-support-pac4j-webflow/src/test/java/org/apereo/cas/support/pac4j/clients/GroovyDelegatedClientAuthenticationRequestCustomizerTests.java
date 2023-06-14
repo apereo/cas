@@ -36,7 +36,7 @@ import static org.springframework.core.Ordered.*;
 @Tag("Groovy")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.groovy-authentication-request-customizer.location=classpath:/AuthnRequestCustomizer.groovy")
-public class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
+class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
     protected WebContext context;
 
     protected MockRequestContext requestContext;

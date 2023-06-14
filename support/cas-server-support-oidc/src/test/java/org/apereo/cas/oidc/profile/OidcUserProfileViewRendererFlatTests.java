@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW",
     "cas.authn.oauth.core.user-profile-view-type=FLAT"
 })
-public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
+class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

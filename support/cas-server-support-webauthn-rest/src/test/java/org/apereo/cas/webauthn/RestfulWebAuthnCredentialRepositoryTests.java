@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApiAuthentication")
 @TestPropertySource(properties = "cas.authn.mfa.web-authn.rest.url=http://localhost:9559")
 @Import(RestfulWebAuthnConfiguration.class)
-public class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @Test
     @Override

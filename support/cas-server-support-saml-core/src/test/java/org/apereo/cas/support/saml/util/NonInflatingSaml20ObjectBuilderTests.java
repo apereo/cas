@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAMLResponse")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
-public class NonInflatingSaml20ObjectBuilderTests {
+class NonInflatingSaml20ObjectBuilderTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;

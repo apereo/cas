@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.authy.api-key=example",
         "cas.authn.mfa.authy.api-url=http://localhost:8080/authy"
     })
-public class AuthyAuthenticationWebflowEventResolverTests {
+class AuthyAuthenticationWebflowEventResolverTests {
     private final RequestContext context = mock(RequestContext.class);
 
     @Autowired

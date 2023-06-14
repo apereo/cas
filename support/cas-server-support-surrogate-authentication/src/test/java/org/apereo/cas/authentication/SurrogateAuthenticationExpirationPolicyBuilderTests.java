@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ExpirationPolicy")
-public class SurrogateAuthenticationExpirationPolicyBuilderTests {
+class SurrogateAuthenticationExpirationPolicyBuilderTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
-public class CasWebSecurityConfigurerAdapterWebTests {
+class CasWebSecurityConfigurerAdapterWebTests {
     @Autowired
     private WebApplicationContext webApplicationContext;
 

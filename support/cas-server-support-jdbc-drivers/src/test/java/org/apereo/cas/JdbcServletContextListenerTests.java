@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Hibernate")
 @SuppressWarnings("JdkObsolete")
-public class JdbcServletContextListenerTests {
+class JdbcServletContextListenerTests {
 
     private final JdbcServletContextListener listener = new JdbcServletContextListener();
 

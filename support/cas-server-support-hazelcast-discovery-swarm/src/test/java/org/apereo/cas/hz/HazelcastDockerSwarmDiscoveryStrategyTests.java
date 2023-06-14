@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Hazelcast")
 @Isolated
-public class HazelcastDockerSwarmDiscoveryStrategyTests {
+class HazelcastDockerSwarmDiscoveryStrategyTests {
     private static void assertAllPropsAreValid(final Map<String, Comparable> properties,
                                                final Collection<PropertyDefinition> configurationProperties) {
         for (val propertyDefinition : configurationProperties) {

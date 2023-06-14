@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Utility")
-public class CollectionUtilsTests {
+class CollectionUtilsTests {
     @Test
     public void verifyCollectionAsInputMap() {
         val value = new HashMap<String, List<Object>>();

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("PasswordOps")
-public class DefaultPasswordPolicyHandlingStrategyTests {
+class DefaultPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyOperation() throws Exception {

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("MFATrustedDevices")
-public class DeviceFingerprintComponentManagerTests {
+class DeviceFingerprintComponentManagerTests {
 
     @Test
     public void verifyOperation() {

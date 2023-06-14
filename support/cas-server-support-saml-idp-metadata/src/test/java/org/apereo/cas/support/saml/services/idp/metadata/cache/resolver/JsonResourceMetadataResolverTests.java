@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:/tmp")
-public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
     public void verifyResolverResolves() throws Exception {

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("Attributes")
-public class ReturnStaticAttributeReleasePolicyTests {
+class ReturnStaticAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ReturnStaticAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

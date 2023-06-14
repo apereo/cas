@@ -41,7 +41,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
 @Getter
-public class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
+class AMQPDefaultTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

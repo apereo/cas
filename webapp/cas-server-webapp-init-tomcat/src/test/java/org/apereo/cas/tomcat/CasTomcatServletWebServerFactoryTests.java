@@ -63,7 +63,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
-public class CasTomcatServletWebServerFactoryTests {
+class CasTomcatServletWebServerFactoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 

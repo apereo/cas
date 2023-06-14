@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("DuoSecurity")
-public class DuoSecurityAuthenticationHandlerTests {
+class DuoSecurityAuthenticationHandlerTests {
 
     @Test
     public void verifyDuoSecurityPasscode() throws Exception {

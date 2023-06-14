@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboPushAuthenticateActionTests extends BaseActionTests {
+class InweboPushAuthenticateActionTests extends BaseActionTests {
 
     private InweboPushAuthenticateAction action;
 

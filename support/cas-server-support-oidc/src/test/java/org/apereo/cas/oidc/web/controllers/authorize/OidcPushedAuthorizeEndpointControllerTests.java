@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
-public class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
+class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizeController")
     protected OidcPushedAuthorizeEndpointController oidcPushedAuthorizeController;

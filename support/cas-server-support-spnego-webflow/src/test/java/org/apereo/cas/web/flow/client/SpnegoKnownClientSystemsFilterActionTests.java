@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Spnego")
-public class SpnegoKnownClientSystemsFilterActionTests {
+class SpnegoKnownClientSystemsFilterActionTests {
 
     private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";
 

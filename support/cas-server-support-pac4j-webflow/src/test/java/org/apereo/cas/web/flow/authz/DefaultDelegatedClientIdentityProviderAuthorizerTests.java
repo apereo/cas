@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
-public class DefaultDelegatedClientIdentityProviderAuthorizerTests {
+class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderAuthorizer")
     private DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer;

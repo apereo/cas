@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 @SuppressWarnings("JavaUtilDate")
-public class DateTimeUtilsTests {
+class DateTimeUtilsTests {
 
     @Test
     public void verifyParsingDateAsLocalDateTime() {

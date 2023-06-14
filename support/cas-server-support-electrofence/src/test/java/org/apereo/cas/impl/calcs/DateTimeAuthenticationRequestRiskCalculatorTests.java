@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.risk.date-time.window-in-hours=4"
 })
 @Tag("Authentication")
-public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed[0].signing-certificate-resources=classpath:FederationMetadata.xml,classpath:adfs-signing.crt",
     "cas.authn.wsfed[0].identity-provider-identifier=http://adfs.example.com/adfs/services/trust"
 })
-public class WsFederationMetadataCertificateProviderTests extends AbstractWsFederationTests {
+class WsFederationMetadataCertificateProviderTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyOperation() throws Exception {

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AmazonWebServices")
-public class DefaultAmazonCloudDirectoryRepositoryTests {
+class DefaultAmazonCloudDirectoryRepositoryTests {
     private static DefaultAmazonCloudDirectoryRepository getMockCloudDirectoryRepository(final CloudDirectoryClient cloud,
                                                                                          final ListObjectAttributesRequest request) {
         return new DefaultAmazonCloudDirectoryRepository(cloud, new AmazonCloudDirectoryProperties()) {

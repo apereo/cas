@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbPropertySourceLocatorTests {
+class MongoDbPropertySourceLocatorTests {
 
     @Test
     public void verifyOperation() {

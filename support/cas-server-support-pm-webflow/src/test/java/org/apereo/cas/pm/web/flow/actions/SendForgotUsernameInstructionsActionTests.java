@@ -31,12 +31,12 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @EnabledIfListeningOnPort(port = 25000)
-public class SendForgotUsernameInstructionsActionTests {
+class SendForgotUsernameInstructionsActionTests {
 
     @Tag("Mail")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BasePasswordManagementActionTests {
+    class DefaultTests extends BasePasswordManagementActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
         protected Action sendForgotUsernameInstructionsAction;
@@ -95,7 +95,7 @@ public class SendForgotUsernameInstructionsActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled=false")
-    public class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
+    class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
         protected Action sendForgotUsernameInstructionsAction;

@@ -75,7 +75,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasValidationConfiguration.class
     })
 @Tag("CAS")
-public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
+class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
     @Qualifier("serviceValidationViewFactory")

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.tokens.crypto.enabled=false"
 })
 @Tag("Simple")
-public class SimplePasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
+class SimplePasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;

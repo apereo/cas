@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationPolicy")
-public class AcceptAnyAuthenticationPolicyFactoryTests {
+class AcceptAnyAuthenticationPolicyFactoryTests {
     @Test
     public void verifyOperation() {
         val input = new AcceptAnyAuthenticationPolicyFactory();

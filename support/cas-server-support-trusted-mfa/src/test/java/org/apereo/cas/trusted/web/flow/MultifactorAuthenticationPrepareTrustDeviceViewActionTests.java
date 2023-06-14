@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
+class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
 
     @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
         properties = {
@@ -48,7 +48,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Nested
     @Tag("WebflowMfaActions")
     @SuppressWarnings("ClassCanBeStatic")
-    public class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
+    class AutoNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 
         @Autowired
@@ -90,7 +90,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
     @Nested
     @Tag("WebflowMfaActions")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
+    class DefaultNamingStrategy extends AbstractMultifactorAuthenticationTrustStorageTests {
         private MockRequestContext context;
 
         @Autowired

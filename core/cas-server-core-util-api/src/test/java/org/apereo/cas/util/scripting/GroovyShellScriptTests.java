@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class GroovyShellScriptTests {
+class GroovyShellScriptTests {
 
     @Test
     public void verifyExec() {

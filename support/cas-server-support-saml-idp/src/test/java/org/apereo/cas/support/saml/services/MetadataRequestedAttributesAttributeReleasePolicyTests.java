@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata3"
 })
-public class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "MetadataRequestedAttributesAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

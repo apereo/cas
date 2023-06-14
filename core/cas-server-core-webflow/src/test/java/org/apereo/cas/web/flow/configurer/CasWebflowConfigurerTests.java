@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowConfig")
-public class CasWebflowConfigurerTests {
+class CasWebflowConfigurerTests {
     @Test
     public void verifyNoAutoConfig() {
         val props = new CasConfigurationProperties();

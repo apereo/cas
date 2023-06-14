@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-public class BasicX509CredentialFactoryBeanTests {
+class BasicX509CredentialFactoryBeanTests {
 
     @Test
     public void verifyNoCert() {

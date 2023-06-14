@@ -65,7 +65,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
     "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
 })
-public class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

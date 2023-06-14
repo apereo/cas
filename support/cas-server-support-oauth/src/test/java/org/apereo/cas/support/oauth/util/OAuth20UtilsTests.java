@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("OAuth")
-public class OAuth20UtilsTests extends AbstractOAuth20Tests {
+class OAuth20UtilsTests extends AbstractOAuth20Tests {
     @Test
     public void verifyRequestHeaderBad() {
         assertNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(new CommonProfile()));

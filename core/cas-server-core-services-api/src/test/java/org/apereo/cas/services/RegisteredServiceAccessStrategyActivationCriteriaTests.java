@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAccessStrategyActivationCriteriaTests {
+class RegisteredServiceAccessStrategyActivationCriteriaTests {
     @Test
     public void verifyAlways() throws Exception {
         val criteria = RegisteredServiceAccessStrategyActivationCriteria.always();

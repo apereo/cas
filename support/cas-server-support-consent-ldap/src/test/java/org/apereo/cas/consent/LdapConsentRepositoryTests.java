@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 10389)
 @Slf4j
 @Tag("LdapRepository")
-public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
+class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 
     @Autowired

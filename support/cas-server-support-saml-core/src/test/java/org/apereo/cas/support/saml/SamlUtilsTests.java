@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
-public class SamlUtilsTests {
+class SamlUtilsTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;

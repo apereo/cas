@@ -37,7 +37,7 @@ import java.util.UUID;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SuppressWarnings("JavaUtilDate")
-public class GroovyAuditTrailManagerTests {
+class GroovyAuditTrailManagerTests {
 
     @Autowired
     @Qualifier("filterAndDelegateAuditTrailManager")

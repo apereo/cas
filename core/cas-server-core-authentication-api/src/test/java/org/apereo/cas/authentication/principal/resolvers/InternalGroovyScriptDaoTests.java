@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class InternalGroovyScriptDaoTests {
+class InternalGroovyScriptDaoTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

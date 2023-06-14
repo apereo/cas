@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasGeoLocationConfiguration.class
 }, properties = "cas.geo-location.groovy.location=classpath:/GroovyGeoLocation.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyGeoLocationServiceTests {
+class GroovyGeoLocationServiceTests {
 
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)

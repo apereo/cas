@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator;

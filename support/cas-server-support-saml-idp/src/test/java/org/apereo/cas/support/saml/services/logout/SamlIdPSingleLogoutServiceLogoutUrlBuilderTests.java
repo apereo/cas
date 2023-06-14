@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("SAMLLogout")
-public class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlSingleLogoutServiceLogoutUrlBuilder")
     private SingleLogoutServiceLogoutUrlBuilder samlLogoutUrlBuilder;

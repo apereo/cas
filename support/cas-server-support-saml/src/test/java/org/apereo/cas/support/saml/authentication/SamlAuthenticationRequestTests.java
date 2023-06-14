@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("SAML")
-public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
+class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     private static String deflateViaStream(final String samlRequest) throws IOException {
         val xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);

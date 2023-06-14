@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Delegation")
-public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
+class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(
         final RegisteredService svc,
         final TicketRegistry ticketRegistry) {

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedSaml2ClientMetadataMongoDbTests {
+class DelegatedSaml2ClientMetadataMongoDbTests {
     @Autowired
     @Qualifier("delegatedSaml2ClientMetadataController")
     private DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController;

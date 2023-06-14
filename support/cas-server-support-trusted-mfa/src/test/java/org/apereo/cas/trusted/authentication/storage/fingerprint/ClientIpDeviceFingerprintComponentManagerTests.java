@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @NoArgsConstructor
 @Tag("MFATrustedDevices")
-public class ClientIpDeviceFingerprintComponentManagerTests {
+class ClientIpDeviceFingerprintComponentManagerTests {
 
     @Test
     public void verifyClientIpFingerprintNotFound() {

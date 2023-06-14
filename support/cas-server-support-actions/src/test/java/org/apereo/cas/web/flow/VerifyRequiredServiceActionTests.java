@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     "cas.tgc.crypto.enabled=false"
 })
 @Tag("WebflowServiceActions")
-public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
+class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
     private Action verifyRequiredServiceAction;
 

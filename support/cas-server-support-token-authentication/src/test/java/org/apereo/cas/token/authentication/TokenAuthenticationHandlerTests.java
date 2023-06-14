@@ -92,7 +92,7 @@ import static org.mockito.Mockito.*;
     TokenAuthenticationConfiguration.class
 })
 @Tag("AuthenticationHandler")
-public class TokenAuthenticationHandlerTests {
+class TokenAuthenticationHandlerTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);

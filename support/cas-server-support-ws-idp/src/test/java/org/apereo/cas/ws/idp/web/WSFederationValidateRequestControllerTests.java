@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Tag("WSFederation")
-public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("federationValidateRequestController")
     private WSFederationValidateRequestController federationValidateRequestController;

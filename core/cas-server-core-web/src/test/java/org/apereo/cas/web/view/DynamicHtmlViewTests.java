@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class
 })
-public class DynamicHtmlViewTests {
+class DynamicHtmlViewTests {
     @Autowired
     @Qualifier(CasWebflowConstants.VIEW_ID_DYNAMIC_HTML)
     private View dynamicHtmlView;

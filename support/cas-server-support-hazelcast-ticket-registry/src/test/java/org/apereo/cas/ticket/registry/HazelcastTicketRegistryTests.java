@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("Hazelcast")
-public class HazelcastTicketRegistryTests {
+class HazelcastTicketRegistryTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Getter
@@ -50,7 +50,7 @@ public class HazelcastTicketRegistryTests {
             "cas.ticket.registry.hazelcast.cluster.network.port=5707",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=testjetlessinstance"
         })
-    public class JetlessTests extends BaseTicketRegistryTests {
+    class JetlessTests extends BaseTicketRegistryTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry newTicketRegistry;
@@ -71,7 +71,7 @@ public class HazelcastTicketRegistryTests {
             "cas.ticket.registry.hazelcast.cluster.network.port=5703",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
         })
-    public class DefaultTests extends BaseTicketRegistryTests {
+    class DefaultTests extends BaseTicketRegistryTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry newTicketRegistry;

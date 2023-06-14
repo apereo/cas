@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class
 })
 @Tag("AuthenticationPolicy")
-public class UniquePrincipalAuthenticationPolicyTests {
+class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class QRUtilsTests {
+class QRUtilsTests {
     @Test
     public void verifyOperation() throws Exception {
         try (val out = new ByteArrayOutputStream()) {

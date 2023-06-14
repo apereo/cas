@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
 @Tag("GroovyMfa")
-public class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
+class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;

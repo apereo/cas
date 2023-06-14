@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ThymeleafAutoConfiguration.class
 })
 @Tag("Web")
-public class CasProtocolThymeleafViewFactoryTests {
+class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired
     private SpringTemplateEngine springTemplateEngine;

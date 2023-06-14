@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
 @Import(DisplayBeforePasswordlessAuthenticationActionTests.PasswordlessAuthenticationActionTestConfiguration.class)
-public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @TestConfiguration(value = "PasswordlessAuthenticationActionTestConfiguration", proxyBeanMethods = false)
     public static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean

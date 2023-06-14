@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceMappedRegexAttributeFilterTests {
+class RegisteredServiceMappedRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceMappedRegexAttributeFilter.json");
 
@@ -48,7 +48,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
 
     private RegisteredServiceMappedRegexAttributeFilter filter;
 
-    public RegisteredServiceMappedRegexAttributeFilterTests() {
+    RegisteredServiceMappedRegexAttributeFilterTests() {
         givenAttributesMap = new HashMap<>();
         givenAttributesMap.put(UID, List.of("loggedInTestUid"));
         givenAttributesMap.put(PHONE, List.of("1290"));

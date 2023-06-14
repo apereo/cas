@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Tag("JDBC")
-public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
+class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
     @BeforeEach
     public void initialize() throws Exception {

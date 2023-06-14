@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 @Getter
-public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     @Autowired

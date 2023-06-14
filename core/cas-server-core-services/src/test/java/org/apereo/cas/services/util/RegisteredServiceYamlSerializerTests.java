@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceYamlSerializerTests {
+class RegisteredServiceYamlSerializerTests {
 
     @Test
     public void verifyPrinter() {

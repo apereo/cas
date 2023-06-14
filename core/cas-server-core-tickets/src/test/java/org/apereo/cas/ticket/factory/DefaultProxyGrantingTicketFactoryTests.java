@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyMismatchedClass() {

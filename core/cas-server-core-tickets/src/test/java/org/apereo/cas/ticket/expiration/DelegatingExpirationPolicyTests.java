@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class DelegatingExpirationPolicyTests {
+class DelegatingExpirationPolicyTests {
 
     @Test
     public void verifyOperation() {

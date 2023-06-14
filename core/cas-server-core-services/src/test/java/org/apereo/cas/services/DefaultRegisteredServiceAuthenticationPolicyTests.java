@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceAuthenticationPolicyTests {
+class DefaultRegisteredServiceAuthenticationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ServiceAuthenticationPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

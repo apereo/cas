@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
+class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperationGlobally() throws Exception {

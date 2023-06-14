@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @SuppressWarnings("JavaUtilDate")
-public class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
+class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
     @Test
     public void verifySignedJwtWithClientId() {
         val registeredService = getOidcRegisteredService("client");

@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 })
 @Getter
 @Tag("MFAProvider")
-public class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
+class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Autowired
     @Qualifier("googleAuthenticatorOneTimeTokenCredentialValidator")

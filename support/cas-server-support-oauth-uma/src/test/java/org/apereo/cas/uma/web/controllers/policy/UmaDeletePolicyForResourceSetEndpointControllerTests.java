@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();

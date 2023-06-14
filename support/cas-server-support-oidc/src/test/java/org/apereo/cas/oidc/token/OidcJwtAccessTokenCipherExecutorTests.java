@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
+class OidcJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() throws Exception {
         val at = getAccessToken();

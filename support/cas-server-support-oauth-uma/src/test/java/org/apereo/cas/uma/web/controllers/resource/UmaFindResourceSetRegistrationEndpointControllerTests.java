@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @BeforeEach
     public void beforeEach() {

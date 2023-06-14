@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Webflow")
-public class ClientFlowExecutionKeyTests {
+class ClientFlowExecutionKeyTests {
 
     @Test
     public void verifySerialization() {

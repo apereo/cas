@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.rest.crypto.enabled=true"
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests {
+class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

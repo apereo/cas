@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
+class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     public void verifyOAuth() {

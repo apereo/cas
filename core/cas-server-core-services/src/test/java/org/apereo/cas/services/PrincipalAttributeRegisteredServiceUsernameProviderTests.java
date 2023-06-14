@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
+class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalAttributeRegisteredServiceUsernameProvider.json");
 

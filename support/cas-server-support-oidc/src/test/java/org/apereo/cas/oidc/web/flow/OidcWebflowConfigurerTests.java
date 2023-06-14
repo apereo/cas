@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
 })
 @Tag("OIDC")
-public class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier("oidcThrottledRequestFilter")

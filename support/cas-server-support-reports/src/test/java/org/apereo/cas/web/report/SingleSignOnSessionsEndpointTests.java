@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "management.endpoint.ssoSessions.enabled=true")
 @Tag("ActuatorEndpoint")
-public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
+class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

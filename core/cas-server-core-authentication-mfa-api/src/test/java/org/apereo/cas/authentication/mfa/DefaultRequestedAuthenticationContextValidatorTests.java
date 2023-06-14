@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.5
  */
 @Tag("MFA")
-public class DefaultRequestedAuthenticationContextValidatorTests {
+class DefaultRequestedAuthenticationContextValidatorTests {
 
     private static final String CASUSER = "casuser";
 

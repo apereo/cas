@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JdbcCloudConfigBootstrapConfiguration.class
 })
 @Tag("JDBC")
-public class JdbcCloudConfigBootstrapConfigurationTests {
+class JdbcCloudConfigBootstrapConfigurationTests {
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
 
     @Autowired

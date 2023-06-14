@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
+class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
         "AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests.json");
 

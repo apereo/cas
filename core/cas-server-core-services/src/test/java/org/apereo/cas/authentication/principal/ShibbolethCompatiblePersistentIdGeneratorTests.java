@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Tag("RegisteredService")
-public class ShibbolethCompatiblePersistentIdGeneratorTests {
+class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
 

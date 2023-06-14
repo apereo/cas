@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 4.2
  */
 @Tag("Authentication")
-public class WebApplicationServiceFactoryTests {
+class WebApplicationServiceFactoryTests {
 
     @Test
     public void verifyServiceAttributes() {

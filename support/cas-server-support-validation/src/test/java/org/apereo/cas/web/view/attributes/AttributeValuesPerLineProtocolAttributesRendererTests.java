@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Attributes")
-public class AttributeValuesPerLineProtocolAttributesRendererTests {
+class AttributeValuesPerLineProtocolAttributesRendererTests {
     @Test
     public void verifyAction() {
         val r = new AttributeValuesPerLineProtocolAttributesRenderer();

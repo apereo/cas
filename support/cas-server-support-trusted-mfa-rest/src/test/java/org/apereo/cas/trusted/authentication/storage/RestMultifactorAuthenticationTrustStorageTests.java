@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
         
         "cas.authn.mfa.trusted.rest.url=http://localhost:9297"
     })
-public class RestMultifactorAuthenticationTrustStorageTests {
+class RestMultifactorAuthenticationTrustStorageTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

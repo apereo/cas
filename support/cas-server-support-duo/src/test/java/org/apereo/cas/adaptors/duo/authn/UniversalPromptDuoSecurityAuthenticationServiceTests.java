@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("DuoSecurity")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class UniversalPromptDuoSecurityAuthenticationServiceTests {
+class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
     @Test
     public void verifyPingFails() throws Exception {

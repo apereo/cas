@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("WebApp")
-public class CasJettyBannerTests {
+class CasJettyBannerTests {
     @Test
     public void verifyAction() {
         val banner = new CasJettyBanner();

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class ReverseDNSRunnableTests {
+class ReverseDNSRunnableTests {
     @Test
     public void verifyOperation() {
         val input = new ReverseDNSRunnable("123.456.000.xyz");

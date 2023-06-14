@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 25000)
 @Tag("Mail")
-public class SendPasswordResetInstructionsActionTests {
+class SendPasswordResetInstructionsActionTests {
 
     @TestConfiguration(value = "PasswordManagementTestConfiguration", proxyBeanMethods = false)
     public static class PasswordManagementTestConfiguration {
@@ -56,7 +56,7 @@ public class SendPasswordResetInstructionsActionTests {
 
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class DefaultTests extends BasePasswordManagementActionTests {
+    class DefaultTests extends BasePasswordManagementActionTests {
 
         @BeforeEach
         public void setup() {
@@ -117,7 +117,7 @@ public class SendPasswordResetInstructionsActionTests {
             "cas.authn.pm.reset.security-questions-enabled=true",
             "cas.authn.pm.reset.number-of-uses=1"
     })
-    public class MultiUseTests extends BasePasswordManagementActionTests {
+    class MultiUseTests extends BasePasswordManagementActionTests {
 
         @Test
         public void verifyActionMultiUse() throws Exception {
@@ -136,7 +136,7 @@ public class SendPasswordResetInstructionsActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     @Import(PasswordManagementTestConfiguration.class)
-    public class WithoutTokens extends BasePasswordManagementActionTests {
+    class WithoutTokens extends BasePasswordManagementActionTests {
 
         @Test
         public void verifyNoLinkAction() throws Exception {

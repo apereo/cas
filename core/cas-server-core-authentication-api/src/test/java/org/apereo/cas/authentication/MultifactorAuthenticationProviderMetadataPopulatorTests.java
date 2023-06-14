@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("AuthenticationMetadata")
-public class MultifactorAuthenticationProviderMetadataPopulatorTests {
+class MultifactorAuthenticationProviderMetadataPopulatorTests {
     @Test
     public void verifyOperation() throws Exception {
         val provider = mock(MultifactorAuthenticationProvider.class);

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class ServiceTests {
+class ServiceTests {
     @Test
     public void verifyOperation() {
         val policy = mock(Service.class);

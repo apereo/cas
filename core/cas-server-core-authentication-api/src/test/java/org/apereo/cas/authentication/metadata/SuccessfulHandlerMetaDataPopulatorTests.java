@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationHandler")
-public class SuccessfulHandlerMetaDataPopulatorTests {
+class SuccessfulHandlerMetaDataPopulatorTests {
     @Test
     public void verifyOperation() {
         val input = new SuccessfulHandlerMetaDataPopulator();

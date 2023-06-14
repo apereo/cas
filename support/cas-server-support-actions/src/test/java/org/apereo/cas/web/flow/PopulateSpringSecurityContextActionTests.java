@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @Import(PopulateSpringSecurityContextActionTests.PopulateSpringSecurityContextActionTestConfiguration.class)
-public class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTests {
+class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)

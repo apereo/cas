@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
+class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
     @Test
     public void verifyOperation() throws Exception {
         this.samlIdPMetadataGenerator.generate(Optional.empty());

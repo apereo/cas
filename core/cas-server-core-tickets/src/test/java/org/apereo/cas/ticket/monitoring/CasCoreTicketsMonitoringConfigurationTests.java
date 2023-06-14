@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @AutoConfigureObservability
-public class CasCoreTicketsMonitoringConfigurationTests {
+class CasCoreTicketsMonitoringConfigurationTests {
     private static final List<String> ENTRIES = new ArrayList<>();
     
     @Autowired

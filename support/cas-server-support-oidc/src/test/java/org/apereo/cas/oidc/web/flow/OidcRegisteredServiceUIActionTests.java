@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
+class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
 
     @BeforeEach
     public void setup() {

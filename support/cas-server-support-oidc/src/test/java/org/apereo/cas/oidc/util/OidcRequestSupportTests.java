@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("OIDC")
-public class OidcRequestSupportTests extends AbstractOidcTests {
+class OidcRequestSupportTests extends AbstractOidcTests {
 
     protected static JEEContext getContextForEndpoint(final String endpoint) {
         val request = new MockHttpServletRequest();

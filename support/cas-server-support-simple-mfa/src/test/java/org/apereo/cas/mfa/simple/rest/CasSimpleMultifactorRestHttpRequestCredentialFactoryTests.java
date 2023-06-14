@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
-public class CasSimpleMultifactorRestHttpRequestCredentialFactoryTests {
+class CasSimpleMultifactorRestHttpRequestCredentialFactoryTests {
     @Autowired
     @Qualifier("casSimpleMultifactorRestHttpRequestCredentialFactory")
     private RestHttpRequestCredentialFactory casSimpleMultifactorRestHttpRequestCredentialFactory;

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
-public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyEncOptional() {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);

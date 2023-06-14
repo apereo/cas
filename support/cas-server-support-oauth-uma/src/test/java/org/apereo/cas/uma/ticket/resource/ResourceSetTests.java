@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class ResourceSetTests {
+class ResourceSetTests {
 
     @Test
     public void verifyOperation() {

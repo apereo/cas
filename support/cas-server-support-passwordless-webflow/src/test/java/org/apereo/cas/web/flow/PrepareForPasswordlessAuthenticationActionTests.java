@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowAuthenticationActions")
-public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
     private Action prepareLoginAction;

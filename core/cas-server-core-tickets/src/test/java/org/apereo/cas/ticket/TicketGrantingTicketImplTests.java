@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class TicketGrantingTicketImplTests {
+class TicketGrantingTicketImplTests {
 
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
 

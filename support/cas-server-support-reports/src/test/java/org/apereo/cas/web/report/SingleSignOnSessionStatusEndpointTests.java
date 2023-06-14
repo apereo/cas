@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.sso.enabled=true"
 })
 @Tag("ActuatorEndpoint")
-public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
+class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("singleSignOnSessionStatusEndpoint")
     private SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint;

@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
     "cas.tgc.crypto.enabled=false",
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"
 })
-public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifySamlResponseAllSigned() throws Exception {

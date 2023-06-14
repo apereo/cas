@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("PasswordOps")
-public class GlibcCryptPasswordEncoderTests {
+class GlibcCryptPasswordEncoderTests {
 
     private static final String PASSWORD_CLEAR = "12345abcDEF!$";
 

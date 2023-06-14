@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class UniquePrincipalRequiredExceptionTests {
+class UniquePrincipalRequiredExceptionTests {
 
     @Test
     public void verifyOperation() {

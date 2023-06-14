@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=none,RSA1_5,RSA-OAEP-256")
-public class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
+class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() {

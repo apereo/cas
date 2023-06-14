@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.jdbc.sql-update=UPDATE %s SET %s=TRUE WHERE lower(%s)=lower(?)"
 })
 @Tag("JDBC")
-public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
+class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
     @BeforeEach
     public void initialize() throws SQLException {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {

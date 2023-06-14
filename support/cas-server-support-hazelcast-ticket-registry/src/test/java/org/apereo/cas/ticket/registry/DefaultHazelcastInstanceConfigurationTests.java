@@ -76,7 +76,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Slf4j
 @Tag("Hazelcast")
-public class DefaultHazelcastInstanceConfigurationTests {
+class DefaultHazelcastInstanceConfigurationTests {
     @Autowired
     @Qualifier("casTicketRegistryHazelcastInstance")
     private HazelcastInstance hzInstance;

@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RenewAuthenticationRequestCheckActionTests {
+class RenewAuthenticationRequestCheckActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;

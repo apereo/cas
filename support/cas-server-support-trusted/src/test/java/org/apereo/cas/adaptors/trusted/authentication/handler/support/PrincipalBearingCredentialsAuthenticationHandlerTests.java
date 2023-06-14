@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class PrincipalBearingCredentialsAuthenticationHandlerTests {
+class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler =
         new PrincipalBearingCredentialsAuthenticationHandler(StringUtils.EMPTY, null,

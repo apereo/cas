@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Authentication")
-public class OneTimePasswordCredentialTests {
+class OneTimePasswordCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oneTimePasswordCredential.json");
 

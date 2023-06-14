@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebApp")
-public class CasSpringBootAdminServerServletInitializerTests {
+class CasSpringBootAdminServerServletInitializerTests {
 
     @Test
     public void verifyInitializer() {

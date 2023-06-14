@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.provisioning.syncope.basic-auth-password=password"
 })
 @Tag("Syncope")
-public class SyncopeAccountRegistrationProvisionerTests {
+class SyncopeAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;

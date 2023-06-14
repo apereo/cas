@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CloudWatchAppenderTests {
+class CloudWatchAppenderTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");

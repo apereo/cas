@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 5672)
 @Tag("AMQP")
-public class DeleteTicketsMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
+class DeleteTicketsMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test
     public void verifyDeleteTickets() throws Exception {

@@ -20,5 +20,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
-public class MariaDbJpaWebAuthnCredentialRepositoryTests extends JpaWebAuthnCredentialRepositoryTests {
+class MariaDbJpaWebAuthnCredentialRepositoryTests extends JpaWebAuthnCredentialRepositoryTests {
 }

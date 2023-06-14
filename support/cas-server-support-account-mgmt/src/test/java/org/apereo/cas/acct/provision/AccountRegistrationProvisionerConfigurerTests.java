@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("Simple")
-public class AccountRegistrationProvisionerConfigurerTests {
+class AccountRegistrationProvisionerConfigurerTests {
     @Test
     public void verifyOperation() {
         val configurer = mock(AccountRegistrationProvisionerConfigurer.class);

@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.google-recaptcha.enabled=true"
 })
 @Tag("WebflowConfig")
-public class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)
     private Action initCaptchaAction;

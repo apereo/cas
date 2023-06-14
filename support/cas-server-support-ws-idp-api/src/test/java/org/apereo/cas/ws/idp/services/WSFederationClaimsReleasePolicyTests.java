@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class WSFederationClaimsReleasePolicyTests {
+class WSFederationClaimsReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "WSFederationClaimsReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

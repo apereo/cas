@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-public class ChainingAuditPrincipalIdProviderTests {
+class ChainingAuditPrincipalIdProviderTests {
     @Test
     public void verifyOperation() {
         val chain = new ChainingAuditPrincipalIdProvider(new ArrayList<>());

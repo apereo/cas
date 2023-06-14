@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
-public class DelegatedClientAuthenticationRequestCustomizerTests {
+class DelegatedClientAuthenticationRequestCustomizerTests {
 
     @Test
     public void verifyOperation() {

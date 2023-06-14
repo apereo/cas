@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyPermTicketNoPolicy() throws Exception {
         val permissionTicket = getPermissionTicketWith(List.of("read", "write"));

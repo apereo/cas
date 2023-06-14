@@ -86,7 +86,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 27017)
 @SuppressWarnings("JavaUtilDate")
-public class MongoDbHealthIndicatorTests {
+class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")
     private HealthIndicator mongoHealthIndicator;

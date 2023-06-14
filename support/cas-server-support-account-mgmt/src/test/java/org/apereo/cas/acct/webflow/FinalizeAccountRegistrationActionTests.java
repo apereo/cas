@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
     CasAccountManagementWebflowConfiguration.class,
     FinalizeAccountRegistrationActionTests.FinalizeAccountRegistrationActionTestConfiguration.class
 })
-public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
+class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FINALIZE_ACCOUNT_REGISTRATION_REQUEST)
     private Action finalizeAccountRegistrationAction;

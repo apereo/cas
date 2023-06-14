@@ -69,7 +69,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
-public class CasCoreAuthenticationSupportConfigurationTests {
+class CasCoreAuthenticationSupportConfigurationTests {
     @Autowired
     @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;

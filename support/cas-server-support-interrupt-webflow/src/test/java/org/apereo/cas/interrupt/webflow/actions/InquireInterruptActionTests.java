@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class InquireInterruptActionTests {
+class InquireInterruptActionTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

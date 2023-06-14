@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
+class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
     private static final String LOGOUT_URL_OK = "https://mocky.io/post";
     private static final String LOGOUT_URL_BAD = "https://unknown-1234-unknown.xyz";
     @Autowired

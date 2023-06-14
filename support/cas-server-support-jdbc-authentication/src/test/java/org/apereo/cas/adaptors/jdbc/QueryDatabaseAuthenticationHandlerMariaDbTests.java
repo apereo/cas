@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
 @Import(QueryDatabaseAuthenticationHandlerMariaDbTests.DatabaseTestConfiguration.class)
-public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casmariadbusers where username=?";
 
     private static final String PASSWORD_FIELD = "password";

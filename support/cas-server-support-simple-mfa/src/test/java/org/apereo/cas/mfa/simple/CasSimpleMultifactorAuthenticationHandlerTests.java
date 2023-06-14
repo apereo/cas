@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
-public class CasSimpleMultifactorAuthenticationHandlerTests {
+class CasSimpleMultifactorAuthenticationHandlerTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
     private AuthenticationHandler casSimpleMultifactorAuthenticationHandler;

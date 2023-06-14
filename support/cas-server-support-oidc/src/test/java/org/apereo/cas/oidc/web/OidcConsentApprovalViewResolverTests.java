@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
+class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
     @Test
     public void verifyBypassedBySession() throws Exception {

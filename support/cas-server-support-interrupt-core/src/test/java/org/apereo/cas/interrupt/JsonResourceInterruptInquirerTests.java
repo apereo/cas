@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("FileSystem")
-public class JsonResourceInterruptInquirerTests {
+class JsonResourceInterruptInquirerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

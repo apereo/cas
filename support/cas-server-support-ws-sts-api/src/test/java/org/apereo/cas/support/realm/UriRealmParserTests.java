@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class UriRealmParserTests {
+class UriRealmParserTests {
 
     @Test
     public void verifyToken() {

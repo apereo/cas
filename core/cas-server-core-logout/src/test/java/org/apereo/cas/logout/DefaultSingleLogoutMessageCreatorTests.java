@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class DefaultSingleLogoutMessageCreatorTests {
+class DefaultSingleLogoutMessageCreatorTests {
     @Test
     public void verifyFrontChannel() {
         val input = new DefaultSingleLogoutMessageCreator();

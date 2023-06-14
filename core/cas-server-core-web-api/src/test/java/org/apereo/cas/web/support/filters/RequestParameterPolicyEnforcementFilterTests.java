@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1
  */
 @Tag("Web")
-public class RequestParameterPolicyEnforcementFilterTests {
+class RequestParameterPolicyEnforcementFilterTests {
 
     private static void internalTestOnlyPostParameter(final String method) {
         val onlyPostParameters = new HashSet<String>();

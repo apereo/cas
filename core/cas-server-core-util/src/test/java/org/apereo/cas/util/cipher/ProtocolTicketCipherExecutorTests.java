@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Cipher")
-public class ProtocolTicketCipherExecutorTests {
+class ProtocolTicketCipherExecutorTests {
     @Test
     public void verifyAction() {
         val cipher = new ProtocolTicketCipherExecutor();

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Audits")
-public class ShortenedReturnValueAsStringAuditResourceResolverTests {
+class ShortenedReturnValueAsStringAuditResourceResolverTests {
     private final ShortenedReturnValueAsStringAuditResourceResolver r = new ShortenedReturnValueAsStringAuditResourceResolver();
 
     @Test

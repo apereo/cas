@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
     CasPersonDirectoryTestConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class ChainingPrincipalAttributesRepositoryTests {
+class ChainingPrincipalAttributesRepositoryTests {
     @Test
     public void verifyOperation() {
         val repo1 = new DefaultPrincipalAttributesRepository();

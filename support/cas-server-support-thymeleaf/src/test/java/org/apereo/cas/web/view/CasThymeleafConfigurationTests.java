@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
         "cas.view.template-prefixes=classpath:templates,file:/templates"
     })
 @Tag("Web")
-public class CasThymeleafConfigurationTests {
+class CasThymeleafConfigurationTests {
     @Autowired
     @Qualifier("chainingTemplateViewResolver")
     private AbstractTemplateResolver chainingTemplateViewResolver;

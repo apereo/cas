@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointControllerTests {
+class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointControllerTests {
 
     @Test
     public void verifyUnmatchedOperation() {

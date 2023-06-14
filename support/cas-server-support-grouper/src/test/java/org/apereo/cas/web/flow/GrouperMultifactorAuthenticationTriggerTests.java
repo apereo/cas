@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Grouper")
-public class GrouperMultifactorAuthenticationTriggerTests {
+class GrouperMultifactorAuthenticationTriggerTests {
 
     @Test
     public void verifyOperationFails() {

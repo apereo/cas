@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 3.2.1
  */
 @Tag("ExpirationPolicy")
-public class RememberMeDelegatingExpirationPolicyTests {
+class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
 

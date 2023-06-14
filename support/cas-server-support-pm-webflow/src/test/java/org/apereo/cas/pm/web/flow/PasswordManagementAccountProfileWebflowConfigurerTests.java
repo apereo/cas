@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.core.enabled=true",
     "CasFeatureModule.AccountManagement.enabled=true"
 })
-public class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     private FlowDefinitionRegistry accountProfileFlowRegistry;

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("JDBCMFA")
 @Getter
-public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;

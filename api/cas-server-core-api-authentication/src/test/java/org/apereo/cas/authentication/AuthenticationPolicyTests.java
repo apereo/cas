@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationPolicy")
-public class AuthenticationPolicyTests {
+class AuthenticationPolicyTests {
 
     @Test
     public void verifyOperation() {

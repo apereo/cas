@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedClientFactoryTests {
+class DefaultDelegatedClientFactoryTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -39,7 +39,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.dropbox.id=123456",
         "cas.authn.pac4j.dropbox.secret=secret"
     })
-    public class EagerInitialization extends BaseDelegatedClientFactoryTests {
+    class EagerInitialization extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyEagerInit() {
             val clients1 = List.copyOf(delegatedClientFactory.build());
@@ -99,7 +99,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class IdentifiableClients extends BaseDelegatedClientFactoryTests {
+    class IdentifiableClients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyFactoryForIdentifiableClients() {
             val clients = delegatedClientFactory.build();
@@ -115,7 +115,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.github.secret=s3cr3t",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class GitHubClients extends BaseDelegatedClientFactoryTests {
+    class GitHubClients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyGithubClient() {
             val clients = delegatedClientFactory.build();
@@ -132,7 +132,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oauth2[0].secret=s3cr3t",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class OAuth20Clients extends BaseDelegatedClientFactoryTests {
+    class OAuth20Clients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyFactory() {
             val clients = delegatedClientFactory.build();
@@ -150,7 +150,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.cas[0].display-name=My CAS",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class CasClients extends BaseDelegatedClientFactoryTests {
+    class CasClients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyFactoryForCasClientsHavingLoginInDomain() {
             val clients = delegatedClientFactory.build();
@@ -174,7 +174,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oidc[0].apple.enabled=true",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class AppleClients extends BaseDelegatedClientFactoryTests {
+    class AppleClients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyClient() {
             val clients = delegatedClientFactory.build();
@@ -210,7 +210,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class OidcClients extends BaseDelegatedClientFactoryTests {
+    class OidcClients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyClient() {
             val clients = delegatedClientFactory.build();
@@ -227,7 +227,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.dropbox.secret=secret",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class LazyInitialization extends BaseDelegatedClientFactoryTests {
+    class LazyInitialization extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyLaziness() {
             val clients1 = List.copyOf(delegatedClientFactory.build());
@@ -251,7 +251,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.core.lazy-init=true"
     })
     @Import(SamlMessageStoreTestConfiguration.class)
-    public class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
+    class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyClient() {
             val clients = delegatedClientFactory.build();
@@ -274,7 +274,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
+    class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyClient() {
             val clients = delegatedClientFactory.build();
@@ -295,7 +295,7 @@ public class DefaultDelegatedClientFactoryTests {
             "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
             "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
+    class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyClient() {
 
@@ -347,7 +347,7 @@ public class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.saml[0].force-keystore-generation=true",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    public class Saml2Clients extends BaseDelegatedClientFactoryTests {
+    class Saml2Clients extends BaseDelegatedClientFactoryTests {
         @Test
         public void verifyClient() {
             val clients = delegatedClientFactory.build();

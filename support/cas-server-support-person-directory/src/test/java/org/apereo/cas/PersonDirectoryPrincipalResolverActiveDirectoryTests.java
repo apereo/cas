@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 10390)
 @Tag("ActiveDirectory")
-public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
+class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     public static final String AD_TRUST_STORE = "file:/tmp/adcacerts.jks";
 
     public static final String AD_ADMIN_PASSWORD = "M3110nM3110n#1";

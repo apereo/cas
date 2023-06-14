@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("CasConfiguration")
-public class AdditionalMetadataVerificationTests {
+class AdditionalMetadataVerificationTests {
 
     @Autowired
     private ResourceLoader resourceLoader;

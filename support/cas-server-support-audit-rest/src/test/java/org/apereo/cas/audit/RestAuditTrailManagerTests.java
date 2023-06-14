@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 @Getter
 @SuppressWarnings("JavaUtilDate")
-public class RestAuditTrailManagerTests {
+class RestAuditTrailManagerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

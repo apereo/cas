@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("CasConfiguration")
-public class ConfigurationMetadataSearchResultTests {
+class ConfigurationMetadataSearchResultTests {
     @Test
     public void verifyAction() {
         val repository = new CasConfigurationMetadataRepository();

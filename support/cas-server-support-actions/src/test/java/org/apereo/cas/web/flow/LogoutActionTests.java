@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("WebflowActions")
-public class LogoutActionTests {
+class LogoutActionTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
 
@@ -59,7 +59,7 @@ public class LogoutActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.logout.follow-service-redirects=true")
-    public class FollowServiceRedirectsTests extends AbstractWebflowActionsTests {
+    class FollowServiceRedirectsTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_LOGOUT)
         private Action logoutAction;
@@ -93,7 +93,7 @@ public class LogoutActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.logout.follow-service-redirects=true")
-    public class DefaultTests extends AbstractWebflowActionsTests {
+    class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_LOGOUT)
         private Action logoutAction;

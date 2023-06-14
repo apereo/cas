@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByHeader() {
         val props = new CasConfigurationProperties();

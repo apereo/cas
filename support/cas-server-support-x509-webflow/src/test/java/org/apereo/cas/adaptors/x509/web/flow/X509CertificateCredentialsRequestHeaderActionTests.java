@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.authn.x509.extract-cert=true")
 @Tag("X509")
-public class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
+class X509CertificateCredentialsRequestHeaderActionTests extends BaseCertificateCredentialActionTests {
 
     @Test
     public void verifyCredentialsResultsInAuthnFailure() throws Exception {

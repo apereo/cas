@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AmazonWebServices")
-public class CloudWatchAppenderSpecTests {
+class CloudWatchAppenderSpecTests {
     private static DescribeLogStreamsResponse createDescribeLogStreamsResult() {
         val logStream = LogStream.builder().logStreamName("test").uploadSequenceToken("test").build();
         return DescribeLogStreamsResponse.builder().logStreams(logStream).build();

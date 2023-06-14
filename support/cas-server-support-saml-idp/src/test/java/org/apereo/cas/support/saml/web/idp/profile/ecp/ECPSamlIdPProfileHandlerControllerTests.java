@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ecpProfileHandlerController")
     private ECPSamlIdPProfileHandlerController controller;

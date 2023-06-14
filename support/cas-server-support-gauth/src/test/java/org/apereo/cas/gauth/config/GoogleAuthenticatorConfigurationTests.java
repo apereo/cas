@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 @Getter
 @Tag("MFAProvider")
-public class GoogleAuthenticatorConfigurationTests {
+class GoogleAuthenticatorConfigurationTests {
     @Autowired
     @Qualifier("googleAuthenticatorInstance")
     private IGoogleAuthenticator googleAuthenticatorInstance;

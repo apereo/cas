@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("X509")
-public class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificateCredentialActionTests {
+class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificateCredentialActionTests {
 
     @Test
     public void verifyNoCredentialsResultsInError() throws Exception {

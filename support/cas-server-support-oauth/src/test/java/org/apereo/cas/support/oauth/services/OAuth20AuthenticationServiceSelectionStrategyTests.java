@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20Tests {
+class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy strategy;

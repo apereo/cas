@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationMetadataControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationMetadataController")
     private WSFederationMetadataController wsFederationMetadataController;

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
+class DefaultChainingMultifactorAuthenticationBypassProviderTests {
 
     private static void mockRememberBypass(final TestMultifactorAuthenticationProvider provider, final Authentication authentication) {
         val authnAttributes = new HashMap<String, List<Object>>();

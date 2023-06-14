@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.*;
  * @since 6.3.0
  */
 @Tag("RestfulApi")
-public class RestfulPropertySourceLocatorTests {
+class RestfulPropertySourceLocatorTests {
 
     @Test
     public void verifyNoUrl() {

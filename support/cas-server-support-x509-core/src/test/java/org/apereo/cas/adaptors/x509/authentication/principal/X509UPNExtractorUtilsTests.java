@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("X509")
-public class X509UPNExtractorUtilsTests {
+class X509UPNExtractorUtilsTests {
     @Test
     public void verifyEmptyValue() {
         val names = new ArrayList();

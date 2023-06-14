@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "CasFeatureModule.SAMLIdentityProvider.redis.enabled=false")
 @EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ConditionalOnExpressionNegativeTests {
+class ConditionalOnExpressionNegativeTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

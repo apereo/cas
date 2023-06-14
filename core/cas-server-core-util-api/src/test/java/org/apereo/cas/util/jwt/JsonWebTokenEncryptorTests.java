@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class JsonWebTokenEncryptorTests {
+class JsonWebTokenEncryptorTests {
     @Test
     public void verifyEncryptionFails() {
         val secret = new DefaultRandomStringGenerator().getNewString(16);

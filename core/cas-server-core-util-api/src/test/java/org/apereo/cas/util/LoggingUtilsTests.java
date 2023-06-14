@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 @Slf4j
-public class LoggingUtilsTests {
+class LoggingUtilsTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(() -> {

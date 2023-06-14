@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Impersonation")
-public class DefaultSurrogateAuthenticationPrincipalBuilderTests {
+class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     @Test
     public void verifyOperationWithNoService() {
         val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(

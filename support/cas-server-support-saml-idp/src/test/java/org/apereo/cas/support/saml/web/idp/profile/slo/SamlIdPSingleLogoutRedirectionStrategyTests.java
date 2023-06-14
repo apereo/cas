@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.logout.send-logout-response=true",
     "cas.authn.saml-idp.logout.sign-logout-response=true"
 })
-public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")
     private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;

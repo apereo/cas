@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAML")
-public class SamlRegisteredServiceCacheKeyTests {
+class SamlRegisteredServiceCacheKeyTests {
     @Test
     public void verifyCacheKeyByMetadataLocation() {
         val entityId = "https://carmenwiki.osu.edu/shibboleth";

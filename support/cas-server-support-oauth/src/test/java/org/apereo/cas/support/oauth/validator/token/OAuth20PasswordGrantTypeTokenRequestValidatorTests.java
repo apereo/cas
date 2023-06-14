@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
-public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthPasswordGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;

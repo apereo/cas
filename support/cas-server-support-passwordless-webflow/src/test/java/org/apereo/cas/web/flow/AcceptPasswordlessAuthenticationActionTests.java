@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org")
-public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+class AcceptPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
     private Action acceptPasswordlessAuthenticationAction;

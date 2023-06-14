@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuthWeb")
-public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
+class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20Tests {
 
     private static final String CLIENT_ID2 = "2";
 

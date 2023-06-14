@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("Cipher")
-public class BinaryCipherExecutorTests {
+class BinaryCipherExecutorTests {
     private static final String TEST_VALUE = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
 
     @Test

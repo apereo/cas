@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("WebflowServiceActions")
-public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
+class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
     private Action action;

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
-public class CasTomcatServletWebServerFactoryClusterTests {
+class CasTomcatServletWebServerFactoryClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 

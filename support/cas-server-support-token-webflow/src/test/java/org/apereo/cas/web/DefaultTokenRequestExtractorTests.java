@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Simple")
-public class DefaultTokenRequestExtractorTests {
+class DefaultTokenRequestExtractorTests {
 
     @Test
     public void verifyTokenFromParameter() {

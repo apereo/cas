@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbPasswordlessUserAccountStoreTests extends BaseMongoDbPasswordlessTests {
+class MongoDbPasswordlessUserAccountStoreTests extends BaseMongoDbPasswordlessTests {
 
     @Test
     public void verifyAction() {

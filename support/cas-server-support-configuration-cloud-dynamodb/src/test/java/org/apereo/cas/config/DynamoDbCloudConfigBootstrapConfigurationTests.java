@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
         DynamoDbCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key=test",
         DynamoDbCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key=test"
     })
-public class DynamoDbCloudConfigBootstrapConfigurationTests {
+class DynamoDbCloudConfigBootstrapConfigurationTests {
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
 
     @Autowired

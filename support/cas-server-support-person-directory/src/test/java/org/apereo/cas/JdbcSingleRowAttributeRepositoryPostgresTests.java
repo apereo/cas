@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
+class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
 
     @Override
     @Test

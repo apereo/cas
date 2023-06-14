@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("SAML1")
-public class SamlAuthenticationMetaDataPopulatorTests {
+class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 

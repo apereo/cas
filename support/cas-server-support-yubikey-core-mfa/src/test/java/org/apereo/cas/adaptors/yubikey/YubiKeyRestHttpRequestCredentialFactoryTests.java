@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MFAProvider")
-public class YubiKeyRestHttpRequestCredentialFactoryTests {
+class YubiKeyRestHttpRequestCredentialFactoryTests {
     @Test
     public void verifyAction() {
         val f = new YubiKeyRestHttpRequestCredentialFactory();

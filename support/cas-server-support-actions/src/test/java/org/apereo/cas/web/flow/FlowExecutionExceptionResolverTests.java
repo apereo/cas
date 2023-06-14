@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Webflow")
-public class FlowExecutionExceptionResolverTests {
+class FlowExecutionExceptionResolverTests {
     @Test
     public void verifyActionNull() {
         val context = new MockRequestContext();

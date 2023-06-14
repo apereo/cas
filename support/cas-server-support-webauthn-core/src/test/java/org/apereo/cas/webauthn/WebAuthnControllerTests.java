@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFAProvider")
-public class WebAuthnControllerTests {
+class WebAuthnControllerTests {
 
     @Test
     public void verifyStartAuthentication() throws Exception {

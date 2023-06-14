@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
+class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() {

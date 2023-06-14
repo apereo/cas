@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowConfig")
-public class RiskAwareAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class RiskAwareAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

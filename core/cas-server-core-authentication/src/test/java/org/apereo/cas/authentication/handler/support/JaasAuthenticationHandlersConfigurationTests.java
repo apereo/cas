@@ -75,7 +75,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.jaas[0].password-policy.account-state-handling-enabled=true",
     "cas.authn.jaas[0].login-config-type=JavaLoginConfig"
 })
-public class JaasAuthenticationHandlersConfigurationTests {
+class JaasAuthenticationHandlersConfigurationTests {
     @Autowired
     @Qualifier("jaasAuthenticationHandlers")
     private BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers;

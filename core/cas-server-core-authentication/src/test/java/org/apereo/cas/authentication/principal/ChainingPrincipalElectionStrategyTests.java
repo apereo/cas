@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class ChainingPrincipalElectionStrategyTests {
+class ChainingPrincipalElectionStrategyTests {
     @Test
     public void verifyOperationWithSingleAuthn() {
         val strategy = new ChainingPrincipalElectionStrategy(new DefaultPrincipalElectionStrategy());

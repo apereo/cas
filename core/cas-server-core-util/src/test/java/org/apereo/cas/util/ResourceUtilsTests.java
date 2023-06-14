@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Utility")
-public class ResourceUtilsTests {
+class ResourceUtilsTests {
     @Test
     public void verifyResourceExists() {
         assertThrows(IllegalArgumentException.class, () -> ResourceUtils.getRawResourceFrom(null));

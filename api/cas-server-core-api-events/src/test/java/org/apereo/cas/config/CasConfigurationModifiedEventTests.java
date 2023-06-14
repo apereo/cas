@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Events")
-public class CasConfigurationModifiedEventTests {
+class CasConfigurationModifiedEventTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(new Executable() {

@@ -24,14 +24,14 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class Cas20ProxyHandlerTests {
+class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;
 
     @Mock
     private TicketGrantingTicket proxyGrantingTicket;
 
-    public Cas20ProxyHandlerTests() {
+    Cas20ProxyHandlerTests() {
         MockitoAnnotations.openMocks(this);
     }
 

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.http-client.host-name-verifier=none"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultCassandraSessionFactoryTests {
+class DefaultCassandraSessionFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

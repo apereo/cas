@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Radius")
 @EnabledOnOs(OS.LINUX)
-public class RadiusTokenAuthenticationHandlerTests {
+class RadiusTokenAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("radiusTokenAuthenticationHandler")

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class YubiKeyAuthenticationWebflowActionTests {
+class YubiKeyAuthenticationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();

@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnAuthenticationWebflowActionTests {
+class WebAuthnAuthenticationWebflowActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_AUTHENTICATION_WEBFLOW)
     private Action webAuthnAuthenticationWebflowAction;

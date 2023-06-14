@@ -29,7 +29,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
-public class DynamoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
+class DynamoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");

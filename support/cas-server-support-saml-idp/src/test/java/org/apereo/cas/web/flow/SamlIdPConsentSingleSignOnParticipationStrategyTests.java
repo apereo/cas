@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @Import(CasConsentCoreConfiguration.class)
-public class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
+class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
 
     @Autowired
     @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)

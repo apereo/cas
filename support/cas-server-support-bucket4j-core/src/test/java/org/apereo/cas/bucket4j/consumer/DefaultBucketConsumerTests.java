@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("AuthenticationThrottling")
-public class DefaultBucketConsumerTests {
+class DefaultBucketConsumerTests {
 
     @Test
     public void verifyFailureAsync() {

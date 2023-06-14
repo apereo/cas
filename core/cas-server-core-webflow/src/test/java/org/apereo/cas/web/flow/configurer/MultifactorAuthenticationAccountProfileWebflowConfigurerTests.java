@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Import(CasWebflowAccountProfileConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class MultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class MultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry accountFlowDefinitionRegistry;

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.account-registration.provisioning.groovy.location=classpath:/groovy-provisioner.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Groovy")
-public class GroovyAccountRegistrationProvisionerTests {
+class GroovyAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;

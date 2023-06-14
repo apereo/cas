@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Tickets")
-public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
+class UnrecognizableServiceForServiceTicketValidationExceptionTests {
     private final Service service = RegisteredServiceTestUtils.getService();
 
     @Test

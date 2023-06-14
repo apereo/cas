@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.simple.token.rest.headers.h1=h2"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RestfulCasSimpleMultifactorAuthenticationServiceTests {
+class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleValueAsArray(true).defaultTypingEnabled(true).build().toObjectMapper();
 

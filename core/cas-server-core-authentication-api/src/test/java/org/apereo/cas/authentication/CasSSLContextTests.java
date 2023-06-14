@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-public class CasSSLContextTests {
+class CasSSLContextTests {
     private static String contactUrl(final String addr, final CasSSLContext context) throws Exception {
         val url = new URL(addr);
         val connection = (HttpsURLConnection) url.openConnection();

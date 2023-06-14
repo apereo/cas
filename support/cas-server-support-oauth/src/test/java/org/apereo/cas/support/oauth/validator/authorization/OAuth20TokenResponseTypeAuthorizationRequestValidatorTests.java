@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
     @Test
     public void verifySupports() throws Exception {
         val service = new OAuthRegisteredService();

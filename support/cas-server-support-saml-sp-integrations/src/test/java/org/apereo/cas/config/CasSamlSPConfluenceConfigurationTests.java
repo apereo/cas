@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.confluence.name-id-attribute=cn",
     "cas.saml-sp.confluence.name-id-format=transient"
 })
-public class CasSamlSPConfluenceConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPConfluenceConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

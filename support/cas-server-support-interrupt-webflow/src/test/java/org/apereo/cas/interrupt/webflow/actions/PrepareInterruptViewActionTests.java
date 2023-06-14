@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowActions")
-public class PrepareInterruptViewActionTests {
+class PrepareInterruptViewActionTests {
     @Test
     public void verifyOperation() {
         val context = new MockRequestContext();

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("CasConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasConfigurationPropertiesEnvironmentManagerTests {
+class CasConfigurationPropertiesEnvironmentManagerTests {
     @Test
     public void verifyOperationByFile() throws Exception {
         val env = new MockEnvironment();

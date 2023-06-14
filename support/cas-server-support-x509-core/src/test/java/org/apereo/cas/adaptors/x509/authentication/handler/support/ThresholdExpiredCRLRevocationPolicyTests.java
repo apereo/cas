@@ -30,7 +30,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 @RequiredArgsConstructor
 @Tag("X509")
-public class ThresholdExpiredCRLRevocationPolicyTests {
+class ThresholdExpiredCRLRevocationPolicyTests {
     /**
      * Gets the unit test parameters.
      *

@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Web")
-public class ThreadContextMDCServletFilterTests {
+class ThreadContextMDCServletFilterTests {
     @Test
     public void verifyFilter() throws Exception {
         val request = new MockHttpServletRequest();

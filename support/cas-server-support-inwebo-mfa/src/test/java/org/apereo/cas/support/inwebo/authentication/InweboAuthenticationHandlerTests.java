@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class InweboAuthenticationHandlerTests {
+class InweboAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
         val inweboService = mock(InweboService.class);

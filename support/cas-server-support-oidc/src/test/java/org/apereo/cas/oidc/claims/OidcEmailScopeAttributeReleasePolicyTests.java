@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.core.claims-map.email=mail",
     "cas.authn.oidc.core.claims-map.email_verified=mail_confirmed"
 })
-public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
+class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         val policy = new OidcEmailScopeAttributeReleasePolicy();

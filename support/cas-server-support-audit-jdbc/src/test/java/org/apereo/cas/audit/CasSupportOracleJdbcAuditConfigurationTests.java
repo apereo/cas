@@ -24,5 +24,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
-public class CasSupportOracleJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
+class CasSupportOracleJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthWeb")
-public class OAuth20DefaultCasClientRedirectActionBuilderTests extends AbstractOAuth20Tests {
+class OAuth20DefaultCasClientRedirectActionBuilderTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() {

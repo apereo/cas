@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAttributes")
-public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
+class LdapUserAttributesToRolesAuthorizationGeneratorTests {
 
     @BeforeAll
     public static void setup() throws Exception {

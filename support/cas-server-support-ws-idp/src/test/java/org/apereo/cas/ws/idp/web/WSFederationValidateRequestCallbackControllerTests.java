@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Import(WSFederationValidateRequestCallbackControllerTests.WSFederationValidateRequestCallbackControllerTestConfiguration.class)
-public class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("federationValidateRequestCallbackController")
     private WSFederationValidateRequestCallbackController federationValidateRequestCallbackController;

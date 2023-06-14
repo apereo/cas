@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("SAML1")
-public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
+class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
 

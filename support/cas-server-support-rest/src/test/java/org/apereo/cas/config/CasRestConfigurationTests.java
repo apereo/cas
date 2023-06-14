@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableWebMvc
 @Tag("CasConfiguration")
-public class CasRestConfigurationTests {
+class CasRestConfigurationTests {
 
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")

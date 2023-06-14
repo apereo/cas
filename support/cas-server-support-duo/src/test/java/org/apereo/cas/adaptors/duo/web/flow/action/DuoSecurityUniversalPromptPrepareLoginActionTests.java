@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
     private Action duoUniversalPromptPrepareLoginAction;

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("PasswordOps")
-public class DefaultPasswordEncoderTests {
+class DefaultPasswordEncoderTests {
 
     @Test
     public void verifyPasswordEncoderByCustomClassName() {

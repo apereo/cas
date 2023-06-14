@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.json.location=classpath:PasswordlessAccount.json")
 @Tag("FileSystem")
-public class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
+class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
 
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)

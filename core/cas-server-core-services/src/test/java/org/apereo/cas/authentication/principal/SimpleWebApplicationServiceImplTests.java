@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Tag("Authentication")
-public class SimpleWebApplicationServiceImplTests {
+class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

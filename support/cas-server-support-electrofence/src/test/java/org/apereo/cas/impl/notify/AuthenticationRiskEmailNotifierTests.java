@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(MailSenderAutoConfiguration.class)
 @Tag("Mail")
-public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @Test
     public void verifyOperation() {
         authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());

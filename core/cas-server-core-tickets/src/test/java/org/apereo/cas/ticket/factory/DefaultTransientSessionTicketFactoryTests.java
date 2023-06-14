@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.ticket.tst.time-to-kill-in-seconds=20")
 @Tag("Tickets")
-public class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     public void verifyExpirationPolicy() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);

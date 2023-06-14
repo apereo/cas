@@ -87,7 +87,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 27017)
 @Tag("MongoDb")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoDbAuthenticationHandlerTests {
+class MongoDbAuthenticationHandlerTests {
     @Autowired
     @Qualifier("mongoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;

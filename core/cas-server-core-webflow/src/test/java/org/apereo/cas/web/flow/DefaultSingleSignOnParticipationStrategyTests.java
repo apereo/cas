@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Webflow")
-public class DefaultSingleSignOnParticipationStrategyTests {
+class DefaultSingleSignOnParticipationStrategyTests {
     @Test
     public void verifyParticipationDisabledWithService() {
         val mgr = mock(ServicesManager.class);

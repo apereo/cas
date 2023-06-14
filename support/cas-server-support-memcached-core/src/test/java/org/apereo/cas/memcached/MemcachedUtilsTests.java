@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Memcached")
-public class MemcachedUtilsTests {
+class MemcachedUtilsTests {
 
     @Test
     public void verifySerial() {

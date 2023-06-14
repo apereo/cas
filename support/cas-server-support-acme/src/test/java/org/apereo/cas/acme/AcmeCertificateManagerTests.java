@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     "cas.acme.retry-internal=PT1S",
     "cas.acme.terms-of-use-accepted=true"
 })
-public class AcmeCertificateManagerTests extends BaseAcmeTests {
+class AcmeCertificateManagerTests extends BaseAcmeTests {
 
     @Autowired
     @Qualifier("acmeCertificateManager")

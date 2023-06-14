@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class AcceptUsersAuthenticationHandlerTests {
+class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
 
     private static final String RUTGERS = "rutgers";

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAMLServiceProvider")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata-test")
-public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
+class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @AfterAll
     public static void shutdown() {

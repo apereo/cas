@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class CredentialTests {
+class CredentialTests {
 
     private static AbstractCredential getCredential() {
         return new AbstractCredential() {

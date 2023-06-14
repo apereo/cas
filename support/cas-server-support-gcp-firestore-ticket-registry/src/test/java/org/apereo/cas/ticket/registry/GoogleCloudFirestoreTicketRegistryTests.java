@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
     "spring.cloud.gcp.firestore.emulator.enabled=true",
     "spring.cloud.gcp.firestore.host-port=127.0.0.1:9980"
 })
-public class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
+class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 100;
 
     @Autowired

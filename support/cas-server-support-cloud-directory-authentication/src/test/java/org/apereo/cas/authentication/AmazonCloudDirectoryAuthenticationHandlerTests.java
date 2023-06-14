@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("AmazonWebServices")
-public class AmazonCloudDirectoryAuthenticationHandlerTests {
+class AmazonCloudDirectoryAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAccountActions")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagementActionTests {
+class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
     private Action accountProfilePasswordChangeRequestAction;

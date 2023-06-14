@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Cipher")
-public class JsonWebKeySetStringCipherExecutorTests {
+class JsonWebKeySetStringCipherExecutorTests {
     private static File getKeystoreFile() throws Exception {
         val jwksKeystore = new ClassPathResource("sample.jwks");
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);

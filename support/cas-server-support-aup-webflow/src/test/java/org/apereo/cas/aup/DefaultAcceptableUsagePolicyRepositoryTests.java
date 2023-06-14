@@ -38,12 +38,12 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Simple")
-public class DefaultAcceptableUsagePolicyRepositoryTests {
+class DefaultAcceptableUsagePolicyRepositoryTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Getter
-    public class DefaultTests extends BaseAcceptableUsagePolicyRepositoryTests {
+    class DefaultTests extends BaseAcceptableUsagePolicyRepositoryTests {
         @Autowired
         @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
         protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
@@ -141,7 +141,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
     @Getter
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-omit-if-attribute-missing=true")
-    public class MissingStatusAttributeTests extends BaseAcceptableUsagePolicyRepositoryTests {
+    class MissingStatusAttributeTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
         @Autowired
         @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)

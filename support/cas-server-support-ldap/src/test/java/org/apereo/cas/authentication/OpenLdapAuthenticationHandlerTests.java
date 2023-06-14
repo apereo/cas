@@ -36,7 +36,7 @@ import java.util.UUID;
 })
 @Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 11389)
-public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
+class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

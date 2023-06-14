@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ChainingRegisteredServiceConsentPolicyTests {
+class ChainingRegisteredServiceConsentPolicyTests {
 
     @Test
     public void verifyOperation() {

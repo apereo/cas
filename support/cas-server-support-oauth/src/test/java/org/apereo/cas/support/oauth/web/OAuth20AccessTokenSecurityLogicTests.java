@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("OAuthToken")
-public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
+class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() throws Exception {

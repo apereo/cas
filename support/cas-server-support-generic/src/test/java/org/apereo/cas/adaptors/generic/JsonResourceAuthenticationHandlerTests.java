@@ -52,10 +52,10 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationHandler")
-public class JsonResourceAuthenticationHandlerTests {
+class JsonResourceAuthenticationHandlerTests {
     private final JsonResourceAuthenticationHandler handler;
 
-    public JsonResourceAuthenticationHandlerTests() throws Exception {
+    JsonResourceAuthenticationHandlerTests() throws Exception {
         val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();

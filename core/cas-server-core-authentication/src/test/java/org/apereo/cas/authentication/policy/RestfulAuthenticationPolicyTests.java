@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("RestfulApiAuthentication")
-public class RestfulAuthenticationPolicyTests {
+class RestfulAuthenticationPolicyTests {
     private static void assertPolicyFails(final int port, final HttpStatus status,
                                           final Class<? extends Throwable> exceptionClass) {
         val applicationContext = new StaticApplicationContext();

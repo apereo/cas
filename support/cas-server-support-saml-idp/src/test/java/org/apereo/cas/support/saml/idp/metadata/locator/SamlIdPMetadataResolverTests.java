@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
 @EnableRetry
-public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
 
     @RepeatedTest(2)
     public void verifyOperation() throws Exception {

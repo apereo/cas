@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
     private ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext))

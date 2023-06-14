@@ -105,7 +105,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
-public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");

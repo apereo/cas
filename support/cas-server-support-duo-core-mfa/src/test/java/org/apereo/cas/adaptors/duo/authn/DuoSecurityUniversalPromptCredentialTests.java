@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptCredentialTests {
+class DuoSecurityUniversalPromptCredentialTests {
 
     @Test
     public void verifyOperation() {

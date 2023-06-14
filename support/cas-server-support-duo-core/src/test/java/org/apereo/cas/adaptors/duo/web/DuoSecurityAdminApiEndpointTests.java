@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityAdminApiEndpointTests {
+class DuoSecurityAdminApiEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

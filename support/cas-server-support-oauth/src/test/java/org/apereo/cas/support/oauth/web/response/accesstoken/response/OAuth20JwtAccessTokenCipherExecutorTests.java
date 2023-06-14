@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-public class OAuth20JwtAccessTokenCipherExecutorTests extends AbstractOAuth20Tests {
+class OAuth20JwtAccessTokenCipherExecutorTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOperation() {

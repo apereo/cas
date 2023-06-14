@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("LdapAuthentication")
-public class OptionalWarningLdapAccountStateHandlerTests {
+class OptionalWarningLdapAccountStateHandlerTests {
     @Test
     public void verifyWarningOnMatch() {
         val h = new OptionalWarningLdapAccountStateHandler();

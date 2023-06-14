@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.profile-selection.ldap.profile-id-attribute=cn",
     "cas.authn.pac4j.profile-selection.ldap.attributes=sn,givenName,uid,mail,cn"
 })
-public class LdapDelegatedClientAuthenticationCredentialResolverTests {
+class LdapDelegatedClientAuthenticationCredentialResolverTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;

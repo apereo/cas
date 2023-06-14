@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 })
 @Tag("Webflow")
-public class ClientFlowExecutionRepositoryTests {
+class ClientFlowExecutionRepositoryTests {
 
     @Autowired
     @Qualifier("flowExecutor")

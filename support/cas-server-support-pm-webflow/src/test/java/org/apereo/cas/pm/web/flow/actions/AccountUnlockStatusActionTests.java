@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("WebflowAccountActions")
-public class AccountUnlockStatusActionTests extends BasePasswordManagementActionTests {
+class AccountUnlockStatusActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_UNLOCK_ACCOUNT_STATUS)
     protected Action action;

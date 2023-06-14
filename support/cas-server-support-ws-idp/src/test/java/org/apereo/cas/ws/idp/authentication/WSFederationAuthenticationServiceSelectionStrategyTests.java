@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WSFederationAuthenticationServiceSelectionStrategyTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationAuthenticationServiceSelectionStrategyTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;

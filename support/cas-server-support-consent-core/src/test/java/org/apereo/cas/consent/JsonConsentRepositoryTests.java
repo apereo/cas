@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.consent.json.location=file://${java.io.tmpdir}/ConsentRepository.json")
 @Getter
 @Tag("FileSystem")
-public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
+class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)

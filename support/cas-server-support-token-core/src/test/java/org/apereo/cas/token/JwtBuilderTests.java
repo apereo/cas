@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Tickets")
-public class JwtBuilderTests {
+class JwtBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseJwtTokenTicketBuilderTests {
+    class DefaultTests extends BaseJwtTokenTicketBuilderTests {
         @Test
         public void verifyZonedDateTimeWorks() {
             val tgt = new MockTicketGrantingTicket("casuser");
@@ -39,7 +39,7 @@ public class JwtBuilderTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.token.crypto.enabled=false")
-    public class DefaultCipherDisabled extends BaseJwtTokenTicketBuilderTests {
+    class DefaultCipherDisabled extends BaseJwtTokenTicketBuilderTests {
         @Test
         public void verifyUnknownJwt() {
             val jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIm9yZy5hcGVyZW8uY2FzLnNlcnZpY2VzLlJlZ2"

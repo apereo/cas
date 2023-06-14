@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshableHandlerInterceptorTests.RefreshableHandlerInterceptorTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RefreshableHandlerInterceptorTests {
+class RefreshableHandlerInterceptorTests {
     @Autowired
     @Qualifier("localeChangeHandlerInterceptor")
     private ObjectProvider<HandlerInterceptor> localeChangeHandlerInterceptor;

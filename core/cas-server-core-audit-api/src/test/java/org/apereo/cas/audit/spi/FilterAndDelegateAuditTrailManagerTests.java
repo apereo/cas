@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Audits")
 @SuppressWarnings("JavaUtilDate")
-public class FilterAndDelegateAuditTrailManagerTests {
+class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
     public void verifyExcludeOperationForAllActions() {

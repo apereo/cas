@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseU2FWebflowActionTests.SharedTestConfiguration.class
 })
 @Tag("WebflowMfaActions")
-public class U2FAccountCheckRegistrationActionTests extends BaseU2FWebflowActionTests {
+class U2FAccountCheckRegistrationActionTests extends BaseU2FWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
         val id = UUID.randomUUID().toString();

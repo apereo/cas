@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = CasWebApplicationConfiguration.class)
 @Tag("CasConfiguration")
-public class CasWebApplicationConfigurationTests {
+class CasWebApplicationConfigurationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

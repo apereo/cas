@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.jwtTicketSigningPublicKey.enabled=true"
     })
 @Tag("ActuatorEndpoint")
-public class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
+class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwtTokenCipherSigningPublicKeyEndpoint")
     private JwtTokenCipherSigningPublicKeyEndpoint endpoint;

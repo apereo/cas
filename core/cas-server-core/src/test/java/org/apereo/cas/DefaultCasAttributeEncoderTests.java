@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Attributes")
-public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
+class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private Map<String, Object> attributes;
 
     @Autowired

@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.OK;
     "cas.sms-provider.clickatell.token=DEMO_TOKEN"
 })
 @Tag("SMS")
-public class ClickatellSmsSenderTests {
+class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;

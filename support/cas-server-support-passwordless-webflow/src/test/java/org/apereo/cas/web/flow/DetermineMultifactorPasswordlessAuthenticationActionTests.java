@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class DetermineMultifactorPasswordlessAuthenticationActionTests {
+class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
@@ -67,7 +67,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithoutMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
+    class WithoutMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
 
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
@@ -99,7 +99,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
+    class WithMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
         private Action determineMultifactorPasswordlessAuthenticationAction;

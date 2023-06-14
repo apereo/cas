@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasServicesStreamingConfiguration.class
 }, properties = "cas.service-registry.stream.core.enabled=true")
 @Tag("RegisteredService")
-public class CasServicesRegistryStreamingEventListenerTests {
+class CasServicesRegistryStreamingEventListenerTests {
     @Autowired
     @Qualifier("casServicesRegistryStreamingEventListener")
     private CasServicesRegistryStreamingEventListener casServicesRegistryStreamingEventListener;

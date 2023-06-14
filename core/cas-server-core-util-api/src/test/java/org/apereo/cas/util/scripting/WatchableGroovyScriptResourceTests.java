@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class WatchableGroovyScriptResourceTests {
+class WatchableGroovyScriptResourceTests {
 
     @Test
     public void verifyOperation() throws Exception {

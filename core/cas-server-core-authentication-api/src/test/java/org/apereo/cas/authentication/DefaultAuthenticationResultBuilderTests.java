@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationResultBuilderTests {
+class DefaultAuthenticationResultBuilderTests {
     @Test
     public void verifyAuthenticationResultBuildsPrincipals() {
         val builder = new DefaultAuthenticationResultBuilder();

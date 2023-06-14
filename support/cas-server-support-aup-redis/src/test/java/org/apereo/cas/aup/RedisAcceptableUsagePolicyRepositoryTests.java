@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Getter
-public class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;

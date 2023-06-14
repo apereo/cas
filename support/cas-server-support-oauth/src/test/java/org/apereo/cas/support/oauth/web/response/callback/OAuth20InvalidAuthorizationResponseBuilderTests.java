@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
+class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthInvalidAuthorizationBuilder")
     private OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder;

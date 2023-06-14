@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 @Tag("WebflowServiceActions")
-public class ServiceAuthorizationCheckMockitoActionTests {
+class ServiceAuthorizationCheckMockitoActionTests {
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
 
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);

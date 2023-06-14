@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAML2")
-public class SamlResponseAuditResourceResolverTests {
+class SamlResponseAuditResourceResolverTests {
     @Test
     public void verifyActionUnknown() {
         val r = new SamlResponseAuditResourceResolver();

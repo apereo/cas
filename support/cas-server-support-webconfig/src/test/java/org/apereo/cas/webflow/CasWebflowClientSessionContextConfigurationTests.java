@@ -14,7 +14,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  */
 @Tag("Webflow")
 @Getter
-public class CasWebflowClientSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfigurationTests {
+class CasWebflowClientSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfigurationTests {
 
     @Autowired
     @Qualifier("loginFlowExecutor")

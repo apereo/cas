@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("GeoLocation")
-public class GeoLocationDeviceFingerprintComponentManagerTests {
+class GeoLocationDeviceFingerprintComponentManagerTests {
     @Test
     public void verifyGeoLocationDevice() {
         val response = new MockHttpServletResponse();

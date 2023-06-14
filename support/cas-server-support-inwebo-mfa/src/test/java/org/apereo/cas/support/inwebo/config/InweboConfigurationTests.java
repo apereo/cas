@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.inwebo.bypass.rest.url=http://localhost:8080/bypass"
     })
 @Tag("MFAProvider")
-public class InweboConfigurationTests {
+class InweboConfigurationTests {
      @Autowired
      @Qualifier("inweboService")
      private InweboService inweboService;

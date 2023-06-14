@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.x509.cn-edipi.extract-edipi-as-attribute=true"
     })
 @Tag("X509")
-public class EDIPIX509AttributeExtractorConfigTests {
+class EDIPIX509AttributeExtractorConfigTests {
 
     @Autowired
     @Qualifier("x509AttributeExtractor")

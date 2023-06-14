@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAMLMetadata")
-public class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
+class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
     @Test
     public void verifyClasspathByExpression() throws Exception {
         System.setProperty("SP_REF", "classpath:sample-sp.xml");

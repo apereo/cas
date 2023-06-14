@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class InvalidTicketExceptionTests {
+class InvalidTicketExceptionTests {
 
     @Test
     public void verifyCodeNoThrowable() {

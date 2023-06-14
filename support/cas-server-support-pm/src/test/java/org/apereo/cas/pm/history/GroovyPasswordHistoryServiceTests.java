@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pm.history.groovy.location=classpath:PasswordHistoryService.groovy"
     })
 @Tag("Groovy")
-public class GroovyPasswordHistoryServiceTests {
+class GroovyPasswordHistoryServiceTests {
     @Autowired
     @Qualifier(PasswordHistoryService.BEAN_NAME)
     private PasswordHistoryService passwordHistoryService;

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Git")
-public class GitRepositoryBuilderTests {
+class GitRepositoryBuilderTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

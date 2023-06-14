@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata",
     "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE"
 })
-public class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
     private SSOSamlIdPPostProfileHandlerController controller;

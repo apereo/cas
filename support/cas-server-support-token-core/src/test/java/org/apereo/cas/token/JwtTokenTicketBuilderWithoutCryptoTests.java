@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.token.crypto.signingEnabled=false"
 })
 @Tag("Tickets")
-public class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
+class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicketEncoding() throws Exception {

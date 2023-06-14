@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class ZonedDateTimeSerializerTests {
+class ZonedDateTimeSerializerTests {
 
     @Test
     public void verifyTranscoderWorks() {

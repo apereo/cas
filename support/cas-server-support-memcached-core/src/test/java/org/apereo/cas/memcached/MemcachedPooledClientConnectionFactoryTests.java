@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Memcached")
 @EnabledIfListeningOnPort(port = 11211)
-public class MemcachedPooledClientConnectionFactoryTests {
+class MemcachedPooledClientConnectionFactoryTests {
 
     @Test
     public void verifyOperation() {

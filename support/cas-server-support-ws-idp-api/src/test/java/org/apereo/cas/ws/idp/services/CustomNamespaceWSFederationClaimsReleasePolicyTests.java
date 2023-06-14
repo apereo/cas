@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WSFederation")
-public class CustomNamespaceWSFederationClaimsReleasePolicyTests {
+class CustomNamespaceWSFederationClaimsReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "verifyWsFedCustomSerializePolicyToJson.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

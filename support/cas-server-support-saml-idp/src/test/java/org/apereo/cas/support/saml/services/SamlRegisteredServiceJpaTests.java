@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.jpa.ddl-auto=create-drop",
     "cas.service-registry.jpa.url=jdbc:hsqldb:mem:cas-services-${#randomString6}"
 })
-public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void before() {

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAccessStrategyAuditableEnforcerTests {
+class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
     private static AuditableExecutionResult executeAccessStrategy(final AuditableContext context) {
         val appCtx = new StaticApplicationContext();

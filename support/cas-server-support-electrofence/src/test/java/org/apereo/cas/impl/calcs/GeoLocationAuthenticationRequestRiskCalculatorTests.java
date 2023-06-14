@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
     "cas.google-maps.ip-stack-api-access-key=6bde37c76ad15c8a5c828fafad8b0bc4"
 })
 @Tag("GeoLocation")
-public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
+class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {

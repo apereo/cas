@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.qrDevices.enabled=true",
         "management.endpoints.web.exposure.include=*"
     })
-public class QRAuthenticationDeviceRepositoryEndpointTests {
+class QRAuthenticationDeviceRepositoryEndpointTests {
     @Autowired
     @Qualifier("qrAuthenticationDeviceRepositoryEndpoint")
     private QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint;

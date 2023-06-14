@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAttributeDefinitionStoreTests {
+class DefaultAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");
 

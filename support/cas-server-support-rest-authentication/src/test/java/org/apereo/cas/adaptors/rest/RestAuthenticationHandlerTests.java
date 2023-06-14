@@ -91,7 +91,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.authn.rest[0].uri=http://localhost:8081/authn")
 @Tag("RestfulApiAuthentication")
-public class RestAuthenticationHandlerTests {
+class RestAuthenticationHandlerTests {
     @Autowired
     @Qualifier("restAuthenticationHandler")
     private BeanContainer<AuthenticationHandler> authenticationHandler;

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAMLMetadata")
-public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
+class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER)
     private Action samlIdPMetadataUIParserAction;

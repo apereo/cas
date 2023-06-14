@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class JsonWebTokenSignerTests {
+class JsonWebTokenSignerTests {
     @Test
     public void verifySignClaims() throws Exception {
         val claims = new JwtClaims();

@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @AutoConfigureObservability
-public class CasCoreServicesMonitoringConfigurationTests {
+class CasCoreServicesMonitoringConfigurationTests {
     private static final List<String> ENTRIES = new ArrayList<>();
 
     @Autowired

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WSFederation")
-public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
+class WsFederationCookieManagerTests extends AbstractWsFederationTests {
     @Test
     public void verifyOperation() {
         val context = new MockRequestContext();

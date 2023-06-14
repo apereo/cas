@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowActions")
-public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WSFEDERATION_METADATA_UI)
     private Action wsFederationMetadataUIAction;

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.web-authn.core.relying-party-id=example.org",
         "cas.authn.mfa.web-authn.core.allow-primary-authentication=true"
     })
-public class WebAuthnValidateSessionCredentialTokenActionTests {
+class WebAuthnValidateSessionCredentialTokenActionTests {
     private static final String SAMPLE_TOKEN = "mO2ST2ZLIZCP6VmGDkiIX-_-VNXfOJQ6TjCwUFSCA3Y";
 
     @Autowired

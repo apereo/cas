@@ -90,7 +90,7 @@ import static org.mockito.Mockito.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @Tag("AuthenticationPolicy")
-public class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
+class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;

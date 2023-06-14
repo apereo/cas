@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasHazelcastThrottlingConfiguration.class
 })
 @Tag("Hazelcast")
-public class CasHazelcastThrottlingConfigurationTests {
+class CasHazelcastThrottlingConfigurationTests {
 
     @Autowired
     @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)

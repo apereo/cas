@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Cookie")
-public class DefaultCookieSameSitePolicyTests {
+class DefaultCookieSameSitePolicyTests {
     @Test
     public void verifyOff() {   
         val opt = CookieGenerationContext.builder().sameSitePolicy("Off").build();

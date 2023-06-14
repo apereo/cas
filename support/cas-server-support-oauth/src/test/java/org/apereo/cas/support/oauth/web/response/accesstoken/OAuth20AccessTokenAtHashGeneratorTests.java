@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuth")
-public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
     @Test
     public void verifyNoneAlgorithm() {
         val hash = generateHashWithAlgorithm("none");

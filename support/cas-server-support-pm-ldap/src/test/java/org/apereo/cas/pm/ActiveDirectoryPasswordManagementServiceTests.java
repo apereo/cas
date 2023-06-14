@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
 })
 @EnabledIfListeningOnPort(port = 10636)
-public class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll
     @SneakyThrows

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Groovy")
-public class GroovyScriptResourceCacheManagerTests {
+class GroovyScriptResourceCacheManagerTests {
     @Test
     public void verifyOperation() throws Exception {
         val file = File.createTempFile("scripted", ".groovy");

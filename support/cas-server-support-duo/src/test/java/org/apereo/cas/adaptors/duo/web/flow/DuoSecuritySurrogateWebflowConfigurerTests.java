@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("DuoSecurity")
-public class DuoSecuritySurrogateWebflowConfigurerTests {
+class DuoSecuritySurrogateWebflowConfigurerTests {
 
     @Import({
         CasCoreMultifactorAuthenticationConfiguration.class,
@@ -73,7 +73,7 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
-    public class DefaultTests extends BaseWebflowConfigurerTests {
+    class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
         public void verifyOperation() {
@@ -103,7 +103,7 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
         "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
-    public class DuoSecurityUniversalPromptTests extends BaseWebflowConfigurerTests {
+    class DuoSecurityUniversalPromptTests extends BaseWebflowConfigurerTests {
         @Autowired
         @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         private CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer;
@@ -145,7 +145,7 @@ public class DuoSecuritySurrogateWebflowConfigurerTests {
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
     @Deprecated(since = "6.5.0", forRemoval = true)
-    public class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
+    class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
         @Test
         public void verifyOperation() {
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

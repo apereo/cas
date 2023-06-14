@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class ServiceTicketImplTests {
+class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";
 

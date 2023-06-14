@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("WSFederation")
-public class WsFederationCredentialTests extends AbstractWsFederationTests {
+class WsFederationCredentialTests extends AbstractWsFederationTests {
     
     @Test
     public void verifyIsValidAllGood() {

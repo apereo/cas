@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
+class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @SneakyThrows
     @Override
     public ResourceBasedServiceRegistry getNewServiceRegistry() {

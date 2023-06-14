@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class CacheStatisticsTests {
+class CacheStatisticsTests {
     @Test
     public void verifyOperation() {
         val stats = new CacheStatistics() {

@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.10
  */
 @Tag("Tickets")
-public class TicketGrantingTicketExpirationPolicyTests {
+class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 200;
 

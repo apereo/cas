@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Authentication")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultCasSSLContextTests {
+class DefaultCasSSLContextTests {
 
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
     @SpringBootConfiguration

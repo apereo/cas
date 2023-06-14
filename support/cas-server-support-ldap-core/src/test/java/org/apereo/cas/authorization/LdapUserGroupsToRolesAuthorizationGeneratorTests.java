@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAttributes")
-public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
+class LdapUserGroupsToRolesAuthorizationGeneratorTests {
 
     @BeforeAll
     public static void setup() throws Exception {

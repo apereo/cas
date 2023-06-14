@@ -90,7 +90,7 @@ import static org.mockito.Mockito.*;
 @EnableScheduling
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisAuthenticationHandlerTests {
+class RedisAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("redisAuthenticationHandler")

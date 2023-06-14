@@ -79,7 +79,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
-public class HazelcastHealthIndicatorTests {
+class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")
     private HealthIndicator hazelcastHealthIndicator;

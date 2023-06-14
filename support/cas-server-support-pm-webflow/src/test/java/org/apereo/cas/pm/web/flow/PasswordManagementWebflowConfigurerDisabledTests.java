@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.pm.core.enabled=false"
 })
 @Tag("WebflowConfig")
-public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflowConfigurerTests {
+class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier("passwordResetHandlerAdapter")

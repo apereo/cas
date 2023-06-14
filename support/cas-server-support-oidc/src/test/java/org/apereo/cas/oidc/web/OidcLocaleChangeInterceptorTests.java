@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcLocaleChangeInterceptorTests extends AbstractOidcTests {
+class OidcLocaleChangeInterceptorTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcLocaleChangeInterceptor")

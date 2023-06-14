@@ -71,7 +71,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 11211)
 @Tag("Memcached")
 @Getter
-public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
+class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

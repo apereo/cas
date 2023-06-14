@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationEventExecutionPlanTests {
+class DefaultAuthenticationEventExecutionPlanTests {
     @Mock
     private ServicesManager servicesManager;
 

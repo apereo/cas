@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Tickets")
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
-public class DefaultTicketRegistryCleanerTests {
+class DefaultTicketRegistryCleanerTests {
 
     @Test
     public void verifyAction() throws Exception {

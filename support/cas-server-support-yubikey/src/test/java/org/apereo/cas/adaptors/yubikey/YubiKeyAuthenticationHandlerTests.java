@@ -44,7 +44,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
  * @since 4.1
  */
 @Tag("MFAProvider")
-public class YubiKeyAuthenticationHandlerTests {
+class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
 
