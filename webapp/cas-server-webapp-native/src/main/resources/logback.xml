@@ -14,6 +14,8 @@
     <logger name="org.springframework.webflow" level="info"/>
 
     <logger name="org.springframework.security" level="warn" />
+    <logger name="org.springframework.data" level="warn" />
+    
     <logger name="com.hazelcast" level="warn" />
     <logger name="org.pac4j" level="warn" />
     <logger name="org.apache.catalina" level="warn" />

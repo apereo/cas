@@ -1,38 +1,48 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.ticket.registry.CachedTicketExpirationPolicy;
+import org.apereo.cas.ticket.registry.RedisCompositeKey;
+import org.apereo.cas.ticket.registry.RedisTicketDocument;
+import org.apereo.cas.ticket.registry.pub.RedisMessagePayload;
+import org.apereo.cas.ticket.registry.sub.RedisTicketRegistryMessageListener;
+import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-import java.sql.Driver;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * This is {@link JdbcDriversRuntimeHints}.
+ * This is {@link RedisTicketRegistryRuntimeHints}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class JdbcDriversRuntimeHints implements CasRuntimeHintsRegistrar {
+public class RedisTicketRegistryRuntimeHints implements CasRuntimeHintsRegistrar {
+
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerReflectionHints(hints, findSubclassesInPackage(Driver.class,
-            "com.mysql", "net.sourceforge", "org.h2",
-            "org.mariadb", "org.postgresql", "org.apache.ignite",
-            "org.sqlite", "org.hsqldb", "oracle.jdbc", "com.microsoft"));
+        hints.serialization()
+            .registerType(RedisMessagePayload.RedisMessageTypes.class)
+            .registerType(PublisherIdentifier.class)
+            .registerType(RedisTicketDocument.class)
+            .registerType(RedisMessagePayload.class);
 
         registerReflectionHints(hints, List.of(
-            TypeReference.of("oracle.jdbc.logging.annotations.Feature"),
-            TypeReference.of("org.hsqldb.dbinfo.DatabaseInformationFull"),
-            TypeReference.of("org.hsqldb.dbinfo.DatabaseInformation")
+            RedisMessagePayload.class,
+            RedisMessagePayload.RedisMessagePayloadBuilder.class,
+            CachedTicketExpirationPolicy.class,
+            RedisCompositeKey.class,
+            RedisTicketDocument.class,
+            RedisTicketDocument.RedisTicketDocumentBuilder.class
+            )
+        );
 
-        ));
-        hints.resources()
-            .registerResourceBundle("org/hsqldb/resources/sql-state-messages")
-            .registerPattern("org/hsqldb/resources/*.sql")
-            .registerPattern("org/hsqldb/resources/*.properties");
+        registerReflectionHints(hints,
+            findSubclassesInPackage(RedisTicketRegistryMessageListener.class, CentralAuthenticationService.NAMESPACE));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

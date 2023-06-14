@@ -1,11 +1,13 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.CasVersion;
+import org.apereo.cas.util.LogMessageSummarizer;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.springframework.aot.hint.MemberCategory;
@@ -198,6 +200,12 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 AutowiredAnnotationBeanPostProcessor.class,
                 CommonAnnotationBeanPostProcessor.class
             ));
+
+        registerReflectionHintForPublicOps(hints,
+            findSubclassesInPackage(ObjectIdGenerator.class, "com.fasterxml.jackson"));
+
+        registerReflectionHintForPublicOps(hints,
+            findSubclassesInPackage(LogMessageSummarizer.class, "org.apereo.cas"));
 
         registerCaffeineHints(hints);
         registerGroovyDGMClasses(hints, classLoader);

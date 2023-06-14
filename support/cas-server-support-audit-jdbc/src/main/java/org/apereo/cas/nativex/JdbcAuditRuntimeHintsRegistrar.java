@@ -1,36 +1,22 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * This is {@link CasCoreAuditRuntimeHints}.
+ * This is {@link JdbcAuditRuntimeHintsRegistrar}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
+public class JdbcAuditRuntimeHintsRegistrar implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        hints.proxies().registerJdkProxy(AuditTrailExecutionPlanConfigurer.class);
-
-        registerReflectionHints(hints, List.of(
-            AuditTrailExecutionPlan.class,
-            AuditTrailExecutionPlanConfigurer.class,
-            AuditTrailManagementAspect.class
-        ));
-
-        registerProxyHints(hints, List.of(AuditTrailExecutionPlanConfigurer.class));
-    }
-
-    private static void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
-        subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
+        registerReflectionHints(hints, List.of(AuditTrailEntity.class));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
@@ -40,6 +26,7 @@ public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
             MemberCategory.INVOKE_DECLARED_METHODS,
             MemberCategory.INVOKE_PUBLIC_METHODS,
             MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_CLASSES,
             MemberCategory.PUBLIC_FIELDS));
     }
 }

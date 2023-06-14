@@ -1,11 +1,13 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.hibernate.dialect.Dialect;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link CasHibernateRuntimeHints}.
@@ -18,6 +20,8 @@ public class CasHibernateRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerReflectionHints(hints,
             findSubclassesInPackage(Dialect.class, "org.hibernate"));
+
+        registerReflectionHints(hints, List.of(CasHibernatePhysicalNamingStrategy.class));
     }
 
     private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {

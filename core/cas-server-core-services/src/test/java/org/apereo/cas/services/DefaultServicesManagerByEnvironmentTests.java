@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
+class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests<DefaultServicesManager> {
     @Test
     void verifyServiceByEnvironment() {
         val r = new CasRegisteredService();

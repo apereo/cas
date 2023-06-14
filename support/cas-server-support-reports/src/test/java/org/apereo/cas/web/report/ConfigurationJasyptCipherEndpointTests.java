@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("ActuatorEndpoint")
 @Import(CasCoreBaseEnvironmentConfiguration.class)
-public class ConfigurationJasyptCipherEndpointTests extends AbstractCasEndpointTests {
+class ConfigurationJasyptCipherEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("casConfigurationCipherEndpoint")
     private ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint;
