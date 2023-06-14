@@ -56,7 +56,7 @@ public class DelegatedSaml2ClientMetadataController {
     @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata")
     public ResponseEntity<String> getFirstServiceProviderMetadata() {
         val saml2Client = builtClients.getClients().stream()
-            .filter(client -> client instanceof SAML2Client)
+            .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast).findFirst();
         return saml2Client.map(DelegatedSaml2ClientMetadataController::getSaml2ClientServiceProviderMetadataResponseEntity)
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
@@ -70,7 +70,7 @@ public class DelegatedSaml2ClientMetadataController {
     @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata")
     public ResponseEntity<String> getFirstIdentityProviderMetadata() {
         val saml2Client = builtClients.getClients().stream()
-            .filter(client -> client instanceof SAML2Client)
+            .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast).findFirst();
         return saml2Client.map(this::getSaml2ClientIdentityProviderMetadataResponseEntity)
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);

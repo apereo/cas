@@ -23,8 +23,8 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
         val handlers = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
         handlers
             .stream()
-            .filter(handler -> handler instanceof ThrottledSubmissionHandlerInterceptor)
-            .map(handler -> (ThrottledSubmissionHandlerInterceptor) handler)
+            .filter(ThrottledSubmissionHandlerInterceptor.class::isInstance)
+            .map(ThrottledSubmissionHandlerInterceptor.class::cast)
             .forEach(ThrottledSubmissionHandlerInterceptor::release);
     }
 }

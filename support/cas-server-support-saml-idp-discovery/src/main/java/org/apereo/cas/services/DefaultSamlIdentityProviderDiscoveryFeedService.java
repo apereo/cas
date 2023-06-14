@@ -55,7 +55,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
     public Collection<String> getEntityIds() {
         return clients.findAllClients()
             .stream()
-            .filter(c -> c instanceof SAML2Client)
+            .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .peek(InitializableObject::init)
             .map(SAML2Client::getServiceProviderResolvedEntityId)
@@ -73,7 +73,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
             .orElseThrow();
         val samlClient = clients.findAllClients()
             .stream()
-            .filter(c -> c instanceof SAML2Client)
+            .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .peek(InitializableObject::init)
             .filter(c -> c.getIdentityProviderResolvedEntityId().equalsIgnoreCase(idp.getEntityID()))

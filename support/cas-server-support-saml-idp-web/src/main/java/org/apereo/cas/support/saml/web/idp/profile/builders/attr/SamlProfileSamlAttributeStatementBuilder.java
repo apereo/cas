@@ -125,7 +125,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val urns = new HashMap<String, String>();
         attributeDefinitionStore.getAttributeDefinitions()
             .stream()
-            .filter(defn -> defn instanceof SamlIdPAttributeDefinition)
+            .filter(SamlIdPAttributeDefinition.class::isInstance)
             .map(SamlIdPAttributeDefinition.class::cast)
             .filter(defn -> StringUtils.isNotBlank(defn.getUrn()))
             .forEach(defn -> {

@@ -105,8 +105,8 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         LOGGER.trace("Looking for locale [{}]", locale);
         val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
         return items.stream()
-            .filter(item -> item instanceof LocalizedName)
-            .map(item -> (LocalizedName) item)
+            .filter(LocalizedName.class::isInstance)
+            .map(LocalizedName.class::cast)
             .filter(item -> {
                 val xmlLang = item.getXMLLang();
                 return StringUtils.isNotBlank(xmlLang) && p.matcher(xmlLang).matches() && StringUtils.isNotBlank(item.getValue());

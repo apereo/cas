@@ -54,7 +54,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
             clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
             if (StringUtils.isNotBlank(clientName)) {
                 clients.findClient(clientName)
-                    .filter(client -> client instanceof SAML2Client)
+                    .filter(SAML2Client.class::isInstance)
                     .map(SAML2Client.class::cast)
                     .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
                         LOGGER.debug("Located client from relay-state: [{}]", client);
@@ -68,7 +68,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
         } else {
             val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
             clients.findClient(clientName)
-                .filter(client -> client instanceof SAML2Client)
+                .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
                     val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,

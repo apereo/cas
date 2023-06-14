@@ -56,8 +56,8 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
-                    .filter(object -> object instanceof RequestedAttribute)
-                    .map(object -> (RequestedAttribute) object)
+                    .filter(RequestedAttribute.class::isInstance)
+                    .map(RequestedAttribute.class::cast)
                     .filter(attr -> {
                         val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
                         LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]", name, context.getRegisteredService().getName());
@@ -81,8 +81,8 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicy extends BaseS
             if (authnRequest.getExtensions() != null) {
                 authnRequest.getExtensions().getUnknownXMLObjects()
                     .stream()
-                    .filter(object -> object instanceof RequestedAttribute)
-                    .map(object -> (RequestedAttribute) object)
+                    .filter(RequestedAttribute.class::isInstance)
+                    .map(RequestedAttribute.class::cast)
                     .forEach(attr -> {
                         val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
                         LOGGER.debug("Found requested attribute [{}] in metadata for [{}]", name, context.getRegisteredService().getName());
