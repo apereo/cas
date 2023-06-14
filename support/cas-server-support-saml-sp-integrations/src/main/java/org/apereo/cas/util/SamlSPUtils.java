@@ -122,7 +122,7 @@ public class SamlSPUtils {
             }
 
             resolvers.stream()
-                .filter(r -> r instanceof AbstractBatchMetadataResolver)
+                .filter(AbstractBatchMetadataResolver.class::isInstance)
                 .map(r -> ((Iterable<EntityDescriptor>) r).iterator())
                 .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
                     .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)

@@ -113,7 +113,7 @@ public class OidcJsonWebKeyStoreUtils {
                                                               final Optional<String> keyIdRequest,
                                                               final Optional<OidcJsonWebKeyUsage> usage) {
 
-        var filter = (Predicate<JsonWebKey>) k -> k instanceof PublicJsonWebKey;
+        var filter = (Predicate<JsonWebKey>) PublicJsonWebKey.class::isInstance;
         if (keyIdRequest.isPresent()) {
             filter = filter.and(jsonWebKey -> StringUtils.equalsIgnoreCase(jsonWebKey.getKeyId(), keyIdRequest.get()));
         }

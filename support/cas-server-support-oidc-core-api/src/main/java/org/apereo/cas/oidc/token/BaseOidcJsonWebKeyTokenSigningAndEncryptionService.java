@@ -83,7 +83,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @Override
     public String resolveIssuer(final Optional<OAuthRegisteredService> service) {
         val filter = service
-            .filter(svc -> svc instanceof OidcRegisteredService)
+            .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast)
             .stream()
             .findFirst();
@@ -95,7 +95,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
     @Override
     public PublicJsonWebKey getJsonWebKeySigningKey(final Optional<OAuthRegisteredService> serviceResult) {
         val servicePassed = serviceResult
-            .filter(svc -> svc instanceof OidcRegisteredService)
+            .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast)
             .stream()
             .findFirst();
@@ -109,20 +109,19 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
                                                            final Optional<OAuthRegisteredService> serviceResult) {
         FunctionUtils.throwIf(jwks.isEmpty(),
             () -> new IllegalArgumentException("JSON web keystore is empty and contains no keys"));
-
-        val jsonWebKeys = jwks.get().getJsonWebKeys();
+        val jsonWebKeys = jwks.orElseThrow().getJsonWebKeys();
         LOGGER.trace("JSON web keystore contains [{}] key(s)", jsonWebKeys);
 
         val finalKey = serviceResult
-            .filter(svc -> svc instanceof OidcRegisteredService)
+            .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast)
             .stream()
             .filter(oidcService -> StringUtils.isNotBlank(oidcService.getJwksKeyId()))
             .map(oidcService -> jsonWebKeys
                 .stream()
-                .filter(key -> key instanceof PublicJsonWebKey)
+                .filter(PublicJsonWebKey.class::isInstance)
                 .filter(key -> StringUtils.equalsIgnoreCase(key.getKeyId(), oidcService.getJwksKeyId()))
-                .map(key -> (PublicJsonWebKey) key)
+                .map(PublicJsonWebKey.class::cast)
                 .findFirst())
             .flatMap(Optional::stream)
             .findFirst();

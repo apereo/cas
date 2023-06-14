@@ -148,7 +148,7 @@ public class CasOAuth20ThrottleConfiguration {
             val clients = oauthSecConfig.getClients()
                 .findAllClients()
                 .stream()
-                .filter(client -> client instanceof DirectClient)
+                .filter(DirectClient.class::isInstance)
                 .map(Client::getName)
                 .collect(Collectors.joining(","));
 

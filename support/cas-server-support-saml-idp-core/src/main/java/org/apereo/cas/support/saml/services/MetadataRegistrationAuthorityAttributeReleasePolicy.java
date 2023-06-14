@@ -50,8 +50,8 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
 
         val matched = extensions.stream()
-            .filter(object -> object instanceof RegistrationInfo)
-            .map(info -> (RegistrationInfo) info)
+            .filter(RegistrationInfo.class::isInstance)
+            .map(RegistrationInfo.class::cast)
             .anyMatch(info -> RegexUtils.find(this.registrationAuthority, info.getRegistrationAuthority()));
 
         if (matched) {

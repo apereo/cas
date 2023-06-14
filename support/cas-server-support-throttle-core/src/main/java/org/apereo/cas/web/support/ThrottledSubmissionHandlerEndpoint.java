@@ -36,7 +36,7 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint 
     public List getRecords() {
         return (List) authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
             .stream()
-            .map(entry -> (ThrottledSubmissionHandlerInterceptor) entry)
+            .map(ThrottledSubmissionHandlerInterceptor.class::cast)
             .filter(Objects::nonNull)
             .map(ThrottledSubmissionHandlerInterceptor::getRecords)
             .flatMap(Collection::stream)

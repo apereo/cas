@@ -70,7 +70,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         final List<RegisteredServiceAttributeReleasePolicy> policies) {
         return policies
             .stream()
-            .filter(policy -> policy instanceof OidcRegisteredServiceAttributeReleasePolicy)
+            .filter(OidcRegisteredServiceAttributeReleasePolicy.class::isInstance)
             .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
             .filter(policy -> policy.getScopeType().equalsIgnoreCase(givenScope)
                          || (policy instanceof OidcCustomScopeAttributeReleasePolicy customPolicy && customPolicy.getScopeName().equals(givenScope)))

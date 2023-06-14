@@ -101,7 +101,7 @@ public class DefaultCasSSLContext implements CasSSLContext {
         val factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return Arrays.stream(factory.getTrustManagers())
-            .filter(e -> e instanceof X509TrustManager)
+            .filter(X509TrustManager.class::isInstance)
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
     }
