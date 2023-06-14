@@ -21,6 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ConfigurationJasyptCipherEndpoint {
     private final CipherExecutor<String, String> casConfigurationCipherExecutor;
 
+    /**
+     * Encrypt value.
+     *
+     * @param value the value
+     * @return the response entity
+     */
     @PostMapping(value = "/encrypt",
                  produces = MediaType.TEXT_PLAIN_VALUE,
                  consumes = MediaType.TEXT_PLAIN_VALUE)
@@ -30,6 +36,12 @@ public class ConfigurationJasyptCipherEndpoint {
         return ResponseEntity.ok(casConfigurationCipherExecutor.encode(value));
     }
 
+    /**
+     * Decrypt value.
+     *
+     * @param value the value
+     * @return the response entity
+     */
     @PostMapping(value = "/decrypt",
                  produces = MediaType.TEXT_PLAIN_VALUE,
                  consumes = MediaType.TEXT_PLAIN_VALUE)

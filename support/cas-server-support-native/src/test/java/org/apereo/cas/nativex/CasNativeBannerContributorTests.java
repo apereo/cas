@@ -26,6 +26,7 @@ class CasNativeBannerContributorTests {
 
     @Test
     void verifyOperation() throws Exception {
+        System.setProperty("java.vendor.version", "Oracle GraalVM");
         val environment = new MockEnvironment();
         val banner = CasBanner.getInstance();
         try (val out = new ByteArrayOutputStream();
