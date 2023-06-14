@@ -32,7 +32,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
     @SuppressWarnings("ClassCanBeStatic")
     class ClaimMappingTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -45,7 +45,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        public void verifyChainOperation() {
+        void verifyChainOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -66,7 +66,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyValueTypes() {
+        void verifyValueTypes() {
             val oidcRegisteredService = getOidcRegisteredService();
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(
                 CollectionUtils.wrap("active1", "status1", "active2", "status2",
@@ -83,7 +83,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
             val oidcRegisteredService = getOidcRegisteredService();
             assertTrue(mapper.containsMappedAttribute("name", oidcRegisteredService));
@@ -91,7 +91,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        public void verifyClaimMapOperation() {
+        void verifyClaimMapOperation() {
             val policy = new OidcEmailScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.EMAIL.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());

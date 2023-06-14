@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 class DynamicFlowModelBuilderTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val builder = new DynamicFlowModelBuilder();
         builder.setStartStateId("StartStateId");
         builder.setGlobalTransitions(List.of());

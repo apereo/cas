@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val file = File.createTempFile("service", ".json");

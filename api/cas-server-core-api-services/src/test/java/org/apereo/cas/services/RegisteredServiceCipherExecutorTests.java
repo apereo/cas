@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @Tag("Cipher")
 class RegisteredServiceCipherExecutorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val component = mock(RegisteredServiceCipherExecutor.class);
         when(component.isEnabled()).thenCallRealMethod();
         when(component.supports(any())).thenCallRealMethod();

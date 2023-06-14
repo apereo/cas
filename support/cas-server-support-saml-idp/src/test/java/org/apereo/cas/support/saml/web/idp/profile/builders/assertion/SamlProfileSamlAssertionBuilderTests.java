@@ -39,7 +39,7 @@ class SamlProfileSamlAssertionBuilderTests {
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
         @Test
-        public void verifyAssertionWithDefaultIssuer() throws Exception {
+        void verifyAssertionWithDefaultIssuer() throws Exception {
             val service = getSamlRegisteredServiceForTestShib();
             val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
@@ -69,7 +69,7 @@ class SamlProfileSamlAssertionBuilderTests {
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
 
         @Test
-        public void verifyAssertionWithServiceMetadataAndIssuer() throws Exception {
+        void verifyAssertionWithServiceMetadataAndIssuer() throws Exception {
             val service = getSamlRegisteredServiceFor("https://cassp.example.org");
             service.setId(1000);
             service.setName("ObjectSignerTest");

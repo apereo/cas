@@ -39,7 +39,7 @@ class MultifactorAuthenticationAvailableActionTests {
         private Action mfaAvailableAction;
 
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
@@ -67,7 +67,7 @@ class MultifactorAuthenticationAvailableActionTests {
         private Action mfaAvailableAction;
 
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();

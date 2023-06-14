@@ -42,7 +42,7 @@ public abstract class BaseBucket4jThrottledRequestTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(throttledRequestExecutor);
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

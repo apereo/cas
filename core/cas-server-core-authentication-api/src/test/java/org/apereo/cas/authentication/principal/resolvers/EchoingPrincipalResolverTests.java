@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Attributes")
 class EchoingPrincipalResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new EchoingPrincipalResolver();
         assertNull(input.getAttributeRepository());
         assertTrue(input.supports(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));

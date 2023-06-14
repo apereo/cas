@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyPlain() {
+    void verifyPlain() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-full-jwt --sub casuser --claims {'name':'CAS','clients':['1234']}"));
     }
 
     @Test
-    public void verifySigned() throws Exception {
+    void verifySigned() throws Exception {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
             runShellCommand(() -> () -> "generate-full-jwt --sub casuser "
@@ -35,7 +35,7 @@ class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     }
 
     @Test
-    public void verifySignedNeverExpires() throws Exception {
+    void verifySignedNeverExpires() throws Exception {
         assertDoesNotThrow(() -> {
             val jwks = new ClassPathResource("jwks.json").getFile().getAbsolutePath();
             runShellCommand(() -> () -> "generate-full-jwt --sub casuser "

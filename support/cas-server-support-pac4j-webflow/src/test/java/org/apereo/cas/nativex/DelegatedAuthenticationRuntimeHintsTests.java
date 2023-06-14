@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class DelegatedAuthenticationRuntimeHintsTests {
     @Test
-    public void verifyHints() {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new DelegatedAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.serialization().onType(OidcProfile.class).test(hints));

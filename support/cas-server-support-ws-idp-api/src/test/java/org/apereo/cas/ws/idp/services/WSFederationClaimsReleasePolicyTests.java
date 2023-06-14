@@ -43,7 +43,7 @@ class WSFederationClaimsReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyAttributeReleaseNone() {
+    void verifyAttributeReleaseNone() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
@@ -59,7 +59,7 @@ class WSFederationClaimsReleasePolicyTests {
     }
 
     @Test
-    public void verifyAttributeReleaseInlineGroovy() {
+    void verifyAttributeReleaseInlineGroovy() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.EMAIL_ADDRESS_2005.name(), "groovy { return attributes['cn'][0] + '@example.org' }"));
@@ -76,7 +76,7 @@ class WSFederationClaimsReleasePolicyTests {
     }
 
     @Test
-    public void verifyAttributeReleaseScriptGroovy() throws Exception {
+    void verifyAttributeReleaseScriptGroovy() throws Exception {
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         val script = IOUtils.toString(new ClassPathResource("wsfed-attr.groovy").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.write(file, script, StandardCharsets.UTF_8);
@@ -98,7 +98,7 @@ class WSFederationClaimsReleasePolicyTests {
     }
 
     @Test
-    public void verifyAttributeRelease() {
+    void verifyAttributeRelease() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn",
@@ -128,7 +128,7 @@ class WSFederationClaimsReleasePolicyTests {
     }
     
     @Test
-    public void verifySerializePolicyToJson() throws IOException {
+    void verifySerializePolicyToJson() throws IOException {
         val policyWritten = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
         MAPPER.writeValue(JSON_FILE, policyWritten);

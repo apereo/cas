@@ -55,7 +55,7 @@ class AdditionalMetadataVerificationTests {
      * @throws IOException if additional property file is missing
      */
     @Test
-    public void verifyMetaData() throws IOException {
+    void verifyMetaData() throws IOException {
         val resource = CasConfigurationProperties.class.getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(resource);
         val additionalMetadataJsonFile = resourceLoader.getResource(resource.toString());

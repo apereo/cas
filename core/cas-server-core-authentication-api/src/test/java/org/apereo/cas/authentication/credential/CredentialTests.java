@@ -42,14 +42,14 @@ class CredentialTests {
     }
 
     @Test
-    public void verifyCred() {
+    void verifyCred() {
         val credential = getCredential();
         assertNotNull(credential.getCredentialMetadata().getCredentialClass());
         assertTrue(credential.isValid());
     }
 
     @Test
-    public void verifyEquals() {
+    void verifyEquals() {
         val credential = getCredential();
         val credential2 = getCredential();
         assertNotNull(credential.getCredentialMetadata().getCredentialClass());
@@ -59,7 +59,7 @@ class CredentialTests {
     }
 
     @Test
-    public void verifyValid() {
+    void verifyValid() {
         val credential = new AbstractCredential() {
             @Serial
             private static final long serialVersionUID = -1746359565306558329L;

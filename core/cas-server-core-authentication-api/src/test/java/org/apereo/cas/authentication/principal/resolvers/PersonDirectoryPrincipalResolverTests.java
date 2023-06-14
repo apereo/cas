@@ -87,7 +87,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyOp() {
+    void verifyOp() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(true)
             .principalAttributeNames("cn")
@@ -103,7 +103,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalAttributeNames("cn")
@@ -120,7 +120,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyNullPrincipal() {
+    void verifyNullPrincipal() {
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(new HashMap<>(0)))
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(String::trim)
@@ -136,7 +136,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyNoPrincipalAttrWithoutNull() {
+    void verifyNoPrincipalAttrWithoutNull() {
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(new HashMap<>(0)))
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(String::trim)
@@ -154,7 +154,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyUnknownPrincipalAttrWithNull() {
+    void verifyUnknownPrincipalAttrWithNull() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(true)
             .principalNameTransformer(String::trim)
@@ -172,7 +172,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyNullAttributes() {
+    void verifyNullAttributes() {
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(new HashMap<>(0)))
             .returnNullIfNoAttributes(true)
             .principalNameTransformer(String::trim)
@@ -189,7 +189,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyNullAttributeValues() {
+    void verifyNullAttributeValues() {
         val attributes = new ArrayList<>();
         attributes.add(null);
         val context = getPrincipalResolutionContextBuilder(new StubPersonAttributeDao(Map.of("a", attributes)))
@@ -206,7 +206,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyNoAttributesWithPrincipal() {
+    void verifyNoAttributesWithPrincipal() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -223,7 +223,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyAttributesWithPrincipal() {
+    void verifyAttributesWithPrincipal() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -242,7 +242,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyChainingResolverOverwrite() {
+    void verifyChainingResolverOverwrite() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -270,7 +270,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyChainingResolver() {
+    void verifyChainingResolver() {
         val context = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -293,7 +293,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyChainingResolverOverwritePrincipal() {
+    void verifyChainingResolverOverwritePrincipal() {
         val context1 = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -331,7 +331,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyMultiplePrincipalAttributeNames() {
+    void verifyMultiplePrincipalAttributeNames() {
         val context1 = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -363,7 +363,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyMultiplePrincipalAttributeNamesNotFound() {
+    void verifyMultiplePrincipalAttributeNamesNotFound() {
         val context1 = getPrincipalResolutionContextBuilder()
             .returnNullIfNoAttributes(false)
             .principalNameTransformer(formUserId -> formUserId)
@@ -395,7 +395,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyPrincipalIdViaCurrentPrincipal() {
+    void verifyPrincipalIdViaCurrentPrincipal() {
         Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE, PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
             .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
                 .returnNullIfNoAttributes(true)

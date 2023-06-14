@@ -46,7 +46,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     private Action action;
 
     @Test
-    public void verifySkipTgt() throws Exception {
+    void verifySkipTgt() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     }
 
     @Test
-    public void verifyCreateTgt() throws Exception {
+    void verifyCreateTgt() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

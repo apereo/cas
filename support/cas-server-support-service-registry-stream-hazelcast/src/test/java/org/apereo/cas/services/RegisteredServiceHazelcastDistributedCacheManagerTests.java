@@ -48,7 +48,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = mgr.get(registeredService);
         assertNull(obj);
@@ -71,7 +71,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    public void verifyPublisher() {
+    void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val casRegisteredServiceStreamPublisherIdentifier = new PublisherIdentifier("123456");
         

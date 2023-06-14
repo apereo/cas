@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegisteredServiceYamlSerializerTests {
 
     @Test
-    public void verifyPrinter() {
+    void verifyPrinter() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val zer = new RegisteredServiceYamlSerializer(appCtx);
@@ -34,7 +34,7 @@ class RegisteredServiceYamlSerializerTests {
     }
 
     @Test
-    public void verifyWriter() {
+    void verifyWriter() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val zer = new RegisteredServiceYamlSerializer(appCtx);

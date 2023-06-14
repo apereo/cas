@@ -81,7 +81,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     private ConfigurableApplicationContext configurableApplicationContext;
 
     @Test
-    public void verifySkip() throws Exception {
+    void verifySkip() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -95,7 +95,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     }
 
     @Test
-    public void verifyError() throws Exception {
+    void verifyError() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -111,7 +111,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     }
 
     @Test
-    public void verifyPass() throws Exception {
+    void verifyPass() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

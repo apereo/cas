@@ -77,7 +77,7 @@ class OktaPersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertEquals(1, oktaPersonAttributeDaos.size());
             assertNull(attributeRepository.getPerson("casuser"));
 
@@ -109,7 +109,7 @@ class OktaPersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(oktaPersonAttributeDaos.toList().isEmpty());
             assertNotNull(attributeRepository.getPerson("casuser"));
             assertFalse(attributeRepository.getPeople(Map.of("username", "casuser"),

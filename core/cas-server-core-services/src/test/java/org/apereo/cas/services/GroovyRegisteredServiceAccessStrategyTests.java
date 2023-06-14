@@ -28,7 +28,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void checkDefaultAuthzStrategyConfig() {
+    void checkDefaultAuthzStrategyConfig() {
         val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         assertTrue(authz.isServiceAccessAllowed());
@@ -40,7 +40,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);

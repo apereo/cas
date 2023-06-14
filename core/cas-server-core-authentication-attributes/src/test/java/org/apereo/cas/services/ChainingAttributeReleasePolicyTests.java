@@ -49,7 +49,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithReplaceAndOrder() {
+    void verifyOperationWithReplaceAndOrder() {
         configureChainingReleasePolicy(10, 1);
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -65,7 +65,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithReplace() {
+    void verifyOperationWithReplace() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -87,7 +87,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithAdd() {
+    void verifyOperationWithAdd() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -102,7 +102,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithMultivalued() {
+    void verifyOperationWithMultivalued() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
@@ -118,7 +118,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyConsentableAttrs() {
+    void verifyConsentableAttrs() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

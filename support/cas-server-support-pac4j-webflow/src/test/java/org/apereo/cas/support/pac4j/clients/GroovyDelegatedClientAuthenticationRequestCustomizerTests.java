@@ -65,7 +65,7 @@ class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val client = new CasClient(new CasConfiguration("https://example.org/cas/login"));
         client.setCallbackUrl("https://example.org/cas/callback");
         client.init();

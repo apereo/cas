@@ -60,7 +60,7 @@ class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void verifyValidCredentials() {
+    void verifyValidCredentials() {
         this.spnegoCredentials.setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
@@ -69,7 +69,7 @@ class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         assertFalse(this.resolver.supports(null));
         assertTrue(this.resolver.supports(this.spnegoCredentials));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));

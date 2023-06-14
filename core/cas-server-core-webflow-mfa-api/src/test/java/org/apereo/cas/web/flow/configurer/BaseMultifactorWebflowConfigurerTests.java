@@ -44,7 +44,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
      * state is present within the flow.
      */
     @Test
-    public void ensureAllTransitionDestinationsExistInFlow() {
+    void ensureAllTransitionDestinationsExistInFlow() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
@@ -60,7 +60,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
@@ -72,7 +72,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyTrustedDevice() {
+    void verifyTrustedDevice() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());

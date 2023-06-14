@@ -45,7 +45,7 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
     }
 
     @Test
-    public void verifyNoServiceFound() {
+    void verifyNoServiceFound() {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -54,7 +54,7 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
     }
 
     @Test
-    public void verifyDisabledServiceFound() throws Exception {
+    void verifyDisabledServiceFound() throws Exception {
         val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
         val strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setEnabled(false);

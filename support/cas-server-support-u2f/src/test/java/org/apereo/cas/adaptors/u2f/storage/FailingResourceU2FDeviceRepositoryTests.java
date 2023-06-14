@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class FailingResourceU2FDeviceRepositoryTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val failure = mock(BaseResourceU2FDeviceRepository.class);
         when(failure.readDevicesFromResource()).thenThrow(new IllegalStateException());
         doThrow(new IllegalStateException()).when(failure).writeDevicesBackToResource(any());

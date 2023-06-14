@@ -28,7 +28,7 @@ class CasWebApplicationConfigurationTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val event = new ApplicationReadyEvent(
             mock(SpringApplication.class), ArrayUtils.EMPTY_STRING_ARRAY,
             applicationContext, Duration.ofSeconds(1));

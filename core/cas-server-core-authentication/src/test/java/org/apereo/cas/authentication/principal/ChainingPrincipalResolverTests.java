@@ -60,7 +60,7 @@ class ChainingPrincipalResolverTests {
     }
 
     @Test
-    public void examineSupports() {
+    void examineSupports() {
         val credential = mock(Credential.class);
         when(credential.getId()).thenReturn("a");
 
@@ -76,7 +76,7 @@ class ChainingPrincipalResolverTests {
     }
 
     @Test
-    public void examineResolve() {
+    void examineResolve() {
         val principalOut = principalFactory.createPrincipal("output");
         val credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");
@@ -104,7 +104,7 @@ class ChainingPrincipalResolverTests {
     }
 
     @Test
-    public void examineResolverMergingAttributes() {
+    void examineResolverMergingAttributes() {
         val p1 = principalFactory.createPrincipal("casuser", Map.of("familyName", List.of("Smith")));
         val p2 = principalFactory.createPrincipal("casuser", Map.of("familyName", List.of("smith")));
 

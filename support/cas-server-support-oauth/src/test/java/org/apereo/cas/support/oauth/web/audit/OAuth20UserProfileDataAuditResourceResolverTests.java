@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20UserProfileDataAuditResourceResolverTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val r = new OAuth20UserProfileDataAuditResourceResolver();
         val token = mock(OAuth20AccessToken.class);
         when(token.getId()).thenReturn("CODE");
@@ -49,7 +49,7 @@ class OAuth20UserProfileDataAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyActionFromToken() {
+    void verifyActionFromToken() {
         val r = new OAuth20UserProfileDataAuditResourceResolver();
         val token = mock(OAuth20AccessToken.class);
         when(token.getId()).thenReturn("CODE");

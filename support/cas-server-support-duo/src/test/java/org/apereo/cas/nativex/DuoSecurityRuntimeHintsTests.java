@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class DuoSecurityRuntimeHintsTests {
     @Test
-    public void verifyHints() {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new DuoSecurityRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.serialization().onType(DuoSecurityCredential.class).test(hints));

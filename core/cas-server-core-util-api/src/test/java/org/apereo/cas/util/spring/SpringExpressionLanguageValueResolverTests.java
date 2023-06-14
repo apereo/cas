@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class SpringExpressionLanguageValueResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         assertNotNull(resolver.apply("HelloWorld"));

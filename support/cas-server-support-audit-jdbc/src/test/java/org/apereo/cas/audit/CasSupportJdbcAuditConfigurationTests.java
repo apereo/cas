@@ -52,7 +52,7 @@ class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests 
     private AuditTrailManager auditTrailManager;
 
     @Test
-    public void verifyCleaner() {
+    void verifyCleaner() {
         inspektrAuditTrailCleaner.clean();
     }
 }

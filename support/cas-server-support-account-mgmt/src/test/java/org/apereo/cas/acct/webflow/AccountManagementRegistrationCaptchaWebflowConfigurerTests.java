@@ -48,7 +48,7 @@ class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWeb
     private Action initCaptchaAction;
 
     @Test
-    public void verifyCaptcha() throws Exception {
+    void verifyCaptcha() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -60,7 +60,7 @@ class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWeb
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
         assertEquals(CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP,

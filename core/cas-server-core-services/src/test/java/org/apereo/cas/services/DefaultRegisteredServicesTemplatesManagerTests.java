@@ -41,7 +41,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    public void verifyNoTemplateLocation() {
+    void verifyNoTemplateLocation() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(1000);
         registeredService.setName("Unknown");
@@ -59,7 +59,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    public void verifyNoTemplateName() {
+    void verifyNoTemplateName() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(1000);
         registeredService.setName("Unknown");
@@ -74,7 +74,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("ExampleTemplate");
@@ -98,7 +98,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    public void verifyTemplateInheritance() {
+    void verifyTemplateInheritance() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("Unknown,UsernameProviderTemplate,AttributeReleaseTemplate");
@@ -117,7 +117,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    public void verifyGroovyTemplates() {
+    void verifyGroovyTemplates() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("GroovyTemplate");

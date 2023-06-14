@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasNativeBannerContributorTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val environment = new MockEnvironment();
         val banner = CasBanner.getInstance();
         try (val out = new ByteArrayOutputStream();

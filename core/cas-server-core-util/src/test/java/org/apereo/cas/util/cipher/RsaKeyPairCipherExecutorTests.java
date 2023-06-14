@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cipher")
 class RsaKeyPairCipherExecutorTests {
     @Test
-    public void verifyActionOneWay() {
+    void verifyActionOneWay() {
         val secretKeyEncryption = "classpath:keys/RSA2048Public.key";
         val secretKeySigning = "classpath:keys/RSA2048Private.key";
         val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
@@ -31,7 +31,7 @@ class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairResource() {
+    void verifyRsaKeyPairResource() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey, privateKey, publicKey);
@@ -41,7 +41,7 @@ class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPair() {
+    void verifyRsaKeyPair() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
@@ -53,7 +53,7 @@ class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairSigning() {
+    void verifyRsaKeyPairSigning() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
@@ -64,7 +64,7 @@ class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairSigningOnly() {
+    void verifyRsaKeyPairSigningOnly() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
         val cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey);
@@ -74,7 +74,7 @@ class RsaKeyPairCipherExecutorTests {
     }
 
     @Test
-    public void verifyRsaKeyPairDoesNothing() {
+    void verifyRsaKeyPairDoesNothing() {
         val cipher = new RsaKeyPairCipherExecutor();
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);

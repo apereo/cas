@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasEurekaServerServletInitializerTests {
 
     @Test
-    public void verifyInitializer() {
+    void verifyInitializer() {
         val servletContext = new MockServletContext();
         val servletInitializer = new CasEurekaServerServletInitializer();
         assertDoesNotThrow(() -> servletInitializer.onStartup(servletContext));

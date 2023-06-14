@@ -102,7 +102,7 @@ public abstract class AbstractOpenSamlTests {
     protected UnmarshallerFactory unmarshallerFactory;
 
     @Test
-    public void autowireApplicationContext() {
+    void autowireApplicationContext() {
         assertNotNull(this.applicationContext);
         assertNotNull(this.configBean);
         assertNotNull(this.parserPool);
@@ -113,7 +113,7 @@ public abstract class AbstractOpenSamlTests {
     }
 
     @Test
-    public void loadStaticContextFactories() {
+    void loadStaticContextFactories() {
         assertNotNull(XMLObjectProviderRegistrySupport.getParserPool());
         assertNotNull(XMLObjectProviderRegistrySupport.getBuilderFactory());
         assertNotNull(XMLObjectProviderRegistrySupport.getMarshallerFactory());
@@ -121,7 +121,7 @@ public abstract class AbstractOpenSamlTests {
     }
 
     @Test
-    public void ensureParserIsInitialized() throws Exception {
+    void ensureParserIsInitialized() throws Exception {
         assertNotNull(this.parserPool);
         assertNotNull(this.parserPool.getBuilder());
     }

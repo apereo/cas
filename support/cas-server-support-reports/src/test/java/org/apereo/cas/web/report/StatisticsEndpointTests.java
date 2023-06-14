@@ -47,7 +47,7 @@ class StatisticsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val results = statisticsEndpoint.handle();
         assertFalse(results.isEmpty());
     }

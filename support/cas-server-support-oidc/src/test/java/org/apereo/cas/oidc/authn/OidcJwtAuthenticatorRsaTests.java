@@ -60,7 +60,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     private OAuth20AuthenticationClientProvider oidcJwtClientProvider;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -98,7 +98,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadUser() throws Exception {
+    void verifyBadUser() throws Exception {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -113,7 +113,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadCred() {
+    void verifyBadCred() {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();

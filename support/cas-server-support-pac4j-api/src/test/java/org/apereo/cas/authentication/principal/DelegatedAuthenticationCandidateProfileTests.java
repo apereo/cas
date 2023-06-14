@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 class DelegatedAuthenticationCandidateProfileTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val profile = DelegatedAuthenticationCandidateProfile.builder()
             .attributes(CoreAuthenticationTestUtils.getAttributes())
             .id(UUID.randomUUID().toString())

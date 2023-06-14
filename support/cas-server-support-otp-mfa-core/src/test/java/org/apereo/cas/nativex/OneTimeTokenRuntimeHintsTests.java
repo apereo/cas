@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class OneTimeTokenRuntimeHintsTests {
     @Test
-    public void verifyHints() {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new OneTimeTokenRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(OneTimeTokenAccountCipherExecutor.class).test(hints));

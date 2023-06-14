@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
     @Test
-    public void verifyPingFails() throws Exception {
+    void verifyPingFails() throws Exception {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenThrow(new RuntimeException());
 
@@ -51,7 +51,7 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyPing() throws Exception {
+    void verifyPing() throws Exception {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
@@ -62,7 +62,7 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyAuth() throws Exception {
+    void verifyAuth() throws Exception {
         val state = UUID.randomUUID().toString();
         val credential = new DuoSecurityUniversalPromptCredential(state,
             RegisteredServiceTestUtils.getAuthentication("casuser"));

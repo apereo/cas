@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFAProvider")
 class DefaultAuthyClientInstanceTests {
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val properties = new AuthyMultifactorAuthenticationProperties()
             .setCountryCode("1")
             .setApiKey("nfg734dbdv10fn$#")

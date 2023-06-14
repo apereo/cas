@@ -40,7 +40,7 @@ class SurrogatePrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyNominate() {
+    void verifyNominate() {
         val surrogate = buildSurrogatePrincipal("cas-surrogate",
             CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getAttributeRepository());
@@ -52,7 +52,7 @@ class SurrogatePrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val strategy = new SurrogatePrincipalElectionStrategy();
         val attributes = CollectionUtils.wrap(
             "formalName", CollectionUtils.wrapSet("cas"),
@@ -84,7 +84,7 @@ class SurrogatePrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyMultiPrincipalsWithNoAttributes() {
+    void verifyMultiPrincipalsWithNoAttributes() {
         val strategy = new SurrogatePrincipalElectionStrategy();
         val attributes = CollectionUtils.<String, List<Object>>wrap(
             "primaryName1", CollectionUtils.wrapList("cas"),

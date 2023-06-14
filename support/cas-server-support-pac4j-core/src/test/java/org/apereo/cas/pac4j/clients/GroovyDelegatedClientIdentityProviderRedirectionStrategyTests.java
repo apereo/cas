@@ -59,7 +59,7 @@ class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

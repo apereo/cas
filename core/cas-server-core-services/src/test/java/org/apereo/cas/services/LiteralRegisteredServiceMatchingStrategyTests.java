@@ -28,7 +28,7 @@ class LiteralRegisteredServiceMatchingStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(true);
         service.setMatchingStrategy(strategy);
@@ -38,7 +38,7 @@ class LiteralRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyOperationCaseInsensitive() {
+    void verifyOperationCaseInsensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(true);
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
@@ -47,7 +47,7 @@ class LiteralRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyOperationCaseSensitive() {
+    void verifyOperationCaseSensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(false);
         assertFalse(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase(Locale.ENGLISH)));

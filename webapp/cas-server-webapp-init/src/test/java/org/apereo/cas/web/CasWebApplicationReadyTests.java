@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 class CasWebApplicationReadyTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(Boolean.FALSE.toString(), System.getProperty(CasWebApplicationReady.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));
     }
 }

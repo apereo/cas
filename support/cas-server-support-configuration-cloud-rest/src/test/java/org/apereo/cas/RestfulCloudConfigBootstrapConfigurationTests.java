@@ -62,7 +62,7 @@ class RestfulCloudConfigBootstrapConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 }

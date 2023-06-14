@@ -27,7 +27,7 @@ class DefaultRegisteredServiceProxyTicketExpirationPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val p = new DefaultRegisteredServiceProxyTicketExpirationPolicy();
         p.setNumberOfUses(12);
         p.setTimeToLive("60");

@@ -62,7 +62,7 @@ class RestEndpointInterruptInquirerTests {
     }
 
     @Test
-    public void verifyResponseCanBeFoundFromRest() {
+    void verifyResponseCanBeFoundFromRest() {
         val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:8888");
         val context = new MockRequestContext();
@@ -86,7 +86,7 @@ class RestEndpointInterruptInquirerTests {
     }
 
     @Test
-    public void verifyBadAttempt() {
+    void verifyBadAttempt() {
         val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:8888");
         val context = new MockRequestContext();

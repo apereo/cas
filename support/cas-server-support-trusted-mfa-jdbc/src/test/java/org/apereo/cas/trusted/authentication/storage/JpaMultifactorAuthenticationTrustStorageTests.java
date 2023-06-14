@@ -62,7 +62,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     }
 
     @Test
-    public void verifyExpireByKey() {
+    void verifyExpireByKey() {
         var record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -79,7 +79,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     }
 
     @Test
-    public void verifyRetrieveAndExpireByDate() {
+    void verifyRetrieveAndExpireByDate() {
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (var offset = 0; offset < 3; offset++) {
@@ -97,7 +97,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     }
 
     @Test
-    public void verifyStoreAndRetrieve() {
+    void verifyStoreAndRetrieve() {
         val original = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         getMfaTrustEngine().save(original);
         val records = getMfaTrustEngine().get(PRINCIPAL);

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemcachedPooledClientConnectionFactoryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val memcached = new BaseMemcachedProperties();
         memcached.setOpTimeout(10);
         memcached.setMaxReconnectDelay(10);

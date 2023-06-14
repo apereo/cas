@@ -37,7 +37,7 @@ class ConditionalOnExpressionNegativeTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyConfigClassNotLoaded() {
+    void verifyConfigClassNotLoaded() {
         val beans = applicationContext.getBeanDefinitionNames();
         assertFalse(Arrays.stream(beans).anyMatch("redisSamlIdPMetadataConnectionFactory"::equalsIgnoreCase));
     }

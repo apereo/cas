@@ -93,7 +93,7 @@ class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyTriggerInactive() {
+    void verifyTriggerInactive() {
         assertTrue(multifactorAuthenticationTrigger.isActivated(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(), new MockHttpServletRequest(),
             new MockHttpServletResponse(),
@@ -105,7 +105,7 @@ class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     }
 
     @Test
-    public void verifyTriggerActive() {
+    void verifyTriggerActive() {
         val authn = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap(Attr_ReplyMessage.NAME, "reply-message", Attr_State.NAME, "whatever")
         ));

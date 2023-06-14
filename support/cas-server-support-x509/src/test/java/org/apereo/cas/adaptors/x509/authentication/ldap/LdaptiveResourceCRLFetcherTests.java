@@ -68,7 +68,7 @@ class LdaptiveResourceCRLFetcherTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val config = mock(ConnectionConfig.class);
         val operation = mock(SearchOperation.class);
         val fetcher = new LdaptiveResourceCRLFetcher(config, operation, "attribute");
@@ -87,7 +87,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        public void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -104,7 +104,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        public void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -120,7 +120,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        public void verifyResourceFromResourceUrl() throws Exception {
+        void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertNotNull(fetcher.fetch(resource));
@@ -137,7 +137,7 @@ class LdaptiveResourceCRLFetcherTests {
         }
 
         @Test
-        public void getCrlFromLdap() throws Exception {
+        void getCrlFromLdap() throws Exception {
             val cache = getCache();
             for (var i = 0; i < 10; i++) {
                 val checker =
@@ -149,7 +149,7 @@ class LdaptiveResourceCRLFetcherTests {
         }
 
         @Test
-        public void getCrlFromLdapWithNoCaching() throws Exception {
+        void getCrlFromLdapWithNoCaching() throws Exception {
             for (var i = 0; i < 10; i++) {
                 val cache = getCache();
                 val checker = new CRLDistributionPointRevocationChecker(

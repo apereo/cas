@@ -30,7 +30,7 @@ class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractMultifac
     protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         assertNotNull(mfaTrustStorageCleaner.getStorage());
         assertDoesNotThrow(() -> {
             val record = getMultifactorAuthenticationTrustRecord();

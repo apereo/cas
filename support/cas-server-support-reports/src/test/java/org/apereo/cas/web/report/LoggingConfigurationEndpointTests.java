@@ -45,7 +45,7 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(loggingConfigurationEndpoint);
         val configuration = loggingConfigurationEndpoint.configuration();
         assertNotNull(configuration);
@@ -54,7 +54,7 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyUpdateOperation() {
+    void verifyUpdateOperation() {
         assertNotNull(loggingConfigurationEndpoint);
         assertDoesNotThrow(() ->
             loggingConfigurationEndpoint.updateLoggerLevel("org.apereo", "warn", false));

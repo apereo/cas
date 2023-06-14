@@ -40,7 +40,7 @@ class InweboConfigurationTests {
     private MultifactorAuthenticationProviderBypassEvaluator inweboBypassEvaluator;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(inweboBypassEvaluator);
         assertNotNull(inweboService);
     }

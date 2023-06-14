@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketGrantingCookieCipherExecutorTests {
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val cipher = new TicketGrantingCookieCipherExecutor();
         val encoded = cipher.encode("ST-1234567890");
         assertEquals("ST-1234567890", cipher.decode(encoded));
@@ -26,7 +26,7 @@ class TicketGrantingCookieCipherExecutorTests {
     }
 
     @Test
-    public void checkEncryptionWithDefaultSettings() {
+    void checkEncryptionWithDefaultSettings() {
         val cipherExecutor = new TicketGrantingCookieCipherExecutor("1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0);
         val result = cipherExecutor.decode(cipherExecutor.encode("CAS Test"));

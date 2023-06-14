@@ -26,21 +26,21 @@ class JsonUtilsTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyRender() {
+    void verifyRender() {
         val response = new MockHttpServletResponse();
         JsonUtils.render(response);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
     @Test
-    public void verifyRenderException() {
+    void verifyRenderException() {
         val response = new MockHttpServletResponse();
         JsonUtils.renderException(new RuntimeException("error"), response);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
     }
 
     @Test
-    public void verifyRenderModel() throws Exception {
+    void verifyRenderModel() throws Exception {
         val response = new MockHttpServletResponse();
         val model = Map.of("key", List.of("one", "two"));
         JsonUtils.render(model, response);

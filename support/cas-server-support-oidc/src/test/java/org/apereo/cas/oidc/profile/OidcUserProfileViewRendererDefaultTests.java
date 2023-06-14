@@ -33,7 +33,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
@@ -54,7 +54,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationOAuth() throws Exception {
+    void verifyOperationOAuth() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -70,7 +70,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationEncryptedAndSigned() throws Exception {
+    void verifyOperationEncryptedAndSigned() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
@@ -90,7 +90,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationSigned() throws Exception {
+    void verifyOperationSigned() throws Exception {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);

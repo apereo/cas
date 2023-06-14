@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultThrottledRequestResponseHandlerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         val handler = new DefaultThrottledRequestResponseHandler("username");

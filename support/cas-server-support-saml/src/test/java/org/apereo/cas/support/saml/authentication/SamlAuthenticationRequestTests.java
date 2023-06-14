@@ -35,7 +35,7 @@ class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void ensureDeflation() throws Exception {
+    void ensureDeflation() throws Exception {
         val deflator = CompressionUtils.deflate(SAML_REQUEST);
         val deflatorStream = deflateViaStream(SAML_REQUEST);
         assertEquals(deflatorStream, deflator);

@@ -37,7 +37,7 @@ class DefaultLdapRegisteredServiceMapperTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyIntegerIdOperation() {
+    void verifyIntegerIdOperation() {
         val mapper = new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap(),
             new RegisteredServiceJsonSerializer(applicationContext));
         val id = String.format("^http://www.serviceid%s.org", RandomUtils.nextInt());

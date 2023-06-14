@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -50,7 +50,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    public void verifyMissingPolicyOperation() throws Exception {
+    void verifyMissingPolicyOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -74,7 +74,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    public void verifyMissingOperation() throws Exception {
+    void verifyMissingOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
         var response = umaFindPolicyForResourceSetEndpointController.getPoliciesForResourceSet(10, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -83,7 +83,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    public void verifyNoAuthOperation() throws Exception {
+    void verifyNoAuthOperation() throws Exception {
         var response = umaFindPolicyForResourceSetEndpointController.getPoliciesForResourceSet(10,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

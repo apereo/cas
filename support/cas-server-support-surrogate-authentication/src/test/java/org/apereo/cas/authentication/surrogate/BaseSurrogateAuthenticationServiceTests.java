@@ -70,17 +70,17 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public abstract SurrogateAuthenticationService getService();
 
     @Test
-    public void verifyUserAllowedToProxy() throws Exception {
+    void verifyUserAllowedToProxy() throws Exception {
         assertFalse(getService().getImpersonationAccounts(getTestUser()).isEmpty());
     }
 
     @Test
-    public void verifyUserNotAllowedToProxy() throws Exception {
+    void verifyUserNotAllowedToProxy() throws Exception {
         assertTrue(getService().getImpersonationAccounts("unknown-user").isEmpty());
     }
 
     @Test
-    public void verifyProxying() throws Exception {
+    void verifyProxying() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val surrogateService = getService();
         assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(getTestUser()), service));
@@ -90,7 +90,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyWildcard() throws Exception {
+    void verifyWildcard() throws Exception {
         val service = Optional.of(CoreAuthenticationTestUtils.getService());
         val admin = CoreAuthenticationTestUtils.getPrincipal(getAdminUser());
         assertTrue(getService().canImpersonate(BANDERSON, admin, service));

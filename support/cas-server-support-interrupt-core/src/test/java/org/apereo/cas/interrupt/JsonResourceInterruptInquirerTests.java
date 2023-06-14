@@ -29,7 +29,7 @@ class JsonResourceInterruptInquirerTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyResponse() throws Exception {
+    void verifyResponse() throws Exception {
         val map = new LinkedHashMap<String, InterruptResponse>();
         var response = new InterruptResponse("Message",
             CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);

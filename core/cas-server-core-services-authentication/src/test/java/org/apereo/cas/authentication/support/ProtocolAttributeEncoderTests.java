@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 class ProtocolAttributeEncoderTests {
     @Test
-    public void verifyEncoder() {
+    void verifyEncoder() {
         val encoder = new ProtocolAttributeEncoder() {
         };
         val attributes = new LinkedHashMap<String, Object>();

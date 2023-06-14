@@ -36,7 +36,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val strategyWritten = new OpenPolicyAgentRegisteredServiceAccessStrategy();
         strategyWritten.setApiUrl("https://localhost:8080");
         strategyWritten.setDecision("example/authz/allow");
@@ -47,7 +47,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val strategy = new OpenPolicyAgentRegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:8755");
         strategy.setDecision("example/authz/allow");

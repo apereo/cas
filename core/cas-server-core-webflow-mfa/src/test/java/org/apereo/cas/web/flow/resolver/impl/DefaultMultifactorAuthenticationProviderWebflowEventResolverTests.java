@@ -66,7 +66,7 @@ class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends 
     }
 
     @Test
-    public void verifyEventResolverWithMfa() {
+    void verifyEventResolverWithMfa() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -97,7 +97,7 @@ class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends 
     }
 
     @Test
-    public void verifyEventResolverWithMfaIgnoresExecForService() {
+    void verifyEventResolverWithMfaIgnoresExecForService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

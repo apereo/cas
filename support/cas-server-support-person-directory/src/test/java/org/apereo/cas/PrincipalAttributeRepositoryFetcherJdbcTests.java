@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    public void verifyOperationWithUsernamePasswordCredentialType() {
+    void verifyOperationWithUsernamePasswordCredentialType() {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)
@@ -56,7 +56,7 @@ class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepo
     }
 
     @Test
-    public void verifyOperationWithoutUsernamePasswordCredentialType() {
+    void verifyOperationWithoutUsernamePasswordCredentialType() {
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)

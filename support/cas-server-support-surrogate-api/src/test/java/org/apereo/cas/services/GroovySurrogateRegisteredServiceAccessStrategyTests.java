@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GroovyServices")
 class GroovySurrogateRegisteredServiceAccessStrategyTests {
     @Test
-    public void verifySurrogateDisabled() {
+    void verifySurrogateDisabled() {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertFalse(executeStrategy("casuser-disabled", true, strategy));
@@ -34,21 +34,21 @@ class GroovySurrogateRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySurrogateFails() {
+    void verifySurrogateFails() {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertFalse(executeStrategy("casuser-fail", true, strategy));
     }
 
     @Test
-    public void verifySurrogateAllowed() {
+    void verifySurrogateAllowed() {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertTrue(executeStrategy("casuser-enabled", true, strategy));
     }
 
     @Test
-    public void verifyNoSurrogateSession() {
+    void verifyNoSurrogateSession() {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();
         strategy.setGroovyScript("classpath:/surrogate-access.groovy");
         assertTrue(executeStrategy("casuser", false, strategy));

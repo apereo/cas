@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 class RedirectUnauthorizedServiceUrlActionTests {
 
     @Test
-    public void verifyUrl() throws Exception {
+    void verifyUrl() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -53,7 +53,7 @@ class RedirectUnauthorizedServiceUrlActionTests {
     }
 
     @Test
-    public void verifyScript() throws Exception {
+    void verifyScript() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

@@ -32,7 +32,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
     @SuppressWarnings("ClassCanBeStatic")
     class OriginalDynamoDbTicketRegistryFacilitatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
-        public void verifyBuildAttributeMap() {
+        void verifyBuildAttributeMap() {
             val ticket = new MockTicketGrantingTicket("casuser",
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 CollectionUtils.wrap("name", "CAS"));
@@ -48,7 +48,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
         }
 
         @Test
-        public void verifyTicketOperations() {
+        void verifyTicketOperations() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
             val ticket = new MockTicketGrantingTicket("casuser",
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -75,7 +75,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
     public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
         extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
-        public void verifyCreateTableWithOnDemandBilling() {
+        void verifyCreateTableWithOnDemandBilling() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
             val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
             dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {

@@ -79,7 +79,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyOk() throws Exception {
+    void verifyOk() throws Exception {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
@@ -89,7 +89,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyMissingClient() {
+    void verifyMissingClient() {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
@@ -99,7 +99,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyOkWithSimpleIdentifier() throws Exception {
+    void verifyOkWithSimpleIdentifier() throws Exception {
         handler.setTypedIdUsed(false);
 
         val facebookProfile = new FacebookProfile();
@@ -111,7 +111,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyNoProfile() {
+    void verifyNoProfile() {
         assertThrows(PreventedException.class, () -> {
             fbClient.setProfileCreator((callContext, sessionStore) -> Optional.empty());
             handler.authenticate(clientCredential, mock(Service.class));

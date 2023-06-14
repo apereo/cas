@@ -132,7 +132,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyMalformedJsonFile() throws Exception {
+    void verifyMalformedJsonFile() throws Exception {
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
 
         FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", CasRegisteredService.FRIENDLY_NAME,
@@ -148,7 +148,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyPullFails() throws Exception {
+    void verifyPullFails() throws Exception {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));
@@ -172,7 +172,7 @@ class GitServiceRegistryTests extends AbstractServiceRegistryTests {
      * Second service is copied to two other locations and deleted in order to commit all changes to the repository.
      */
     @Test
-    public void verifyLoadWithRootDirectory() throws IOException {
+    void verifyLoadWithRootDirectory() throws IOException {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         val svc2 = buildRegisteredServiceInstance(RandomUtils.nextLong(), CasRegisteredService.class);
         svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);

@@ -46,12 +46,12 @@ class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePo
     }
     
     @Test
-    public void verifyRepositoryAction() throws Exception {
+    void verifyRepositoryAction() throws Exception {
         verifyRepositoryAction("casuser", CollectionUtils.wrap("accepted", "false"));
     }
     
     @Test
-    public void determinePrincipalId() {
+    void determinePrincipalId() {
         val principalId = determinePrincipalId("casuser", CollectionUtils.wrap("accepted", "false"));
         assertEquals("casuser", principalId);
     }

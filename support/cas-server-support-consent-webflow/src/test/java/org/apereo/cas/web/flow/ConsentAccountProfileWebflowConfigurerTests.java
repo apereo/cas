@@ -36,7 +36,7 @@ class ConsentAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerT
     protected FlowDefinitionRegistry accountFlowDefinitionRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);

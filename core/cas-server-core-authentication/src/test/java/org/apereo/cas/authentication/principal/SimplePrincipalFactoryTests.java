@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class SimplePrincipalFactoryTests {
     @Test
-    public void checkPrincipalCreation() {
+    void checkPrincipalCreation() {
         val fact = PrincipalFactoryUtils.newPrincipalFactory();
         val map = new HashMap<String, List<Object>>();
         map.put("a1", List.of("v1"));
@@ -28,7 +28,7 @@ class SimplePrincipalFactoryTests {
     }
 
     @Test
-    public void checkPrincipalEquality() {
+    void checkPrincipalEquality() {
         val fact = PrincipalFactoryUtils.newPrincipalFactory();
         val map = new HashMap<String, List<Object>>();
         map.put("a1", List.of("v1"));

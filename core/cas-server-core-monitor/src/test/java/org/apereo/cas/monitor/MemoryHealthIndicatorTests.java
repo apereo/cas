@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemoryHealthIndicatorTests {
 
     @Test
-    public void verifyObserveOk() {
+    void verifyObserveOk() {
         assertEquals(Status.UP, new MemoryMonitorHealthIndicator(0).health().getStatus());
     }
 
     @Test
-    public void verifyObserveWarn() {
+    void verifyObserveWarn() {
         val monitor = new MemoryMonitorHealthIndicator(100);
         assertEquals(Status.DOWN, monitor.health().getStatus());
     }

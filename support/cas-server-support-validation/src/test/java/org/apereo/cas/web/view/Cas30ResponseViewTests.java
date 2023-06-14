@@ -140,7 +140,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyViewAuthnAttributes() throws Exception {
+    void verifyViewAuthnAttributes() throws Exception {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
@@ -148,7 +148,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
@@ -159,7 +159,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
+    void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
         val attributes = renderView();
         LOGGER.trace("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
@@ -170,7 +170,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     }
 
     @Test
-    public void verifyViewBinaryAttributes() throws Exception {
+    void verifyViewBinaryAttributes() throws Exception {
         val attributes = renderView();
         assertTrue(attributes.containsKey("binaryAttribute"));
         val binaryAttr = attributes.get("binaryAttribute");

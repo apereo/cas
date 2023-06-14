@@ -29,7 +29,7 @@ class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    public void disableFlowIfNoService() {
+    void disableFlowIfNoService() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());

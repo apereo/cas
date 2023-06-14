@@ -83,7 +83,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void checkAuthenticationHandlerResolutionDefault() {
+    void checkAuthenticationHandlerResolutionDefault() {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("serviceid1"),
@@ -94,7 +94,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void checkAuthenticationHandlerResolution() {
+    void checkAuthenticationHandlerResolution() {
         val resolver = new DefaultAuthenticationHandlerResolver();
         val transaction = new DefaultAuthenticationTransactionFactory()
             .newTransaction(RegisteredServiceTestUtils.getService("serviceid2"),
@@ -104,7 +104,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void checkAuthenticationHandlerExcluded() {
+    void checkAuthenticationHandlerExcluded() {
         val resolver = new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = new DefaultAuthenticationTransactionFactory()

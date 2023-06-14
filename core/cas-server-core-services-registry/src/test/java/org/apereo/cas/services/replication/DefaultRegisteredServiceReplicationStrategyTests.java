@@ -49,7 +49,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifySetInCache() {
+    void verifySetInCache() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -66,7 +66,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifyGetInCacheAndRemove() {
+    void verifyGetInCacheAndRemove() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -90,7 +90,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifyGetInCacheAndSave() {
+    void verifyGetInCacheAndSave() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -112,7 +112,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifyGetInCacheAndUpdate() {
+    void verifyGetInCacheAndUpdate() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -137,7 +137,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifyGetInCacheAndMatch() {
+    void verifyGetInCacheAndMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -160,7 +160,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifyUpdateWithMatch() {
+    void verifyUpdateWithMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -186,7 +186,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    public void verifyUpdateWithNoMatch() {
+    void verifyUpdateWithNoMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

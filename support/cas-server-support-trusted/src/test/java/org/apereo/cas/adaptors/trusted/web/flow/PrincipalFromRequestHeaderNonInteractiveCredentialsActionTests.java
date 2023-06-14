@@ -40,7 +40,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    public void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -61,7 +61,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
 
 
     @Test
-    public void verifyError() throws Exception {
+    void verifyError() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -75,7 +75,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
     }
 
     @Test
-    public void verifyAdaptiveError() throws Exception {
+    void verifyAdaptiveError() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));

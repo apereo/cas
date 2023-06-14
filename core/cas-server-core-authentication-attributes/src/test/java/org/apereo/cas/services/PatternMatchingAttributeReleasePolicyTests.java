@@ -31,7 +31,7 @@ class PatternMatchingAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val policy = new PatternMatchingAttributeReleasePolicy();
         assertNotNull(policy.getName());
         policy.getAllowedAttributes().put("memberOf",
@@ -44,7 +44,7 @@ class PatternMatchingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verfyPatternTransform() throws IOException {
+    void verfyPatternTransform() throws IOException {
         val policy = new PatternMatchingAttributeReleasePolicy();
         policy.getAllowedAttributes().put("memberOf",
             new PatternMatchingAttributeReleasePolicy.Rule()
@@ -68,7 +68,7 @@ class PatternMatchingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verfyTransformEntireMatch() throws IOException {
+    void verfyTransformEntireMatch() throws IOException {
         val policy = new PatternMatchingAttributeReleasePolicy();
         policy.getAllowedAttributes().put("memberOf",
             new PatternMatchingAttributeReleasePolicy.Rule()

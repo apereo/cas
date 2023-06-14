@@ -45,7 +45,7 @@ class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTe
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
     }
 }

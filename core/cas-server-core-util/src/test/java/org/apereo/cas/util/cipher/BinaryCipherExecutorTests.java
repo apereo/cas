@@ -26,7 +26,7 @@ class BinaryCipherExecutorTests {
     private static final String TEST_VALUE = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
 
     @Test
-    public void checkEncodingDecoding() {
+    void checkEncodingDecoding() {
         val cc = new TestBinaryCipherExecutor("MTIzNDU2Nzg5MDEyMzQ1Ng==",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
@@ -37,7 +37,7 @@ class BinaryCipherExecutorTests {
     }
 
     @Test
-    public void checkEncodingDecodingBadKeys() {
+    void checkEncodingDecodingBadKeys() {
         val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
         assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
@@ -47,7 +47,7 @@ class BinaryCipherExecutorTests {
     }
 
     @Test
-    public void checkDecoderWithRootCause() {
+    void checkDecoderWithRootCause() {
         val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
         assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
@@ -55,7 +55,7 @@ class BinaryCipherExecutorTests {
     }
 
     @Test
-    public void checkLegacyKeys() {
+    void checkLegacyKeys() {
         val cc = new TestBinaryCipherExecutor("1234567890123456",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,

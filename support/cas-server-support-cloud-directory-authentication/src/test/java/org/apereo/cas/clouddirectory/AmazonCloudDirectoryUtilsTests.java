@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 class AmazonCloudDirectoryUtilsTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(AmazonCloudDirectoryUtils.getListIndexRequest("attr-name", "attr-value",
             ObjectReference.builder().build(), new AmazonCloudDirectoryProperties()));
     }

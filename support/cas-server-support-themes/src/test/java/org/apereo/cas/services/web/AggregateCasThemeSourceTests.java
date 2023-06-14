@@ -37,7 +37,7 @@ class AggregateCasThemeSourceTests {
     private ThemeSource themeSource;
 
     @Test
-    public void verifyCustomSource() {
+    void verifyCustomSource() {
         val theme = themeSource.getTheme("my-theme");
         assertNotNull(theme);
         val message = theme.getMessageSource().getMessage("cas.theme.name",

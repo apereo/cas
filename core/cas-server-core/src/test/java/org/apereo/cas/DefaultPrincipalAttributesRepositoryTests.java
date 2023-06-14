@@ -35,7 +35,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void checkDefaultAttributes() {
+    void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
         val principal = CoreAuthenticationTestUtils.getPrincipal();
         assertEquals(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap().size(),
@@ -43,7 +43,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     }
 
     @Test
-    public void checkInitialAttributes() {
+    void checkInitialAttributes() {
         val p = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
@@ -53,7 +53,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     }
 
     @Test
-    public void checkAttributesWithRepository() {
+    void checkAttributesWithRepository() {
         val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
@@ -66,7 +66,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     }
 
     @Test
-    public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
+    void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
         val repositoryWritten = new DefaultPrincipalAttributesRepository();
         repositoryWritten.setIgnoreResolvedAttributes(true);
         repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));

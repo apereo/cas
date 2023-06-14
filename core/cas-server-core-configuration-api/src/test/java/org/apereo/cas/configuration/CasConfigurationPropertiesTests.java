@@ -28,7 +28,7 @@ class CasConfigurationPropertiesTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(casProperties);
         assertNotNull(result);
         val props = SerializationUtils.deserialize(result);

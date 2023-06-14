@@ -38,7 +38,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyUnAuthz() {
+    void verifyUnAuthz() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         request.addHeader(SurrogateAuthenticationRestHttpRequestCredentialFactory.REQUEST_HEADER_SURROGATE_PRINCIPAL, "surrogate");
@@ -51,7 +51,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    public void verifyOperationByHeader() {
+    void verifyOperationByHeader() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         request.addHeader(SurrogateAuthenticationRestHttpRequestCredentialFactory.REQUEST_HEADER_SURROGATE_PRINCIPAL, "surrogate");
@@ -70,7 +70,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    public void verifyEmptyCreds() {
+    void verifyEmptyCreds() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         val service = new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class));
@@ -79,7 +79,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    public void verifyOperationByCredentialSeparator() {
+    void verifyOperationByCredentialSeparator() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "surrogate+test");
@@ -96,7 +96,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    public void verifyBasicUsernamePasswordOperationWithoutSurrogatePrincipal() {
+    void verifyBasicUsernamePasswordOperationWithoutSurrogatePrincipal() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "test");

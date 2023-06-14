@@ -39,7 +39,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyNoneDefined() throws Exception {
+    void verifyNoneDefined() throws Exception {
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
@@ -50,7 +50,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    public void verifyDefined() throws Exception {
+    void verifyDefined() throws Exception {
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
@@ -61,7 +61,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    public void verifyUnknown() throws Exception {
+    void verifyUnknown() throws Exception {
         val context = new MockRequestContext();
         val account = PasswordlessUserAccount.builder()
             .username("casuser")
@@ -72,7 +72,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     }
 
     @Test
-    public void verifyNoAccount() throws Exception {
+    void verifyNoAccount() throws Exception {
         val context = new MockRequestContext();
         assertFalse(isAuthorized(context));
     }

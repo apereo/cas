@@ -65,13 +65,13 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    public void verifyRepositoryActionWithAdvancedConfig() throws Exception {
+    void verifyRepositoryActionWithAdvancedConfig() throws Exception {
         verifyRepositoryAction("casuser",
             CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("casuser@example.org")));
     }
 
     @Test
-    public void verifySubmitWithoutAuthn() throws Exception {
+    void verifySubmitWithoutAuthn() throws Exception {
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", Map.of(), c);
         WebUtils.putAuthentication(null, context);
@@ -79,7 +79,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    public void verifyRepositoryPolicyText() {
+    void verifyRepositoryPolicyText() {
         val service = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policy.setMessageCode("aup.code");
@@ -89,27 +89,27 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    public void verifyRepositoryPolicyNoService() {
+    void verifyRepositoryPolicyNoService() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         verifyFetchingPolicy(service, RegisteredServiceTestUtils.getAuthentication(), false);
     }
 
     @Test
-    public void verifyRepositoryPolicyNoServiceViaAttr() {
+    void verifyRepositoryPolicyNoServiceViaAttr() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         verifyFetchingPolicy(service, RegisteredServiceTestUtils.getAuthentication(principal), false);
     }
 
     @Test
-    public void determinePrincipalIdWithAdvancedConfig() {
+    void determinePrincipalIdWithAdvancedConfig() {
         val principalId = determinePrincipalId("casuser",
             CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("CASuser@example.org")));
         assertEquals("CASuser@example.org", principalId);
     }
 
     @Test
-    public void raiseMissingPrincipalAttributeError() {
+    void raiseMissingPrincipalAttributeError() {
         val exception = assertThrows(IllegalStateException.class,
             () -> raiseException(CollectionUtils.wrap("aupAccepted", List.of("false"), "wrong-attribute",
                 List.of("CASuser@example.org"))));
@@ -117,7 +117,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
     }
 
     @Test
-    public void raiseEmptyPrincipalAttributeError() {
+    void raiseEmptyPrincipalAttributeError() {
         val exception = assertThrows(IllegalStateException.class,
             () -> raiseException(CollectionUtils.wrap("aupAccepted", List.of("false"), "email", new ArrayList<>())));
         assertTrue(exception.getMessage().contains("empty or multi-valued with an empty element"));

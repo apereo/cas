@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 class SimpleHttpClientFactoryBeanTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val input = new SimpleHttpClientFactoryBean();
         assertNotNull(input.getObject());
         assertNotNull(input.getObjectType());

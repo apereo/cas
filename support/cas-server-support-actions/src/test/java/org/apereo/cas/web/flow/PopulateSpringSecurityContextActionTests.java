@@ -47,7 +47,7 @@ class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTes
     private SecurityContextRepository securityContextRepository;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         val context = new MockRequestContext();

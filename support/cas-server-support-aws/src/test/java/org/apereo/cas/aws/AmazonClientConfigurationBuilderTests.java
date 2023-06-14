@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class AmazonClientConfigurationBuilderTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val properties = new AbstractDynamoDbProperties() {
             @Serial
             private static final long serialVersionUID = -3599433486448467450L;

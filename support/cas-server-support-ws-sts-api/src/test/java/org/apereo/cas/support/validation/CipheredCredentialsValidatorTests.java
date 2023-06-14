@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class CipheredCredentialsValidatorTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val id = UUID.randomUUID().toString();
         val validator = new CipheredCredentialsValidator(CipherExecutor.noOp());
 
@@ -38,7 +38,7 @@ class CipheredCredentialsValidatorTests {
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         val id = UUID.randomUUID().toString();
         val validator = new CipheredCredentialsValidator(CipherExecutor.noOp());
         val credential = new Credential();

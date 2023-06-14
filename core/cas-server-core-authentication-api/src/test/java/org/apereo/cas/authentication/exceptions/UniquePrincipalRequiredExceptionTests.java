@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UniquePrincipalRequiredExceptionTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new UniquePrincipalRequiredException();
         assertNotNull(input.getCode());
 

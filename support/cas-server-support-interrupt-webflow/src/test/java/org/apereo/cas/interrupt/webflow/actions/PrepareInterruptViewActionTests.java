@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 class PrepareInterruptViewActionTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

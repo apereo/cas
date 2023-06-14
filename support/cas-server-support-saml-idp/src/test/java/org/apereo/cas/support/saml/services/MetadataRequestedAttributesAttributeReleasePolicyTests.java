@@ -37,7 +37,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyNoServiceOrEntityId() {
+    void verifyNoServiceOrEntityId() {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -53,7 +53,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    public void verifyMatch() {
+    void verifyMatch() {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -74,7 +74,7 @@ class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdP
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         MAPPER.writeValue(JSON_FILE, filter);

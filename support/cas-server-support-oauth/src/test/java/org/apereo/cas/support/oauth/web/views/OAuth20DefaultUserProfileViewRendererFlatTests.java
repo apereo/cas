@@ -33,7 +33,7 @@ class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Test
     private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
 
     @Test
-    public void verifyNestedOption() {
+    void verifyNestedOption() {
         val map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
             OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES,
             CollectionUtils.wrap("email", "cas@example.org", "name", "Test"),

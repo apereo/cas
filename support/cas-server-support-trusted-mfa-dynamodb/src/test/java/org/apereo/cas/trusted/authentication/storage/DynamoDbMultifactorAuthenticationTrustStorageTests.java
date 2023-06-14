@@ -47,7 +47,7 @@ class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifa
     }
 
     @Test
-    public void verifySetAnExpireByKey() {
+    void verifySetAnExpireByKey() {
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance("casuser",
             "geography", "fingerprint"));
         val records = getMfaTrustEngine().get("casuser");
@@ -57,7 +57,7 @@ class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifa
     }
 
     @Test
-    public void verifyExpireByDate() {
+    void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));

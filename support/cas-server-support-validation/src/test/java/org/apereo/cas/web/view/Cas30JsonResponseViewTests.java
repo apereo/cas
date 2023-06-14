@@ -56,7 +56,7 @@ class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     }
 
     @Test
-    public void verifyFailureView() throws Exception {
+    void verifyFailureView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = getCasView(false, new NoOpProtocolAttributeEncoder(), getDelegatedView());
         val model = new HashMap<String, Object>();

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("DuoSecurity")
 class DuoSecurityRestHttpRequestCredentialFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = new DuoSecurityRestHttpRequestCredentialFactory();
         val request = new MockHttpServletRequest();
 

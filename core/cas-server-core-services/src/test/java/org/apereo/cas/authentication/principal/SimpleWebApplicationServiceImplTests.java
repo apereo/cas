@@ -53,7 +53,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifySerializeACompletePrincipalToJson() throws IOException {
+    void verifySerializeACompletePrincipalToJson() throws IOException {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val serviceWritten = new WebApplicationServiceFactory().createService(request);
@@ -63,7 +63,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifyResponse() {
+    void verifyResponse() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -78,7 +78,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
+    void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
         val request = new MockHttpServletRequest();
         request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -86,7 +86,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifyResponseForJsession() {
+    void verifyResponseForJsession() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://www.cnn.com/;jsession=test");
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -95,7 +95,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifyResponseWithNoTicket() {
+    void verifyResponseWithNoTicket() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -111,7 +111,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
+    void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -128,7 +128,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    public void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
+    void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

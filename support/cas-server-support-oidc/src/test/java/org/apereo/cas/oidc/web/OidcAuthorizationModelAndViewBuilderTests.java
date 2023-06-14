@@ -34,7 +34,7 @@ class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
     private OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder;
 
     @Test
-    public void verifyOperationForOidc() throws Exception {
+    void verifyOperationForOidc() throws Exception {
         val parameters = new HashMap<String, String>();
         val registeredService = getOidcRegisteredService();
         val results = oauthAuthorizationModelAndViewBuilder.build(registeredService,
@@ -47,7 +47,7 @@ class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperationForNonOidc() throws Exception {
+    void verifyOperationForNonOidc() throws Exception {
         val parameters = new HashMap<String, String>();
         val registeredService = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://localhost:8443/app/redirect");
         val results = oauthAuthorizationModelAndViewBuilder.build(registeredService,

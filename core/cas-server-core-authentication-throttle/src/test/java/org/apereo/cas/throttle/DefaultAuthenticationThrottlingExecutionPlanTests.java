@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultAuthenticationThrottlingExecutionPlanTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

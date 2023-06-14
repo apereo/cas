@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BasicX509CredentialFactoryBeanTests {
 
     @Test
-    public void verifyNoCert() {
+    void verifyNoCert() {
         val factory = new BasicX509CredentialFactoryBean();
         assertSame(BasicX509Credential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
@@ -29,7 +29,7 @@ class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyCred() throws Exception {
+    void verifyCred() throws Exception {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityID("example.entityid");
         factory.setKeyNames(List.of("cas"));
@@ -40,7 +40,7 @@ class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyBadEntityKeys() {
+    void verifyBadEntityKeys() {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityResource(new ClassPathResource("keys/xyz.pem"));
         factory.setCertificateResources(List.of(new ClassPathResource("keys/cert.pem")));
@@ -48,7 +48,7 @@ class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyBadPrivateKeys() {
+    void verifyBadPrivateKeys() {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setPrivateKeyResource(new ClassPathResource("keys/xyz.pem"));
         factory.setCertificateResources(List.of(new ClassPathResource("keys/cert.pem")));
@@ -56,7 +56,7 @@ class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyCredEntityWithBadCrl() {
+    void verifyCredEntityWithBadCrl() {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityID("example.entityid");
         factory.setKeyNames(List.of("cas"));

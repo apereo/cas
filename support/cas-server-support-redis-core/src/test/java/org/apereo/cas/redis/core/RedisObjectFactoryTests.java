@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 class RedisObjectFactoryTests {
     @Test
-    public void verifyRedisSearchCommandSupported() {
+    void verifyRedisSearchCommandSupported() {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
@@ -44,7 +44,7 @@ class RedisObjectFactoryTests {
 
 
     @Test
-    public void verifyConnection() {
+    void verifyConnection() {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
@@ -57,7 +57,7 @@ class RedisObjectFactoryTests {
     }
 
     @Test
-    public void verifyClusterConnection() {
+    void verifyClusterConnection() {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
             .setType("master")
@@ -89,7 +89,7 @@ class RedisObjectFactoryTests {
     }
 
     @Test
-    public void verifyNonDefaultClientConnectionOptions() {
+    void verifyNonDefaultClientConnectionOptions() {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
             .setType("master")
@@ -125,7 +125,7 @@ class RedisObjectFactoryTests {
 
 
     @Test
-    public void validateRedisReadFromValues() {
+    void validateRedisReadFromValues() {
         Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(Enum::name).forEach(ReadFrom::valueOf);
     }
 }

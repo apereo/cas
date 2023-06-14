@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MultifactorAuthenticationContingencyPlanTests {
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -44,7 +44,7 @@ class MultifactorAuthenticationContingencyPlanTests {
     }
 
     @Test
-    public void verifyManyProviders() {
+    void verifyManyProviders() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

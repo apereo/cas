@@ -46,7 +46,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     private SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder;
 
     @Test
-    public void verifyNoSupportedFormats() throws Exception {
+    void verifyNoSupportedFormats() throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
@@ -81,7 +81,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyUnknownSupportedFormats() throws Exception {
+    void verifyUnknownSupportedFormats() throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
@@ -116,7 +116,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
 
 
     @Test
-    public void verifyNameId() throws Exception {
+    void verifyNameId() throws Exception {
         verifyNameIdByFormat(NameIDType.EMAIL);
         verifyNameIdByFormat(NameIDType.TRANSIENT);
         verifyNameIdByFormat(NameIDType.PERSISTENT);
@@ -128,7 +128,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyPersistedNameIdFormat() throws Exception {
+    void verifyPersistedNameIdFormat() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
 
@@ -154,7 +154,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyAttributeQueryNameID() throws Exception {
+    void verifyAttributeQueryNameID() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
 
@@ -192,7 +192,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyPersistedNameIdFormatWithServiceEntityIdOverride() throws Exception {
+    void verifyPersistedNameIdFormatWithServiceEntityIdOverride() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
         service.setIssuerEntityId(UUID.randomUUID().toString());
@@ -220,7 +220,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyNameIdFormatSkipQualifiers() throws Exception {
+    void verifyNameIdFormatSkipQualifiers() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
         service.setIssuerEntityId(UUID.randomUUID().toString());
@@ -282,7 +282,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySkipTransient() throws Exception {
+    void verifySkipTransient() throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");

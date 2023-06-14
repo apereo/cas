@@ -77,7 +77,7 @@ class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebf
     }
 
     @Test
-    public void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() {
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

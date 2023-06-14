@@ -46,7 +46,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyWithTrueRememberMeCredentials() {
+    void verifyWithTrueRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
@@ -56,7 +56,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyRememberMeUserAgentAndIp() {
+    void verifyRememberMeUserAgentAndIp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -73,7 +73,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyRememberMeUserAgent() {
+    void verifyRememberMeUserAgent() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -89,7 +89,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyRememberMeIp() {
+    void verifyRememberMeIp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -104,7 +104,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyWithFalseRememberMeCredentials() {
+    void verifyWithFalseRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
@@ -114,7 +114,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyWithoutRememberMeCredentials() {
+    void verifyWithoutRememberMeCredentials() {
         val builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             new RememberMeAuthenticationProperties());
         val auth = builder.build();

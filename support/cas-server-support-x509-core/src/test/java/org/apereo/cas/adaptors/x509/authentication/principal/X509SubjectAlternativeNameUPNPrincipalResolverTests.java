@@ -128,7 +128,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     }
 
     @Test
-    public void verifyAlternate() throws Exception {
+    void verifyAlternate() throws Exception {
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)
             .servicesManager(servicesManager)

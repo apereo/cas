@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AMQP")
 class AMQPTicketRegistryQueueReceiverTests extends AbstractTicketMessageQueueCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val receiver = new DefaultQueueableTicketRegistryMessageReceiver(ticketRegistry,
             new PublisherIdentifier(UUID.randomUUID().toString()));
         var ticket = new TicketGrantingTicketImpl("TGT-334455", CoreAuthenticationTestUtils.getAuthentication(),

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasSimpleMultifactorAuthenticationRuntimeHintsTests {
     @Test
-    public void verifyHints() {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CasSimpleMultifactorAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(BucketStore.class).test(hints));

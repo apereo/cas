@@ -76,7 +76,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySavingSamlService() throws Exception {
+    void verifySavingSamlService() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -94,7 +94,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySavingInCommonSamlService() throws Exception {
+    void verifySavingInCommonSamlService() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -117,7 +117,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void checkPattern() {
+    void checkPattern() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val registeredService = new SamlRegisteredService();
@@ -143,7 +143,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
         val serviceWritten = new SamlRegisteredService();
         serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
@@ -155,7 +155,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySignAssertionTrueWithDeserialization() {
+    void verifySignAssertionTrueWithDeserialization() {
         val json = """
             {
               "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
@@ -175,7 +175,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifySignAssertionFalseWithDeserialization() {
+    void verifySignAssertionFalseWithDeserialization() {
         val json = """
             {
               "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",

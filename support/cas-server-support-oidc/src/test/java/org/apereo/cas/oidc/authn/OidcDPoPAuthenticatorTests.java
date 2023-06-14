@@ -40,7 +40,7 @@ class OidcDPoPAuthenticatorTests extends AbstractOidcTests {
     private OAuth20AuthenticationClientProvider oidcDPoPClientProvider;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(service);
 

@@ -32,7 +32,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
     @TestPropertySource(properties = "cas.authn.oidc.core.claims-map.phone_number=cell_phone")
     class ClaimMappingsTests extends AbstractOidcTests {
         @Test
-        public void verifyMappedToUnknown() {
+        void verifyMappedToUnknown() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone_number", List.of("12134321245")));
             
@@ -46,7 +46,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifyMapped() {
+        void verifyMapped() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val principal = CoreAuthenticationTestUtils.getPrincipal(
                 CollectionUtils.wrap("cell_phone", List.of("12134321245")));
@@ -65,7 +65,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             assertEquals(OidcConstants.StandardScopes.PHONE.getScope(), policy.getScopeType());
             assertNotNull(policy.getAllowedAttributes());
@@ -82,7 +82,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
         }
 
         @Test
-        public void verifySerialization() {
+        void verifySerialization() {
             val appCtx = new StaticApplicationContext();
             appCtx.refresh();
             val policy = new OidcPhoneScopeAttributeReleasePolicy();

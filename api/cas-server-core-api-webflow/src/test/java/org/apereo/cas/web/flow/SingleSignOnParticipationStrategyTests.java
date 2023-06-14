@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class SingleSignOnParticipationStrategyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = mock(SingleSignOnParticipationStrategy.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.isCreateCookieOnRenewedAuthentication(any())).thenCallRealMethod();

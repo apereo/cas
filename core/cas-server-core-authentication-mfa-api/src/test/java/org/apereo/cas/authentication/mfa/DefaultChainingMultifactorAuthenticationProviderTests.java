@@ -35,7 +35,7 @@ class DefaultChainingMultifactorAuthenticationProviderTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setHttpRequestHeaders("headerbypass");
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

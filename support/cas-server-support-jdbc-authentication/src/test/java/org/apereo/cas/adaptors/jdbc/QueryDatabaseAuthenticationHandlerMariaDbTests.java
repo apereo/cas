@@ -84,7 +84,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("location"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
         val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),

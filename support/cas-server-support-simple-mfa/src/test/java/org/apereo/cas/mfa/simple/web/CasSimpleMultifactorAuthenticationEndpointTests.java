@@ -34,14 +34,14 @@ class CasSimpleMultifactorAuthenticationEndpointTests extends AbstractCasEndpoin
     private CasSimpleMultifactorAuthenticationEndpoint endpoint;
 
     @Test
-    public void verifyGenerateToken() throws Exception {
+    void verifyGenerateToken() throws Exception {
         val authorization = EncodingUtils.encodeBase64("casuser:casuser");
         val results = endpoint.generateToken(RegisteredServiceTestUtils.CONST_TEST_URL, authorization);
         assertTrue(results.getStatusCode().is2xxSuccessful());
     }
 
     @Test
-    public void verifyAuthFails() throws Exception {
+    void verifyAuthFails() throws Exception {
         val authorization = EncodingUtils.encodeBase64("casuser:unknown");
         val results = endpoint.generateToken(RegisteredServiceTestUtils.CONST_TEST_URL, authorization);
         assertTrue(results.getStatusCode().isError());

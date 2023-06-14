@@ -86,7 +86,7 @@ class CasEventsReportEndpointTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         publishEvent();
         assertFalse(casEventRepository.load().findAny().isEmpty());
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
@@ -107,7 +107,7 @@ class CasEventsReportEndpointTests {
     }
 
     @Test
-    public void verifyImportOperationAsJson() throws Exception {
+    void verifyImportOperationAsJson() throws Exception {
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         val request = new MockHttpServletRequest();
         val event = new CasEvent()
@@ -124,7 +124,7 @@ class CasEventsReportEndpointTests {
     }
 
     @Test
-    public void verifyBulkImportAsZip() throws Exception {
+    void verifyBulkImportAsZip() throws Exception {
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         endpoint.deleteAllEvents();
 

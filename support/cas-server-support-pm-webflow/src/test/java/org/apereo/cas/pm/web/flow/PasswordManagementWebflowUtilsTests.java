@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 class PasswordManagementWebflowUtilsTests {
     @Test
-    public void verifyResetQs() {
+    void verifyResetQs() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

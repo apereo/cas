@@ -95,7 +95,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @Test
-    public void verifyThrottle() throws Exception {
+    void verifyThrottle() throws Exception {
         /* Ensure that repeated logins BELOW threshold rate are allowed */
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 

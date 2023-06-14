@@ -27,7 +27,7 @@ class BasicCredentialMetadataTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeABasicCredentialMetaDataToJson() throws Exception {
+    void verifySerializeABasicCredentialMetaDataToJson() throws Exception {
         val credentialMetaDataWritten = new BasicCredentialMetadata(new UsernamePasswordCredential());
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
         val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetadata.class);

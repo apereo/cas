@@ -105,7 +105,7 @@ class RedisPersonAttributeDaoTests {
     }
 
     @Test
-    public void verifyAttributes() {
+    void verifyAttributes() {
         val person = attributeRepository.getPerson(USER_ID);
         assertNotNull(person);
         val attributes = person.getAttributes();

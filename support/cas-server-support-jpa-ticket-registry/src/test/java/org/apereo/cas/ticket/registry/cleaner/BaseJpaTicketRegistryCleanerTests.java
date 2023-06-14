@@ -99,7 +99,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -127,7 +127,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyTransientTicketCleaning() throws Exception {
+    void verifyTransientTicketCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -181,7 +181,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     }
 
     @Test
-    public void verifyDeviceCodeAndUserCleaning() throws Exception {
+    void verifyDeviceCodeAndUserCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);

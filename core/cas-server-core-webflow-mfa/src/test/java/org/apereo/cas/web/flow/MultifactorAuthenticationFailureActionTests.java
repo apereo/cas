@@ -68,7 +68,7 @@ class MultifactorAuthenticationFailureActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     class UnavailableModes extends BaseMultifactorActionTests {
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
             executeAction(MultifactorAuthenticationProviderFailureModes.NONE, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
             executeAction(MultifactorAuthenticationProviderFailureModes.UNDEFINED, null, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
@@ -79,7 +79,7 @@ class MultifactorAuthenticationFailureActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     class OpenMode extends BaseMultifactorActionTests {
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.OPEN, null, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
     }
@@ -88,7 +88,7 @@ class MultifactorAuthenticationFailureActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     class PhantomMode extends BaseMultifactorActionTests {
         @Test
-        public void verifyOperations() throws Exception {
+        void verifyOperations() throws Exception {
             executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED,
                 MultifactorAuthenticationProviderFailureModes.PHANTOM, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }

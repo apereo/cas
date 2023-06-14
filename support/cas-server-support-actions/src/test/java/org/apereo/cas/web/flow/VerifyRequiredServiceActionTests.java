@@ -63,20 +63,20 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifySkipCheckNoService() throws Exception {
+    void verifySkipCheckNoService() throws Exception {
         val result = verifyRequiredServiceAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
     }
 
     @Test
-    public void verifySkipServiceMatchesPattern() throws Exception {
+    void verifySkipServiceMatchesPattern() throws Exception {
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://www.google.com/example"));
         val result = verifyRequiredServiceAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
     }
 
     @Test
-    public void verifySkipServiceByProperty() throws Exception {
+    void verifySkipServiceByProperty() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService("^https://yahoo.com.+");
         service.setEvaluationOrder(1);
         service.setProperties(CollectionUtils.wrap(
@@ -89,7 +89,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifySkipNoSsoServices() throws Exception {
+    void verifySkipNoSsoServices() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService("^https://app1.com.+");
         getServicesManager().save(service);
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app1.com/"));
@@ -103,7 +103,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifySkipWithSsoServicesMismatch() {
+    void verifySkipWithSsoServicesMismatch() {
         val service = RegisteredServiceTestUtils.getRegisteredService("^https://app2.com.+");
         getServicesManager().save(service);
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app2.com/"));
@@ -119,7 +119,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifySkipWithSsoServicesMatch() {
+    void verifySkipWithSsoServicesMatch() {
         val service = RegisteredServiceTestUtils.getRegisteredService("^https://app2.com.+");
         getServicesManager().save(service);
         WebUtils.putServiceIntoFlowScope(this.requestContext, RegisteredServiceTestUtils.getService("https://app2.com/"));

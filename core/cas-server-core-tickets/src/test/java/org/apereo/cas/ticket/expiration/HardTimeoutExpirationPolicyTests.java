@@ -47,25 +47,25 @@ class HardTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketIsNull() {
+    void verifyTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
     @Test
-    public void verifyTicketIsNotExpired() {
+    void verifyTicketIsNotExpired() {
         this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).minusNanos(1), ZoneOffset.UTC));
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void verifyTicketIsExpired() {
+    void verifyTicketIsExpired() {
         this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).plusNanos(1), ZoneOffset.UTC));
         assertTrue(this.ticket.isExpired());
         assertEquals(0, this.expirationPolicy.getTimeToIdle());
     }
 
     @Test
-    public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
+    void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
         val policyWritten = new HardTimeoutExpirationPolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
@@ -73,7 +73,7 @@ class HardTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val policyWritten = new HardTimeoutExpirationPolicy();
         val result = SerializationUtils.serialize(policyWritten);
         val policyRead = SerializationUtils.deserialize(result, HardTimeoutExpirationPolicy.class);

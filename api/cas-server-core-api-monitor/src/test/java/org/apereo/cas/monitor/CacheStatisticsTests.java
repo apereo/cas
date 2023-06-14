@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class CacheStatisticsTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val stats = new CacheStatistics() {
             @Override
             public String getName() {

@@ -24,14 +24,14 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.*;
 class BeanDefinitionStoreFailureAnalyzerTests {
 
     @Test
-    public void analyzeBeanDefinitionStoreException() {
+    void analyzeBeanDefinitionStoreException() {
         val analysis = performAnalysis();
         val description = analysis.getDescription();
         assertThat(description).contains("not.defined");
     }
 
     @Test
-    public void analyzeBeanDefinitionStoreExceptionFullMsg() {
+    void analyzeBeanDefinitionStoreExceptionFullMsg() {
         val analysis = new BeanDefinitionStoreFailureAnalyzer().analyze(
             new BeanDefinitionStoreException("resourcedesc", "beanname", "themsg"));
         val description = analysis.getDescription();

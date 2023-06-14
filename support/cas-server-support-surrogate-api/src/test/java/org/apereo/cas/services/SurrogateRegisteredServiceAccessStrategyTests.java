@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 class SurrogateRegisteredServiceAccessStrategyTests {
     @Test
-    public void verifySurrogateDisabled() {
+    void verifySurrogateDisabled() {
         val a = new SurrogateRegisteredServiceAccessStrategy();
         a.setSurrogateEnabled(false);
         assertFalse(executeStrategy(a));
@@ -32,7 +32,7 @@ class SurrogateRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySurrogateDisabledWithAttributes() {
+    void verifySurrogateDisabledWithAttributes() {
         val a = new SurrogateRegisteredServiceAccessStrategy();
         a.setSurrogateEnabled(true);
         a.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV"));
@@ -40,7 +40,7 @@ class SurrogateRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySurrogateAttributesNotAvail() {
+    void verifySurrogateAttributesNotAvail() {
         val a = new SurrogateRegisteredServiceAccessStrategy();
         a.setSurrogateEnabled(true);
         a.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV",
@@ -49,7 +49,7 @@ class SurrogateRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySurrogateAllowed() {
+    void verifySurrogateAllowed() {
         val a = new SurrogateRegisteredServiceAccessStrategy();
         a.setSurrogateEnabled(true);
         assertTrue(executeStrategy(a));

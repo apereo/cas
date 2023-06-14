@@ -81,7 +81,7 @@ class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyRemovalByKey() throws Exception {
+    void verifyRemovalByKey() throws Exception {
         val r = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (val webServer = new MockWebServer(9297,
@@ -94,7 +94,7 @@ class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyRemovalByDate() {
+    void verifyRemovalByDate() {
         try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -103,7 +103,7 @@ class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyFetchRecords() throws Exception {
+    void verifyFetchRecords() throws Exception {
         val r = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (val webServer = new MockWebServer(9297,
@@ -118,7 +118,7 @@ class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifySetAnExpireByKey() throws Exception {
+    void verifySetAnExpireByKey() throws Exception {
         val r =
             MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
@@ -133,7 +133,7 @@ class RestMultifactorAuthenticationTrustStorageTests {
     }
 
     @Test
-    public void verifyExpireByDate() throws Exception {
+    void verifyExpireByDate() throws Exception {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         r.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS).minusDays(2));
 

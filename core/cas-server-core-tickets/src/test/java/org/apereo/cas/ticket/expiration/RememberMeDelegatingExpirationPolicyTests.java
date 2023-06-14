@@ -74,7 +74,7 @@ class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketExpirationWithRememberMe() {
+    void verifyTicketExpirationWithRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
             Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
@@ -86,7 +86,7 @@ class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void verifyNoRememberMe() {
+    void verifyNoRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             principalFactory.createPrincipal("test"),
             Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(false)));
@@ -95,7 +95,7 @@ class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketExpirationWithRememberMeBuiltAuthn() {
+    void verifyTicketExpirationWithRememberMeBuiltAuthn() {
         val builder = new DefaultAuthenticationResultBuilder();
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "casuser"));
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1,
@@ -113,7 +113,7 @@ class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketExpirationWithoutRememberMe() {
+    void verifyTicketExpirationWithoutRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
@@ -123,7 +123,7 @@ class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketTTLWithRememberMe() {
+    void verifyTicketTTLWithRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
             Collections.singletonMap(
@@ -133,21 +133,21 @@ class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketTTLWithoutRememberMe() {
+    void verifyTicketTTLWithoutRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertEquals(DEFAULT_TTL, expirationPolicy.getTimeToLive(t));
     }
 
     @Test
-    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+    void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

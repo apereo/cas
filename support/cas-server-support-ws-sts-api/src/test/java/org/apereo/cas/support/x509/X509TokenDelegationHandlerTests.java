@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class X509TokenDelegationHandlerTests {
 
     @Test
-    public void verifyHandle() {
+    void verifyHandle() {
         val handler = new X509TokenDelegationHandler();
 
         val elementResponse = mock(Element.class);
@@ -36,7 +36,7 @@ class X509TokenDelegationHandlerTests {
     }
 
     @Test
-    public void verifyDelegation() {
+    void verifyDelegation() {
         val params = new TokenDelegationParameters();
 
         val handler = new X509TokenDelegationHandler();

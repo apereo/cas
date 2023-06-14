@@ -60,7 +60,7 @@ class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     private S3Client amazonS3ServiceRegistryClient;
 
     @Test
-    public void verifyFailsOp() {
+    void verifyFailsOp() {
         assertNotNull(amazonS3ServiceRegistryClient);
         val service = mock(RegisteredService.class);
         when(service.getId()).thenThrow(new RuntimeException());

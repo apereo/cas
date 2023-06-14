@@ -75,7 +75,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLogoutUrlByService() {
+    void verifyLogoutUrlByService() {
         val svc = getRegisteredService("https://www.google.com");
         svc.setLogoutUrl("http://www.example.com/logout");
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -84,7 +84,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLogoutUrlByDefault() throws Exception {
+    void verifyLogoutUrlByDefault() throws Exception {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -93,7 +93,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLogoutUrlUnknownUrlProtocol() {
+    void verifyLogoutUrlUnknownUrlProtocol() {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -102,7 +102,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithLocalUrlNotAllowed() {
+    void verifyLocalLogoutUrlWithLocalUrlNotAllowed() {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -111,7 +111,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithLocalUrlAllowed() throws Exception {
+    void verifyLocalLogoutUrlWithLocalUrlAllowed() throws Exception {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true);
@@ -120,7 +120,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithValidRegExValidationAndLocalUrlNotAllowed() throws Exception {
+    void verifyLocalLogoutUrlWithValidRegExValidationAndLocalUrlNotAllowed() throws Exception {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true);
@@ -129,7 +129,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlAllowed() throws Exception {
+    void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlAllowed() throws Exception {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true, "\\d*", true);
@@ -138,7 +138,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() {
+    void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\d*", true);

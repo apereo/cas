@@ -34,7 +34,7 @@ class DelegatedClientIdentityProviderConfigurationPostProcessorTests {
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(delegatedClientIdentityProviderConfigurationPostProcessor);
         assertDoesNotThrow(() -> {
             val context = new MockRequestContext();

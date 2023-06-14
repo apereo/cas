@@ -53,7 +53,7 @@ class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementS
     }
 
     @Test
-    public void verifyTokenCreationAndParsing() {
+    void verifyTokenCreationAndParsing() {
         val token = passwordChangeService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         assertNotNull(token);
         val result = passwordChangeService.parseToken(token);
@@ -61,7 +61,7 @@ class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementS
     }
 
     @Test
-    public void verifyPasswordChangedFails() {
+    void verifyPasswordChangedFails() {
         val credential = new UsernamePasswordCredential("caspm", "123456");
         val bean = new PasswordChangeRequest();
         bean.setConfirmedPassword("Mellon".toCharArray());
@@ -72,19 +72,19 @@ class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementS
     }
 
     @Test
-    public void verifyFindEmail() {
+    void verifyFindEmail() {
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("caspm@example.org", email);
     }
 
     @Test
-    public void verifyFindPhone() {
+    void verifyFindPhone() {
         val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("1234567890", ph);
     }
 
     @Test
-    public void verifyFindSecurityQuestions() {
+    void verifyFindSecurityQuestions() {
         val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals(1, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));

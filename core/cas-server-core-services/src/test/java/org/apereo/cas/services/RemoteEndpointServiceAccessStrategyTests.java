@@ -30,7 +30,7 @@ class RemoteEndpointServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() throws IOException {
         val strategyWritten = new RemoteEndpointServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, strategyWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, RemoteEndpointServiceAccessStrategy.class);
@@ -38,7 +38,7 @@ class RemoteEndpointServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:8755");
         strategy.setAcceptableResponseCodes("200,201");
@@ -50,7 +50,7 @@ class RemoteEndpointServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:1234");
         strategy.setAcceptableResponseCodes("600");

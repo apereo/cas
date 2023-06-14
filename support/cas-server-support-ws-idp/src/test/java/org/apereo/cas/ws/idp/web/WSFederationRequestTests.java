@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WSFederationRequestTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val request = new MockHttpServletRequest();
         request.addParameter(WSFederationConstants.WTREALM, id);

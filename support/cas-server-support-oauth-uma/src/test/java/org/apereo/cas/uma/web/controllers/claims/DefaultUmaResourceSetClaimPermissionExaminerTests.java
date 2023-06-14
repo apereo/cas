@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyUnmatchedOperation() {
+    void verifyUnmatchedOperation() {
         val ticketId = UUID.randomUUID().toString();
         val permissionTicket = mock(UmaPermissionTicket.class);
         when(permissionTicket.getId()).thenReturn(ticketId);
@@ -57,7 +57,7 @@ class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointC
     }
 
     @Test
-    public void verifyMatchedOperation() {
+    void verifyMatchedOperation() {
         val ticketId = UUID.randomUUID().toString();
         val permissionTicket = mock(UmaPermissionTicket.class);
         when(permissionTicket.getId()).thenReturn(ticketId);

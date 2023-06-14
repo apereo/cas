@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

@@ -30,7 +30,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:multiple-keys.jwks")
     class KeystoreWithMultipleKeysTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val claims = getClaims();
 
             val es512 = getOidcRegisteredService("ES512");
@@ -62,27 +62,27 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
     })
     class DefaultTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val claims = getClaims();
             val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
             assertNotNull(result);
         }
 
         @Test
-        public void verifyWrongType() {
+        void verifyWrongType() {
             assertFalse(oidcTokenSigningAndEncryptionService.shouldEncryptToken(getOAuthRegisteredService("1", "http://localhost/cas")));
             assertFalse(oidcTokenSigningAndEncryptionService.shouldSignToken(getOAuthRegisteredService("1", "http://localhost/cas")));
         }
 
         @Test
-        public void verifySkipSigning() {
+        void verifySkipSigning() {
             val oidcRegisteredService = getOidcRegisteredService(false, false);
             val result = oidcTokenSigningAndEncryptionService.shouldSignToken(oidcRegisteredService);
             assertFalse(result);
         }
 
         @Test
-        public void verifyValidationOperation() {
+        void verifyValidationOperation() {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val result = oidcTokenSigningAndEncryptionService.encode(oidcRegisteredService, claims);
@@ -91,14 +91,14 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        public void verifyDecodingFailureBadToken() {
+        void verifyDecodingFailureBadToken() {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             assertThrows(IllegalArgumentException.class,
                 () -> oidcTokenSigningAndEncryptionService.decode("bad-token", Optional.of(oidcRegisteredService)));
         }
 
         @Test
-        public void verifyDecodingFailureNoIssuer() {
+        void verifyDecodingFailureNoIssuer() {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val claims = getClaims();
             claims.setIssuer(StringUtils.EMPTY);
@@ -108,7 +108,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        public void verifyDecodingFailureBadIssuer() {
+        void verifyDecodingFailureBadIssuer() {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val claims = getClaims();
             claims.setIssuer("bad-issuer");
@@ -118,7 +118,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        public void verifyDecodingFailureBadClient() {
+        void verifyDecodingFailureBadClient() {
             val oidcRegisteredService = getOidcRegisteredService(true, false);
             val claims = getClaims();
             claims.setStringClaim(OAuth20Constants.CLIENT_ID, StringUtils.EMPTY);
@@ -128,7 +128,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        public void verifyNoneNotSupported() {
+        void verifyNoneNotSupported() {
             val claims = getClaims();
             val oidcRegisteredService = getOidcRegisteredService();
             oidcRegisteredService.setIdTokenSigningAlg(AlgorithmIdentifiers.NONE);
@@ -139,7 +139,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
         }
 
         @Test
-        public void verifyNoneSupported() {
+        void verifyNoneSupported() {
             val discovery = new OidcServerDiscoverySettings(casProperties.getAuthn().getOidc().getCore().getIssuer());
             discovery.setIdTokenSigningAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));
             discovery.setIdTokenEncryptionAlgValuesSupported(Set.of(AlgorithmIdentifiers.NONE));

@@ -88,7 +88,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticateFailure() {
+    void verifyAuthenticateFailure() {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
             () -> ldapAuthenticationHandlers.toList()
@@ -96,7 +96,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticateSuccess() {
+    void verifyAuthenticateSuccess() {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());

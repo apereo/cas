@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 9092)
 class KafkaObjectFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = new KafkaObjectFactory("localhost:9092");
         assertNotNull(factory.getKafkaAdmin());
         assertNotNull(factory.getKafkaTemplate(new StringSerializer(), new StringSerializer()));

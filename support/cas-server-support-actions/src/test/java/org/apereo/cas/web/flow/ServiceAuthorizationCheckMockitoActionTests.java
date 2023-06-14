@@ -58,7 +58,7 @@ class ServiceAuthorizationCheckMockitoActionTests {
     }
 
     @Test
-    public void noServiceProvided() throws Exception {
+    void noServiceProvided() throws Exception {
         val mockRequestContext = new MockRequestContext();
         val action = getAction();
         val event = action.execute(mockRequestContext);
@@ -66,7 +66,7 @@ class ServiceAuthorizationCheckMockitoActionTests {
     }
 
     @Test
-    public void verifyEmptyRegistry() {
+    void verifyEmptyRegistry() {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, RegisteredServiceTestUtils.getService());
         when(servicesManager.getAllServices()).thenReturn(List.of());
@@ -76,7 +76,7 @@ class ServiceAuthorizationCheckMockitoActionTests {
     }
 
     @Test
-    public void authorizedServiceProvided() throws Exception {
+    void authorizedServiceProvided() throws Exception {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, authorizedService);
         val action = getAction();
@@ -85,7 +85,7 @@ class ServiceAuthorizationCheckMockitoActionTests {
     }
 
     @Test
-    public void unauthorizedServiceProvided() {
+    void unauthorizedServiceProvided() {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, unauthorizedService);
 
@@ -94,7 +94,7 @@ class ServiceAuthorizationCheckMockitoActionTests {
     }
 
     @Test
-    public void serviceThatIsNotRegisteredProvided() {
+    void serviceThatIsNotRegisteredProvided() {
         val mockRequestContext = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(mockRequestContext, undefinedService);
         val action = getAction();

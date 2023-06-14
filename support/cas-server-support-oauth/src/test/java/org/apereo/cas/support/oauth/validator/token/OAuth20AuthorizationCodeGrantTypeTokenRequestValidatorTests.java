@@ -68,7 +68,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         private OAuth20TokenRequestValidator validator;
         
         @Test
-        public void verifyPreviousAccessTokensRemoved() throws Exception {
+        void verifyPreviousAccessTokensRemoved() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -142,7 +142,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        public void verifyBadToken() throws Exception {
+        void verifyBadToken() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -160,7 +160,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        public void verifyBadService() throws Exception {
+        void verifyBadService() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -178,7 +178,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        public void verifyBadRequest() throws Exception {
+        void verifyBadRequest() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -194,7 +194,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        public void verifyUnknownCodeRevokesPreviousAccessTokens() throws Exception {
+        void verifyUnknownCodeRevokesPreviousAccessTokens() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();
@@ -223,7 +223,7 @@ class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         }
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val profile = new CommonProfile();

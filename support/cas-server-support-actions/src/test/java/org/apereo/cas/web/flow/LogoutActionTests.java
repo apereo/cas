@@ -65,7 +65,7 @@ class LogoutActionTests {
         private Action logoutAction;
 
         @Test
-        public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
+        void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
             request.addParameter("service", TEST_SERVICE_ID);
             val service = new CasRegisteredService();
             service.setServiceId(TEST_SERVICE_ID);
@@ -77,7 +77,7 @@ class LogoutActionTests {
         }
 
         @Test
-        public void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Exception {
+        void verifyLogoutForServiceWithFollowRedirectsAndInternalService() throws Exception {
             val service = new CasRegisteredService();
             service.setServiceId(TEST_SERVICE_ID);
             service.setName(TEST_SERVICE_ID);
@@ -99,13 +99,13 @@ class LogoutActionTests {
         private Action logoutAction;
 
         @Test
-        public void verifyLogoutNoCookie() throws Exception {
+        void verifyLogoutNoCookie() throws Exception {
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }
 
         @Test
-        public void logoutForServiceWithNoFollowRedirects() throws Exception {
+        void logoutForServiceWithNoFollowRedirects() throws Exception {
             getServicesManager().deleteAll();
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
             val event = logoutAction.execute(requestContext);
@@ -114,7 +114,7 @@ class LogoutActionTests {
         }
 
         @Test
-        public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
+        void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
             getServicesManager().deleteAll();
             request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
             val service = new CasRegisteredService();
@@ -127,7 +127,7 @@ class LogoutActionTests {
         }
 
         @Test
-        public void verifyLogoutCookie() throws Exception {
+        void verifyLogoutCookie() throws Exception {
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             request.setCookies(cookie);
             val event = logoutAction.execute(requestContext);
@@ -135,7 +135,7 @@ class LogoutActionTests {
         }
 
         @Test
-        public void verifyLogoutRequestBack() throws Exception {
+        void verifyLogoutRequestBack() throws Exception {
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             request.setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
@@ -151,7 +151,7 @@ class LogoutActionTests {
         }
 
         @Test
-        public void verifyLogoutRequestFront() throws Exception {
+        void verifyLogoutRequestFront() throws Exception {
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
             request.setCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()

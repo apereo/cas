@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -43,7 +43,7 @@ class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    public void verifyMissingOperation() {
+    void verifyMissingOperation() {
         val results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(210, body,
@@ -52,7 +52,7 @@ class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    public void verifyNoAuthOperation() throws Exception {
+    void verifyNoAuthOperation() throws Exception {
         val body = createUmaResourceRegistrationRequest().toJson();
         val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(100, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

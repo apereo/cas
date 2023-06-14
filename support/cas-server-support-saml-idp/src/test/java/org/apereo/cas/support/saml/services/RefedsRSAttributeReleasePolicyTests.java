@@ -37,7 +37,7 @@ class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests 
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyMatch() {
+    void verifyMatch() {
         val filter = new RefedsRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
@@ -54,7 +54,7 @@ class RefedsRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests 
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new RefedsRSAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, RefedsRSAttributeReleasePolicy.class);

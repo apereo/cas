@@ -53,7 +53,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        public void verifyTgtMismatch() throws Exception {
+        void verifyTgtMismatch() throws Exception {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
@@ -92,14 +92,14 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        public void verifyNoTgtToSet() throws Exception {
+        void verifyNoTgtToSet() throws Exception {
             context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
         }
 
         @Test
-        public void verifyTgtToSet() throws Exception {
+        void verifyTgtToSet() throws Exception {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
@@ -118,7 +118,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        public void verifyTgtToSetRemovingOldTgt() throws Exception {
+        void verifyTgtToSetRemovingOldTgt() throws Exception {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
@@ -154,7 +154,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        public void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
+        void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -172,7 +172,7 @@ class SendTicketGrantingTicketActionTests {
         }
 
         @Test
-        public void verifySsoSessionCookieOnServiceSsoDisallowed() throws Exception {
+        void verifySsoSessionCookieOnServiceSsoDisallowed() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
 

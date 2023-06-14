@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class DigestUtilsTests {
     @Test
-    public void verifySha() {
+    void verifySha() {
         assertNotNull(DigestUtils.sha("HelloWorld".getBytes(StandardCharsets.UTF_8)));
         assertNotNull(DigestUtils.shaBase64("salt", "HelloWorld"));
         assertNotNull(DigestUtils.shaBase64("salt", "HelloWorld", ";", true));

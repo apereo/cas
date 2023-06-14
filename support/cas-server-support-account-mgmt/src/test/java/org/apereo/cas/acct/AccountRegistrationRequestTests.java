@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class AccountRegistrationRequestTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new AccountRegistrationRequest();
         request.putProperty("custom", "value");
         request.putProperty("complex", List.of(1, 2, 3));

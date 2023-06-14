@@ -38,7 +38,7 @@ class DefaultConsentActivationStrategyDisabledTests {
     private ConsentActivationStrategy consentActivationStrategy;
     
     @Test
-    public void verifyNoConsent() {
+    void verifyNoConsent() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

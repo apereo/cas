@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("Groovy")
 class GroovyPasswordPolicyHandlingStrategyTests {
     @Test
-    public void verifyStrategySupportsDefault() {
+    void verifyStrategySupportsDefault() {
         val resource = new ClassPathResource("lppe-strategy.groovy");
 
         val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
@@ -41,7 +41,7 @@ class GroovyPasswordPolicyHandlingStrategyTests {
     }
 
     @Test
-    public void verifyStrategyHandlesErrors() {
+    void verifyStrategyHandlesErrors() {
         val resource = new ClassPathResource("lppe-strategy-throws-error.groovy");
         val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);

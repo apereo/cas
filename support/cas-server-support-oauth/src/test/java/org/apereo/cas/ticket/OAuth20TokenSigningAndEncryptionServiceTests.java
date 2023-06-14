@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = mock(OAuth20TokenSigningAndEncryptionService.class);
         when(service.shouldEncryptToken(any())).thenCallRealMethod();
         when(service.shouldSignToken(any())).thenCallRealMethod();

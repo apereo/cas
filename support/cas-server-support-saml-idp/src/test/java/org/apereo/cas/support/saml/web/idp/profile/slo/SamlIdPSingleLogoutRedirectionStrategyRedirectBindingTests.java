@@ -51,7 +51,7 @@ class SamlIdPSingleLogoutRedirectionStrategyRedirectBindingTests extends BaseSam
     private LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy;
 
     @Test
-    public void verifyOperationForRedirectBinding() throws Exception {
+    void verifyOperationForRedirectBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val registeredService = getSamlRegisteredServiceFor(false, false,

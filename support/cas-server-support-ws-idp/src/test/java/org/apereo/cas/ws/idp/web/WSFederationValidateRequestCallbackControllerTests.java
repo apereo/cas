@@ -62,7 +62,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyWithTicketGrantingTicket() throws Exception {
+    void verifyWithTicketGrantingTicket() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -105,7 +105,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
     }
 
     @Test
-    public void verifyWithoutTicketGrantingTicket() throws Exception {
+    void verifyWithoutTicketGrantingTicket() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

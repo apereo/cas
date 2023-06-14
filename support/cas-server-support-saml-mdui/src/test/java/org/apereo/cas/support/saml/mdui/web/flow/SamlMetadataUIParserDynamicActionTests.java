@@ -48,7 +48,7 @@ class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
     private Action samlMetadataUIParserAction;
 
     @Test
-    public void verifyEntityIdUIInfoExistsDynamically() throws Exception {
+    void verifyEntityIdUIInfoExistsDynamically() throws Exception {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");

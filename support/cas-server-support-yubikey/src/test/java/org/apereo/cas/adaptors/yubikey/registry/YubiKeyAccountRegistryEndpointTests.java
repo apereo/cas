@@ -54,7 +54,7 @@ class YubiKeyAccountRegistryEndpointTests {
     private YubiKeyAccountRegistryEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         endpoint.deleteAll();
         val username = UUID.randomUUID().toString();
         assertTrue(endpoint.load().isEmpty());
@@ -76,7 +76,7 @@ class YubiKeyAccountRegistryEndpointTests {
     }
 
     @Test
-    public void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Exception {
         val toSave = YubiKeyAccount.builder().username(UUID.randomUUID().toString())
             .devices(CollectionUtils.wrapList(YubiKeyRegisteredDevice.builder()
                 .name(UUID.randomUUID().toString())

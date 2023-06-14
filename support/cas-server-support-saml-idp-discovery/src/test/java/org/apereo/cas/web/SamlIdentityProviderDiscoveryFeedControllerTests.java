@@ -45,7 +45,7 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyFeed() {
+    void verifyFeed() {
         assertFalse(controller.getDiscoveryFeed().isEmpty());
         assertNotNull(controller.home());
         assertNotNull(controller.redirect("https://cas.example.org/idp",

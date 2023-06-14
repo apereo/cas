@@ -47,7 +47,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyPlainJwtWithoutClientId() {
+    void verifyPlainJwtWithoutClientId() {
         val request = getJwtRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -58,7 +58,7 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyPlainJwtWithClientId() {
+    void verifyPlainJwtWithClientId() {
         val request = getJwtRequest();
 
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret");

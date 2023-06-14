@@ -29,12 +29,12 @@ class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResou
     private ProtocolEndpointWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
 
     @Test
-    public void verifyEndpoints() {
+    void verifyEndpoints() {
         assertFalse(restProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test
-    public void verifyServiceTicketAsDefault() {
+    void verifyServiceTicketAsDefault() {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val service = RegisteredServiceTestUtils.getService("test");
@@ -44,7 +44,7 @@ class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResou
     }
 
     @Test
-    public void verifyServiceTicketAsJwt() throws Exception {
+    void verifyServiceTicketAsJwt() throws Exception {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);

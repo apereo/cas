@@ -56,7 +56,7 @@ class ValidateCaptchaActionTests {
     private CaptchaActivationStrategy captchaActivationStrategy;
 
     @Test
-    public void verifyCaptchaValidationSkipped() throws Exception {
+    void verifyCaptchaValidationSkipped() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -76,7 +76,7 @@ class ValidateCaptchaActionTests {
     }
 
     @Test
-    public void verifyCaptchaValidated() throws Exception {
+    void verifyCaptchaValidated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -94,7 +94,7 @@ class ValidateCaptchaActionTests {
     }
 
     @Test
-    public void verifyCaptchaFails() throws Exception {
+    void verifyCaptchaFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

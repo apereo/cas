@@ -48,7 +48,7 @@ public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServ
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    public void verifyFailures() {
+    void verifyFailures() {
         assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
     }

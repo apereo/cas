@@ -39,7 +39,7 @@ class CasPersonDirectoryConfigurationCascadeAggregationTests {
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(aggregatingAttributeRepository);
         val person = aggregatingAttributeRepository.getPerson("casuser");
         assertNotNull(person);

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class ClosedYubiKeyAccountRegistryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val registry = new ClosedYubiKeyAccountRegistry(mock(YubiKeyAccountValidator.class));
         assertTrue(registry.getAccount("casuser").isEmpty());
         assertTrue(registry.getAccounts().isEmpty());

@@ -93,7 +93,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyCreate() {
+    void verifyCreate() {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
@@ -119,7 +119,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifySaveAndUpdate() {
+    void verifySaveAndUpdate() {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
@@ -149,7 +149,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyGet() {
+    void verifyGet() {
         val casuser = getUsernameUnderTest();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
@@ -174,7 +174,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyCaseSensitivity() {
+    void verifyCaseSensitivity() {
         val casuser = getUsernameUnderTest().toLowerCase(Locale.ENGLISH);
         val acct = getAccount("verifyCaseSensitivity", casuser);
         assertNotNull(acct);
@@ -200,7 +200,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyGetWithDecodedSecret() {
+    void verifyGetWithDecodedSecret() {
         val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);

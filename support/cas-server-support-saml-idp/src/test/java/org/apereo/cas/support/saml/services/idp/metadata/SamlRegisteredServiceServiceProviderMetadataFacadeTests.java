@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void verifyResolver() {
+    void verifyResolver() {
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
@@ -60,7 +60,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
     }
 
     @Test
-    public void verifyResolverNoEntityDesc() throws Exception {
+    void verifyResolverNoEntityDesc() throws Exception {
         val mdr = mock(MetadataResolver.class);
         when(mdr.resolve(any())).thenReturn(null);
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
@@ -72,7 +72,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
     }
 
     @Test
-    public void verifyNoSsoDescriptor() throws Exception {
+    void verifyNoSsoDescriptor() throws Exception {
         val mdr = mock(MetadataResolver.class);
         val entityDesc = mock(EntityDescriptor.class);
         when(mdr.resolve(any())).thenReturn(List.of(entityDesc));
@@ -86,7 +86,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
     }
 
     @Test
-    public void verifyResolverExpiredEntity() throws Exception {
+    void verifyResolverExpiredEntity() throws Exception {
         val entityDesc = mock(EntityDescriptor.class);
         when(entityDesc.getValidUntil()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusMonths(1).toInstant());
         val mdr = mock(MetadataResolver.class);
@@ -100,7 +100,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
     }
 
     @Test
-    public void verifyResolverSpExpiredEntity() throws Exception {
+    void verifyResolverSpExpiredEntity() throws Exception {
         val spDesc = mock(SPSSODescriptor.class);
         when(spDesc.getValidUntil()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusMonths(1).toInstant());
         val entityDesc = mock(EntityDescriptor.class);

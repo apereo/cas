@@ -42,7 +42,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     @SuppressWarnings("ClassCanBeStatic")
     class EncryptedKeystoreTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val resource = oidcJsonWebKeystoreGeneratorService.find();
             assertTrue(resource.isPresent());
             val jwks = new JsonWebKeySet(IOUtils.toString(resource.get().getInputStream(), StandardCharsets.UTF_8));
@@ -65,7 +65,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val resource = oidcJsonWebKeystoreGeneratorService.generate();
             assertTrue(resource.exists());
             assertTrue(keystore.setLastModified(new Date().getTime()));
@@ -77,7 +77,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        public void verifyRegeneration() throws Exception {
+        void verifyRegeneration() throws Exception {
             val resource1 = oidcJsonWebKeystoreGeneratorService.generate();
             assertTrue(resource1.exists());
             val resource2 = oidcJsonWebKeystoreGeneratorService.generate();
@@ -85,7 +85,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        public void verifyCurve256() throws Exception {
+        void verifyCurve256() throws Exception {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(256);
@@ -93,7 +93,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        public void verifyCurve384() throws Exception {
+        void verifyCurve384() throws Exception {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(384);
@@ -101,7 +101,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         }
 
         @Test
-        public void verifyCurve521() throws Exception {
+        void verifyCurve521() throws Exception {
             val properties = new OidcProperties();
             properties.getJwks().getCore().setJwksType("ec");
             properties.getJwks().getCore().setJwksKeySize(521);

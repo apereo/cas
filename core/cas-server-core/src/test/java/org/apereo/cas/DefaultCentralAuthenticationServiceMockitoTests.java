@@ -202,23 +202,23 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @Test
-    public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
         assertThrows(InvalidTicketException.class, () -> cas.createProxyGrantingTicket("bad-st", getAuthenticationContext()));
     }
 
     @Test
-    public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
+    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
         assertThrows(UnauthorizedServiceException.class, () -> this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext()));
     }
 
     @Test
-    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() {
+    void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() {
         assertThrows(UnauthorizedProxyingException.class,
             () -> this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext()));
     }
 
     @Test
-    public void verifyChainedAuthenticationsOnValidation() {
+    void verifyChainedAuthenticationsOnValidation() {
         val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         val st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);

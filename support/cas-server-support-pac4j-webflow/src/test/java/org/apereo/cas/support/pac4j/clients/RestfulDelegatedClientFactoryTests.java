@@ -58,7 +58,7 @@ class RestfulDelegatedClientFactoryTests {
     })
     class InvalidStatusCodeTests extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyBadStatusCode() {
+        void verifyBadStatusCode() {
             try (val webServer = new MockWebServer(9212, HttpStatus.EXPECTATION_FAILED)) {
                 webServer.start();
                 val clientsFound = delegatedClientFactory.build();
@@ -76,7 +76,7 @@ class RestfulDelegatedClientFactoryTests {
     })
     class DefaultTests extends BaseDelegatedClientFactoryTests {
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val clients = new HashMap<String, Object>();
             clients.put("callbackUrl", "https://sso.example.org/cas/login");
             clients.put("properties", getProperties());
@@ -114,7 +114,7 @@ class RestfulDelegatedClientFactoryTests {
         private CasConfigurationProperties casProperties;
 
         @Test
-        public void verifyAction() throws Exception {
+        void verifyAction() throws Exception {
             val clients = new HashMap<String, Object>();
             clients.put("cas.authn.pac4j.github.client-name", "name");
             clients.put("cas.authn.pac4j.github.id", "id");

@@ -107,13 +107,13 @@ class WiringConfigurationTests {
     private FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter;
 
     @Test
-    public void verifyConfigurationClasses() {
+    void verifyConfigurationClasses() {
         assertNotNull(applicationContext);
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
     }
 
     @Test
-    public void verifyRootController() throws Exception {
+    void verifyRootController() throws Exception {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpGet.METHOD_NAME);
         request.setRequestURI("/cas/example");
@@ -122,7 +122,7 @@ class WiringConfigurationTests {
     }
 
     @Test
-    public void verifyLocale() {
+    void verifyLocale() {
         var request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.ENGLISH));
         assertEquals(Locale.ENGLISH, localeResolver.resolveLocale(request));
@@ -133,7 +133,7 @@ class WiringConfigurationTests {
     }
 
     @Test
-    public void verifyAuthFilterClearing() throws Exception {
+    void verifyAuthFilterClearing() throws Exception {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
         val filter = currentCredentialsAndAuthenticationClearingFilter.getFilter();
         filter.init(new MockFilterConfig());

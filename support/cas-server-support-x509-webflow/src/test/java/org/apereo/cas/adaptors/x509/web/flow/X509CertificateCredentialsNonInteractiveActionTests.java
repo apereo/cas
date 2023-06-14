@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificateCredentialActionTests {
 
     @Test
-    public void verifyNoCredentialsResultsInError() throws Exception {
+    void verifyNoCredentialsResultsInError() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(),
@@ -39,7 +39,7 @@ class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificat
     }
 
     @Test
-    public void verifyBadCertificateError() throws Exception {
+    void verifyBadCertificateError() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -53,7 +53,7 @@ class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificat
     }
 
     @Test
-    public void verifyCredentialsResultsInSuccess() throws Exception {
+    void verifyCredentialsResultsInSuccess() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE,
@@ -65,7 +65,7 @@ class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificat
     }
 
     @Test
-    public void verifyErrorInRequestResultsInError() throws Exception {
+    void verifyErrorInRequestResultsInError() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE,

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 class U2FStartRegistrationActionTests extends BaseU2FWebflowActionTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val id = UUID.randomUUID().toString();
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

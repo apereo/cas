@@ -25,7 +25,7 @@ class ChainingAWSCredentialsProviderTests {
     }
 
     @Test
-    public void verifyInstance() throws Exception {
+    void verifyInstance() throws Exception {
         val path = File.createTempFile("props", ".txt").getCanonicalPath();
         val p = (AwsCredentialsProviderChain) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
             "profilePath", path);

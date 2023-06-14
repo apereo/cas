@@ -36,7 +36,7 @@ class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
      * for each user while also maintaining a unique cache key for each.
      */
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val p1 = cachingAttributeRepository.getPerson("tensada");
         assertEquals("tensada", p1.getName());
         assertEquals("Tens", p1.getAttributeValue("oldName"));

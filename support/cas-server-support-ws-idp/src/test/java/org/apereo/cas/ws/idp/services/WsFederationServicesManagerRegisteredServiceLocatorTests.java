@@ -57,7 +57,7 @@ class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreW
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(wsFederationServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, wsFederationServicesManagerRegisteredServiceLocator.getOrder());
         val registeredService = getWsFederationRegisteredService("http://app.example.org/wsfed.*", "CAS");
@@ -81,7 +81,7 @@ class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreW
     }
 
     @Test
-    public void verifyWithCallback() throws Exception {
+    void verifyWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas" + WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK;
         
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");

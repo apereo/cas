@@ -28,7 +28,7 @@ class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     @SuppressWarnings("ClassCanBeStatic")
     class EncryptOnlyTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val at = getAccessToken();
             val encoded = oidcResponseModeJwtCipherExecutor.encode(at.getId());
             assertNotNull(encoded);
@@ -47,7 +47,7 @@ class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     @SuppressWarnings("ClassCanBeStatic")
     class SignOnlyTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val at = getAccessToken();
             val encoded = oidcResponseModeJwtCipherExecutor.encode(at.getId());
             assertNotNull(encoded);
@@ -66,7 +66,7 @@ class OidcJwtResponseModeCipherExecutorTests extends AbstractOidcTests {
     @SuppressWarnings("ClassCanBeStatic")
     class SignAndEncryptTests extends AbstractOidcTests {
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val at = getAccessToken();
             val encoded = oidcResponseModeJwtCipherExecutor.encode(at.getId());
             assertNotNull(encoded);

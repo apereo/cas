@@ -38,7 +38,7 @@ class CasMetricsConfigurationTests {
     private TimedAspect timedAspect;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(timedAspect);
     }
 }

@@ -36,7 +36,7 @@ class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePassw
     private SingleSignOnParticipationStrategy strategy;
 
     @Test
-    public void verifyStrategyWithANonPmRequest() {
+    void verifyStrategyWithANonPmRequest() {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(new MockHttpServletRequest())
             .httpServletResponse(new MockHttpServletResponse())
@@ -46,7 +46,7 @@ class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePassw
     }
 
     @Test
-    public void verifyStrategyWithAnInvalidPmRequest() {
+    void verifyStrategyWithAnInvalidPmRequest() {
         val ctx = new MockRequestContext();
         ctx.putRequestParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN, "invalidResetToken");
 
@@ -59,7 +59,7 @@ class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePassw
     }
 
     @Test
-    public void verifyStrategyWithAValidPmRequest() throws Exception {
+    void verifyStrategyWithAValidPmRequest() throws Exception {
         val ctx = new MockRequestContext();
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);

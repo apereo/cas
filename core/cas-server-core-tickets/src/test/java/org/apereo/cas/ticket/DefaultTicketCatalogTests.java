@@ -73,14 +73,14 @@ class DefaultTicketCatalogTests {
     private ServiceTicketSessionTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Test
-    public void verifyFindAll() {
+    void verifyFindAll() {
         val tickets = ticketCatalog.findAll();
         assertFalse(tickets.isEmpty());
         assertEquals(5, tickets.size());
     }
 
     @Test
-    public void verifyByTicketType() {
+    void verifyByTicketType() {
         assertTrue(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyTicket.class).isPresent());
@@ -89,14 +89,14 @@ class DefaultTicketCatalogTests {
     }
 
     @Test
-    public void verifyUpdateAndFind() {
+    void verifyUpdateAndFind() {
         val defn = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).get();
         ticketCatalog.update(defn);
         assertTrue(ticketCatalog.contains(defn.getPrefix()));
     }
 
     @Test
-    public void verifyContains() {
+    void verifyContains() {
         val tgt = new MockTicketGrantingTicket("casuser");
         assertTrue(ticketCatalog.contains(tgt.getPrefix()));
         assertNotNull(ticketCatalog.find(tgt));

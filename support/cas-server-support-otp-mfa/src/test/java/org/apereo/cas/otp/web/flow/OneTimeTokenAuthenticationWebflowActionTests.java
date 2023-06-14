@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class OneTimeTokenAuthenticationWebflowActionTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val resolver = mock(CasWebflowEventResolver.class);
         when(resolver.resolveSingle(any())).thenReturn(new EventFactorySupport()
             .event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS));

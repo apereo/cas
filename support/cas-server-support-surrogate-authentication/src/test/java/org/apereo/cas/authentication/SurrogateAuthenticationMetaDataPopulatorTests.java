@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationMetadata")
 class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val p = new SurrogateAuthenticationMetaDataPopulator();
         assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 

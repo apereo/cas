@@ -71,7 +71,7 @@ class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyResolver() {
+    void verifyResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository,
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),

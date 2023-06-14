@@ -78,20 +78,20 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
     }
 
     @Test
-    public void verifyNotFoundUser() {
+    void verifyNotFoundUser() {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
         assertThrows(FailedLoginException.class, () -> handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    public void verifyFoundUser() throws Exception {
+    void verifyFoundUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(handler.authenticate(c, mock(Service.class)));
     }
 
     @Test
-    public void verifyMultipleUsersFound() throws Exception {
+    void verifyMultipleUsersFound() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticate(c, mock(Service.class)));
     }

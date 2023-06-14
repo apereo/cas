@@ -102,7 +102,7 @@ class ConfigurationTests {
     private AuthenticationHandler rejectUsersAuthenticationHandler;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(fileAuthenticationHandler);
         assertNotNull(groovyResourceAuthenticationHandler);
         assertNotNull(jsonResourceAuthenticationHandler);

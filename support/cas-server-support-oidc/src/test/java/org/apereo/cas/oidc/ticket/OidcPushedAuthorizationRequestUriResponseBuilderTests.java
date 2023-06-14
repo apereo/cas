@@ -45,7 +45,7 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
     private OAuth20AuthorizationResponseBuilder oidcPushedAuthorizationRequestResponseBuilder;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertEquals(0, oidcPushedAuthorizationRequestResponseBuilder.getOrder());
 
         val registeredService = getOidcRegisteredService();

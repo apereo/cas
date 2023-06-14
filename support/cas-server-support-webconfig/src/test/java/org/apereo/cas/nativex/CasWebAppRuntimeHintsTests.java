@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasWebAppRuntimeHintsTests {
     @Test
-    public void verifyHints() {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CasWebAppRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.serialization().onType(DefaultCsrfToken.class).test(hints));

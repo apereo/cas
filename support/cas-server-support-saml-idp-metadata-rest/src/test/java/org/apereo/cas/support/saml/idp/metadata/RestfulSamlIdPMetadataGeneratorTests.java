@@ -49,7 +49,7 @@ class RestfulSamlIdPMetadataGeneratorTests extends BaseRestfulSamlMetadataTests 
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         var document = new SamlIdPMetadataDocument();
         var entity = MAPPER.writeValueAsString(document);
         try (val webServer = new MockWebServer(9453,

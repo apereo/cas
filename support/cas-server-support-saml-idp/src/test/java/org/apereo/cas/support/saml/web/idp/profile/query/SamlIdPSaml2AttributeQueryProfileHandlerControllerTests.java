@@ -61,7 +61,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;
 
         @Test
-        public void verifyOperation() throws Exception {
+        void verifyOperation() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -94,7 +94,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyUnknownService() throws Exception {
+        void verifyUnknownService() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -135,7 +135,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyTicketExpired() throws Exception {
+        void verifyTicketExpired() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -175,7 +175,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyEncryptedNameIDFails() throws Exception {
+        void verifyEncryptedNameIDFails() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -215,7 +215,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyOK() throws Exception {
+        void verifyOK() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");
@@ -252,7 +252,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         }
 
         @Test
-        public void verifyFault() throws Exception {
+        void verifyFault() throws Exception {
             val response = new MockHttpServletResponse();
             val request = new MockHttpServletRequest();
             request.setMethod("POST");

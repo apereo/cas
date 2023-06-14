@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegexUtilsTests {
 
     @Test
-    public void verifyNotValidRegex() {
+    void verifyNotValidRegex() {
         val notValidRegex = "***";
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }
 
     @Test
-    public void verifyBlankValidRegex() {
+    void verifyBlankValidRegex() {
         var pattern = RegexUtils.createPattern(StringUtils.EMPTY);
         assertNotNull(pattern);
         assertSame(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
@@ -33,7 +33,7 @@ class RegexUtilsTests {
     }
 
     @Test
-    public void verifyNullRegex() {
+    void verifyNullRegex() {
         assertFalse(RegexUtils.isValidRegex(null));
     }
 }

@@ -57,7 +57,7 @@ class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyOperationWithService() throws Exception {
+    void verifyOperationWithService() throws Exception {
         val criteria = new CriteriaSet(
             new SamlIdPSamlRegisteredServiceCriterion(getSamlRegisteredServiceFor(UUID.randomUUID().toString())),
             new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getCore().getEntityId()));

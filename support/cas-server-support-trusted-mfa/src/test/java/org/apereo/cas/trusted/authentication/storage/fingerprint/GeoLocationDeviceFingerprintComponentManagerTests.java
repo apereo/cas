@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Tag("GeoLocation")
 class GeoLocationDeviceFingerprintComponentManagerTests {
     @Test
-    public void verifyGeoLocationDevice() {
+    void verifyGeoLocationDevice() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
@@ -47,7 +47,7 @@ class GeoLocationDeviceFingerprintComponentManagerTests {
     }
 
     @Test
-    public void verifyNoGeoLocationDevice() {
+    void verifyNoGeoLocationDevice() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         val geoResp = new GeoLocationResponse();

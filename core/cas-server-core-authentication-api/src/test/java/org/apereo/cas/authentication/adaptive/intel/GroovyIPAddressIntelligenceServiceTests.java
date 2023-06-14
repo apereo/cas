@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GroovyMfa")
 class GroovyIPAddressIntelligenceServiceTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val script = new ClassPathResource("GroovyIPAddressIntelligenceService.groovy");
         val props = new AdaptiveAuthenticationProperties();
         props.getIpIntel().getGroovy().setLocation(script);

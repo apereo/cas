@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML1")
 class SamlAttributeEncoderTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val original = CoreAuthenticationTestUtils.getAttributes();
         original.put("address", EncodingUtils.hexEncode("123 Main Street"));
         val attributes = ProtocolAttributeEncoder.decodeAttributes(original, CoreAuthenticationTestUtils.getRegisteredService(),
@@ -31,7 +31,7 @@ class SamlAttributeEncoderTests {
     }
 
     @Test
-    public void ensureSamlUrnAttributesEncoded() {
+    void ensureSamlUrnAttributesEncoded() {
         val attributes = new HashMap<String, Object>();
         attributes.put(ProtocolAttributeEncoder.encodeAttribute("urn:oid:2.5.4.3"), "testValue");
         val result = ProtocolAttributeEncoder.decodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"),
@@ -40,7 +40,7 @@ class SamlAttributeEncoderTests {
     }
 
     @Test
-    public void ensureSamlMsftClaimsAttributesEncoded() {
+    void ensureSamlMsftClaimsAttributesEncoded() {
         val attributes = new HashMap<String, Object>();
         attributes.put("http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname", "testValue");
         val result = ProtocolAttributeEncoder.decodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"),

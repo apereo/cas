@@ -84,7 +84,7 @@ class RestPasswordManagementServiceTests {
         private PasswordManagementService passwordChangeService;
 
         @Test
-        public void verifyEmailFound() {
+        void verifyEmailFound() {
             val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
             assertFalse(passwordChangeService.change(request));
             assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
@@ -122,7 +122,7 @@ class RestPasswordManagementServiceTests {
         private PasswordHistoryService passwordHistoryService;
 
         @Test
-        public void verifyEmailFound() {
+        void verifyEmailFound() {
             val data = "casuser@example.org";
             try (val webServer = new MockWebServer(9091,
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -142,7 +142,7 @@ class RestPasswordManagementServiceTests {
         }
 
         @Test
-        public void verifyUserFound() {
+        void verifyUserFound() {
             val data = "casuser";
             try (val webServer = new MockWebServer(9090,
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -162,7 +162,7 @@ class RestPasswordManagementServiceTests {
         }
 
         @Test
-        public void verifyPhoneFound() {
+        void verifyPhoneFound() {
             val data = "1234567890";
             try (val webServer = new MockWebServer(9092,
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -181,7 +181,7 @@ class RestPasswordManagementServiceTests {
         }
 
         @Test
-        public void verifySecurityQuestions() {
+        void verifySecurityQuestions() {
             val data = "{\"question1\":\"answer1\"}";
             try (val webServer = new MockWebServer(9308,
                 new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -210,7 +210,7 @@ class RestPasswordManagementServiceTests {
 
 
         @Test
-        public void verifyUpdateSecurityQuestions() {
+        void verifyUpdateSecurityQuestions() {
             val query = PasswordManagementQuery.builder().username("casuser").build();
             query.securityQuestion("Q1", "A1");
             try (val webServer = new MockWebServer(9308, HttpStatus.OK)) {
@@ -237,7 +237,7 @@ class RestPasswordManagementServiceTests {
         }
 
         @Test
-        public void verifyUnlockAccount() {
+        void verifyUnlockAccount() {
             try (val webServer = new MockWebServer(9308, HttpStatus.OK)) {
                 webServer.start();
                 val props = new CasConfigurationProperties();
@@ -250,7 +250,7 @@ class RestPasswordManagementServiceTests {
 
 
         @Test
-        public void verifyPasswordChanged() {
+        void verifyPasswordChanged() {
             val data = "true";
             val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "123456".toCharArray(), "123456".toCharArray());
             try (val webServer = new MockWebServer(9309,

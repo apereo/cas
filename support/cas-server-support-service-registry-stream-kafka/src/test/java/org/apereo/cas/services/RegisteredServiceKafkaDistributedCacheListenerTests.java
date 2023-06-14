@@ -47,7 +47,7 @@ class RegisteredServiceKafkaDistributedCacheListenerTests {
     }
 
     @Test
-    public void verifyRemoval() {
+    void verifyRemoval() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val item = new DistributedCacheObject<RegisteredService>(
             Map.of("event", CasRegisteredServiceDeletedEvent.class.getSimpleName()),
@@ -58,7 +58,7 @@ class RegisteredServiceKafkaDistributedCacheListenerTests {
     }
 
     @Test
-    public void verifyUpdate() {
+    void verifyUpdate() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val item = new DistributedCacheObject<RegisteredService>(
             Map.of(),

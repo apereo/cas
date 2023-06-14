@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
-    public void verifyMultiRowAttributeRepository() {
+    void verifyMultiRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);

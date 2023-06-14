@@ -25,7 +25,7 @@ class FlowBuilderConversionServiceTests extends BaseWebflowConfigurerTests {
     protected FlowBuilderServices flowBuilderServices;
 
     @Test
-    public void verfyConversion() {
+    void verfyConversion() {
         val conversionService = flowBuilderServices.getConversionService();
 
         var result = conversionService.executeConversion("https://github.io", Service.class);

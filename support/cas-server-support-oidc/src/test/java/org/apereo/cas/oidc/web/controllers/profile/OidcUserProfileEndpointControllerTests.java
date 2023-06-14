@@ -42,7 +42,7 @@ class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
     protected OAuth20AccessTokenFactory accessTokenFactory;
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -51,7 +51,7 @@ class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verify() throws Exception {
+    void verify() throws Exception {
         val map = new HashMap<String, List<Object>>();
         map.put("cn", List.of("cas"));
 

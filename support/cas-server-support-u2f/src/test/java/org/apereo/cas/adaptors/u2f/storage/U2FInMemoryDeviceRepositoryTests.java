@@ -37,7 +37,7 @@ class U2FInMemoryDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests 
     private U2FDeviceRepository deviceRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(deviceRepository);
         assertTrue(deviceRepository.getRegisteredDevices(UUID.randomUUID().toString()).isEmpty());
     }

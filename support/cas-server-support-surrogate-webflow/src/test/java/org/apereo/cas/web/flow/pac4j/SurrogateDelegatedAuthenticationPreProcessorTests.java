@@ -41,7 +41,7 @@ class SurrogateDelegatedAuthenticationPreProcessorTests {
     private DelegatedAuthenticationPreProcessor surrogateDelegatedAuthenticationPreProcessor;
 
     @Test
-    public void verifySurrogatePrincipalFound() {
+    void verifySurrogatePrincipalFound() {
         val credential = new BasicIdentifiableCredential("casuser");
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
         val surrogatePrincipal = surrogateDelegatedAuthenticationPreProcessor.process(RegisteredServiceTestUtils.getPrincipal("casuser"),
@@ -50,7 +50,7 @@ class SurrogateDelegatedAuthenticationPreProcessorTests {
     }
 
     @Test
-    public void verifyDefault() {
+    void verifyDefault() {
         val credential = new BasicIdentifiableCredential("casuser");
         val surrogatePrincipal = surrogateDelegatedAuthenticationPreProcessor.process(RegisteredServiceTestUtils.getPrincipal("casuser"),
             mock(BaseClient.class), credential, RegisteredServiceTestUtils.getService());

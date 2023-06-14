@@ -72,7 +72,7 @@ class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private ThrottledRequestFilter oidcThrottledRequestFilter;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

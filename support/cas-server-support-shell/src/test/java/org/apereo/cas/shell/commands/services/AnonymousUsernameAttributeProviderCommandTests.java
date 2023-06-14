@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class AnonymousUsernameAttributeProviderCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-anonymous-user --username casuser --service example --salt ythr91%^1"));
     }
 }

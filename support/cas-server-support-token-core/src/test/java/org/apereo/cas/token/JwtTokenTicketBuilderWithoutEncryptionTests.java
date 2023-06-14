@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
-    public void verifyJwtForServiceTicket() throws ParseException {
+    void verifyJwtForServiceTicket() throws ParseException {
         val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
@@ -35,7 +35,7 @@ class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuil
     }
 
     @Test
-    public void verifyJwtForServiceTicketEncoding() {
+    void verifyJwtForServiceTicketEncoding() {
         val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val jwtDec = EncodingUtils.decodeBase64ToString(jwt);
@@ -43,7 +43,7 @@ class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuil
     }
 
     @Test
-    public void verifyJwtForServiceTicketWithoutEncryptionKey() throws Exception {
+    void verifyJwtForServiceTicketWithoutEncryptionKey() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("https://jwt.no-encryption-key.example.org/cas");
         val jwt = tokenTicketBuilder.build("ST-123456", service);
         assertNotNull(jwt);

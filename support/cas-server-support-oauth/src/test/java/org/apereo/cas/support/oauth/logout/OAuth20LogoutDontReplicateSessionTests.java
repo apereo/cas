@@ -25,7 +25,7 @@ class OAuth20LogoutDontReplicateSessionTests extends AbstractOAuth20Tests {
     private LogoutExecutionPlan logoutExecutionPlan;
 
     @Test
-    public void verifyThatTheOAuthSpecificLogoutPostProcessorIsNotRegistered() {
+    void verifyThatTheOAuthSpecificLogoutPostProcessorIsNotRegistered() {
         assertEquals(0, logoutExecutionPlan.getLogoutPostProcessors().size());
     }
 }

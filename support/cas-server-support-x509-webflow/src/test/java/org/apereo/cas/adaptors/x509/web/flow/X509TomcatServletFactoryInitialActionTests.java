@@ -38,7 +38,7 @@ class X509TomcatServletFactoryInitialActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val action = new X509TomcatServletFactoryInitialAction(casProperties);
 
         val context = new MockRequestContext();

@@ -32,14 +32,14 @@ class CasSimpleMultifactorRestHttpRequestCredentialFactoryTests {
     private RestHttpRequestCredentialFactory casSimpleMultifactorRestHttpRequestCredentialFactory;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val body = new LinkedMultiValueMap<String, String>();
         body.add(CasSimpleMultifactorRestHttpRequestCredentialFactory.PARAMETER_NAME_CAS_SIMPLE_OTP, "token");
         assertFalse(casSimpleMultifactorRestHttpRequestCredentialFactory.fromRequest(null, body).isEmpty());
     }
 
     @Test
-    public void verifyEmptyBody() {
+    void verifyEmptyBody() {
         val body = new LinkedMultiValueMap<String, String>();
         assertTrue(casSimpleMultifactorRestHttpRequestCredentialFactory.fromRequest(null, body).isEmpty());
         body.put("some-other-key", List.of("value1"));

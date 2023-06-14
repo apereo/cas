@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class QRUtilsTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         try (val out = new ByteArrayOutputStream()) {
             val result = QRUtils.generateQRCode("test", 16, 16);
             assertNotNull(EncodingUtils.decodeBase64(result));

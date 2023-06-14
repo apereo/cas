@@ -32,7 +32,7 @@ class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         servicesManager.save(getOidcRegisteredService(id));
 

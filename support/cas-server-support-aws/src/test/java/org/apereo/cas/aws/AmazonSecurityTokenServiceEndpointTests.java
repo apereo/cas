@@ -75,7 +75,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyAuthzFails() {
+        void verifyAuthzFails() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -105,7 +105,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyAuthzFails() {
+        void verifyAuthzFails() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -138,7 +138,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val request = new MockHttpServletRequest();
 
             val body = new LinkedMultiValueMap<String, String>();
@@ -151,7 +151,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyContextValidationFails() {
+        void verifyContextValidationFails() {
             val request = new MockHttpServletRequest();
 
             val body = new LinkedMultiValueMap<String, String>();
@@ -164,7 +164,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyNoCredentials() {
+        void verifyNoCredentials() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null,
@@ -173,7 +173,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyFailsAuthN() {
+        void verifyFailsAuthN() {
             val request = new MockHttpServletRequest();
 
             val body = new LinkedMultiValueMap<String, String>();
@@ -210,7 +210,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -245,7 +245,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
@@ -256,7 +256,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         }
 
         @Test
-        public void verifySpecificUnknownRoleOperation() {
+        void verifySpecificUnknownRoleOperation() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));

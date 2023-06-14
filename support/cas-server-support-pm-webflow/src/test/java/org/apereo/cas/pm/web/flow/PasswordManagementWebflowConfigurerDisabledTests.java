@@ -57,7 +57,7 @@ class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflowConfig
     private Action verifySecurityQuestionsAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

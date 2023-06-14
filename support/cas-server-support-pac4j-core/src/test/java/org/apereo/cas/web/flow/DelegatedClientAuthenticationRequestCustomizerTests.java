@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class DelegatedClientAuthenticationRequestCustomizerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val customizer = mock(DelegatedClientAuthenticationRequestCustomizer.class);
         when(customizer.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, customizer.getOrder());

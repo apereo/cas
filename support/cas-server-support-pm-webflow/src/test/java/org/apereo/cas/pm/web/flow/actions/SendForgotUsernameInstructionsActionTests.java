@@ -42,7 +42,7 @@ class SendForgotUsernameInstructionsActionTests {
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        public void verifyNoEmailOrUser() throws Exception {
+        void verifyNoEmailOrUser() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
@@ -70,7 +70,7 @@ class SendForgotUsernameInstructionsActionTests {
         }
 
         @Test
-        public void verifyOp() throws Exception {
+        void verifyOp() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 
@@ -101,7 +101,7 @@ class SendForgotUsernameInstructionsActionTests {
         protected Action sendForgotUsernameInstructionsAction;
 
         @Test
-        public void verifyOpWithoutPrincipalResolution() throws Exception {
+        void verifyOpWithoutPrincipalResolution() throws Exception {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
 

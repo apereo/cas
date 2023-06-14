@@ -72,7 +72,7 @@ class AuthyAuthenticationWebflowEventResolverTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authn));

@@ -29,7 +29,7 @@ class CachingAttributeRepositoryTests {
     private IPersonAttributeDao cachingAttributeRepository;
 
     @Test
-    public void verifyRepositoryCaching() {
+    void verifyRepositoryCaching() {
         val person1 = cachingAttributeRepository.getPerson("casuser");
         assertEquals("casuser", person1.getName());
         assertEquals(4, person1.getAttributes().size());

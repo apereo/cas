@@ -47,7 +47,7 @@ class GrouperPersonAttributeDaoTests {
     private IPersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val attributes = PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(aggregatingAttributeRepository)
             .principalId("casuser")

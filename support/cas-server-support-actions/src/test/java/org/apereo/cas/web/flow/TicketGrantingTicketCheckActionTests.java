@@ -30,7 +30,7 @@ class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyNullTicket() throws Exception {
+    void verifyNullTicket() throws Exception {
         val ctx = new MockRequestContext();
         val action = new TicketGrantingTicketCheckAction(getTicketRegistry());
         val event = action.execute(ctx);
@@ -38,7 +38,7 @@ class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyInvalidTicket() throws Exception {
+    void verifyInvalidTicket() throws Exception {
         val ctx = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
@@ -48,7 +48,7 @@ class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyValidTicket() throws Exception {
+    void verifyValidTicket() throws Exception {
         val ctx = new MockRequestContext();
         val ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val tgt = getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);

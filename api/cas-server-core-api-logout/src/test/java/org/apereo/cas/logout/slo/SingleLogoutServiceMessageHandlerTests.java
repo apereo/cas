@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class SingleLogoutServiceMessageHandlerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val handler = new SingleLogoutServiceMessageHandler() {
             @Override
             public Collection<SingleLogoutRequestContext> handle(final WebApplicationService singleLogoutService,

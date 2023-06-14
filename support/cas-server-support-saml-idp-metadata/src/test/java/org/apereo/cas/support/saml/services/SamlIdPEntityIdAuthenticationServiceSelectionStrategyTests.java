@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2")
 class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
         val factory = new WebApplicationServiceFactory();
         val strategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, factory, "http://localhost:8080/cas");

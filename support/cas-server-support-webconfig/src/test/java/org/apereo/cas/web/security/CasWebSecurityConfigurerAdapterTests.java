@@ -67,7 +67,7 @@ class CasWebSecurityConfigurerAdapterTests {
     private SecurityFilterChain casWebSecurityConfigurerAdapter;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(casWebSecurityConfigurerAdapter);
     }
 }

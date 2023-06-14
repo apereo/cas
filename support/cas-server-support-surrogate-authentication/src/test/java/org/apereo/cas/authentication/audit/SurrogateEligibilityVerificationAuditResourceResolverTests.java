@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class SurrogateEligibilityVerificationAuditResourceResolverTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val resolver = new SurrogateEligibilityVerificationAuditResourceResolver();
         val jp = mock(JoinPoint.class);
         val result = AuditableExecutionResult.builder()

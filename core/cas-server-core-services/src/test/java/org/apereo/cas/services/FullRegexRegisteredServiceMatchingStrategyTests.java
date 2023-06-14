@@ -27,7 +27,7 @@ class FullRegexRegisteredServiceMatchingStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = new FullRegexRegisteredServiceMatchingStrategy();
         service.setMatchingStrategy(strategy);
@@ -37,7 +37,7 @@ class FullRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = RegisteredServiceTestUtils.getRegisteredService("https://.*");
         val strategy = new FullRegexRegisteredServiceMatchingStrategy();
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
@@ -45,7 +45,7 @@ class FullRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    public void verifyPattern2() {
+    void verifyPattern2() {
         val service = RegisteredServiceTestUtils.getRegisteredService("\\d\\d\\d");
         val strategy = new FullRegexRegisteredServiceMatchingStrategy();
         assertFalse(strategy.matches(service, "https://google123.com"));

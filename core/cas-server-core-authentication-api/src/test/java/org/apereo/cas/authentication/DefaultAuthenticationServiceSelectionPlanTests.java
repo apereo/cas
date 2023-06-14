@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultAuthenticationServiceSelectionPlanTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val input = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         assertThrows(ClassCastException.class,
             () -> input.resolveService(CoreAuthenticationTestUtils.getService(), WebApplicationService.class));

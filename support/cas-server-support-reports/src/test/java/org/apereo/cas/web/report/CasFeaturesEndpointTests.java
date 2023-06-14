@@ -25,7 +25,7 @@ class CasFeaturesEndpointTests extends AbstractCasEndpointTests {
     private CasFeaturesEndpoint endpoint;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val features = endpoint.features();
         assertFalse(features.isEmpty());
         assertTrue(CasFeatureModule.FeatureCatalog.Reports.isRegistered());

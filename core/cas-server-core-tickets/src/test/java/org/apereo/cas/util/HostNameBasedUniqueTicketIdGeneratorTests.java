@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test
-    public void verifyUniqueGenerationOfTicketIds() {
+    void verifyUniqueGenerationOfTicketIds() {
         val generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
         val id1 = generator.getNewTicketId("TEST");
         val id2 = generator.getNewTicketId("TEST");
@@ -26,7 +26,7 @@ class HostNameBasedUniqueTicketIdGeneratorTests {
     }
 
     @Test
-    public void verifyUniqueGenerationOfTicketIdsWithPrefix() {
+    void verifyUniqueGenerationOfTicketIdsWithPrefix() {
         val generator = new HostNameBasedUniqueTicketIdGenerator(10, "prefix");
         val id1 = generator.getNewTicketId("TEST");
         val id2 = generator.getNewTicketId("TEST");

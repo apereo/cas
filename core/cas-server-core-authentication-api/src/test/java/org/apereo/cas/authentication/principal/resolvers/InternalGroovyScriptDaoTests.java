@@ -35,7 +35,7 @@ class InternalGroovyScriptDaoTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val groovy = new GroovyPrincipalAttributesProperties();
         groovy.setLocation(new ClassPathResource("/GroovyAttributeDao.groovy"));
         val d = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, groovy));

@@ -37,7 +37,7 @@ class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolic
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertNotNull(acceptableUsagePolicyRepository);
         verifyRepositoryAction("casuser",
             CollectionUtils.wrap("accepted", List.of("false"), "email", List.of("CASuser@example.org")));

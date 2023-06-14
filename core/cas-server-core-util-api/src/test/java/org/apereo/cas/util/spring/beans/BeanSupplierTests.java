@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class BeanSupplierTests {
     @Test
-    public void verifyRequireInterface() {
+    void verifyRequireInterface() {
         assertThrows(IllegalArgumentException.class, () -> BeanSupplier.of(String.class).otherwiseProxy().get());
     }
 
     @Test
-    public void verifyBeanSupplied() throws Exception {
+    void verifyBeanSupplied() throws Exception {
         val noOp = BeanSupplier.of(CipherExecutor.class)
             .alwaysMatch()
             .supply(CipherExecutor::noOp)
@@ -34,7 +34,7 @@ class BeanSupplierTests {
     }
 
     @Test
-    public void verifyBeanProxiedWithSupplier() throws Exception {
+    void verifyBeanProxiedWithSupplier() throws Exception {
         val noOp = BeanSupplier.of(CipherExecutor.class)
             .neverMatch()
             .otherwise(CipherExecutor::noOp)
@@ -43,7 +43,7 @@ class BeanSupplierTests {
     }
 
     @Test
-    public void verifyBeanSuppliedWithMultipleConditions() throws Exception {
+    void verifyBeanSuppliedWithMultipleConditions() throws Exception {
         val noOp = BeanSupplier.of(CipherExecutor.class)
             .alwaysMatch()
             .supply(CipherExecutor::noOp)
@@ -52,7 +52,7 @@ class BeanSupplierTests {
     }
 
     @Test
-    public void verifyBeanProxied() throws Exception {
+    void verifyBeanProxied() throws Exception {
         val r1 = BeanSupplier.of(CipherExecutor.class).neverMatch().otherwiseProxy().get();
         assertTrue(BeanSupplier.isProxy(r1));
 

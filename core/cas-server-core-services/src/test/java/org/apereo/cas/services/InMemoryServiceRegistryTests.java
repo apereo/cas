@@ -29,7 +29,7 @@ class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void removeNonExistingService() {
+    void removeNonExistingService() {
         var registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         assertTrue(getNewServiceRegistry().delete(registeredService));
     }

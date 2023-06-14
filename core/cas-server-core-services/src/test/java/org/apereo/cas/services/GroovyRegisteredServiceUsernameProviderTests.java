@@ -36,7 +36,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyUsernameProvider() {
+    void verifyUsernameProvider() {
         val provider = new GroovyRegisteredServiceUsernameProvider();
         provider.setGroovyScript("classpath:uid.groovy");
 
@@ -50,7 +50,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void verifyUsernameProviderInline() {
+    void verifyUsernameProviderInline() {
         val provider = new GroovyRegisteredServiceUsernameProvider();
         provider.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
 
@@ -64,7 +64,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void verifyUsernameProviderInlineAsList() {
+    void verifyUsernameProviderInlineAsList() {
         val provider = new GroovyRegisteredServiceUsernameProvider();
         provider.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
@@ -77,7 +77,7 @@ class GroovyRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val provider = new GroovyRegisteredServiceUsernameProvider();
         provider.setGroovyScript("groovy { return 'something' }");
         provider.setEncryptUsername(true);

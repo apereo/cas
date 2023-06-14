@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 class RestfulIPAddressIntelligenceServiceTests {
     @Test
-    public void verifyAllowedOperation() {
+    void verifyAllowedOperation() {
         try (val webServer = new MockWebServer(9300,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
@@ -39,7 +39,7 @@ class RestfulIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    public void verifyBannedOperation() {
+    void verifyBannedOperation() {
         try (val webServer = new MockWebServer(9304,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
             webServer.start();
@@ -53,7 +53,7 @@ class RestfulIPAddressIntelligenceServiceTests {
     }
 
     @Test
-    public void verifyRankedOperation() {
+    void verifyRankedOperation() {
         try (val webServer = new MockWebServer(9306,
             new ByteArrayResource("12.435".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.PRECONDITION_REQUIRED)) {
             webServer.start();

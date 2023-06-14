@@ -21,26 +21,26 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class GenerateDdlCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --createSchema --dropSchema --file " + file + " --dialect HSQL"));
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --file " + file + " --dialect HSQL"));
     }
 
     @Test
-    public void verifyCreateOperation() throws Exception {
+    void verifyCreateOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --createSchema --file " + file + " --dialect HSQL"));
     }
 
     @Test
-    public void verifyDropOperation() throws Exception {
+    void verifyDropOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --url jdbc:hsqldb:mem:cas2 --dropSchema --file " + file + " --dialect HSQL"));
     }
 
     @Test
-    public void verifyBadDialect() throws Exception {
+    void verifyBadDialect() throws Exception {
         val file = File.createTempFile("ddl", "sql");
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --file " + file + " --dialect XYZ"));
     }

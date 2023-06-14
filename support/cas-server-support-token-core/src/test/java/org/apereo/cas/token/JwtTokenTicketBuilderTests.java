@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
-    public void verifyJwtForServiceTicket() throws Exception {
+    void verifyJwtForServiceTicket() throws Exception {
         var jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
@@ -33,7 +33,7 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     }
 
     @Test
-    public void verifyJwtForServiceTicketWithOwnKeys() throws Exception {
+    void verifyJwtForServiceTicketWithOwnKeys() throws Exception {
         val service = CoreAuthenticationTestUtils.getWebApplicationService("https://jwt.example.org/cas");
         val jwt = tokenTicketBuilder.build("ST-123455", service);
         assertNotNull(jwt);
@@ -49,7 +49,7 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     }
 
     @Test
-    public void verifyJwtForTicketGrantingTicket() throws Exception {
+    void verifyJwtForTicketGrantingTicket() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         val jwt = tokenTicketBuilder.build(tgt, Map.of());
         assertNotNull(jwt);

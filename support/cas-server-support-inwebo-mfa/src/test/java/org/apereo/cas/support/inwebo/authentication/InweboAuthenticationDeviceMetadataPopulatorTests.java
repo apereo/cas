@@ -21,7 +21,7 @@ class InweboAuthenticationDeviceMetadataPopulatorTests {
         new InweboAuthenticationDeviceMetadataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() {
         val credentials = new InweboCredential();
         credentials.setDeviceName("MyDeviceName");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();

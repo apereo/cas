@@ -37,12 +37,12 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     private AuthenticationServiceSelectionStrategy strategy;
 
     @Test
-    public void verifyNullService() {
+    void verifyNullService() {
         assertNotNull(strategy.resolveServiceFrom(mock(Service.class)));
     }
 
     @Test
-    public void verifyGrantType() {
+    void verifyGrantType() {
         val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addHeader("X-" + CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL2);
@@ -57,7 +57,7 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     }
 
     @Test
-    public void verifyJwtRequest() {
+    void verifyJwtRequest() {
         val registeredService = addRegisteredService();
         val claims = new JWTClaimsSet.Builder().subject("cas")
             .claim("scope", new String[]{"profile"})
@@ -79,7 +79,7 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
     }
 
     @Test
-    public void verifyBadRequest() {
+    void verifyBadRequest() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org"));

@@ -43,7 +43,7 @@ class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogate
     private PasswordlessAuthenticationPreProcessor surrogatePasswordlessAuthenticationPreProcessor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val uid = "casuser";
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication(uid));
         val account = PasswordlessUserAccount.builder().username(uid).build();

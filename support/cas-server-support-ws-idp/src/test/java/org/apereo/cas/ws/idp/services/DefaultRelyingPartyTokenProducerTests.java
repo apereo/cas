@@ -53,7 +53,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
     private ServicesManager servicesManager;
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();
@@ -83,7 +83,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
     }
 
     @Test
-    public void verifyRequestFailsOperation() {
+    void verifyRequestFailsOperation() {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();
@@ -103,7 +103,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
 
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();

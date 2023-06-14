@@ -44,7 +44,7 @@ class JdbcDataSourceHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserve() {
+    void verifyObserve() {
         val monitor = new JdbcDataSourceHealthIndicator(5000,
             this.dataSource, this.executor,
             "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
@@ -53,7 +53,7 @@ class JdbcDataSourceHealthIndicatorTests {
     }
 
     @Test
-    public void verifyBadQuery() {
+    void verifyBadQuery() {
         val monitor = new JdbcDataSourceHealthIndicator(5000,
             this.dataSource, this.executor,
             "SELECT 1 FROM XYZ");

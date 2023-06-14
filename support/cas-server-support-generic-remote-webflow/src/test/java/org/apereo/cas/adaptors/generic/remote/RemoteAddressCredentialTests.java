@@ -25,7 +25,7 @@ class RemoteAddressCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeARemoteAddressCredentialToJson() throws IOException {
+    void verifySerializeARemoteAddressCredentialToJson() throws IOException {
         val credentialWritten = new RemoteAddressCredential("80.123.456.78");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, RemoteAddressCredential.class);

@@ -52,7 +52,7 @@ class PasswordManagementCaptchaWebflowConfigurerTests extends BaseWebflowConfigu
     private Action initCaptchaAction;
 
     @Test
-    public void verifyCaptcha() throws Exception {
+    void verifyCaptcha() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -64,7 +64,7 @@ class PasswordManagementCaptchaWebflowConfigurerTests extends BaseWebflowConfigu
     }
     
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);

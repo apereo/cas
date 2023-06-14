@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -46,7 +46,7 @@ class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyJsonOperation() {
+    void verifyJsonOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class PrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
         val principal = props.getAuthn().getMfa().getTriggers().getPrincipal();
         principal.setGlobalPrincipalAttributeNameTriggers("email");
@@ -35,7 +35,7 @@ class PrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultif
     }
 
     @Test
-    public void verifyDenyWhenUnmatched() {
+    void verifyDenyWhenUnmatched() {
         val props = new CasConfigurationProperties();
         val principal = props.getAuthn().getMfa().getTriggers().getPrincipal();
         principal.setGlobalPrincipalAttributeNameTriggers("email");

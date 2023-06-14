@@ -121,7 +121,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setUseFriendlyName(true);
         MAPPER.writeValue(JSON_FILE, filter);
@@ -131,7 +131,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    public void verifyNoAuthnRequest() {
+    void verifyNoAuthnRequest() {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
@@ -149,7 +149,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    public void verifyAuthnRequestWithoutExtensions() throws IOException {
+    void verifyAuthnRequestWithoutExtensions() throws IOException {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
@@ -185,7 +185,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    public void verifyAuthnRequestWithExtensionsNotAllowed() throws IOException {
+    void verifyAuthnRequestWithExtensionsNotAllowed() throws IOException {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(false);
@@ -232,7 +232,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    public void verifyAuthnRequestWithExtensionsAllowed() throws IOException {
+    void verifyAuthnRequestWithExtensionsAllowed() throws IOException {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalName"));
         filter.setUseFriendlyName(false);

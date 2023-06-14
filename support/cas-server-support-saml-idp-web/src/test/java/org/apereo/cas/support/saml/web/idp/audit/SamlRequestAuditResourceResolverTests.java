@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2")
 class SamlRequestAuditResourceResolverTests {
     @Test
-    public void verifyActionUnknown() {
+    void verifyActionUnknown() {
         val r = new SamlRequestAuditResourceResolver();
         val result = r.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
@@ -30,7 +30,7 @@ class SamlRequestAuditResourceResolverTests {
 
 
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val r = new SamlRequestAuditResourceResolver();
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
@@ -44,7 +44,7 @@ class SamlRequestAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyLogout() {
+    void verifyLogout() {
         val r = new SamlRequestAuditResourceResolver();
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");

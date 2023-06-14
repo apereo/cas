@@ -27,7 +27,7 @@ class DefaultRegisteredServiceServiceTicketExpirationPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val p = new DefaultRegisteredServiceServiceTicketExpirationPolicy();
         p.setNumberOfUses(12);
         p.setTimeToLive("60");
@@ -37,7 +37,7 @@ class DefaultRegisteredServiceServiceTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifyUndefined() {
+    void verifyUndefined() {
         val p = RegisteredServiceServiceTicketExpirationPolicy.undefined();
         assertNull(p.getTimeToLive());
         assertEquals(Long.MIN_VALUE, p.getNumberOfUses());

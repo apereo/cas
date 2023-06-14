@@ -36,7 +36,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     protected OidcClientConfigurationEndpointController controller;
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -48,7 +48,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyServiceNotFoundForUpdate() throws Exception {
+    void verifyServiceNotFoundForUpdate() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
@@ -57,7 +57,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyGetOperation() {
+    void verifyGetOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
@@ -71,7 +71,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyUpdateOperation() throws Exception {
+    void verifyUpdateOperation() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
@@ -94,7 +94,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadRequest() {
+    void verifyBadRequest() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();

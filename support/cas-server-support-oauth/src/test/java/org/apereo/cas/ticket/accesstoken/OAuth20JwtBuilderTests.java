@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("JavaUtilDate")
 class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
     @Test
-    public void verifyJwt() {
+    void verifyJwt() {
         servicesManager.save(getRegisteredService("clientid-jwt", "secret-jwt"));
         val service = CoreAuthenticationTestUtils.getService("https://service.example.com");
         val request = JwtBuilder.JwtRequest.builder()
@@ -38,7 +38,7 @@ class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyBadJwt() {
+    void verifyBadJwt() {
         assertThrows(IllegalArgumentException.class, () -> JwtBuilder.parse("badly-formatted-jwt"));
     }
 }

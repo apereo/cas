@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("Hazelcast")
 class HazelcastKubernetesDiscoveryStrategyTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val cluster = new HazelcastClusterProperties();
         val kb = cluster.getDiscovery().getKubernetes();
         val id = UUID.randomUUID().toString();

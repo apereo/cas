@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class HttpUtilsTests {
 
     @Test
-    public void verifyExecWithExistingClient() {
+    void verifyExecWithExistingClient() {
         try (val webServer = new MockWebServer(8081, HttpStatus.OK)) {
             webServer.start();
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -40,7 +40,7 @@ class HttpUtilsTests {
     }
 
     @Test
-    public void verifyExec() {
+    void verifyExec() {
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword("password")
             .basicAuthUsername("user")
@@ -54,7 +54,7 @@ class HttpUtilsTests {
     }
 
     @Test
-    public void verifyBearerToken() {
+    void verifyBearerToken() {
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .bearerToken(UUID.randomUUID().toString())
             .method(HttpMethod.GET)
@@ -67,7 +67,7 @@ class HttpUtilsTests {
     }
 
     @Test
-    public void verifyClose() {
+    void verifyClose() {
         assertDoesNotThrow(() -> {
             HttpUtils.close(null);
             val response = mock(CloseableHttpResponse.class);
@@ -77,7 +77,7 @@ class HttpUtilsTests {
     }
 
     @Test
-    public void verifyBadSSLLogging() {
+    void verifyBadSSLLogging() {
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .method(HttpMethod.GET)
             .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")

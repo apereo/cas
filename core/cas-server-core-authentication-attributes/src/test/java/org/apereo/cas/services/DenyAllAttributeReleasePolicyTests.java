@@ -26,7 +26,7 @@ class DenyAllAttributeReleasePolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
+    void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new DenyAllAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, DenyAllAttributeReleasePolicy.class);

@@ -36,7 +36,7 @@ class DynamicHtmlViewTests {
     private View dynamicHtmlView;
 
     @Test
-    public void verifyViewRendering() throws Exception {
+    void verifyViewRendering() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         dynamicHtmlView.render(Map.of(DynamicHtmlView.class.getName(), "Hello"), request, response);
@@ -44,7 +44,7 @@ class DynamicHtmlViewTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val view = new DynamicHtmlView("<p>Hello</p>");

@@ -36,7 +36,7 @@ class PathWatcherServiceTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val file1 = createFile("file1.txt");
         val file2 = createFile("file2.txt");
 

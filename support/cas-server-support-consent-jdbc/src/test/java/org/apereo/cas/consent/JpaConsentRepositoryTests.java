@@ -44,12 +44,12 @@ class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
     protected ConsentRepository repository;
 
     @Test
-    public void verifyBadDelete() {
+    void verifyBadDelete() {
         assertFalse(repository.deleteConsentDecision(-1, null));
     }
 
     @Test
-    public void verifyLargeDataset() throws Exception {
+    void verifyLargeDataset() throws Exception {
         val principal = UUID.randomUUID().toString();
         for (int i = 0; i < COUNT; i++) {
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());

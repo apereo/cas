@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class UsernamePasswordRestHttpRequestCredentialFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = new UsernamePasswordRestHttpRequestCredentialFactory();
         assertEquals(Integer.MIN_VALUE, factory.getOrder());
     }

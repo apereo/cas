@@ -31,7 +31,7 @@ class CasGeoLocationMaxmindConfigurationTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(geoLocationService);
     }
 }

@@ -39,7 +39,7 @@ class RemoteAddressNonInteractiveCredentialsActionTests {
     private Action remoteAddressCheck;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -53,7 +53,7 @@ class RemoteAddressNonInteractiveCredentialsActionTests {
     }
 
     @Test
-    public void verifyFails() throws Exception {
+    void verifyFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(StringUtils.EMPTY);

@@ -66,7 +66,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyInCommonAggregateWithCallback() throws Exception {
+    void verifyInCommonAggregateWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
@@ -96,7 +96,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyLogoutOperation() {
+    void verifyLogoutOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
@@ -117,7 +117,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
@@ -138,7 +138,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyRedirectEncodedSamlRequestOperation() {
+    void verifyRedirectEncodedSamlRequestOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
         val service1 = RegisteredServiceTestUtils.getRegisteredService("mmoayyed.*");
@@ -158,7 +158,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyEntityIdParam() {
+    void verifyEntityIdParam() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
@@ -179,7 +179,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyProviderIdParam() {
+    void verifyProviderIdParam() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
@@ -200,7 +200,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyReverseOperation() {
+    void verifyReverseOperation() {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
         service1.setEvaluationOrder(9);
 
@@ -227,7 +227,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
      * requested entityID, exactly one metadata lookup is performed.
      */
     @Test
-    public void verifyEntityIDFilter() {
+    void verifyEntityIDFilter() {
         try (val mockFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
             val service1 = getSamlRegisteredServiceFor(false, false, false, "urn:abc:def.+");
             service1.setEvaluationOrder(9);
@@ -253,7 +253,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyMatchWithEncodedParam() {
+    void verifyMatchWithEncodedParam() {
         try (val mockFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
 
             val service1 = getSamlRegisteredServiceFor(".*app.samlclient.edu.*/sp");
@@ -281,7 +281,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyNoSamlService() {
+    void verifyNoSamlService() {
         try (val mockFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
 
             val service1 = RegisteredServiceTestUtils.getRegisteredService(".*app.samlclient.edu.*/sp");
@@ -298,7 +298,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyWithSelectionStrategy() throws Exception {
+    void verifyWithSelectionStrategy() throws Exception {
         val prefix = "http://localhost:8443/cas";
         val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
 

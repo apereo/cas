@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 class SamlExceptionTests {
     @Test
-    public void verifyArgs() {
+    void verifyArgs() {
         val ex = new SamlException("code", "message", List.of("arg1"));
         assertNotNull(ex.getMessage());
         assertNotNull(ex.getCode());
@@ -25,7 +25,7 @@ class SamlExceptionTests {
     }
 
     @Test
-    public void verifyArgsWithCause() {
+    void verifyArgsWithCause() {
         val ex = new SamlException("code", new RuntimeException(), List.of("arg1"));
         assertNotNull(ex.getMessage());
         assertNotNull(ex.getCode());

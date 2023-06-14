@@ -39,7 +39,7 @@ class RegisteredServiceScriptedAttributeFilterTests {
     }
 
     @Test
-    public void verifyScriptedAttributeFilter() throws Exception {
+    void verifyScriptedAttributeFilter() throws Exception {
         val f = File.createTempFile("attr", ".groovy");
         val stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
         FileUtils.copyInputStreamToFile(stream, f);
@@ -53,7 +53,7 @@ class RegisteredServiceScriptedAttributeFilterTests {
     }
 
     @Test
-    public void verifyScriptedAttributeFilterInlined() throws Exception {
+    void verifyScriptedAttributeFilterInlined() throws Exception {
         val filter = new RegisteredServiceScriptedAttributeFilter(0, "groovy {logger.debug('exec'); return attributes;}");
         val results = filter.filter(this.givenAttributesMap);
         assertEquals(2, results.size());

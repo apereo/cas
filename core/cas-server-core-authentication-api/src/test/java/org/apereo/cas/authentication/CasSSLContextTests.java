@@ -33,7 +33,7 @@ class CasSSLContextTests {
     }
 
     @Test
-    public void verifyOperationBySystem() throws Exception {
+    void verifyOperationBySystem() throws Exception {
         val system = CasSSLContext.system();
         assertNotNull(system.getSslContext());
         assertNotNull(system.getKeyManagers());
@@ -46,7 +46,7 @@ class CasSSLContextTests {
     }
 
     @Test
-    public void verifyOperationDisabled() throws Exception {
+    void verifyOperationDisabled() throws Exception {
         val disabled = CasSSLContext.disabled();
         assertNotNull(disabled.getSslContext());
         assertNotNull(disabled.getKeyManagers());

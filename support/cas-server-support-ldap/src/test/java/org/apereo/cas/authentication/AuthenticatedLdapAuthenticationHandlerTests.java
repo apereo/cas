@@ -42,7 +42,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @SuppressWarnings("ClassCanBeStatic")
     class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
-        public void verifyAuthenticateNotFound() {
+        void verifyAuthenticateNotFound() {
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
                     .forEach(Unchecked.consumer(h -> h.authenticate(
@@ -50,7 +50,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
         }
 
         @Test
-        public void verifyAuthenticateFailureNotFound() {
+        void verifyAuthenticateFailureNotFound() {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
             assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(

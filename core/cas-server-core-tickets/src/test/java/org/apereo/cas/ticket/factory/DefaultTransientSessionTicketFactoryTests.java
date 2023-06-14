@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
-    public void verifyExpirationPolicy() {
+    void verifyExpirationPolicy() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>(0));
         assertNotNull(ticket);
@@ -36,7 +36,7 @@ class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    public void verifyById() {
+    void verifyById() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(UUID.randomUUID().toString(), Map.of());
         assertNotNull(ticket);
@@ -44,7 +44,7 @@ class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    public void verifyByServiceById() {
+    void verifyByServiceById() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(UUID.randomUUID().toString(),
             RegisteredServiceTestUtils.getService("example"), Map.of("key", "value"));
@@ -53,7 +53,7 @@ class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    public void verifyCustomExpirationPolicy() {
+    void verifyCustomExpirationPolicy() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"),
             CollectionUtils.wrap(ExpirationPolicy.class.getName(),

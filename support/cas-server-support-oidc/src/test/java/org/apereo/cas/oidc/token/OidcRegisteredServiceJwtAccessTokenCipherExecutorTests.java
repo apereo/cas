@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperationGlobally() throws Exception {
+    void verifyOperationGlobally() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.setJwks(null);
         service.setClientId(UUID.randomUUID().toString());
@@ -45,7 +45,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
 
 
     @Test
-    public void verifyOperationByService() throws Exception {
+    void verifyOperationByService() throws Exception {
         val service = getOidcRegisteredService("whatever");
         assertTrue(oidcRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
         val at = getAccessToken(service.getClientId());
@@ -59,7 +59,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
     }
 
     @Test
-    public void verifyNoSigningKey() throws Exception {
+    void verifyNoSigningKey() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty(RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getDefaultValue()));
@@ -73,7 +73,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
     }
 
     @Test
-    public void verifyEncKey() throws Exception {
+    void verifyEncKey() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));
@@ -87,7 +87,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
     }
 
     @Test
-    public void verifyNoEncKey() throws Exception {
+    void verifyNoEncKey() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));
@@ -97,7 +97,7 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
     }
 
     @Test
-    public void verifyOAuthService() throws Exception {
+    void verifyOAuthService() throws Exception {
         val service = getOAuthRegisteredService(UUID.randomUUID().toString(), RegisteredServiceTestUtils.CONST_TEST_URL);
         service.getProperties().put(RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));

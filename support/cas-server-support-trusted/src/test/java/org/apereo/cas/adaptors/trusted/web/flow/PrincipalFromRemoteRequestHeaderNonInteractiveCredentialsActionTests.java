@@ -31,7 +31,7 @@ class PrincipalFromRemoteRequestHeaderNonInteractiveCredentialsActionTests exten
     private PrincipalFromRequestExtractorAction action;
 
     @Test
-    public void verifyRemoteUserExists() throws Exception {
+    void verifyRemoteUserExists() throws Exception {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

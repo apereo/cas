@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cipher")
 class WebflowConversationStateCipherExecutorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val cipher = new WebflowConversationStateCipherExecutor(null, null,
             "AES", 512, 16, "webflow");
         val encoded = cipher.encode("ST-1234567890".getBytes(StandardCharsets.UTF_8));

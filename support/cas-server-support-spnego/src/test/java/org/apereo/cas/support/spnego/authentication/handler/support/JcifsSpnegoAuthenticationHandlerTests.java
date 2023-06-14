@@ -37,7 +37,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     private static final int POOL_SIZE = 10;
 
     @Test
-    public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
+    void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
@@ -49,7 +49,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
+    void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
@@ -60,7 +60,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
+    void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)));
@@ -80,7 +80,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyUnsuccessfulAuthentication() throws Exception {
+    void verifyUnsuccessfulAuthentication() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)));
@@ -90,7 +90,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupports() {
+    void verifySupports() {
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
@@ -101,7 +101,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyGetSimpleCredentials() {
+    void verifyGetSimpleCredentials() {
         val myNtlmUser = "DOMAIN\\Username";
         val myNtlmUserWithNoDomain = USERNAME;
         val myKerberosUser = "Username@DOMAIN.COM";

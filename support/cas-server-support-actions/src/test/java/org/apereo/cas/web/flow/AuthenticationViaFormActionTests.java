@@ -45,7 +45,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     private CasCookieBuilder warnCookieGenerator;
 
     @Test
-    public void verifySuccessfulAuthenticationWithNoService() throws Exception {
+    void verifySuccessfulAuthenticationWithNoService() throws Exception {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         request.addParameter(USERNAME_PARAM, TEST);
@@ -59,7 +59,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifySuccessfulAuthenticationWithNoServiceAndWarn() throws Exception {
+    void verifySuccessfulAuthenticationWithNoServiceAndWarn() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new MockRequestContext();
@@ -76,7 +76,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifySuccessfulAuthenticationWithServiceAndWarn() throws Exception {
+    void verifySuccessfulAuthenticationWithServiceAndWarn() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new MockRequestContext();
@@ -95,7 +95,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyFailedAuthenticationWithNoService() throws Exception {
+    void verifyFailedAuthenticationWithNoService() throws Exception {
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
 
@@ -112,7 +112,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyRenewWithServiceAndSameCredentials() throws Exception {
+    void verifyRenewWithServiceAndSameCredentials() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
@@ -137,7 +137,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
+    void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
 
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
@@ -159,7 +159,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyServiceTicketCreationWithSso() throws Exception {
+    void verifyServiceTicketCreationWithSso() throws Exception {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val authResult = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
             RegisteredServiceTestUtils.getService(TEST), credential);
@@ -178,7 +178,7 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyRenewWithServiceAndBadCredentials() throws Exception {
+    void verifyRenewWithServiceAndBadCredentials() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val service = RegisteredServiceTestUtils.getService(TEST);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(

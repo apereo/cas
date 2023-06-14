@@ -30,7 +30,7 @@ class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperations() {
+    void verifyOperations() {
         executeEvaluation(
             BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,
             BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,

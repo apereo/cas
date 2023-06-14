@@ -86,7 +86,7 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("locations"));
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         properties.setName("DbHandler");

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultTokenRequestExtractorTests {
 
     @Test
-    public void verifyTokenFromParameter() {
+    void verifyTokenFromParameter() {
         val request = new MockHttpServletRequest();
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "test");
         val e = new DefaultTokenRequestExtractor();
@@ -28,7 +28,7 @@ class DefaultTokenRequestExtractorTests {
     }
 
     @Test
-    public void verifyTokenFromHeader() {
+    void verifyTokenFromHeader() {
         val request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, "test");
         val e = new DefaultTokenRequestExtractor();
@@ -37,7 +37,7 @@ class DefaultTokenRequestExtractorTests {
     }
 
     @Test
-    public void verifyTokenNotFound() {
+    void verifyTokenNotFound() {
         val request = new MockHttpServletRequest();
         val e = new DefaultTokenRequestExtractor();
         val token = e.extract(request);

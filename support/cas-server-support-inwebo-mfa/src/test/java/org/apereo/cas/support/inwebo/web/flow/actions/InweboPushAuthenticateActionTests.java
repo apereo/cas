@@ -41,7 +41,7 @@ class InweboPushAuthenticateActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAuthenticateOk() {
+    void verifyPushAuthenticateOk() {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.OK));
 
         val event = action.doExecute(requestContext);
@@ -50,7 +50,7 @@ class InweboPushAuthenticateActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAuthenticateFailed() {
+    void verifyPushAuthenticateFailed() {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.TIMEOUT));
 
         val event = action.doExecute(requestContext);

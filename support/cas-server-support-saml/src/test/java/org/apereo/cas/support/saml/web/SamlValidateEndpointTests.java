@@ -55,12 +55,12 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     private ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
-    public void verifyEndpoints() {
+    void verifyEndpoints() {
         assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val service = CoreAuthenticationTestUtils.getService();
         assertNotNull(samlValidateEndpoint);
         val results = samlValidateEndpoint.handle("sample", "sample", service.getId());

@@ -38,7 +38,7 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extend
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -66,7 +66,7 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extend
     }
 
     @Test
-    public void verifyEmptyOperation() {
+    void verifyEmptyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -91,7 +91,7 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extend
     }
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

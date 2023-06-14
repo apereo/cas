@@ -38,7 +38,7 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new MetadataEntityAttributesAttributeReleasePolicy();
         filter.setEntityAttribute("entity-attribute");
         filter.setEntityAttributeFormat("entity-format");
@@ -50,7 +50,7 @@ class MetadataEntityAttributesAttributeReleasePolicyTests extends BaseSamlIdPCon
     }
 
     @Test
-    public void verifyPredicateFails() {
+    void verifyPredicateFails() {
         val filter = new MetadataEntityAttributesAttributeReleasePolicy();
         filter.setEntityAttribute("entity-attribute");
         filter.setEntityAttributeFormat("entity-format");

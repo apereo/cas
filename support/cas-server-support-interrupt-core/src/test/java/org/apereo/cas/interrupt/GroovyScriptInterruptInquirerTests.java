@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 class GroovyScriptInterruptInquirerTests {
     @Test
-    public void verifyResponseCanBeFoundFromGroovy() {
+    void verifyResponseCanBeFoundFromGroovy() {
         val q = new GroovyScriptInterruptInquirer(new ClassPathResource("interrupt.groovy"));
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),

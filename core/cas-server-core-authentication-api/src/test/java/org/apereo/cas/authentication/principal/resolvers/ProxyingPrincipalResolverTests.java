@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class ProxyingPrincipalResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val resolver = new ProxyingPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory());
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertTrue(resolver.supports(credential));

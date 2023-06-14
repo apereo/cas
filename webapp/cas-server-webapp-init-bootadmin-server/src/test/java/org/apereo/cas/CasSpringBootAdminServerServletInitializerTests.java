@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasSpringBootAdminServerServletInitializerTests {
 
     @Test
-    public void verifyInitializer() {
+    void verifyInitializer() {
         System.setProperty("spring.cloud.compatibility-verifier.enabled", "false");
         
         val servletContext = new MockServletContext();

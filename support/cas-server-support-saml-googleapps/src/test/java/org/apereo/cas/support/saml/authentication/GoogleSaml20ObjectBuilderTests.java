@@ -50,7 +50,7 @@ class GoogleSaml20ObjectBuilderTests extends AbstractOpenSamlTests {
         + "/BS73KC3Mnzulqf5jOg26WaqmByNoHSnoeUsq86uHy8k3s1/";
     
     @Test
-    public void decodeNonInflatedSamlAuthnRequest() {
+    void decodeNonInflatedSamlAuthnRequest() {
         val builder = new GoogleSaml20ObjectBuilder(this.configBean);
         val decoded = builder.decodeSamlAuthnRequest(BASE64_SAML_AUTHN_REQUEST);
         val authnRequest = SamlUtils.transformSamlObject(this.configBean, decoded, AuthnRequest.class);

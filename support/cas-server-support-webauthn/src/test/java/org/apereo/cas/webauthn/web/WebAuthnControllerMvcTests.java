@@ -99,7 +99,7 @@ class WebAuthnControllerMvcTests {
     }
 
     @Test
-    public void verifyRegistrationEndpoint() throws Exception {
+    void verifyRegistrationEndpoint() throws Exception {
         val endpoint = WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER;
         
         /* Without CSRF token, we must fail */
@@ -129,7 +129,7 @@ class WebAuthnControllerMvcTests {
     }
 
     @Test
-    public void verifyAuthenticationEndpoint() throws Exception {
+    void verifyAuthenticationEndpoint() throws Exception {
         executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), false, HttpStatus.SC_FORBIDDEN);
         executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), true, HttpStatus.SC_FORBIDDEN);
 

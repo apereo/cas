@@ -41,7 +41,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     protected OidcDynamicClientRegistrationEndpointController controller;
 
     @Test
-    public void verifyBadEndpointRequest() throws Exception {
+    void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -50,14 +50,14 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    public void verifyBadInput() throws Exception {
+    void verifyBadInput() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
         assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCode().value());
     }
 
     @Test
-    public void verifyBadRedirect() throws Exception {
+    void verifyBadRedirect() throws Exception {
         val registrationReq = '{'
                               + "   \"redirect_uris\":"
                               + "     [\"https://client.example.org/callback#something\","
@@ -72,7 +72,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registrationReq = '{'
                               + "   \"application_type\": \"web\","
                               + "   \"default_acr_values\":"
@@ -113,7 +113,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    public void verifyNoClientNameOperation() throws Exception {
+    void verifyNoClientNameOperation() throws Exception {
         val registrationReq = '{'
                               + "   \"application_type\": \"web\","
                               + "   \"default_acr_values\":"

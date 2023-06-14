@@ -41,7 +41,7 @@ class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests 
     private Action action;
 
     @Test
-    public void verifyTerminateActionConfirmed() throws Exception {
+    void verifyTerminateActionConfirmed() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         Objects.requireNonNull(request.getSession(true)).setAttribute(Pac4jConstants.REQUESTED_URL, "https://github.com");
@@ -52,7 +52,7 @@ class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests 
     }
 
     @Test
-    public void verifyTerminateActionRequests() throws Exception {
+    void verifyTerminateActionRequests() throws Exception {
         val tgt = new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication());
         getTicketRegistry().addTicket(tgt);
         val context = new MockRequestContext();
@@ -68,7 +68,7 @@ class TerminateSessionConfirmingActionTests extends AbstractWebflowActionsTests 
     }
 
     @Test
-    public void verifyTerminateActionConfirming() throws Exception {
+    void verifyTerminateActionConfirming() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

@@ -63,14 +63,14 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    public void verifyNoRequest() {
+    void verifyNoRequest() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(IllegalArgumentException.class, () -> controller.handleCallbackProfileRequestGet(response, request));
     }
 
     @Test
-    public void verifyNoTicketPassiveAuthn() throws Exception {
+    void verifyNoTicketPassiveAuthn() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest(true));
@@ -89,7 +89,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    public void verifyNoTicket() throws Exception {
+    void verifyNoTicket() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
@@ -104,7 +104,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    public void verifyValidationByPost() throws Exception {
+    void verifyValidationByPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -125,7 +125,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigu
     }
 
     @Test
-    public void verifyValidationByRedirect() throws Exception {
+    void verifyValidationByRedirect() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

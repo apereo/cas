@@ -118,7 +118,7 @@ class MongoDbAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthentication() throws Exception {
+    void verifyAuthentication() throws Exception {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("u1", "p1");
         val result = authenticationHandler.authenticate(creds, mock(Service.class));
         assertEquals("u1", result.getPrincipal().getId());
@@ -128,19 +128,19 @@ class MongoDbAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAuthenticationFails() {
+    void verifyAuthenticationFails() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown", "p1");
         assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(creds, mock(Service.class)));
     }
 
     @Test
-    public void verifyNoPsw() {
+    void verifyNoPsw() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("userPlain", "p1");
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(creds, mock(Service.class)));
     }
 
     @Test
-    public void verifyBadPsw() {
+    void verifyBadPsw() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("u1", "other");
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(creds, mock(Service.class)));
     }

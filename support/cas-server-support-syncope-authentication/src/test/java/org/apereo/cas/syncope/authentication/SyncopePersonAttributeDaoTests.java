@@ -49,7 +49,7 @@ class SyncopePersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyUserIsFound() {
+        void verifyUserIsFound() {
             var found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
             assertFalse(found.iterator().next().getAttributes().isEmpty());
             var people = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")),
@@ -58,7 +58,7 @@ class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        public void verifyUserAttributeMappings() {
+        void verifyUserAttributeMappings() {
             val found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
             val attributes = found.iterator().next().getAttributes();
             assertFalse(attributes.isEmpty());
@@ -89,7 +89,7 @@ class SyncopePersonAttributeDaoTests {
         private IPersonAttributeDao attributeRepository;
 
         @Test
-        public void verifyUserIsFound() {
+        void verifyUserIsFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
             try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
@@ -104,7 +104,7 @@ class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        public void verifyUserIsNotFound() {
+        void verifyUserIsNotFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result");
             try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
@@ -115,7 +115,7 @@ class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        public void verifySyncopeDown() {
+        void verifySyncopeDown() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
             try (val webserver = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {

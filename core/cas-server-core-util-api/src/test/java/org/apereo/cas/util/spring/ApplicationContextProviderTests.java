@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class ApplicationContextProviderTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

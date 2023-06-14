@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class ServiceAuditResourceResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
         val resolver = new ServiceAuditResourceResolver(new AuditEngineProperties());
@@ -32,7 +32,7 @@ class ServiceAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyJsonOperation() {
+    void verifyJsonOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
         val resolver = new ServiceAuditResourceResolver(new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));

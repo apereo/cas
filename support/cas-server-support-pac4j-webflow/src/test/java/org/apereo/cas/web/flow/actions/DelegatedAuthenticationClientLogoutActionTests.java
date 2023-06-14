@@ -51,7 +51,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
     private LogoutManager logoutManager;
 
     @Test
-    public void verifyOperationWithProfile() throws Exception {
+    void verifyOperationWithProfile() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
@@ -79,7 +79,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
     }
 
     @Test
-    public void verifyOperationWithNoProfile() throws Exception {
+    void verifyOperationWithNoProfile() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");

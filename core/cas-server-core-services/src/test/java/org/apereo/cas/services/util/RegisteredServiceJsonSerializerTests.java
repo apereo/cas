@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegisteredServiceJsonSerializerTests {
 
     @Test
-    public void verifyPrinter() {
+    void verifyPrinter() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
@@ -37,7 +37,7 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    public void verifyWriter() {
+    void verifyWriter() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
@@ -47,7 +47,7 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    public void checkNullability() {
+    void checkNullability() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);
@@ -68,7 +68,7 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    public void verifySsoPolicySerialization() {
+    void verifySsoPolicySerialization() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
@@ -91,7 +91,7 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    public void verifyEmptyStringAsNull() {
+    void verifyEmptyStringAsNull() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val zer = new RegisteredServiceJsonSerializer(applicationContext);

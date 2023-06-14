@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
-    RejectUsersAuthenticationHandlerTests() {
+    public RejectUsersAuthenticationHandlerTests() {
         val users = new HashSet<String>();
         users.add("scott");
         users.add("dima");
@@ -39,7 +39,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() throws Exception {
+    void verifySupportsProperUserCredentials() throws Exception {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fff");
         credential.assignPassword("rutgers");
@@ -47,7 +47,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyDoesntSupportBadUserCredentials() {
+    void verifyDoesntSupportBadUserCredentials() {
         try {
             assertFalse(authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
@@ -58,7 +58,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsUserInMap() {
+    void verifyFailsUserInMap() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("scott");
         credential.assignPassword("rutgers");
@@ -66,7 +66,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPassesUserNotInMap() throws Exception {
+    void verifyPassesUserNotInMap() throws Exception {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("fds");
         credential.assignPassword("rutgers");
@@ -74,7 +74,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPassesNullUserName() {
+    void verifyPassesNullUserName() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword("user");
@@ -82,7 +82,7 @@ class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyPassesNullUserNameAndPassword() {
+    void verifyPassesNullUserNameAndPassword() {
         assertThrows(AccountNotFoundException.class, () -> authenticationHandler.authenticate(new UsernamePasswordCredential(), mock(Service.class)));
     }
 }

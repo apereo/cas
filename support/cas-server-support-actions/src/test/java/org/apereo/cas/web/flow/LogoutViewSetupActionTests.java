@@ -34,7 +34,7 @@ class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
     private Action logoutViewSetupAction;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setAttribute(HttpAction.class.getName(), new OkAction("Test"));

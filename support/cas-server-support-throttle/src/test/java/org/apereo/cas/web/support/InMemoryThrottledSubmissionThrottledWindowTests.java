@@ -45,7 +45,7 @@ public class InMemoryThrottledSubmissionThrottledWindowTests
 
     @Override
     @Test
-    public void verifyThrottle() throws Exception {
+    void verifyThrottle() throws Exception {
         var success = login("casuser", "Mellon", IP_ADDRESS);
         assertEquals(HttpStatus.SC_OK, success.getStatus());
 

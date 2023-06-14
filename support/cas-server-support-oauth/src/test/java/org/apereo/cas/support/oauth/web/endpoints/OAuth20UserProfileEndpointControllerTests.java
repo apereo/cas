@@ -72,7 +72,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyNoGivenAccessToken() throws Exception {
+    void verifyNoGivenAccessToken() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(),
             CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
@@ -86,7 +86,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyNoExistingAccessToken() throws Exception {
+    void verifyNoExistingAccessToken() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
         val mockResponse = new MockHttpServletResponse();
@@ -100,7 +100,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyExpiredAccessToken() throws Exception {
+    void verifyExpiredAccessToken() throws Exception {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
         val jwtBuilder = new JwtBuilder(new OAuth20JwtAccessTokenCipherExecutor(), servicesManager,
@@ -126,12 +126,12 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyEndpoints() {
+    void verifyEndpoints() {
         assertFalse(oauth20ProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    public void verifyOK() throws Exception {
+    void verifyOK() throws Exception {
 
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
@@ -170,7 +170,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
+    void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
         val list = List.of(VALUE, VALUE);
@@ -216,7 +216,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyOKWithAuthorizationHeader() throws Exception {
+    void verifyOKWithAuthorizationHeader() throws Exception {
         val map = new HashMap<String, List<Object>>();
         map.put(NAME, List.of(VALUE));
         val list = List.of(VALUE, VALUE);

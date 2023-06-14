@@ -22,7 +22,7 @@ class WSFederationMetadataWriterTests extends BaseCoreWsSecurityIdentityProvider
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val results = WSFederationMetadataWriter.produceMetadataDocument(casProperties);
         assertNotNull(results);
     }

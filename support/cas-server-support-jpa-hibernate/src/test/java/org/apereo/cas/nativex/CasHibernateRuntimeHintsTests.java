@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasHibernateRuntimeHintsTests {
     @Test
-    public void verifyHints() {
+    void verifyHints() {
         val hints = new RuntimeHints();
         assertDoesNotThrow(() -> new CasHibernateRuntimeHints().registerHints(hints, getClass().getClassLoader()));
     }

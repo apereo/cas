@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AcmeWellKnownChallengeControllerTests extends BaseAcmeTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         acmeChallengeRepository.add("token", "challenge");
         assertNotNull(acmeWellKnownChallengeController.handleRequest("token",
             new MockHttpServletRequest(), new MockHttpServletResponse()));

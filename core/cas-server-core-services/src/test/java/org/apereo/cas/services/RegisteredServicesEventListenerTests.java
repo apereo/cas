@@ -84,7 +84,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    public void verifyServiceExpirationEventNoContact() {
+    void verifyServiceExpirationEventNoContact() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         assertDoesNotThrow(new Executable() {
             @Override
@@ -97,7 +97,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    public void verifyServiceExpirationEventWithContact() {
+    void verifyServiceExpirationEventWithContact() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -110,7 +110,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    public void verifyServiceExpirationWithRemovalEvent() {
+    void verifyServiceExpirationWithRemovalEvent() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");

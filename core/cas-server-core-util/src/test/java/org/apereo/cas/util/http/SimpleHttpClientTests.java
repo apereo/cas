@@ -60,7 +60,7 @@ class SimpleHttpClientTests {
     @SuppressWarnings("ClassCanBeStatic")
     class DefaultTests {
         @Test
-        public void verifyMessageRejected() {
+        void verifyMessageRejected() {
             val msg = mock(HttpMessage.class);
             when(msg.getUrl()).thenThrow(RejectedExecutionException.class);
             val result = getHttpClient().sendMessageToEndPoint(msg);
@@ -68,7 +68,7 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        public void verifyMessageFail() {
+        void verifyMessageFail() {
             val msg = mock(HttpMessage.class);
             when(msg.getUrl()).thenThrow(RuntimeException.class);
             val result = getHttpClient().sendMessageToEndPoint(msg);
@@ -76,7 +76,7 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        public void verifyMessageSent() throws Exception {
+        void verifyMessageSent() throws Exception {
             try (val webServer = new MockWebServer(8165,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
                 webServer.start();
@@ -86,7 +86,7 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        public void verifyMessageRefused() throws Exception {
+        void verifyMessageRefused() throws Exception {
             try (val webServer = new MockWebServer(8166,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
                 webServer.start();
@@ -96,25 +96,25 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        public void verifyMessageNotSent() throws Exception {
+        void verifyMessageNotSent() throws Exception {
             val result = getHttpClient().sendMessageToEndPoint(new URL("http://localhost:1234"));
             assertNull(result);
         }
 
         @Test
-        public void verifyBadUrl() {
+        void verifyBadUrl() {
             assertFalse(getHttpClient().isValidEndPoint("https://www.whateverabc1234.org"));
         }
 
         @Test
-        public void verifyInvalidHttpsUrl() {
+        void verifyInvalidHttpsUrl() {
             val client = getHttpClient();
             assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
             assertFalse(client.isValidEndPoint("xyz"));
         }
 
         @Test
-        public void verifyBypassedInvalidHttpsUrl() {
+        void verifyBypassedInvalidHttpsUrl() {
             val clientFactory = new SimpleHttpClientFactoryBean();
             clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
             clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
@@ -125,12 +125,12 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        public void verifyOkayUrl() {
+        void verifyOkayUrl() {
             assertTrue(getHttpClient().isValidEndPoint("https://www.google.com"));
         }
 
         @Test
-        public void verifyValidRejected() throws Exception {
+        void verifyValidRejected() throws Exception {
             try (val webServer = new MockWebServer(8099,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
                 webServer.start();
@@ -146,7 +146,7 @@ class SimpleHttpClientTests {
     @EnabledIfListeningOnPort(port = 9859)
     class HttpBinTests {
         @Test
-        public void verifyMessage() throws Exception {
+        void verifyMessage() throws Exception {
             val clientFactory = new SimpleHttpClientFactoryBean();
             clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
             clientFactory.setHostnameVerifier(new NoopHostnameVerifier());

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 class ResourceUtilsTests {
     @Test
-    public void verifyResourceExists() {
+    void verifyResourceExists() {
         assertThrows(IllegalArgumentException.class, () -> ResourceUtils.getRawResourceFrom(null));
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         val resourceLoader = mock(ResourceLoader.class);
@@ -44,7 +44,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyResourceOnClasspath() {
+    void verifyResourceOnClasspath() {
         val res = new ClassPathResource("valid.json");
         assertNotNull(ResourceUtils.prepareClasspathResourceIfNeeded(res, false, "valid"));
         assertNull(ResourceUtils.prepareClasspathResourceIfNeeded(null, false, "valid"));
@@ -52,7 +52,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyPrepare() {
+    void verifyPrepare() {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), false, ".*");
@@ -60,7 +60,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyPrepareDir() {
+    void verifyPrepareDir() {
         val url = getClass().getClassLoader().getResource("META-INF");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), true, "MANIFEST");
@@ -68,7 +68,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyExport() throws Exception {
+    void verifyExport() throws Exception {
         val resourceName = "META-INF/additional-spring-configuration-metadata.json";
         val url = getClass().getClassLoader().getResource(resourceName);
         assertNotNull(url);
@@ -90,7 +90,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyClasspathResourceDirectory() {
+    void verifyClasspathResourceDirectory() {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val file = new File(url.toExternalForm()).getParentFile();
@@ -101,7 +101,7 @@ class ResourceUtilsTests {
      * Check that doesResourceExist validates existence of directory.
      */
     @Test
-    public void verifyResourceExistsDetectsFolder() throws IOException {
+    void verifyResourceExistsDetectsFolder() throws IOException {
         val path = Files.createTempDirectory("castest-");
         assertTrue(ResourceUtils.doesResourceExist(ResourceUtils.getResourceFrom(path.toString())));
         FileUtils.forceDelete(path.toFile());

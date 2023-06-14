@@ -33,7 +33,7 @@ class ConditionalOnExpressionPositiveTests extends BaseRedisSamlMetadataTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyConfigClassLoaded() {
+    void verifyConfigClassLoaded() {
         val beans = applicationContext.getBeanDefinitionNames();
         assertTrue(Arrays.stream(beans).anyMatch("redisSamlIdPMetadataConnectionFactory"::equalsIgnoreCase));
         assertTrue(Arrays.stream(beans).anyMatch("redisSamlIdPMetadataTemplate"::equalsIgnoreCase));

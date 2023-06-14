@@ -43,7 +43,7 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     }
 
     @Test
-    public void verifyResolver() throws Exception {
+    void verifyResolver() throws Exception {
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -62,7 +62,7 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     }
 
     @Test
-    public void verifyFailsResolver() throws Exception {
+    void verifyFailsResolver() throws Exception {
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -77,7 +77,7 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     }
 
     @Test
-    public void verifyResolverDoesNotSupport() {
+    void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
     }
 }

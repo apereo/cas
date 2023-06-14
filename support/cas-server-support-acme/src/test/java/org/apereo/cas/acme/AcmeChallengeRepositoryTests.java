@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AcmeChallengeRepositoryTests extends BaseAcmeTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         acmeChallengeRepository.add("token", "challenge");
         assertNotNull(acmeChallengeRepository.get("token"));
         Thread.sleep(3000);

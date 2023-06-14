@@ -41,7 +41,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     private OneTimeTokenCredentialRepository registry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
@@ -64,7 +64,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
 
     @Test
-    public void verifyImportOperation() throws Exception {
+    void verifyImportOperation() throws Exception {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())

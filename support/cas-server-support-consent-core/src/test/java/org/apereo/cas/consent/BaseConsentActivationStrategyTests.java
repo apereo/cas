@@ -48,7 +48,7 @@ public abstract class BaseConsentActivationStrategyTests {
     }
 
     @Test
-    public void verifyConsentActive() {
+    void verifyConsentActive() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -59,7 +59,7 @@ public abstract class BaseConsentActivationStrategyTests {
     }
 
     @Test
-    public void verifyConsentDisabled() {
+    void verifyConsentDisabled() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -70,7 +70,7 @@ public abstract class BaseConsentActivationStrategyTests {
     }
 
     @Test
-    public void verifyConsentUndefined() {
+    void verifyConsentUndefined() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

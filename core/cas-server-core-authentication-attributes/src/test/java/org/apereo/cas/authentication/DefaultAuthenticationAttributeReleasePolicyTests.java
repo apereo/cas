@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 class DefaultAuthenticationAttributeReleasePolicyTests {
     @Test
-    public void verifyNoRelease() {
+    void verifyNoRelease() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
@@ -37,7 +37,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyNoReleaseCredential() {
+    void verifyNoReleaseCredential() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
         policy.getOnlyReleaseAttributes().add(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         val service = CoreAuthenticationTestUtils.getRegisteredService();
@@ -51,7 +51,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyReleaseCredentialAllowed() {
+    void verifyReleaseCredentialAllowed() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
         policy.getOnlyReleaseAttributes().add(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         val service = CoreAuthenticationTestUtils.getRegisteredService();
@@ -65,7 +65,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOnlyRelease() {
+    void verifyOnlyRelease() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of("cn", "authnContext"),
             Set.of(), "authnContext");
         val service = CoreAuthenticationTestUtils.getRegisteredService();
@@ -81,7 +81,7 @@ class DefaultAuthenticationAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyReleaseAll() {
+    void verifyReleaseAll() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of(),
             Set.of(), "authnContext");
 

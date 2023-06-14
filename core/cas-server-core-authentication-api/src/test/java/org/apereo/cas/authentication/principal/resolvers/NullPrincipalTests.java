@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class NullPrincipalTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(NullPrincipal.getInstance().getId());
     }
 

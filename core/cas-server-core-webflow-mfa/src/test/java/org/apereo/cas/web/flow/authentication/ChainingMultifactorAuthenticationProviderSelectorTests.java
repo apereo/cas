@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class ChainingMultifactorAuthenticationProviderSelectorTests {
 
     @Test
-    public void verifyMultipleProviders() {
+    void verifyMultipleProviders() {
         val evaluator = mock(MultifactorAuthenticationFailureModeEvaluator.class);
         val selector = new ChainingMultifactorAuthenticationProviderSelector(evaluator);
 

@@ -29,7 +29,7 @@ class CasConfigurationPropertiesValidatorTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val validator = new CasConfigurationPropertiesValidator(applicationContext);
         assertFalse(validator.validate().isEmpty());
     }

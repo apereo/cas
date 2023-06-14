@@ -86,12 +86,12 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyHandler() {
+    void verifyHandler() {
         assertNotNull(amazonCognitoAuthenticationHandler);
     }
 
     @Test
-    public void verifyExpiredPassword() throws Exception {
+    void verifyExpiredPassword() throws Exception {
         val jwtProcessor = getConfigurableJWTProcessor("casuser");
 
         val provider = mock(CognitoIdentityProviderClient.class);
@@ -106,33 +106,33 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyAccountDisabled() throws Exception {
+    void verifyAccountDisabled() throws Exception {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("disabled").build(), AccountDisabledException.class);
     }
 
     @Test
-    public void verifyAccountExpired() throws Exception {
+    void verifyAccountExpired() throws Exception {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("expired").build(), AccountExpiredException.class);
     }
 
     @Test
-    public void verifyAccountFail() throws Exception {
+    void verifyAccountFail() throws Exception {
         verifyAccountStatusFailure(UserNotFoundException.builder().message("no-found").build(), AccountNotFoundException.class);
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("not-found").build(), FailedLoginException.class);
     }
 
     @Test
-    public void verifyAccountNotFound() throws Exception {
+    void verifyAccountNotFound() throws Exception {
         verifyAccountStatusFailure(NotAuthorizedException.builder().message("fail").build(), FailedLoginException.class);
     }
 
     @Test
-    public void verifyAccountPassword() throws Exception {
+    void verifyAccountPassword() throws Exception {
         verifyAccountStatusFailure(InvalidPasswordException.builder().message("fail").build(), AccountPasswordMustChangeException.class);
     }
 
     @Test
-    public void verifyNoSub() throws Exception {
+    void verifyNoSub() throws Exception {
         val jwtProcessor = getConfigurableJWTProcessor(StringUtils.EMPTY);
         val provider = mock(CognitoIdentityProviderClient.class);
 

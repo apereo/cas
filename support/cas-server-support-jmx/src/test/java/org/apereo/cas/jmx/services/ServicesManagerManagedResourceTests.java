@@ -25,7 +25,7 @@ class ServicesManagerManagedResourceTests {
     private ServicesManagerManagedResource servicesManagerManagedResource;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         assertNotNull(this.servicesManagerManagedResource);
         assertNotNull(this.servicesManagerManagedResource.getServices());
     }

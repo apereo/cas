@@ -35,7 +35,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyPassOperation() {
+    void verifyPassOperation() {
         System.setProperty("test.runtime", "pass");
         val event = new ApplicationReadyEvent(mock(SpringApplication.class),
             ArrayUtils.EMPTY_STRING_ARRAY, this.applicationContext, Duration.ofSeconds(30));
@@ -43,7 +43,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     }
 
     @Test
-    public void verifyFailOperation() {
+    void verifyFailOperation() {
         System.setProperty("test.runtime", "fail");
         val event = new ApplicationReadyEvent(mock(SpringApplication.class),
             ArrayUtils.EMPTY_STRING_ARRAY, this.applicationContext, Duration.ofSeconds(30));

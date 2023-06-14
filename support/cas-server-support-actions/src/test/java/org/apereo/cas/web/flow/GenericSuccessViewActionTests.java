@@ -49,7 +49,7 @@ class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyAuthzServices() throws Exception {
+    void verifyAuthzServices() throws Exception {
         val registeredService1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         getServicesManager().save(registeredService1);
 
@@ -74,7 +74,7 @@ class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyRedirect() throws Exception {
+    void verifyRedirect() throws Exception {
         val servicesManager = mock(ServicesManager.class);
         val serviceFactory = mock(ServiceFactory.class);
 
@@ -96,7 +96,7 @@ class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyAuthn() throws Exception {
+    void verifyAuthn() throws Exception {
         val servicesManager = mock(ServicesManager.class);
         val serviceFactory = mock(ServiceFactory.class);
 
@@ -121,7 +121,7 @@ class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyValidPrincipal() throws Exception {
+    void verifyValidPrincipal() throws Exception {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
         val tgt = new MockTicketGrantingTicket(CoreAuthenticationTestUtils.getAuthentication("cas"));
@@ -134,7 +134,7 @@ class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyPrincipalCanNotBeDetermined() {
+    void verifyPrincipalCanNotBeDetermined() {
         val mgr = mock(ServicesManager.class);
         val factory = mock(ServiceFactory.class);
         val action = new GenericSuccessViewAction(getTicketRegistry(), mgr, factory, casProperties);

@@ -41,7 +41,7 @@ class EDIPIX509AttributeExtractorConfigTests {
      * Confirm that non-default bean loaded per properties.
      */
     @Test
-    public void verifyCorrectX509AttributeExtractorLoaded() throws IOException, CertificateException {
+    void verifyCorrectX509AttributeExtractorLoaded() throws IOException, CertificateException {
         assertNotNull(x509AttributeExtractor);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                 ResourceUtils.getResourceFrom("classpath:/edipi.cer").getInputStream());

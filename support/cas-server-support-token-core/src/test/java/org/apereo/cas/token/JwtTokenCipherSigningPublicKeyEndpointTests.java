@@ -40,13 +40,13 @@ class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTes
     private JwtTokenCipherSigningPublicKeyEndpoint endpoint;
 
     @Test
-    public void verifyOperationWithoutService() throws Exception {
+    void verifyOperationWithoutService() throws Exception {
         val publicKey = endpoint.fetchPublicKey(StringUtils.EMPTY);
         assertEquals(StringUtils.EMPTY, publicKey);
     }
 
     @Test
-    public void verifyOperationByService() throws Exception {
+    void verifyOperationByService() throws Exception {
         val service = RegisteredServiceTestUtils.getService("https://publickey.service");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 

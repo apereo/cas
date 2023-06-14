@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class TicketAsFirstParameterResourceResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ST-123434"});
         val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties());
@@ -29,7 +29,7 @@ class TicketAsFirstParameterResourceResolverTests {
     }
 
     @Test
-    public void verifyTicketWithService() {
+    void verifyTicketWithService() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
         val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
@@ -38,7 +38,7 @@ class TicketAsFirstParameterResourceResolverTests {
     }
 
     @Test
-    public void verifyTicketWithServiceAsJson() {
+    void verifyTicketWithServiceAsJson() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
         val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
@@ -47,7 +47,7 @@ class TicketAsFirstParameterResourceResolverTests {
     }
 
     @Test
-    public void verifyNullOperation() {
+    void verifyNullOperation() {
         val jp = mock(JoinPoint.class);
         val resolver = new TicketAsFirstParameterResourceResolver(new AuditEngineProperties());
         val input = resolver.resolveFrom(jp, null);

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Logout")
 class LogoutWebApplicationServiceFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val properties = new LogoutProperties();
         val factory = new LogoutWebApplicationServiceFactory(properties);

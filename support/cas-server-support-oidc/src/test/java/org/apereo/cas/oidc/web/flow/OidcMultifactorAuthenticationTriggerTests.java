@@ -43,7 +43,7 @@ class OidcMultifactorAuthenticationTriggerTests {
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=unknown")
     class NoMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        public void verifyAcrMissingMfa() {
+        void verifyAcrMissingMfa() {
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
             request.addParameter(OAuth20Constants.ACR_VALUES, "unknown");
@@ -64,7 +64,7 @@ class OidcMultifactorAuthenticationTriggerTests {
     })
     class WithMappedMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        public void verifyAcrMfa() {
+        void verifyAcrMfa() {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
@@ -77,7 +77,7 @@ class OidcMultifactorAuthenticationTriggerTests {
         }
 
         @Test
-        public void verifyUnsupportedAcr() {
+        void verifyUnsupportedAcr() {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
@@ -96,7 +96,7 @@ class OidcMultifactorAuthenticationTriggerTests {
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=mfa-dummy")
     class WithMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        public void verifyNoAcr() {
+        void verifyNoAcr() {
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
             val authn = RegisteredServiceTestUtils.getAuthentication();
@@ -106,7 +106,7 @@ class OidcMultifactorAuthenticationTriggerTests {
         }
 
         @Test
-        public void verifyAcrMfa() {
+        void verifyAcrMfa() {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
             val service = RegisteredServiceTestUtils.getService();
@@ -120,7 +120,7 @@ class OidcMultifactorAuthenticationTriggerTests {
         }
 
         @Test
-        public void verifyUrlEncoding() {
+        void verifyUrlEncoding() {
             val url = "https://link.test.edu/web/cas?profile=Example Primo&targetURL=abc";
             val request = new MockHttpServletRequest();
             request.setRequestURI("/cas/login");

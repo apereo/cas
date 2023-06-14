@@ -33,7 +33,7 @@ class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth20Tests
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test
-    public void verifyNoProfile() throws Exception {
+    void verifyNoProfile() throws Exception {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         servicesManager.save(service);
 

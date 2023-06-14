@@ -71,7 +71,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("bean1"));
         }
     }
@@ -88,7 +88,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(applicationContext.containsBean("bean1"));
         }
     }
@@ -104,7 +104,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("bean1"));
         }
     }
@@ -120,7 +120,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertFalse(applicationContext.containsBean("bean1"));
         }
     }
@@ -140,7 +140,7 @@ class CasFeatureEnabledPropertyPropertyConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        public void verifyOperation() {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("beanMultiple"));
         }
     }

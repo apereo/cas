@@ -52,7 +52,7 @@ class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests 
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
 
@@ -64,7 +64,7 @@ class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests 
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         var oidcProperties = new OidcProperties();
         oidcProperties.getJwks().getRest().setUrl("https://localhost:1234");
         oidcProperties.getJwks().getRest().setMethod("get");

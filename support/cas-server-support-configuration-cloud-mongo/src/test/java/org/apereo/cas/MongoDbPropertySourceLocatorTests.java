@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class MongoDbPropertySourceLocatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val factory = new SimpleMongoClientDatabaseFactory(MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI);
         val template = new MongoTemplate(factory);
         val loc = new MongoDbPropertySourceLocator(template);

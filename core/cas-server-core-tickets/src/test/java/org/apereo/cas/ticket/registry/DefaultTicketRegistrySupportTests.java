@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class DefaultTicketRegistrySupportTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val registry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
         val tgt = new MockTicketGrantingTicket("casuser", Map.of("name", List.of("CAS")));
         registry.addTicket(tgt);

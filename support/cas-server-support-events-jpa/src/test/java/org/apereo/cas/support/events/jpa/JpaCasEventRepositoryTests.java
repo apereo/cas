@@ -37,17 +37,18 @@ class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 
+    
     @Override
     @Transactional
     @Test
-    public void verifyLoadOps() throws Exception {
+    protected void verifyLoadOps() throws Exception {
         super.verifyLoadOps();
     }
 
     @Override
     @Transactional
     @Test
-    public void verifySave() throws Exception {
+    protected void verifySave() throws Exception {
         super.verifySave();
     }
 }

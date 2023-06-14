@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         assertEquals(OidcConstants.CUSTOM_SCOPE_TYPE, policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
@@ -58,7 +58,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyGroovyMappingInline() {
+    void verifyGroovyMappingInline() {
         ApplicationContextProvider.holdApplicationContext(oidcConfigurationContext.getApplicationContext());
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         policy.setClaimMappings(Map.of("groups", "groovy { return attributes['groups'] }"));
@@ -76,7 +76,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));

@@ -84,13 +84,13 @@ class RegisteredServiceTests {
     }
 
     @Test
-    public void verifyAllowToProxyIsFalseByDefault() {
+    void verifyAllowToProxyIsFalseByDefault() {
         val service = new CasRegisteredService();
         assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
     @Test
-    public void verifySettersAndGetters() {
+    void verifySettersAndGetters() {
         prepareService();
         assertEquals(DESCRIPTION, baseService.getDescription());
         assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed());
@@ -104,7 +104,7 @@ class RegisteredServiceTests {
     }
 
     @Test
-    public void verifyServiceAttributeFilterAllAttributes() {
+    void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
         baseService.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val p = mock(Principal.class);
@@ -125,7 +125,7 @@ class RegisteredServiceTests {
     }
 
     @Test
-    public void verifyServiceAttributeFilterAllowedAttributes() {
+    void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
@@ -150,7 +150,7 @@ class RegisteredServiceTests {
     }
 
     @Test
-    public void verifyServiceAttributeFilterMappedAttributes() {
+    void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         val policy = new ReturnMappedAttributeReleasePolicy();
         val mappedAttr = ArrayListMultimap.<String, Object>create();
@@ -176,14 +176,14 @@ class RegisteredServiceTests {
     }
 
     @Test
-    public void verifyServiceEquality() {
+    void verifyServiceEquality() {
         val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         assertEquals(svc1, svc2);
     }
 
     @Test
-    public void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() {
+    void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() {
         val invalidId = "***";
         val service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
         service.matches("notRelevant");

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class OidcWebFingerUserInfoRepositoryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val repo = mock(OidcWebFingerUserInfoRepository.class);
         when(repo.findByEmailAddress(anyString())).thenCallRealMethod();
         when(repo.findByUsername(anyString())).thenCallRealMethod();

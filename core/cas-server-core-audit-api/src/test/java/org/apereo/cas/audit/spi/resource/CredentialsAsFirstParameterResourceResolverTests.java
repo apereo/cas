@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class CredentialsAsFirstParameterResourceResolverTests {
 
     @Test
-    public void verifyCredential() {
+    void verifyCredential() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()});
@@ -32,7 +32,7 @@ class CredentialsAsFirstParameterResourceResolverTests {
     }
 
     @Test
-    public void verifyJsonCredential() {
+    void verifyJsonCredential() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         val cred = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "p@ssword");
@@ -41,7 +41,7 @@ class CredentialsAsFirstParameterResourceResolverTests {
     }
 
     @Test
-    public void verifyException() {
+    void verifyException() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()});
@@ -49,7 +49,7 @@ class CredentialsAsFirstParameterResourceResolverTests {
     }
 
     @Test
-    public void verifyTransaction() {
+    void verifyTransaction() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs())

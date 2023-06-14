@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 class SamlIdPServiceFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlIdPConstants.PROVIDER_ID, "example-sp-entityid");
         val input = new SamlIdPServiceFactory();

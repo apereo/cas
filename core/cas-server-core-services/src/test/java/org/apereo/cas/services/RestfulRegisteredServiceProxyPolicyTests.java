@@ -33,7 +33,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Exception {
         val policy = new RestfulRegisteredServiceProxyPolicy();
         policy.setEndpoint("http://localhost:9222");
         policy.setHeaders(CollectionUtils.wrap("header", "value"));
@@ -43,7 +43,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    public void verifyOperationPasses() throws Exception {
+    void verifyOperationPasses() throws Exception {
         try (val webServer = new MockWebServer(9222,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
@@ -56,7 +56,7 @@ class RestfulRegisteredServiceProxyPolicyTests {
     }
 
     @Test
-    public void verifyOperationFails() throws Exception {
+    void verifyOperationFails() throws Exception {
         try (val webServer = new MockWebServer(9222,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
             webServer.start();

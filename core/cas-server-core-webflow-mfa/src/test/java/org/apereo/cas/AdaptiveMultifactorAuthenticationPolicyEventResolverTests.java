@@ -71,7 +71,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     }
 
     @Test
-    public void verifyOperationNeedsMfa() {
+    void verifyOperationNeedsMfa() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         val event = resolver.resolve(context);
@@ -80,7 +80,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     }
 
     @Test
-    public void verifyOperationNeedsMfaByGeo() {
+    void verifyOperationNeedsMfaByGeo() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));

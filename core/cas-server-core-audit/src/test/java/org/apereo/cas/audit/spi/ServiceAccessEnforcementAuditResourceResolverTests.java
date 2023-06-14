@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class ServiceAccessEnforcementAuditResourceResolverTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() {
         val r = new ServiceAccessEnforcementAuditResourceResolver(
             new AuditEngineProperties().setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val result = AuditableExecutionResult.builder()

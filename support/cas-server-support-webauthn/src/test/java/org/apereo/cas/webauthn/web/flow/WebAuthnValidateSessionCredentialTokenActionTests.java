@@ -65,7 +65,7 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
     
     @Test
-    public void verifyMissingToken() throws Exception {
+    void verifyMissingToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -78,7 +78,7 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     }
 
     @Test
-    public void verifyEmptySessionForToken() throws Exception {
+    void verifyEmptySessionForToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter("token", SAMPLE_TOKEN);
@@ -92,7 +92,7 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     }
 
     @Test
-    public void verifyNoUserForToken() throws Exception {
+    void verifyNoUserForToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 
@@ -110,7 +110,7 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     }
 
     @Test
-    public void verifySuccessAuthForToken() throws Exception {
+    void verifySuccessAuthForToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
 

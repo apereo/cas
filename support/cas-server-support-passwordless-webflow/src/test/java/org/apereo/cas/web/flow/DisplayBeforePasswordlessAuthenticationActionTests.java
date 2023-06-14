@@ -60,7 +60,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    public void verifyAction() throws Exception {
+    void verifyAction() throws Exception {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
@@ -71,7 +71,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    public void verifyNoUser() throws Exception {
+    void verifyNoUser() throws Exception {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
@@ -80,7 +80,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    public void verifyUnknownUser() throws Exception {
+    void verifyUnknownUser() throws Exception {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
         val request = new MockHttpServletRequest();
@@ -90,7 +90,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
-    public void verifyError() throws Exception {
+    void verifyError() throws Exception {
         val context = new MockRequestContext();
         val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));

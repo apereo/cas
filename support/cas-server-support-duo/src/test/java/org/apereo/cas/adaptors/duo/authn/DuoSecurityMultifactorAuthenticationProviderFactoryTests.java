@@ -39,7 +39,7 @@ class DuoSecurityMultifactorAuthenticationProviderFactoryTests extends BaseCasWe
         duoProviderFactory;
 
     @Test
-    public void verifyBasicProvider() {
+    void verifyBasicProvider() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         props.setDuoApplicationKey("abcdefghijklmnop");
         val provider = duoProviderFactory.createProvider(props);
@@ -47,7 +47,7 @@ class DuoSecurityMultifactorAuthenticationProviderFactoryTests extends BaseCasWe
     }
 
     @Test
-    public void verifyUniversalProvider() {
+    void verifyUniversalProvider() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         props.setDuoApplicationKey(null);
         val provider = duoProviderFactory.createProvider(props);

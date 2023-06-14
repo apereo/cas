@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WsFederationMetadataCertificateProviderTests extends AbstractWsFederationTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         assertFalse(wsFederationConfigurations.toList().isEmpty());
         val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.first(), configBean);
         assertEquals(2, provider.getSigningCredentials().size());

@@ -28,7 +28,7 @@ class X509CertificateCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
+    void verifySerializeAX509CertificateCredentialToJson() throws IOException {
         MAPPER.findAndRegisterModules();
         val certificate = new CasX509Certificate(true);
         val credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});

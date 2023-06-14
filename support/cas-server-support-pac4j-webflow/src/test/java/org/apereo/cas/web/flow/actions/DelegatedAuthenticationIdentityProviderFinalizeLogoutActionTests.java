@@ -41,7 +41,7 @@ class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");

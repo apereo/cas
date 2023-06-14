@@ -44,7 +44,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
     
     @Test
-    public void verifySignedAuthnRequest() throws Exception {
+    void verifySignedAuthnRequest() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setServiceId("signed:authn:service");
         servicesManager.save(service);
@@ -58,7 +58,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    public void verifyNoShire() {
+    void verifyNoShire() {
         val request = new MockHttpServletRequest();
 
         val service = getSamlRegisteredServiceForTestShib();
@@ -72,7 +72,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    public void verifyBadServiceWithNoMetadata() {
+    void verifyBadServiceWithNoMetadata() {
         val request = new MockHttpServletRequest();
 
         val service = new SamlRegisteredService();
@@ -87,7 +87,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(MessageDecodingException.class,
@@ -96,7 +96,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
 
 
     @Test
-    public void verifyBadService() {
+    void verifyBadService() {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, "xxxxxx");
         val response = new MockHttpServletResponse();
@@ -105,7 +105,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, samlRegisteredService.getServiceId());
         request.addParameter("CName1", "SomeParameter");

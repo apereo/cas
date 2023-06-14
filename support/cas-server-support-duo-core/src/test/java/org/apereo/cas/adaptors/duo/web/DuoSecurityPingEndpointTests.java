@@ -35,7 +35,7 @@ class DuoSecurityPingEndpointTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         val duoService = mock(DuoSecurityAuthenticationService.class);

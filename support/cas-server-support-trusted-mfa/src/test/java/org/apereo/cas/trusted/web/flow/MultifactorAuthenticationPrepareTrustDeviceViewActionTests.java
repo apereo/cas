@@ -76,7 +76,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         }
 
         @Test
-        public void verifyRegisterDevice() throws Exception {
+        void verifyRegisterDevice() throws Exception {
             val bean = new MultifactorAuthenticationTrustBean();
             WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
             assertNull(bean.getDeviceName());
@@ -128,13 +128,13 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         }
 
         @Test
-        public void verifyRegisterDevice() throws Exception {
+        void verifyRegisterDevice() throws Exception {
             assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER,
                 mfaPrepareTrustDeviceViewAction.execute(context).getId());
         }
 
         @Test
-        public void verifyPrepWithBypass() throws Exception {
+        void verifyPrepWithBypass() throws Exception {
             val service = (BaseRegisteredService) WebUtils.getRegisteredService(context);
             val policy = new DefaultRegisteredServiceMultifactorPolicy();
             policy.setBypassTrustedDeviceEnabled(true);
@@ -145,7 +145,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         }
 
         @Test
-        public void verifyPrepWithNoBypassAndService() throws Exception {
+        void verifyPrepWithNoBypassAndService() throws Exception {
             WebUtils.putRegisteredService(context, null);
             WebUtils.putServiceIntoFlowScope(context, null);
             assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER,

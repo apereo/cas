@@ -32,7 +32,7 @@ class Saml10ObjectBuilderTests {
     private OpenSamlConfigBean openSamlConfigBean;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val saml10ObjectBuilder = new Saml10ObjectBuilder(this.openSamlConfigBean);
         var result = saml10ObjectBuilder.newStatus(StatusCode.DEFAULT_ELEMENT_NAME);
         assertNotNull(result);

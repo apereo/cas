@@ -32,7 +32,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     private Action action;
 
     @Test
-    public void verifyDoesNothing() throws Exception {
+    void verifyDoesNothing() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -43,7 +43,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyLocateByContext() throws Exception {
+    void verifyLocateByContext() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse()));
@@ -59,7 +59,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     }
 
     @Test
-    public void verifyByCookie() throws Exception {
+    void verifyByCookie() throws Exception {
         val context = new MockRequestContext();
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();

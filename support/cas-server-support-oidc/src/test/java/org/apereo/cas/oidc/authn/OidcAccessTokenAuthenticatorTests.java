@@ -35,7 +35,7 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     private Authenticator oidcDynamicRegistrationAuthenticator;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         new ProfileManager(ctx, JEESessionStore.INSTANCE).removeProfiles();
@@ -59,7 +59,7 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         new ProfileManager(ctx, JEESessionStore.INSTANCE).removeProfiles();
@@ -72,7 +72,7 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyFailsMissingScopes() throws Exception {
+    void verifyFailsMissingScopes() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());

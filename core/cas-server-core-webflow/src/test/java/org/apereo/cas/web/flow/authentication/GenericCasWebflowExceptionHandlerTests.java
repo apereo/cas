@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 class GenericCasWebflowExceptionHandlerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(AccountLockedException.class);
         errors.add(CredentialExpiredException.class);

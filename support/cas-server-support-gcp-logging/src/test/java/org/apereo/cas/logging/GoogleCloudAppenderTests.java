@@ -49,7 +49,7 @@ class GoogleCloudAppenderTests {
     private HandlerInterceptor googleCloudLoggingInterceptor;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

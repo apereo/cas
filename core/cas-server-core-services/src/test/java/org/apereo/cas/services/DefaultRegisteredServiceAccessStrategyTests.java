@@ -74,14 +74,14 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkLoad() {
+    void checkLoad() {
         val authz = new DefaultRegisteredServiceAccessStrategy(getRequiredAttributes(), getRejectedAttributes());
         authz.postLoad();
         assertEquals(0, authz.getOrder());
     }
 
     @Test
-    public void checkDefaultInterfaceImpls() {
+    void checkDefaultInterfaceImpls() {
         val authz = new RegisteredServiceAccessStrategy() {
             @Serial
             private static final long serialVersionUID = -6993120869616143038L;
@@ -94,28 +94,28 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkDefaultAuthzStrategyConfig() {
+    void checkDefaultAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
-    public void checkDisabledAuthzStrategyConfig() {
+    void checkDisabledAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy(false, true);
         assertFalse(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
-    public void checkDisabledSsoAuthzStrategyConfig() {
+    void checkDisabledSsoAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy(true, false);
         assertTrue(authz.isServiceAccessAllowed());
         assertFalse(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
-    public void setAuthzStrategyConfig() {
+    void setAuthzStrategyConfig() {
         val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
         authz.setEnabled(true);
         authz.setSsoEnabled(true);
@@ -125,7 +125,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalInactive() {
+    void checkAuthzPrincipalInactive() {
         val authz = new DefaultRegisteredServiceAccessStrategy()
             .setActivationCriteria((RegisteredServiceAccessStrategyActivationCriteria) request -> false);
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder()
@@ -133,20 +133,20 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalNoAttrRequirements() {
+    void checkAuthzPrincipalNoAttrRequirements() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId(TEST).build()));
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrRequirementsEmptyPrincipal() {
+    void checkAuthzPrincipalWithAttrRequirementsEmptyPrincipal() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder().principalId(TEST).build()));
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrRequirementsAll() {
+    void checkAuthzPrincipalWithAttrRequirementsAll() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess(RegisteredServiceAccessStrategyRequest.builder()
@@ -154,7 +154,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzWithAttributeRequirementAsGroovy() {
+    void checkAuthzWithAttributeRequirementAsGroovy() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         val required = new HashMap<String, Set<String>>();
         required.put(CN, Set.of("groovy { return attributes.containsKey('name') && currentValues.contains('admin') }"));
@@ -168,7 +168,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrRequirementsMissingOne() {
+    void checkAuthzPrincipalWithAttrRequirementsMissingOne() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
         val pAttrs = getPrincipalAttributes();
@@ -178,7 +178,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrRequirementsMissingOneButNotAllNeeded() {
+    void checkAuthzPrincipalWithAttrRequirementsMissingOneButNotAllNeeded() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
         authz.setRequireAllAttributes(false);
@@ -190,7 +190,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
+    void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         val reqs = getRequiredAttributes();
         reqs.remove(PHONE);
@@ -208,7 +208,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
      * use of anyMatch and allMatch in the access strategy.
      */
     @Test
-    public void checkAuthzPrincipalWithAttrRequirementsWrongValue() {
+    void checkAuthzPrincipalWithAttrRequirementsWrongValue() {
         val reqAttrs = getRequiredAttributes();
         reqAttrs.put(GIVEN_NAME, Collections.singleton("not present"));
 
@@ -221,7 +221,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
+    void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         val reqs = getRequiredAttributes();
         reqs.remove(PHONE);
@@ -234,7 +234,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkRejectedAttributesNotAvailable() {
+    void checkRejectedAttributesNotAvailable() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         val reqs = getRequiredAttributes();
         authz.setRequiredAttributes(reqs);
@@ -247,7 +247,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkRejectedAttributesAvailable() {
+    void checkRejectedAttributesAvailable() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
 
         val rejectedAttributes = getRejectedAttributes();
@@ -260,7 +260,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkRejectedAttributesAvailableRequireAll() {
+    void checkRejectedAttributesAvailableRequireAll() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(true);
 
@@ -274,7 +274,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkRejectedAttributesAvailableRequireAll3() {
+    void checkRejectedAttributesAvailableRequireAll3() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(false);
         val rejectedAttributes = getRejectedAttributes();
@@ -286,7 +286,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkRejectedAttributesAvailableRequireAll2() {
+    void checkRejectedAttributesAvailableRequireAll2() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(false);
         val rejectedAttributes = getRejectedAttributes();
@@ -298,7 +298,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrValueCaseInsensitiveComparison() {
+    void checkAuthzPrincipalWithAttrValueCaseInsensitiveComparison() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
 
         val reqs = getRequiredAttributes();
@@ -314,7 +314,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAuthzPrincipalWithAttrValuePatternComparison() {
+    void checkAuthzPrincipalWithAttrValuePatternComparison() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
 
         val reqs = getRequiredAttributes();
@@ -329,7 +329,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifySerializeADefaultRegisteredServiceAccessStrategyToJson() throws IOException {
+    void verifySerializeADefaultRegisteredServiceAccessStrategyToJson() throws IOException {
         val strategyWritten = new DefaultRegisteredServiceAccessStrategy();
 
         val reqs = getRequiredAttributes();
@@ -345,7 +345,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void verifyRejectedAttributesMoreThanPrincipal() {
+    void verifyRejectedAttributesMoreThanPrincipal() {
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRejectedAttributes(getRejectedAttributes());
         authz.setRequiredAttributes(Map.of(CN, Set.of(CAS)));

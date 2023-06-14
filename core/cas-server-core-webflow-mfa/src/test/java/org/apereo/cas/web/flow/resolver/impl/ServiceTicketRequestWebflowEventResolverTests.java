@@ -45,7 +45,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    public void verifyAttemptWithoutCredential() throws Exception {
+    void verifyAttemptWithoutCredential() throws Exception {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
@@ -68,7 +68,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    public void verifyServiceTicketRequestSkipped() {
+    void verifyServiceTicketRequestSkipped() {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
@@ -91,7 +91,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    public void verifyServiceTicketRequestCreated() throws Exception {
+    void verifyServiceTicketRequestCreated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -114,7 +114,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    public void verifyServiceTicketRequestPrincipalMismatch() throws Exception {
+    void verifyServiceTicketRequestPrincipalMismatch() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -136,7 +136,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    public void verifyServiceTicketRequestFailsAuthN() throws Exception {
+    void verifyServiceTicketRequestFailsAuthN() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -159,7 +159,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
     }
 
     @Test
-    public void verifyServiceTicketRequestWithRenew() throws Exception {
+    void verifyServiceTicketRequestWithRenew() throws Exception {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
