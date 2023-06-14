@@ -61,4 +61,5 @@ docker run --name=simplesamlphp-idp -p 9443:8080 \
   -v $PWD/ci/tests/saml2/php.ini-production:/usr/local/etc/php/php.ini \
   -d kenchan0130/simplesamlphp
 
+chmod +x ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
