@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Web")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationChannelControllerTests {
+class QRAuthenticationChannelControllerTests {
     @Autowired
     @Qualifier("tokenTicketJwtBuilder")
     private JwtBuilder jwtBuilder;

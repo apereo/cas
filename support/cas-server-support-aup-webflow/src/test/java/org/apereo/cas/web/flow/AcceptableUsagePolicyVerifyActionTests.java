@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowAccountActions")
-public class AcceptableUsagePolicyVerifyActionTests {
+class AcceptableUsagePolicyVerifyActionTests {
 
     @TestConfiguration(value = "AcceptableUsagePolicyTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -56,7 +56,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(AcceptableUsagePolicyTestConfiguration.class)
-    public class VerificationSkippedTests extends BaseAcceptableUsagePolicyActionTests {
+    class VerificationSkippedTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;
@@ -76,7 +76,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseAcceptableUsagePolicyActionTests {
+    class DefaultTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;
@@ -128,7 +128,7 @@ public class AcceptableUsagePolicyVerifyActionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.acceptable-usage-policy.core.enabled=false")
-    public class NoOpSkippedTests extends BaseAcceptableUsagePolicyActionTests {
+    class NoOpSkippedTests extends BaseAcceptableUsagePolicyActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
         private Action acceptableUsagePolicyVerifyAction;

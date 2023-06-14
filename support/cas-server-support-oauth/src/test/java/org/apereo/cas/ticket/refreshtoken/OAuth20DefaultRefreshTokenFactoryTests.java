@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuthToken")
-public class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
+class OAuth20DefaultRefreshTokenFactoryTests extends AbstractOAuth20Tests {
     @Test
     public void verifyOperationWithExpPolicy() {
         val registeredService = getRegisteredService("https://rt.oauth.org", "clientid-rt", "secret-at");

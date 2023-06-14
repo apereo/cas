@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class JacksonObjectMapperFactoryTests {
+class JacksonObjectMapperFactoryTests {
     @Test
     public void verifyYamlFactory() throws Exception {
         val mapper = JacksonObjectMapperFactory.builder()

@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceResponseHeadersEnforcementFilterTests {
+class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
         return getFilterForProperty(Pair.of(p, "true"));

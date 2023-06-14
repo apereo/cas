@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 @EnableScheduling
 @Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
+class LdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override
     @SneakyThrows
     protected String getUsernameUnderTest() {

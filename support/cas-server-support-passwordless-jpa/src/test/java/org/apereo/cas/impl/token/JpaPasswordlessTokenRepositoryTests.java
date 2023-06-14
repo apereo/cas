@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaPasswordlessAuthenticationConfiguration.class
 })
 @TestPropertySource(properties = "cas.jdbc.show-sql=false")
-public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
+class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
     private PasswordlessTokenRepository passwordlessTokenRepository;

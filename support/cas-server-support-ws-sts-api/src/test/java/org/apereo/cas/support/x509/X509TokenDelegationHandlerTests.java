@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class X509TokenDelegationHandlerTests {
+class X509TokenDelegationHandlerTests {
 
     @Test
     public void verifyHandle() {

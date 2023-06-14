@@ -29,7 +29,7 @@ import static org.springframework.http.HttpStatus.*;
 },
         properties = "cas.sms-provider.sms-mode.url=http://localhost:8099")
 @Tag("SMS")
-public class SmsModeSmsSenderTests {
+class SmsModeSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;

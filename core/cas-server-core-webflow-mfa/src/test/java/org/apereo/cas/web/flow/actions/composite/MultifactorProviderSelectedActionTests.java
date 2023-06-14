@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("multifactorProviderSelectedAction")
     private Action action;

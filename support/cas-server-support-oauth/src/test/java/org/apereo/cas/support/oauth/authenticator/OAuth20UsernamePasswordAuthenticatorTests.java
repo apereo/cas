@@ -29,7 +29,7 @@ import static org.springframework.http.HttpHeaders.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
+class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier("oauthUserAuthenticator")
     private Authenticator authenticator;

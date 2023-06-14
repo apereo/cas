@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationPolicy")
-public class NotPreventedAuthenticationPolicyTests {
+class NotPreventedAuthenticationPolicyTests {
 
     @Test
     public void verifyOperationPrevented() throws Exception {

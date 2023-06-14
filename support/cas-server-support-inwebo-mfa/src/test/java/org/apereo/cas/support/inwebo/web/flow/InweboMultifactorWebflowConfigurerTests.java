@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.inwebo.client-certificate.passphrase=password"
 })
 @Getter
-public class InweboMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class InweboMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("inweboFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

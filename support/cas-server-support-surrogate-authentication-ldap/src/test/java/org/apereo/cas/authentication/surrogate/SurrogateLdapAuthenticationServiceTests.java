@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
 })
 @Getter
 @EnabledIfListeningOnPort(port = 10389)
-public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
     private static final String ADMIN_USER = RandomUtils.randomAlphabetic(10);
 

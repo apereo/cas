@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Webflow")
-public class WebflowCipherBeanTests extends BaseWebflowConfigurerTests {
+class WebflowCipherBeanTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier("webflowCipherExecutor")

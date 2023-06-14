@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.google-recaptcha.verify-url=http://localhost:9294"
 )
 @Tag("WebflowActions")
-public class ValidateCaptchaActionTests {
+class ValidateCaptchaActionTests {
 
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)

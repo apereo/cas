@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.attributeConsent.enabled=true")
 @Tag("ActuatorEndpoint")
 @Import(CasConsentCoreConfiguration.class)
-public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
+class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

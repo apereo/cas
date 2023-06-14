@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
     public void verifyFailsNoAuth() throws Exception {

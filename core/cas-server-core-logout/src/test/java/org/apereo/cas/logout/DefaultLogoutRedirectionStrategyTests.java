@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class DefaultLogoutRedirectionStrategyTests {
+class DefaultLogoutRedirectionStrategyTests {
 
     private static MockRequestContext getMockRequestContext(final MockHttpServletRequest request) {
         val context = new MockRequestContext();

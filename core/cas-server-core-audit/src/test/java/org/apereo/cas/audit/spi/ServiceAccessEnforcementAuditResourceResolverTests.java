@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Audits")
-public class ServiceAccessEnforcementAuditResourceResolverTests {
+class ServiceAccessEnforcementAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new ServiceAccessEnforcementAuditResourceResolver(

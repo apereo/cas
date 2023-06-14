@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAML2")
-public class SamlResponseAuditPrincipalIdProviderTests {
+class SamlResponseAuditPrincipalIdProviderTests {
     @Test
     public void verifyAction() {
         val r = new SamlResponseAuditPrincipalIdProvider();

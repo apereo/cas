@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Cipher")
-public class TicketGrantingCookieCipherExecutorTests {
+class TicketGrantingCookieCipherExecutorTests {
 
     @Test
     public void verifyAction() {

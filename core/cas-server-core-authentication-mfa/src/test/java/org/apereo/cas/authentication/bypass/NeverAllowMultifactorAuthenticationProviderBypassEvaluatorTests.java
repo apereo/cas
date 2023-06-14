@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 
 @Tag("MFATrigger")
-public class NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests {
+class NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
     public void verifyOperation() {

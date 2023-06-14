@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Events")
-public class CasAuditActionContextRecordedEventTests {
+class CasAuditActionContextRecordedEventTests {
 
     @Test
     public void verifyOperation() {

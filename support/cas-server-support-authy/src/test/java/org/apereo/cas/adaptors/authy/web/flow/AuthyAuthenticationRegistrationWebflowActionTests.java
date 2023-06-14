@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("WebflowMfaActions")
-public class AuthyAuthenticationRegistrationWebflowActionTests {
+class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);

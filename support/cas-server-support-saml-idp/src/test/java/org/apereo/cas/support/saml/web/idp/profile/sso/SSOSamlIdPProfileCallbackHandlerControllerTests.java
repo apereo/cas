@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML2Web")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
-public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileCallbackHandlerController")
     private SSOSamlIdPProfileCallbackHandlerController controller;

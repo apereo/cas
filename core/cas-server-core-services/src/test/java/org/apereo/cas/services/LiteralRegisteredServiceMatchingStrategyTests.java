@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class LiteralRegisteredServiceMatchingStrategyTests {
+class LiteralRegisteredServiceMatchingStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ExactLiteralRegisteredServiceMatchingStrategyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.authorization-response-issuer-parameter-supported=true")
-public class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
+class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oauthAuthorizationModelAndViewBuilder")
     private OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder;

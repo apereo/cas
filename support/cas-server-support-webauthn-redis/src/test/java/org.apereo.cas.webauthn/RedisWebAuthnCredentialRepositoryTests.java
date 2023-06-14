@@ -24,5 +24,5 @@ import org.springframework.test.context.TestPropertySource;
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
 @Import(RedisWebAuthnConfiguration.class)
-public class RedisWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+class RedisWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 }

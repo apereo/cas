@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Attributes")
-public class DefaultAuthenticationAttributeReleasePolicyTests {
+class DefaultAuthenticationAttributeReleasePolicyTests {
     @Test
     public void verifyNoRelease() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class CasAppenderTests {
+class CasAppenderTests {
 
     @Test
     public void verifyOperation() {

@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DependencyInjectionTestExecutionListener.class,
     CassandraServiceRegistryTests.DisposingTestExecutionListener.class
 })
-public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
+class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cassandraServiceRegistry")
     private ServiceRegistry newServiceRegistry;

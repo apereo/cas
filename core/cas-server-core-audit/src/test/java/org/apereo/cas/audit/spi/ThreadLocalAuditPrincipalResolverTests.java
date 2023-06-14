@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Audits")
-public class ThreadLocalAuditPrincipalResolverTests {
+class ThreadLocalAuditPrincipalResolverTests {
 
     private final ThreadLocalAuditPrincipalResolver theResolver =
         new ThreadLocalAuditPrincipalResolver(new DefaultAuditPrincipalIdProvider());

@@ -54,7 +54,7 @@ import static org.springframework.http.HttpStatus.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class BasicDuoSecurityAuthenticationServiceTests {
+class BasicDuoSecurityAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

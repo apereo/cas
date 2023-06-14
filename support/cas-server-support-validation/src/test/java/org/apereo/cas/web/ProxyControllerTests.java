@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasValidationConfiguration.class
 })
 @Tag("CAS")
-public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
+class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired
     @Qualifier("proxyController")

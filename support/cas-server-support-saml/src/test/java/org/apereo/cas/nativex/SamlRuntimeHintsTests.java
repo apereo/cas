@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Native")
-public class SamlRuntimeHintsTests {
+class SamlRuntimeHintsTests {
     @Test
     public void verifyHints() {
         val hints = new RuntimeHints();

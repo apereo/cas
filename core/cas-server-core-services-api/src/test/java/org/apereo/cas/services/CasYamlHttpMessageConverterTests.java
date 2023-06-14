@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class CasYamlHttpMessageConverterTests {
+class CasYamlHttpMessageConverterTests {
     private static BaseRegisteredService getService() {
         val svc = new CasRegisteredService();
         svc.setServiceId("Testing");

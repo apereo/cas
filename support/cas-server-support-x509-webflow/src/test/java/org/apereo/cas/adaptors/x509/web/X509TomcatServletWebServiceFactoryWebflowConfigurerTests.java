@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "cas.authn.x509.webflow.port=9876"
 })
-public class X509TomcatServletWebServiceFactoryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class X509TomcatServletWebServiceFactoryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("x509TomcatServletWebServiceFactoryWebflowConfigurer")
     private CasWebflowConfigurer webflowConfigurer;

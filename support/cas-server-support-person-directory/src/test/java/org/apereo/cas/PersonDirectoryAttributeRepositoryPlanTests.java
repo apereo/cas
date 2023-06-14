@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Attributes")
-public class PersonDirectoryAttributeRepositoryPlanTests {
+class PersonDirectoryAttributeRepositoryPlanTests {
 
     @Test
     public void verifyOperation() {

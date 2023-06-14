@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationHandler")
-public class RequiredHandlerAuthenticationPolicyFactoryTests {
+class RequiredHandlerAuthenticationPolicyFactoryTests {
 
     @Test
     public void verifyOperation() {

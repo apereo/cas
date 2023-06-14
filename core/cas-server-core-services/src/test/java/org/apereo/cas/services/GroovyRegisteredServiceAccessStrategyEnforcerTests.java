@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 }, properties = "cas.access-strategy.groovy.location=classpath:ServiceAccessStrategy.groovy")
-public class GroovyRegisteredServiceAccessStrategyEnforcerTests {
+class GroovyRegisteredServiceAccessStrategyEnforcerTests {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")

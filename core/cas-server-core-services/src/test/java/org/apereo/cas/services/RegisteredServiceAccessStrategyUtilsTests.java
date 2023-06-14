@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class RegisteredServiceAccessStrategyUtilsTests {
+class RegisteredServiceAccessStrategyUtilsTests {
 
     @Test
     public void verifyExpired() {

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("AuthenticationMetadata")
-public class ClientInfoAuthenticationMetaDataPopulatorTests {
+class ClientInfoAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyOperation() {

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAMLResponse")
-public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifySubjectWithNoNameId() throws Exception {

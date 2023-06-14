@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("X509")
-public class ResourceCRLFetcherTests {
+class ResourceCRLFetcherTests {
     @Test
     public void verifyFetchByUrl() throws Exception {
         val fetcher = new ResourceCRLFetcher();

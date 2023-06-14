@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "management.metrics.export.simple.enabled=true")
 @Tag("Metrics")
-public class CasMetricsConfigurationTests {
+class CasMetricsConfigurationTests {
     @Autowired
     @Qualifier("timedAspect")
     private TimedAspect timedAspect;

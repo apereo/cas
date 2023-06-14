@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.core.merger=MULTIVALUED"
     })
 @Tag("X509")
-public class X509SubjectDNPrincipalResolverAggregateTests {
+class X509SubjectDNPrincipalResolverAggregateTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     @Autowired

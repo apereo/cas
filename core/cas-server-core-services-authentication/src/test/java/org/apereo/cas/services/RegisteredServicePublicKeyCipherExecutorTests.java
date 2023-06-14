@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Cipher")
-public class RegisteredServicePublicKeyCipherExecutorTests {
+class RegisteredServicePublicKeyCipherExecutorTests {
 
     private static BaseRegisteredService getService(final String keyLocation) {
         val svc = new CasRegisteredService();

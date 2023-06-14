@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("X509")
-public class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("x509CasMultifactorWebflowCustomizer")
     private CasMultifactorWebflowCustomizer x509CasMultifactorWebflowCustomizer;

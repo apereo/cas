@@ -20,6 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
-public class OracleJpaSamlRegisteredServiceMetadataResolverTests extends JpaSamlRegisteredServiceMetadataResolverTests {
+class OracleJpaSamlRegisteredServiceMetadataResolverTests extends JpaSamlRegisteredServiceMetadataResolverTests {
 }
 

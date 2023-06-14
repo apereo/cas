@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowEvents")
 @Import(DefaultMultifactorAuthenticationProviderWebflowEventResolverTests.MultifactorAuthenticationTestConfiguration.class)
 @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
-public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;

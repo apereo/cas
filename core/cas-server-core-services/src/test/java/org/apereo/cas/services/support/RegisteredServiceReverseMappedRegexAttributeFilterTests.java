@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceReverseMappedRegexAttributeFilterTests {
+class RegisteredServiceReverseMappedRegexAttributeFilterTests {
     @Test
     public void verifyOperation() {
         val filter = new RegisteredServiceReverseMappedRegexAttributeFilter();

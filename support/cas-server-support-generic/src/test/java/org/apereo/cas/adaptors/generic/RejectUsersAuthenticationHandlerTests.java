@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class RejectUsersAuthenticationHandlerTests {
+class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
-    public RejectUsersAuthenticationHandlerTests() {
+    RejectUsersAuthenticationHandlerTests() {
         val users = new HashSet<String>();
         users.add("scott");
         users.add("dima");

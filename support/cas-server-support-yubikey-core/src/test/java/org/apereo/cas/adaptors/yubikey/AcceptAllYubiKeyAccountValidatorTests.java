@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MFAProvider")
-public class AcceptAllYubiKeyAccountValidatorTests {
+class AcceptAllYubiKeyAccountValidatorTests {
     @Test
     public void verifyAction() {
         val v = new AcceptAllYubiKeyAccountValidator();

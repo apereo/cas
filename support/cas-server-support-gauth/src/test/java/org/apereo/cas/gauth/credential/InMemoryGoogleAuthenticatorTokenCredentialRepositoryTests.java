@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 5.3.0
  */
 @Tag("MFAProvider")
-public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
+class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
@@ -32,7 +32,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ScratchCodesEncryptionTests extends BaseOneTimeTokenCredentialRepositoryTests {
+    class ScratchCodesEncryptionTests extends BaseOneTimeTokenCredentialRepositoryTests {
         private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();
 
         @Override
@@ -53,7 +53,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseOneTimeTokenCredentialRepositoryTests {
+    class DefaultTests extends BaseOneTimeTokenCredentialRepositoryTests {
         private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();
 
         @Override

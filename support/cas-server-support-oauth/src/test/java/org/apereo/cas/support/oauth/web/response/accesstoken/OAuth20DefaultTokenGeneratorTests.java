@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.access-token.crypto.enabled=true",
     "cas.authn.oauth.device-token.refresh-interval=PT1S"
 })
-public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
 
     @BeforeEach
     public void initialize() {

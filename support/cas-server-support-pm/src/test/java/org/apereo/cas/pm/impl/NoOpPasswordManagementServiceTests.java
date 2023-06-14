@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("PasswordOps")
-public class NoOpPasswordManagementServiceTests {
+class NoOpPasswordManagementServiceTests {
 
     @Test
     public void verifyChange() {

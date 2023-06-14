@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = "cas.service-registry.templates.directory.location=classpath:/service-templates")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultRegisteredServicesTemplatesManagerTests {
+class DefaultRegisteredServicesTemplatesManagerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

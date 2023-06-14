@@ -56,7 +56,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.ignite.trust-store-type=pkcs12"
     })
 @Getter
-public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
+class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

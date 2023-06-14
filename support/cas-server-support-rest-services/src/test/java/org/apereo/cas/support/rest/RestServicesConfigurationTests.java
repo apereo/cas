@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.rest.services.attribute-value=attr-v"
 })
 @Tag("CasConfiguration")
-public class RestServicesConfigurationTests {
+class RestServicesConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceResourceRestController")
     private RegisteredServiceResource registeredServiceResourceRestController;

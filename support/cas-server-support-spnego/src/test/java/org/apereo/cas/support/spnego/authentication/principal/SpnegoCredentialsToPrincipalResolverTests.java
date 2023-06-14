@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("Spnego")
-public class SpnegoCredentialsToPrincipalResolverTests {
+class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoPrincipalResolver resolver;
 
     private SpnegoCredential spnegoCredentials;

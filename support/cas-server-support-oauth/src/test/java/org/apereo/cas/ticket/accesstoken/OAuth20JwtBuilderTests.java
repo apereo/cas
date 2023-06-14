@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthToken")
 @SuppressWarnings("JavaUtilDate")
-public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
+class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyJwt() {
         servicesManager.save(getRegisteredService("clientid-jwt", "secret-jwt"));

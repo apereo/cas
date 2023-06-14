@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("MFATrigger")
-public class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
+class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
     public void verifyShouldProceed() {

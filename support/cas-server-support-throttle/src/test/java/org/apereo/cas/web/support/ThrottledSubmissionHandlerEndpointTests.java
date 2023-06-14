@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class)
 @Tag("ActuatorEndpoint")
-public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
+class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("throttledSubmissionHandlerEndpoint")
     private ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint;

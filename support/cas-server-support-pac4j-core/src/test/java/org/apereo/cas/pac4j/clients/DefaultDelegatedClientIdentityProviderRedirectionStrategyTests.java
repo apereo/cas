@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
+class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
 
     private ServicesManager servicesManager;
 

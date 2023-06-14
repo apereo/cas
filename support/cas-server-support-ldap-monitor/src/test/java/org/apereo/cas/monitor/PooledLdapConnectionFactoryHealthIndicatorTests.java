@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class PooledLdapConnectionFactoryHealthIndicatorTests {
+class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Autowired
     @Qualifier("pooledLdapConnectionFactoryHealthIndicator")
     private CompositeHealthContributor monitor;

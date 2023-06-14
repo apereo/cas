@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreWsSecuritySecurityTokenTicketConfiguration.class,
     CasWsSecurityTokenTicketComponentSerializationConfiguration.class
 })
-public class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyTicket() {

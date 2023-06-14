@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("RestfulApi")
-public class RestfulIPAddressIntelligenceServiceTests {
+class RestfulIPAddressIntelligenceServiceTests {
     @Test
     public void verifyAllowedOperation() {
         try (val webServer = new MockWebServer(9300,

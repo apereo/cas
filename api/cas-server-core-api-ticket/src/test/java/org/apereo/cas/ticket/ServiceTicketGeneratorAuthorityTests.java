@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.6.0
  */
 @Tag("Tickets")
-public class ServiceTicketGeneratorAuthorityTests {
+class ServiceTicketGeneratorAuthorityTests {
     @Test
     public void verifyAllow() {
         val allow = ServiceTicketGeneratorAuthority.allow();

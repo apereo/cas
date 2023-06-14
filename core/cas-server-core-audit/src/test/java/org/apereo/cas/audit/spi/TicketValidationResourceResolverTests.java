@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Audits")
-public class TicketValidationResourceResolverTests {
+class TicketValidationResourceResolverTests {
     @Test
     public void verifyActionPassedJson() {
         val jp = mock(JoinPoint.class);

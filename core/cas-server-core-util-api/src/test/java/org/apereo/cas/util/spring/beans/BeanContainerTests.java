@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("Utility")
-public class BeanContainerTests {
+class BeanContainerTests {
     @Test
     public void verifyOperation() throws Exception {
         var results = BeanContainer.of(List.of("one")).and("two").toList();

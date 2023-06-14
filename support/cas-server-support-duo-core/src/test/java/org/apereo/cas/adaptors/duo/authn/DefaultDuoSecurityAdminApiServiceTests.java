@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DefaultDuoSecurityAdminApiServiceTests {
+class DefaultDuoSecurityAdminApiServiceTests {
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;

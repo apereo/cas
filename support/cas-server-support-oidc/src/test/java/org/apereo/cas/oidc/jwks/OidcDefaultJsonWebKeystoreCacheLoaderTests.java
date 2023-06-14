@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.oidc.jwks.core.jwks-key-size=384",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks"
 })
-public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
+class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @BeforeAll
     public static void setup() throws Exception {
         val file = new File(FileUtils.getTempDirectory(), "keystore.jwks");

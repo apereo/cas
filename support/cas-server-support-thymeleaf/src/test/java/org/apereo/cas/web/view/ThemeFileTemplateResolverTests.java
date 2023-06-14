@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Web")
-public class ThemeFileTemplateResolverTests {
+class ThemeFileTemplateResolverTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationMetadata")
-public class DelegatedClientAuthenticationMetaDataPopulatorTests {
+class DelegatedClientAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifySupports() {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();

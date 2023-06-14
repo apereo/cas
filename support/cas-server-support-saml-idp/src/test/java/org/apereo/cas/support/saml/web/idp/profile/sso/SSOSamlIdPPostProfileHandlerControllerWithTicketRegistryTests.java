@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=false"
 })
-public class SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileHandlerController")
     private SSOSamlIdPPostProfileHandlerController controller;

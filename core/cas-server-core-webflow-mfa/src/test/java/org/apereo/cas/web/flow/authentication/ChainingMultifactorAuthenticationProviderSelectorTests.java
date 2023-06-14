@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class ChainingMultifactorAuthenticationProviderSelectorTests {
+class ChainingMultifactorAuthenticationProviderSelectorTests {
 
     @Test
     public void verifyMultipleProviders() {

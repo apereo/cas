@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationHandler")
-public class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
+class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
     @Test
     public void verifyOperationPrevented() {
         val input = new AllAuthenticationHandlersSucceededAuthenticationPolicy();

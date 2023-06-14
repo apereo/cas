@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
+class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
 
     @Test
     public void verifyOperation() throws Exception {

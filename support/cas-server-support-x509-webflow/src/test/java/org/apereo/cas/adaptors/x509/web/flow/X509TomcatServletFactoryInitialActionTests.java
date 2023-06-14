@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 },
     properties = "cas.authn.x509.webflow.port=9876")
-public class X509TomcatServletFactoryInitialActionTests {
+class X509TomcatServletFactoryInitialActionTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

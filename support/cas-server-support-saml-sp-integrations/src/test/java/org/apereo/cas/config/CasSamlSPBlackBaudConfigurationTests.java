@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.black-baud.name-id-attribute=cn",
     "cas.saml-sp.black-baud.name-id-format=transient"
 })
-public class CasSamlSPBlackBaudConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPBlackBaudConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.server.prefix=https://sso.example.org/cas")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAccountRegistrationServiceTests {
+class DefaultAccountRegistrationServiceTests {
     private AccountRegistrationService accountRegistrationService;
 
     @Autowired

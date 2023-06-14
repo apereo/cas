@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Hazelcast")
-public class HazelcastAwsDiscoveryStrategyTests {
+class HazelcastAwsDiscoveryStrategyTests {
     @Test
     public void verifyAction() {
         val strategy = new HazelcastAwsDiscoveryStrategy();

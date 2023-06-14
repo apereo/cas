@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class InweboServiceTests {
+class InweboServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

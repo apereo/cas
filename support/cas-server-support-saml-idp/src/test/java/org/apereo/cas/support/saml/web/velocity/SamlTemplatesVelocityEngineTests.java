@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2")
-public class SamlTemplatesVelocityEngineTests extends BaseSamlIdPConfigurationTests {
+class SamlTemplatesVelocityEngineTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     private VelocityEngine velocityEngineFactoryBean;

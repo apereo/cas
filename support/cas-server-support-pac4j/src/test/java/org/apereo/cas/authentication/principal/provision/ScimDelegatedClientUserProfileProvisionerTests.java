@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
     "cas.scim.password=changeit",
     "cas.authn.pac4j.provisioning.scim.enabled=true"
 })
-public class ScimDelegatedClientUserProfileProvisionerTests extends BaseCasCoreTests {
+class ScimDelegatedClientUserProfileProvisionerTests extends BaseCasCoreTests {
     @Autowired
     @Qualifier("pac4jScimDelegatedClientUserProfileProvisioner")
     private Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner;

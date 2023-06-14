@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
+class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("mongoDbServiceRegistry")

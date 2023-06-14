@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
+class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizationModelAndViewBuilder")
     private OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder;

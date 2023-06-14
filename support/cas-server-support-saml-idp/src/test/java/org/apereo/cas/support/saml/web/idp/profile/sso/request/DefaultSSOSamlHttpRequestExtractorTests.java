@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("SAML2")
-public class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTests {
+class DefaultSSOSamlHttpRequestExtractorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_REQUEST = "pZNBj9owEIX%2FSm4%2BJcYQFrAIUgSqhLRtEWx72MvK6wys1cROPeNu%2Bu%2FrBGg57O6lp0j"
         + "j5%2FnevHGWqJq6lWWgF7uHnwGQkhIRPBln185iaMAfwP8yGr7t7wv2QtSi5BxBBw"
         + "%2BZVh4q12XaNTLPJ9z509PJu9ByMZmMeYidkPcMji3X534sKYm8eQ4EZ4KxpwtiayvoCjZlySY6MVb1Nv5BTRtxlrJGEYYfYpwF5OtY2rjucPjKEV2msO1Yst0U7Kla5CKfwiSdPefjNJ"

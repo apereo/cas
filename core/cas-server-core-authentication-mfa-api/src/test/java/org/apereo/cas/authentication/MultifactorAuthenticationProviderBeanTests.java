@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class MultifactorAuthenticationProviderBeanTests {
+class MultifactorAuthenticationProviderBeanTests {
     @Test
     public void verifyOperation() {
         val input = new MultifactorAuthenticationProviderBean(

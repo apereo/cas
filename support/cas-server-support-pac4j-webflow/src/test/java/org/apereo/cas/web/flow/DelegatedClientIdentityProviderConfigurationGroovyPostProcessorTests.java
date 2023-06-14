@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.groovy-provider-post-processor.location=classpath:GroovyClientProviderProcessor.groovy")
 @Tag("Delegation")
-public class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
+class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")
     private DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;

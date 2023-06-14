@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("WebflowActions")
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-public class WsFederationClientRedirectActionTests {
+class WsFederationClientRedirectActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WS_FEDERATION_REDIRECT)

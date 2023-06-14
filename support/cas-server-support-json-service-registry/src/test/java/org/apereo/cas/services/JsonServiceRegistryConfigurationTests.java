@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
 properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")
-public class JsonServiceRegistryConfigurationTests {
+class JsonServiceRegistryConfigurationTests {
     @Autowired
     @Qualifier("jsonServiceRegistry")
     private ServiceRegistry serviceRegistry;

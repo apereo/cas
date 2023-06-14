@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class TicketGrantingTicketTests {
+class TicketGrantingTicketTests {
     @Test
     public void verifyOperation() {
         val ticket = mock(TicketGrantingTicket.class);

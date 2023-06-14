@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = "cas.authn.pm.core.password-policy-pattern=P@ss.+")
-public class PasswordChangeActionTests extends BasePasswordManagementActionTests {
+class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORD_CHANGE)
     private Action passwordChangeAction;

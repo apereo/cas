@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
     "cas.consent.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
-public class OracleJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
+class OracleJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
 }

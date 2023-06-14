@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.infinite-campus.name-id-attribute=cn",
     "cas.saml-sp.infinite-campus.name-id-format=transient"
 })
-public class CasSamlSPInfiniteCampusConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPInfiniteCampusConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

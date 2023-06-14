@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
+class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("CasConfiguration")
-public class CommaSeparatedStringToThrowablesConverterTests {
+class CommaSeparatedStringToThrowablesConverterTests {
     @Test
     public void verifyConverters() {
         val c = new CommaSeparatedStringToThrowablesConverter();

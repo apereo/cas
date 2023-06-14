@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oauth.access-token.crypto.encryption-enabled=false")
-public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
+class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     private OAuth20JwtAccessTokenEncoder getAccessTokenEncoder(final OAuth20AccessToken accessToken,
                                                                final RegisteredService registeredService) {
         return OAuth20JwtAccessTokenEncoder.builder()

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.casFeatures.enabled=true")
 @Tag("ActuatorEndpoint")
-public class CasFeaturesEndpointTests extends AbstractCasEndpointTests {
+class CasFeaturesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("casFeaturesEndpoint")
     private CasFeaturesEndpoint endpoint;

@@ -77,7 +77,7 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cassandra")
 @EnabledIfListeningOnPort(port = 9042)
-public class CassandraAuthenticationHandlerTests {
+class CassandraAuthenticationHandlerTests {
     @Autowired
     @Qualifier("cassandraAuthenticationHandler")
     private AuthenticationHandler cassandraAuthenticationHandler;

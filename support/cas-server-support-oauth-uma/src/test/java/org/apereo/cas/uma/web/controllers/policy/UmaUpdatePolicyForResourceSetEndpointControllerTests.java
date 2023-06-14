@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyOperation() {
         val results = authenticateUmaRequestWithProtectionScope();

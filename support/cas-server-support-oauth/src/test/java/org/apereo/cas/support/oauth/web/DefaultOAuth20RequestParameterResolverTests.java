@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
+class DefaultOAuth20RequestParameterResolverTests extends AbstractOAuth20Tests {
 
     private static MockHttpServletRequest getJwtRequest() {
         val request = new MockHttpServletRequest();

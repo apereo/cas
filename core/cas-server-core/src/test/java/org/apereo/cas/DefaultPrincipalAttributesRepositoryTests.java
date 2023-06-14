@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Attributes")
-public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
+class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultPrincipalAttributesRepository.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

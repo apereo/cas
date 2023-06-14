@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
+class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAttributeReleasePolicyFactory")
     private OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;

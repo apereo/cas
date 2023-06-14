@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 @Tag("Attributes")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class PersonDirectoryPrincipalResolverTests {
+class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";
 

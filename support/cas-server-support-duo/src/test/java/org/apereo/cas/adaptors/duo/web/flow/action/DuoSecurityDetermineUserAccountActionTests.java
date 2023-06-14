@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     @Qualifier("determineDuoUserAccountAction")

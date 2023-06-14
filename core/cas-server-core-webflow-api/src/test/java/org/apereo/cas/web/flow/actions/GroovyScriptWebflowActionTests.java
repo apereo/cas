@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyScriptWebflowActionTests {
+class GroovyScriptWebflowActionTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

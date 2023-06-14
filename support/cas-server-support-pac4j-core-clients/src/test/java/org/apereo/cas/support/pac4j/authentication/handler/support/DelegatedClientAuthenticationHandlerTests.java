@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("AuthenticationHandler")
-public class DelegatedClientAuthenticationHandlerTests {
+class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
 

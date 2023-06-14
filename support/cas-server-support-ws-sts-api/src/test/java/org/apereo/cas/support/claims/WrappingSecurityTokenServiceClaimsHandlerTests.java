@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WrappingSecurityTokenServiceClaimsHandlerTests {
+class WrappingSecurityTokenServiceClaimsHandlerTests {
 
     @Test
     public void verifySupportedClaims() {

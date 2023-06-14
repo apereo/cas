@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.consent.core.crypto.enabled=false",
     "cas.consent.activation-strategy-groovy-script.location=classpath:/ConsentActivationStrategy.groovy"
 })
-public class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
+class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
     @Autowired
     @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;

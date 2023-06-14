@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2Web")
-public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlRegisteredServiceMetadataHealthIndicator")
     private HealthIndicator samlRegisteredServiceMetadataHealthIndicator;

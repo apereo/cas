@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Web")
-public class SpringAwareMessageMessageInterpolatorTests {
+class SpringAwareMessageMessageInterpolatorTests {
 
     @Test
     public void verifyOperation() {

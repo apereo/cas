@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.token.crypto.encryption-enabled=false")
 @Tag("Tickets")
-public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
+class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws ParseException {

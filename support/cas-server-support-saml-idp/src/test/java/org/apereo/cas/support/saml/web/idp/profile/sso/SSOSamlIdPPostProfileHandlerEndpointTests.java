@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoints.web.exposure.include=*",
     "management.endpoint.samlPostProfileResponse.enabled=true"
 })
-public class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoSamlPostProfileHandlerEndpoint")
     private SSOSamlIdPPostProfileHandlerEndpoint endpoint;

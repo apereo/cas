@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("DynamoDb")
 @EnabledIfListeningOnPort(port = 8000)
-public class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

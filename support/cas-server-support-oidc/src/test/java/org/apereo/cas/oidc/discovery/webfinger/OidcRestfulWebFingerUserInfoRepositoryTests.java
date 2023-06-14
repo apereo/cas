@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("RestfulApi")
-public class OidcRestfulWebFingerUserInfoRepositoryTests {
+class OidcRestfulWebFingerUserInfoRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

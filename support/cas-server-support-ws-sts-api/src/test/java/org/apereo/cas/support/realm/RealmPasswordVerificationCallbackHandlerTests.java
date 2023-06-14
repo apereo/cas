@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class RealmPasswordVerificationCallbackHandlerTests {
+class RealmPasswordVerificationCallbackHandlerTests {
     @Test
     public void verifyToken() {
         val realm = new RealmPasswordVerificationCallbackHandler("password".toCharArray());

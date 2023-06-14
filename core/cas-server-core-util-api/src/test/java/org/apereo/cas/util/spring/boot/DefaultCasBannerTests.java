@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DefaultCasBannerTests {
+class DefaultCasBannerTests {
     @Test
     @Order(1)
     public void verifyOperation() throws Exception {

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAcceptableUsagePolicyTests {
+class RegisteredServiceAcceptableUsagePolicyTests {
 
     @Test
     public void verifyOperation() {

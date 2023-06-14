@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("MFA")
-public class DefaultRegisteredServiceMultifactorPolicyTests {
+class DefaultRegisteredServiceMultifactorPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceMultifactorPolicy.json");
 

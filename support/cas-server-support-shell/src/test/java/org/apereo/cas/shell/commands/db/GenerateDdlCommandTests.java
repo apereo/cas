@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateDdlCommandTests extends BaseCasShellCommandTests {
+class GenerateDdlCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         val file = File.createTempFile("ddl", "sql");

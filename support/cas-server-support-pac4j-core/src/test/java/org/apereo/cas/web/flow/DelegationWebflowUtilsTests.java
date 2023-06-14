@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Utility")
-public class DelegationWebflowUtilsTests {
+class DelegationWebflowUtilsTests {
 
     @Test
     public void verifyOperation() throws Exception {

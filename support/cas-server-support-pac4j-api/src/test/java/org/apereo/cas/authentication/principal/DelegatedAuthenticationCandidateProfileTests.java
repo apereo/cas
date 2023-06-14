@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Delegation")
-public class DelegatedAuthenticationCandidateProfileTests {
+class DelegatedAuthenticationCandidateProfileTests {
     @Test
     public void verifyOperation() {
         val profile = DelegatedAuthenticationCandidateProfile.builder()

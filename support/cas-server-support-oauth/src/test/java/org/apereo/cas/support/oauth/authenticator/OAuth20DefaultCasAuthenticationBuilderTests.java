@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20DefaultCasAuthenticationBuilderTests extends BaseOAuth20AuthenticatorTests {
+class OAuth20DefaultCasAuthenticationBuilderTests extends BaseOAuth20AuthenticatorTests {
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")

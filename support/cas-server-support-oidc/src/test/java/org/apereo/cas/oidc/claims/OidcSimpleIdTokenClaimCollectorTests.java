@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/oidc-definitions.json")
-public class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
+class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(OidcIdTokenClaimCollector.BEAN_NAME)
     private OidcIdTokenClaimCollector oidcIdTokenClaimCollector;

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("Utility")
-public class CompressionUtilsTests {
+class CompressionUtilsTests {
 
     @Test
     public void verifyInflation() {

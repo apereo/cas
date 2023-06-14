@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("JDBC")
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
-public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
+class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
 
     @RetryingTest(3)
     public void verifyResolver() throws Exception {

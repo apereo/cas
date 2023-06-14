@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
-public class OidcDPoPAuthenticatorTests extends AbstractOidcTests {
+class OidcDPoPAuthenticatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcDPoPClientProvider")
     private OAuth20AuthenticationClientProvider oidcDPoPClientProvider;

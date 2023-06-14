@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.view.custom-login-form-fields.field1.required=false")
-public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

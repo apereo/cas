@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
+class GenerateFullJwtCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyPlain() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-full-jwt --sub casuser --claims {'name':'CAS','clients':['1234']}"));

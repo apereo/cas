@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
-public class SessionHealthIndicatorTests {
+class SessionHealthIndicatorTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
 

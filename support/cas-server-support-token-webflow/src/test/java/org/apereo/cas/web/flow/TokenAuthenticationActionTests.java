@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     TokenAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowAuthenticationActions")
-public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
+class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);

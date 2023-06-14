@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.0
  */
 @Tag("RegisteredService")
-public class CasRegisteredServiceTests {
+class CasRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "CasRegisteredService.json");
 

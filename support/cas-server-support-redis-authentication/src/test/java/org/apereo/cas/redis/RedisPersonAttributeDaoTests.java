@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.redis[0].port=6379"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RedisPersonAttributeDaoTests {
+class RedisPersonAttributeDaoTests {
     private static final String USER_ID = UUID.randomUUID().toString();
 
     @Autowired

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
+class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcRevocationEndpointController")
     protected OidcRevocationEndpointController oidcRevocationEndpointController;

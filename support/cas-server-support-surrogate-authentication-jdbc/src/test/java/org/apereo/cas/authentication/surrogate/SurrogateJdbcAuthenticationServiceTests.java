@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 })
 @Getter
 @Tag("JDBC")
-public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;

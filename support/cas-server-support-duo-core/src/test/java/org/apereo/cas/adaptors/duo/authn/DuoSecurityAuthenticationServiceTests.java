@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("DuoSecurity")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DuoSecurityAuthenticationServiceTests {
+class DuoSecurityAuthenticationServiceTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

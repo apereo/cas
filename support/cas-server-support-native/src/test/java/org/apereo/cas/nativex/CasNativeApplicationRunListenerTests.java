@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Native")
-public class CasNativeApplicationRunListenerTests {
+class CasNativeApplicationRunListenerTests {
     @Test
     public void verifyOperation() {
         val factories = SpringFactoriesLoader.loadFactories(SpringApplicationRunListener.class, getClass().getClassLoader());

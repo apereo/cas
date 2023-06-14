@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.webAuthnDevices.enabled=true"
     })
 @Tag("MFAProvider")
-public class WebAuthnRegisteredDevicesEndpointTests {
+class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
     @Qualifier("webAuthnRegisteredDevicesEndpoint")
     private WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint;

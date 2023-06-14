@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseSessionStoreTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Web")
-public class DistributedJEESessionStoreTests {
+class DistributedJEESessionStoreTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

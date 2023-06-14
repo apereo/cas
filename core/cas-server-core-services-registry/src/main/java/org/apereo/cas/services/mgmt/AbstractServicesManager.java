@@ -62,7 +62,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .forEach(locator -> locator.getRegisteredServiceIndexes()
                 .stream()
                 .map(RegisteredServiceQueryIndex::getIndex)
-                .filter(AttributeIndex<?, ?>.class::isInstance)
+                .filter(AttributeIndex.class::isInstance)
                 .map(AttributeIndex.class::cast)
                 .forEach(index -> {
                     LOGGER.debug("Adding registered service index [{}] supplied by [{}]",

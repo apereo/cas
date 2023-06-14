@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
+class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
 
     @Test
     public void verifyAction() throws Exception {

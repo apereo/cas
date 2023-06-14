@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
 @EnableAutoConfiguration
-public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
+class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

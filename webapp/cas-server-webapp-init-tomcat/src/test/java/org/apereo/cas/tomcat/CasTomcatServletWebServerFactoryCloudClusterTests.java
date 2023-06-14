@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
-public class CasTomcatServletWebServerFactoryCloudClusterTests {
+class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 

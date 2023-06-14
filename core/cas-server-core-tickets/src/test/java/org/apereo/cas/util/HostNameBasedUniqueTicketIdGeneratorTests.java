@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("Tickets")
-public class HostNameBasedUniqueTicketIdGeneratorTests {
+class HostNameBasedUniqueTicketIdGeneratorTests {
 
     @Test
     public void verifyUniqueGenerationOfTicketIds() {

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-public class DefaultAuthenticationResultBuilderFactoryTests {
+class DefaultAuthenticationResultBuilderFactoryTests {
     @Test
     public void verifyOperation() {
         assertNotNull(new DefaultAuthenticationResultBuilderFactory().newBuilder());

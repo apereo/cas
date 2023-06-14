@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-public class BasicResourceCredentialFactoryBeanTests {
+class BasicResourceCredentialFactoryBeanTests {
     @Test
     public void verifyKeys() throws Exception {
         val factory = new BasicResourceCredentialFactoryBean();

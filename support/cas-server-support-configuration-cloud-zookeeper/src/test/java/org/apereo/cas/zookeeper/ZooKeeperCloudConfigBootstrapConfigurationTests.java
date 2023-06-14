@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ZooKeeper")
 @EnabledIfListeningOnPort(port = 2181)
 @EnableRetry
-public class ZooKeeperCloudConfigBootstrapConfigurationTests {
+class ZooKeeperCloudConfigBootstrapConfigurationTests {
     @Autowired
     @Qualifier("curatorFramework")
     private CuratorFramework curatorFramework;

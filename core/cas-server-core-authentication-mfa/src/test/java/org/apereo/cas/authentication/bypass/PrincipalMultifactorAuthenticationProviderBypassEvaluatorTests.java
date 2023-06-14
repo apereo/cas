@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
+class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
     public void verifyNoMatchOperation() {

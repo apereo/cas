@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlMetadataUIWebflowConfiguration.class
 })
 @Tag("SAMLMetadata")
-public class SamlMetadataUIWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SamlMetadataUIWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

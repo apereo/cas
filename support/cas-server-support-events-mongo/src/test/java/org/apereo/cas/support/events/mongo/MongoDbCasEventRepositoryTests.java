@@ -36,7 +36,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired
     @Qualifier(CasEventRepository.BEAN_NAME)

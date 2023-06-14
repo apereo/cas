@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  */
 @Import(SpnegoCredentialsActionTests.SpnegoAuthenticationTestConfiguration.class)
 @Tag("Spnego")
-public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
+class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();

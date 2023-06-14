@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowAuthenticationActions")
-public class CheckWebAuthenticationRequestActionTests {
+class CheckWebAuthenticationRequestActionTests {
 
     @Test
     public void verifyNoWeb() throws Exception {

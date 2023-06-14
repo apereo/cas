@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Tag("Consent")
-public class DefaultConsentDecisionBuilderTests {
+class DefaultConsentDecisionBuilderTests {
     @Autowired
     @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
     private ConsentDecisionBuilder consentDecisionBuilder;

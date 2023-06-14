@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class ReturnMappedAttributeReleasePolicyTests {
+class ReturnMappedAttributeReleasePolicyTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

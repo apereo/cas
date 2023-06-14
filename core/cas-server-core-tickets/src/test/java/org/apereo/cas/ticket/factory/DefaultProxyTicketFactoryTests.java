@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Tickets")
 @TestPropertySource(properties = "cas.ticket.crypto.enabled=true")
-public class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     public void verifyCustomExpirationPolicy() {
         val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", CasRegisteredService.class);

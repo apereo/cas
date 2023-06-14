@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("RestfulApi")
-public class BlackDotIPAddressIntelligenceServiceTests {
+class BlackDotIPAddressIntelligenceServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

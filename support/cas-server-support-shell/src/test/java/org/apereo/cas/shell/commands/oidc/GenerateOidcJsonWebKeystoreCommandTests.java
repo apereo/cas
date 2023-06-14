@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateOidcJsonWebKeystoreCommandTests extends BaseCasShellCommandTests {
+class GenerateOidcJsonWebKeystoreCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
         val location = FileUtils.getTempDirectoryPath();

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
+class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcLogoutEndpointController")
     protected OidcLogoutEndpointController oidcLogoutEndpointController;

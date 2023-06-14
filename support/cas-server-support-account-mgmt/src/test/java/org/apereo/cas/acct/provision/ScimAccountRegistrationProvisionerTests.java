@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("SCIM")
 @EnabledIfListeningOnPort(port = 9666)
-public class ScimAccountRegistrationProvisionerTests {
+class ScimAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;

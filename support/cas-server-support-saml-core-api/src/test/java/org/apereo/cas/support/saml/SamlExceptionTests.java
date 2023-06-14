@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-public class SamlExceptionTests {
+class SamlExceptionTests {
     @Test
     public void verifyArgs() {
         val ex = new SamlException("code", "message", List.of("arg1"));

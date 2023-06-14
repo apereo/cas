@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
 })
-public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void setup() {

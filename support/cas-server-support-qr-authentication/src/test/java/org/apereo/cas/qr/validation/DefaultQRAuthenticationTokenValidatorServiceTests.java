@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices.json")
-public class DefaultQRAuthenticationTokenValidatorServiceTests {
+class DefaultQRAuthenticationTokenValidatorServiceTests {
     @Autowired
     @Qualifier("tokenTicketJwtBuilder")
     private JwtBuilder jwtBuilder;

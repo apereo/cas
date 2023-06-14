@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowServiceActions")
-public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
+class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class HttpUtilsTests {
+class HttpUtilsTests {
 
     @Test
     public void verifyExecWithExistingClient() {

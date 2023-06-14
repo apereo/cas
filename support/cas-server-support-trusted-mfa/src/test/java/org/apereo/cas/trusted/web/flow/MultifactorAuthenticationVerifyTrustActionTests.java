@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("WebflowMfaActions")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

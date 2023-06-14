@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowEvents")
-public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;

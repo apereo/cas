@@ -20,5 +20,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLJpaPasswordlessTokenRepositoryTests extends JpaPasswordlessTokenRepositoryTests {
+class MySQLJpaPasswordlessTokenRepositoryTests extends JpaPasswordlessTokenRepositoryTests {
 }

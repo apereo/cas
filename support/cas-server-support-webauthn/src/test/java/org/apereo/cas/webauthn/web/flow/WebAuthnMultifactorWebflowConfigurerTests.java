@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("WebflowMfaConfig")
 @Getter
-public class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("webAuthnFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.stream.core.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 9092)
-public class CasServicesStreamingKafkaConfigurationTests {
+class CasServicesStreamingKafkaConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceDistributedCacheManager")
     private DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager;

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateCryptoKeysCommandTests extends BaseCasShellCommandTests {
+class GenerateCryptoKeysCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-key --key-size 512"));

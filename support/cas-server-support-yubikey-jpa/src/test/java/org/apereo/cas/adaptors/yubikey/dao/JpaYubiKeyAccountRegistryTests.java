@@ -34,7 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Tag("JDBCMFA")
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class JpaYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+class JpaYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
     private CipherExecutor yubikeyAccountCipherExecutor;

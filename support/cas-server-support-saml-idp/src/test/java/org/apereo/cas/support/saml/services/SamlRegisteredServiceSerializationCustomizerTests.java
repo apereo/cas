@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("SAML2")
-public class SamlRegisteredServiceSerializationCustomizerTests {
+class SamlRegisteredServiceSerializationCustomizerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class NoDefaults extends BaseSamlIdPConfigurationTests {
+    class NoDefaults extends BaseSamlIdPConfigurationTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -42,7 +42,7 @@ public class SamlRegisteredServiceSerializationCustomizerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.services.defaults.signAssertions=true")
-    public class WithDefaults extends BaseSamlIdPConfigurationTests {
+    class WithDefaults extends BaseSamlIdPConfigurationTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

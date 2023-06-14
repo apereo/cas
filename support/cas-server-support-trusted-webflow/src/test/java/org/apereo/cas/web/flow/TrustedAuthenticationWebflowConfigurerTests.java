@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
-public class TrustedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class TrustedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

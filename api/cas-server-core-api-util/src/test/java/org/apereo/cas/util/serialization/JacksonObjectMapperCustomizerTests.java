@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class JacksonObjectMapperCustomizerTests {
+class JacksonObjectMapperCustomizerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

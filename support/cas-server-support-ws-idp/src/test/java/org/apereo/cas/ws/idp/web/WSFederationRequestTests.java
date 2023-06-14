@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WSFederationRequestTests {
+class WSFederationRequestTests {
 
     @Test
     public void verifyOperation() {

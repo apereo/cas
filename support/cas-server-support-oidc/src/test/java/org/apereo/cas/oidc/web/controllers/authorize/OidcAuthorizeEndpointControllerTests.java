@@ -38,12 +38,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcAuthorizeEndpointControllerTests {
+class OidcAuthorizeEndpointControllerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
-    public class PushedAuthorizationRequests extends AbstractOidcTests {
+    class PushedAuthorizationRequests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcAuthorizeController")
         protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
@@ -63,7 +63,7 @@ public class OidcAuthorizeEndpointControllerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultAuthorizationRequests extends AbstractOidcTests {
+    class DefaultAuthorizationRequests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcAuthorizeController")
         protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;

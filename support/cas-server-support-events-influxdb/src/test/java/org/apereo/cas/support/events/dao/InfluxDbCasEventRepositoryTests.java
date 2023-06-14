@@ -27,7 +27,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("InfluxDb")
 @EnabledIfListeningOnPort(port = 8086)
 @Getter
-public class InfluxDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+class InfluxDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired
     @Qualifier("influxDbEventsConnectionFactory")

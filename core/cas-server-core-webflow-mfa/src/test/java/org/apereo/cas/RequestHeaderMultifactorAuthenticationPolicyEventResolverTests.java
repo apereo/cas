@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowEvents")
 @Import(RequestHeaderMultifactorAuthenticationPolicyEventResolverTests.RequestHeaderMultifactorTestConfiguration.class)
-public class RequestHeaderMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class RequestHeaderMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("httpRequestAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestHeaderAuthenticationPolicyWebflowEventResolver;

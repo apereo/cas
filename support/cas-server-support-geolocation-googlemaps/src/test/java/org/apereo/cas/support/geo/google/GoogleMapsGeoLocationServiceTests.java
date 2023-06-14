@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
     GoogleMapsGeoCodingConfiguration.class
 }, properties = "cas.geo-location.google-maps.api-key=AIzaSyCea6zDOkwJVIOm0vZyAI5eHYrz9Vzlhi9")
 @Tag("GeoLocation")
-public class GoogleMapsGeoLocationServiceTests {
+class GoogleMapsGeoLocationServiceTests {
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;

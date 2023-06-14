@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.registration.client-secret-expiration=P14D")
-public class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcTests {
+class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

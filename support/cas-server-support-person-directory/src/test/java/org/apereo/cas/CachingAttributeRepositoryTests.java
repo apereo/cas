@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.stub.attributes.eppn=eppn"
     })
 @Tag("Attributes")
-public class CachingAttributeRepositoryTests {
+class CachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
     private IPersonAttributeDao cachingAttributeRepository;

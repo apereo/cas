@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("GroovyServices")
-public class GroovySurrogateRegisteredServiceAccessStrategyTests {
+class GroovySurrogateRegisteredServiceAccessStrategyTests {
     @Test
     public void verifySurrogateDisabled() {
         val strategy = new GroovySurrogateRegisteredServiceAccessStrategy();

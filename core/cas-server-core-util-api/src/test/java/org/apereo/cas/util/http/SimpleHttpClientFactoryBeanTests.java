@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class SimpleHttpClientFactoryBeanTests {
+class SimpleHttpClientFactoryBeanTests {
 
     @Test
     public void verifyOperation() throws Exception {

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WSFederation")
 @TestPropertySource(properties = "cas.authn.wsfed[0].attributes-type=BOTH")
-public class WsFederationCredentialsToPrincipalResolverAllResolutionTests extends AbstractWsFederationTests {
+class WsFederationCredentialsToPrincipalResolverAllResolutionTests extends AbstractWsFederationTests {
     @Autowired
     @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;

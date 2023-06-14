@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class DefaultResourceSetRepositoryTests {
+class DefaultResourceSetRepositoryTests {
     @Test
     public void verifyOwner() {
         val repo = new DefaultResourceSetRepository();

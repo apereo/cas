@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.authenticationHandlers.enabled=true")
 @Tag("ActuatorEndpoint")
-public class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointTests {
+class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("registeredAuthenticationHandlersEndpoint")

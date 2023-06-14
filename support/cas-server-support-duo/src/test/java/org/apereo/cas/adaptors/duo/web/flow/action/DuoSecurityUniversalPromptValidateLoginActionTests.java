@@ -64,7 +64,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("duoUniversalPromptSessionStore")
     private BrowserWebStorageSessionStore duoUniversalPromptSessionStore;

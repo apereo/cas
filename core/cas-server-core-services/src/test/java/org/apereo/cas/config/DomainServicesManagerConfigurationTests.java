@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.core.init-from-json=true"
     }
 )
-public class DomainServicesManagerConfigurationTests {
+class DomainServicesManagerConfigurationTests {
     @Autowired
     @Qualifier("defaultServicesManagerExecutionPlanConfigurer")
     private ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer;

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Hibernate")
-public class DataSourceProxyTests {
+class DataSourceProxyTests {
 
     @Test
     @SuppressWarnings("JdkObsolete")

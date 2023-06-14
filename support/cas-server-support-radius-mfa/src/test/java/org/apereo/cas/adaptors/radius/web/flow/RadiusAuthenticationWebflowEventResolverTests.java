@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.radius.client.inet-address=localhost,localguest"
     })
 @Tag("Radius")
-public class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("radiusAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;

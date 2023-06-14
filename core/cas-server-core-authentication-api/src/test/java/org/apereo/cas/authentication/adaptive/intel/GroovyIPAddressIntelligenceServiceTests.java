@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("GroovyMfa")
-public class GroovyIPAddressIntelligenceServiceTests {
+class GroovyIPAddressIntelligenceServiceTests {
     @Test
     public void verifyOperation() {
         val script = new ClassPathResource("GroovyIPAddressIntelligenceService.groovy");

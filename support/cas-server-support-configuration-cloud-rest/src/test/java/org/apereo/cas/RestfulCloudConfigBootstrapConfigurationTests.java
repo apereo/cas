@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RestfulCloudConfigBootstrapConfiguration.class
 })
 @Tag("RestfulApi")
-public class RestfulCloudConfigBootstrapConfigurationTests {
+class RestfulCloudConfigBootstrapConfigurationTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

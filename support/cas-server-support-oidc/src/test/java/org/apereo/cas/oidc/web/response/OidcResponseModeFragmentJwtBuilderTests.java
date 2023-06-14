@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcResponseModeFragmentJwtBuilderTests extends AbstractOidcTests {
+class OidcResponseModeFragmentJwtBuilderTests extends AbstractOidcTests {
     @Test
     public void verifyResponseModeForService() throws Exception {
         val registeredService = getOidcRegisteredService("client");

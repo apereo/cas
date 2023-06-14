@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

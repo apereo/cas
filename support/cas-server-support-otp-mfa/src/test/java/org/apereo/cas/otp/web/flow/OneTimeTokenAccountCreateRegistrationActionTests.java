@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class OneTimeTokenAccountCreateRegistrationActionTests {
+class OneTimeTokenAccountCreateRegistrationActionTests {
     @Test
     public void verifyCreateAccount() throws Exception {
         val applicationContext = new StaticApplicationContext();

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServicePrincipalAttributesRepositoryTests {
+class RegisteredServicePrincipalAttributesRepositoryTests {
     @Test
     public void verifyOperation() {
         val policy = mock(RegisteredServicePrincipalAttributesRepository.class);

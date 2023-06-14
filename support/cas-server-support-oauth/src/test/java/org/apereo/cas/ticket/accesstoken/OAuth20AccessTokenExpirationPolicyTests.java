@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
 @Tag("OAuthToken")
-public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
     @Test
     public void verifyAccessTokenExpiryWhenTgtIsExpired() {
         val tgt = newTicketGrantingTicket();

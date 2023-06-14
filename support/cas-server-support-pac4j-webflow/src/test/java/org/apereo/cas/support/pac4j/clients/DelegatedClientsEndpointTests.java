@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("ActuatorEndpoint")
 @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedClientsEndpointTests extends AbstractCasEndpointTests {
+class DelegatedClientsEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("delegatedClientsEndpoint")
     private DelegatedClientsEndpoint endpoint;

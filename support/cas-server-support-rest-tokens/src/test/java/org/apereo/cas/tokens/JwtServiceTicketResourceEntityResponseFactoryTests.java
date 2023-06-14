@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Tickets")
-public class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
+class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
 
     @Autowired
     @Qualifier("restProtocolEndpointConfigurer")

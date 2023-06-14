@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.top-hat.name-id-attribute=cn",
     "cas.saml-sp.top-hat.name-id-format=transient"
 })
-public class CasSamlSPSTopHatConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPSTopHatConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

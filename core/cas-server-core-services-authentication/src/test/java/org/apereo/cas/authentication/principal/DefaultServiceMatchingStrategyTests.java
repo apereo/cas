@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultServiceMatchingStrategyTests {
+class DefaultServiceMatchingStrategyTests {
 
     private ServiceMatchingStrategy strategy;
 

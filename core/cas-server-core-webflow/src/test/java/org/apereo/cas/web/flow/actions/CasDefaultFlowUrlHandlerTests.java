@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("Webflow")
-public class CasDefaultFlowUrlHandlerTests {
+class CasDefaultFlowUrlHandlerTests {
 
     private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
 

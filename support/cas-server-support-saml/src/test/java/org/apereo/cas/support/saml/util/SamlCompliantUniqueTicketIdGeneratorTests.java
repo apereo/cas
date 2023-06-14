@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.3
  */
 @Tag("SAML")
-public class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
+class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifySaml1Compliant() {

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("GroovyAuthentication")
-public class GroovyAuthenticationHandlerTests {
+class GroovyAuthenticationHandlerTests {
     @Test
     public void verifyOperation() {
         val resource = new ClassPathResource("GroovyAuthnHandler.groovy");

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.ticket.tst.time-to-kill-in-seconds=5"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class TransientSessionTicketExpirationPolicyBuilderTests {
+class TransientSessionTicketExpirationPolicyBuilderTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

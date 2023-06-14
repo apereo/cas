@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowAccountProfileConfiguration.class,
     CasCoreAuditConfiguration.class
 })
-public class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
+class PrepareAccountProfileViewActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
     private Action prepareAccountProfileViewAction;

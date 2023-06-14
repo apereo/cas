@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.bypass.rest.url=http://localhost:8080/bypass"
     })
 @Tag("MFATrigger")
-public class YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests {
+class YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests {
     @Autowired
     @Qualifier("yubikeyBypassEvaluator")
     private MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator;

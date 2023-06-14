@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class StaticUserGraphicalAuthenticationRepositoryTests {
+class StaticUserGraphicalAuthenticationRepositoryTests {
 
     @Test
     public void verifyImage() throws Exception {

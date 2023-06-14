@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Cipher")
-public class CacheCredentialsCipherExecutorTests {
+class CacheCredentialsCipherExecutorTests {
     @Test
     public void verifyAction() {
         val cipher = new CacheCredentialsCipherExecutor(null, null,

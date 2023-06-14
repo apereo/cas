@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0.6
  */
 @Tag("X509")
-public class X509SerialNumberPrincipalResolverTests {
+class X509SerialNumberPrincipalResolverTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     private X509SerialNumberPrincipalResolver resolver;

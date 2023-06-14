@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Webflow")
-public class DynamicFlowModelBuilderTests {
+class DynamicFlowModelBuilderTests {
     @Test
     public void verifyOperation() {
         val builder = new DynamicFlowModelBuilder();

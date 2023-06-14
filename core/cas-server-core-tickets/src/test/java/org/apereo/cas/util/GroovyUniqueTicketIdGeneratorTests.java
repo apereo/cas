@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-public class GroovyUniqueTicketIdGeneratorTests {
+class GroovyUniqueTicketIdGeneratorTests {
     @Test
     public void verifyOperation() {
         val resource = new ClassPathResource("GroovyUniqueTicketIdGenerator.groovy");

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.authn.policy.source-selection-enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
-public class UsernamePasswordCredentialTests {
+class UsernamePasswordCredentialTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

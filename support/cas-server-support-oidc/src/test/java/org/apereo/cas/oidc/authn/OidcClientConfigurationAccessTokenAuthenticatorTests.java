@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcTests {
+class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() throws Exception {

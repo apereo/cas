@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class Cas20ProtocolValidationSpecificationTests extends BaseCasCoreTests {
+class Cas20ProtocolValidationSpecificationTests extends BaseCasCoreTests {
     @Autowired
     @Qualifier("casAlwaysSatisfiedProtocolValidationSpecification")
     private CasProtocolValidationSpecification validationSpecification;

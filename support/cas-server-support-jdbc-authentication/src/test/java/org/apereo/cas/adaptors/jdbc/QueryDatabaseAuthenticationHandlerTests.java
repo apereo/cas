@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
 @Tag("JDBCAuthentication")
 @Import(QueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
-public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casusers where username=?";
 
     private static final String PASSWORD_FIELD = "password";

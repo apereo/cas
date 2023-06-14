@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("GeoLocation")
-public class GeoLocationServiceTests {
+class GeoLocationServiceTests {
     @Test
     public void verifyLocate() {
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());

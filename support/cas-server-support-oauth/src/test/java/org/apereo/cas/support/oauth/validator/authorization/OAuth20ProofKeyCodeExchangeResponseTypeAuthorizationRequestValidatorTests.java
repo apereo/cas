@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator")
     private OAuth20AuthorizationRequestValidator validator;

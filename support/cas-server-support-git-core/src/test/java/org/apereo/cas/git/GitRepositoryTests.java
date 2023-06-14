@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Git")
 @Slf4j
-public class GitRepositoryTests {
+class GitRepositoryTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

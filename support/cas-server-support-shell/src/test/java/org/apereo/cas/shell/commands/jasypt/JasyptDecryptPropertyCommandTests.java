@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class JasyptDecryptPropertyCommandTests extends BaseCasShellCommandTests {
+class JasyptDecryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "decrypt-value --value {cas-cipher}iARpnWTURDdiAhWdcHXxqJpncj4iRo3w9i2UT33stcs= "

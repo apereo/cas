@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestfulUrlTemplateResolverTests {
+class RestfulUrlTemplateResolverTests {
     @Test
     public void verifyAction() {
         val request = new MockHttpServletRequest();

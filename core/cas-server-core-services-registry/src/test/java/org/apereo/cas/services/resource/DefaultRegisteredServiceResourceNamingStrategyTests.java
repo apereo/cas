@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceResourceNamingStrategyTests {
+class DefaultRegisteredServiceResourceNamingStrategyTests {
     private static void verifyFileNamePattern(final Pattern pattern, final String name) {
         val matcher = pattern.matcher(name);
         assertTrue(matcher.find());

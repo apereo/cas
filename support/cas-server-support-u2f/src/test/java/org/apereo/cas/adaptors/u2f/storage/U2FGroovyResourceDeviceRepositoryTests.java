@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GroovyMfa")
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;

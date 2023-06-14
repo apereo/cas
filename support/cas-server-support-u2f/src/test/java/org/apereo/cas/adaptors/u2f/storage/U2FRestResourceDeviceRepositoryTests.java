@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration
-public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
     private static final List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
 

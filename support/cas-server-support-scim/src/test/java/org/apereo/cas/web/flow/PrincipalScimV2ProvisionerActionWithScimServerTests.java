@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SCIM")
 @EnabledIfListeningOnPort(port = 9666)
-public class PrincipalScimV2ProvisionerActionWithScimServerTests extends BaseScimProvisionerActionTests {
+class PrincipalScimV2ProvisionerActionWithScimServerTests extends BaseScimProvisionerActionTests {
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();

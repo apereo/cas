@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Getter
 @Tag("JDBC")
-public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)

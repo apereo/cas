@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("WSFederation")
-public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
+class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
     private static final String UPN_PARAM = "upn";
 

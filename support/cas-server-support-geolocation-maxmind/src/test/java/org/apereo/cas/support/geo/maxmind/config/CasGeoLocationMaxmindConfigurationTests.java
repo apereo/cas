@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasGeoLocationMaxmindConfiguration.class
 })
 @Tag("GeoLocation")
-public class CasGeoLocationMaxmindConfigurationTests {
+class CasGeoLocationMaxmindConfigurationTests {
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;

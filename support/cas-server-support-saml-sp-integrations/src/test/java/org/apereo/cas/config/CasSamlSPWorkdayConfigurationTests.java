@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.workday.name-id-attribute=cn",
     "cas.saml-sp.workday.name-id-format=transient"
 })
-public class CasSamlSPWorkdayConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPWorkdayConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

@@ -70,7 +70,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("RestfulApi")
-public class TicketGrantingTicketResourceTests {
+class TicketGrantingTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
 

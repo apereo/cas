@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByCompositeProvider() {
         val appCtx = new StaticApplicationContext();

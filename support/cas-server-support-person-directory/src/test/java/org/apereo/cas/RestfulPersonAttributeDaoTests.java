@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
     })
 @Tag("RestfulApi")
-public class RestfulPersonAttributeDaoTests {
+class RestfulPersonAttributeDaoTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     protected IPersonAttributeDao attributeRepository;

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("CAS")
-public class CasProtocolValidationSpecificationTests {
+class CasProtocolValidationSpecificationTests {
 
     @Test
     public void verifyOperation() {

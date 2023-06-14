@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @Import(QueryDatabaseAuthenticationHandlerPostgresTests.DatabaseTestConfiguration.class)
-public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";
 
     private static final String PASSWORD_FIELD = "password";

@@ -41,7 +41,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 @Tag("JDBC")
-public class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
+class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Autowired
     @Qualifier("inspektrAuditTrailCleaner")

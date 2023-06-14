@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Web")
-public class ChainingTemplateViewResolverTests {
+class ChainingTemplateViewResolverTests {
     @Test
     public void verifyAction() {
         val r = new ChainingTemplateViewResolver();

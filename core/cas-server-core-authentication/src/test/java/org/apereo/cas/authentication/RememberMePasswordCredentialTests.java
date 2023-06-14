@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.2.1
  */
 @Tag("Authentication")
-public class RememberMePasswordCredentialTests {
+class RememberMePasswordCredentialTests {
 
     @Test
     public void verifyGettersAndSetters() {

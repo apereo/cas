@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowAccountActions")
 @TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-policy-terms-attribute-name=cn")
-public class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyActionTests {
+class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_AUP_RENDER)
     private Action acceptableUsagePolicyRenderAction;

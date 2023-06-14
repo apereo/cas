@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Tag("Consent")
-public class DefaultConsentEngineTests {
+class DefaultConsentEngineTests {
     @Autowired
     @Qualifier(ConsentEngine.BEAN_NAME)
     private ConsentEngine consentEngine;

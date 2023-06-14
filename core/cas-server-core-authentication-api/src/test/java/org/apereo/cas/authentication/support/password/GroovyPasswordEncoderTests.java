@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-public class GroovyPasswordEncoderTests {
+class GroovyPasswordEncoderTests {
 
     @Test
     public void verifyOperation() {

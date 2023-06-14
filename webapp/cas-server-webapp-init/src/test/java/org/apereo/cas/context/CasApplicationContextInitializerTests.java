@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = CasApplicationContextInitializer.class)
 @Tag("WebApp")
-public class CasApplicationContextInitializerTests {
+class CasApplicationContextInitializerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

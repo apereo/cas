@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  */
 @Setter
 @Tag("WSFederation")
-public class WsFederationHelperTests extends AbstractWsFederationTests {
+class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyEncryptedToken() throws Exception {

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLResponse")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
-public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
+class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyOperationByParam() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");

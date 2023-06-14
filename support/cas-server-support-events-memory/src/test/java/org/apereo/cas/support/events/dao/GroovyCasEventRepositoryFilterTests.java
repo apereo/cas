@@ -17,7 +17,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 @Tag("Groovy")
 @Import(GroovyCasEventRepositoryFilterTests.GroovyCasEventRepositoryFilterTestConfiguration.class)
-public class GroovyCasEventRepositoryFilterTests extends InMemoryCasEventRepositoryTests {
+class GroovyCasEventRepositoryFilterTests extends InMemoryCasEventRepositoryTests {
 
     @TestConfiguration(value = "GroovyCasEventRepositoryFilterTestConfiguration", proxyBeanMethods = false)
     public static class GroovyCasEventRepositoryFilterTestConfiguration {

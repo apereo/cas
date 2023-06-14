@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.service-registry.yaml.location=classpath:/services")
 @Tag("FileSystem")
-public class YamlServiceRegistryConfigurationTests {
+class YamlServiceRegistryConfigurationTests {
     @Autowired
     @Qualifier("yamlServiceRegistry")
     private ServiceRegistry serviceRegistry;

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFAProvider")
-public class AuthyAuthenticationHandlerTests {
+class AuthyAuthenticationHandlerTests {
     private static AuthyClientInstance configureAuthyClientInstance(final int userStatus,
                                                                     final int tokenStatus, final String message) throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);

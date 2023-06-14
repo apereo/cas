@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @Import(OidcServerDiscoverySettingsFactoryTests.OidcAuthenticationContextTestConfiguration.class)
-public class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
+class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
 
     @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
     public static class OidcAuthenticationContextTestConfiguration {

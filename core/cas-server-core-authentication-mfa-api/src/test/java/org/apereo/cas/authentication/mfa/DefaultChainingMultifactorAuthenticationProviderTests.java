@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @Tag("MFA")
-public class DefaultChainingMultifactorAuthenticationProviderTests {
+class DefaultChainingMultifactorAuthenticationProviderTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

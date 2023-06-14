@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Hibernate")
-public class CasHibernatePhysicalNamingStrategyTests {
+class CasHibernatePhysicalNamingStrategyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

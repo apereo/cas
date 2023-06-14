@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-public class OidcGroovyWebFingerUserInfoRepositoryTests {
+class OidcGroovyWebFingerUserInfoRepositoryTests {
     @Test
     public void verifyFindByEmail() {
         val repo = new OidcGroovyWebFingerUserInfoRepository(new ClassPathResource("webfinger.groovy"));

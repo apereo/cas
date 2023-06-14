@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("AuthenticationHandler")
-public class DefaultAuthenticationHandlerResolverTests {
+class DefaultAuthenticationHandlerResolverTests {
     @Test
     public void verifyOperation() {
         val h1 = new SimpleTestUsernamePasswordAuthenticationHandler("h1");

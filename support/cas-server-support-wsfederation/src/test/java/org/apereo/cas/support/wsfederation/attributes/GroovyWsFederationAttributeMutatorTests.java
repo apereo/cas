@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class GroovyWsFederationAttributeMutatorTests {
+class GroovyWsFederationAttributeMutatorTests {
     @Test
     public void verifyAction() {
         val g = new GroovyWsFederationAttributeMutator(new ClassPathResource("GroovyWsFedMutator.groovy"));

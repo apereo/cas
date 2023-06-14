@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("LdapAuthentication")
-public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
+class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategySupportsDefault() {
         val s = new RejectResultCodeLdapPasswordPolicyHandlingStrategy();

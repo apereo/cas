@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class FailingResourceU2FDeviceRepositoryTests {
+class FailingResourceU2FDeviceRepositoryTests {
 
     @Test
     public void verifyOperation() throws Exception {

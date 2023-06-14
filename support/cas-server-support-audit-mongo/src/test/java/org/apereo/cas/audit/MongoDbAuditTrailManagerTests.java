@@ -47,7 +47,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("MongoDb")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
+class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @Autowired
     @Qualifier("mongoDbAuditTrailManager")

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Delegation")
-public class ChainingDelegatedClientUserProfileProvisionerTests {
+class ChainingDelegatedClientUserProfileProvisionerTests {
     @Test
     public void verifyOperation() {
         val commonProfile = new CommonProfile();

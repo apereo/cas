@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.core.user-profile-view-type=NESTED")
-public class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Tests {
+class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("oauthUserProfileViewRenderer")

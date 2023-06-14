@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapPasswordSynchronizationConfigurationTests {
+class LdapPasswordSynchronizationConfigurationTests {
     @Autowired
     @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;

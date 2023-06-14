@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("Attributes")
-public class ReturnAllowedAttributeReleasePolicyTests {
+class ReturnAllowedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -65,7 +65,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class AttributeDefinitionsTests {
+    class AttributeDefinitionsTests {
         @Autowired
         @Qualifier(AttributeDefinitionStore.BEAN_NAME)
         private AttributeDefinitionStore attributeDefinitionStore;
@@ -119,7 +119,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class DefaultTests {
+    class DefaultTests {
 
         @Autowired
         private CasConfigurationProperties casProperties;

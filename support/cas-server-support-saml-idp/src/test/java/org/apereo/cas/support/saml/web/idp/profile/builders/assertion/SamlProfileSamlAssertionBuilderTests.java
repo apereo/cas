@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAMLResponse")
-public class SamlProfileSamlAssertionBuilderTests {
+class SamlProfileSamlAssertionBuilderTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class AssertionWithDefaultMetadata extends BaseSamlIdPConfigurationTests {
+    class AssertionWithDefaultMetadata extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlProfileSamlAssertionBuilder")
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
@@ -63,7 +63,7 @@ public class SamlProfileSamlAssertionBuilderTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
-    public class AssertionWithServiceProviderMetadata extends BaseSamlIdPConfigurationTests {
+    class AssertionWithServiceProviderMetadata extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlProfileSamlAssertionBuilder")
         private SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;

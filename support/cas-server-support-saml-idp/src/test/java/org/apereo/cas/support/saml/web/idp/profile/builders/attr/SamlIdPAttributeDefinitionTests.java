@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("SAMLAttributes")
-public class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private AttributeDefinitionStore attributeDefinitionStore;

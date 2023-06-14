@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.syncope.provisioning.basic-auth-password=password"
 })
 @Tag("Syncope")
-public class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SYNCOPE_PRINCIPAL_PROVISIONER_ACTION)
     private Action syncopePrincipalProvisionerAction;

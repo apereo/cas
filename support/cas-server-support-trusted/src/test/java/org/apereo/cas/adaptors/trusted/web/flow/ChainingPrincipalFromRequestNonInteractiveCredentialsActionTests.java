@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WebflowActions")
-public class ChainingPrincipalFromRequestNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
+class ChainingPrincipalFromRequestNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("remoteUserAuthenticationAction")
     private PrincipalFromRequestExtractorAction remoteUserAuthenticationAction;

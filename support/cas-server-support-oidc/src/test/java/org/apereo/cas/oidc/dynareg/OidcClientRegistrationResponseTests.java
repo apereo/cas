@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcClientRegistrationResponseTests extends AbstractOidcTests {
+class OidcClientRegistrationResponseTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() {

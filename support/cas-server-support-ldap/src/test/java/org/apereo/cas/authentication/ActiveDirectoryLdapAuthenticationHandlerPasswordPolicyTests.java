@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 })
 @EnabledIfListeningOnPort(port = 10390)
 @Tag("ActiveDirectory")
-public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
+class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override
     protected String getUsername() {

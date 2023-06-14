@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("cxfServlet")
     private ServletRegistrationBean cxfServlet;

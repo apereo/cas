@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
 @EnableScheduling
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
-public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
+class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

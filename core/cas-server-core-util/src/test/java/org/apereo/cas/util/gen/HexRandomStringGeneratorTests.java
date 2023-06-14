@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Simple")
-public class HexRandomStringGeneratorTests {
+class HexRandomStringGeneratorTests {
 
     private static final int LENGTH = 36;
 

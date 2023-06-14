@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasJavaMelodyConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasJavaMelodyConfigurationTests {
+class CasJavaMelodyConfigurationTests {
 
     @Autowired
     @Qualifier("monitoringSpringServiceAdvisor")

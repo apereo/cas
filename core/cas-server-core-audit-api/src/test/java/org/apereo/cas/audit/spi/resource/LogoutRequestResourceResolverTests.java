@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class LogoutRequestResourceResolverTests {
+class LogoutRequestResourceResolverTests {
 
     private static final String TGT_ID = "TGT-0";
 

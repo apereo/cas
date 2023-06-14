@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
 @Tag("JDBC")
-public class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
+class PrincipalAttributeRepositoryFetcherJdbcTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
     public void verifyOperationWithUsernamePasswordCredentialType() {

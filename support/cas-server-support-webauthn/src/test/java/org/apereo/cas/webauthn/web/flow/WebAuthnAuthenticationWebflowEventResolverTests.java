@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowEvents")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("webAuthnAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver;

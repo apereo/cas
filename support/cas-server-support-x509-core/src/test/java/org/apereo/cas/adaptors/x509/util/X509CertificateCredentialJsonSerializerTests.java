@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("X509")
-public class X509CertificateCredentialJsonSerializerTests {
+class X509CertificateCredentialJsonSerializerTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

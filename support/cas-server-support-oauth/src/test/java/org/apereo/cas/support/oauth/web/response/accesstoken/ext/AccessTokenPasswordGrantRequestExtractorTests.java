@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth20Tests {
+class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20ConfigurationContext")
     private OAuth20ConfigurationContext oauth20ConfigurationContext;

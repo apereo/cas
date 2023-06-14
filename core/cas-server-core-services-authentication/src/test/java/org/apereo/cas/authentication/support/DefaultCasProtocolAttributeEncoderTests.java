@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Attributes")
-public class DefaultCasProtocolAttributeEncoderTests {
+class DefaultCasProtocolAttributeEncoderTests {
     private final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(mock(ServicesManager.class),
         CipherExecutor.noOpOfStringToString());
 

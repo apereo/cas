@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Metrics")
-public class CapacityTests {
+class CapacityTests {
     private static void verify(final String... values) {
         Arrays.stream(values).forEach(v -> assertNotNull(Capacity.parse(v)));
     }

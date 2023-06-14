@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationHandler")
-public class UsernamePasswordWrapperAuthenticationHandlerTests {
+class UsernamePasswordWrapperAuthenticationHandlerTests {
 
     @Test
     public void verifyTypes() {

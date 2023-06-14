@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultResponseTests {
+class DefaultResponseTests {
     @Test
     public void verifyHeader() {
         val input = DefaultResponse.getHeaderResponse("github.com", Map.of("key", "value"));

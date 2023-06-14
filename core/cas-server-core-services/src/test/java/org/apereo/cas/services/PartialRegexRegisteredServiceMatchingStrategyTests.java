@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class PartialRegexRegisteredServiceMatchingStrategyTests {
+class PartialRegexRegisteredServiceMatchingStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "PartialRegexRegisteredServiceMatchingStrategyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.algs.override-blocked-signature-signing-algorithms=http://www.w3.org/2001/04/xmldsig-more#md5",
     "cas.authn.saml-idp.algs.override-allowed-signature-signing-algorithms=http://www.w3.org/2001/04/xmldsig-more#hmac-md5"
 })
-public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
+class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
     private SAML2Configuration saml2ClientConfiguration;
 
     private SAML2MessageContext saml2MessageContext;

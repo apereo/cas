@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFATrigger")
 @Import(SamlIdPMultifactorAuthenticationTriggerTests.MultifactorTestConfiguration.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.core.authentication-context-class-mappings=context1->mfa-dummy")
-public class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTests {
+class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier("samlIdPMultifactorAuthenticationTrigger")
     private MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger;

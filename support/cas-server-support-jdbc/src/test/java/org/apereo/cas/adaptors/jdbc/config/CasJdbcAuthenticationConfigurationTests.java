@@ -98,7 +98,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect"
 })
 @Tag("JDBCAuthentication")
-public class CasJdbcAuthenticationConfigurationTests {
+class CasJdbcAuthenticationConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

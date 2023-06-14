@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
-public class SurrogateRegisteredServiceAccessStrategyTests {
+class SurrogateRegisteredServiceAccessStrategyTests {
     @Test
     public void verifySurrogateDisabled() {
         val a = new SurrogateRegisteredServiceAccessStrategy();

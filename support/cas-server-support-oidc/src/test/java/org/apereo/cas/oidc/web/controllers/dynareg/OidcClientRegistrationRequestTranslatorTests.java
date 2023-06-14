@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
-public class OidcClientRegistrationRequestTranslatorTests {
+class OidcClientRegistrationRequestTranslatorTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN")
-    public class OpenRegistrationMode extends AbstractOidcTests {
+    class OpenRegistrationMode extends AbstractOidcTests {
 
         @Autowired
         @Qualifier("oidcClientRegistrationRequestTranslator")

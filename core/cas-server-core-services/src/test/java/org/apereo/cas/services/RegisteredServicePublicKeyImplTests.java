@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("RegisteredService")
-public class RegisteredServicePublicKeyImplTests {
+class RegisteredServicePublicKeyImplTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServicePublicKeyImpl.json");
 

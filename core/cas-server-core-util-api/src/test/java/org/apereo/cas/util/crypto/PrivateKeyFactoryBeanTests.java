@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("X509")
-public class PrivateKeyFactoryBeanTests {
+class PrivateKeyFactoryBeanTests {
 
     @Test
     public void verifyOperation() throws Exception {

@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Tag("MongoDb")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
+class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)

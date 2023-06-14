@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Delegation")
-public class ChainingRegisteredServiceDelegatedAuthenticationPolicyTests {
+class ChainingRegisteredServiceDelegatedAuthenticationPolicyTests {
     @Test
     public void verifySelectionStrategy() {
         val chain = new ChainingRegisteredServiceDelegatedAuthenticationPolicy();

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Grouper")
-public class GrouperFacadeTests {
+class GrouperFacadeTests {
     @Test
     public void verifyAttributes() {
         val group = new WsGroup();

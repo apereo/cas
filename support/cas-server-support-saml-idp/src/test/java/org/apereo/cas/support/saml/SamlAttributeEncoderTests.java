@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("SAML1")
-public class SamlAttributeEncoderTests {
+class SamlAttributeEncoderTests {
     @Test
     public void verifyAction() {
         val original = CoreAuthenticationTestUtils.getAttributes();

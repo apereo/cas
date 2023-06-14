@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-public class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePasswordlessAuthenticationActionTests {
+class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("passwordlessDelegatedClientIdentityProviderAuthorizer")
     private DelegatedClientIdentityProviderAuthorizer authorizer;

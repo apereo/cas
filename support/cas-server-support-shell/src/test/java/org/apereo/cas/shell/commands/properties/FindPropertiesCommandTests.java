@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class FindPropertiesCommandTests extends BaseCasShellCommandTests {
+class FindPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "find --name cas.server.name --summary"));

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Webflow")
-public class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePasswordManagementActionTests {
+class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePasswordManagementActionTests {
 
     @Autowired
     @Qualifier("passwordManagementSingleSignOnParticipationStrategy")

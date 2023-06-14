@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("AuthenticationHandler")
-public class ByCredentialSourceAuthenticationHandlerResolverTests {
+class ByCredentialSourceAuthenticationHandlerResolverTests {
 
     @Test
     public void verifySupports() {

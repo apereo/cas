@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("InfluxDb")
 @EnabledIfListeningOnPort(port = 8086)
-public class InfluxDbConnectionFactoryTests {
+class InfluxDbConnectionFactoryTests {
     private InfluxDbConnectionFactory factory;
 
     @BeforeEach

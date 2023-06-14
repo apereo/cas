@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("AuthenticationThrottling")
-public class BucketProducerTests {
+class BucketProducerTests {
 
     @Test
     public void verifyOperation() {

@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=mfa-dummy")
 @Import(OidcAuthenticationContextWebflowEventResolverTests.OidcAuthenticationContextTestConfiguration.class)
-public class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
+class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAuthenticationContextWebflowEventResolver")
     protected CasWebflowEventResolver resolver;

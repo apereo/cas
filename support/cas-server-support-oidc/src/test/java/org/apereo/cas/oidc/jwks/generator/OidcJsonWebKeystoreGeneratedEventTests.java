@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcJsonWebKeystoreGeneratedEventTests {
+class OidcJsonWebKeystoreGeneratedEventTests {
 
     @Test
     public void verifyOperation() throws Exception {

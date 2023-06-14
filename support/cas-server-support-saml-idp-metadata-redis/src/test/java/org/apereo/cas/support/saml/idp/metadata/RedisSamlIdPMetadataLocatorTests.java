@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
+class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
 
     @Autowired
     @Qualifier("redisSamlIdPMetadataTemplate")

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Native")
 @SpringBootTest(classes = CasNativeSupportConfiguration.class)
-public class CasNativeBannerContributorTests {
+class CasNativeBannerContributorTests {
 
     @Test
     public void verifyOperation() throws Exception {

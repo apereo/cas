@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RestfulApiAuthentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
 
     @Test
     @Order(0)

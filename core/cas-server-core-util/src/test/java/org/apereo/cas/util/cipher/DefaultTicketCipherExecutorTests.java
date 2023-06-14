@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Cipher")
-public class DefaultTicketCipherExecutorTests {
+class DefaultTicketCipherExecutorTests {
     public static Stream<Arguments> getParameters() {
         return Stream.of(
             Arguments.of(16, "e0q85ep-GXg8tfuDEWUJGw"),

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Getter
 @Tag("JDBC")
-public class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
+class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final int COUNT = 1000;
 
     @Autowired

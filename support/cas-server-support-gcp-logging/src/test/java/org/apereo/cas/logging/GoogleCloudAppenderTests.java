@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     GoogleCloudLoggingConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GoogleCloudAppenderTests {
+class GoogleCloudAppenderTests {
 
     @Autowired
     @Qualifier("googleCloudLoggingInterceptor")

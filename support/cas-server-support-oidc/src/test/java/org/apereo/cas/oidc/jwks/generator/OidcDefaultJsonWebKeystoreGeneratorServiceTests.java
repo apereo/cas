@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @SuppressWarnings("JavaUtilDate")
-public class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
+class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
@@ -40,7 +40,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:/encrypted.jwks")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class EncryptedKeystoreTests extends AbstractOidcTests {
+    class EncryptedKeystoreTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() throws Exception {
             val resource = oidcJsonWebKeystoreGeneratorService.find();
@@ -53,7 +53,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         private File keystore;
 
         @BeforeEach

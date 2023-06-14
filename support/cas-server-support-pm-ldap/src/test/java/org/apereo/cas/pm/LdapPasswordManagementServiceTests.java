@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
 })
 @EnabledIfListeningOnPort(port = 10389)
-public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;
 
     @BeforeAll

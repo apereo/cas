@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboMustEnrollActionTests extends BaseActionTests {
+class InweboMustEnrollActionTests extends BaseActionTests {
 
     private InweboMustEnrollAction action;
 

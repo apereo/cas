@@ -47,7 +47,7 @@ import static org.springframework.http.HttpStatus.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.rest.url=http://localhost:6591"
     })
-public class RestfulYubiKeyAccountRegistryTests {
+class RestfulYubiKeyAccountRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

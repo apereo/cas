@@ -84,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.radius.id=mfa-dummy"
 })
 @Tag("Radius")
-public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
+class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     @Autowired
     @Qualifier("radiusAccessChallengedMultifactorAuthenticationTrigger")
     private MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;

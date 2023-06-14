@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("SAML2")
-public class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

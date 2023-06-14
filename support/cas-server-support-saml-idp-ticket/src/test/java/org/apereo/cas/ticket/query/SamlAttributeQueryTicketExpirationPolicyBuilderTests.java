@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("ExpirationPolicy")
-public class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
+class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
     @Test
     public void verifyOperation() {
         val properties = new CasConfigurationProperties();

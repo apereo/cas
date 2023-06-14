@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("OAuth")
-public class OAuth20LogoutReplicateSessionTests {
+class OAuth20LogoutReplicateSessionTests {
 
     @Autowired
     @Qualifier(LogoutExecutionPlan.BEAN_NAME)

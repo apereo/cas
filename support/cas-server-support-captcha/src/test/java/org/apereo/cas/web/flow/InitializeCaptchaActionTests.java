@@ -35,7 +35,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
     }
 )
 @Tag("WebflowActions")
-public class InitializeCaptchaActionTests {
+class InitializeCaptchaActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_INIT_CAPTCHA)
     private Action initializeCaptchaAction;

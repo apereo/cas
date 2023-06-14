@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-public class YubiKeyAuthenticationPrepareLoginActionTests {
+class YubiKeyAuthenticationPrepareLoginActionTests {
     @BeforeEach
     public void setup() {
         val applicationContext = new StaticApplicationContext();

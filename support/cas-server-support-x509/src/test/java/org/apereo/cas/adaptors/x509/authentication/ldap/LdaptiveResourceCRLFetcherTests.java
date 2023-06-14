@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
-public class LdaptiveResourceCRLFetcherTests {
+class LdaptiveResourceCRLFetcherTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
 
@@ -81,7 +81,7 @@ public class LdaptiveResourceCRLFetcherTests {
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=cn")
     @SuppressWarnings("ClassCanBeStatic")
-    public class InvalidNonBinaryAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
+    class InvalidNonBinaryAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
@@ -98,7 +98,7 @@ public class LdaptiveResourceCRLFetcherTests {
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=unknown")
     @SuppressWarnings("ClassCanBeStatic")
-    public class UnknownAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
+    class UnknownAttributeFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;
@@ -114,7 +114,7 @@ public class LdaptiveResourceCRLFetcherTests {
     @Nested
     @Tag("Ldap")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultFetchFromLdap extends BaseX509LdapResourceFetcherTests {
+    class DefaultFetchFromLdap extends BaseX509LdapResourceFetcherTests {
         @Autowired
         @Qualifier("crlFetcher")
         private CRLFetcher fetcher;

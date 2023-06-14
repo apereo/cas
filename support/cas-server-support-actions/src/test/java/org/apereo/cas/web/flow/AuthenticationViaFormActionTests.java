@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("WebflowAuthenticationActions")
-public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
+class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
 
     private static final String TEST = "test";
 

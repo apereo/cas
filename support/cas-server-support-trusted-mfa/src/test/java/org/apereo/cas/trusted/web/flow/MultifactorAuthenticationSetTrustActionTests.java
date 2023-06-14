@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Getter
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

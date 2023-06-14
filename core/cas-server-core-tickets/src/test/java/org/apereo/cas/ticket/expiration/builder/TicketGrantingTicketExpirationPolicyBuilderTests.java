@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class TicketGrantingTicketExpirationPolicyBuilderTests {
+class TicketGrantingTicketExpirationPolicyBuilderTests {
 
     @Test
     public void verifyRememberMe() {

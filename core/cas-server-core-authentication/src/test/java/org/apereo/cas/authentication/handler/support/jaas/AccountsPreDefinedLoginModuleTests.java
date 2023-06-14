@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class AccountsPreDefinedLoginModuleTests {
+class AccountsPreDefinedLoginModuleTests {
 
     @Test
     public void verifyOperation() throws Exception {

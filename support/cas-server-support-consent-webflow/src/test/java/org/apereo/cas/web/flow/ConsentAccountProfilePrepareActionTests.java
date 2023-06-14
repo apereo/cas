@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAccountActions")
 @Import(CasWebflowAccountProfileConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
+class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
     @Autowired
     @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
     private ConsentDecisionBuilder consentDecisionBuilder;

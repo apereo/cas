@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Audits")
-public class ProtocolSpecificationValidationAuditResourceResolverTests {
+class ProtocolSpecificationValidationAuditResourceResolverTests {
 
     @Test
     public void verifyOperation() {

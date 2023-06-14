@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServicePropertyTests {
+class RegisteredServicePropertyTests {
 
     @Test
     public void verifyNull() {

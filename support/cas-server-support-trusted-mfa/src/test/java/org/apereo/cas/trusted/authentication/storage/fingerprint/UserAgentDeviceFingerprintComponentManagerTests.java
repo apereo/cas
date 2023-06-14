@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MFATrustedDevices")
-public class UserAgentDeviceFingerprintComponentManagerTests {
+class UserAgentDeviceFingerprintComponentManagerTests {
     @Test
     public void verifyAgentFingerprintNotFound() {
         val request = new MockHttpServletRequest();

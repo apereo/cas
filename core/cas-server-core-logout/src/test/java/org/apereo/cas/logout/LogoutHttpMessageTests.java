@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Logout")
-public class LogoutHttpMessageTests {
+class LogoutHttpMessageTests {
     @Test
     public void verifyOperation() throws Exception {
         val message = new LogoutHttpMessage(new URL("https://github.com"), "LogoutMessage", false);

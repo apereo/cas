@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("Logout")
-public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
+class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     private ServicesManager servicesManager;
 
     public static AbstractWebApplicationService getService(final String url) {

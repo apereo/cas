@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class AddPropertiesToConfigurationCommandTests extends BaseCasShellCommandTests {
+class AddPropertiesToConfigurationCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         var file = File.createTempFile("cas", ".properties");

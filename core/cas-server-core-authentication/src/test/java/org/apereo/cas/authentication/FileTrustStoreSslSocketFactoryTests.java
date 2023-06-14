@@ -30,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
-public class FileTrustStoreSslSocketFactoryTests {
+class FileTrustStoreSslSocketFactoryTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SslSocketFactoryTests {
+    class SslSocketFactoryTests {
         private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
 
         private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");

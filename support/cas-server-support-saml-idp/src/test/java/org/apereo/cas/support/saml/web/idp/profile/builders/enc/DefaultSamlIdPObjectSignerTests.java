@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
-public class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
+class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void findsSigningCredential() throws Exception {

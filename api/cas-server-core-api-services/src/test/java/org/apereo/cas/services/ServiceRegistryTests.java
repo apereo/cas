@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ServiceRegistryTests {
+class ServiceRegistryTests {
     @Test
     public void verifyFindById() {
         val component = mock(ServiceRegistry.class);

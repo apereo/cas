@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsConfiguration.class
 })
 @Tag("Simple")
-public class DefaultNotificationSenderTests {
+class DefaultNotificationSenderTests {
     @Autowired
     @Qualifier("notificationSender")
     private NotificationSender notificationSender;

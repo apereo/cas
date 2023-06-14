@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLJdbcPasswordManagementServiceTests extends JdbcPasswordManagementServiceTests {
+class MySQLJdbcPasswordManagementServiceTests extends JdbcPasswordManagementServiceTests {
     @Override
     protected void dropTablesBeforeTest(final JdbcTemplate jdbcTemplate) {
         jdbcTemplate.execute("drop table if exists `pm_table_accounts`;");

@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
 @Tag("Attributes")
-public class PersonDirectoryPrincipalResolverConcurrencyTests {
+class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     private static final int NUM_USERS = 100;
 

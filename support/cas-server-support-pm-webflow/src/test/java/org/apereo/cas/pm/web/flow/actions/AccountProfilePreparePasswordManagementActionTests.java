@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
     "CasFeatureModule.AccountManagement.enabled=true"
 })
 @Import(CasWebflowAccountProfileConfiguration.class)
-public class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
+class AccountProfilePreparePasswordManagementActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
     private Action prepareAccountProfilePasswordMgmtAction;

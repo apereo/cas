@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class ChainingAttributeReleasePolicyTests {
+class ChainingAttributeReleasePolicyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

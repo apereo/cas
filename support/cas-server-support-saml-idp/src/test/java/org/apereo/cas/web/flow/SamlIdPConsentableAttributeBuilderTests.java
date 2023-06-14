@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Import(CasConsentCoreConfiguration.class)
 @TestPropertySource(properties =
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
-public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
+class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
     private static final String VALUE = UUID.randomUUID().toString();
     @Autowired
     @Qualifier("samlIdPConsentableAttributeBuilder")

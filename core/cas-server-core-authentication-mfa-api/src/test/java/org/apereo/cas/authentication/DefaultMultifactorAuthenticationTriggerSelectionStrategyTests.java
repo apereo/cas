@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("MFATrigger")
-public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
+class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     private static MultifactorAuthenticationTrigger getMultifactorAuthenticationTrigger() {
         val trigger = mock(MultifactorAuthenticationTrigger.class);
         when(trigger.supports(any(), any(), any(), any())).thenReturn(true);

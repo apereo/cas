@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("CAS")
-public class ChainingCasProtocolValidationSpecificationTests {
+class ChainingCasProtocolValidationSpecificationTests {
 
     private static Assertion getAssertion() {
         val assertion = mock(Assertion.class);

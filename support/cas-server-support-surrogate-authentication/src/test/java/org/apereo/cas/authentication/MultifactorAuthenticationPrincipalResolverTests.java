@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @Tag("Authentication")
-public class MultifactorAuthenticationPrincipalResolverTests {
+class MultifactorAuthenticationPrincipalResolverTests {
     @Autowired
     @Qualifier("surrogateMultifactorAuthenticationPrincipalResolver")
     private MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver;

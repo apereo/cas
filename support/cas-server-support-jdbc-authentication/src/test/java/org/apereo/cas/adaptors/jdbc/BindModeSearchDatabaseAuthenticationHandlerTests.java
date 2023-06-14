@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 })
 @Tag("JDBCAuthentication")
 @Import(BindModeSearchDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
-public class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
+class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;

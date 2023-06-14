@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("WebflowServiceActions")
-public class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
+class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
     @BeforeEach
     public void setup() {
         val services = RegisteredServiceTestUtils.getRegisteredServicesForTests();

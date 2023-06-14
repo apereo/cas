@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowEvents")
 @Import(TimedMultifactorAuthenticationPolicyEventResolverTests.TimedMultifactorTestConfiguration.class)
-public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     @Qualifier("timedAuthenticationPolicyWebflowEventResolver")

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationThrottling")
-public class ThrottledSubmissionHandlerInterceptorTests {
+class ThrottledSubmissionHandlerInterceptorTests {
 
     @Test
     public void verifyOperation() throws Exception {

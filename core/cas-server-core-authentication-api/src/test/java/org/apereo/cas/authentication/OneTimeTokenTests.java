@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class OneTimeTokenTests {
+class OneTimeTokenTests {
 
     @Test
     public void verifyComparisonWorks() throws Exception {

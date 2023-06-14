@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("CAS")
 @TestPropertySource(properties = "cas.ticket.crypto.enabled=true")
-public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
+class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
     private static Service getService(final String name) {
         val request = new MockHttpServletRequest();

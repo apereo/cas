@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
     },
     properties = "cas.webflow.session.server.hazelcast.cluster.core.instance-name=hzsessioninstance")
 @Tag("Hazelcast")
-public class HazelcastSessionConfigurationTests {
+class HazelcastSessionConfigurationTests {
     @Autowired
     @Qualifier("hazelcastInstance")
     private HazelcastInstance hazelcastInstance;

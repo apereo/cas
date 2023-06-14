@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Simple")
-public class Log4jInitializationTests {
+class Log4jInitializationTests {
     @Test
     public void verifyOperation() {
         assertDoesNotThrow(() -> {

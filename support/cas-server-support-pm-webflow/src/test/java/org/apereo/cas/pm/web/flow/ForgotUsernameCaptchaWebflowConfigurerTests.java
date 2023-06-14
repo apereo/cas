@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.reset.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })
 @Tag("WebflowConfig")
-public class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
     private Action initCaptchaAction;

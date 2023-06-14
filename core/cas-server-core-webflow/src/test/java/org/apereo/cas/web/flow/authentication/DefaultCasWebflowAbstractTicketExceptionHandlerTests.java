@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Webflow")
-public class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
+class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 
     private RequestContext context;

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("X509")
-public class X509RestHttpRequestHeaderCredentialFactoryTests {
+class X509RestHttpRequestHeaderCredentialFactoryTests {
     private static final String HEADER = "ssl_client_cert";
 
     private final X509RestHttpRequestHeaderCredentialFactory factory =

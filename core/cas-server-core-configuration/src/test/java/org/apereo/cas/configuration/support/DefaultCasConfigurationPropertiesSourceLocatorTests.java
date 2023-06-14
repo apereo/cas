@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 )
 @Tag("CasConfiguration")
-public class DefaultCasConfigurationPropertiesSourceLocatorTests {
+class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");
         System.setProperty("spring.profiles.active", CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE + ",dev");

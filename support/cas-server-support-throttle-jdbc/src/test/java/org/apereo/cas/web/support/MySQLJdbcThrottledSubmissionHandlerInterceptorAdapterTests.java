@@ -46,7 +46,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
 @Getter
-public class MySQLJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+class MySQLJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;

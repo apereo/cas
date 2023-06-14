@@ -21,7 +21,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.*;
  * @since 6.4.0
  */
 @Tag("Utility")
-public class BeanDefinitionStoreFailureAnalyzerTests {
+class BeanDefinitionStoreFailureAnalyzerTests {
 
     @Test
     public void analyzeBeanDefinitionStoreException() {

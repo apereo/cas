@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  */
 @EnabledIfListeningOnPort(port = 25000)
 @Tag("Mail")
-public class ValidatePasswordResetTokenActionTests extends BasePasswordManagementActionTests {
+class ValidatePasswordResetTokenActionTests extends BasePasswordManagementActionTests {
     @Test
     public void verifyInvalidTickeeditpt() throws Exception {
         val context = new MockRequestContext();

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class ChainingRestHttpRequestCredentialFactoryTests {
+class ChainingRestHttpRequestCredentialFactoryTests {
 
     @Test
     public void verifyOperation() {

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class DefaultUniqueTicketIdGeneratorTests {
+class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
     public void verifyUniqueGenerationOfTicketIds() {

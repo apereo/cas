@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
+class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("casCallbackUrlResolver")
     private UrlResolver casCallbackUrlResolver;

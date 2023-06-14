@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Hazelcast")
-public class HazelcastBannerContributorTests {
+class HazelcastBannerContributorTests {
     @Test
     public void verifyOperation() throws Exception {
         val c = new HazelcastBannerContributor();

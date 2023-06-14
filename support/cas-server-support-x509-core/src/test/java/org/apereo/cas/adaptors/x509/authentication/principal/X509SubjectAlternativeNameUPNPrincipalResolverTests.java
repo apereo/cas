@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("X509")
-public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
+class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     @Mock
     private ServicesManager servicesManager;

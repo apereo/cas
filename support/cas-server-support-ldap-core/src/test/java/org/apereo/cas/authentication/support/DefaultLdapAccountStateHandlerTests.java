@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("LdapAuthentication")
-public class DefaultLdapAccountStateHandlerTests {
+class DefaultLdapAccountStateHandlerTests {
     @Test
     public void verifyActiveDirectoryErrors() {
         val handler = new DefaultLdapAccountStateHandler();

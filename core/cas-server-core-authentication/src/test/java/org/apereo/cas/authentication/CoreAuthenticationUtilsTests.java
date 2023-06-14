@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("Utility")
-public class CoreAuthenticationUtilsTests {
+class CoreAuthenticationUtilsTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

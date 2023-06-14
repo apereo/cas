@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class InetAddressUtilsTests {
+class InetAddressUtilsTests {
 
     @Test
     public void verifyOperation() {

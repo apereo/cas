@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
+class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
     @Qualifier(ConsentRepository.BEAN_NAME)

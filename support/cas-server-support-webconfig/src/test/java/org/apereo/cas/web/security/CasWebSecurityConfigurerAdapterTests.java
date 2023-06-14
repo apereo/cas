@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("LdapAuthentication")
 @EnabledIfListeningOnPort(port = 10389)
-public class CasWebSecurityConfigurerAdapterTests {
+class CasWebSecurityConfigurerAdapterTests {
 
     @Autowired
     @Qualifier("casWebSecurityConfigurerAdapter")

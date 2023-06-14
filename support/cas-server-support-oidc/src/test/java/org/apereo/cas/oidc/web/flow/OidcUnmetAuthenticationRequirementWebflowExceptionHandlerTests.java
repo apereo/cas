@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests extends AbstractOidcTests {
+class OidcUnmetAuthenticationRequirementWebflowExceptionHandlerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcUnmetAuthenticationRequirementWebflowExceptionHandler")
     private CasWebflowExceptionHandler oidcUnmetAuthenticationRequirementWebflowExceptionHandler;

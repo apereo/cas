@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLResponse")
 @TestPropertySource(properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
-public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
     @Qualifier("samlProfileSamlAttributeStatementBuilder")

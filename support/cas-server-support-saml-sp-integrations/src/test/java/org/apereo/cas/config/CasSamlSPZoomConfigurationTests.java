@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.zoom.name-id-attribute=cn",
     "cas.saml-sp.zoom.name-id-format=transient"
 })
-public class CasSamlSPZoomConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPZoomConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

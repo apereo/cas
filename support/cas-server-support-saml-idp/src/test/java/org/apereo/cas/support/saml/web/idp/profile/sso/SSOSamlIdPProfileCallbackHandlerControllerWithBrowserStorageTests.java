@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.core.session-storage-type=BROWSER_SESSION_STORAGE",
     "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata"
 })
-public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostProfileCallbackHandlerController")
     private SSOSamlIdPProfileCallbackHandlerController controller;

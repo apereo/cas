@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Simple")
-public class CasFeatureEnabledPropertyPropertyConditionTests {
+class CasFeatureEnabledPropertyPropertyConditionTests {
     @ConditionalOnFeaturesEnabled({
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature3"),
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "feature4")
@@ -66,7 +66,7 @@ public class CasFeatureEnabledPropertyPropertyConditionTests {
         RefreshAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
-    public class Feature1EnabledTests {
+    class Feature1EnabledTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -83,7 +83,7 @@ public class CasFeatureEnabledPropertyPropertyConditionTests {
         RefreshAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
-    public class Feature1DisabledTests {
+    class Feature1DisabledTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -99,7 +99,7 @@ public class CasFeatureEnabledPropertyPropertyConditionTests {
         RefreshAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
-    public class Feature1EnabledUndefinedTests {
+    class Feature1EnabledUndefinedTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -115,7 +115,7 @@ public class CasFeatureEnabledPropertyPropertyConditionTests {
         RefreshAutoConfiguration.class,
         CasFeatureModuleDisabledByDefaultTestConfiguration.class
     })
-    public class Feature3DisabledByDefaultTests {
+    class Feature3DisabledByDefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -135,7 +135,7 @@ public class CasFeatureEnabledPropertyPropertyConditionTests {
         "CasFeatureModule.AcceptableUsagePolicy.feature3.enabled=true",
         "CasFeatureModule.AcceptableUsagePolicy.feature4.enabled=true"
     })
-    public class FeatureMultipleConditionsTests {
+    class FeatureMultipleConditionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

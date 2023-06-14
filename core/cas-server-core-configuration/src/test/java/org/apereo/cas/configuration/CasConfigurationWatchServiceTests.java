@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
     AopAutoConfiguration.class
 })
 @Tag("CasConfiguration")
-public class CasConfigurationWatchServiceTests {
+class CasConfigurationWatchServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

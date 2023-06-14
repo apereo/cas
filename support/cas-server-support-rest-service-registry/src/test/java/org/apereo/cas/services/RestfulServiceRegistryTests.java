@@ -82,7 +82,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag("RestfulApi")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
+class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

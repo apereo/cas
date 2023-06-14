@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Web")
-public class CasReloadableMessageBundleTests {
+class CasReloadableMessageBundleTests {
 
     @Test
     public void verifyDefaultMessage() {

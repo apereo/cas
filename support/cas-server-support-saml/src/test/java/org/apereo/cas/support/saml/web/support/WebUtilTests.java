@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("Web")
-public class WebUtilTests {
+class WebUtilTests {
 
     @Test
     public void verifyFindService() {

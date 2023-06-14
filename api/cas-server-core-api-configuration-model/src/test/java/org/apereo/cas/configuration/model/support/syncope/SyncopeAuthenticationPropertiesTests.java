@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("CasConfiguration")
-public class SyncopeAuthenticationPropertiesTests {
+class SyncopeAuthenticationPropertiesTests {
 
     @Test
     public void verifyUndefined() {

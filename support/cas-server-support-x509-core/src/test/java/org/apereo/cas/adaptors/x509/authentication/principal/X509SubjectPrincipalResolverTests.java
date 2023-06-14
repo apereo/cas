@@ -35,7 +35,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @since 4.0.0
  */
 @Tag("X509")
-public class X509SubjectPrincipalResolverTests {
+class X509SubjectPrincipalResolverTests {
 
     @Mock
     private ServicesManager servicesManager;

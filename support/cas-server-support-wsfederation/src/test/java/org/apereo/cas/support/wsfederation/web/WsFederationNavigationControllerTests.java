@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
+class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
 
     @Autowired
     @Qualifier("wsFederationNavigationController")

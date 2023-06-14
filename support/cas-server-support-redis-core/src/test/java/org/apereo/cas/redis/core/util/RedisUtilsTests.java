@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class RedisUtilsTests {
+class RedisUtilsTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

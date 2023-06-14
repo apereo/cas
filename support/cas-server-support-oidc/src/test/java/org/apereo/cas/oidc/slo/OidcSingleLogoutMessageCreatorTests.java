@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
+class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcSingleLogoutMessageCreator")

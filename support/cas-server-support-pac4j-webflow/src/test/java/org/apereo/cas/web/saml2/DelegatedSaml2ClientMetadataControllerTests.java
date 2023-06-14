@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
     })
 @Tag("SAML2Web")
-public class DelegatedSaml2ClientMetadataControllerTests {
+class DelegatedSaml2ClientMetadataControllerTests {
     @Autowired
     @Qualifier("delegatedSaml2ClientMetadataController")
     private DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController;

@@ -38,7 +38,7 @@ import static org.springframework.http.HttpStatus.*;
     properties = "cas.authn.mfa.gauth.rest.url=http://example.com")
 @Getter
 @Tag("MFAProvider")
-public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
+class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private static final ObjectMapper MAPPER = builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

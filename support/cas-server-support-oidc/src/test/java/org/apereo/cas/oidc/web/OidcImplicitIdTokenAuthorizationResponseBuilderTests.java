@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
+class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         val authzRequest = OAuth20AuthorizationRequest.builder()

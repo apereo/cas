@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Audits")
-public class MessageBundleAwareResourceResolverTests {
+class MessageBundleAwareResourceResolverTests {
     @Test
     public void verifyOperationByExceptionMessage() {
         val jp = mock(JoinPoint.class);

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("SAMLMetadata")
-public class SamlMetadataUIInfoTests {
+class SamlMetadataUIInfoTests {
     @Test
     public void verifyInfoNotAvailable() {
         val service = RegisteredServiceTestUtils.getRegisteredService();

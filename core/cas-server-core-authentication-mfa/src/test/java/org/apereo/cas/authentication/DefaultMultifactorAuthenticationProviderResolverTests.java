@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("MFA")
-public class DefaultMultifactorAuthenticationProviderResolverTests {
+class DefaultMultifactorAuthenticationProviderResolverTests {
     private static void assertProviderResolutionFromManyProviders(final MultifactorAuthenticationTrigger trigger,
                                                                   final ConfigurableApplicationContext applicationContext,
                                                                   final boolean assertPresence) {

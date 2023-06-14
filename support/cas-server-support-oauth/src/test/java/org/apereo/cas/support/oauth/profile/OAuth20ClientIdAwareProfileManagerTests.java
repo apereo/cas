@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
+class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     protected OAuth20ClientIdAwareProfileManager profileManager;
 
     protected JEEContext context;

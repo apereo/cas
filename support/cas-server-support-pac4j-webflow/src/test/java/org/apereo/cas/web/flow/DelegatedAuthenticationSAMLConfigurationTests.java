@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreHttpConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationSAMLConfigurationTests {
+class DelegatedAuthenticationSAMLConfigurationTests {
     @Autowired
     @Qualifier(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;

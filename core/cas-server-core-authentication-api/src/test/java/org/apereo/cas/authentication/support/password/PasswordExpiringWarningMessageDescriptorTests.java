@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("PasswordOps")
-public class PasswordExpiringWarningMessageDescriptorTests {
+class PasswordExpiringWarningMessageDescriptorTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "PasswordExpiringWarningMessageDescriptor.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

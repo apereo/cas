@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("DuoSecurity")
-public class DefaultDuoSecurityMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
+class DefaultDuoSecurityMultifactorAuthenticationProviderTests extends BaseAbstractMultifactorAuthenticationProviderTests {
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         return new DefaultDuoSecurityMultifactorAuthenticationProvider(

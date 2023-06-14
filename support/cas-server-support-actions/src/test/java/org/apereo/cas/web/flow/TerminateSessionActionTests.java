@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Tag("WebflowActions")
-public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
+class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     private Action action;

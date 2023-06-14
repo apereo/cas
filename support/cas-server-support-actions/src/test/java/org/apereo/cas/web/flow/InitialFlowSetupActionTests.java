@@ -50,11 +50,11 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("WebflowActions")
-public class InitialFlowSetupActionTests {
+class InitialFlowSetupActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractWebflowActionsTests {
+    class DefaultTests extends AbstractWebflowActionsTests {
 
         private static final String CONST_CONTEXT_PATH = "/test";
 
@@ -153,7 +153,7 @@ public class InitialFlowSetupActionTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class SsoDisabledTests extends AbstractWebflowActionsTests {
+    class SsoDisabledTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
         private Action action;

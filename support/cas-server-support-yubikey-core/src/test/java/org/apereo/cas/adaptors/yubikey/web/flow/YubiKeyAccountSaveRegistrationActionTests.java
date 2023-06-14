@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowMfaActions")
-public class YubiKeyAccountSaveRegistrationActionTests {
+class YubiKeyAccountSaveRegistrationActionTests {
     @BeforeEach
     public void setup() {
         val applicationContext = new StaticApplicationContext();

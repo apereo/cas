@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AopAutoConfiguration.class
 })
 @Tag("WebApp")
-public class CasUndertowBannerTests {
+class CasUndertowBannerTests {
     @Autowired
     private Environment environment;
 

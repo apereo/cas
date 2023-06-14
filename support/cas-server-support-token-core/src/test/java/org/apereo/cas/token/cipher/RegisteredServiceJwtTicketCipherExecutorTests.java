@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Cipher")
-public class RegisteredServiceJwtTicketCipherExecutorTests {
+class RegisteredServiceJwtTicketCipherExecutorTests {
     @Test
     public void verifyCipheredTokenWithoutService() {
         val c = new RegisteredServiceJwtTicketCipherExecutor();

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Tickets")
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
-public class DefaultTicketRegistrySupportTests {
+class DefaultTicketRegistrySupportTests {
 
     @Test
     public void verifyOperation() throws Exception {

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPHttpRedirectDeflateEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
     @Order(1)
     public void verify() throws Exception {

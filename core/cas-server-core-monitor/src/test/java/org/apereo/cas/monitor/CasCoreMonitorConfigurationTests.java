@@ -72,7 +72,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
 @AutoConfigureObservability
-public class CasCoreMonitorConfigurationTests {
+class CasCoreMonitorConfigurationTests {
     @Autowired
     @Qualifier("defaultExecutableObserver")
     private ExecutableObserver defaultExecutableObserver;

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebApp")
-public class CasConfigurationServerServletInitializerTests {
+class CasConfigurationServerServletInitializerTests {
     @BeforeAll
     public static void setup() {
         System.setProperty("spring.profiles.active", "native");

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.sso.services.allow-missing-service-parameter=false")
 @Tag("WebflowActions")
-public class InitializeLoginActionTests extends AbstractWebflowActionsTests {
+class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     private Action action;

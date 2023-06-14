@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class ReturnLinkedAttributeReleasePolicyTests {
+class ReturnLinkedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ReturnLinkedAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

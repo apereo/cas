@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateInitialAuthenticationActionTests {
+class SurrogateInitialAuthenticationActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)

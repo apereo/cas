@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.pager-duty.name-id-attribute=cn",
     "cas.saml-sp.pager-duty.name-id-format=transient"
 })
-public class CasSamlSPPagerDutyConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPPagerDutyConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

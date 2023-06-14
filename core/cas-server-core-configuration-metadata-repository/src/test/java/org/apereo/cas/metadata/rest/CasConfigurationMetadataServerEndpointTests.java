@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasConfigurationMetadataServerEndpointTests {
+class CasConfigurationMetadataServerEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

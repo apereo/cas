@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
 @Getter
 @Tag("MFA")
-public class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")

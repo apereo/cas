@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Cipher")
-public class RegisteredServiceCipherExecutorTests {
+class RegisteredServiceCipherExecutorTests {
     @Test
     public void verifyOperation() {
         val component = mock(RegisteredServiceCipherExecutor.class);

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Tickets")
-public class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyBadType() {

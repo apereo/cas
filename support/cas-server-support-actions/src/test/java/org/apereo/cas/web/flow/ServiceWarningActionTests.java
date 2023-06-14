@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowServiceActions")
-public class ServiceWarningActionTests extends AbstractWebflowActionsTests {
+class ServiceWarningActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
     private Action action;

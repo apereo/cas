@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.zendesk.name-id-attribute=cn",
     "cas.saml-sp.zendesk.name-id-format=transient"
 })
-public class CasSamlSPZendeskConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPZendeskConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

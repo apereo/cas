@@ -76,7 +76,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.pac4j.cookie.enabled=true"
     })
 @Tag("Webflow")
-public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
+class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;

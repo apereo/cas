@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("GroovyAuthentication")
-public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByProviderEmbeddedScript() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);

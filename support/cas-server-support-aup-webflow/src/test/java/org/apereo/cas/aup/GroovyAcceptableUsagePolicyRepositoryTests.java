@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("Groovy")
 @TestPropertySource(properties = "cas.acceptable-usage-policy.groovy.location=classpath:/AcceptableUsagePolicy.groovy")
-public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)

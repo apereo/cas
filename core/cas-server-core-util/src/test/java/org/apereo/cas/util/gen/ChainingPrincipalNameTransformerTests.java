@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Authentication")
-public class ChainingPrincipalNameTransformerTests {
+class ChainingPrincipalNameTransformerTests {
     @Test
     public void verifyChain() {
         val t = new ChainingPrincipalNameTransformer();

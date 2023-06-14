@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Native")
-public class Pac4jCoreRuntimeHintsTests {
+class Pac4jCoreRuntimeHintsTests {
     @Test
     public void verifyHints() {
         val hints = new RuntimeHints();

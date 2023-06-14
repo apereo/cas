@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractOAuth20Tests {
+class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("profileScopeToAttributesFilter")

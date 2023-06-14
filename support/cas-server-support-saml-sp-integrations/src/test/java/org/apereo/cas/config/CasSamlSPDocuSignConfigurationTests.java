@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.docu-sign.name-id-attribute=cn",
     "cas.saml-sp.docu-sign.name-id-format=transient"
 })
-public class CasSamlSPDocuSignConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPDocuSignConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

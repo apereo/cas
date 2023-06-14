@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-public class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
+class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("confirmLogoutAction")
     private Action action;

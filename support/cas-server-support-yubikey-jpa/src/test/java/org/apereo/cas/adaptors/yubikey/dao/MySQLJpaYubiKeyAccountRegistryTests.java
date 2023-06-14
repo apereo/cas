@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.yubikey.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
-public class MySQLJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
+class MySQLJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
 }

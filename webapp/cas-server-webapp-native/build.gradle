@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 description = "Apereo CAS Native GraalVM Web Application"
 
 apply plugin: "java"
@@ -37,8 +39,6 @@ configurations {
 }
 
 dependencies {
-    compileOnly libraries.graalvmsdk
-
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -72,6 +72,33 @@ dependencies {
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm-webflow")
+
+//    implementation project(":support:cas-server-support-duo")
+//    implementation project(":support:cas-server-support-oidc")
+//    implementation project(":support:cas-server-support-ldap")
+//    implementation project(":support:cas-server-support-pac4j-webflow")
+//    implementation project(":support:cas-server-support-saml")
+//    implementation project(":support:cas-server-support-saml-idp")
+//    implementation project(":support:cas-server-support-hazelcast-ticket-registry")
+//    implementation project(":support:cas-server-support-hazelcast-ticket-registry")
+    implementation project(":support:cas-server-support-redis-ticket-registry")
+    implementation project(":support:cas-server-support-yaml-service-registry")
+    implementation project(":support:cas-server-support-consent-webflow")
+    implementation project(":support:cas-server-support-rest")
+    implementation project(":support:cas-server-support-jdbc")
+    implementation project(":support:cas-server-support-captcha")
+    implementation project(":support:cas-server-support-audit-jdbc")
+    implementation project(":support:cas-server-support-account-mgmt")
+    
+//    implementation project(":support:cas-server-support-aup-webflow")
+//    implementation project(":support:cas-server-support-reports")
+//    implementation project(":support:cas-server-support-metrics")
+//    implementation project(":support:cas-server-support-gauth")
+//    implementation project(":support:cas-server-support-simple-mfa")
+//    implementation project(":support:cas-server-support-webauthn")
+//    implementation project(":support:cas-server-support-interrupt-webflow")
+//    implementation project(":support:cas-server-support-aup-webflow")
+//    implementation project(":support:cas-server-support-token-tickets")
 
     def casModules = providers.systemProperty("casModules").getOrNull()
     if (casModules != null) {
@@ -108,18 +135,19 @@ graalvmNative {
     binaries {
         main {
             imageName = "cas"
-            quickBuild = false
+            quickBuild = true
             debug = true
             verbose = false
             richOutput = true
             sharedLibrary = false
+            mainClass = "org.apereo.cas.nativex.CasNativeWebApplication"
             
             configurationFileDirectories.from(file('src/graal'))
 
-            buildArgs.add('--native-image-info')
             buildArgs.add('-H:+ReportExceptionStackTraces')
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
+//            buildArgs.add('-H:+IncludeAllLocales')
 
             buildArgs.add('-J-Xmx16G')
             buildArgs.add('-J-Xms4G')

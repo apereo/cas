@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.saml-metadata-ui.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"
 })
 @Tag("SAMLMetadata")
-public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
+class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
     private Action samlMetadataUIParserAction;

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.registeredServices.enabled=true")
 @Tag("ActuatorEndpoint")
-public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
+class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("registeredServicesReportEndpoint")
     private RegisteredServicesEndpoint endpoint;

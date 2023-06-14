@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLMetadata")
-public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyResolver() {

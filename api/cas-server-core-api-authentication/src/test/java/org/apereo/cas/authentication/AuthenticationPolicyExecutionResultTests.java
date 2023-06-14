@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("AuthenticationPolicy")
-public class AuthenticationPolicyExecutionResultTests {
+class AuthenticationPolicyExecutionResultTests {
 
     @Test
     public void verifyOperation() {

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Web")
-public class SimpleUrlValidatorTests {
+class SimpleUrlValidatorTests {
     @Test
     public void verifyOperation() {
         val validator = SimpleUrlValidator.getInstance();

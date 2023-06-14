@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class Cas10ProxyHandlerTests {
+class Cas10ProxyHandlerTests {
 
     private final ProxyHandler proxyHandler = new Cas10ProxyHandler();
 

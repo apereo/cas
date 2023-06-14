@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Attributes")
-public class ReturnEncryptedAttributeReleasePolicyTests {
+class ReturnEncryptedAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EncryptingAttributeReleasePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

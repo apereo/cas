@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DefaultDelegatedAuthenticationNavigationControllerTests {
+class DefaultDelegatedAuthenticationNavigationControllerTests {
 
     @Autowired
     @Qualifier("defaultDelegatedAuthenticationNavigationController")

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("GroovyAuthentication")
-public class GroovyAuthenticationHandlerResolverTests {
+class GroovyAuthenticationHandlerResolverTests {
     @Test
     public void verifyAction() {
         val resolver = new GroovyAuthenticationHandlerResolver(

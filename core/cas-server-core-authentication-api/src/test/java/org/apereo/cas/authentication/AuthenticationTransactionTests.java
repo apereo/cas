@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Authentication")
-public class AuthenticationTransactionTests {
+class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeSingle() {
         val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Native")
-public class CasCoreTicketsRuntimeHintsTests {
+class CasCoreTicketsRuntimeHintsTests {
     @Test
     public void verifyHints() {
         val hints = new RuntimeHints();

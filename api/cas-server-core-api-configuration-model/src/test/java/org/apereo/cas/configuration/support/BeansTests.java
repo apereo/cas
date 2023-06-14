@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class BeansTests {
+class BeansTests {
 
     @Test
     public void verifyOperation() {

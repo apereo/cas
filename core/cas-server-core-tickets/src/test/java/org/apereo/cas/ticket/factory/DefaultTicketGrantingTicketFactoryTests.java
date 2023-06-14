@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
     public void verifyNoExpirationPolicy() {

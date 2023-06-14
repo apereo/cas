@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
-public class OidcClientSecretValidatorTests extends AbstractOidcTests {
+class OidcClientSecretValidatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
     private OAuth20ClientSecretValidator oauth20ClientSecretValidator;

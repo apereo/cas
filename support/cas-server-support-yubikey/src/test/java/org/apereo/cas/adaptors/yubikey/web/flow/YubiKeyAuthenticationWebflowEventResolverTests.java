@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowEvents")
-public class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("yubikeyAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;

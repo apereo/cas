@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("SAMLMetadata")
-public class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
     public void verifyResolverSupports() throws Exception {

@@ -45,7 +45,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
+class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");

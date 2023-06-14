@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("RestfulApiAuthentication")
-public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
+class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     @Test
     public void verifyOperationShouldProceed() {
         val applicationContext = new StaticApplicationContext();

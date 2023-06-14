@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.jdbc[0].username=uid"
 })
 @Tag("JDBCAuthentication")
-public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
+class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test
     public void verifySingleRowAttributeRepository() {

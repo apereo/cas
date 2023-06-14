@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("CasConfiguration")
-public class CasConfigurationMetadataRepositoryTests {
+class CasConfigurationMetadataRepositoryTests {
 
     @Test
     public void verifyOperation() {

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class SpringExpressionLanguageValueResolverTests {
+class SpringExpressionLanguageValueResolverTests {
     @Test
     public void verifyOperation() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();

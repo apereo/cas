@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2")
-public class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurationTests {
+class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlArtifactTicketFactory")
     private SamlArtifactTicketFactory samlArtifactTicketFactory;

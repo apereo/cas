@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 @Tag("AmazonWebServices")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
+class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;

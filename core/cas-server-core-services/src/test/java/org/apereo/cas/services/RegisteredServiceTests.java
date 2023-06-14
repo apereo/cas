@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  */
 @Setter
 @Tag("RegisteredService")
-public class RegisteredServiceTests {
+class RegisteredServiceTests {
     private static final long ID = 1000;
 
     private static final String SERVICE_ID = "test";

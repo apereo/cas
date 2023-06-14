@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 @SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-public class SurrogateSelectionActionTests {
+class SurrogateSelectionActionTests {
     @Autowired
     @Qualifier("selectSurrogateAction")
     private Action selectSurrogateAction;

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.spnego.system.kerberos-conf=classpath:kerb5.conf",
     "cas.authn.spnego.system.login-conf=classpath:jaas.conf"
 })
-public class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class SpengoWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("X509")
-public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
+class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
 
     @Mock
     private ServicesManager servicesManager;

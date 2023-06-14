@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @TestPropertySource(properties = "cas.authn.passwordless.tokens.rest.url=http://localhost:9293")
-public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
+class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
     private PasswordlessTokenRepository passwordlessTokenRepository;

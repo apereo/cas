@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseX509Tests.SharedTestConfiguration.class,
     properties = "cas.authn.x509.crl-fetcher=resource")
 @Tag("X509")
-public class DefaultX509ConfigTests {
+class DefaultX509ConfigTests {
 
     @Autowired
     @Qualifier("crlFetcher")

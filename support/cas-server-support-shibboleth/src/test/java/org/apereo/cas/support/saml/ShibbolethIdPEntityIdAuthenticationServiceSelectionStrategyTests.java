@@ -74,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @Tag("SAML")
-public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
+class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Autowired
     @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy;

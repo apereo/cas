@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasScimConfiguration.class)
 @TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
 @Tag("SCIM")
-public class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

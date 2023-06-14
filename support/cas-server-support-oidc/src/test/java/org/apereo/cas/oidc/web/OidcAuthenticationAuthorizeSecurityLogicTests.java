@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("OIDC")
-public class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
+class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
 
     private TicketGrantingTicket ticketGrantingTicket;
 

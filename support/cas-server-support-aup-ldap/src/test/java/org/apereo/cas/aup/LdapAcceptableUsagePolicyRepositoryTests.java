@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=carLicense"
 })
 @Getter
-public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;

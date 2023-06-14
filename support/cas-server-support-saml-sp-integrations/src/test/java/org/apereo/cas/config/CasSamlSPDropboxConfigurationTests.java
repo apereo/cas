@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.dropbox.name-id-attribute=cn",
     "cas.saml-sp.dropbox.name-id-format=transient"
 })
-public class CasSamlSPDropboxConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPDropboxConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

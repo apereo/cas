@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceAuthenticationHandlerResolverTests {
+class RegisteredServiceAuthenticationHandlerResolverTests {
 
     private ServicesManager defaultServicesManager;
 

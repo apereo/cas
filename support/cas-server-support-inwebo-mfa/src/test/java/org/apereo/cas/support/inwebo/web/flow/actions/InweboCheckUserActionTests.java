@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboCheckUserActionTests extends BaseActionTests {
+class InweboCheckUserActionTests extends BaseActionTests {
 
     private static final String SITE_ALIAS = "7845zesf357dsq89s74za6z4e5df";
     private static final int USER_ID = 123456;

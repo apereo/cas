@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("GroovyAuthentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)
     public void verifyOperationByProvider() {

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Cipher")
-public class WebflowConversationStateCipherExecutorTests {
+class WebflowConversationStateCipherExecutorTests {
     @Test
     public void verifyAction() {
         val cipher = new WebflowConversationStateCipherExecutor(null, null,

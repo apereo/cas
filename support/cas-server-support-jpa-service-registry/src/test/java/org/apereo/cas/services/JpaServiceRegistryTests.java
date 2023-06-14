@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")
 @Getter
-public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
+class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final int COUNT = 10_000;
 
     @Autowired

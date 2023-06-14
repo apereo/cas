@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowAuthenticationActions")
-public class PasswordlessDetermineDelegatedAuthenticationActionTests {
+class PasswordlessDetermineDelegatedAuthenticationActionTests {
     @Nested
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
@@ -47,7 +47,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy"
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithoutClients extends BasePasswordlessAuthenticationActionTests {
+    class WithoutClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
         private Action determineDelegatedAuthenticationAction;
@@ -79,7 +79,7 @@ public class PasswordlessDetermineDelegatedAuthenticationActionTests {
         "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy"
     })
     @SuppressWarnings("ClassCanBeStatic")
-    public class WithClients extends BasePasswordlessAuthenticationActionTests {
+    class WithClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
         private Action determineDelegatedAuthenticationAction;

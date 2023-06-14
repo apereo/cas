@@ -27,7 +27,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     })
 @Tag("WebflowMfaConfig")
 @Getter
-public class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("yubikeyFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

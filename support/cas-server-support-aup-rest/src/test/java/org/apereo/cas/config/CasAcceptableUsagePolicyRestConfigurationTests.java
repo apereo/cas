@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasAcceptableUsagePolicyRestConfiguration.class,
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 })
-public class CasAcceptableUsagePolicyRestConfigurationTests {
+class CasAcceptableUsagePolicyRestConfigurationTests {
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;

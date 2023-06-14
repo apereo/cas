@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("ExpirationPolicy")
-public class MultiTimeUseOrTimeoutExpirationPolicyTests {
+class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "multiTimeUseOrTimeoutExpirationPolicy.json");
 

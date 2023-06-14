@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasCloudBusConfigurationEventListenerTests {
+class CasCloudBusConfigurationEventListenerTests {
     @Autowired
     @Qualifier("casCloudBusConfigurationEventListener")
     private DefaultCasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener;

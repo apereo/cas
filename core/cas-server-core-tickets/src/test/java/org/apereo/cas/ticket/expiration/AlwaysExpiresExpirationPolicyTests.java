@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0
  */
 @Tag("ExpirationPolicy")
-public class AlwaysExpiresExpirationPolicyTests {
+class AlwaysExpiresExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "alwaysExpiresExpirationPolicy.json");
 

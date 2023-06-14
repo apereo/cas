@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CachingPrincipalAttributesRepositoryTests.CachingPrincipalAttributeRepositoryTestConfiguration.class
 })
 @Tag("Attributes")
-public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
+class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
 

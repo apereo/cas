@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("Simple")
-public class UnauthorizedProxyingExceptionTests {
+class UnauthorizedProxyingExceptionTests {
 
     private static final String MESSAGE = "GG";
 

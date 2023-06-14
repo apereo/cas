@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedSaml2ClientMetadataJdbcTests {
+class DelegatedSaml2ClientMetadataJdbcTests {
     @Autowired
     @Qualifier("delegatedSaml2ClientMetadataController")
     private DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController;

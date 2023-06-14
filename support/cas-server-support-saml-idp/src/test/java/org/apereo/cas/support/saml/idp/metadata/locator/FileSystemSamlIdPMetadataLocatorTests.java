@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
-public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
+class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyUnknownDirectory() {

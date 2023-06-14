@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Simple")
 @Slf4j
-public class ExceptionOnlyFilterTests {
+class ExceptionOnlyFilterTests {
 
     private static long getFileSize() {
         var logFile = FileUtils.getFile("build/slf4j-exceptions.log");

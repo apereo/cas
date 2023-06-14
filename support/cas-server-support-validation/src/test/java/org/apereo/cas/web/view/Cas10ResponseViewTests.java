@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("CAS")
-public class Cas10ResponseViewTests {
+class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
 

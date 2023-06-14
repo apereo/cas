@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.mongo.drop-collection=true"
     })
 @Getter
-public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;

@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("Logout")
-public class DefaultLogoutManagerTests {
+class DefaultLogoutManagerTests {
     private static final String ID = "id";
 
     private static final String URL = "http://www.github.com";
@@ -59,7 +59,7 @@ public class DefaultLogoutManagerTests {
 
     private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
-    public DefaultLogoutManagerTests() throws Exception {
+    DefaultLogoutManagerTests() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 

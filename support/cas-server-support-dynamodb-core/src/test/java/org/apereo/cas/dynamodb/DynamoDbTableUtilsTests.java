@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("DynamoDb")
-public class DynamoDbTableUtilsTests {
+class DynamoDbTableUtilsTests {
     @Test
     public void verifyCreateTable() {
         val client = mock(DynamoDbClient.class);

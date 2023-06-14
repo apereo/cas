@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AmazonWebServices")
-public class AmazonClientConfigurationBuilderTests {
+class AmazonClientConfigurationBuilderTests {
 
     @Test
     public void verifyOperation() {

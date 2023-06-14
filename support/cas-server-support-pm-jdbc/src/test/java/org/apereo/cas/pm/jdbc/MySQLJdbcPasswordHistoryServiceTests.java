@@ -22,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
+class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 
     @BeforeEach
     public void initialize() {

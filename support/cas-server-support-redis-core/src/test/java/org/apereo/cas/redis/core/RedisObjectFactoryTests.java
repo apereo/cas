@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Redis")
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisObjectFactoryTests {
+class RedisObjectFactoryTests {
     @Test
     public void verifyRedisSearchCommandSupported() {
         val props = new BaseRedisProperties();

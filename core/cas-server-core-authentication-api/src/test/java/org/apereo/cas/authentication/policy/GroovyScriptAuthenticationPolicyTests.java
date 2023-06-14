@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("GroovyAuthentication")
-public class GroovyScriptAuthenticationPolicyTests {
+class GroovyScriptAuthenticationPolicyTests {
 
     @Test
     public void verifyActionExternalScript() throws Exception {

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
+class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcProfileController")
     protected OidcUserProfileEndpointController oidcUserProfileEndpointController;

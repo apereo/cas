@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFAProvider")
-public class ClosedYubiKeyAccountRegistryTests {
+class ClosedYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyOperation() {

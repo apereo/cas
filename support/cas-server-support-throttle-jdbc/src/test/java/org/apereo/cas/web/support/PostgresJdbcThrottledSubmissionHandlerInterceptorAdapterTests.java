@@ -45,7 +45,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @Getter
-public class PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+class PostgresJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 3.4.6
  */
 @Tag("X509")
-public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
+class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
     /**
      * Gets the unit test parameters.

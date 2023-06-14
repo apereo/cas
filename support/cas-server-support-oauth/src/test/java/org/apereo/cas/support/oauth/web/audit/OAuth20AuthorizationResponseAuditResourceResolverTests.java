@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationResponseAuditResourceResolverTests {
+class OAuth20AuthorizationResponseAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new OAuth20AuthorizationResponseAuditResourceResolver(

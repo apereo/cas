@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityUserAccountStatusEndpointTests {
+class DuoSecurityUserAccountStatusEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

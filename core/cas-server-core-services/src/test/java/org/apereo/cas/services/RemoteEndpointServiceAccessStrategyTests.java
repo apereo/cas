@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("RegisteredService")
-public class RemoteEndpointServiceAccessStrategyTests {
+class RemoteEndpointServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "remoteEndpointServiceAccessStrategy.json");
 

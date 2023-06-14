@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @ActiveProfiles("example")
-public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
+class AmazonSimpleSystemsManagementCloudConfigBootstrapConfigurationTests {
     static final String ENDPOINT = "http://localhost:4566";
 
     static final String CREDENTIAL_SECRET_KEY = "test";

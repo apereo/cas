@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnAccountCheckRegistrationActionTests {
+class WebAuthnAccountCheckRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WEBAUTHN_CHECK_ACCOUNT_REGISTRATION)
     private Action webAuthnCheckAccountRegistrationAction;

@@ -40,7 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
-public class MongoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+class MongoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
     private CipherExecutor yubikeyAccountCipherExecutor;

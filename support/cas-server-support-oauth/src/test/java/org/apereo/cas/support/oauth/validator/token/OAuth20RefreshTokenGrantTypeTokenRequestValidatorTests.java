@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 @TestPropertySource(properties = "cas.authn.oauth.session-replication.replicate-sessions=false")
-public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_TICKET = "RT-SUPPORTING";
 
     private static final String NON_SUPPORTING_TICKET = "RT-NON-SUPPORTING";

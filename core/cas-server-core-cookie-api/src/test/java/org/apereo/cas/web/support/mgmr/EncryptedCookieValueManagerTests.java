@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Cookie")
-public class EncryptedCookieValueManagerTests {
+class EncryptedCookieValueManagerTests {
 
     @Test
     public void verifyNoValue() {

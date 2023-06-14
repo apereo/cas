@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.session.jdbc.initialize-schema=always"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasJdbcSessionConfigurationTests {
+class CasJdbcSessionConfigurationTests {
     @Autowired
     @Qualifier("sessionRepository")
     private SessionRepository sessionRepository;

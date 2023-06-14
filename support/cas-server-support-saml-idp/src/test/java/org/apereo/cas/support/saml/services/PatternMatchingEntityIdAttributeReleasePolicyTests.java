@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAMLAttributes")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

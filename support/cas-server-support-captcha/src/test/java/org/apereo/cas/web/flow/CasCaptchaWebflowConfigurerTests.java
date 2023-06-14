@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(CasCaptchaConfiguration.class)
 @Tag("WebflowConfig")
-public class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class OidcMessageSanitizerTests extends AbstractOidcTests {
+class OidcMessageSanitizerTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier(MessageSanitizer.BEAN_NAME)

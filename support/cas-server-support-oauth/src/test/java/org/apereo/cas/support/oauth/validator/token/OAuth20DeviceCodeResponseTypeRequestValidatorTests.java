@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifySupports() {

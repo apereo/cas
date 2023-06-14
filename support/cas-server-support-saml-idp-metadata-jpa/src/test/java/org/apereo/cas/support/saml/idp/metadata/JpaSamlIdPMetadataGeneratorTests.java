@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("JDBC")
-public class JpaSamlIdPMetadataGeneratorTests {
+class JpaSamlIdPMetadataGeneratorTests {
 
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled=true",
@@ -30,7 +30,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class NoCipherJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
+    class NoCipherJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
         public void verifyOperation() throws Exception {
             this.samlIdPMetadataGenerator.generate(Optional.empty());
@@ -49,7 +49,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
+    class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
         public void verifyOperation() throws Exception {
             this.samlIdPMetadataGenerator.generate(Optional.empty());

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
-public class DelegatedAuthenticationClientLogoutActionTests {
+class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
     private Action delegatedAuthenticationClientLogoutAction;

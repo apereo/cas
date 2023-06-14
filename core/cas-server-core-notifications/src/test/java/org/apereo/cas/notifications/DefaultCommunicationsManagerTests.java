@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-public class DefaultCommunicationsManagerTests {
+class DefaultCommunicationsManagerTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;

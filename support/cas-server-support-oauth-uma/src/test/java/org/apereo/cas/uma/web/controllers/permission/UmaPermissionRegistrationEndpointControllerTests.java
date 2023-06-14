@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyPermissionRegistrationOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();

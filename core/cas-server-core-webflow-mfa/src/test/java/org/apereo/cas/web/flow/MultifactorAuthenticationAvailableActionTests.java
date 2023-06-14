@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-public class MultifactorAuthenticationAvailableActionTests {
+class MultifactorAuthenticationAvailableActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
         private Action mfaAvailableAction;
@@ -61,7 +61,7 @@ public class MultifactorAuthenticationAvailableActionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class FailureModeNoneTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    class FailureModeNoneTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
         private Action mfaAvailableAction;

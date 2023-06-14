@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAMLResponse")
 @SuppressWarnings("JavaUtilDate")
-public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
+class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlProfileSamlNameIdBuilder")
     private SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder;

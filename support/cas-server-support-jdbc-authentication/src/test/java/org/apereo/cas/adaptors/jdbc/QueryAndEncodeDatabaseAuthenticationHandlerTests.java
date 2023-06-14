@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
 @Tag("JDBCAuthentication")
 @Import(QueryAndEncodeDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
-public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
+class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
 
     private static final String SQL = "SELECT * FROM users where %s";

@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
     "cas.jdbc.physical-table-names.JpaMultifactorAuthenticationTrustRecord=mfaauthntrustedrec"
 })
-public class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
 
     private static final String PRINCIPAL2 = "principal2";

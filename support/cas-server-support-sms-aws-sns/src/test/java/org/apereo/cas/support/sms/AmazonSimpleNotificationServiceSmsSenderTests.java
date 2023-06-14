@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AmazonWebServices")
-public class AmazonSimpleNotificationServiceSmsSenderTests {
+class AmazonSimpleNotificationServiceSmsSenderTests {
     @Test
     public void verifyAction() {
         val snsClient = mock(SnsClient.class);

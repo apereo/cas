@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("RegisteredService")
-public class RegexMatchingRegisteredServiceProxyPolicyTests {
+class RegexMatchingRegisteredServiceProxyPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexMatchingRegisteredServiceProxyPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

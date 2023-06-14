@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsFederationTests {
+class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsFederationTests {
     @Autowired
     @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;

@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 10389)
-public class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
+class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
     private static final String CN = RandomUtils.randomAlphabetic(6);
 
     @Autowired

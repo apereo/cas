@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
-public class AmazonS3SamlIdPMetadataGeneratorTests {
+class AmazonS3SamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlIdPMetadataLocator")
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;

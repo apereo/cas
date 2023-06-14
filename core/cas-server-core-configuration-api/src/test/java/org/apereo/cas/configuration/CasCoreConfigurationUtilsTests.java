@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
-public class CasCoreConfigurationUtilsTests {
+class CasCoreConfigurationUtilsTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

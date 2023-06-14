@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("Web")
-public class SimpleUrlValidatorFactoryBeanTests {
+class SimpleUrlValidatorFactoryBeanTests {
 
     @Test
     public void verifyValidation() {

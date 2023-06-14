@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RestfulApi")
-public class RestfulLoginWebflowDecoratorTests {
+class RestfulLoginWebflowDecoratorTests {
     @SneakyThrows
     private static String getJsonData() {
         return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Redis")
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class U2FRedisDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FRedisDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Git")
-public class TypeAwareGitRepositoryRegisteredServiceLocatorTests {
+class TypeAwareGitRepositoryRegisteredServiceLocatorTests {
     @Test
     public void verifyOperation() throws Exception {
         val strategy = new DefaultRegisteredServiceResourceNamingStrategy();

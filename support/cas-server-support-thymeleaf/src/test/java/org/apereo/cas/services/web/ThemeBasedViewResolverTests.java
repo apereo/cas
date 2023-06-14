@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Web")
-public class ThemeBasedViewResolverTests {
+class ThemeBasedViewResolverTests {
     @Test
     public void verifyFailsOperation() {
         val themeResolver = mock(ThemeResolver.class);

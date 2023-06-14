@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("MFAProvider")
-public class InweboCredentialTests {
+class InweboCredentialTests {
 
     @Test
     public void verifyOperation() {

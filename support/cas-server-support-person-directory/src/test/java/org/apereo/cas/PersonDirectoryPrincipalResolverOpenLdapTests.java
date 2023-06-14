@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("LdapAttributes")
 @EnabledIfListeningOnPort(port = 11389)
-public class PersonDirectoryPrincipalResolverOpenLdapTests {
+class PersonDirectoryPrincipalResolverOpenLdapTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;

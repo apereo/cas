@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.
  */
 @Tag("X509")
-public class X509CertificateCredentialTests {
+class X509CertificateCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

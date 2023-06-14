@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

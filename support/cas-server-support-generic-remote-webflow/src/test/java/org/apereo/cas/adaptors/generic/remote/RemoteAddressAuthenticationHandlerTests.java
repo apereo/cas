@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseRemoteAddressTests.SharedTestConfiguration.class,
     properties = "cas.authn.remote-address.ip-address-range=192.168.1.0/255.255.255.0")
 @Tag("AuthenticationHandler")
-public class RemoteAddressAuthenticationHandlerTests {
+class RemoteAddressAuthenticationHandlerTests {
     @Autowired
     @Qualifier("remoteAddressAuthenticationHandler")
     private AuthenticationHandler remoteAddressAuthenticationHandler;

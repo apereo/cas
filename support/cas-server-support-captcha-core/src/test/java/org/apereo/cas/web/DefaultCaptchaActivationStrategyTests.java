@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("Simple")
-public class DefaultCaptchaActivationStrategyTests {
+class DefaultCaptchaActivationStrategyTests {
 
     private static MockRequestContext getRequestContext(final HttpServletRequest request) {
         val context = new MockRequestContext();

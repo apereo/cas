@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
+class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
 
     @Override
     @BeforeEach

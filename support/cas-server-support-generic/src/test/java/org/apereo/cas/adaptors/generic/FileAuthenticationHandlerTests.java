@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class FileAuthenticationHandlerTests {
+class FileAuthenticationHandlerTests {
     private FileAuthenticationHandler authenticationHandler;
 
     @BeforeEach

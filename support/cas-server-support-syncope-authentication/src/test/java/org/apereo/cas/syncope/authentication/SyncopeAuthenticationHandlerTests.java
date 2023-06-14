@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Syncope")
-public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
+class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     private static final Credential CREDENTIAL =
         CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password");
 
@@ -41,7 +41,7 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     @EnabledIfListeningOnPort(port = 18080)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = "cas.authn.syncope.url=http://localhost:18080/syncope")
-    public class SyncopeCoreServerTests {
+    class SyncopeCoreServerTests {
         @Autowired
         @Qualifier("syncopeAuthenticationHandlers")
         private BeanContainer<AuthenticationHandler> syncopeAuthenticationHandlers;
@@ -60,7 +60,7 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = "cas.authn.syncope.url=http://localhost:8096")
-    public class SyncopeMockDataTests {
+    class SyncopeMockDataTests {
 
         @Autowired
         @Qualifier("syncopeAuthenticationHandlers")

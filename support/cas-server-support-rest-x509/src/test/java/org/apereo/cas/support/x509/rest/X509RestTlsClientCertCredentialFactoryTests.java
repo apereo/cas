@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("X509")
-public class X509RestTlsClientCertCredentialFactoryTests {
+class X509RestTlsClientCertCredentialFactoryTests {
     private static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 
     private final X509RestTlsClientCertCredentialFactory factory = new X509RestTlsClientCertCredentialFactory();

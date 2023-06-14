@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
+class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
 

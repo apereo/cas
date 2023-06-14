@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.safari-online.name-id-attribute=cn",
     "cas.saml-sp.safari-online.name-id-format=transient"
 })
-public class CasSamlSPSafariOnlineConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPSafariOnlineConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

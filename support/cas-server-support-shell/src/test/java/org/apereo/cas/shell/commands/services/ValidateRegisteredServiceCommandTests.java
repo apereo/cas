@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
+class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() throws Exception {
         val appCtx = new StaticApplicationContext();

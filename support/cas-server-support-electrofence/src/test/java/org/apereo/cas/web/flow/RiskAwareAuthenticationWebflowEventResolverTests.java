@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.adaptive.risk.response.sms.text=Message",
     "cas.authn.adaptive.risk.response.sms.from=3487244312"
 })
-public class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfigurerTests {
+class RiskAwareAuthenticationWebflowEventResolverTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("riskAwareAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver;

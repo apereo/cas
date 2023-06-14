@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(CasAcceptableUsagePolicyWebflowConfiguration.class)
 @Tag("WebflowConfig")
-public class AcceptableUsagePolicyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class AcceptableUsagePolicyWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

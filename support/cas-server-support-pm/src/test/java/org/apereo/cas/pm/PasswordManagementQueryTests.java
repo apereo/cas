@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("PasswordOps")
-public class PasswordManagementQueryTests {
+class PasswordManagementQueryTests {
 
     @Test
     public void verifyOperation() {

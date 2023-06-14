@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowConfig")
-public class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     public void verifyOperation() {

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.okta.client-id=dummy-client",
         "cas.authn.attribute-repository.okta.private-key.location=classpath:okta-private-key.pem"
     })
-public class OktaConfigurationFactoryTests {
+class OktaConfigurationFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

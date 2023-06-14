@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationMetadata")
-public class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
+class CredentialCustomFieldsAttributeMetaDataPopulatorTests {
     private final CredentialCustomFieldsAttributeMetaDataPopulator populator =
         new CredentialCustomFieldsAttributeMetaDataPopulator();
 

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("DuoSecurity")
-public class DuoSecurityRestHttpRequestCredentialFactoryTests {
+class DuoSecurityRestHttpRequestCredentialFactoryTests {
     @Test
     public void verifyOperation() {
         val factory = new DuoSecurityRestHttpRequestCredentialFactory();

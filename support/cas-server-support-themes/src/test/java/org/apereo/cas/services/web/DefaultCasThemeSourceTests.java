@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class,
     properties = "cas.view.template-prefixes[0]=classpath:/ext-templates")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultCasThemeSourceTests {
+class DefaultCasThemeSourceTests {
     @Autowired
     @Qualifier("themeSource")
     private ThemeSource themeSource;

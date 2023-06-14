@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowAccountProfileConfiguration.class,
     CasCoreAuditConfiguration.class
 })
-public class AccountProfileRemoveSingleSignOnSessionTests extends AbstractWebflowActionsTests {
+class AccountProfileRemoveSingleSignOnSessionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
     private Action removeSessionAction;

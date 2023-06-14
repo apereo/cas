@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Tickets")
-public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
+class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws Exception {

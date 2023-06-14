@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class SingleLogoutServiceMessageHandlerTests {
+class SingleLogoutServiceMessageHandlerTests {
 
     @Test
     public void verifyOperation() {

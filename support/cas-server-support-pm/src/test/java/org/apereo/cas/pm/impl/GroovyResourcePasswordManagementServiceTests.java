@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
 })
 @Tag("Groovy")
-public class GroovyResourcePasswordManagementServiceTests {
+class GroovyResourcePasswordManagementServiceTests {
 
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)

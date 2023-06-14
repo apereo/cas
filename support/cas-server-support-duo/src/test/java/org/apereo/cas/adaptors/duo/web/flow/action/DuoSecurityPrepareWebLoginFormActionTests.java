@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
-public class DuoSecurityPrepareWebLoginFormActionTests {
+class DuoSecurityPrepareWebLoginFormActionTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

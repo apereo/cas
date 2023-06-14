@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Utility")
-public class BeanSupplierTests {
+class BeanSupplierTests {
     @Test
     public void verifyRequireInterface() {
         assertThrows(IllegalArgumentException.class, () -> BeanSupplier.of(String.class).otherwiseProxy().get());

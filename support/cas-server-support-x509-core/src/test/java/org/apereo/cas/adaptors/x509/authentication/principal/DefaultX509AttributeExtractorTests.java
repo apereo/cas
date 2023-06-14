@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("X509")
-public class DefaultX509AttributeExtractorTests {
+class DefaultX509AttributeExtractorTests {
 
     @SneakyThrows
     private X509Certificate getCertificate(final String certLocation) {

@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLAttributes")
-public class SamlRegisteredServiceAttributeReleasePolicyTests {
+class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyNoSamlService() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();

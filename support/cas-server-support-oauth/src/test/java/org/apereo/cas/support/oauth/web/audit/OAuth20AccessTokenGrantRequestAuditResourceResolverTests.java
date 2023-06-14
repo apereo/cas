@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("OAuth")
-public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
+class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new OAuth20AccessTokenGrantRequestAuditResourceResolver();

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("X509")
-public class EDIPIX509AttributeExtractorTests {
+class EDIPIX509AttributeExtractorTests {
 
     @SneakyThrows
     private X509Certificate getCertificate(final String certLocation) {

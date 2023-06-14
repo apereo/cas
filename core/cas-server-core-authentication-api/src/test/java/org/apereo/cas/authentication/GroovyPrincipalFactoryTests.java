@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("GroovyAuthentication")
-public class GroovyPrincipalFactoryTests {
+class GroovyPrincipalFactoryTests {
     @Test
     public void verifyAction() {
         val factory = PrincipalFactoryUtils.newGroovyPrincipalFactory(new ClassPathResource("PrincipalFactory.groovy"));

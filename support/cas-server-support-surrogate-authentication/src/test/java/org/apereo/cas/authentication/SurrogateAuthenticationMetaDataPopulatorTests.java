@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationMetadata")
-public class SurrogateAuthenticationMetaDataPopulatorTests {
+class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {
         val p = new SurrogateAuthenticationMetaDataPopulator();

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebflowConfig")
-public class CasFlowHandlerMappingTests extends BaseWebflowConfigurerTests {
+class CasFlowHandlerMappingTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier("loginFlowHandlerMapping")

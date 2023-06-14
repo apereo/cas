@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasSendGridConfiguration.class
 }, properties = "spring.sendgrid.api-key=12345667890")
 @Tag("Mail")
-public class SendGridEmailSenderTests {
+class SendGridEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
     private EmailSender emailSender;

@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
-public class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
+class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 10;
 
     @Autowired

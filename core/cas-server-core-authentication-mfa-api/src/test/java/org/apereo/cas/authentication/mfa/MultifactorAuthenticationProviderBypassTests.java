@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  */
 
 @Tag("MFATrigger")
-public class MultifactorAuthenticationProviderBypassTests {
+class MultifactorAuthenticationProviderBypassTests {
 
     @Test
     public void verifyMultifactorAuthenticationBypassByPrincipalAttributes() {

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20UserProfileDataCreatorTests extends AbstractOAuth20Tests {
+class DefaultOAuth20UserProfileDataCreatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oAuth2UserProfileDataCreator")
     private OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator;

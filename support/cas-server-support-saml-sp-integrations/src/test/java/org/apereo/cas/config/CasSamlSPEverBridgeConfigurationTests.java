@@ -15,6 +15,6 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.ever-bridge.name-id-attribute=cn",
     "cas.saml-sp.ever-bridge.name-id-format=transient"
 })
-public class CasSamlSPEverBridgeConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPEverBridgeConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

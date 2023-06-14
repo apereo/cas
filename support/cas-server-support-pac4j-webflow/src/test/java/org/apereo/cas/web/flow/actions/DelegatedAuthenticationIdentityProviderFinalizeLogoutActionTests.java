@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
+class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_FINALIZE_LOGOUT)
     private Action action;

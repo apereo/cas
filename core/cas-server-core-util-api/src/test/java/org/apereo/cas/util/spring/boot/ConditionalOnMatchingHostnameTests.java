@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Simple")
-public class ConditionalOnMatchingHostnameTests {
+class ConditionalOnMatchingHostnameTests {
 
     private static String HOSTNAME;
 

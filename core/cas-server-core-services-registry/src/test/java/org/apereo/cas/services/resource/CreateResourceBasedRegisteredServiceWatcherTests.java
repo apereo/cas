@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RegisteredService")
-public class CreateResourceBasedRegisteredServiceWatcherTests {
+class CreateResourceBasedRegisteredServiceWatcherTests {
 
     @Test
     public void verifyOperationFoundCreated() throws Exception {

@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.academic-health-plans.name-id-attribute=cn",
     "cas.saml-sp.academic-health-plans.name-id-format=transient"
 })
-public class CasSamlSPAcademicHealthPlansConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPAcademicHealthPlansConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

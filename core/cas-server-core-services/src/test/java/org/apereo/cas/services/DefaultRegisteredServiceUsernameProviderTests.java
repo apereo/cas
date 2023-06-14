@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceUsernameProviderTests {
+class DefaultRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceUsernameProvider.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

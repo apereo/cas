@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.view.template-prefixes[1]=classpath:/more-ext-templates"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class AggregateCasThemeSourceTests {
+class AggregateCasThemeSourceTests {
     @Autowired
     @Qualifier("themeSource")
     private ThemeSource themeSource;

@@ -36,11 +36,11 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("SAML2")
-public class SamlIdPSingleSignOnParticipationStrategyTests {
+class SamlIdPSingleSignOnParticipationStrategyTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends BaseSamlIdPWebflowTests {
+    class DefaultTests extends BaseSamlIdPWebflowTests {
         @Autowired
         @Qualifier("samlIdPSingleSignOnParticipationStrategy")
         private SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy;
@@ -95,7 +95,7 @@ public class SamlIdPSingleSignOnParticipationStrategyTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
-    public class MfaProviderTests extends BaseSamlIdPWebflowTests {
+    class MfaProviderTests extends BaseSamlIdPWebflowTests {
         @Autowired
         @Qualifier("samlIdPSingleSignOnParticipationStrategy")
         private SingleSignOnParticipationStrategy samlIdPSingleSignOnParticipationStrategy;

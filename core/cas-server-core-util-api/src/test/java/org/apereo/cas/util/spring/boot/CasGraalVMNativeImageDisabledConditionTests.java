@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Simple")
-public class CasGraalVMNativeImageDisabledConditionTests {
+class CasGraalVMNativeImageDisabledConditionTests {
     @Test
     public void verifyNotInNativeImage() {
         val condition = new CasGraalVMNativeImageDisabledCondition();

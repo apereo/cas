@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed[0].identity-attribute=upn"
 })
 @Tag("WebflowConfig")
-public class WsFederationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class WsFederationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
+class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

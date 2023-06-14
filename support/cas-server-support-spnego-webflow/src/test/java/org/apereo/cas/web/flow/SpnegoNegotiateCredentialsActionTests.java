@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Spnego")
-public class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
+class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();

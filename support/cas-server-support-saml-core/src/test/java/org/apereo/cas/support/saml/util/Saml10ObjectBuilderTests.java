@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML1")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
-public class Saml10ObjectBuilderTests {
+class Saml10ObjectBuilderTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Kafka")
 @EnabledIfListeningOnPort(port = 9092)
-public class KafkaObjectFactoryTests {
+class KafkaObjectFactoryTests {
     @Test
     public void verifyOperation() {
         val factory = new KafkaObjectFactory("localhost:9092");

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("GroovyServices")
-public class GroovyScriptAttributeReleasePolicyTests {
+class GroovyScriptAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "groovyScriptAttributeReleasePolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

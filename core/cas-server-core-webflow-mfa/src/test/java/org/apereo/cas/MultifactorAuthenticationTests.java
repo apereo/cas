@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
 @Tag("MFA")
-public class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
 

@@ -27,12 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcHandlerInterceptorAdapterTests {
+class OidcHandlerInterceptorAdapterTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
-    public class PushedAuthorizationTests extends AbstractOidcTests {
+    class PushedAuthorizationTests extends AbstractOidcTests {
         @Test
         public void verifyAuthzUrl() throws Exception {
             val svc = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://oauth.example.org");
@@ -54,7 +54,7 @@ public class OidcHandlerInterceptorAdapterTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyNothing() throws Exception {
             val request = new MockHttpServletRequest();

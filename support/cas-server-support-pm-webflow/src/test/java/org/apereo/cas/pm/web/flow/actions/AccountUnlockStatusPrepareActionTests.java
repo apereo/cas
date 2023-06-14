@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("WebflowAccountActions")
-public class AccountUnlockStatusPrepareActionTests extends BasePasswordManagementActionTests {
+class AccountUnlockStatusPrepareActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_UNLOCK_PREPARE)
     protected Action accountUnlockStatusPrepareAction;

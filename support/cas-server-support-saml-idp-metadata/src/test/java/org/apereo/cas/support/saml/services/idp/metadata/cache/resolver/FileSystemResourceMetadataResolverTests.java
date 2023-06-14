@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAMLMetadata")
-public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     private static File METADATA_FILE;
 
     private SamlRegisteredServiceMetadataResolver resolver;

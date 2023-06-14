@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("WebflowActions")
-public class SingleSignOnSessionCreatedActionTests {
+class SingleSignOnSessionCreatedActionTests {
 
     @Nested
     @TestPropertySource(properties = "cas.webflow.groovy.actions."
                                      + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
                                      + "=classpath:/SingleSignOnSessionCreated.groovy")
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractWebflowActionsTests {
+    class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
         private Action action;
@@ -56,7 +56,7 @@ public class SingleSignOnSessionCreatedActionTests {
                                      + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
                                      + "=classpath:/Unknown12345.groovy")
     @SuppressWarnings("ClassCanBeStatic")
-    public class UnknownScriptTests extends AbstractWebflowActionsTests {
+    class UnknownScriptTests extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
         private Action action;

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.authn.pm.core.enabled=true")
 @Tag("WebflowConfig")
-public class PasswordManagementWebflowConfigurerEnabledTests extends PasswordManagementWebflowConfigurerDisabledTests {
+class PasswordManagementWebflowConfigurerEnabledTests extends PasswordManagementWebflowConfigurerDisabledTests {
     @Override
     @SneakyThrows
     protected void verifyPasswordManagementStates(final Flow flow) {

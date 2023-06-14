@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcDefaultAttributeToScopeClaimMapperTests {
+class OidcDefaultAttributeToScopeClaimMapperTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ClaimMappingTests extends AbstractOidcTests {
+    class ClaimMappingTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
@@ -64,7 +64,7 @@ public class OidcDefaultAttributeToScopeClaimMapperTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyValueTypes() {
             val oidcRegisteredService = getOidcRegisteredService();

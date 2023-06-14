@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("FileSystem")
 @Getter
-public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
+class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository deviceRepository;

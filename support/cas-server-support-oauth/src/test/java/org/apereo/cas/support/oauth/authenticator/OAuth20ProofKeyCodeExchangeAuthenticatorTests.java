@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
+class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20ProofKeyCodeExchangeAuthenticator authenticator;
 
     @BeforeEach

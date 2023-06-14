@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.profile-selection.groovy.location=classpath:GroovyProfileSelection.groovy")
-public class GroovyDelegatedClientAuthenticationCredentialResolverTests {
+class GroovyDelegatedClientAuthenticationCredentialResolverTests {
     @Autowired
     @Qualifier("groovyDelegatedClientAuthenticationCredentialResolver")
     private DelegatedClientAuthenticationCredentialResolver groovyDelegatedClientAuthenticationCredentialResolver;

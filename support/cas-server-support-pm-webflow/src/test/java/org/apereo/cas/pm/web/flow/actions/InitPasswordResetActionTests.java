@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Mail")
-public class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
+class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
 
     @Test
     public void verifyAction() throws Exception {

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceChainingAttributeFilterTests {
+class RegisteredServiceChainingAttributeFilterTests {
 
     @Test
     public void verifyOperation() {

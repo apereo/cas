@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Hibernate")
-public class DefaultCloseableDataSourceTests {
+class DefaultCloseableDataSourceTests {
     @Test
     public void verifyOperation() {
         val props = new Jpa()

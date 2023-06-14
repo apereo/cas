@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("Utility")
-public class PasswordEncoderUtilsTests {
+class PasswordEncoderUtilsTests {
     private static final String RAW_PASSWORD = UUID.randomUUID().toString();
 
     private StaticApplicationContext applicationContext;

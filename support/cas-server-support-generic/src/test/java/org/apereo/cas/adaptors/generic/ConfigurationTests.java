@@ -84,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.reject.users=one,two,three"
 })
 @Tag("CasConfiguration")
-public class ConfigurationTests {
+class ConfigurationTests {
     @Autowired
     @Qualifier("fileAuthenticationHandler")
     private AuthenticationHandler fileAuthenticationHandler;

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class MultifactorAuthenticationCredentialTests {
+class MultifactorAuthenticationCredentialTests {
 
     @Test
     public void verifyOperation() {

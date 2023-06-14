@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-public class SamlIdPServiceFactoryTests {
+class SamlIdPServiceFactoryTests {
     @Test
     public void verifyOperation() {
         val request = new MockHttpServletRequest();

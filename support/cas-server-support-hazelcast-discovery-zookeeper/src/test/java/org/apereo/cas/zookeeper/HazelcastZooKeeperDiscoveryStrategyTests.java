@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("ZooKeeper")
 @EnabledIfListeningOnPort(port = 2181)
-public class HazelcastZooKeeperDiscoveryStrategyTests {
+class HazelcastZooKeeperDiscoveryStrategyTests {
     @Test
     public void verifyOperation() {
         val cluster = new HazelcastClusterProperties();

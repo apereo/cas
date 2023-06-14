@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("MFAProvider")
-public class GoogleAuthenticatorAuthenticationHandlerTests {
+class GoogleAuthenticatorAuthenticationHandlerTests {
     private IGoogleAuthenticator googleAuthenticator;
 
     private GoogleAuthenticatorAuthenticationHandler handler;

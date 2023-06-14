@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuthWeb")
-public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
+class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("deviceUserCodeApprovalEndpointController")
     private OAuth20DeviceUserCodeApprovalEndpointController callbackAuthorizeController;

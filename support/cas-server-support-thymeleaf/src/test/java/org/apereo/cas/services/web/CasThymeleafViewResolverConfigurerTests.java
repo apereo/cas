@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.custom.properties.test=test"
 })
 @Tag("Web")
-public class CasThymeleafViewResolverConfigurerTests {
+class CasThymeleafViewResolverConfigurerTests {
 
     @Autowired
     @Qualifier("thymeleafViewResolver")

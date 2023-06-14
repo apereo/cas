@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
-public class OidcInitialAccessTokenControllerTests {
+class OidcInitialAccessTokenControllerTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class OpenRegistrationTests extends AbstractOidcTests {
+    class OpenRegistrationTests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcInitialAccessTokenController")
         protected OidcInitialAccessTokenController controller;
@@ -50,7 +50,7 @@ public class OidcInitialAccessTokenControllerTests {
     })
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ProtectedRegistrationTests extends AbstractOidcTests {
+    class ProtectedRegistrationTests extends AbstractOidcTests {
         @Autowired
         @Qualifier("oidcInitialAccessTokenController")
         protected OidcInitialAccessTokenController controller;

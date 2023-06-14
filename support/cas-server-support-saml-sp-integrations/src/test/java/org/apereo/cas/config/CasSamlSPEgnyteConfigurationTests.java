@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.egnyte.name-id-attribute=cn",
     "cas.saml-sp.egnyte.name-id-format=transient"
 })
-public class CasSamlSPEgnyteConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPEgnyteConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

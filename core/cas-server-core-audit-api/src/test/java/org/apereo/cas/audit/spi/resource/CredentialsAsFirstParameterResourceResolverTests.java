@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Audits")
-public class CredentialsAsFirstParameterResourceResolverTests {
+class CredentialsAsFirstParameterResourceResolverTests {
 
     @Test
     public void verifyCredential() {

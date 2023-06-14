@@ -91,7 +91,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class GoogleAuthenticatorRedisTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+class GoogleAuthenticatorRedisTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Override
     @BeforeEach

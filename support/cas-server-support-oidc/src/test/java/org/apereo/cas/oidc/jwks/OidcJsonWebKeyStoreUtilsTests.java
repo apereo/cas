@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
+class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
 
     @Test
     public void verifyKeySet() {

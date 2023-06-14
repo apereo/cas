@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     properties = "cas.authn.surrogate.groovy.location=classpath:/GroovySurrogate.groovy")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
-public class GroovySurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class GroovySurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;

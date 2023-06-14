@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 27017)
 @Tag("MongoDb")
-public class MongoDbConnectionFactoryTests {
+class MongoDbConnectionFactoryTests {
     private static final String URI = "mongodb://root:secret@localhost:27017/admin";
 
     @Test

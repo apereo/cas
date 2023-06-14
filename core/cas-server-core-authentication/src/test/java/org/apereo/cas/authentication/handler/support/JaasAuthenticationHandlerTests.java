@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("AuthenticationHandler")
-public class JaasAuthenticationHandlerTests {
+class JaasAuthenticationHandlerTests {
     private File fileName;
 
     @BeforeEach

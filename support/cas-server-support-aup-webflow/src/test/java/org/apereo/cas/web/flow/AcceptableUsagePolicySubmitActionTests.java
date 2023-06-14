@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowAccountActions")
-public class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsagePolicyActionTests {
+class AcceptableUsagePolicySubmitActionTests extends BaseAcceptableUsagePolicyActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_AUP_SUBMIT)

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerCachingTests {
+class DefaultServicesManagerCachingTests {
 
     @Test
     public void verifyServicesCache() throws Exception {

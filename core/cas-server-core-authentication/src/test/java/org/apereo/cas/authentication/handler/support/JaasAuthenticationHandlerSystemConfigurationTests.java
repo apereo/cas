@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-public class JaasAuthenticationHandlerSystemConfigurationTests {
+class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";
 

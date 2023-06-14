@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     TokenAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
-public class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());

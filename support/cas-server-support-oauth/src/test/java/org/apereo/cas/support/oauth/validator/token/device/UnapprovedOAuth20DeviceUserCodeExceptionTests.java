@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class UnapprovedOAuth20DeviceUserCodeExceptionTests {
+class UnapprovedOAuth20DeviceUserCodeExceptionTests {
     @Test
     public void verifyOperation() {
         assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> {

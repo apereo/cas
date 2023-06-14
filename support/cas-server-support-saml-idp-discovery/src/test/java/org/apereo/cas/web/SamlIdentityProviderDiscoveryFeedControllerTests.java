@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdentityProviderDiscoveryConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdentityProviderDiscoveryFeedControllerTests {
+class SamlIdentityProviderDiscoveryFeedControllerTests {
     @Autowired
     @Qualifier("identityProviderDiscoveryFeedController")
     private SamlIdentityProviderDiscoveryFeedController controller;

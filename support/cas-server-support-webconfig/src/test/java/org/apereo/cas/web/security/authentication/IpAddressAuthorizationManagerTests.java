@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
-public class IpAddressAuthorizationManagerTests {
+class IpAddressAuthorizationManagerTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;

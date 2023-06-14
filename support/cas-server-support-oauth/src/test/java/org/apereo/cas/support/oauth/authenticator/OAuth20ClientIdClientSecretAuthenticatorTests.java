@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
-public class OAuth20ClientIdClientSecretAuthenticatorTests {
+class OAuth20ClientIdClientSecretAuthenticatorTests {
 
     @TestConfiguration(value = "NullPrincipalTestConfiguration", proxyBeanMethods = false)
     public static class NullPrincipalTestConfiguration {
@@ -50,7 +50,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
 
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    public class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
+    class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
         public void verifyAuthentication() {
             val credentials = new UsernamePasswordCredentials("client", "secret");
@@ -160,7 +160,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
     @SuppressWarnings("ClassCanBeStatic")
     @Import(NullPrincipalTestConfiguration.class)
     @Nested
-    public class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
+    class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
         public void verifyAuthenticationWithoutResolvedPrincipal() {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");

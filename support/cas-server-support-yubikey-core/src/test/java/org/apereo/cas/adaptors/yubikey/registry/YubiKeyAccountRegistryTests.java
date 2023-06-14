@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFAProvider")
-public class YubiKeyAccountRegistryTests {
+class YubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAuthz() {

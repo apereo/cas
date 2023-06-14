@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseThymeleafTests.SharedTestConfiguration.class
 })
 @Tag("Web")
-public class CasMustacheViewTests {
+class CasMustacheViewTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

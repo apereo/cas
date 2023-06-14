@@ -50,12 +50,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML2Web")
-public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
+class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=false")
-    public class DisabledTests extends BaseSamlIdPConfigurationTests {
+    class DisabledTests extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("saml2AttributeQueryProfileHandlerController")
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;
@@ -75,7 +75,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
     @SuppressWarnings("ClassCanBeStatic")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=true")
-    public class DefaultTests extends BaseSamlIdPConfigurationTests {
+    class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("saml2AttributeQueryProfileHandlerController")
         private SamlIdPSaml2AttributeQueryProfileHandlerController controller;

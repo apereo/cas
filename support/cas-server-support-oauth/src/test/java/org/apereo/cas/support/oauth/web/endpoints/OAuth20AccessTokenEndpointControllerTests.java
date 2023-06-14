@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.2
  */
 @Tag("OAuthWeb")
-public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Tests {
+class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Tests {
 
     /**
      * Check the registered services always contain empty allowed grant types.

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-public class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByNoPolicy() {
         val props = new CasConfigurationProperties();

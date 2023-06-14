@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class ConsentAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class ConsentAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry accountFlowDefinitionRegistry;

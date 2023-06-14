@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("AuthenticationHandler")
-public class ExcludedAuthenticationHandlerAuthenticationPolicyTests {
+class ExcludedAuthenticationHandlerAuthenticationPolicyTests {
 
     @Test
     public void verifyOperation() {

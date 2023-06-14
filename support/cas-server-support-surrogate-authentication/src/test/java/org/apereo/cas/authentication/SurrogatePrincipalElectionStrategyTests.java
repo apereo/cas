@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Impersonation")
-public class SurrogatePrincipalElectionStrategyTests {
+class SurrogatePrincipalElectionStrategyTests {
     private static Principal buildSurrogatePrincipal(final String surrogateId,
                                                      final Authentication primaryAuth,
                                                      final IPersonAttributeDao attributeRepository) {

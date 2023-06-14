@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.core.expiration-time-unit=seconds"
 })
 @Tag("Attributes")
-public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
+class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
     private IPersonAttributeDao cachingAttributeRepository;

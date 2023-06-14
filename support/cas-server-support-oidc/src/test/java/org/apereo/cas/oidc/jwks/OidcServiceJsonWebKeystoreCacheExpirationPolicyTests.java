@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcServiceJsonWebKeystoreCacheExpirationPolicyTests extends AbstractOidcTests {
+class OidcServiceJsonWebKeystoreCacheExpirationPolicyTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() {

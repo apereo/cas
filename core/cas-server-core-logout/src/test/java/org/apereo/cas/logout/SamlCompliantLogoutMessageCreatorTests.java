@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("SAMLLogout")
-public class SamlCompliantLogoutMessageCreatorTests {
+class SamlCompliantLogoutMessageCreatorTests {
     private static final String TEST_URL = "https://google.com";
 
     private final SingleLogoutMessageCreator builder = new DefaultSingleLogoutMessageCreator();

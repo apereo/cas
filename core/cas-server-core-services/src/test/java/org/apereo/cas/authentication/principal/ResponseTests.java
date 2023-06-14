@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.4
  */
 @Tag("Authentication")
-public class ResponseTests {
+class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";
 

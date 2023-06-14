@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 @Import(DefaultRelyingPartyTokenProducerTests.DefaultRelyingPartyTokenProducerTestConfiguration.class)
 @TestPropertySource(properties = "cas.authn.wsfed-idp.sts.custom-claims=my-custom-claim,second-custom-claim")
-public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("wsFederationRelyingPartyTokenProducer")
     private WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer;

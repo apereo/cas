@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     })
 @Getter
 @EnabledIfListeningOnPort(port = 6379)
-public class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+class RedisThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Delegation")
-public class DelegatedClientJacksonModuleTests {
+class DelegatedClientJacksonModuleTests {
     private static final AbstractJacksonBackedStringSerializer SERIALIZER = new TransientSessionTicketStringSerializer();
 
     @Test

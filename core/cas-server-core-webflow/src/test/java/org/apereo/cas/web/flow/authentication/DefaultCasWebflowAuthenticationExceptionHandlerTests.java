@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("AuthenticationHandler")
-public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
+class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 
     private RequestContext context;

@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Authentication")
 @Slf4j
-public class DefaultAuthenticationManagerTests {
+class DefaultAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
 
     private static final String HANDLER_B = "HandlerB";

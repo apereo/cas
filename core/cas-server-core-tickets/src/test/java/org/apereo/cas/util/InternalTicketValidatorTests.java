@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Tickets")
-public class InternalTicketValidatorTests {
+class InternalTicketValidatorTests {
 
     @Test
     public void verifyOperation() {

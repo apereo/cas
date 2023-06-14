@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-public class DelegatedAuthenticationIdentityProviderLogoutActionTests {
+class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT)
     private Action action;

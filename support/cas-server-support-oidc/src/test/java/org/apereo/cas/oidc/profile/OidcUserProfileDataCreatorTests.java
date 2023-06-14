@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcUserProfileDataCreatorTests {
+class OidcUserProfileDataCreatorTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -38,7 +38,7 @@ public class OidcUserProfileDataCreatorTests {
         "cas.authn.oauth.core.user-profile-view-type=FLAT",
         "cas.authn.oidc.core.claims-map.email=email-address"
     })
-    public class WithClaimMappingsTests extends AbstractOidcTests {
+    class WithClaimMappingsTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() throws Exception {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -60,7 +60,7 @@ public class OidcUserProfileDataCreatorTests {
         "cas.authn.oauth.access-token.crypto.encryption-enabled=false",
         "cas.authn.oidc.id-token.include-id-token-claims=true"
     })
-    public class DefaultTests extends AbstractOidcTests {
+    class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyOperation() throws Exception {
             val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());

@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class AuthenticationPreProcessorTests {
+class AuthenticationPreProcessorTests {
 
     @Test
     public void verifyOperation() {

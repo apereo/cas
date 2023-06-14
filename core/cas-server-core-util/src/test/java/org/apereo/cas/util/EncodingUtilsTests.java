@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Utility")
-public class EncodingUtilsTests {
+class EncodingUtilsTests {
 
     @SneakyThrows
     private static PrivateKey getPrivateKey() {

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowEvents")
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
-public class OneTimeTokenAuthenticationWebflowEventResolverTests {
+class OneTimeTokenAuthenticationWebflowEventResolverTests {
     @Autowired
     @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;

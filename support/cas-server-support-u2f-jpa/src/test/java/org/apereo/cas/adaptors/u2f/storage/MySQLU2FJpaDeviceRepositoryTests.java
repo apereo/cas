@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLU2FJpaDeviceRepositoryTests extends U2FJpaDeviceRepositoryTests {
+class MySQLU2FJpaDeviceRepositoryTests extends U2FJpaDeviceRepositoryTests {
     
 }
 

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 @Import(LdapPasswordlessAuthenticationConfiguration.class)
-public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
+class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;

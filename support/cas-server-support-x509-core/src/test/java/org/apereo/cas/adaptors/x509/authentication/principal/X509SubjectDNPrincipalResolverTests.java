@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("X509")
-public class X509SubjectDNPrincipalResolverTests {
+class X509SubjectDNPrincipalResolverTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
     private X509SubjectDNPrincipalResolver resolver;

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Audits")
-public class DefaultAuditTrailRecordResolutionPlanTests {
+class DefaultAuditTrailRecordResolutionPlanTests {
     @Test
     public void verifyOperation() {
         val plan = new DefaultAuditTrailRecordResolutionPlan();

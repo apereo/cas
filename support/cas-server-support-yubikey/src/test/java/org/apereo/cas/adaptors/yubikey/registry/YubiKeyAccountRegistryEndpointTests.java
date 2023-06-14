@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.yubikeyAccountRepository.enabled=true"
     })
 @Tag("MFAProvider")
-public class YubiKeyAccountRegistryEndpointTests {
+class YubiKeyAccountRegistryEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

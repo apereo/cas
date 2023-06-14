@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
-public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
+class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
 
     @Test
     public void verifyOperation() {

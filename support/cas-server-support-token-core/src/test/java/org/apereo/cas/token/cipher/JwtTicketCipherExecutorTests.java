@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Cipher")
-public class JwtTicketCipherExecutorTests {
+class JwtTicketCipherExecutorTests {
 
     public static final String ST = "ST-1234567890";
 

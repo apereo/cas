@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Logout")
-public class LogoutWebApplicationServiceFactoryTests {
+class LogoutWebApplicationServiceFactoryTests {
     @Test
     public void verifyOperation() {
         val request = new MockHttpServletRequest();

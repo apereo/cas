@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("CasConfiguration")
-public class RelaxedPropertyNamesTests {
+class RelaxedPropertyNamesTests {
 
     @Test
     public void verifyValues() {

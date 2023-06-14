@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("JDBC")
-public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServiceTests {
+class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServiceTests {
 
     @Test
     public void verifyUserEmailCanBeFound() {

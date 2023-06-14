@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowActions")
-public class CreateGoogleAnalyticsCookieActionTests {
+class CreateGoogleAnalyticsCookieActionTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

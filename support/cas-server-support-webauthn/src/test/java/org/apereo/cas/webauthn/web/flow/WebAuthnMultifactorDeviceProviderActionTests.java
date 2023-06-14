@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasWebflowAccountProfileConfiguration.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class WebAuthnMultifactorDeviceProviderActionTests {
+class WebAuthnMultifactorDeviceProviderActionTests {
     @Autowired
     @Qualifier("webAuthnDeviceProviderAction")
     private MultifactorAuthenticationDeviceProviderAction webAuthnDeviceProviderAction;

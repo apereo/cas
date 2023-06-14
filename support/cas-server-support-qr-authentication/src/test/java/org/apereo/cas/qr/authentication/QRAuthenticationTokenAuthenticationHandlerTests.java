@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("AuthenticationHandler")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationTokenAuthenticationHandlerTests {
+class QRAuthenticationTokenAuthenticationHandlerTests {
     @Autowired
     @Qualifier("qrAuthenticationTokenAuthenticationHandler")
     private AuthenticationHandler qrAuthenticationTokenAuthenticationHandler;

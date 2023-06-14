@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.gartner.name-id-attribute=cn",
     "cas.saml-sp.gartner.name-id-format=transient"
 })
-public class CasSamlSPGartnerConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPGartnerConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.statistics.enabled=true")
 @Tag("ActuatorEndpoint")
-public class StatisticsEndpointTests extends AbstractCasEndpointTests {
+class StatisticsEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("statisticsReportEndpoint")
     private StatisticsEndpoint statisticsEndpoint;

@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Delegation")
-public class DelegatedAuthenticationGenerateClientsActionTests {
+class DelegatedAuthenticationGenerateClientsActionTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.core.discovery-selection.selection-type=MENU")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class MenuSelectionTests {
+    class MenuSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         private Action delegatedAuthenticationCreateClientsAction;
@@ -79,7 +79,7 @@ public class DelegatedAuthenticationGenerateClientsActionTests {
         properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class DynamicSelectionTests {
+    class DynamicSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         private Action delegatedAuthenticationCreateClientsAction;

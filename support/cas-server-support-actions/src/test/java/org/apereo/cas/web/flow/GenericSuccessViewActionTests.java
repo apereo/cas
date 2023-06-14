@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = "cas.view.authorized-services-on-successful-login=true")
-public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
+class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
     private Action genericSuccessViewAction;

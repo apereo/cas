@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-public class TicketAsFirstParameterResourceResolverTests {
+class TicketAsFirstParameterResourceResolverTests {
     @Test
     public void verifyOperation() {
         val jp = mock(JoinPoint.class);

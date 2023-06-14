@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-public class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
+class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
     private Action action;

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OIDC")
-public class OidcDefaultJsonWebKeystoreRotationServiceTests {
+class OidcDefaultJsonWebKeystoreRotationServiceTests {
     static {
         try {
             val keystore = new File(FileUtils.getTempDirectoryPath(), "rotation.jwks");
@@ -61,7 +61,7 @@ public class OidcDefaultJsonWebKeystoreRotationServiceTests {
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/rotation.jwks")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class EmptyKeystoreTests extends AbstractOidcTests {
+    class EmptyKeystoreTests extends AbstractOidcTests {
 
         @Test
         public void verifyOperation() throws Exception {
@@ -95,7 +95,7 @@ public class OidcDefaultJsonWebKeystoreRotationServiceTests {
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/current.jwks")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    public class ExistingKeystoreTests extends AbstractOidcTests {
+    class ExistingKeystoreTests extends AbstractOidcTests {
 
         @Test
         public void verifyOperation() throws Exception {

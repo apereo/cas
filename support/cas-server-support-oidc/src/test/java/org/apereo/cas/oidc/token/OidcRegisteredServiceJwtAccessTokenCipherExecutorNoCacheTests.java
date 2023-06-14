@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends AbstractOidcTests {
+class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests extends AbstractOidcTests {
 
     @Test
     public void verifyEmptyCacheOperation() {

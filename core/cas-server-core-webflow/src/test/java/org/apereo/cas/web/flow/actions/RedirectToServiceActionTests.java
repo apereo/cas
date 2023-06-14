@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("WebflowServiceActions")
-public class RedirectToServiceActionTests {
+class RedirectToServiceActionTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;

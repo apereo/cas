@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class GroovyRegisteredServiceUsernameProviderTests {
+class GroovyRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceUsernameProviderTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

@@ -15,5 +15,5 @@ import org.springframework.test.context.TestPropertySource;
     "cas.saml-sp.zimbra.name-id-attribute=cn",
     "cas.saml-sp.zimbra.name-id-format=transient"
 })
-public class CasSamlSPZimbraConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPZimbraConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

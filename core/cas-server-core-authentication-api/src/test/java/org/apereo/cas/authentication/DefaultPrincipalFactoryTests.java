@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Authentication")
-public class DefaultPrincipalFactoryTests {
+class DefaultPrincipalFactoryTests {
     private static final String UID = "uid";
 
     @Test

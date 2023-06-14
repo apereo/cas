@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Audits")
-public class SurrogateAuditPrincipalIdProviderTests {
+class SurrogateAuditPrincipalIdProviderTests {
     @Test
     public void verifyAction() {
         val p = new SurrogateAuditPrincipalIdProvider();

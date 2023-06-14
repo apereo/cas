@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Groovy")
-public class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
+class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests {
     private ServicesManager servicesManager;
 
     @BeforeEach

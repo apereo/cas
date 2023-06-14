@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
-public class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("ssoPostSimpleSignProfileHandlerController")
     private SSOSamlIdPPostSimpleSignProfileHandlerController controller;

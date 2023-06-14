@@ -64,7 +64,7 @@ import static org.mockito.Mockito.*;
     CasValidationConfiguration.class
 })
 @Tag("CAS")
-public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
+class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")
     private ServiceValidationViewFactory serviceValidationViewFactory;

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("Groovy")
-public class GroovyPasswordPolicyHandlingStrategyTests {
+class GroovyPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategySupportsDefault() {
         val resource = new ClassPathResource("lppe-strategy.groovy");

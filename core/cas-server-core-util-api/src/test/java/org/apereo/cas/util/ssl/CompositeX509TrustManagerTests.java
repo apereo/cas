@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("X509")
-public class CompositeX509TrustManagerTests {
+class CompositeX509TrustManagerTests {
     @Test
     public void verifyIssuers() throws Exception {
         val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());

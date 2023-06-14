@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.redis.enabled=true"
 })
 @EnabledIfListeningOnPort(port = 6379)
-public class ConditionalOnExpressionPositiveTests extends BaseRedisSamlMetadataTests {
+class ConditionalOnExpressionPositiveTests extends BaseRedisSamlMetadataTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

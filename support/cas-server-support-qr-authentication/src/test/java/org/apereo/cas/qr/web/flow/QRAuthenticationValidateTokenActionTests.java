@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowAuthenticationActions")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationValidateTokenActionTests {
+class QRAuthenticationValidateTokenActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL)
