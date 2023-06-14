@@ -62,6 +62,7 @@ as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.ht
 - LDAP direct binds are now able to resolve person attributes after authentication.
 - Logout events are now sent to the CAS audit log.
 - OpenID Connect JWKS are now able to support an arbitrary number of keys for signing operations.
+- Standard claims can be individually filtered on a per relying party.
 
 ## Library Upgrades
 
@@ -73,3 +74,9 @@ as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.ht
 - Sentry
 - Apache CXF
 - Oshi
+- Logback
+- Swagger
+- Apache Kafka
+- Micrometer
+- Elastic APM
+- Graal VM
