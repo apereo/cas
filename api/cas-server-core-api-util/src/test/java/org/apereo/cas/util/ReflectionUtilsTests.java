@@ -1,13 +1,10 @@
 package org.apereo.cas.util;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
-
-import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
-
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -17,28 +14,25 @@ import static org.assertj.core.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-class ReflectionUtilsTests {
+public class ReflectionUtilsTests {
 
     @Test
     void findSubclassesInPackage() {
-        Collection<Class<?>> utilClasses = ReflectionUtils.findSubclassesInPackage(Object.class, ReflectionUtils.class.getPackageName());
-
+        val utilClasses = ReflectionUtils.findSubclassesInPackage(Object.class, ReflectionUtils.class.getPackageName());
         assertThat(utilClasses).contains(ReflectionUtils.class);
         assertThat(utilClasses).doesNotContain(Object.class);
     }
 
     @Test
     void findClassesWithAnnotationsInPackage() {
-        Collection<Class<?>> tagClasses = ReflectionUtils.findClassesWithAnnotationsInPackage(Set.of(Tag.class), "org.apereo.cas");
-
+        val tagClasses = ReflectionUtils.findClassesWithAnnotationsInPackage(Set.of(Tag.class), "org.apereo.cas");
         assertThat(tagClasses).contains(ReflectionUtilsTests.class);
         assertThat(tagClasses).doesNotContain(ReflectionUtils.class);
     }
 
     @Test
     void findClassBySimpleNameInPackage() {
-        Optional<Class<?>> applicationContext = ReflectionUtils.findClassBySimpleNameInPackage("ApplicationContext", "org.springframework");
-
+        val applicationContext = ReflectionUtils.findClassBySimpleNameInPackage(ApplicationContext.class.getSimpleName(), "org.springframework");
         assertThat(applicationContext).isPresent();
         assertThat(applicationContext).contains(ApplicationContext.class);
     }
