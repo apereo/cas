@@ -50,16 +50,22 @@ Generated hint files can typicallt be found in `build/generated/aotResources`.
 
 ## System Requirements
 
-A Graal VM distribution compatible with [CAS requirements](../planning/Installation-Requirements.html) must be present on the build machine.
-Presently and at a minimum, you will need to have Graal VM installed with 
-the [native image tool](https://www.graalvm.org/latest/reference-manual/native-image/) in place.
+A Graal VM distribution compatible with [CAS requirements](../planning/Installation-Requirements.html) must be present on the build machine
+and activated as the operating Java runtime. Presently and at a minimum, you will need to have Graal VM installed with 
+the [native image tool](https://www.graalvm.org/latest/reference-manual/native-image/) in place, in case your Graal VM
+distribution does not offer and package this by default.
      
 Needless to say, the ability to work with Graal VM native image is and will only be available in CAS deployments
-that run with an [embedded server container](../installation/Configuring-Servlet-Container-Embedded.html) that ships with CAS directly.
+that run with an [embedded server container](../installation/Configuring-Servlet-Container-Embedded.html).
 When building a CAS Graal VM native image, an embedded server container will be automatically provided.
  
-The build machine that ultimate produces the CAS Graal VM native image is preferred be running Linux 
+The build machine that ultimately produces the CAS Graal VM native image is preferred be running Linux 
 with at least 16GB of memory and 4 CPU cores.
+
+<div class="alert alert-info">:information_source: <strong>LLVM Toolchain</strong><p>
+You may run into build errors about <i>ld64 limitations</i>, particularly if you are building native images on ARM machines.
+The build process may ask you to use <code>ld64.lld</code> via <code>gu install llvm-toolchain</code>.
+</p></div>
 
 ## Installation
 
@@ -72,7 +78,7 @@ Building CAS Graal VM native images can be quite resource intensive and time con
 included in the build, CAS configuration options and the horsepower of the build machine and available memory, the build time can vary greatly
 and typically is in the neighborhood of <code>10~20</code> minutes and perhaps longer.</p></div>
 
-Since in AOT and native mode, configuration is being processed and the context is being optimised at build time,
+Since in AOT and native mode, configuration is being processed and the context is being optimized at build time,
 any properties that would influence bean creation (such as the ones used within the bootstrap context) should be set
 to the same values at build time and runtime to avoid unexpected behaviour. While building a CAS deployment that contains 
 the Spring Cloud Config Client, you must make sure that the configuration data source that it connects to is available at build time. 
@@ -98,3 +104,33 @@ Note while the startup time is orders of magnitude faster than on the traditiona
 the actual latency and throughput may be worse on the native image - there is no JIT compiler that optimizes 
 code execution paths in runtime. Ideally, you should run performance tests to find out how CAS behaves 
 as a native image vs a traditional JVM application.
+  
+## Native Image Hints
+
+If you need to provide your own hints for reflection, resources, serialization, proxy usage etc. 
+you can define your own class that implements the `CasRuntimeHintsRegistrar` API, with the following outline:
+
+```java
+package org.example;
+
+public class MyRuntimeHints implements CasRuntimeHintsRegistrar {
+    @Override
+    public void registerHints(RuntimeHints hints, 
+                              ClassLoader classLoader) {
+        // Register your own hints...
+    }
+}
+```
+
+You can then use `@ImportRuntimeHints` on any `@AutoConfiguration` class to activate such hints. Alternatively,
+you may create the file `src/main/resources/META-INF/spring/aot.factories` with the following contents:
+
+```properties
+org.springframework.aot.hint.RuntimeHintsRegistrar=org.example.MyRuntimeHints
+```
+
+CAS itself will provide a large body of native image hints for many of modules found in the codebase. This process and native image
+support coverage is not exhaustive and you may be asked to register your own hints for components, APIs and processes
+that are absent in CAS-provided hints. If you do run into such scenarios, consider contributing those hints
+back to the CAS project directly if the hint belongs or affects a CAS-owned component, or discuss the issue with the
+[reachability metadata project](https://github.com/oracle/graalvm-reachability-metadata).

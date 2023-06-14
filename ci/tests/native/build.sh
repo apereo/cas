@@ -37,30 +37,29 @@ if [[ "${BUILD}" == "true" ]]; then
   if [[ "${CI}" == "true" ]]; then
     BUILD_OPTIONS="${BUILD_OPTIONS} --no-daemon"
   fi
-  printgreen "Building CAS native image with options..."
+  printgreen "Building CAS Graal VM native image..."
   export GRAALVM_BUILDTOOLS_MAX_PARALLEL_BUILDS=8
   tasks="./gradlew :webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile ${BUILD_OPTIONS}"
   echo "$tasks"
-  echo -e "***************************************************************************************"
   eval "$tasks"
 
   if [[ $? -ne 0 ]]; then
-    printred "CAS native image build failed"
+    printred "CAS Graal VM native image build failed"
     exit 1
   fi
 fi
 
-printgreen "CAS native image build is successfully built"
+printgreen "CAS Graal VM native image build is successfully built"
 cd ./webapp/cas-server-webapp-native || exit
 ls -al ./build/native
 
 if [[ "${RUN}" == "true" ]]; then
   keystore="/etc/cas/thekeystore"
   if [[ -f "${keystore}" ]]; then
-    printyellow "Keystore ${keystore} already exists and will not be created again!"
+    printyellow "Keystore ${keystore} already exists and will not be created again"
   else
-    dname="${dname:-CN=mmoayyed.unicon.net,OU=Example,OU=Org,C=US}"
-    subjectAltName="${subjectAltName:-dns:unicon.net,dns:localhost,ip:127.0.0.1}"
+    dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
+    subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
     sudo mkdir -p /etc/cas
     printgreen "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
     [ -f "${keystore}" ] && sudo rm "${keystore}"
@@ -72,7 +71,7 @@ if [[ "${RUN}" == "true" ]]; then
     fi
   fi
 
-  printgreen "Launching CAS native image..."
+  printgreen "Launching CAS Graal VM native image..."
   ./build/native/nativeCompile/cas --spring.profiles.active=native &
   pid=$!
   sleep 20
@@ -94,5 +93,5 @@ if [[ "${RUN}" == "true" ]]; then
   kill -9 $pid
   [ "$CI" = "true" ] && pkill cas
 fi
-printgreen "Built and validated CAS native image successfully."
+printgreen "Built and validated CAS Graal VM native image successfully."
 exit 0

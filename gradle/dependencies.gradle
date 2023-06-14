@@ -2585,12 +2585,10 @@ ext.libraries = [
                     exclude(group: "org.springframework.data", module: "spring-data-redis")
                 },
                 dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion"),
-                dependencies.create("com.redis:spring-lettucemod:$springLettuceModVersion") {
+                dependencies.create("com.redis:lettucemod:$lettuceModVersion") {
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 }
         ],
         springintegration          : [
