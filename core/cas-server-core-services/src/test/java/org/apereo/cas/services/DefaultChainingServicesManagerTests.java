@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
+class DefaultChainingServicesManagerTests extends AbstractServicesManagerTests<DefaultChainingServicesManager> {
     @Test
     void verifyOperation() {
         val mock = mock(ServicesManager.class);

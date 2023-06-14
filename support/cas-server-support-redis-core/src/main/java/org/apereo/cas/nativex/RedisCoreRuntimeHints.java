@@ -1,21 +1,20 @@
 package org.apereo.cas.nativex;
 
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.web.CaptchaActivationStrategy;
-import org.apereo.cas.web.CaptchaValidator;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
+import io.lettuce.core.cluster.api.sync.RedisClusterCommands;
 import org.springframework.aot.hint.RuntimeHints;
 
 /**
- * This is {@link CasCaptchaRuntimeHints}.
+ * This is {@link RedisCoreRuntimeHints}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-public class CasCaptchaRuntimeHints implements CasRuntimeHintsRegistrar {
+public class RedisCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         hints.proxies()
-            .registerJdkProxy(CaptchaValidator.class)
-            .registerJdkProxy(CaptchaActivationStrategy.class);
+            .registerJdkProxy(RedisModulesCommands.class, RedisClusterCommands.class);
     }
 }

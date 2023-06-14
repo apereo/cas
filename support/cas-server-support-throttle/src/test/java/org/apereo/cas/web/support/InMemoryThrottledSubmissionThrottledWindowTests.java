@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 @Getter
 @Tag("AuthenticationThrottling")
-public class InMemoryThrottledSubmissionThrottledWindowTests
+class InMemoryThrottledSubmissionThrottledWindowTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired

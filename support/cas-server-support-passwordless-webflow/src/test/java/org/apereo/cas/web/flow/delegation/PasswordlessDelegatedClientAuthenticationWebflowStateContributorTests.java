@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @Tag("WebflowAuthenticationActions")
-public class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
+class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests
     extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("passwordlessDelegatedClientAuthenticationWebflowStateContributor")

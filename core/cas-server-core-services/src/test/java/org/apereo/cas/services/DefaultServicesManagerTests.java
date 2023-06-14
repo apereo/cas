@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
-public class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultServicesManager> {
+class DefaultServicesManagerTests extends AbstractServicesManagerTests<DefaultServicesManager> {
 
     private static final String TEST = "test";
 

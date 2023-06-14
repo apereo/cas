@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.core.provider-selection-enabled=true",
     "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy1,mfa-dummy2"
 })
-public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests
+class RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests
     extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")

@@ -7,14 +7,17 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
-
+import lombok.val;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.TypeReference;
 import org.springframework.binding.message.DefaultMessageContext;
+import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.engine.FlowExecutionExceptionHandlerSet;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.Action;
-
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,19 +40,37 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             .registerType(ClientFlowExecutionRepository.SerializedFlowExecutionState.class)
             .registerType(LocalAttributeMap.class);
 
-        List.of(
-                "org.springframework.webflow.engine.impl.RequestControlContextImpl",
-                "org.springframework.webflow.engine.impl.FlowSessionImpl",
-                DefaultMessageContext.class.getName(),
-                FlowExecutionImpl.class.getName(),
-                WebflowConversationStateCipherExecutor.class.getName()
-            )
-            .forEach(el -> hints.reflection().registerTypeIfPresent(classLoader, el,
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS));
+        registerReflectionHints(hints, List.of(
+            TypeReference.of("org.springframework.webflow.engine.impl.RequestControlContextImpl"),
+            TypeReference.of("org.springframework.webflow.engine.impl.FlowSessionImpl"),
+            DefaultMessageContext.class,
+            FlowExecutionImpl.class,
+            FlowExecutionExceptionHandlerSet.class,
+            WebflowConversationStateCipherExecutor.class
+        ));
+
+        registerReflectionHints(hints,
+            findSubclassesInPackage(AnnotatedObject.class, "org.springframework.webflow"));
+    }
+
+    private static void registerReflectionHints(final RuntimeHints hints, final Collection entries) {
+        val memberCategories = new MemberCategory[]{
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+            MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+            MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.DECLARED_FIELDS,
+            MemberCategory.PUBLIC_FIELDS};
+        entries.forEach(el -> {
+            if (el instanceof String clazz) {
+                hints.reflection().registerType(TypeReference.of(clazz), memberCategories);
+            }
+            if (el instanceof Class clazz) {
+                hints.reflection().registerType(clazz, memberCategories);
+            }
+            if (el instanceof TypeReference reference) {
+                hints.reflection().registerType(reference, memberCategories);
+            }
+        });
     }
 }

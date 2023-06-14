@@ -37,7 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
+class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
