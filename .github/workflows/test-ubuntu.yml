@@ -56,8 +56,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
@@ -110,8 +108,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
@@ -140,8 +136,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-#      - name: Gradle Wrapper Validation
-#        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
@@ -151,8 +145,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
         uses: nick-fields/retry@v2
         with:
@@ -164,6 +156,7 @@ jobs:
           command: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v3"
+        continue-on-error: true
         if: ${{ env.CODECOV_TOKEN != null }}
         with:
           token: ${{ env.CODECOV_TOKEN }}
