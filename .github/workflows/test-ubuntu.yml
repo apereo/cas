@@ -164,7 +164,7 @@ jobs:
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
           verbose: false
-          fail_ci_if_error: true
+          fail_ci_if_error: false
       - name: "Upload Coverage Report"
         uses: "actions/upload-artifact@v3"
         with:
