@@ -37,6 +37,7 @@ package com.example.cas;
 
 public class MyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     ...
+    @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         final UsernamePasswordCredential credential,
         final String originalPassword) {
@@ -72,17 +73,15 @@ package com.example.cas;
 
 @AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyAuthenticationEventExecutionPlanConfiguration
-    implements AuthenticationEventExecutionPlanConfigurer {
+public class MyAuthenticationConfiguration {
     
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public AuthenticationHandler myAuthenticationHandler() {
+    public AuthenticationHandler myAuthenticationHandler(
+        final CasConfigurationProperties casProperties) {
+        
         var handler = new MyAuthenticationHandler();
         /*
-            Configure the handler by invoking various setter methods.
+            Configure the handler by invoking various setter methods, etc.
             Note that you also have full access to the collection of resolved CAS settings.
             Note that each authentication handler may optionally qualify for an 'order`
             as well as a unique name.
@@ -90,15 +89,16 @@ public class MyAuthenticationEventExecutionPlanConfiguration
         return handler;
     }
 
-    @Override
-    public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        if (feelingGoodOnAMondayMorning()) {
-            plan.registerAuthenticationHandler(myAuthenticationHandler());
-        }
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer myPlan(
+        @Qualifier("myAuthenticationHandler")
+        final AuthenticationHandler myAuthenticationHandler) {
+        return plan -> {
+            plan.registerAuthenticationHandler(myAuthenticationHandler);
+        };
     }
 }
 ```
-
 
 Now that we have properly created and registered our handler with the CAS authentication machinery, we just need to 
 ensure that CAS is able to pick up our special configuration via the strategy [outlined here](../configuration/Configuration-Management-Extensions.html).

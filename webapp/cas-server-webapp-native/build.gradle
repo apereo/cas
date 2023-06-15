@@ -168,7 +168,8 @@ processAot {
     list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
 
     jvmArgs = list
-
+    systemProperties System.properties
+    
     args(
         "--spring.profiles.active=native",
         "--spring.main.lazy-initialization=false",
