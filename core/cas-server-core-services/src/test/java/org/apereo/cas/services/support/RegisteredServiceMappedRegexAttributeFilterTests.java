@@ -48,7 +48,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
 
     private RegisteredServiceMappedRegexAttributeFilter filter;
 
-    public RegisteredServiceMappedRegexAttributeFilterTests() {
+    RegisteredServiceMappedRegexAttributeFilterTests() {
         givenAttributesMap = new HashMap<>();
         givenAttributesMap.put(UID, List.of("loggedInTestUid"));
         givenAttributesMap.put(PHONE, List.of("1290"));

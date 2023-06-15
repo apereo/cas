@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
 class JsonResourceAuthenticationHandlerTests {
     private final JsonResourceAuthenticationHandler handler;
 
-    public JsonResourceAuthenticationHandlerTests() throws Exception {
+    JsonResourceAuthenticationHandlerTests() throws Exception {
         val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();
