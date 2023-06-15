@@ -33,7 +33,7 @@ class OAuthRegisteredServiceTests {
 
     private final ServiceRegistry dao;
 
-    public OAuthRegisteredServiceTests() throws Exception {
+    OAuthRegisteredServiceTests() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),

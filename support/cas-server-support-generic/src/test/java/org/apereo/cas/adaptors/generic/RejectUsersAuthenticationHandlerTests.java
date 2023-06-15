@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
-    public RejectUsersAuthenticationHandlerTests() {
+    RejectUsersAuthenticationHandlerTests() {
         val users = new HashSet<String>();
         users.add("scott");
         users.add("dima");

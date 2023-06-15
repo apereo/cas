@@ -55,7 +55,7 @@ class RegisteredServiceRegexAttributeFilterTests {
 
     private final Map<String, List<Object>> givenAttributesMap;
 
-    public RegisteredServiceRegexAttributeFilterTests() {
+    RegisteredServiceRegexAttributeFilterTests() {
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
         this.givenAttributesMap = new HashMap<>();
