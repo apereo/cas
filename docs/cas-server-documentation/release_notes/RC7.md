@@ -80,3 +80,6 @@ as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.ht
 - Micrometer
 - Elastic APM
 - Graal VM
+- Hibernate
+- BouncyCastle
+- Google Cloud
