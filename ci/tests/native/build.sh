@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BUILD_OPTIONS="-x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache -DskipNestedConfigMetadataGen=true"
+BUILD_TASKS=":webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile"
 
 RED="\e[31m"
 GREEN="\e[32m"
@@ -9,6 +10,7 @@ ENDCOLOR="\e[0m"
 
 BUILD="true"
 RUN="true"
+CAS_MODULES=""
 
 while (( "$#" )); do
   case "$1" in
@@ -18,6 +20,10 @@ while (( "$#" )); do
     ;;
   --run)
       RUN="$2"
+      shift 2
+      ;;
+  --modules)
+      CAS_MODULES="$2"
       shift 2
       ;;
   esac
@@ -39,7 +45,7 @@ if [[ "${BUILD}" == "true" ]]; then
   fi
   printgreen "Building CAS Graal VM native image..."
   export GRAALVM_BUILDTOOLS_MAX_PARALLEL_BUILDS=8
-  tasks="./gradlew :webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile ${BUILD_OPTIONS}"
+  tasks="./gradlew ${BUILD_TASKS} -DcasModules=${CAS_MODULES} ${BUILD_OPTIONS}"
   echo "$tasks"
   eval "$tasks"
 
