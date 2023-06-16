@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -67,6 +68,7 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             .registerJdkProxy(PrincipalElectionStrategyConflictResolver.class)
             .registerJdkProxy(PrincipalElectionStrategy.class)
             .registerJdkProxy(CredentialMetadata.class)
+            .registerJdkProxy(AuthenticationHandler.class)
             .registerJdkProxy(AuthenticationTransactionManager.class)
             .registerJdkProxy(AuthenticationHandlerResolver.class);
 

@@ -1,4 +1,4 @@
-name: Tests - Ubuntu
+name: Unit & Integration Tests
 
 env:
   JAVA_OPTS: "-Xms512m -Xmx8048m -Xss512m -XX:ReservedCodeCacheSize=512m -server"
