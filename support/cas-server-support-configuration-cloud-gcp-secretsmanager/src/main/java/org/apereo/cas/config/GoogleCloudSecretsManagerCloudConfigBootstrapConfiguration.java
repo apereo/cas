@@ -96,7 +96,7 @@ public class GoogleCloudSecretsManagerCloudConfigBootstrapConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "googleCloudSecretsManagerTemplate")
+    @ConditionalOnMissingBean(name = "googleCloudSecretsManagerCredentialProvider")
     public CredentialsProvider googleCloudSecretsManagerCredentialProvider(final GcpSecretManagerProperties properties) throws Exception {
         return new DefaultCredentialsProvider(properties);
     }
