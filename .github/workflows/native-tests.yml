@@ -73,34 +73,6 @@ jobs:
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
   ##########################################################################
-
-  cache:
-    runs-on: macos-latest
-    needs: [initialize]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Initialize
-        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - uses: actions/checkout@v3
-      - name: Download Dependencies
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
-      - uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-  ##########################################################################
             
   puppeteer-scenarios:
     needs: [initialize]
@@ -160,7 +132,6 @@ jobs:
       - name: Configure CI 
         run: |
           source ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
-          echo "Required node version: $NODE_REQUIRED"
           echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
@@ -211,7 +182,6 @@ jobs:
       - name: Configure CI
         run: |
           ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
-          echo "Required node version: $NODE_REQUIRED"
           echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
