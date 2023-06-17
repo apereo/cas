@@ -388,7 +388,7 @@ fi
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   if [[ "${NATIVE_BUILD}" == "true" ]]; then
-    DEFAULT_PUPPETEER_BUILD_CTR=40
+    DEFAULT_PUPPETEER_BUILD_CTR=45
   elif [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
     # remote gradle cache employed
     DEFAULT_PUPPETEER_BUILD_CTR=20
@@ -448,7 +448,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
           exit 3
        fi
        echo -n '.'
-       sleepfor 30
+       sleepfor 60
     done
     wait $pid
     if [ $? -ne 0 ]; then
