@@ -76,7 +76,7 @@ jobs:
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
   ##########################################################################
   
@@ -162,7 +162,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
@@ -212,7 +212,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       #      - name: Setup tmate session
       #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests

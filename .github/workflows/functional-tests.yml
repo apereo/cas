@@ -30,7 +30,7 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 17
-  NODE_CURRENT: '18'
+  NODE_CURRENT: '20'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 15
   SCENARIO_REGEX: ".*"
@@ -75,7 +75,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
-        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
   ##########################################################################
 
@@ -95,7 +95,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - uses: actions/checkout@v3
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
@@ -110,7 +110,7 @@ jobs:
   puppeteer-scenarios:
     needs: [cache]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
@@ -157,14 +157,16 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
+      - name: Configure CI
+        run: ./ci/tests/puppeteer/ci-config.sh
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_CURRENT }}
+          node-version: ${{ env.NODE_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
-      - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh
       - name: Run Tests
         uses: nick-fields/retry@v2
         with:
@@ -199,14 +201,16 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
+      - name: Configure CI
+        run: ./ci/tests/puppeteer/ci-config.sh
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_CURRENT }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
-      - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh
       - name: Run Tests
         uses: nick-fields/retry@v2
         with:

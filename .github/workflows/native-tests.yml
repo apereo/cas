@@ -36,16 +36,11 @@ env:
   SCENARIO_REGEX: ".*"
 
 on:
+  schedule:
+    - cron: '0 0 * * *'
   push:
     branches:
       - master
-      - '!**.**.**'
-      - 'pr-*'
-  pull_request:
-    types: [ labeled ]
-    branches:
-      - master
-      - '!**.**.**'
 
 ##########################################################################
 
