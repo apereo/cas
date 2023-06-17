@@ -144,7 +144,7 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
     name: ${{matrix.scenario}}
-    timeout_minutes: ${{ env.RETRY_MINUTES }}
+    timeout-minutes: ${{ env.RETRY_MINUTES }}
     steps:
       - uses: actions/checkout@v3
       - name: "Setup Graal VM"
@@ -188,7 +188,7 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
     name: ${{matrix.scenario}}
-    timeout_minutes: ${{ env.RETRY_MINUTES }}
+    timeout-minutes: ${{ env.RETRY_MINUTES }}
     steps:
       - uses: actions/checkout@v3
       - name: "Setup Graal VM"
