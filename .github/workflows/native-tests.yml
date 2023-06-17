@@ -165,12 +165,13 @@ jobs:
           echo "Current Nodejs version: ${NODE_CURRENT}"
           CI_CONFIG="$PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}/ci.json"
           echo "Checking scenario CI configuration file: ${CI_CONFIG}"
-          jq --version
-          NODE_REQUIRED=$([[ -f $CI_CONFIG ]] && cat $CI_CONFIG | jq -j '."nodejs.version"')
-          echo "Required CI Nodejs version: ${NODE_REQUIRED}"
-          [[ -z $NODE_REQUIRED ]] && \
-            echo "Setting Nodejs version to ${NODE_CURRENT}" && \
+          if [[ -f $CI_CONFIG ]]; then
+            echo "Found $CI_CONFIG file"
+            export NODE_REQUIRED=$(cat $CI_CONFIG | jq -j '."nodejs.version"')
+          else
+            echo "Using default Nodejs version: ${NODE_CURRENT}"
             export NODE_REQUIRED=${NODE_CURRENT}
+          fi
           echo "Final Nodejs version: ${NODE_REQUIRED}"
       - name: Set up Nodejs
         uses: actions/setup-node@v3
