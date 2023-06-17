@@ -85,6 +85,7 @@ DRYRUN=""
 CLEAR="true"
 INITONLY="false"
 NATIVE_BUILD="false"
+BUILD_SPAWN="background"
 
 while (( "$#" )); do
   case "$1" in
@@ -255,27 +256,6 @@ if [[ ! -z ${requiredEnvVars} ]]; then
   done
 fi
 
-docker info > /dev/null 2>&1
-dockerInstalled=$?
-
-dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
-if [[ "${dockerRequired}" == "true" ]]; then
-  echo "Checking if Docker is available..."
-  if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
-    printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
-    exit 0
-  fi
-  if [[ $dockerInstalled -ne 0 ]] ; then
-    printred "Docker engine is not running. Skipping running test since the test requires Docker."
-    exit 0
-  fi
-  if [[ "$CI" == "true" ]]; then
-    printgreen "Docker engine is available"
-    docker --version
-  fi  
-fi
-
-
 scenarioName=${scenario##*/}
 enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
@@ -302,16 +282,18 @@ if [[ "${INITONLY}" == "true" ]]; then
   REBUILD="false"
 fi
 
+if [[ "${CI}" == "true" ]]; then
+  BUILD_SPAWN="foreground"
+fi
+
 if [[ "${NATIVE_BUILD}" == "true" ]]; then
   REBUILD="true"
+  BUILD_SPAWN="foreground"
 fi
 
 if [[ "${DRYRUN}" == "true" ]]; then
   printyellow "Skipping execution of test scenario while in dry-run/initialize-only mode."
 fi
-
-#echo "Installing jq"
-#sudo apt-get install jq
 
 random=$(openssl rand -hex 8)
 
@@ -417,9 +399,8 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
-  echo "$BUILD_COMMAND"
-
-  if [[ "${CI}" == "true" ]]; then
+  echo -e "Executing build command in the ${BUILD_SPAWN}:\n\n$BUILD_COMMAND"
+  if [[ "${BUILD_SPAWN}" == "background" ]]; then
     printcyan "Launching build in background to make observing slow builds easier..."
     $BUILD_COMMAND > build.log 2>&1 &
     pid=$!
@@ -460,7 +441,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
       rm build.log
     fi
   else
-    printcyan "Launching CAS build in a non-CI environment..."
+    printcyan "Launching CAS build in the foreground..."
     $BUILD_COMMAND
     pid=$!
     wait $pid
@@ -470,6 +451,27 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     fi
   fi
 fi
+
+docker info > /dev/null 2>&1
+dockerInstalled=$?
+
+dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
+if [[ "${dockerRequired}" == "true" ]]; then
+  echo "Checking if Docker is available..."
+  if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
+    printyellow "Not running test in CI that requires Docker, because non-linux GitHub runner can't run Docker."
+    exit 0
+  fi
+  if [[ $dockerInstalled -ne 0 ]] ; then
+    printred "Docker engine is not running. Skipping running test since the test requires Docker."
+    exit 0
+  fi
+  if [[ "$CI" == "true" ]]; then
+    printgreen "Docker engine is available"
+    docker --version
+  fi
+fi
+
 
 if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
   cp "${casWebApplicationFile}" "$PWD"/cas.${projectType}
