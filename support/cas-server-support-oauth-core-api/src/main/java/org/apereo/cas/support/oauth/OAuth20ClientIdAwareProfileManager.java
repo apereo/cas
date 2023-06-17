@@ -43,6 +43,7 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
     }
 
     @Override
+    @SuppressWarnings("NonApiType")
     protected LinkedHashMap<String, UserProfile> retrieveAll(final boolean readFromSession) {
         val profiles = super.retrieveAll(readFromSession).entrySet();
         val clientId = getClientIdFromRequest();

@@ -106,7 +106,7 @@ class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTe
             }
 
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            public void writeDevicesBackToResource(final ArrayList<U2FDeviceRegistration> devices) {
+            public void writeDevicesBackToResource(final List<U2FDeviceRegistration> devices) {
                 DEVICES.addAll(devices);
             }
 

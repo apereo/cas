@@ -1,10 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
-
 import lombok.Setter;
 import lombok.ToString;
-
 import java.security.cert.X509Certificate;
 
 /**
@@ -43,8 +41,9 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        return new StringBuilder(this.serialNumberPrefix)
-            .append(certificate.getSerialNumber()).append(this.valueDelimiter)
-            .append(certificate.getIssuerDN().getName()).toString();
+        return this.serialNumberPrefix
+            + certificate.getSerialNumber()
+            + this.valueDelimiter
+            + certificate.getIssuerDN().getName();
     }
 }

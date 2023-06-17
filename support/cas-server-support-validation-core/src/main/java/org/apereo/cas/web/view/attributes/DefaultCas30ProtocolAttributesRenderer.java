@@ -2,11 +2,9 @@ package org.apereo.cas.web.view.attributes;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -24,10 +22,10 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
     public Collection<String> render(final Map<String, Object> attributes) {
         val formattedAttributes = new ArrayList<String>(attributes.size());
         LOGGER.trace("Beginning to format/render attributes for the response");
-        attributes.forEach((k, v) -> {
+        attributes.forEach((attributeName, v) -> {
             val values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                val name = CasProtocolAttributesRenderer.sanitizeAttributeName(k);
+                val name = CasProtocolAttributesRenderer.sanitizeAttributeName(attributeName);
                 val fmt = buildSingleAttributeDefinitionLine(name, value);
                 LOGGER.trace("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
@@ -36,27 +34,10 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
         return formattedAttributes;
     }
 
-    /**
-     * Build single attribute definition line.
-     *
-     * @param attributeName the attribute name
-     * @param value         the value
-     * @return the string
-     */
     protected String buildSingleAttributeDefinitionLine(final String attributeName, final Object value) {
-        return new StringBuilder()
-            .append("<cas:".concat(attributeName).concat(">"))
-            .append(encodeAttributeValue(value))
-            .append("</cas:".concat(attributeName).concat(">"))
-            .toString();
+        return "<cas:%s>%s</cas:%s>".formatted(attributeName, encodeAttributeValue(value), attributeName);
     }
 
-    /**
-     * Encode attribute value.
-     *
-     * @param value the value
-     * @return the string
-     */
     protected String encodeAttributeValue(final Object value) {
         return StringEscapeUtils.escapeXml10(value.toString().trim());
     }
