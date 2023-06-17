@@ -160,6 +160,7 @@ jobs:
       - name: Configure CI 
         run: |
           ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
+          echo "Required node version: $NODE_REQUIRED"
           echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
@@ -210,6 +211,7 @@ jobs:
       - name: Configure CI
         run: |
           ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
+          echo "Required node version: $NODE_REQUIRED"
           echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
