@@ -1,7 +1,6 @@
 #!/bin/bash
 
 PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-20}
 
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
@@ -390,8 +389,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   if [[ "${NATIVE_BUILD}" == "true" ]]; then
     DEFAULT_PUPPETEER_BUILD_CTR=45
   elif [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
-    # remote gradle cache employed
-    DEFAULT_PUPPETEER_BUILD_CTR=20
+    DEFAULT_PUPPETEER_BUILD_CTR=30
   else
     DEFAULT_PUPPETEER_BUILD_CTR=30
   fi
