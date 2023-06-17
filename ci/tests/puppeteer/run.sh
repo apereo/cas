@@ -617,6 +617,10 @@ if [[ "${RERUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
 fi
 
 RC=-1
+if [[ "${NATIVE_BUILD}" == "true" ]]; then
+  RC=0
+fi
+
 if [[ "${DRYRUN}" != "true" && "${NATIVE_BUILD}" == "false" ]]; then
   if [[ "${CLEAR}" == "true" ]]; then
     clear

@@ -30,7 +30,7 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 17
-  NODE_CURRENT: '18'
+  NODE_CURRENT: '20'
   MAX_ATTEMPTS: 1
   RETRY_MINUTES: 35
   SCENARIO_REGEX: ".*account-change.*"
