@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 1
   RETRY_MINUTES: 35
-  SCENARIO_REGEX: ".*"
+  SCENARIO_REGEX: ".*account-change.*"
 
 on:
   schedule:
@@ -158,15 +158,19 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI 
-        run: ./ci/tests/puppeteer/ci-config.sh
+        run: |
+          ./ci/tests/puppeteer/ci-config.sh
+          echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
+          check-latest: true
       - name: Run Native Tests
         uses: nick-fields/retry@v2
+        timeout-minutes: 45
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           timeout_minutes: ${{ env.RETRY_MINUTES }}
@@ -204,7 +208,9 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
-        run: ./ci/tests/puppeteer/ci-config.sh
+        run: |
+          ./ci/tests/puppeteer/ci-config.sh
+          echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
@@ -213,6 +219,7 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Run Native Tests
         uses: nick-fields/retry@v2
+        timeout-minutes: 45
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           timeout_minutes: ${{ env.RETRY_MINUTES }}

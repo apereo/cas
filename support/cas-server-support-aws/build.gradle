@@ -20,6 +20,7 @@ dependencies {
 
     implementation libraries.awssts
     implementation libraries.aws
+    implementation libraries.awsverifiedpermissions
 
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
