@@ -144,7 +144,6 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: ${{ env.RETRY_MINUTES }}
     steps:
       - uses: actions/checkout@v3
       - name: "Setup Graal VM"
@@ -173,6 +172,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
           retry_on: error
           shell: bash
           command: |
@@ -188,7 +188,6 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: ${{ env.RETRY_MINUTES }}
     steps:
       - uses: actions/checkout@v3
       - name: "Setup Graal VM"
@@ -217,6 +216,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
           retry_on: error
           shell: bash
           command: |
