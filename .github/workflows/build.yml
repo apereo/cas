@@ -12,7 +12,6 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   JDK_CURRENT: 17
   JDK_LATEST: 21-ea
-  GRAALVM_CURRENT: 22.3.2
 
 ##########################################################################
 
@@ -162,7 +161,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: graalvm/setup-graalvm@v1
         with:
-          version: ${{ env.GRAALVM_CURRENT }}
+          distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
