@@ -160,10 +160,19 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Determine Nodejs Version
+        run: |
+          echo "Current Nodejs version: ${NODE_CURRENT}"
+          CI_CONFIG="$PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}/ci.json"
+          NODE_REQUIRED=$([[ -f $CI_CONFIG ]] && cat $CI_CONFIG | jq -j '."nodejs.version"')
+          [[ -z $NODE_REQUIRED ]] && \
+            echo "Setting Nodejs version to ${NODE_CURRENT}" && \
+            exort NODE_REQUIRED=${NODE_CURRENT}
+          echo "Required Nodejs version: ${NODE_REQUIRED}"
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_CURRENT }}
+          node-version: ${{ env.NODE_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
@@ -204,10 +213,19 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Determine Nodejs Version
+        run: |
+          echo "Current Nodejs version: ${NODE_CURRENT}"
+          CI_CONFIG="$PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}/ci.json"
+          NODE_REQUIRED=$([[ -f $CI_CONFIG ]] && cat $CI_CONFIG | jq -j '."nodejs.version"')
+          [[ -z $NODE_REQUIRED ]] && \
+            echo "Setting Nodejs version to ${NODE_CURRENT}" && \
+            exort NODE_REQUIRED=${NODE_CURRENT}
+          echo "Required Nodejs version: ${NODE_REQUIRED}"
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_CURRENT }}
+          node-version: ${{ env.NODE_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
