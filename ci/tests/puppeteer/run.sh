@@ -387,7 +387,9 @@ if [[ -n "${buildScript}" ]]; then
 fi
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
-  if [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
+  if [[ "${NATIVE_BUILD}" == "true" ]]; then
+    DEFAULT_PUPPETEER_BUILD_CTR=40
+  elif [[ "${CI}" == "true" && ! -z "${GRADLE_BUILDCACHE_PSW}" ]]; then
     # remote gradle cache employed
     DEFAULT_PUPPETEER_BUILD_CTR=20
   else
@@ -438,10 +440,10 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     until [[ -f ${targetArtifact} ]]; do
        let counter++
        if [[ $counter -gt $PUPPETEER_BUILD_CTR ]]; then
-          printred "\nBuild is taking too long; aborting."
+          printred "\nBuild is taking too long; build counter ${counter} is greater than ${PUPPETEER_BUILD_CTR}. Aborting..."
           printred "Build log"
           cat build.log
-          printred "Build thread dump"
+          printred "Build thread dump..."
           jstack $pid || true
           exit 3
        fi

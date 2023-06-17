@@ -1,4 +1,4 @@
-name: Functional Tests
+name: Native Image Tests
 
 ##########################################################################
 
@@ -31,9 +31,9 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 17
   NODE_CURRENT: '18'
-  MAX_ATTEMPTS: 3
-  RETRY_MINUTES: 15
-  SCENARIO_REGEX: ".*"
+  MAX_ATTEMPTS: 1
+  RETRY_MINUTES: 35
+  SCENARIO_REGEX: ".*account-change.*"
 
 on:
   push:
@@ -52,7 +52,7 @@ on:
 jobs:
   cancel-previous-runs:
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 1
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
@@ -61,7 +61,7 @@ jobs:
   ##########################################################################
   initialize:
     needs: [cancel-previous-runs]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -80,7 +80,7 @@ jobs:
   ##########################################################################
 
   cache:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [initialize]
     steps:
       - uses: actions/checkout@v3
@@ -109,7 +109,7 @@ jobs:
             
   puppeteer-scenarios:
     needs: [cache]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 10
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
@@ -136,7 +136,7 @@ jobs:
 
   ##########################################################################
   puppeteer-tests-255:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -144,14 +144,18 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: 25
+    timeout_minutes: ${{ env.RETRY_MINUTES }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: "Setup Graal VM"
+        uses: graalvm/setup-graalvm@v1
         with:
+          distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+          set-java-home: 'true'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -165,19 +169,18 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh
-      - name: Run Tests
+      - name: Run Native Tests
         uses: nick-fields/retry@v2
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -185,15 +188,18 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: 25
+    timeout_minutes: ${{ env.RETRY_MINUTES }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: "Setup Graal VM"
+        uses: graalvm/setup-graalvm@v1
         with:
+          distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'temurin'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
+          set-java-home: 'true'
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         with:
@@ -207,14 +213,13 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh
-      - name: Run Tests
+      - name: Run Native Tests
         uses: nick-fields/retry@v2
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           retry_on: error
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}
-            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
