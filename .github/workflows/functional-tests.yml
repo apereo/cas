@@ -249,9 +249,9 @@ jobs:
       - name: Run Native Tests
         uses: nick-fields/retry@v2
         with:
-          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          max_attempts: 1
           retry_on: error
-          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          timeout-minutes: 45
           shell: bash
           command: |
             export RUNNER_OS=${{ runner.os }}

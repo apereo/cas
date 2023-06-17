@@ -126,13 +126,13 @@ graalvmNative {
             buildArgs.add('-march=native')
             buildArgs.add('--no-server')
             buildArgs.add('--native-image-info')
-            buildArgs.add('--pgo-instrument')
 
-            def profileFile = rootProject.file("default.iprof")
-            if (profileFile.exists()) {
-                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
-                buildArgs.add("--pgo=${profileFile.path}")
-            }
+//            buildArgs.add('--pgo-instrument')
+//            def profileFile = rootProject.file("default.iprof")
+//            if (profileFile.exists()) {
+//                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
+//                buildArgs.add("--pgo=${profileFile.path}")
+//            }
 //            buildArgs.add('--gc=G1')
 
             buildArgs.add('--initialize-at-build-time=org.hibernate.internal.util.ReflectHelper')

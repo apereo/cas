@@ -58,5 +58,5 @@ You can use this syntax in your CAS configuration:
 # spring.config.import=sm://
 
 # Example of the project-secret long-form syntax.
-cas.some.property=${sm://projects/<project-id>/secrets/cas_some_property
+cas.some.property=${sm://projects/<project-id>/secrets/cas_some_property}
 ```
