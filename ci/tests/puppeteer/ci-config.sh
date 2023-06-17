@@ -3,7 +3,7 @@
 echo "Current Nodejs version: ${NODE_CURRENT}"
 export NODE_REQUIRED=${NODE_CURRENT}
 
-CI_CONFIG="$PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}/ci.json"
+CI_CONFIG="$PWD/ci/tests/puppeteer/scenarios/$1/ci.json"
 echo "Checking scenario CI configuration file: ${CI_CONFIG}"
 
 if [[ -f $CI_CONFIG ]]; then
