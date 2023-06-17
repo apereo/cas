@@ -7,7 +7,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +21,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -116,14 +114,22 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     private AbstractResource determineJsonWebKeystoreResource() throws Exception {
         val file = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
-        val resource = ResourceUtils.getRawResourceFrom(file);
-        if (ResourceUtils.doesResourceExist(file)) {
-            val jwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
-                val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
-                return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
+        try {
+            val jsonKeys = new JsonWebKeySet(file).toJson();
+            return new ByteArrayResource(jsonKeys.getBytes(StandardCharsets.UTF_8), "OpenID Connect Keystore");
+        } catch (final Exception e) {
+            LOGGER.debug("Given resource [{}] cannot be parsed as a raw JSON web keystore", file);
+            LOGGER.trace(e.getMessage(), e);
+            val resource = ResourceUtils.getRawResourceFrom(file);
+            if (ResourceUtils.doesResourceExist(file)) {
+                val jwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
+                    val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
+                    return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
+                }
             }
+            return resource;
         }
-        return resource;
     }
+
 }

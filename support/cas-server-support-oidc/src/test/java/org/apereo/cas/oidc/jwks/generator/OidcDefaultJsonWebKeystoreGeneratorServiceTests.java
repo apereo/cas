@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -16,12 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,6 +32,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
+    }
+
+    @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file={\"keys\": []}")
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    class EmbeddedKeystoreTests extends AbstractOidcTests {
+        @Test
+        void verifyOperation() throws Exception {
+            val resource = oidcJsonWebKeystoreGeneratorService.find();
+            assertTrue(resource.isPresent());
+            val jwks = new JsonWebKeySet(IOUtils.toString(resource.get().getInputStream(), StandardCharsets.UTF_8));
+            assertTrue(jwks.getJsonWebKeys().isEmpty());
+        }
     }
 
     @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=classpath:/encrypted.jwks")

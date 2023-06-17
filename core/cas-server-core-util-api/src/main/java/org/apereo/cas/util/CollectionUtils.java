@@ -376,10 +376,10 @@ public class CollectionUtils {
                                         final String key6, final Object value6,
                                         final String key7, final Object value7,
                                         final String key8, final Object value8) {
-        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+        val map = wrap(key, value, key2, value2, key3, value3, key4, value4,
             key5, value5, key6, value6, key7, value7);
-        m.put(key8, value8);
-        return (Map) m;
+        map.put(key8, value8);
+        return (Map) map;
     }
 
     /**
@@ -416,10 +416,10 @@ public class CollectionUtils {
                                         final String key7, final Object value7,
                                         final String key8, final Object value8,
                                         final String key9, final Object value9) {
-        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+        val map = wrap(key, value, key2, value2, key3, value3, key4, value4,
             key5, value5, key6, value6, key7, value7, key8, value8);
-        m.put(key9, value9);
-        return (Map) m;
+        map.put(key9, value9);
+        return (Map) map;
     }
 
     /**
@@ -516,7 +516,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
-    public static <T> HashSet<T> wrapHashSet(final T... source) {
+    public static <T> Set<T> wrapHashSet(final T... source) {
         val list = new HashSet<T>();
         addToCollection(list, source);
         return list;
@@ -529,7 +529,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
-    public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
+    public static <T> Set<T> wrapHashSet(final Collection<T> source) {
         return new HashSet<>(source);
     }
 
@@ -553,7 +553,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the array list
      */
-    public static <T> ArrayList<T> wrapArrayList(final T... source) {
+    public static <T> List<T> wrapArrayList(final T... source) {
         val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
