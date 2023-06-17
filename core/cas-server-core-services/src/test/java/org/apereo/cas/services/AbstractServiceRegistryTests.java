@@ -184,8 +184,7 @@ public abstract class AbstractServiceRegistryTests {
         serviceRegistry.save(buildRegisteredServiceInstance(200, registeredServiceClass));
         val services = serviceRegistry.load();
         assertFalse(services.isEmpty());
-        val rs = (BaseRegisteredService) serviceRegistry.findServiceById(services.stream()
-            .findFirst().orElse(null).getId());
+        val rs = (BaseRegisteredService) serviceRegistry.findServiceById(services.iterator().next().getId());
         assertNotNull(rs, registeredServiceClass::getName);
         rs.setEvaluationOrder(9999);
         rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
@@ -310,8 +309,7 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void execSaveWithAuthnMethodPolicy(final Class<? extends BaseWebBasedRegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        val policy =
-            new DefaultRegisteredServiceMultifactorPolicy();
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);
 
         val set = new HashSet<String>();

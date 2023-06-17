@@ -70,7 +70,7 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
         getServiceRegistry().save(buildRegisteredServiceInstance(8080, registeredServiceClass));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        val rs = getServiceRegistry().findServiceById(services.stream().findFirst().orElse(null).getId());
+        val rs = getServiceRegistry().findServiceById(services.iterator().next().getId());
         val originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);

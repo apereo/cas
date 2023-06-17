@@ -153,7 +153,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         modelBuilder.setStates(states);
     }
 
-    private static void createDuoUniversalPromptLoginViewState(final ArrayList<AbstractStateModel> states) {
+    private static void createDuoUniversalPromptLoginViewState(final List<AbstractStateModel> states) {
         val actionState = new ActionStateModel(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
         val actions = new LinkedList<AbstractActionModel>();
         val action = new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN);
@@ -168,7 +168,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actionState);
     }
 
-    private static void createSessionStorageStates(final ArrayList<AbstractStateModel> states) {
+    private static void createSessionStorageStates(final List<AbstractStateModel> states) {
         val actions = new LinkedList<AbstractActionModel>();
         val action = new SetModel("flowScope." + BrowserSessionStorage.KEY_SESSION_STORAGE_CONTEXT, String.format("'%s'", SESSION_STORAGE_CONTEXT));
         actions.add(action);
@@ -353,7 +353,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actModel);
     }
 
-    private static LinkedList<AbstractActionModel> createDuoInitializeLoginAction(final List<AbstractStateModel> states) {
+    private static List<AbstractActionModel> createDuoInitializeLoginAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));

@@ -181,8 +181,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         val queryList = new ArrayList<String>();
         queryAttributes.forEach((key, values) ->
             values.forEach(queryValue -> {
-                var cql = String.format("SELECT * FROM %s.%s WHERE prefix='%s' AND ", properties.getKeyspace(), metadata.getProperties().getStorageName(), metadata.getPrefix());
-                cql += String.format("attributes CONTAINS KEY '%s' AND attributes CONTAINS '%s' ALLOW FILTERING;", digestIdentifier(key), digestIdentifier(queryValue.toString()));
+                var cql = "SELECT * FROM %s.%s WHERE prefix='%s' AND ".formatted(properties.getKeyspace(), metadata.getProperties().getStorageName(), metadata.getPrefix());
+                cql += "attributes CONTAINS KEY '%s' AND attributes CONTAINS '%s' ALLOW FILTERING;".formatted(digestIdentifier(key), digestIdentifier(queryValue.toString()));
                 queryList.add(cql);
             }));
         val rowMapper = new BeanPropertyRowMapper<>(CassandraTicketHolder.class, true);
@@ -241,11 +241,8 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private void createTablesIfNecessary() {
-        val createNs = new StringBuilder("CREATE KEYSPACE IF NOT EXISTS ")
-            .append(properties.getKeyspace()).append(" WITH replication = {")
-            .append("'class':'SimpleStrategy','replication_factor':1")
-            .append("};")
-            .toString();
+        val createNs = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = { 'class':'SimpleStrategy','replication_factor':1 };"
+            .formatted(properties.getKeyspace()).stripIndent().strip();
         LOGGER.trace("Creating Cassandra keyspace with query [{}]", createNs);
         cassandraSessionFactory.getCqlTemplate().execute(createNs);
 
@@ -254,28 +251,12 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .filter(metadata -> StringUtils.isNotBlank(metadata.getProperties().getStorageName()))
             .forEach(metadata -> {
                 if (properties.isDropTablesOnStartup()) {
-                    val drop = new StringBuilder("DROP TABLE IF EXISTS ")
-                        .append(properties.getKeyspace())
-                        .append('.')
-                        .append(metadata.getProperties().getStorageName())
-                        .append(';')
-                        .toString();
+                    val drop = "DROP TABLE IF EXISTS %s.%s;".formatted(properties.getKeyspace(), metadata.getProperties().getStorageName());
                     LOGGER.trace("Dropping Cassandra table with query [{}]", drop);
                     cassandraSessionFactory.getCqlTemplate().execute(drop);
                 }
-                val createTable = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
-                    .append(properties.getKeyspace())
-                    .append('.')
-                    .append(metadata.getProperties().getStorageName())
-                    .append('(')
-                    .append("id text,")
-                    .append("type text,")
-                    .append("prefix text,")
-                    .append("attributes map<text, text>,")
-                    .append("data text, ")
-                    .append("PRIMARY KEY(id,type) ")
-                    .append(");")
-                    .toString();
+                val createTable = "CREATE TABLE IF NOT EXISTS %s.%s(id text,type text,prefix text,attributes map<text, text>,data text, PRIMARY KEY(id,type));"
+                    .formatted(properties.getKeyspace(), metadata.getProperties().getStorageName());
                 LOGGER.trace("Creating Cassandra table with query [{}]", createTable);
                 cassandraSessionFactory.getCqlTemplate().execute(createTable);
 

@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -99,7 +100,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      * @param uriBuilder  the uri builder
      * @param queryParams the query params
      */
-    protected void checkForThemeParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+    protected void checkForThemeParameter(final UriComponentsBuilder uriBuilder, final Map<String, String> queryParams) {
         webContext.getRequestParameter(casProperties.getTheme().getParamName()).ifPresent(themeParam -> {
             LOGGER.debug("Processing theme parameter [{}] with value [{}]",
                 casProperties.getTheme().getParamName(), themeParam);
@@ -114,7 +115,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      * @param uriBuilder  the uri builder
      * @param queryParams the query params
      */
-    protected void checkForLocalParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+    protected void checkForLocalParameter(final UriComponentsBuilder uriBuilder, final Map<String, String> queryParams) {
         val localProps = casProperties.getLocale();
         LOGGER.debug("Processing locale parameter [{}]", localProps.getParamName());
         webContext.getRequestParameter(localProps.getParamName()).ifPresent(localeParam -> {
@@ -131,7 +132,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      * @param uriBuilder  the uri builder
      * @param queryParams the query params
      */
-    protected void checkForMethodParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+    protected void checkForMethodParameter(final UriComponentsBuilder uriBuilder, final Map<String, String> queryParams) {
         webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD).ifPresent(methodParam -> {
             LOGGER.debug("Processing method parameter [{}] with value [{}]",
                 CasProtocolConstants.PARAMETER_METHOD, methodParam);
