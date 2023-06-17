@@ -133,7 +133,7 @@ graalvmNative {
                 ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
                 buildArgs.add("--pgo=${profileFile.path}")
             }
-            buildArgs.add('--gc=G1')
+//            buildArgs.add('--gc=G1')
 
             buildArgs.add('--initialize-at-build-time=org.hibernate.internal.util.ReflectHelper')
             buildArgs.add('--initialize-at-build-time=java.beans.Introspector')
