@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 1
   RETRY_MINUTES: 35
-  SCENARIO_REGEX: ".*account-change.*"
+  SCENARIO_REGEX: ".*"
 
 on:
   schedule:
