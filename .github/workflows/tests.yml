@@ -57,7 +57,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
-        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
 ##########################################################################
 
@@ -79,7 +79,7 @@ jobs:
 ##      - name: Gradle Wrapper Validation
 ##        uses: gradle/wrapper-validation-action@v1
 #      - name: Initialize
-#        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+#        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 #      - uses: actions/checkout@v3
 #      - name: Download Dependencies
 #        run: ./gradlew --build-cache --configure-on-demand --no-daemon build downloadDependencies --parallel --refresh-dependencies -DskipNestedConfigMetadataGen=true --max-workers=8 -x test -x check -x javadoc
@@ -137,7 +137,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
       - uses: actions/cache@v3
         with:

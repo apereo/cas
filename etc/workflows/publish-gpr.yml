@@ -40,7 +40,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Initialize
-        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
 ##########################################################################
 
@@ -55,7 +55,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - uses: actions/checkout@v3
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
@@ -83,7 +83,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
