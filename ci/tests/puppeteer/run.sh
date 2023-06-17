@@ -229,6 +229,7 @@ if [[ "${NATIVE_BUILD}" == "true" ]]; then
   echo "GRAALVM_HOME: $GRAALVM_HOME"
   java --version
 fi
+printgreen -n "Node version: " && node --version
 echo -e "******************************************************\n"
 
 config="${scenario}/script.json"
