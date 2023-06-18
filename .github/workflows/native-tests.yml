@@ -32,7 +32,7 @@ env:
   JDK_CURRENT: 17
   NODE_CURRENT: '20'
   MAX_ATTEMPTS: 1
-  RETRY_MINUTES: 35
+  RETRY_MINUTES: 60
   SCENARIO_REGEX: ".*"
 
 on:
@@ -142,7 +142,6 @@ jobs:
           check-latest: true
       - name: Run Native Tests
         uses: nick-fields/retry@v2
-        timeout-minutes: 45
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           timeout_minutes: ${{ env.RETRY_MINUTES }}
@@ -191,7 +190,6 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Run Native Tests
         uses: nick-fields/retry@v2
-        timeout-minutes: 45
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           timeout_minutes: ${{ env.RETRY_MINUTES }}

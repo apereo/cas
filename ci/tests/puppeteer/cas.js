@@ -612,7 +612,8 @@ exports.mockJsonServer = async (pathMappings, port = 8000) => {
     return app;
 };
 
-exports.httpServer = async (root, port = 5432,
+exports.httpServer = async (root,
+                            port = 5432,
                             authEnabled = true,
                             authUser = "restapi",
                             authPassword = "YdCP05HvuhOH^*Z") => {
@@ -637,7 +638,7 @@ exports.httpServer = async (root, port = 5432,
             folder: root
         }
     };
-    new NodeStaticAuth(config);
+    return new NodeStaticAuth(config);
 };
 
 exports.randomNumber = async (min = 1, max = 100) =>
