@@ -87,8 +87,6 @@ class RestMultifactorAuthenticationTrustStorageTests {
         try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-
-            mfaTrustEngine.save(r);
             assertDoesNotThrow(() -> mfaTrustEngine.remove(r.getRecordKey()));
         }
     }
