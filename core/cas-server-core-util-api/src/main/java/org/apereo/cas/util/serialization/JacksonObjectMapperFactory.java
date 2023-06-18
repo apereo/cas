@@ -1,7 +1,6 @@
 package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -26,7 +25,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
