@@ -158,7 +158,11 @@ layout: null
             *   [MongoDb](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-MongoDb.html)
             *   [REST](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-Rest.html)
             *   [Custom](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-Custom.html)
-*   [Delegation & Proxying](#delegationauthn)
+
+* [Authorization](#casauthorization)
+    *   [Overview](/cas/{{ version }}/authorization/Authorization-Overview.html)
+
+* [Delegation & Proxying](#delegationauthn)
     *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication.html)
     *   [Authentication Policy](/cas/{{ version }}/integration/Delegate-Authentication-AuthenticationPolicy.html)
     *   [Auto Redirection](/cas/{{ version }}/integration/Delegate-Authentication-Redirection.html)
@@ -190,6 +194,7 @@ layout: null
         *   [Yahoo!](/cas/{{ version }}/integration/Delegate-Authentication-Yahoo.html)
         *   [SAML2](/cas/{{ version }}/integration/Delegate-Authentication-SAML.html)
         *   [ADFS](/cas/{{ version }}/integration/ADFS-Integration.html)
+
 * [Attributes](#casattributes)
     *   [Attribute Definitions](#attrdefinitions)
         *   [Overview](/cas/{{ version }}/integration/Attribute-Definitions.html)
@@ -366,6 +371,7 @@ layout: null
         *   [JDBC](/cas/{{ version }}/password_management/Password-Management-JDBC.html)
         *   [REST](/cas/{{ version }}/password_management/Password-Management-REST.html)
         *   [Custom](/cas/{{ version }}/password_management/Password-Management-Custom.html)
+
 * [Ticketing](#ticketingconfig)
     *   [Overview](/cas/{{ version }}/ticketing/Configuring-Ticketing-Components.html)
     *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html)
@@ -538,7 +544,7 @@ layout: null
             *   [Request](/cas/{{ version }}/protocol/REST-Protocol-Request-ServiceTicket.html)
             *   [Validation](/cas/{{ version }}/protocol/REST-Protocol-ServiceTicket-Validation.html)
 
-*   [Impersonation](#surrogacy)
+* [Impersonation](#surrogacy)
     *   [Overview](/cas/{{ version }}/authentication/Surrogate-Authentication.html)
     *   [Account Selection](/cas/{{ version }}/authentication/Surrogate-Authentication-AccountSelection.html)
     *   [Access Strategy](/cas/{{ version }}/authentication/Surrogate-Authentication-AccessStrategy.html)
@@ -549,6 +555,7 @@ layout: null
         *   [Groovy](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-Groovy.html)
         *   [JDBC](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-JDBC.html)
         *   [Custom](/cas/{{ version }}/authentication/Surrogate-Authentication-Storage-Custom.html)
+
 * [Account Registration](#acctregistration)
     *   [Overview](/cas/{{ version }}/registration/Account-Registration-Overview.html)
     *   [Account Profile](/cas/{{ version }}/registration/Account-Management-Overview.html)

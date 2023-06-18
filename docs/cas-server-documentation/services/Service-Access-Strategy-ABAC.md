@@ -14,6 +14,16 @@ attributes of the authenticated subject/principal, resource, action, and environ
 access to a resource to perform an action. Principal attributes in a user profile include ID, job roles, group memberships, departmental and organizational 
 memberships, management level, security clearance, and other identifying criteria.
 
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>Note that comparison of 
+principal/required attribute <strong>names</strong> is case-sensitive. Exact matches are required
+for any individual attribute name. Furthermore, note that if the CAS server is configured to cache
+attributes upon release, all required attributes must also be released to the
+relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on
+attribute release and filters.
+
+</p></div>
+
+
 The ABAC strategy allows one to configure a service with the following properties:
 
 | Field                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
@@ -23,8 +33,7 @@ The ABAC strategy allows one to configure a service with the following propertie
 | `caseInsensitive`         | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`                                                                                                                                                                                                                                                                                                                                                         |
 | `rejectedAttributes`      | A `Map` of rejected principal attribute names along with the set of values for each attribute. These attributes **MUST NOT** be available to the authenticated Principal so that access may be granted. If none is defined, the check is entirely ignored.                                                                                                                                                                                                                      |
      
-You can also tune the ABAC strategy to conditionally activate and enforce 
-the policy. [See this guide](Service-Access-Strategy-ABAC-Activation.html) for more info.
+You can also tune the ABAC strategy to conditionally activate and enforce the policy. [See this guide](Service-Access-Strategy-ABAC-Activation.html) for more info.
 
 
 {% tabs accessstrategy %}
