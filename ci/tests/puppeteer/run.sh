@@ -282,7 +282,7 @@ if [[ "${INITONLY}" == "true" ]]; then
   REBUILD="false"
 fi
 
-if [[ "${CI}" == "true" ]]; then
+if [[ "${CI}" == "" || "${CI}" == "false" ]]; then
   BUILD_SPAWN="foreground"
 fi
 
@@ -399,7 +399,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
-  echo -e "Executing build command in the ${BUILD_SPAWN}:\n\n$BUILD_COMMAND"
+  printcyan -e "Executing build command in the ${BUILD_SPAWN}:\n\n$BUILD_COMMAND"
   if [[ "${BUILD_SPAWN}" == "background" ]]; then
     printcyan "Launching build in background to make observing slow builds easier..."
     $BUILD_COMMAND > build.log 2>&1 &
