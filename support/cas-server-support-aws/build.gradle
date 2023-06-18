@@ -17,6 +17,8 @@ dependencies {
     implementation project(":core:cas-server-core-rest-api")
     implementation project(":core:cas-server-core-rest")
     implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-authentication")
 
     implementation libraries.awssts
     implementation libraries.aws

@@ -424,6 +424,7 @@ layout: null
         *   [Grouper](/cas/{{ version }}/services/Service-Access-Strategy-Grouper.html)
         *   [OpenFGA](/cas/{{ version }}/services/Service-Access-Strategy-OpenFGA.html)
         *   [Open Policy Agent](/cas/{{ version }}/services/Service-Access-Strategy-OpenPolicyAgent.html)
+        *   [AWS Verified Permissions](/cas/{{ version }}/services/Service-Access-Strategy-AWS-VerifiedPermissions.html)
         *   [HTTP](/cas/{{ version }}/services/Service-Access-Strategy-Http.html)
         *   [REST](/cas/{{ version }}/services/Service-Access-Strategy-REST.html)
         *   [Time](/cas/{{ version }}/services/Service-Access-Strategy-Time.html)
