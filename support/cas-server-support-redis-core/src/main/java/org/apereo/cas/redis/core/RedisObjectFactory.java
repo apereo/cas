@@ -90,7 +90,10 @@ public class RedisObjectFactory {
                                                                    final boolean initialize,
                                                                    final CasSSLContext casSslContext) {
         var factory = (LettuceConnectionFactory) null;
-        if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
+        if (StringUtils.hasText(redis.getUri())) {
+            factory = new LettuceConnectionFactory(LettuceConnectionFactory.createRedisConfiguration(redis.getUri()),
+                    getRedisPoolClientConfig(redis, true, casSslContext));
+        } else if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
             factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));
         } else if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
             factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));

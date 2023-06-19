@@ -39,6 +39,14 @@ public class RedisObjectFactoryTests {
     }
 
     @Test
+    public void verifyConnectionURI() {
+        val props = new BaseRedisProperties();
+        props.setUri("redis://localhost:6379");
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
+        assertNotNull(connection);
+    }
+
+    @Test
     public void verifyClusterConnection() {
         val props = new BaseRedisProperties();
         props.getCluster().getNodes().add(new RedisClusterNodeProperties()
