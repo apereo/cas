@@ -143,7 +143,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
     @ResponseBody
     @Operation(summary = "Produce SAML2 response entity", parameters = {
         @Parameter(name = "username", required = true),
-        @Parameter(name = "password", required = true),
+        @Parameter(name = "password", required = false),
         @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
         @Parameter(name = "encrypt")
     })

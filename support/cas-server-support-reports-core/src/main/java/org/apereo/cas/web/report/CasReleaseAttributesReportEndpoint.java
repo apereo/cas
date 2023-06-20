@@ -91,7 +91,6 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
         
         val authentication = buildAuthentication(username, password, selectedService);
-
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(selectedService)

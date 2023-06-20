@@ -14,6 +14,11 @@ import java.util.Map;
 @FunctionalInterface
 public interface PrincipalFactory extends Serializable {
     /**
+     * Implementation bean name.
+     */
+    String BEAN_NAME = "principalFactory";
+
+    /**
      * Create principal.
      *
      * @param id the id

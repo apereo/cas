@@ -124,7 +124,9 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
+            .principalFactory(getPrincipalFactory())
             .ticketRegistry(getTicketRegistry())
+            .principalResolver(getDefaultPrincipalResolver())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
@@ -135,6 +137,7 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
             .validationAuthorizers(getServiceValidationAuthorizers())
             .validationViewFactory(serviceValidationViewFactory)
             .casProperties(casProperties)
+            .serviceFactory(getWebApplicationServiceFactory())
             .build();
         return new ServiceValidateController(context);
     }
