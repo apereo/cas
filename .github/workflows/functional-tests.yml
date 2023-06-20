@@ -134,11 +134,11 @@ jobs:
       - name: Configure CI
         run: |
           source ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
-          echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
+          echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_REQUIRED }}
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Run Tests
@@ -180,7 +180,7 @@ jobs:
       - name: Configure CI
         run: |
           source ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
-          echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
+          echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
         with:
