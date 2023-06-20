@@ -32,6 +32,11 @@ public class BaseRedisProperties implements Serializable {
     private boolean enabled = true;
 
     /**
+     * Database URI.
+     */
+    private String uri;
+
+    /**
      * Database index used by the connection factory.
      */
     @RequiredProperty
