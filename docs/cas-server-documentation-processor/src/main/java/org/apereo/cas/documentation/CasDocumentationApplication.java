@@ -718,8 +718,7 @@ public class CasDocumentationApplication {
             map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
             var paramCount = Arrays.stream(method.getParameterTypes())
                 .filter(type -> !type.equals(HttpServletRequest.class) && !type.equals(HttpServletResponse.class)).count();
-
-
+            
             if (operation.parameters().length == 0 && paramCount > 0) {
                 for (var i = 0; i < method.getParameterTypes().length; i++) {
                     var parameter = method.getParameters()[i];

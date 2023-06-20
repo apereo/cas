@@ -170,10 +170,12 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                 getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
                 getConfigurationContext().getTicketRegistry(), context.getHttpRequest());
 
-            val samlAttributeQueryTicketFactory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory().get(SamlAttributeQueryTicket.class);
-            val ticket = samlAttributeQueryTicketFactory.create(nameId, assertion.get(), context.getAdaptor().getEntityId(), ticketGrantingTicket);
-            getConfigurationContext().getTicketRegistry().addTicket(ticket);
-            context.getHttpRequest().setAttribute(SamlAttributeQueryTicket.class.getName(), ticket);
+            if (ticketGrantingTicket != null) {
+                val samlAttributeQueryTicketFactory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory().get(SamlAttributeQueryTicket.class);
+                val ticket = samlAttributeQueryTicketFactory.create(nameId, assertion.get(), context.getAdaptor().getEntityId(), ticketGrantingTicket);
+                getConfigurationContext().getTicketRegistry().addTicket(ticket);
+                context.getHttpRequest().setAttribute(SamlAttributeQueryTicket.class.getName(), ticket);
+            }
         }
     }
 }

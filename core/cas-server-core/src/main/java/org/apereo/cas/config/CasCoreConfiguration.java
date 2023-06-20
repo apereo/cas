@@ -95,7 +95,7 @@ public class CasCoreConfiguration {
         public CentralAuthenticationServiceContext centralAuthenticationServiceContext(
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor,
-            @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,

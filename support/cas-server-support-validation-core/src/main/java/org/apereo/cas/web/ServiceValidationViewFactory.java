@@ -172,7 +172,7 @@ public class ServiceValidationViewFactory {
         val format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
         final Function<String, ValidationResponseType> func = FunctionUtils.doIf(StringUtils::isNotBlank,
             t -> ValidationResponseType.valueOf(t.toUpperCase(Locale.ENGLISH)),
-            f -> service != null ? service.getFormat() : ValidationResponseType.XML);
+            __ -> service != null ? service.getFormat() : ValidationResponseType.XML);
         return func.apply(format);
     }
 }

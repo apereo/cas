@@ -4,6 +4,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -47,6 +49,7 @@ import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -54,6 +57,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.View;
@@ -76,6 +80,54 @@ import static org.springframework.http.MediaType.*;
 public class CasValidationConfiguration {
     private static final BeanCondition CONDITION_PROXY_AUTHN = BeanCondition.on("cas.sso.proxy-authn-enabled")
         .isTrue().evenIfMissing();
+
+    @Configuration(value = "CasValidationContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasValidationContextConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public ServiceValidateConfigurationContext casValidationConfigurationContext(
+            @Qualifier("serviceValidationAuthorizers")
+            final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("requestedContextValidator")
+            final RequestedAuthenticationContextValidator requestedContextValidator,
+            @Qualifier("serviceValidationViewFactory")
+            final ServiceValidationViewFactory serviceValidationViewFactory,
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver) {
+            return ServiceValidateConfigurationContext.builder()
+                .ticketRegistry(ticketRegistry)
+                .principalFactory(principalFactory)
+                .principalResolver(defaultPrincipalResolver)
+                .authenticationSystemSupport(authenticationSystemSupport)
+                .servicesManager(servicesManager)
+                .centralAuthenticationService(centralAuthenticationService)
+                .argumentExtractor(argumentExtractor)
+                .requestedContextValidator(requestedContextValidator)
+                .validationAuthorizers(serviceValidationAuthorizers)
+                .casProperties(casProperties)
+                .validationViewFactory(serviceValidationViewFactory)
+                .serviceFactory(webApplicationServiceFactory)
+                .build();
+        }
+    }
+
+
 
     @Configuration(value = "CasValidationViewRegistrationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -459,205 +511,76 @@ public class CasValidationConfiguration {
         @ConditionalOnMissingBean(name = "serviceValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceValidateController serviceValidateController(
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier("serviceValidationAuthorizers")
-            final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
             @Qualifier("serviceValidateControllerValidationSpecification")
-            final CasProtocolValidationSpecification serviceValidateControllerValidationSpecification,
-            @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .ticketRegistry(ticketRegistry)
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .requestedContextValidator(requestedContextValidator)
-                .validationAuthorizers(serviceValidationAuthorizers)
-                .casProperties(casProperties)
-                .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(serviceValidateControllerValidationSpecification))
-                .proxyHandler(proxy20Handler)
-                .build();
-            return new ServiceValidateController(context);
+            final CasProtocolValidationSpecification serviceValidateControllerValidationSpecification) {
+
+            return new ServiceValidateController(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(serviceValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "legacyValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LegacyValidateController legacyValidateController(
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator,
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy10Handler")
             final ProxyHandler proxy10Handler,
-            @Qualifier("serviceValidationAuthorizers")
-            final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("legacyValidateControllerValidationSpecification")
-            final CasProtocolValidationSpecification legacyValidateControllerValidationSpecification,
-            @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .ticketRegistry(ticketRegistry)
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .requestedContextValidator(requestedContextValidator)
-                .validationAuthorizers(serviceValidationAuthorizers)
-                .casProperties(casProperties)
-                .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(legacyValidateControllerValidationSpecification))
-                .proxyHandler(proxy10Handler)
-                .build();
-            return new LegacyValidateController(context);
+            final CasProtocolValidationSpecification legacyValidateControllerValidationSpecification) {
+            return new LegacyValidateController(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(legacyValidateControllerValidationSpecification))
+                .withProxyHandler(proxy10Handler));
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "proxyValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyValidateController proxyValidateController(
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier("serviceValidationAuthorizers")
-            final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("proxyValidateControllerValidationSpecification")
-            final CasProtocolValidationSpecification proxyValidateControllerValidationSpecification,
-            @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .ticketRegistry(ticketRegistry)
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .requestedContextValidator(requestedContextValidator)
-                .validationAuthorizers(serviceValidationAuthorizers)
-                .casProperties(casProperties)
-                .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(proxyValidateControllerValidationSpecification))
-                .proxyHandler(proxy20Handler)
-                .build();
-            return new ProxyValidateController(context);
+            final CasProtocolValidationSpecification proxyValidateControllerValidationSpecification) {
+            return new ProxyValidateController(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(proxyValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public V3ProxyValidateController v3ProxyValidateController(
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier("serviceValidationAuthorizers")
-            final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("v3ProxyValidateControllerValidationSpecification")
-            final CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification,
-            @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .ticketRegistry(ticketRegistry)
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .requestedContextValidator(requestedContextValidator)
-                .validationAuthorizers(serviceValidationAuthorizers)
-                .casProperties(casProperties)
-                .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(v3ProxyValidateControllerValidationSpecification))
-                .proxyHandler(proxy20Handler)
-                .build();
-            return new V3ProxyValidateController(context);
+            final CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification) {
+            return new V3ProxyValidateController(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(v3ProxyValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ServiceValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public V3ServiceValidateController v3ServiceValidateController(
-            @Qualifier("serviceValidationAuthorizers")
-            final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator,
             @Qualifier("v3ServiceValidateControllerValidationSpecification")
-            final CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification,
-            @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .ticketRegistry(ticketRegistry)
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .requestedContextValidator(requestedContextValidator)
-                .validationAuthorizers(serviceValidationAuthorizers)
-                .casProperties(casProperties)
-                .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
-                .proxyHandler(proxy20Handler)
-                .build();
-            return new V3ServiceValidateController(context);
+            final CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification) {
+            return new V3ServiceValidateController(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
     }
 

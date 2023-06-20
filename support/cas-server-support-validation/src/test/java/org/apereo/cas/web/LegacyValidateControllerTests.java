@@ -38,6 +38,8 @@ class LegacyValidateControllerTests extends AbstractServiceValidateControllerTes
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         val context = ServiceValidateConfigurationContext.builder()
             .casProperties(casProperties)
+            .principalFactory(getPrincipalFactory())
+            .principalResolver(getDefaultPrincipalResolver())
             .ticketRegistry(getTicketRegistry())
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
@@ -48,6 +50,7 @@ class LegacyValidateControllerTests extends AbstractServiceValidateControllerTes
             .requestedContextValidator(new MockRequestedAuthenticationContextValidator())
             .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
             .validationViewFactory(serviceValidationViewFactory)
+            .serviceFactory(getWebApplicationServiceFactory())
             .build();
         return new LegacyValidateController(context);
     }

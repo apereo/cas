@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -22,23 +22,18 @@ import org.apereo.cas.support.saml.web.SamlValidateEndpoint;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.CasProtocolVersionValidationSpecification;
 import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
-import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
-import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
-import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -52,7 +47,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
-
 import java.util.List;
 import java.util.Set;
 
@@ -207,10 +201,13 @@ public class SamlConfiguration {
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
             return new SamlValidateEndpoint(casProperties, servicesManager,
-                authenticationSystemSupport, webApplicationServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
-                samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer);
+                authenticationSystemSupport, webApplicationServiceFactory, principalFactory,
+                samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer, defaultPrincipalResolver);
         }
 
         @Bean
@@ -228,40 +225,15 @@ public class SamlConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlValidateController samlValidateController(
-            final CasConfigurationProperties casProperties,
-            @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory,
-            @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ArgumentExtractor argumentExtractor,
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("requestedContextValidator")
-            final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("samlValidateControllerValidationSpecification")
-            final CasProtocolValidationSpecification samlValidateControllerValidationSpecification,
-            @Qualifier("serviceValidationAuthorizers")
-            final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .ticketRegistry(ticketRegistry)
-                .validationSpecifications(CollectionUtils.wrapSet(samlValidateControllerValidationSpecification))
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .proxyHandler(proxy20Handler)
-                .requestedContextValidator(requestedContextValidator)
-                .validationAuthorizers(validationAuthorizers)
-                .casProperties(casProperties)
-                .validationViewFactory(serviceValidationViewFactory).build();
-            return new SamlValidateController(context);
+            final CasProtocolValidationSpecification samlValidateControllerValidationSpecification) {
+            return new SamlValidateController(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(samlValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
 
     }

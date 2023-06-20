@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -21,10 +22,13 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
+import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
@@ -92,7 +96,7 @@ public class CasReportsConfiguration {
             final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
-            @Qualifier("principalFactory")
+            @Qualifier(PrincipalFactory.BEAN_NAME)
             final ObjectProvider<PrincipalFactory> principalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ObjectProvider<ServicesManager> servicesManager,
@@ -100,6 +104,21 @@ public class CasReportsConfiguration {
             return new CasReleaseAttributesReportEndpoint(casProperties,
                 servicesManager, authenticationSystemSupport,
                 webApplicationServiceFactory, principalFactory, defaultPrincipalResolver);
+        }
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasProtocolValidationEndpoint casProtocolValidationEndpoint(
+            @Qualifier("casValidationConfigurationContext")
+            final ServiceValidateConfigurationContext casValidationConfigurationContext,
+            @Qualifier("proxy20Handler")
+            final ProxyHandler proxy20Handler,
+            @Qualifier("v3ServiceValidateControllerValidationSpecification")
+            final CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification) {
+            return new CasProtocolValidationEndpoint(casValidationConfigurationContext
+                .withValidationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
+                .withProxyHandler(proxy20Handler));
         }
     }
 

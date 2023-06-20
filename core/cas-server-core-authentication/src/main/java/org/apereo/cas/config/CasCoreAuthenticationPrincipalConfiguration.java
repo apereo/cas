@@ -114,7 +114,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
             @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
             return chain -> {
                 val conflictResolver = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory());
                 val strategy = new DefaultPrincipalElectionStrategy(principalFactory, conflictResolver);
@@ -128,7 +128,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPrincipalFactoryConfiguration {
 
-        @ConditionalOnMissingBean(name = "principalFactory")
+        @ConditionalOnMissingBean(name = PrincipalFactory.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory principalFactory() {
