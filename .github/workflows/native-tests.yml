@@ -117,7 +117,7 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: |
-          source ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
+          source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
           echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
           echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
       - name: Setup Gradle Wrapper Cache
@@ -171,7 +171,7 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
         run: |
-          ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
+          ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
           echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
           echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
       - name: Setup Gradle Wrapper Cache
