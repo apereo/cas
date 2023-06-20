@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "^https://httpbin.org/anything/open",
+  "serviceId": "^http://localhost:9889/anything/open",
   "name": "Open",
   "id": 2,
   "description": "Open Service",

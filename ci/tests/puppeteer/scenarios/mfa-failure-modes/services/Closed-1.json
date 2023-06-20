@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "^https://httpbin.org/anything/closed",
+  "serviceId": "^http://localhost:9889/anything/closed",
   "name": "Closed",
   "id": 1,
   "description": "Closed Service",
@@ -10,3 +10,4 @@
     "failureMode" : "CLOSED"
   }
 }
+

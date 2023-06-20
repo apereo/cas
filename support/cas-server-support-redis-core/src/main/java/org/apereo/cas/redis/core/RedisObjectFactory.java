@@ -3,7 +3,6 @@ package org.apereo.cas.redis.core;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
-
 import com.redis.lettucemod.RedisModulesClient;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.ClientOptions;
@@ -33,7 +32,6 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,7 +210,7 @@ public class RedisObjectFactory {
             config.setMaxTotal(pool.getMaxActive());
             config.setMaxIdle(pool.getMaxIdle());
             config.setMinIdle(pool.getMinIdle());
-            config.setMaxWaitMillis(pool.getMaxWait());
+            config.setMaxWait(Beans.newDuration(pool.getMaxWait()));
             config.setLifo(pool.isLifo());
             config.setFairness(pool.isFairness());
             config.setTestWhileIdle(pool.isTestWhileIdle());
@@ -273,16 +271,15 @@ public class RedisObjectFactory {
         if (StringUtils.hasText(redis.getUri())) {
             LOGGER.debug("Setting Redis standalone configuration based on URI");
             return LettuceConnectionFactory.createRedisConfiguration(redis.getUri());
-        } else {
-            LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
-            val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
-            standaloneConfig.setDatabase(redis.getDatabase());
-            if (StringUtils.hasText(redis.getPassword())) {
-                standaloneConfig.setUsername(redis.getUsername());
-                standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
-            }
-            return standaloneConfig;
         }
+        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
+        val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
+        standaloneConfig.setDatabase(redis.getDatabase());
+        if (StringUtils.hasText(redis.getPassword())) {
+            standaloneConfig.setUsername(redis.getUsername());
+            standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
+        }
+        return standaloneConfig;
     }
 
     private static RedisSentinelConfiguration getSentinelConfig(final BaseRedisProperties redis) {
