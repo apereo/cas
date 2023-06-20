@@ -113,8 +113,22 @@ jobs:
     name: ${{matrix.scenario}}
     steps:
       - uses: actions/checkout@v3
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Configure CI
+        run: |
+          source ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
+          echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
+          echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v3
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
         with:
           distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
@@ -122,26 +136,17 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Initialize
-        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Configure CI 
-        run: |
-          source ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
-          echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
         with:
-          node-version: ${{ env.NODE_REQUIRED }}
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
           check-latest: true
       - name: Run Native Tests
         uses: nick-fields/retry@v2
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           timeout_minutes: ${{ env.RETRY_MINUTES }}
@@ -162,8 +167,22 @@ jobs:
     name: ${{matrix.scenario}}
     steps:
       - uses: actions/checkout@v3
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Configure CI
+        run: |
+          ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
+          echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
+          echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v3
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
         with:
           distribution: 'graalvm'
           java-version: ${{ env.JDK_CURRENT }}
@@ -171,25 +190,16 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
-      - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Initialize
-        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Configure CI
-        run: |
-          ./ci/tests/puppeteer/ci-config.sh ${{matrix.scenario}}
-          echo "NODE_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
       - name: Set up Nodejs
         uses: actions/setup-node@v3
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
         with:
-          node-version: ${{ env.NODE_REQUIRED }}
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Run Native Tests
         uses: nick-fields/retry@v2
+        if: ${{ env.NATIVE_BUILD_ENABLED == "true" }}
         with:
           max_attempts: ${{ env.MAX_ATTEMPTS }}
           timeout_minutes: ${{ env.RETRY_MINUTES }}

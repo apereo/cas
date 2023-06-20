@@ -48,14 +48,23 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Testing Strategy
 
-The collection of end-to-end browser [tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
+The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `403` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 ### Graal VM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run 
-as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). 
+The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) will selectively switch
+to build and verify Graal VM native images in the coming releases.
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
+
+### AWS Verified Permissions
+
+A new service access strategy is now available to authorization application access based on 
+[AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
 
 ## Other Stuff
 
@@ -63,6 +72,7 @@ as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.ht
 - Logout events are now sent to the CAS audit log.
 - OpenID Connect JWKS are now able to support an arbitrary number of keys for signing operations.
 - Standard claims can be individually filtered on a per relying party.
+- New CAS actuator endpoints to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
 
 ## Library Upgrades
 
