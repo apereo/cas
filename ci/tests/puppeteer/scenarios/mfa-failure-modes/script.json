@@ -8,7 +8,7 @@
     "--cas.authn.mfa.core.authentication-context-attribute=authenticationContext",
 
     "--cas.authn.mfa.yubikey.client-id=18421",
-    "--cas.authn.mfa.yubikey.api-urls=https://httpbin.org/status/500",
+    "--cas.authn.mfa.yubikey.api-urls=http://localhost:9889/status/500",
     "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",
     "--cas.authn.mfa.yubikey.failure-mode=UNDEFINED",
     
@@ -16,5 +16,6 @@
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

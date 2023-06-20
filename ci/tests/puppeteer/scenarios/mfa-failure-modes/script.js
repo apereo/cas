@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let service = "https://httpbin.org/anything/closed";
+    let service = "http://localhost:9889/anything/closed";
     await cas.logg("Checking CLOSED failure mode");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -15,7 +15,7 @@ const cas = require('../../cas.js');
 
     await cas.goto(page, `https://localhost:8443/cas/logout`);
 
-    service = "https://httpbin.org/anything/phantom";
+    service = "http://localhost:9889/anything/phantom";
     await cas.logg("Checking PHANTOM failure mode");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -31,7 +31,7 @@ const cas = require('../../cas.js');
 
     await cas.goto(page, `https://localhost:8443/cas/logout`);
 
-    service = "https://httpbin.org/anything/open";
+    service = "http://localhost:9889/anything/open";
     await cas.logg("Checking OPEN failure mode");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -47,7 +47,7 @@ const cas = require('../../cas.js');
 
     await cas.goto(page, `https://localhost:8443/cas/logout`);
 
-    service = "https://httpbin.org/anything/none";
+    service = "http://localhost:9889/anything/none";
     await cas.logg("Checking NONE failure mode");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -56,7 +56,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, "#token");
 
     await cas.goto(page, `https://localhost:8443/cas/logout`);
-    service = "https://httpbin.org/anything/undefined";
+    service = "http://localhost:9889/anything/undefined";
     await cas.logg("Checking UNDEFINED failure mode");
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
