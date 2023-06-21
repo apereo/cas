@@ -8,7 +8,7 @@
     "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
 
     "--logging.level.org.apereo.cas=info",
-    "--logging.level.org.apereo.cas.web.support=trace"
+    "--logging.level.org.apereo.cas.web.support=debug"
   ]
 }
 
