@@ -8,16 +8,16 @@ category: Protocols
 # SAML2 NameID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata
-will be consulted to find the right format.
-The Name ID value is always the authenticated user that is designed to be returned
-to this service. In other words, if you
-decide to configure CAS to return a particular attribute as
+will be consulted to find the right format. The Name ID value is always the authenticated user that is designed to be returned
+to this service. In other words, if you decide to configure CAS to return a particular attribute as
 [the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
 that value will then be used to construct the Name ID along with the right format.
 
-## Examples
+{% tabs saml2nameids %}
 
-The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` 
+{% tab saml2nameids Email Address %}
+
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
 as the final Name ID format, and use the `mail` attribute value as the final Name ID value.
 
 ```json
@@ -34,6 +34,11 @@ as the final Name ID format, and use the `mail` attribute value as the final Nam
   }
 }
 ```
+
+{% endtab %}
+
+
+{% tab saml2nameids Unspecified %}
 
 The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified`
 as the final Name ID format, and use the `sysid` attribute value and the scope `example.org`. The final Name ID value would then
@@ -55,6 +60,10 @@ be constructed as `<sysid-attribute-value>@example.org`.
 }
 ```
 
+{% endtab %}
+
+{% tab saml2nameids Transient %}
+
 The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:2.0:nameid-format:transient` as the final Name ID format,
 and use the `cn` attribute value in upper-case as the final Name ID value, skipping the generation of transient value per the required format.
 
@@ -74,6 +83,10 @@ and use the `cn` attribute value in upper-case as the final Name ID value, skipp
   }
 }
 ```
+
+{% endtab %}
+
+{% tab saml2nameids Persistent %}
 
 The following service definition instructs CAS to use the `cn` attribute value to create a persistent Name ID.
 
@@ -95,3 +108,7 @@ The following service definition instructs CAS to use the `cn` attribute value t
   }
 }
 ```
+
+{% endtab %}
+
+{% endtabs %}

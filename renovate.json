@@ -3,10 +3,12 @@
   "extends": [
     "config:base",
     ":preserveSemverRanges",
-    ":rebaseStalePrs",
     ":disableRateLimiting",
     ":semanticCommits",
     ":semanticCommitTypeAll(renovatebot)"
   ],
-  "labels": ["dependencies", "bot", "renovate"]
+  "labels": ["Bot", "Renovate"],
+  "schedule": [
+    "every weekend"
+  ]
 }
