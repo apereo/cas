@@ -103,12 +103,17 @@ public class CasPullRequestListener implements PullRequestListener {
     @SneakyThrows
     private void checkForPullRequestTestCases(final PullRequest pr) {
         if (pr.isTargetBranchOnHeroku()) {
-            log.info("Pull request {} is targeted at a Heroku branch", pr);
+            log.info("Pull request {} is targeted at a Heroku branch and will be ignored", pr);
             return;
         }
 
         if (pr.isDraft() || pr.isWorkInProgress()) {
-            log.info("Pull request {} is a work-in-progress", pr);
+            log.info("Pull request {} is a work-in-progress and will be ignored", pr);
+            return;
+        }
+
+        if (pr.isBot()) {
+            log.info("Pull request {} is produced by a bot and will be ignored", pr);
             return;
         }
 

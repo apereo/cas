@@ -136,4 +136,8 @@ public class PullRequest {
     public boolean isLabeledAs(final CasLabels labelName) {
         return this.labels.stream().anyMatch(l -> l.getName().equalsIgnoreCase(labelName.getTitle()));
     }
+
+    public boolean isBot() {
+        return user.getLogin().equalsIgnoreCase("renovate[bot]");
+    }
 }
