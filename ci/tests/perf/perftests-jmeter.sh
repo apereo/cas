@@ -29,7 +29,6 @@ case "$testCategory" in
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/saml/services"
     casProperties="${casProperties} --cas.http-client.host-name-verifier=none "
     casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true --spring.main.lazy-initialization=false "
-    casProperties="${casProperties} --logging.level.org.apereo.cas=debug "
     jmeterScript="etc/loadtests/jmeter/CAS_SAML2.jmx"
     casModules="saml-idp,reports"
     ;;
@@ -38,7 +37,6 @@ case "$testCategory" in
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
     casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
     casProperties="${casProperties} --cas.audit.slf4j.use-single-line=true --spring.main.lazy-initialization=false "
-    casProperties="${casProperties} --logging.level.org.apereo.cas=debug "
     jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
     casModules="oidc,reports"
     ;;
@@ -92,7 +90,7 @@ if [ $retVal == 0 ]; then
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
       --management.endpoints.enabled-by-default=true \
-      --logging.level.org.apereo.cas=warn ${casProperties} &
+      --logging.level.org.apereo.cas=debug ${casProperties} &
   pid=$!
   printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
