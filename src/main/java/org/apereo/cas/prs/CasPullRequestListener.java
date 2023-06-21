@@ -67,18 +67,26 @@ public class CasPullRequestListener implements PullRequestListener {
                 if (filename.contains("api/cas-server-core-api-configuration-model")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_CONFIGURATION);
                 }
+                if (filename.contains("cas-server-documentation")) {
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
+                }
                 if (filename.contains("dependencies.gradle")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
-                } else if (filename.endsWith(".gradle")) {
+                }
+                if (filename.endsWith(".gradle")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
-                } else if (filename.contains("gradle.properties")) {
+                }
+                if (filename.contains("gradle.properties")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
-                } else if (filename.endsWith(".html") || filename.endsWith(".js") || filename.endsWith(".css")) {
+                }
+                if (filename.endsWith(".html") || filename.endsWith(".js") || filename.endsWith(".css")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_USER_INTERFACE_THEMES);
-                } else if (filename.endsWith(".md")) {
+                }
+                if (filename.endsWith(".md")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
-                } else if (filename.contains("script.js") || filename.contains("script.json")) {
+                }
+                if (filename.contains("puppeteer") || filename.contains("script.js") || filename.contains("script.json")) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_UNIT_INTEGRATION_TESTS);
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_PUPPETEER);
                 }
