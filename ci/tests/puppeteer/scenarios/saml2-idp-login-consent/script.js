@@ -23,7 +23,7 @@ const assert = require("assert");
     await cas.submitForm(page, "#fm1");
     await page.waitForTimeout(4000);
     console.log(page.url());
-    assert(page.url().startsWith("https://httpbin.org/post"));
+    assert(page.url().startsWith("https://localhost:9859/post"));
     let content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     console.log(payload);
