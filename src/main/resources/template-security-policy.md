@@ -1,6 +1,6 @@
 Thank you very much for submitting this pull request! 
 
-It appears that this pull request attempts to upgrade one or more CAS dependencies to a newer version, and this patch is likely targeted at a CAS branch that is no longer maintained and has reached end of life, or, the targeted CAS version has gone into maintenance mode. 
+It appears that this pull request attempts to manually upgrade one or more CAS dependencies to a newer version, and this patch is likely targeted at a CAS branch that is no longer maintained and has reached end of life, or, the targeted CAS version has gone into maintenance mode. 
 
 Please note that third-party libraries and dependencies are not upgraded to versions that have reached end-of-life status or remain in maintenance mode. The targeted CAS release will only receive security fixes and patches in response to security vulnerability reports that are accurately and privately reported to CAS. 
 
