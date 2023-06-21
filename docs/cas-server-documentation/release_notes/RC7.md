@@ -65,14 +65,31 @@ to build and verify Graal VM native images in the coming releases.
 
 A new service access strategy is now available to authorization application access based on 
 [AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
+    
+## Docker-based Integration Tests
+
+The following docker containers, used for integration tests, are now upgraded:
+
+- AWS LocalStack
+- Apereo CAS
+- Apache Cassandra
+- AWS DynamoDb
+- Elastic APM
+- Internet2 Grouper
+- MariaDb
+- MongoDb
+- Redis
+- SCIM
+- Apache Syncope
 
 ## Other Stuff
 
 - LDAP direct binds are now able to resolve person attributes after authentication.
 - Logout events are now sent to the CAS audit log.
+- [Renovate](https://docs.renovatebot.com/) is now turned on to scan the codebase for dependency updates. Renovate support is also available in [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 - OpenID Connect JWKS are now able to support an arbitrary number of keys for signing operations.
 - Standard claims can be individually filtered on a per relying party.
-- New CAS actuator endpoints to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
+- New CAS actuator endpoints are available to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
 
 ## Library Upgrades
 
