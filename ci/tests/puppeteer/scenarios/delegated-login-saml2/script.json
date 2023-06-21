@@ -1,5 +1,10 @@
 {
   "dependencies": "pac4j-webflow,reports",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "conditions": {
     "docker": "true"
   },
