@@ -11,12 +11,13 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(2000);
     await cas.click(page, "div .idp span");
     await page.waitForTimeout(4000);
+    await cas.screenshot(page);
     await cas.type(page, "#userNameInput", process.env.ADFS_USERNAME, true);
     await cas.type(page, "#passwordInput", process.env.ADFS_PASSWORD, true);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     await cas.submitForm(page, "#loginForm");
-    await page.waitForTimeout(3000);
-    
+    await page.waitForTimeout(4000);
+    await cas.screenshot(page);
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
     await page2.waitForTimeout(1000);
