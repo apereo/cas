@@ -43,3 +43,6 @@ else
 fi
 
 docker logs -f saml2-sp &
+
+chmod +x ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh
