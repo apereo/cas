@@ -12,11 +12,13 @@ if [[ -n "${ACS_URL}" ]]; then
   echo -e "Found requested ACS url: ${ACS_URL}"
 fi
 
-
 echo "Launching SAML2 service provider from scenario ${SCENARIO_FOLDER}"
 
 echo "Accessing CAS SAML2 identity provider metadata"
 curl -k -I https://localhost:8443/cas/idp/metadata
+
+chmod +x ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 
 echo "Launching SAML2 service provider..."
 docker stop saml2-sp || true && docker rm saml2-sp || true
@@ -30,7 +32,8 @@ docker run -p 9876:9876 -p 8076:8076 \
   -e SIGN_AUTHN_REQUESTS=${SIGN_AUTHN_REQUESTS} \
   -e ACS_URL="${ACS_URL}" \
   -v "${SCENARIO_FOLDER}"/saml-md/idp-metadata.xml:/sp-webapp/idp-metadata.xml \
-  -v "${CAS_KEYSTORE}":/etc/cas/thekeystore apereo/saml2-sp:latest
+  -v "${CAS_KEYSTORE}":/etc/cas/thekeystore \
+  apereo/saml2-sp:latest
 docker logs -f saml2-sp &
 sleep 30
 docker ps | grep "saml2-sp"
@@ -44,5 +47,4 @@ fi
 
 docker logs -f saml2-sp &
 
-chmod +x ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
-${PWD}/ci/tests/httpbin/run-httpbin-server.sh
+
