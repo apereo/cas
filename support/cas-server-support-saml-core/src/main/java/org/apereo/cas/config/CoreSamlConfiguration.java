@@ -53,6 +53,7 @@ public class CoreSamlConfiguration {
      */
     static {
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+        System.setProperty("com.sun.org.apache.xml.internal.security.ignoreLineBreaks", "true");
         Init.init();
     }
 
