@@ -40,5 +40,5 @@ The following fields are available to this access strategy:
 | `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |
 | `apiUrl`   | <sup>[1]</sup> The OpenFGA endpoint URL.                                                           |
 | `token`    | <sup>[1]</sup> The bearer token to use in the `Authorization` header, if required.                 |
-  
-*[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.*
+
+<sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>

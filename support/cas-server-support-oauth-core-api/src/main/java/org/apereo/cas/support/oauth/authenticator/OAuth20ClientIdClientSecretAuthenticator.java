@@ -88,7 +88,6 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
                 profile.setId(id);
             } else {
-
                 val usernameContext = RegisteredServiceUsernameProviderContext.builder()
                     .registeredService(registeredService)
                     .service(service)

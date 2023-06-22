@@ -97,10 +97,9 @@ if [ $retVal == 0 ]; then
     echo -n '.'
     sleep 2
   done
-  curl -k -H "Content-Type:application/json" \
-    -X POST "https://localhost:8443/cas/actuator/loggers/org.apereo.cas" \
-    -d '{"configuredLevel": "DEBUG"}'
-
+#  curl -k -H "Content-Type:application/json" \
+#    -X POST "https://localhost:8443/cas/actuator/loggers/org.apereo.cas" \
+#    -d '{"configuredLevel": "DEBUG"}'
   printgreen "\n\nReady!"
 
   case "$testCategory" in

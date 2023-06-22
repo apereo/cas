@@ -44,7 +44,7 @@ The following fields are available to this access strategy:
 | `token`    | <sup>[1]</sup> The bearer token to use in the `Authorization` header, if required. |
 | `context`  | Custom context to carry data to assist with the policy decision making.            |
   
-*[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.*
+<sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
                        
 The authorization request body under the `input` parameter matches the following structure:
 

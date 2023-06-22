@@ -39,5 +39,5 @@ The following fields are available to this access strategy:
 | `policyStoreId`       | <sup>[1]</sup> (Optional) Policies in this policy store to use authorizations |
 | `context`             | (Optional) Additional context used for granular authorization decisions.      |
 | `actionId`            | <sup>[1]</sup> Specifies the requested action to be authorized.               |
-  
-*[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.*
+
+<sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>

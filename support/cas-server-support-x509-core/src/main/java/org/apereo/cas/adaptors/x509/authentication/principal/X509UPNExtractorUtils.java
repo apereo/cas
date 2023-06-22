@@ -56,10 +56,10 @@ public class X509UPNExtractorUtils {
         val id = Optional.ofNullable(seq).map(asn1Encodables -> ASN1ObjectIdentifier.getInstance(asn1Encodables.getObjectAt(0))).orElse(null);
         if (id != null && UPN_OBJECTID.equals(id.getId())) {
             val obj = (ASN1TaggedObject) seq.getObjectAt(1);
-            val primitiveObj = obj.getObject();
+            val primitiveObj = obj.getBaseObject();
 
             val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
-                () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
+                () -> ASN1TaggedObject.getInstance(primitiveObj).getBaseObject(),
                 () -> primitiveObj);
             val prim = func.apply(primitiveObj);
 
