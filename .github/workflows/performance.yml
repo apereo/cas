@@ -17,9 +17,9 @@ env:
 on:
   schedule:
     - cron: "0 22 * * *"
-  push:
-    branches:
-      - master
+#  push:
+#    branches:
+#      - master
 #      - '!**.**.**'
 #  pull_request:
 #    types: [ labeled ]
@@ -113,7 +113,7 @@ jobs:
           - cas
           - oidc
           - saml
-    name: jmeter - ${{ matrix.category }}
+    name: jmeter - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -134,7 +134,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: JMeter Performance Tests ${{ matrix.category }}/${{ matrix.protocols }}
+      - name: JMeter Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
         uses: nick-fields/retry@v2
         with:
           max_attempts: 2
