@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
+    ":rebaseStalePrs",
     ":preserveSemverRanges",
     ":disableRateLimiting",
     ":semanticCommits",
@@ -9,6 +10,15 @@
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
-    "every weekend"
+    "after 10pm and before 6am every weekday"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "automerge": true,
+      "ignoreTests": true,
+      "automergeType": "pr",
+      "automergeSchedule": ["at any time"]
+    }
   ]
 }
