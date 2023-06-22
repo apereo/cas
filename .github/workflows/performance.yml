@@ -17,10 +17,9 @@ env:
 on:
   schedule:
     - cron: "0 22 * * *"
-#on:
-#  push:
-#    branches:
-#      - master
+  push:
+    branches:
+      - master
 #      - '!**.**.**'
 #  pull_request:
 #    types: [ labeled ]
@@ -110,6 +109,10 @@ jobs:
           - tomcat
           - jetty
           - undertow
+        protocols:
+          - cas
+          - oidc
+          - saml
     name: jmeter - ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v3
@@ -131,10 +134,13 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: JMeter CAS Performance Tests
-        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} cas
-      - name: JMeter OIDC Performance Tests
-        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} oidc
-      - name: JMeter SAML2 Performance Tests
-        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} saml
-##########################################################################
+      - name: JMeter Performance Tests ${{ matrix.category }}/${{ matrix.protocols }}
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          retry_on: error
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} ${{ matrix.protocols }}

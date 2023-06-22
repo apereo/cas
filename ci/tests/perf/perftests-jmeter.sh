@@ -49,9 +49,9 @@ retVal=0
 echo -e "**********************************************************"
 echo -e "Build started at $(date) for test category ${testCategory}"
 echo -e "**********************************************************"
-gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
+gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc --no-configuration-cache -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
-echo "$tasks"
+printgreen "$tasks"
 echo -e "***************************************************************************************"
 eval "$tasks"
 retVal=$?
@@ -97,6 +97,10 @@ if [ $retVal == 0 ]; then
     echo -n '.'
     sleep 2
   done
+  curl -k -H "Content-Type:application/json" \
+    -X POST "https://localhost:8443/cas/actuator/loggers/org.apereo.cas" \
+    -d '{"configuredLevel": "DEBUG"}'
+
   printgreen "\n\nReady!"
 
   case "$testCategory" in
