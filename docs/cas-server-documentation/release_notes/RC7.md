@@ -66,7 +66,7 @@ to build and verify Graal VM native images in the coming releases.
 A new service access strategy is now available to authorization application access based on 
 [AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
     
-## Docker-based Integration Tests
+### Docker-based Integration Tests
 
 The following docker containers, used for integration tests, are now upgraded:
 
