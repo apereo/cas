@@ -1,17 +1,21 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +27,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     void verifyOperation() {
@@ -42,9 +48,55 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         when(state.getAuthentication()).thenReturn(authn);
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicy(new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 1, 0));
-
         assertFalse(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
     }
+
+    @Test
+    void verifySsoParticipationByAuthnAttribute() {
+        val state = mock(AuthenticationAwareTicket.class);
+        when(state.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(Map.of("tag", List.of("123-abc"))));
+        val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        val policy = new AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.setAttributes(Map.of("tag", List.of("123-.*")));
+        chain.addPolicy(policy);
+        assertTrue(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
+    }
+
+    @Test
+    void verifySsoParticipationByPrincipalAttribute() {
+        val state = mock(AuthenticationAwareTicket.class);
+        when(state.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("cn", List.of("1/2/3"))));
+        val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        val policy = new AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.setAttributes(Map.of("cn", List.of("\\d/\\d/\\d")));
+        chain.addPolicy(policy);
+        assertTrue(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
+    }
+
+    @Test
+    void verifySsoParticipationByAttributeAsJson() throws IOException {
+        val policy = new AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.setAttributes(Map.of("cn", List.of("\\d/\\d/\\d")));
+        policy.setRequireAllAttributes(true);
+        val file = Files.createTempFile("attr", ".json").toFile();
+        MAPPER.writeValue(file, policy);
+        val read = MAPPER.readValue(file, AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy.class);
+        assertEquals(policy, read);
+    }
+
+    @Test
+    void verifySsoParticipationAllAttributes() {
+        val state = mock(AuthenticationAwareTicket.class);
+        when(state.getAuthentication()).thenReturn(
+            CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("cn", List.of("1/2/3"))));
+        val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
+        val policy = new AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy();
+        policy.setAttributes(Map.of("cn", List.of("\\d/\\d/\\d"), "attr2", List.of("absent")));
+        policy.setRequireAllAttributes(true);
+        chain.addPolicy(policy);
+        assertFalse(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
+    }
+
 
     @Test
     void verifySsoParticipationByAuthenticationDatePasses() {
