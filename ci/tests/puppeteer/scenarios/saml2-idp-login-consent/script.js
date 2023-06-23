@@ -16,7 +16,7 @@ const assert = require("assert");
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     await cas.goto(page, url);
     await page.waitForTimeout(4000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(2000);
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);

@@ -51,7 +51,8 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoIdentityProvider")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CognitoIdentityProviderClient amazonCognitoIdentityProvider(final CasConfigurationProperties casProperties) {
+    public CognitoIdentityProviderClient amazonCognitoIdentityProvider(
+        final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getCognito();
         val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(), props.getCredentialSecretKey());
         val builder = CognitoIdentityProviderClient.builder();
@@ -78,9 +79,10 @@ public class AmazonCognitoAuthenticationConfiguration {
         @Qualifier("amazonCognitoAuthenticationJwtProcessor")
         final ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) throws Exception {
+        final ServicesManager servicesManager) {
         val cognito = casProperties.getAuthn().getCognito();
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(cognito.getName(), servicesManager, amazonCognitoPrincipalFactory, amazonCognitoIdentityProvider, cognito,
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(servicesManager,
+            amazonCognitoPrincipalFactory, amazonCognitoIdentityProvider, cognito,
             amazonCognitoAuthenticationJwtProcessor);
         handler.setState(cognito.getState());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cognito.getPrincipalTransformation()));
@@ -102,9 +104,11 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationJwtProcessor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor(final CasConfigurationProperties casProperties) throws Exception {
+    public ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor(
+        final CasConfigurationProperties casProperties) throws Exception {
         val cognito = casProperties.getAuthn().getCognito();
-        val resourceRetriever = new DefaultResourceRetriever((int) Beans.newDuration(cognito.getConnectionTimeout()).toMillis(),
+        val resourceRetriever = new DefaultResourceRetriever(
+            (int) Beans.newDuration(cognito.getConnectionTimeout()).toMillis(),
             (int) Beans.newDuration(cognito.getSocketTimeout()).toMillis());
         val region = StringUtils.defaultIfBlank(cognito.getRegion(), Region.AWS_GLOBAL.id());
         val url = String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", region, cognito.getUserPoolId());

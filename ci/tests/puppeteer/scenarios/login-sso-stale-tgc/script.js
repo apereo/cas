@@ -12,7 +12,7 @@ const assert = require('assert');
     await page.setCookie(cookie0, cookie1, cookie2, cookie3);
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertCookie(page, false);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     let tgc = await cas.assertCookie(page);
     assert(tgc.path === "/cas");
     await browser.close();

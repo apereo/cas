@@ -8,7 +8,6 @@ import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.authentication.principal.TokenWebApplicationServiceResponseBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +35,7 @@ public class TokenTicketsConfiguration {
         public ResponseBuilder webApplicationServiceResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("tokenTicketBuilder")
+            @Qualifier(TokenTicketBuilder.BEAN_NAME)
             final TokenTicketBuilder tokenTicketBuilder,
             @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator) {
