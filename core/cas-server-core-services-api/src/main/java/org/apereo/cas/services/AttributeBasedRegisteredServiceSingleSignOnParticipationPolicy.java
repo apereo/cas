@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -64,14 +65,16 @@ public class AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy impl
 
     private static boolean examineAttributeValues(final Map<String, List<Object>> givenAttributes,
                                                   final Map.Entry<String, List<String>> entry) {
-        val attributeValues = givenAttributes.getOrDefault(entry.getKey(), List.of());
+        val key = SpringExpressionLanguageValueResolver.getInstance().resolve(entry.getKey());
+        val attributeValues = givenAttributes.getOrDefault(key, List.of());
         return entry
             .getValue()
             .stream()
             .anyMatch(pattern -> attributeValues.stream().anyMatch(attrValue -> {
                 val attributeValue = attrValue.toString();
-                LOGGER.trace("Comparing [{}] against pattern [{}]", attributeValue, pattern);
-                return RegexUtils.find(pattern, attributeValue);
+                val resolvedPattern = SpringExpressionLanguageValueResolver.getInstance().resolve(pattern);
+                LOGGER.trace("Comparing [{}] against pattern [{}]", attributeValue, resolvedPattern);
+                return RegexUtils.find(resolvedPattern, attributeValue);
             }));
     }
 }
