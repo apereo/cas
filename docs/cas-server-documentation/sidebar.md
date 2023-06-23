@@ -117,7 +117,6 @@ layout: null
         *   [Redis](/cas/{{ version }}/authentication/Redis-Authentication.html)
         *   [Azure Active Directory](/cas/{{ version }}/authentication/Azure-ActiveDirectory-Authentication.html)
         *   [Okta](/cas/{{ version }}/authentication/Okta-Authentication.html)
-        *   [Pac4J](/cas/{{ version }}/authentication/Pac4j-Authentication.html)
         *   [Permissive](/cas/{{ version }}/authentication/Permissive-Authentication.html)
         *   [Reject](/cas/{{ version }}/authentication/Reject-Authentication.html)
         *   [SOAP](/cas/{{ version }}/authentication/SOAP-Authentication.html)

@@ -22,8 +22,7 @@ class DefaultTokenRequestExtractorTests {
     void verifyTokenFromParameter() {
         val request = new MockHttpServletRequest();
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "test");
-        val e = new DefaultTokenRequestExtractor();
-        val token = e.extract(request);
+        val token = TokenRequestExtractor.defaultExtractor().extract(request);
         assertEquals("test", token);
     }
 
@@ -31,16 +30,14 @@ class DefaultTokenRequestExtractorTests {
     void verifyTokenFromHeader() {
         val request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, "test");
-        val e = new DefaultTokenRequestExtractor();
-        val token = e.extract(request);
+        val token = TokenRequestExtractor.defaultExtractor().extract(request);
         assertEquals("test", token);
     }
 
     @Test
     void verifyTokenNotFound() {
         val request = new MockHttpServletRequest();
-        val e = new DefaultTokenRequestExtractor();
-        val token = e.extract(request);
+        val token = TokenRequestExtractor.defaultExtractor().extract(request);
         assertNull(token);
     }
 }

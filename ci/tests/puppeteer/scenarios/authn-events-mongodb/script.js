@@ -24,7 +24,7 @@ const fs = require('fs');
     }
 
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertCookie(page);
 
     console.log("Getting events...");

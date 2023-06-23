@@ -70,13 +70,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
                 if (activationStatus == 1) {
                     val loginQueryResult = consoleAdmin.loginQuery(userId);
                     if ("OK".equals(loginQueryResult.getErr())) {
-                        var hasAuthenticator = false;
-                        for (val maname : loginQueryResult.getManame()) {
-                            if (maname.contains("Authenticator")) {
-                                hasAuthenticator = true;
-                                break;
-                            }
-                        }
+                        var hasAuthenticator = loginQueryResult.getManame().stream().anyMatch(maname -> maname.contains("Authenticator"));
                         if (!hasAuthenticator) {
                             activationStatus = BROWSER_AUTHENTICATION_STATUS;
                         } else if (loginQueryResult.getManame().size() > 2) {

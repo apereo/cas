@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     const service = "https://apereo.github.io";
 
     await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${service}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     let ticket = await cas.assertParameter(page, "SAMLart");
 

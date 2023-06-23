@@ -1,4 +1,4 @@
-package org.apereo.cas.integration.pac4j.authentication.handler.support;
+package org.apereo.cas.support.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,9 +21,7 @@ import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
-
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +34,7 @@ import java.util.HashMap;
  */
 @Slf4j
 @Setter
-public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     /**
      * The session store.
      */
@@ -47,9 +44,9 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
 
     private boolean isTypedIdUsed;
 
-    protected AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                 final PrincipalFactory principalFactory, final Integer order,
-                                                 final SessionStore sessionStore) {
+    protected BaseDelegatedClientAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                       final PrincipalFactory principalFactory, final Integer order,
+                                                       final SessionStore sessionStore) {
         super(name, servicesManager, principalFactory, order);
         this.sessionStore = sessionStore;
     }

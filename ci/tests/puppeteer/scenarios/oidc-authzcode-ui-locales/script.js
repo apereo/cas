@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
 
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
     
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertInnerText(page, "#allow", "ERLAUBEN");
     await cas.assertInnerText(page, "#cancel", "VERBIETEN");
 

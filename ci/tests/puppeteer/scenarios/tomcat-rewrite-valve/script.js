@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     let url = await page.url();
     console.log(`Page url: ${url}`);
     assert(url === "https://localhost:8443/cas/auth");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.assertCookie(page);
     await page.waitForTimeout(2000);
     await cas.goto(page, "https://localhost:8443/cas/off");

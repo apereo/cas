@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
 
     console.log("Generating service ticket without SSO");
     await cas.goto(page, "https://localhost:8443/cas/login?service=https://google.com");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
 
     await cas.assertTicketParameter(page);
 
