@@ -124,8 +124,10 @@ public class ResourceUtils {
             if (res.isFile() && FileUtils.isDirectory(res.getFile())) {
                 return true;
             }
-            IOUtils.read(res.getInputStream(), new byte[1]);
-            return res.contentLength() > 0;
+            try (val input = res.getInputStream()) {
+                IOUtils.read(input, new byte[1]);
+                return res.contentLength() > 0;
+            }
         } catch (final FileNotFoundException e) {
             LOGGER.trace(e.getMessage());
             return false;
@@ -188,8 +190,9 @@ public class ResourceUtils {
                 LOGGER.trace("Deleting resource directory [{}]", destination);
                 FileUtils.forceDelete(destination);
             }
-            try (val out = new FileOutputStream(destination)) {
-                resource.getInputStream().transferTo(out);
+            try (val out = new FileOutputStream(destination);
+                 val input = resource.getInputStream()) {
+                input.transferTo(out);
             }
         });
         return new FileSystemResource(destination);
