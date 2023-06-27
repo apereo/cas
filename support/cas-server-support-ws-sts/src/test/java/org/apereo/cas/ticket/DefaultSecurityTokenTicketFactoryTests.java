@@ -42,6 +42,5 @@ class DefaultSecurityTokenTicketFactoryTests extends BaseTicketFactoryTests {
         val result = ticketSerializationManager.deserializeTicket(serialized, SecurityTokenTicket.class);
         assertNotNull(result);
         assertEquals(result, token);
-        
     }
 }

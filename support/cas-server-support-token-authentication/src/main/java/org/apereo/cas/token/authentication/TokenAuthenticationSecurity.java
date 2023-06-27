@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -24,6 +25,7 @@ import org.pac4j.jwt.config.signature.SignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.pac4j.jwt.profile.JwtGenerator;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,8 +37,21 @@ import java.util.Set;
  */
 @Slf4j
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-class TokenAuthenticationSecurity {
+public class TokenAuthenticationSecurity {
     private RegisteredServiceSecurityConfiguration securityConfiguration;
+
+    /**
+     * Generate token for authentication.
+     *
+     * @param authentication the authentication
+     * @return the string
+     */
+    public String generateTokenFor(final Authentication authentication) {
+        val claims = new HashMap<String, Object>(authentication.getAttributes());
+        claims.putAll(authentication.getPrincipal().getAttributes());
+        claims.put("sub", authentication.getPrincipal().getId());
+        return toGenerator().generate(claims);
+    }
 
     /**
      * For registered service.

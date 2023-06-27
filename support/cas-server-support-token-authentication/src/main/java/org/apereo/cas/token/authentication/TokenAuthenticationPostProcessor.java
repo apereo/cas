@@ -12,7 +12,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.Ordered;
-import java.util.HashMap;
 
 /**
  * This is {@link TokenAuthenticationPostProcessor}.
@@ -37,11 +36,7 @@ public class TokenAuthenticationPostProcessor implements AuthenticationPostProce
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
-            val generator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toGenerator();
-            val claims = new HashMap<String, Object>(authentication.getAttributes());
-            claims.putAll(authentication.getPrincipal().getAttributes());
-            claims.put("sub", authentication.getPrincipal().getId());
-            val token = generator.generate(claims);
+            val token = TokenAuthenticationSecurity.forRegisteredService(registeredService).generateTokenFor(authentication);
             builder.addAttribute(TokenConstants.PARAMETER_NAME_TOKEN, token);
         });
     }
