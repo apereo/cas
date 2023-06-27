@@ -74,7 +74,7 @@ public class LdapAuthenticationConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
             val handlers = new HashSet<AuthenticationHandler>();
-            Set<LdapAuthenticationProperties> ldapHandlers = new HashSet<>(casProperties.getAuthn().getLdap());
+            val ldapHandlers = new HashSet<>(casProperties.getAuthn().getLdap());
             ldapHandlers.stream().filter(l -> {
                 if (l.getType() == null || StringUtils.isBlank(l.getLdapUrl())) {
                     LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
