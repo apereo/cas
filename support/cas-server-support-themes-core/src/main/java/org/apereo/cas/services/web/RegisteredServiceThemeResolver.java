@@ -33,24 +33,24 @@ import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
- * ThemeResolver to determine the theme for CAS based on the service provided.
+ * {@link org.springframework.web.servlet.ThemeResolver} to determine the theme for CAS based on the service provided.
  * The theme resolver will extract the service parameter from the Request object
  * and attempt to match the URL provided to a Service Id. If the service is
- * found and there is no theme specified or access to the service is not allowed, the default
- * theme will be used.
+ * found and there is no theme specified or access to the service is not allowed,
+ * the default theme will be used.
  * If the service does have a theme associated with it but the theme is a path to a
- * {@code FileSystemResource} system resource that exists, it will be executed as a
+ * {@link FileSystemResource} system resource that exists, it will be executed as a
  * Groovy script that should return the name of the theme.
- * If the theme value is an HTTP {@code URLResource}, then the contents referenced by the URL
+ * If the theme value is an HTTP {@link UrlResource}, then the contents referenced by the URL
  * will be read and the response used as the theme name.
- * Blank values returned from the script or the URL will result in the default theme
- * being used.
+ * Blank values returned from the script or the URL will result in the default theme being used.
  * If the theme attribute in the service is not a file or URL resource, it will be evaluated as
  * a Spring expression and then a search for property files with the theme name as the base name
  * is done using configured template prefix locations.
- * If nothing is found in template prefix locations, the {@code ResourceBundle.getBundle()} method
+ * If nothing is found in template prefix locations, the {@link java.util.ResourceBundle#getBundle(String, Locale)} method
  * using the locale of the request is used to look for the theme properties to ensure it exists.
  * If theme properties don't exist for the specified theme name then the default theme will be used.
  *
