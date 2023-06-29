@@ -135,7 +135,7 @@ class DefaultAuthenticationManagerTests {
         plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
         plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
-        plan.registerAuthenticationPostProcessor((builder, transaction) -> LOGGER.trace("Running authentication post processor"));
+        plan.registerAuthenticationPostProcessor(AuthenticationPostProcessor.none());
         return plan;
     }
 
@@ -154,7 +154,7 @@ class DefaultAuthenticationManagerTests {
         map.put(newMockHandler(false), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPreProcessor(transaction -> false);
+        authenticationExecutionPlan.registerAuthenticationPreProcessor(__ -> false);
 
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, applicationContext);

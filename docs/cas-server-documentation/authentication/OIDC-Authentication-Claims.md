@@ -293,7 +293,7 @@ and internally defined for the standard `email` scope.
 
 {% endtab %}
 
-{% tab oidcclaimrelease Filter Claims %}
+{% tab oidcclaimrelease Claim Filtering %}
 
 It is possible to control the release of standard claims, i.e. `name`, that are connect to a standard scope, such as `profile`.
 Typically when the release policy references a standard scope, all claims available and resolved that belong to that scope

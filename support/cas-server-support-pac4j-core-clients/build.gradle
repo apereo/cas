@@ -8,8 +8,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
-    implementation project(":support:cas-server-support-pac4j-authentication")
-    
+
     api project(":api:cas-server-core-api")
     
     implementation libraries.pac4joidcoauth

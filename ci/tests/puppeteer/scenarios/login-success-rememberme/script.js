@@ -9,7 +9,7 @@ const assert = require("assert");
 
     await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.click(page, "#rememberMe");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     let tgc = await cas.assertCookie(page);
     let date = new Date(tgc.expires * 1000);

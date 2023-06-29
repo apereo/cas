@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     for (let i = 0; i < 5; i++) {
         await cas.goto(page, "https://localhost:8443/cas/logout");
         await cas.goto(page, "https://localhost:8443/cas/login");
-        await cas.loginWith(page, "casuser", "Mellon");
+        await cas.loginWith(page);
         await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     }
     await browser.close();

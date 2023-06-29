@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
 
     console.log("Establishing SSO session...");
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(3000);

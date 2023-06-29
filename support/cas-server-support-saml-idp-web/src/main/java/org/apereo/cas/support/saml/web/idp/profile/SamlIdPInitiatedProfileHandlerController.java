@@ -73,7 +73,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
                 facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, ctx);
         }
         ctx.setMessage(authnRequest);
-        val bindingContext = ctx.getSubcontext(SAMLBindingContext.class, true);
+        val bindingContext = ctx.ensureSubcontext(SAMLBindingContext.class);
         Objects.requireNonNull(bindingContext).setHasBindingSignature(false);
         SAMLBindingSupport.setRelayState(ctx, target);
 

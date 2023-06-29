@@ -99,7 +99,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenReturn(initResult1);
 
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-exp-password", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
 
         assertThrows(AccountPasswordMustChangeException.class, () -> handler.authenticate(creds, mock(Service.class)));
@@ -141,7 +141,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenReturn(result2);
 
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(creds, mock(Service.class)));
     }
@@ -166,7 +166,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
 
         when(provider.adminGetUser(any(AdminGetUserRequest.class))).thenReturn(userResult1);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
         assertNotNull(result);
@@ -193,7 +193,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         when(provider.adminGetUser(any(AdminGetUserRequest.class))).thenReturn(userResult1);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
 
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
                 PrincipalFactoryUtils.newPrincipalFactory(), provider,
                 casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds, mock(Service.class));
@@ -213,7 +213,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
 
         when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenThrow(ex);
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-exp-password", "Hell063!!");
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         assertThrows(expected, () -> handler.authenticate(creds, mock(Service.class)));
     }

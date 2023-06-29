@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import lombok.val;
@@ -20,7 +19,6 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowTyp
 import software.amazon.awssdk.services.cognitoidentityprovider.model.InvalidPasswordException;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.NotAuthorizedException;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoundException;
-
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -44,13 +42,13 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
 
     private final ConfigurableJWTProcessor jwtProcessor;
 
-    public AmazonCognitoAuthenticationAuthenticationHandler(final String name,
-                                                            final ServicesManager servicesManager,
-                                                            final PrincipalFactory principalFactory,
-                                                            final CognitoIdentityProviderClient cognitoIdentityProvider,
-                                                            final AmazonCognitoAuthenticationProperties properties,
-                                                            final ConfigurableJWTProcessor jwtProcessor) {
-        super(name, servicesManager, principalFactory, properties.getOrder());
+    public AmazonCognitoAuthenticationAuthenticationHandler(
+        final ServicesManager servicesManager,
+        final PrincipalFactory principalFactory,
+        final CognitoIdentityProviderClient cognitoIdentityProvider,
+        final AmazonCognitoAuthenticationProperties properties,
+        final ConfigurableJWTProcessor jwtProcessor) {
+        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.cognitoIdentityProvider = cognitoIdentityProvider;
         this.properties = properties;
         this.jwtProcessor = jwtProcessor;
@@ -113,9 +111,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             throw new FailedLoginException(e.getMessage());
         } catch (final UserNotFoundException e) {
             throw new AccountNotFoundException(e.getMessage());
-        } catch (final CredentialExpiredException e) {
-            throw new AccountPasswordMustChangeException(e.getMessage());
-        } catch (final InvalidPasswordException e) {
+        } catch (final CredentialExpiredException | InvalidPasswordException e) {
             throw new AccountPasswordMustChangeException(e.getMessage());
         } catch (final Exception e) {
             throw new FailedLoginException(e.getMessage());

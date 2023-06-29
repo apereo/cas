@@ -130,7 +130,7 @@ function loadSidebarForActiveVersion() {
         setTimeout(function(){
           let top = $(element).offset().top;
           // console.log("Element top position: " + top);
-          let offset = top <= 200 ? 30 : 130;
+          let offset = top <= 200 ? 30 : 150;
           $("#sidebar").animate({scrollTop: offset }, 1000);
         }, 100);
       }

@@ -278,7 +278,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         val callContext = new CallContext(webContext, JEESessionStore.INSTANCE);
         val saml2MessageContext = new SAML2MessageContext(callContext);
         saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
-        val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+        val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);
         assertNotNull(peer);
 
         peer.setEntityId("https://cas.example.org/idp");

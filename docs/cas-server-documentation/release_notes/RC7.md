@@ -65,7 +65,26 @@ to build and verify Graal VM native images in the coming releases.
 
 A new service access strategy is now available to authorization application access based on 
 [AWS Verified Permissions](../services/Service-Access-Strategy-AWS-VerifiedPermissions.html).
-    
+ 
+### Spring Framework Upgrades
+
+Starting with this release candidate and going forward, CAS will switch to building against Spring Framework `6.1.x`
+and Spring Boot `3.2.x` milestone builds.
+
+The Spring framework `6.1.x` generation presents with the following feature themes:
+
+- Embracing JDK 21 LTS
+- Virtual Threads (Project Loom)
+- JVM Checkpoint Restore (Project CRaC)
+- Data Binding and Validation, revisited
+
+Note that Spring Framework `6.1` provides a first-class experience on JDK `21` and Jakarta EE 10 at 
+runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of 
+GraalVM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
+
+As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
+in the next few release candidates. 
+
 ### Docker-based Integration Tests
 
 The following docker containers, used for integration tests, are now upgraded:
@@ -81,6 +100,11 @@ The following docker containers, used for integration tests, are now upgraded:
 - Redis
 - SCIM
 - Apache Syncope
+      
+###
+
+A new [single sign-on participation policy](../services/Configuring-Service-SSO-Policy.html) is now available
+that can control SSO participation on a per-application basis based on presence or absense of user attributes. 
 
 ## Other Stuff
 
@@ -102,6 +126,8 @@ The following docker containers, used for integration tests, are now upgraded:
 - Apache CXF
 - Oshi
 - Logback
+- MongoDb
+- Nimbus OIDC
 - Swagger
 - Apache Kafka
 - Micrometer
@@ -110,3 +136,5 @@ The following docker containers, used for integration tests, are now upgraded:
 - Hibernate
 - BouncyCastle
 - Google Cloud
+- Spring WS
+- Spring Framework
