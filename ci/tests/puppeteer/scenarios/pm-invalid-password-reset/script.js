@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.assertInnerText(page, "#content h2", "Password Reset Failed");
     console.log("Attempting invalid password reset with SSO");
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await cas.goto(page, "https://localhost:8443/cas/login?pswdrst=bad_token_with_sso");
     await cas.assertInnerText(page, "#content h2", "Password Reset Failed");
     await browser.close();

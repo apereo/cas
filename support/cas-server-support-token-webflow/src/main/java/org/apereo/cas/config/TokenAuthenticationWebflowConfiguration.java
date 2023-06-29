@@ -1,11 +1,16 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.DefaultTokenRequestExtractor;
+import org.apereo.cas.web.TokenAuthenticationEndpoint;
 import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -17,6 +22,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,16 +52,18 @@ public class TokenAuthenticationWebflowConfiguration {
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices, final CasConfigurationProperties casProperties,
+        final FlowBuilderServices flowBuilderServices,
+        final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
-        return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new TokenWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "tokenRequestExtractor")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TokenRequestExtractor tokenRequestExtractor() {
-        return new DefaultTokenRequestExtractor();
+        return TokenRequestExtractor.defaultExtractor();
     }
 
     @Bean
@@ -70,6 +78,8 @@ public class TokenAuthenticationWebflowConfiguration {
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier("serviceTicketRequestWebflowEventResolver")
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -79,7 +89,7 @@ public class TokenAuthenticationWebflowConfiguration {
             .withProperties(casProperties)
             .withAction(() -> new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, tokenRequestExtractor,
-                servicesManager))
+                servicesManager, webApplicationServiceFactory, casProperties))
             .withId(CasWebflowConstants.ACTION_ID_TOKEN_AUTHENTICATION_ACTION)
             .build()
             .get();
@@ -92,5 +102,26 @@ public class TokenAuthenticationWebflowConfiguration {
         @Qualifier("tokenWebflowConfigurer")
         final CasWebflowConfigurer tokenWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(tokenWebflowConfigurer);
+    }
+
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TokenAuthenticationEndpoint tokenAuthenticationEndpoint(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final PrincipalResolver defaultPrincipalResolver,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        @Qualifier(PrincipalFactory.BEAN_NAME)
+        final PrincipalFactory principalFactory) {
+        return new TokenAuthenticationEndpoint(casProperties, defaultPrincipalResolver,
+            servicesManager, registeredServiceAccessStrategyEnforcer,
+            webApplicationServiceFactory, principalFactory);
     }
 }

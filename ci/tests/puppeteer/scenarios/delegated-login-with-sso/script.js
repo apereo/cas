@@ -9,7 +9,7 @@ const cas = require('../../cas.js');
     await cas.goto(page, "https://localhost:8444/cas/login");
     await page.waitForTimeout(3000);
     await cas.screenshot(page);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
     await cas.assertCookie(page, true, "TGCEXT");
 

@@ -7,7 +7,7 @@ const assert = require('assert');
     const page = await cas.newPage(browser);
     const service = "https://httpbin.org/anything/1";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(2000);
     let ticket = await cas.assertTicketParameter(page);
 

@@ -217,7 +217,7 @@ class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
         val context = new MessageContext();
         context.setMessage(authnRequest);
-        val binding = context.getSubcontext(SAMLBindingContext.class, true);
+        val binding = context.ensureSubcontext(SAMLBindingContext.class);
         binding.setHasBindingSignature(true);
         binding.setRelayState(UUID.randomUUID().toString());
 

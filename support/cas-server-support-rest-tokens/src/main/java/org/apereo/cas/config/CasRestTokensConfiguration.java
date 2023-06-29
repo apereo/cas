@@ -33,7 +33,7 @@ public class CasRestTokensConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory(
-        @Qualifier("tokenTicketBuilder")
+        @Qualifier(TokenTicketBuilder.BEAN_NAME)
         final TokenTicketBuilder tokenTicketBuilder) {
         return new JwtTicketGrantingTicketResourceEntityResponseFactory(tokenTicketBuilder);
     }
@@ -43,7 +43,7 @@ public class CasRestTokensConfiguration {
     public ServiceTicketResourceEntityResponseFactoryConfigurer restTokenServiceTicketResourceEntityResponseFactoryConfigurer(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
-        @Qualifier("tokenTicketBuilder")
+        @Qualifier(TokenTicketBuilder.BEAN_NAME)
         final TokenTicketBuilder tokenTicketBuilder,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
     //await cas.sleep(5000);
     await cas.click(page,'a.identity-provider-link');
     //await cas.sleep(5000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     //await cas.sleep(5000);
     // hit strapi endpoint that triggers CAS login to get JWT
     //await cas.goto(page, "https://host.k3d.internal");

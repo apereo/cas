@@ -10,13 +10,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
-import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
@@ -27,13 +25,12 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Pac4j authentication handler which gets the credentials and then the user profile
+ * Authentication handler which gets the credentials and then the user profile
  * in a delegated authentication process from an external identity provider.
  *
  * @author Jerome Leleu
@@ -41,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Monitorable
-public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
+public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAuthenticationHandler {
 
     private final Clients clients;
 
@@ -77,7 +74,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             val client = clients.findClient(clientCredentials.getClientName())
                 .map(BaseClient.class::cast)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
-                                                                + clientCredentials.getClientName()));
+                    + clientCredentials.getClientName()));
             LOGGER.trace("Delegated client is: [{}]", client);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();

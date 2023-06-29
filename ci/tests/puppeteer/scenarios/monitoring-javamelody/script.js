@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.goto(page, "https://localhost:8443/cas/login");
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.authenticate({'username':'javamelody', 'password': 'M3ll0n'});
     let response = await cas.goto(page, "https://localhost:8443/cas/monitoring");
     console.log(`${response.status()} ${response.statusText()}`);

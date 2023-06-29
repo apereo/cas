@@ -121,6 +121,44 @@ the ticket continues to actively issue service tickets, etc.
 
 {% endtab %}
 
+{% tab ssoservicepolicy Attributes %}
+
+The policy calculation here typically includes evaluating all authentication and principal attributes linked to the SSO session to check whether
+the ticket continues to actively issue service tickets, etc. Each attribute defined in the policy will be examined against each principal
+and authentication attribute and for each match, the attribute value is then examined against the defined pattern in the policy.
+Successful matches allow for SSO participation. The `requireAllAttributes` flag controls whether *all* attribute conditions defined the policy
+must produce successful matches. 
+
+Note that the regular expression matching strategy is defined as *non-eager* and both attribute names
+and value patterns defined in the policy are able to support the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "singleSignOnParticipationPolicy":
+    {
+      "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
+      "policies": [ "java.util.ArrayList",
+        [
+          {
+            "@class":"org.apereo.cas.services.AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy",
+            "attributes":{
+                "@class": "java.util.HashMap",
+                "cn": [ "java.util.ArrayList", ["\\d/\\d/\\d"] ]
+            },
+            "requireAllAttributes": false
+          }
+        ]
+      ]
+    }
+}
+```
+
+{% endtab %}
+
 {% tab ssoservicepolicy Custom %}
 
 Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:

@@ -2,6 +2,7 @@ package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -52,6 +53,26 @@ class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     void verifyJwtForTicketGrantingTicket() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         val jwt = tokenTicketBuilder.build(tgt, Map.of());
+        assertNotNull(jwt);
+        val result = tokenCipherExecutor.decode(jwt);
+        val claims = JWTClaimsSet.parse(result.toString());
+        assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
+    }
+
+    @Test
+    void verifyJwtForAuthN() throws Exception {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val jwt = tokenTicketBuilder.build(tgt.getAuthentication());
+        assertNotNull(jwt);
+        val result = tokenCipherExecutor.decode(jwt);
+        val claims = JWTClaimsSet.parse(result.toString());
+        assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
+    }
+
+    @Test
+    void verifyJwtForAuthAndService() throws Exception {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val jwt = tokenTicketBuilder.build(tgt.getAuthentication(), RegisteredServiceTestUtils.getRegisteredService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
         val claims = JWTClaimsSet.parse(result.toString());

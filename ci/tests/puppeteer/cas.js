@@ -134,7 +134,9 @@ exports.uploadImage = async (imagePath) => {
 
 exports.waitForElement = async(page, selector, timeout = 10000) => await page.waitForSelector(selector, {timeout: timeout});
 
-exports.loginWith = async (page, user, password,
+exports.loginWith = async (page,
+                           user = "casuser",
+                           password = "Mellon",
                            usernameField = "#username",
                            passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);

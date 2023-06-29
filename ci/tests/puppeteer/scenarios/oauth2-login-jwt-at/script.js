@@ -10,7 +10,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     await cas.goto(page, url);
     console.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(1000);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page);
     await page.waitForTimeout(1000);
 
     let code = await cas.assertParameter(page, "code");

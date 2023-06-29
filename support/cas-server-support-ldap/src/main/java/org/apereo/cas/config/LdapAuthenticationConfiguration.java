@@ -23,8 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -64,19 +63,22 @@ public class LdapAuthenticationConfiguration {
             final PrincipalFactory ldapPrincipalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            val handlers = new HashSet<AuthenticationHandler>();
-            casProperties.getAuthn().getLdap().stream().filter(prop -> {
-                if (prop.getType() == null || StringUtils.isBlank(prop.getLdapUrl())) {
-                    LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
-                    return false;
-                }
-                return true;
-            }).forEach(prop -> {
-                val handler = LdapUtils.createLdapAuthenticationHandler(prop,
-                    applicationContext, servicesManager, ldapPrincipalFactory);
-                handler.setState(prop.getState());
-                handlers.add(handler);
-            });
+            val handlers = casProperties.getAuthn().getLdap()
+                .stream()
+                .filter(prop -> {
+                    if (prop.getType() == null || StringUtils.isBlank(prop.getLdapUrl())) {
+                        LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
+                        return false;
+                    }
+                    return true;
+                }).map(prop -> {
+                    val handler = LdapUtils.createLdapAuthenticationHandler(prop,
+                        applicationContext, servicesManager, ldapPrincipalFactory);
+                    handler.setState(prop.getState());
+                    return handler;
+                })
+                .collect(Collectors.toList());
+
             return BeanContainer.of(handlers);
         }
 
