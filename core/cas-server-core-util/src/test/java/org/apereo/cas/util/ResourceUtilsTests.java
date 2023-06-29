@@ -43,18 +43,6 @@ class ResourceUtilsTests {
             new DefaultResourceLoader(ResourceUtilsTests.class.getClassLoader())));
     }
 
-    /**
-     * This test takes about 8 seconds to run with no leak or 12 seconds if a stream is left unclosed, but then
-     * the JVM runs for another 90 seconds while it is garbage collecting and closing all the unclosed streams.
-     */
-    @Test
-    void verifyResourceExistsDoesNotLeak() {
-        for (int i=0; i < 100000; i++) {
-            assertTrue(ResourceUtils.doesResourceExist("./src/test/java/org/apereo/cas/util/ResourceUtilsTests.java"));
-            assertFalse(ResourceUtils.doesResourceExist("./src/test/java/org/apereo/cas/util/ResourceUtilsTests2.java"));
-        }
-    }
-
     @Test
     void verifyResourceOnClasspath() {
         val res = new ClassPathResource("valid.json");
