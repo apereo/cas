@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
+const assert = require('assert');
 
 async function loginWithToken(page, service, token) {
     await cas.goto(page, "https://localhost:8443/cas/logout");
@@ -23,12 +24,19 @@ async function loginWithToken(page, service, token) {
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page);
     let ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
+    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
     console.log(body);
     token = body.match(/<cas:token>(.+)<\/cas:token>/)[1];
     console.log(`SSO Token ${token}`);
     await loginWithToken(page, service, token);
 
+    const response = await cas.doRequest(`https://localhost:8443/cas/actuator/tokenAuth/casuser?service=${service}`,
+        "POST", {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        });
+    body = JSON.parse(response);
+    assert(body.registeredService.id === 1);
+    await loginWithToken(page, service, body.token);
     await browser.close();
-    
 })();
