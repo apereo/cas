@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 
 /**
  * This is {@link DefaultServiceTicketSessionTrackingPolicy}.
@@ -52,10 +51,9 @@ public class DefaultServiceTicketSessionTrackingPolicy implements ServiceTicketS
                     return path.equals(normalizedExistingPath);
                 }).toList();
 
-            toRemove.forEach(Unchecked.consumer(entry -> {
+            toRemove.forEach(entry -> {
                 ownerTicket.getServices().remove(entry.getKey());
-                ticketRegistry.deleteTicket(entry.getKey());
-            }));
+            });
         }
         ownerTicket.getServices().put(serviceTicket.getId(), serviceTicket.getService());
     }
