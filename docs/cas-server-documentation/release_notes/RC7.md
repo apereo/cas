@@ -101,7 +101,7 @@ The following docker containers, used for integration tests, are now upgraded:
 - SCIM
 - Apache Syncope
       
-###
+### Attribute-based SSO Participation
 
 A new [single sign-on participation policy](../services/Configuring-Service-SSO-Policy.html) is now available
 that can control SSO participation on a per-application basis based on presence or absense of user attributes. 
