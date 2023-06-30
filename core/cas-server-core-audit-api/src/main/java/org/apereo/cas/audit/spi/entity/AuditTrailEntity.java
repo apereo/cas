@@ -2,13 +2,14 @@ package org.apereo.cas.audit.spi.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.ToString;
+import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 
 /**
@@ -18,7 +19,10 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Entity(name = "COM_AUDIT_TRAIL")
+@MappedSuperclass
+@ToString
+@SuperBuilder
+@Accessors(chain = true)
 @Getter
 @Setter
 public class AuditTrailEntity {
@@ -42,7 +46,6 @@ public class AuditTrailEntity {
     @Column(name = "AUD_SERVER_IP")
     private String serverIp;
 
-    @Column(name = "AUD_RESOURCE", length = 2048)
     private String resource;
 
     @Column(name = "AUD_ACTION")

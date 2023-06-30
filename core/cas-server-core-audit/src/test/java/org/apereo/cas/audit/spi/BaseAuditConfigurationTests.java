@@ -25,16 +25,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseAuditConfigurationTests {
     private static final String USER = RandomUtils.randomAlphanumeric(6);
 
+    protected AuditActionContext auditActionContext;
+
     public abstract AuditTrailManager getAuditTrailManager();
 
     @BeforeEach
     public void onSetUp() {
         val auditTrailManager = getAuditTrailManager();
         auditTrailManager.removeAll();
-        val ctx = new AuditActionContext(USER, "TEST", "TEST",
+        this.auditActionContext = new AuditActionContext(USER, "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
             "1.2.3.4", "GoogleChrome", Map.of());
-        auditTrailManager.record(ctx);
+        auditTrailManager.record(auditActionContext);
     }
 
     @Test

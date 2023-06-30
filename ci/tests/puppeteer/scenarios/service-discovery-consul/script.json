@@ -16,5 +16,5 @@
     "--spring.cloud.consul.discovery.heartbeat.ttlUnit=s"
 
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/consul/run-consul-server.sh"
 }

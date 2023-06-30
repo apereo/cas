@@ -43,7 +43,7 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * A negative value disables the trimming process where the audit
      * functionality no longer substrings the audit record.
      */
-    private int columnLength = 100;
+    private int columnLength = 512;
 
     /**
      * SQL query that provides a template to fetch audit records.
