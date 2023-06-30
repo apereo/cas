@@ -278,7 +278,8 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
-exports.doRequest = async (url, method = "GET", headers = {},
+exports.doRequest = async (url, method = "GET",
+                           headers = {},
                            statusCode = 200,
                            requestBody = undefined,
                            callback = undefined) =>
