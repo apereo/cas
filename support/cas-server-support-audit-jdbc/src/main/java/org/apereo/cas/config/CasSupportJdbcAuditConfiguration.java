@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
+import org.apereo.cas.audit.JdbcAuditTrailEntity;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -92,7 +93,7 @@ public class CasSupportJdbcAuditConfiguration {
                         .jpaVendorAdapter(inspektrAuditJpaVendorAdapter)
                         .persistenceUnitName("jpaInspektrAuditContext")
                         .dataSource(inspektrAuditTrailDataSource)
-                        .packagesToScan(CollectionUtils.wrapSet(AuditTrailEntity.class.getPackage().getName()))
+                        .packagesToScan(CollectionUtils.wrapSet(JdbcAuditTrailEntity.class.getPackage().getName()))
                         .build();
                     return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
                 }))
@@ -171,16 +172,15 @@ public class CasSupportJdbcAuditConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val jdbc = casProperties.getAudit().getJdbc();
-                    val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate);
-                    t.setCleanupCriteria(auditCleanupCriteria);
-                    t.setDataSource(inspektrAuditTrailDataSource);
-                    t.setAsynchronous(jdbc.isAsynchronous());
-                    t.setColumnLength(jdbc.getColumnLength());
-                    t.setTableName(getAuditTableNameFrom(jdbc));
-
-                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), __ -> t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate()));
-                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), __ -> t.setDateFormatterPattern(jdbc.getDateFormatterPattern()));
-                    return t;
+                    val manager = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate);
+                    manager.setCleanupCriteria(auditCleanupCriteria);
+                    manager.setDataSource(inspektrAuditTrailDataSource);
+                    manager.setAsynchronous(jdbc.isAsynchronous());
+                    manager.setColumnLength(jdbc.getColumnLength());
+                    manager.setTableName(getAuditTableNameFrom(jdbc));
+                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), __ -> manager.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate()));
+                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), __ -> manager.setDateFormatterPattern(jdbc.getDateFormatterPattern()));
+                    return manager;
                 })
                 .otherwiseProxy()
                 .get();

@@ -17,5 +17,5 @@
     "--spring.cloud.consul.config.enabled=true",
     "--spring.cloud.consul.config.profile-separator=-"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/consul/run-consul-server.sh"
 }

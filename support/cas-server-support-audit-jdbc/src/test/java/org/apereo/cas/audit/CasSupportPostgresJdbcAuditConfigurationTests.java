@@ -1,7 +1,6 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
