@@ -86,13 +86,15 @@ public class CasWebAppSecurityConfiguration extends GlobalMethodSecurityConfigur
         
         @Bean
         @ConditionalOnMissingBean(name = "casWebAppSecurityWebMvcConfigurer")
-        public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer() {
+        public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer(final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addViewControllers(final ViewControllerRegistry registry) {
-                    registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
-                        .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
-                    registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+                    if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
+                        registry.addViewController(CasWebSecurityConfigurerAdapter.ENDPOINT_URL_ADMIN_FORM_LOGIN)
+                            .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
+                        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+                    }
                 }
             };
         }

@@ -234,13 +234,18 @@ public class RedisObjectFactory {
     }
 
     private static RedisConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
-        LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
-        val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
-        standaloneConfig.setDatabase(redis.getDatabase());
-        if (StringUtils.hasText(redis.getPassword())) {
-            standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
+        if (StringUtils.hasText(redis.getUri())) {
+            LOGGER.debug("Setting Redis standalone configuration based on URI");
+            return LettuceConnectionFactory.createRedisConfiguration(redis.getUri());
+        } else {
+            LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
+            val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
+            standaloneConfig.setDatabase(redis.getDatabase());
+            if (StringUtils.hasText(redis.getPassword())) {
+                standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
+            }
+            return standaloneConfig;
         }
-        return standaloneConfig;
     }
 
     private static RedisSentinelConfiguration getSentinelConfig(final BaseRedisProperties redis) {

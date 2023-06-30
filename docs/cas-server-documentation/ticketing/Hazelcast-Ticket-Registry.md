@@ -31,6 +31,13 @@ instance used by the ticket registry implementation to build and retrieve Hazelc
 maps for its distributed tickets storage. Some aspects of hazelcast configuration in 
 this auto-configuration mode are controlled by CAS properties.
 
+<div class="alert alert-warning"><strong>Features compatibility</strong><p>Be aware that Hazelcast
+ticket registry is NOT compatible with Spring beans refresh. This implies
+<a href="../configuration/Configuration-Management-Reload.html">Configuration Management Reload</a>
+cannot be used with Hazelcast ticket registry, nor any other mechanisme that would rely on 
+<code>@RefreshScope</code> annotated beans.
+</p></div>
+
 {% include_cached {{ version }}/hazelcast-configuration.md configKey="cas.ticket.registry.hazelcast" %}
 
 <div class="alert alert-warning"><strong>Session Monitoring</strong><p>Be aware that under 

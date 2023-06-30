@@ -37,8 +37,21 @@ import java.nio.charset.StandardCharsets;
  * ThemeResolver to determine the theme for CAS based on the service provided.
  * The theme resolver will extract the service parameter from the Request object
  * and attempt to match the URL provided to a Service Id. If the service is
- * found, the theme associated with it will be used. If not, these is associated
- * with the service or the service was not found, a default theme will be used.
+ * found and there is no theme specified or access to the service is not allowed, the default
+ * theme will be used.
+ * If the service does have a theme associated with it but the theme is a path to a
+ * {@code FileSystemResource} system resource that exists, it will be executed as a
+ * Groovy script that should return the name of the theme.
+ * If the theme value is an HTTP {@code URLResource}, then the contents referenced by the URL
+ * will be read and the response used as the theme name.
+ * Blank values returned from the script or the URL will result in the default theme
+ * being used.
+ * If the theme attribute in the service is not a file or URL resource, it will be evaluated as
+ * a Spring expression and then a search for property files with the theme name as the base name
+ * is done using configured template prefix locations.
+ * If nothing is found in template prefix locations, the {@code ResourceBundle.getBundle()} method
+ * using the locale of the request is used to look for the theme properties to ensure it exists.
+ * If theme properties don't exist for the specified theme name then the default theme will be used.
  *
  * @author Scott Battaglia
  * @since 3.0.0
@@ -141,10 +154,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     protected String resolveThemeForService(final WebBasedRegisteredService registeredService,
                                             final HttpServletRequest request) {
-        val messageSource = new CasThemeResourceBundleMessageSource();
         val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getTheme());
-        messageSource.setBasename(theme);
-
         if (casProperties.getObject().getView().getTemplatePrefixes()
             .stream()
             .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
@@ -152,12 +162,13 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             LOGGER.trace("Found custom external theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;
         }
-
+        val messageSource = new CasThemeResourceBundleMessageSource();
+        messageSource.setBasename(theme);
         if (messageSource.doGetBundle(theme, request.getLocale()) != null) {
             LOGGER.trace("Found custom theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;
         }
-        
+
         LOGGER.warn("Theme [{}] for service [{}] cannot be located", theme, registeredService.getName());
         return null;
     }

@@ -36,7 +36,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
     @Override
     public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
         return FunctionUtils.doUnchecked(() -> {
-            val jsonWebKey = getJsonWebKeySigningKey();
+            val jsonWebKey = getJsonWebKeySigningKey(service);
             FunctionUtils.throwIf(jsonWebKey.getPublicKey() == null,
                 () -> new IllegalArgumentException("JSON web key to validate the id token signature has no public key"));
             val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
@@ -94,5 +94,5 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         return EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
     }
 
-    protected abstract PublicJsonWebKey getJsonWebKeySigningKey();
+    protected abstract PublicJsonWebKey getJsonWebKeySigningKey(Optional<OAuthRegisteredService> serviceResult);
 }
