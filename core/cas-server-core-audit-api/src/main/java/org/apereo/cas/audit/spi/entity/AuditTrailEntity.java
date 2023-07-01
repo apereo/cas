@@ -35,7 +35,7 @@ public class AuditTrailEntity {
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id = -1;
+    private long id;
 
     @Column(name = "AUD_USER")
     private String user;
