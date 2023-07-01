@@ -1,5 +1,10 @@
 {
   "dependencies": "surrogate-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.surrogate.simple.surrogates.casuser=user1,user2,user3"

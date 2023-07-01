@@ -1,5 +1,10 @@
 {
   "dependencies": "themes-collection",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--spring.thymeleaf.cache=false",
     "--cas.logout.confirm-logout=true",
