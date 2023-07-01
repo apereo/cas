@@ -22,6 +22,7 @@ import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -112,17 +113,17 @@ public class TokenAuthenticationWebflowConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TokenAuthenticationEndpoint tokenAuthenticationEndpoint(
-        final CasConfigurationProperties casProperties,
+        final ObjectProvider<CasConfigurationProperties> casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver,
+        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager,
+        final ObjectProvider<ServicesManager> servicesManager,
         @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
-        final PrincipalFactory principalFactory) {
+        final ObjectProvider<PrincipalFactory> principalFactory) {
         return new TokenAuthenticationEndpoint(casProperties, defaultPrincipalResolver,
             servicesManager, registeredServiceAccessStrategyEnforcer,
             webApplicationServiceFactory, principalFactory);

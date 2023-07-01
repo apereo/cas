@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -78,7 +79,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         parameters = {
             @Parameter(name = "username", required = true),
             @Parameter(name = "password", required = false),
-            @Parameter(name = "service", required = true)
+            @Parameter(name = "service", required = true, description = "May be the service id or its numeric identifier")
         })
     public Map<String, Object> releasePrincipalAttributes(
         final String username,
@@ -87,7 +88,9 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         final String service) {
 
         val selectedService = serviceFactory.getObject().createService(service);
-        val registeredService = servicesManager.getObject().findServiceBy(selectedService);
+        val registeredService = NumberUtils.isCreatable(service)
+            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+            : servicesManager.getObject().findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
         
         val authentication = buildAuthentication(username, password, selectedService);
@@ -107,7 +110,8 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
             authentication);
 
         val finalAuthentication = builder.build();
-        val assertion = DefaultAssertionBuilder.builder()
+        val assertion = DefaultAssertionBuilder
+            .builder()
             .primaryAuthentication(finalAuthentication)
             .service(selectedService)
             .authentications(CollectionUtils.wrap(finalAuthentication))
@@ -151,7 +155,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         parameters = {
             @Parameter(name = "username", required = true),
             @Parameter(name = "password", required = false),
-            @Parameter(name = "service", required = true)
+            @Parameter(name = "service", required = true, description = "May be the service id or its numeric identifier")
         })
     public Map<String, Object> releaseAttributes(final String username, @Nullable final String password, final String service) {
         val map = releasePrincipalAttributes(username, password, service);
