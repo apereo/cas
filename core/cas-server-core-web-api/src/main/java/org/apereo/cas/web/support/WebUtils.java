@@ -1423,6 +1423,16 @@ public class WebUtils {
     }
 
     /**
+     * Gets one time token accounts.
+     *
+     * @param requestContext the request context
+     * @return the one time token accounts
+     */
+    public static Collection getOneTimeTokenAccounts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("registeredDevices", Collection.class);
+    }
+
+    /**
      * Gets one time token account.
      *
      * @param <T>            the type parameter
@@ -1433,6 +1443,7 @@ public class WebUtils {
     public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
         return requestContext.getFlowScope().get("registeredDevice", clazz);
     }
+
 
     /**
      * Put google authenticator multiple device registration enabled.
@@ -1842,4 +1853,6 @@ public class WebUtils {
     public static void putWildcardedRegisteredService(final RequestContext context, final boolean result) {
         context.getFlowScope().put("wildcardedRegisteredService", result);
     }
+
+
 }

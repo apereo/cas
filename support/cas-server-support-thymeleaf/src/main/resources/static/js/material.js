@@ -45,7 +45,7 @@
             if (parentElement != null && parentElement.nextElementSibling != null) {
                 let el = parentElement.nextElementSibling.nextElementSibling;
                 if (el != null) {
-                    if (s.toUpperCase(Locale.ENGLISH) === s && s.toLowerCase(Locale.ENGLISH) !== s && !ev.shiftKey) {
+                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
                         // console.log('CAPSLOCK is on');
                         el.classList.remove("caps-warn");
                         el.classList.add('caps-on');

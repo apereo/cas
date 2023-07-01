@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -22,22 +23,22 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
+import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link GoogleAuthenticatorPrepareLoginActionTests}.
+ * This is {@link GoogleAuthenticatorValidateTokenActionTests}.
  *
  * @author Misagh Moayyed
- * @since 6.3.0
+ * @since 7.0.0
  */
 @Tag("WebflowMfaActions")
-@SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-                properties = "cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true")
-class GoogleAuthenticatorPrepareLoginActionTests {
+@SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
+class GoogleAuthenticatorValidateTokenActionTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_PREPARE_LOGIN)
+    @Qualifier(CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_TOKEN)
     private Action action;
 
     @Autowired
@@ -48,7 +49,7 @@ class GoogleAuthenticatorPrepareLoginActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifySuccessfulValidation() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -62,16 +63,21 @@ class GoogleAuthenticatorPrepareLoginActionTests {
             .name(UUID.randomUUID().toString())
             .secretKey("secret")
             .validationCode(123456)
-            .scratchCodes(List.of())
+            .scratchCodes(List.of(666777))
             .build();
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+
+        assertThrows(IllegalArgumentException.class, () -> action.execute(context));
         
-        assertNull(action.execute(context));
-        assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
-        assertNotNull(WebUtils.getOneTimeTokenAccounts(context));
+        request.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "111222");
+        request.setParameter(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, String.valueOf(acct.getId()));
+        assertThrows(FailedLoginException.class, () -> action.execute(context));
+
+        request.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, acct.getScratchCodes().get(0).toString());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 }

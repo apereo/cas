@@ -1793,6 +1793,10 @@ public interface CasWebflowConstants {
      * Action id 'googleAccountCheckRegistrationAction'.
      */
     String ACTION_ID_GOOGLE_CHECK_ACCOUNT_REGISTRATION = "googleAccountCheckRegistrationAction";
+    /**
+     * Action id 'googleValidateTokenAction'.
+     */
+    String ACTION_ID_GOOGLE_VALIDATE_TOKEN = "googleValidateTokenAction";
 
     /**
      * Action id 'googleAccountConfirmSelectionAction'.
