@@ -1,6 +1,4 @@
-<!--
-
-# Details
+# Read Before Submissions
 
 Thank you for your contributions to Apereo CAS.
 
@@ -24,9 +22,12 @@ has already ported your changes forward to the `master` branch. You may do so by
 master: https://github.com/apereo/cas/pull/$PR_NUMBER
 ```
 
-Do not keep this template as is when you submit. Please remove or adjust the description when you submit your pull request.
+# Remember
 
-If you have questions, please [reach out](https://apereo.github.io/cas/Mailing-Lists.html).
+**DO NOT** keep this template as is when you submit. Please remove or adjust the description when you submit your pull request.
 
-Thanks again!
--->
+Please do not submit a pull request to ask questions, seek guidance or support. Use the designated mailing lists to discuss
+ideas, feature requests and bug fixes. See [mailing lists](https://apereo.github.io/cas/Mailing-Lists.html).
+
+Do not submit pull requests without tests that verify or reproduce your intended use case. The pull request will
+most likely be automatically closed immediately, unless the change is extremely trivial. 
