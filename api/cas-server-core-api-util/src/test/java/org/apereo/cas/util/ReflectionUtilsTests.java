@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
-public class ReflectionUtilsTests {
+class ReflectionUtilsTests {
 
     @Test
     void findSubclassesInPackage() {

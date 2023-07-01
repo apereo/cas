@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.util;
 
-import org.apereo.cas.config.CoreSamlConfigurationTests;
+import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,9 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAML1")
-@SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 class Saml10ObjectBuilderTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)

@@ -62,7 +62,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
     "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })
-public class BaseWebflowConfigurerTests {
+public abstract class BaseWebflowConfigurerTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
 

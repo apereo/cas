@@ -1,25 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
-
-import net.shibboleth.shared.xml.impl.BasicParserPool;
-import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.opensaml.core.xml.XMLObjectBuilderFactory;
-import org.opensaml.core.xml.io.MarshallerFactory;
-import org.opensaml.core.xml.io.UnmarshallerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.scheduling.annotation.EnableScheduling;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseSamlConfigurationTests}.
@@ -27,44 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
-@EnableScheduling
 @Tag("SAML2")
-class BaseSamlConfigurationTests {
-    @Autowired
-    @Qualifier("shibboleth.VelocityEngine")
-    protected VelocityEngine velocityEngineFactoryBean;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    protected OpenSamlConfigBean openSamlConfigBean;
-
-    @Autowired
-    @Qualifier("shibboleth.ParserPool")
-    protected BasicParserPool parserPool;
-
-    @Autowired
-    @Qualifier("shibboleth.BuilderFactory")
-    protected XMLObjectBuilderFactory builderFactory;
-
-    @Autowired
-    @Qualifier("shibboleth.MarshallerFactory")
-    protected MarshallerFactory marshallerFactory;
-
-    @Autowired
-    @Qualifier("shibboleth.UnmarshallerFactory")
-    protected UnmarshallerFactory unmarshallerFactory;
-
-    @Test
-    void verify() {
-        assertNotNull(velocityEngineFactoryBean);
-        assertNotNull(openSamlConfigBean);
-        assertNotNull(parserPool);
-        assertNotNull(builderFactory);
-        assertNotNull(marshallerFactory);
-        assertNotNull(unmarshallerFactory);
-    }
-
+public abstract class BaseSamlConfigurationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class

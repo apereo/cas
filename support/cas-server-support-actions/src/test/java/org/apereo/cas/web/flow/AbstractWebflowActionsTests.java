@@ -12,5 +12,5 @@ import org.springframework.context.annotation.Import;
  * @since 6.0.0
  */
 @Import(CasSupportActionsConfiguration.class)
-public class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
+public abstract class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
 }
