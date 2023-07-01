@@ -96,7 +96,7 @@ import org.springframework.context.annotation.Bean;
     PasswordlessAuthenticationConfiguration.class,
     PasswordlessAuthenticationWebflowConfiguration.class
 })
-public class BasePasswordlessAuthenticationActionTests {
+public abstract class BasePasswordlessAuthenticationActionTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
 

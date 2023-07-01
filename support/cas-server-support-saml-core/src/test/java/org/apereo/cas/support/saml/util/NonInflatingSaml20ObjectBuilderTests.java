@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CoreSamlConfigurationTests;
+import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLResponse")
-@SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 class NonInflatingSaml20ObjectBuilderTests {
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)

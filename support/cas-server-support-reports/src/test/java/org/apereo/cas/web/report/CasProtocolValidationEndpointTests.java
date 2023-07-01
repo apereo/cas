@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
 })
-public class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
+class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("casProtocolValidationEndpoint")
     private CasProtocolValidationEndpoint endpoint;
