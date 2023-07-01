@@ -1,7 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
@@ -66,10 +65,10 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
         }
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
-        val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
+        val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
         attributes.put(Pac4jConstants.CLIENT_NAME, CollectionUtils.wrap(profile.getClientName()));
         if (profile instanceof BasicUserProfile bup) {
-            attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(bup.getAuthenticationAttributes()));
+            attributes.putAll(CollectionUtils.toMultiValuedMap(bup.getAuthenticationAttributes()));
         }
         val initialPrincipal = principalFactory.createPrincipal(id, attributes);
         val principal = finalizeAuthenticationPrincipal(initialPrincipal, client, credentials, service);

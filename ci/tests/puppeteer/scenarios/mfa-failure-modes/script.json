@@ -1,5 +1,8 @@
 {
   "dependencies": "yubikey",
+  "conditions": {
+    "docker": "true"
+  },
   "requirements": {
     "graalvm": {
       "enabled": true

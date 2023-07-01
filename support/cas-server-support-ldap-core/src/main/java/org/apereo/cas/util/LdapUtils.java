@@ -444,26 +444,26 @@ public class LdapUtils {
     /**
      * New ldap authenticator.
      *
-     * @param l the ldap settings.
+     * @param props the ldap settings.
      * @return the authenticator
      */
-    public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties l) {
-        switch (l.getType()) {
+    public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties props) {
+        switch (props.getType()) {
             case AD -> {
-                LOGGER.debug("Creating active directory authenticator for [{}]", l.getLdapUrl());
-                return getActiveDirectoryAuthenticator(l);
+                LOGGER.debug("Creating active directory authenticator for [{}]", props.getLdapUrl());
+                return getActiveDirectoryAuthenticator(props);
             }
             case DIRECT -> {
-                LOGGER.debug("Creating direct-bind authenticator for [{}]", l.getLdapUrl());
-                return getDirectBindAuthenticator(l);
+                LOGGER.debug("Creating direct-bind authenticator for [{}]", props.getLdapUrl());
+                return getDirectBindAuthenticator(props);
             }
             case AUTHENTICATED -> {
-                LOGGER.debug("Creating authenticated authenticator for [{}]", l.getLdapUrl());
-                return getAuthenticatedOrAnonSearchAuthenticator(l);
+                LOGGER.debug("Creating authenticated authenticator for [{}]", props.getLdapUrl());
+                return getAuthenticatedOrAnonSearchAuthenticator(props);
             }
             default -> {
-                LOGGER.debug("Creating anonymous authenticator for [{}]", l.getLdapUrl());
-                return getAuthenticatedOrAnonSearchAuthenticator(l);
+                LOGGER.debug("Creating anonymous authenticator for [{}]", props.getLdapUrl());
+                return getAuthenticatedOrAnonSearchAuthenticator(props);
             }
         }
     }
@@ -471,27 +471,27 @@ public class LdapUtils {
     /**
      * New pooled connection factory pooled connection factory.
      *
-     * @param l the ldap properties
+     * @param props the ldap properties
      * @return the pooled connection factory
      */
-    public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
-        val connectionConfig = newLdaptiveConnectionConfig(l);
+    public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties props) {
+        val connectionConfig = newLdaptiveConnectionConfig(props);
 
-        LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection pool configuration for [{}]", props.getLdapUrl());
         val pooledCf = new PooledConnectionFactory(connectionConfig);
-        pooledCf.setMinPoolSize(l.getMinPoolSize());
-        pooledCf.setMaxPoolSize(l.getMaxPoolSize());
-        pooledCf.setValidateOnCheckOut(l.isValidateOnCheckout());
-        pooledCf.setValidatePeriodically(l.isValidatePeriodically());
-        pooledCf.setBlockWaitTime(Beans.newDuration(l.getBlockWaitTime()));
+        pooledCf.setMinPoolSize(props.getMinPoolSize());
+        pooledCf.setMaxPoolSize(props.getMaxPoolSize());
+        pooledCf.setValidateOnCheckOut(props.isValidateOnCheckout());
+        pooledCf.setValidatePeriodically(props.isValidatePeriodically());
+        pooledCf.setBlockWaitTime(Beans.newDuration(props.getBlockWaitTime()));
 
         val strategy = new IdlePruneStrategy();
-        strategy.setIdleTime(Beans.newDuration(l.getIdleTime()));
-        strategy.setPrunePeriod(Beans.newDuration(l.getPrunePeriod()));
+        strategy.setIdleTime(Beans.newDuration(props.getIdleTime()));
+        strategy.setPrunePeriod(Beans.newDuration(props.getPrunePeriod()));
 
         pooledCf.setPruneStrategy(strategy);
 
-        val validator = l.getValidator();
+        val validator = props.getValidator();
         switch (validator.getType().trim().toLowerCase(Locale.ENGLISH)) {
             case "compare" -> {
                 val compareRequest = new CompareRequest(
@@ -499,12 +499,12 @@ public class LdapUtils {
                     validator.getAttributeName(),
                     validator.getAttributeValue());
                 val compareValidator = new CompareConnectionValidator(compareRequest);
-                compareValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-                compareValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+                compareValidator.setValidatePeriod(Beans.newDuration(props.getValidatePeriod()));
+                compareValidator.setValidateTimeout(Beans.newDuration(props.getValidateTimeout()));
                 pooledCf.setValidator(compareValidator);
             }
             case "none" ->
-                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", l.getLdapUrl());
+                LOGGER.debug("No validator is configured for the LDAP connection pool of [{}]", props.getLdapUrl());
             case "search" -> {
                 val searchRequest = new SearchRequest();
                 searchRequest.setBaseDn(validator.getBaseDn());
@@ -513,39 +513,34 @@ public class LdapUtils {
                 searchRequest.setSearchScope(SearchScope.valueOf(validator.getScope()));
                 searchRequest.setSizeLimit(1);
                 val searchValidator = new SearchConnectionValidator(searchRequest);
-                searchValidator.setValidatePeriod(Beans.newDuration(l.getValidatePeriod()));
-                searchValidator.setValidateTimeout(Beans.newDuration(l.getValidateTimeout()));
+                searchValidator.setValidatePeriod(Beans.newDuration(props.getValidatePeriod()));
+                searchValidator.setValidateTimeout(Beans.newDuration(props.getValidateTimeout()));
                 pooledCf.setValidator(searchValidator);
             }
         }
 
-        pooledCf.setFailFastInitialize(l.isFailFast());
+        pooledCf.setFailFastInitialize(props.isFailFast());
 
-        if (StringUtils.isNotBlank(l.getPoolPassivator())) {
-            val pass =
-                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase(Locale.ENGLISH));
-            switch (pass) {
-                case BIND:
-                    if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
-                        val bindRequest = new SimpleBindRequest(l.getBindDn(), l.getBindCredential());
-                        pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
-                        LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
-                    } else {
-                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
-                            .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
-                            .collect(Collectors.toList());
-                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
-                                + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
-                                + "set the pool passivator setting to one of [{}]",
-                            l.getPoolPassivator(), l.getLdapUrl(), values);
-                    }
-                    break;
-                default:
-                    break;
+        if (StringUtils.isNotBlank(props.getPoolPassivator())) {
+            val pass = AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(props.getPoolPassivator().toUpperCase(Locale.ENGLISH));
+            if (pass == AbstractLdapProperties.LdapConnectionPoolPassivator.BIND) {
+                if (StringUtils.isNotBlank(props.getBindDn()) && StringUtils.isNoneBlank(props.getBindCredential())) {
+                    val bindRequest = new SimpleBindRequest(props.getBindDn(), props.getBindCredential());
+                    pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
+                    LOGGER.debug("Created [{}] passivator for [{}]", props.getPoolPassivator(), props.getLdapUrl());
+                } else {
+                    val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                        .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
+                        .collect(Collectors.toList());
+                    LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
+                            + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
+                            + "set the pool passivator setting to one of [{}]",
+                        props.getPoolPassivator(), props.getLdapUrl(), values);
+                }
             }
         }
 
-        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", l.getLdapUrl(), l.getBindDn());
+        LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", props.getLdapUrl(), props.getBindDn());
         pooledCf.initialize();
         return pooledCf;
     }

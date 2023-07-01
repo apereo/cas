@@ -11,14 +11,18 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationSecurity;
+import org.apereo.cas.util.CollectionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.http.MediaType;
+import org.springframework.util.Assert;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,12 +68,14 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
     @WriteOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Produce an authentication token for the user and the intended application", parameters = {
         @Parameter(name = "username", required = true, in = ParameterIn.PATH),
-        @Parameter(name = "service", required = true, in = ParameterIn.QUERY)
+        @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> produceToken(@Selector final String username,
                                   final String service) {
         val selectedService = serviceFactory.createService(service);
-        val registeredService = servicesManager.findServiceBy(selectedService);
+        val registeredService = NumberUtils.isCreatable(service)
+            ? servicesManager.findServiceBy(Long.parseLong(service))
+            : servicesManager.findServiceBy(selectedService);
         val principal = principalResolver.resolve(new BasicIdentifiableCredential(username),
             Optional.of(principalFactory.createPrincipal(username)),
             Optional.empty(), Optional.of(selectedService));
@@ -83,5 +89,37 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
         accessResult.throwExceptionIfNeeded();
         val token = TokenAuthenticationSecurity.forRegisteredService(registeredService).generateTokenFor(authentication);
         return Map.of("registeredService", registeredService, "token", token);
+    }
+
+    /**
+     * Validate token and return results.
+     *
+     * @param token   the token
+     * @param service the service
+     * @return the map
+     */
+    @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Validate an authentication token for the user and the intended application", parameters = {
+        @Parameter(name = "token", required = true, in = ParameterIn.PATH),
+        @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
+    })
+    public Map<?, ?> validateToken(@Selector final String token,
+                                  final String service) {
+        val selectedService = serviceFactory.createService(service);
+        val registeredService = NumberUtils.isCreatable(service)
+            ? servicesManager.findServiceBy(Long.parseLong(service))
+            : servicesManager.findServiceBy(selectedService);
+        val profile = TokenAuthenticationSecurity.forRegisteredService(registeredService).validateToken(token);
+        Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
+        val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
+        val principal = principalFactory.createPrincipal(profile.getId(), attributes);
+        val audit = AuditableContext.builder()
+            .service(selectedService)
+            .principal(principal)
+            .registeredService(registeredService)
+            .build();
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+        return Map.of("registeredService", registeredService, "principal", principal);
     }
 }

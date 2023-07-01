@@ -49,5 +49,6 @@ class TokenAuthenticationEndpointTests extends AbstractCasEndpointTests {
         val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val authnResults = tokenAuthenticationHandler.authenticate(new TokenCredential(token, service), service);
         assertEquals("casuser", authnResults.getPrincipal().getId());
+        assertNotNull(endpoint.validateToken(token, service.getId()));
     }
 }

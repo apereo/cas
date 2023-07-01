@@ -62,12 +62,13 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
 
     private Pair<String, Map> getKeyAndMap(final RequestContext requestContext) {
         switch (aupProperties.getInMemory().getScope()) {
-            case GLOBAL:
+            case GLOBAL -> {
                 val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
                 return Pair.of(principal.getId(), policyMap);
-            case AUTHENTICATION:
-            default:
+            }
+            default -> {
                 return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
+            }
         }
     }
 }
