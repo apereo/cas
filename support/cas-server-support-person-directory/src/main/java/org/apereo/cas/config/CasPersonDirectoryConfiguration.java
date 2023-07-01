@@ -149,7 +149,7 @@ public class CasPersonDirectoryConfiguration {
             final ObjectProvider<List<PersonDirectoryAttributeRepositoryCustomizer>> customizers) {
             val plan = new DefaultPersonDirectoryAttributeRepositoryPlan(
                 Optional.ofNullable(customizers.getIfAvailable()).orElseGet(ArrayList::new));
-            configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
+            configurers.forEach(cfg -> cfg.configureAttributeRepositoryPlan(plan));
             AnnotationAwareOrderComparator.sort(plan.getAttributeRepositories());
             LOGGER.trace("Final list of attribute repositories is [{}]", plan.getAttributeRepositories());
             return plan;
@@ -163,14 +163,15 @@ public class CasPersonDirectoryConfiguration {
             final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getAttributeRepository();
             switch (properties.getCore().getAggregation()) {
-                case CASCADE:
+                case CASCADE -> {
                     val dao = new CascadingPersonAttributeDao();
                     dao.setAddOriginalAttributesToQuery(true);
                     dao.setStopIfFirstDaoReturnsNull(true);
                     return dao;
-                case MERGE:
-                default:
+                }
+                default -> {
                     return new MergingPersonAttributeDaoImpl();
+                }
             }
         }
 

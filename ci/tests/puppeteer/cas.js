@@ -351,17 +351,17 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
     });
     let urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
     console.log(`Posting to URL ${colors.green(url)}`);
-    await instance
+    return await instance
         .post(url, urlParams, {headers: headers})
         .then(res => {
             console.log(res.data);
-            successHandler(res);
+            return successHandler(res);
         })
         .catch(error => {
             if (error.response !== undefined) {
                 this.logr(error.response.data)
             }
-            failureHandler(error);
+            return failureHandler(error);
         })
 };
 

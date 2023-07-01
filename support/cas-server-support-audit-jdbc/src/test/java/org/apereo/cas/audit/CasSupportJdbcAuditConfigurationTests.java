@@ -49,6 +49,7 @@ import java.util.UUID;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 @Tag("JDBC")
+@SuppressWarnings("JavaUtilDate")
 class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Autowired

@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import lombok.experimental.UtilityClass;
@@ -11,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +39,42 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CollectionUtils {
+
+    /**
+     * Ensure given attributes in the map are always captured
+     * with a single-value, if they exist. If the requested attributes have multiple values,
+     * the first element is chosen.
+     *
+     * @param attributes             the attributes
+     * @param singleValuedAttributes the single valued attributes
+     * @return the map
+     */
+    public static Map<String, Object> toSingleValuedMap(final Map<String, Object> attributes,
+                                                        final List<String> singleValuedAttributes) {
+        val results = new LinkedHashMap<>(attributes);
+        singleValuedAttributes.forEach(name -> {
+            val values = results.remove(name);
+            firstElement(values).ifPresent(value -> results.put(name, value));
+        });
+        return results;
+    }
+
+    /**
+     * Convert attribute values to multi valued objects.
+     *
+     * @param attributes the attributes
+     * @return the map of attributes to return
+     */
+    public static Map<String, List<Object>> toMultiValuedMap(final Map<String, Object> attributes) {
+        val entries = attributes.entrySet();
+        return entries
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = entry.getValue();
+                return toCollection(value, ArrayList.class);
+            }));
+    }
+
     /**
      * Distinct by key predicate.
      *
@@ -61,7 +95,7 @@ public class CollectionUtils {
      * @return the optional
      */
     public static Optional<Object> firstElement(final Object obj) {
-        val object = CollectionUtils.toCollection(obj);
+        val object = toCollection(obj);
         if (object.isEmpty()) {
             return Optional.empty();
         }
@@ -111,35 +145,35 @@ public class CollectionUtils {
      */
     @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<>();
+        val resultingSet = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
-            c.addAll((Collection<Object>) obj);
+            resultingSet.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued element [{}]", obj);
         } else if (obj instanceof Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
-            c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
+            resultingSet.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
             if (byte[].class.isInstance(obj)) {
-                c.add(obj);
+                resultingSet.add(obj);
             } else {
-                c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
+                resultingSet.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
             LOGGER.trace("Converting array element [{}]", obj);
         } else if (obj instanceof Iterator it) {
             while (it.hasNext()) {
-                c.add(it.next());
+                resultingSet.add(it.next());
             }
         } else if (obj instanceof Enumeration it) {
             while (it.hasMoreElements()) {
-                c.add(it.nextElement());
+                resultingSet.add(it.nextElement());
             }
         } else {
-            c.add(obj);
+            resultingSet.add(obj);
             LOGGER.trace("Converting element [{}]", obj);
         }
-        return c.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
+        return resultingSet.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -659,4 +693,6 @@ public class CollectionUtils {
         Arrays.stream(attributes).forEach(result::putAll);
         return result;
     }
+
+
 }

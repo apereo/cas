@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jwt.config.encryption.EncryptionConfiguration;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -27,6 +29,7 @@ import org.pac4j.jwt.profile.JwtGenerator;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,7 +53,17 @@ public class TokenAuthenticationSecurity {
         val claims = new HashMap<String, Object>(authentication.getAttributes());
         claims.putAll(authentication.getPrincipal().getAttributes());
         claims.put("sub", authentication.getPrincipal().getId());
-        return toGenerator().generate(claims);
+        return toGenerator().generate(CollectionUtils.toSingleValuedMap(claims, List.of("jti", "iss", "nbf", "iat", "exp")));
+    }
+
+    /**
+     * Validate token and build user profile.
+     *
+     * @param token the token
+     * @return the user profile
+     */
+    public UserProfile validateToken(final String token) {
+        return toAuthenticator().validateToken(token);
     }
 
     /**

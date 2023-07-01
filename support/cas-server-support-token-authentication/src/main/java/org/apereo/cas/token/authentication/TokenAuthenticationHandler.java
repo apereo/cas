@@ -2,7 +2,6 @@ package org.apereo.cas.token.authentication;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -12,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
@@ -41,10 +41,9 @@ public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         try {
             val tokenCredential = (BasicIdentifiableCredential) credential;
             val registeredService = getServicesManager().findServiceBy(service);
-            val authenticator = TokenAuthenticationSecurity.forRegisteredService(registeredService).toAuthenticator();
-            val profile = authenticator.validateToken(tokenCredential.getId());
+            val profile = TokenAuthenticationSecurity.forRegisteredService(registeredService).validateToken(tokenCredential.getId());
             Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
-            val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(profile.getAttributes());
+            val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
             val principal = principalFactory.createPrincipal(profile.getId(), attributes);
             tokenCredential.setId(principal.getId());
             return createHandlerResult(tokenCredential, principal, new ArrayList<>(0));

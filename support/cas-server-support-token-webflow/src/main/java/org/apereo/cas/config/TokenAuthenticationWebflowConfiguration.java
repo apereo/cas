@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -82,6 +83,8 @@ public class TokenAuthenticationWebflowConfiguration {
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+        final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         return WebflowActionBeanSupplier.builder()
@@ -89,7 +92,7 @@ public class TokenAuthenticationWebflowConfiguration {
             .withProperties(casProperties)
             .withAction(() -> new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, tokenRequestExtractor,
-                servicesManager, webApplicationServiceFactory, casProperties))
+                servicesManager, webApplicationServiceFactory, authenticationServiceSelectionPlan, casProperties))
             .withId(CasWebflowConstants.ACTION_ID_TOKEN_AUTHENTICATION_ACTION)
             .build()
             .get();

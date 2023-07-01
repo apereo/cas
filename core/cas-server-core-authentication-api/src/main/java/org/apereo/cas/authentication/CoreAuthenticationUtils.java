@@ -95,22 +95,6 @@ public class CoreAuthenticationUtils {
     }
 
     /**
-     * Convert attribute values to multi valued objects.
-     *
-     * @param attributes the attributes
-     * @return the map of attributes to return
-     */
-    public static Map<String, List<Object>> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        val entries = attributes.entrySet();
-        return entries
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                val value = entry.getValue();
-                return CollectionUtils.toCollection(value, ArrayList.class);
-            }));
-    }
-
-    /**
      * Gets attribute merger.
      *
      * @param mergingPolicy the merging policy
@@ -118,19 +102,23 @@ public class CoreAuthenticationUtils {
      */
     public static IAttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
         switch (mergingPolicy) {
-            case MULTIVALUED:
+            case MULTIVALUED -> {
                 val merger = new MultivaluedAttributeMerger();
                 merger.setDistinctValues(true);
                 return merger;
-            case ADD:
+            }
+            case ADD -> {
                 return new NoncollidingAttributeAdder();
-            case SOURCE:
+            }
+            case SOURCE -> {
                 return new ReturnOriginalAdditiveAttributeMerger();
-            case DESTINATION:
+            }
+            case DESTINATION -> {
                 return new ReturnChangesAdditiveAttributeMerger();
-            case REPLACE:
-            default:
+            }
+            default -> {
                 return new ReplacingAttributeAdder();
+            }
         }
     }
 

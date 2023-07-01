@@ -40,7 +40,7 @@
     "--cas.ticket.registry.mongo.user-id=root",
     "--cas.ticket.registry.mongo.password=secret"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }
 
 
