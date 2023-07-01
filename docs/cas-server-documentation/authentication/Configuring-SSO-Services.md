@@ -13,7 +13,7 @@ and capabilities that affect application behavior and treatment when it comes to
   
 {% tabs ssoservices %}
 
-{% tabs ssoservices Default Service %}
+{% tab ssoservices Default Service %}
 
 In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
@@ -23,7 +23,7 @@ all other services, MUST be authorized and registered with CAS.
 
 {% endtab %}
 
-{% tabs ssoservices Required Service %}
+{% tab ssoservices Required Service %}
 
 CAS may be configured to require the user to authenticate from an application before
 access can be granted to all other registered services. Once CAS finds a record for the required
@@ -51,7 +51,7 @@ Such validation checks can be turned off and skipped on a per-application basis:
 
 {% endtab %}
 
-{% tabs ssoservices Participation Policies %}
+{% tab ssoservices Participation Policies %}
 
 Additional policies can be assigned to each service definition to control participation 
 of an application in an existing single sign-on session. 
@@ -60,4 +60,4 @@ of an application in an existing single sign-on session.
 
 {% endtab %}
 
-{$ endtabs %}
+{% endtabs %}
