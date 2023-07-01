@@ -106,7 +106,7 @@ function writeToLocalStorage(value, key= "localStorageKey") {
     }
 }
 
-function readFromLocalStorage(key= "localStorageKey") {
+function readFromLocalStorage(key = "localStorageKey") {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support local storage for read-ops");
         return null;

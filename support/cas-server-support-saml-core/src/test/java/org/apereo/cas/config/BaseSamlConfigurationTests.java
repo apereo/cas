@@ -22,15 +22,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link CoreSamlConfigurationTests}.
+ * This is {@link BaseSamlConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 @EnableScheduling
 @Tag("SAML2")
-public class CoreSamlConfigurationTests {
+class BaseSamlConfigurationTests {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
     protected VelocityEngine velocityEngineFactoryBean;
