@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -34,23 +35,23 @@ import java.util.Optional;
  */
 @Endpoint(id = "tokenAuth", enableByDefault = false)
 public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
-    private final PrincipalResolver principalResolver;
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<PrincipalResolver> principalResolver;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final ServiceFactory<WebApplicationService> serviceFactory;
+    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final PrincipalFactory principalFactory;
+    private final ObjectProvider<PrincipalFactory> principalFactory;
 
     public TokenAuthenticationEndpoint(
-        final CasConfigurationProperties casProperties,
-        final PrincipalResolver principalResolver,
-        final ServicesManager servicesManager,
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        final ServiceFactory<WebApplicationService> serviceFactory,
-        final PrincipalFactory principalFactory) {
-        super(casProperties);
+        final ObjectProvider<CasConfigurationProperties> casProperties,
+        final ObjectProvider<PrincipalResolver> principalResolver,
+        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+        final ObjectProvider<PrincipalFactory> principalFactory) {
+        super(casProperties.getObject());
         this.principalResolver = principalResolver;
         this.servicesManager = servicesManager;
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
@@ -72,12 +73,12 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
     })
     public Map<?, ?> produceToken(@Selector final String username,
                                   final String service) {
-        val selectedService = serviceFactory.createService(service);
+        val selectedService = serviceFactory.getObject().createService(service);
         val registeredService = NumberUtils.isCreatable(service)
-            ? servicesManager.findServiceBy(Long.parseLong(service))
-            : servicesManager.findServiceBy(selectedService);
-        val principal = principalResolver.resolve(new BasicIdentifiableCredential(username),
-            Optional.of(principalFactory.createPrincipal(username)),
+            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+            : servicesManager.getObject().findServiceBy(selectedService);
+        val principal = principalResolver.getObject().resolve(new BasicIdentifiableCredential(username),
+            Optional.of(principalFactory.getObject().createPrincipal(username)),
             Optional.empty(), Optional.of(selectedService));
         val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         val audit = AuditableContext.builder()
@@ -85,7 +86,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
             .authentication(authentication)
             .registeredService(registeredService)
             .build();
-        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
         accessResult.throwExceptionIfNeeded();
         val token = TokenAuthenticationSecurity.forRegisteredService(registeredService).generateTokenFor(authentication);
         return Map.of("registeredService", registeredService, "token", token);
@@ -105,20 +106,20 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
     })
     public Map<?, ?> validateToken(@Selector final String token,
                                   final String service) {
-        val selectedService = serviceFactory.createService(service);
+        val selectedService = serviceFactory.getObject().createService(service);
         val registeredService = NumberUtils.isCreatable(service)
-            ? servicesManager.findServiceBy(Long.parseLong(service))
-            : servicesManager.findServiceBy(selectedService);
+            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+            : servicesManager.getObject().findServiceBy(selectedService);
         val profile = TokenAuthenticationSecurity.forRegisteredService(registeredService).validateToken(token);
         Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
         val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
-        val principal = principalFactory.createPrincipal(profile.getId(), attributes);
+        val principal = principalFactory.getObject().createPrincipal(profile.getId(), attributes);
         val audit = AuditableContext.builder()
             .service(selectedService)
             .principal(principal)
             .registeredService(registeredService)
             .build();
-        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
         accessResult.throwExceptionIfNeeded();
         return Map.of("registeredService", registeredService, "principal", principal);
     }

@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +46,11 @@ import java.util.UUID;
 @RestControllerEndpoint(id = "awsSts", enableByDefault = false)
 @Slf4j
 public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint {
-    private final RestAuthenticationService restAuthenticationService;
+    private final ObjectProvider<RestAuthenticationService> restAuthenticationService;
 
-    public AmazonSecurityTokenServiceEndpoint(final CasConfigurationProperties casProperties,
-                                              final RestAuthenticationService restAuthenticationService) {
-        super(casProperties);
+    public AmazonSecurityTokenServiceEndpoint(final ObjectProvider<CasConfigurationProperties> casProperties,
+                                              final ObjectProvider<RestAuthenticationService> restAuthenticationService) {
+        super(casProperties.getObject());
         this.restAuthenticationService = restAuthenticationService;
     }
 
@@ -118,7 +119,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
 
         var authenticationResult = (AuthenticationResult) null;
         try {
-            authenticationResult = restAuthenticationService.authenticate(requestBody, request, response)
+            authenticationResult = restAuthenticationService.getObject().authenticate(requestBody, request, response)
                 .orElseThrow(AuthenticationException::new);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
