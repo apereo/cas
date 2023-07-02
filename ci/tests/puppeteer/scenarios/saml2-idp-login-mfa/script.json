@@ -3,6 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
