@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
-import org.apereo.cas.audit.JdbcAuditTrailEntity;
-import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
+import org.apereo.cas.audit.JdbcAuditTrailEntityFactory;
+import org.apereo.cas.audit.generic.JdbcAuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
@@ -14,7 +14,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -43,12 +42,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
-
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
- * This is {@link CasSupportJdbcAuditConfiguration}.
+ * This is {@link CasJdbcAuditConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -58,7 +56,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement(proxyTargetClass = false)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Audit, module = "jdbc")
 @AutoConfiguration
-public class CasSupportJdbcAuditConfiguration {
+public class CasJdbcAuditConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.jdbc.url").evenIfMissing();
 
     @Configuration(value = "CasSupportJdbcAuditEntityConfiguration", proxyBeanMethods = false)
@@ -85,15 +83,18 @@ public class CasSupportJdbcAuditConfiguration {
             final DataSource inspektrAuditTrailDataSource,
             final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
-                    val ctx = JpaConfigurationContext.builder()
+                    val dialect = casProperties.getAudit().getJdbc().getDialect();
+                    val type = new JdbcAuditTrailEntityFactory(dialect).getType();
+                    val ctx = JpaConfigurationContext
+                        .builder()
                         .jpaVendorAdapter(inspektrAuditJpaVendorAdapter)
                         .persistenceUnitName("jpaInspektrAuditContext")
                         .dataSource(inspektrAuditTrailDataSource)
-                        .packagesToScan(CollectionUtils.wrapSet(JdbcAuditTrailEntity.class.getPackage().getName()))
+                        .packagesToScan(CollectionUtils.wrapSet(type.getPackage().getName()))
                         .build();
                     return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
                 }))
@@ -131,11 +132,11 @@ public class CasSupportJdbcAuditConfiguration {
             return BeanSupplier.of(TransactionOperations.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val t = new TransactionTemplate(inspektrAuditTransactionManager);
+                    val template = new TransactionTemplate(inspektrAuditTransactionManager);
                     val jdbc = casProperties.getAudit().getJdbc();
-                    t.setIsolationLevelName(jdbc.getIsolationLevelName());
-                    t.setPropagationBehaviorName(jdbc.getPropagationBehaviorName());
-                    return t;
+                    template.setIsolationLevelName(jdbc.getIsolationLevelName());
+                    template.setPropagationBehaviorName(jdbc.getPropagationBehaviorName());
+                    return template;
                 })
                 .otherwiseProxy()
                 .get();
@@ -146,7 +147,7 @@ public class CasSupportJdbcAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSupportJdbcAuditManagerConfiguration {
         private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
-            var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
+            var tableName = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
             if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
                 tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
             }
@@ -178,8 +179,9 @@ public class CasSupportJdbcAuditConfiguration {
                     manager.setAsynchronous(jdbc.isAsynchronous());
                     manager.setColumnLength(jdbc.getColumnLength());
                     manager.setTableName(getAuditTableNameFrom(jdbc));
-                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), __ -> manager.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate()));
-                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), __ -> manager.setDateFormatterPattern(jdbc.getDateFormatterPattern()));
+                    FunctionUtils.doIfNotBlank(jdbc.getSelectSqlQueryTemplate(), manager::setSelectByDateSqlTemplate);
+                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterPattern(), manager::setDateFormatterPattern);
+                    FunctionUtils.doIfNotBlank(jdbc.getDateFormatterFunction(), manager::setDateFormatterFunction);
                     return manager;
                 })
                 .otherwiseProxy()

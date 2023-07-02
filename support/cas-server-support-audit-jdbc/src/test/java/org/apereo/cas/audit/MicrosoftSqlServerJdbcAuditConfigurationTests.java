@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link CasSupportMicrosoftSqlServerJdbcAuditConfigurationTests}.
+ * This is {@link MicrosoftSqlServerJdbcAuditConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -20,5 +20,5 @@ import org.springframework.test.context.TestPropertySource;
     })
 @EnabledIfListeningOnPort(port = 1433)
 @Tag("MsSqlServer")
-class CasSupportMicrosoftSqlServerJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
+class MicrosoftSqlServerJdbcAuditConfigurationTests extends CasJdbcAuditConfigurationTests {
 }

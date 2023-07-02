@@ -1,9 +1,8 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
+import org.apereo.cas.config.CasJdbcAuditConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingConfiguration;
-import org.apereo.cas.config.CasSupportJdbcAuditConfiguration;
-
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     CasJdbcThrottlingConfiguration.class,
-    CasSupportJdbcAuditConfiguration.class,
+    CasJdbcAuditConfiguration.class,
     CasHibernateJpaConfiguration.class,
     BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class
 }, properties = {

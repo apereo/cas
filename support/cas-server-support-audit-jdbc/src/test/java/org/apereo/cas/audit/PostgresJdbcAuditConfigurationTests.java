@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link CasSupportPostgresJdbcAuditConfigurationTests}.
+ * This is {@link PostgresJdbcAuditConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -19,5 +19,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-class CasSupportPostgresJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
+class PostgresJdbcAuditConfigurationTests extends CasJdbcAuditConfigurationTests {
 }
