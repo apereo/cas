@@ -166,8 +166,8 @@ public class FunctionUtils {
      * @param input        the input
      * @param trueFunction the true function
      */
-    public static void doIfNotBlank(final CharSequence input,
-                                    final CheckedConsumer<CharSequence> trueFunction) {
+    public static <T extends CharSequence> void doIfNotBlank(final T input,
+                                                             final CheckedConsumer<T> trueFunction) {
         try {
             if (StringUtils.isNotBlank(input)) {
                 trueFunction.accept(input);

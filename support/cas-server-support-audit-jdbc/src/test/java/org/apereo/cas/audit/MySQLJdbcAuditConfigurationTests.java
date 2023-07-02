@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link CasSupportMySQLJdbcAuditConfigurationTests}.
+ * This is {@link MySQLJdbcAuditConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -22,5 +22,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
+class MySQLJdbcAuditConfigurationTests extends CasJdbcAuditConfigurationTests {
 }

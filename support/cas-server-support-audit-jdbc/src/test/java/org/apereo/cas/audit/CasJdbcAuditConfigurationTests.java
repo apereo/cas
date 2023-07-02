@@ -4,7 +4,7 @@ import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasSupportJdbcAuditConfiguration;
+import org.apereo.cas.config.CasJdbcAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.RandomUtils;
 
@@ -27,14 +27,14 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * This is {@link CasSupportJdbcAuditConfigurationTests}.
+ * This is {@link CasJdbcAuditConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
     CasCoreAuditConfiguration.class,
-    CasSupportJdbcAuditConfiguration.class,
+    CasJdbcAuditConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
@@ -50,7 +50,7 @@ import java.util.UUID;
 @Getter
 @Tag("JDBC")
 @SuppressWarnings("JavaUtilDate")
-class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
+class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
 
     @Autowired
     @Qualifier("inspektrAuditTrailCleaner")

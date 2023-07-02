@@ -60,6 +60,13 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private String dateFormatterPattern;
 
     /**
+     * A formatter function that receives the formatted date value
+     * and the date pattern as the first and second argument.
+     * Example: {@code TO_DATE('%s', '%s')}.
+     */
+    private String dateFormatterFunction;
+    
+    /**
      * Scheduler settings to indicate how often the cleaner is reloaded.
      */
     @NestedConfigurationProperty

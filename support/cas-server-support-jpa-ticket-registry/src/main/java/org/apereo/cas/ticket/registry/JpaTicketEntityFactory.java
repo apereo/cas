@@ -16,13 +16,10 @@ import org.apereo.cas.ticket.registry.postgres.PostgresJpaTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-
 import jakarta.persistence.Table;
-
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -35,10 +32,14 @@ import java.util.Optional;
  */
 @Slf4j
 public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketEntity> {
-    private static TicketSerializationManager TICKET_SERIALIZATION_MANAGER;
 
     public JpaTicketEntityFactory(final String dialect) {
         super(dialect);
+    }
+
+    private static class ThreadSafeHolder {
+        private static final TicketSerializationManager TICKET_SERIALIZATION_MANAGER =
+            ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
     }
 
     /**
@@ -47,10 +48,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
      * @return the instance
      */
     public static TicketSerializationManager getTicketSerializationManager() {
-        if (TICKET_SERIALIZATION_MANAGER == null) {
-            TICKET_SERIALIZATION_MANAGER = ApplicationContextProvider.getApplicationContext().getBean(TicketSerializationManager.class);
-        }
-        return TICKET_SERIALIZATION_MANAGER;
+        return ThreadSafeHolder.TICKET_SERIALIZATION_MANAGER;
     }
 
     public String getEntityName() {

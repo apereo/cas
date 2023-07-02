@@ -27,11 +27,6 @@ import java.time.ZonedDateTime;
 @Setter
 public class AuditTrailEntity {
 
-    /**
-     * Audit table name.
-     */
-    public static final String AUDIT_TRAIL_TABLE_NAME = "COM_AUDIT_TRAIL";
-
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +41,7 @@ public class AuditTrailEntity {
     @Column(name = "AUD_SERVER_IP")
     private String serverIp;
 
+    @Column(name = "AUD_RESOURCE")
     private String resource;
 
     @Column(name = "AUD_ACTION")
