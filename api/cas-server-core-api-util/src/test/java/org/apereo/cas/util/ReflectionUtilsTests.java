@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.crypto.DecodableCipher;
+import org.apereo.cas.util.crypto.EncodableCipher;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,9 +27,10 @@ class ReflectionUtilsTests {
 
     @Test
     void findClassesWithAnnotationsInPackage() {
-        val tagClasses = ReflectionUtils.findClassesWithAnnotationsInPackage(Set.of(Tag.class), "org.apereo.cas");
-        assertThat(tagClasses).contains(ReflectionUtilsTests.class);
-        assertThat(tagClasses).doesNotContain(ReflectionUtils.class);
+        val tagClasses = ReflectionUtils.findClassesWithAnnotationsInPackage(Set.of(FunctionalInterface.class), "org.apereo.cas");
+        assertThat(tagClasses).contains(LogMessageSummarizer.class);
+        assertThat(tagClasses).contains(DecodableCipher.class);
+        assertThat(tagClasses).contains(EncodableCipher.class);
     }
 
     @Test
