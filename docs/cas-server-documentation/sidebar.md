@@ -592,6 +592,7 @@ layout: null
         *   [MongoDb](/cas/{{ version }}/audits/Audits-MongoDb.html)
         *   [Redis](/cas/{{ version }}/audits/Audits-Redis.html)
         *   [REST](/cas/{{ version }}/audits/Audits-REST.html)
+        *   [Custom](/cas/{{ version }}/audits/Audits-Custom.html)
 
 * [Monitoring & Statistics](#monitoroverview)
     *   [Overview](/cas/{{ version }}/monitoring/Monitoring-Statistics.html)
