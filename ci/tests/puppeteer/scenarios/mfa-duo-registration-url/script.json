@@ -6,6 +6,11 @@
   "environmentVariables": [
     "DUO_REGISTRATION_SIGNING_KEY=Rn8fXz_kmaqBHafs-JhwHW4pyWbMcI0_7mnKoBxd7CFvvsLE9RZLgLwZ_z5m8XjiyDWYAiv4hWFUf3cm-EA0nA"
   ],
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
