@@ -75,6 +75,7 @@ class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
             "1.2.3.4",
             "1.2.3.4",
             "GoogleChrome",
+            "Paris",
             Map.of());
         getAuditTrailManager().record(context);
     }

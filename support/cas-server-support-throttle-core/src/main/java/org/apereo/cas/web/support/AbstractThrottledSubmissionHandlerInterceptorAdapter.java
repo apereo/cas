@@ -204,6 +204,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
             clientInfo.getClientIpAddress(),
             clientInfo.getServerIpAddress(),
             clientInfo.getUserAgent(),
+            clientInfo.getGeoLocation(),
             clientInfo.getHeaders());
         LOGGER.debug("Recording throttled audit action [{}]", context);
         configurationContext.getAuditTrailExecutionPlan().record(context);

@@ -48,7 +48,7 @@ class GroovyAuditTrailManagerTests {
         val ctx = new AuditActionContext("casuser",
             "TEST", "TEST", "CAS", new Date(),
             "1.2.3.4", "1.2.3.4",
-            UUID.randomUUID().toString(), Map.of());
+            UUID.randomUUID().toString(), "Paris", Map.of());
         auditTrailManager.record(ctx);
     }
 }
