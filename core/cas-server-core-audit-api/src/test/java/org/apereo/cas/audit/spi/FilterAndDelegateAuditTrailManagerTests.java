@@ -41,7 +41,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     private static AuditActionContext getAuditActionContext() {
         return new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString(), Map.of());
+            "1.2.3.4", UUID.randomUUID().toString(), "London", Map.of());
     }
 
     @Test
@@ -77,7 +77,7 @@ class FilterAndDelegateAuditTrailManagerTests {
             "CAS",
             DateTimeUtils.dateOf(LocalDateTime.now(ZoneOffset.UTC).plusDays(1)),
             "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString(), Map.of());
+            "1.2.3.4", UUID.randomUUID().toString(), "London", Map.of());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);

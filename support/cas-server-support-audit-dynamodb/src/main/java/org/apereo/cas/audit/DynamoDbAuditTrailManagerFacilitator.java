@@ -135,9 +135,10 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
                     val serverIp = item.get(ColumnNames.SERVER_IP_ADDRESS.getColumnName()).s();
                     val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).s();
                     val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
+                    val geoLocation = item.get(ColumnNames.GEO_LOCATION.getColumnName()).s();
                     val time1 = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
                     return new AuditActionContext(principal, resource, actionPerformed,
-                        appCode, new Date(time1), clientIp, serverIp, userAgent, Map.of());
+                        appCode, new Date(time1), clientIp, serverIp, userAgent, geoLocation, Map.of());
                 })
             .collect(Collectors.toSet());
     }
@@ -176,6 +177,10 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
          * userAgent column.
          */
         USER_AGENT("userAgent"),
+        /**
+         * Geolocation column.
+         */
+        GEO_LOCATION("geoLocation"),
         /**
          * applicationCode column.
          */

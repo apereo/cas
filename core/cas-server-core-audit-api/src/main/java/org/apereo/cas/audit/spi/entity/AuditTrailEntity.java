@@ -52,6 +52,9 @@ public class AuditTrailEntity {
 
     @Column(name = "AUD_USERAGENT")
     private String userAgent;
+    
+    @Column(name = "AUD_GEOLOCATION")
+    private String geoLocation;
 
     @Column(name = "AUD_DATE", nullable = false)
     private ZonedDateTime recordDate;

@@ -45,6 +45,8 @@ import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditRe
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.GroovyAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
+import org.apereo.inspektr.common.spi.ClientInfoResolver;
+import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,6 +69,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This is {@link CasCoreAuditConfiguration}.
@@ -283,6 +286,8 @@ public class CasCoreAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
         public AuditTrailManagementAspect auditTrailManagementAspect(
+            @Qualifier("casAuditClientInfoResolver")
+            final ClientInfoResolver casAuditClientInfoResolver,
             @Qualifier("auditTrailRecordResolutionPlan")
             final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan,
             @Qualifier("auditablePrincipalResolver")
@@ -303,6 +308,7 @@ public class CasCoreAuditConfiguration {
                 auditFormat);
             aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
             aspect.setEnabled(casProperties.getAudit().getEngine().isEnabled());
+            aspect.setClientInfoResolver(casAuditClientInfoResolver);
             return aspect;
         }
 
@@ -313,7 +319,7 @@ public class CasCoreAuditConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AuditTrailManager.class)
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -327,6 +333,13 @@ public class CasCoreAuditConfiguration {
                 })
                 .otherwiseProxy()
                 .get();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casAuditClientInfoResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ClientInfoResolver casAuditClientInfoResolver() {
+            return new DefaultClientInfoResolver();
         }
     }
 
@@ -512,10 +525,17 @@ public class CasCoreAuditConfiguration {
                 .when(BeanCondition.on("cas.audit.slf4j.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
                     val slf4j = casProperties.getAudit().getSlf4j();
-                    val slf4jManager = new Slf4jLoggingAuditTrailManager();
-                    slf4jManager.setUseSingleLine(slf4j.isUseSingleLine());
-                    slf4jManager.setEntrySeparator(slf4j.getSinglelineSeparator());
-                    plan.registerAuditTrailManager(slf4jManager);
+                    val manager = new Slf4jLoggingAuditTrailManager();
+                    manager.setUseSingleLine(slf4j.isUseSingleLine());
+                    manager.setEntrySeparator(slf4j.getSinglelineSeparator());
+                    if (!slf4j.getAuditableFields().isEmpty()) {
+                        val fields = org.springframework.util.StringUtils.commaDelimitedListToSet(slf4j.getAuditableFields())
+                            .stream()
+                            .map(field -> AuditTrailManager.AuditableFields.valueOf(field.toUpperCase(Locale.ENGLISH)))
+                            .toList();
+                        manager.setAuditableFields(fields);
+                    }
+                    plan.registerAuditTrailManager(manager);
                 })
                 .otherwiseProxy()
                 .get();

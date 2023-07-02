@@ -35,7 +35,7 @@ public abstract class BaseAuditConfigurationTests {
         auditTrailManager.removeAll();
         this.auditActionContext = new AuditActionContext(USER, "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", "GoogleChrome", Map.of());
+            "1.2.3.4", "GoogleChrome", "London", Map.of());
         auditTrailManager.record(auditActionContext);
     }
 
