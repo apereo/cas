@@ -1,5 +1,10 @@
 {
   "dependencies": "generic,pm-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.pm.core.enabled=true",
     "--cas.authn.pm.core.password-policy-pattern=.+",
