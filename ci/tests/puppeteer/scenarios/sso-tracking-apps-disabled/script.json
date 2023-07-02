@@ -1,5 +1,10 @@
 {
   "dependencies": "reports",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.audit.engine.enabled=false",
 
