@@ -6,7 +6,7 @@ category: Authorization
 
 {% include variables.html %}
 
-# Authorization
+# Authorization & Access Management
 
 Implementing an authorization strategy to protect applications and relying 
 parties in CAS can be done using the following strategies: 

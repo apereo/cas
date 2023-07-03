@@ -22,7 +22,8 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import java.util.Date;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -31,21 +32,22 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    CasCoreAuditConfiguration.class,
-    CasJdbcAuditConfiguration.class,
-    CasHibernateJpaConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    AopAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    RefreshAutoConfiguration.class
-},
-                properties = {
-                    "cas.jdbc.show-sql=false",
-                    "cas.audit.jdbc.column-length=-1",
-                    "cas.audit.jdbc.schedule.enabled=true",
-                    "cas.audit.jdbc.asynchronous=false"
-                })
+@SpringBootTest(
+    classes = {
+        CasCoreAuditConfiguration.class,
+        CasJdbcAuditConfiguration.class,
+        CasHibernateJpaConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        AopAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        RefreshAutoConfiguration.class
+    },
+    properties = {
+        "cas.jdbc.show-sql=false",
+        "cas.audit.jdbc.column-length=-1",
+        "cas.audit.jdbc.schedule.enabled=true",
+        "cas.audit.jdbc.asynchronous=false"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Getter
 @Tag("JDBC")
@@ -71,7 +73,7 @@ class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
             UUID.randomUUID().toString(),
             RandomUtils.randomAlphabetic(10_000),
             "TEST",
-            "CAS", new Date(),
+            "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("1.2.3.4",
                 "1.2.3.4",
                 "GoogleChrome",

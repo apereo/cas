@@ -39,7 +39,8 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Date;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -100,7 +101,7 @@ class MongoDbHealthIndicatorTests {
     public void bootstrap() {
         val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
-            "action", "appcode", new Date(),
+            "action", "appcode", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("clientIp", "serverIp", UUID.randomUUID().toString(), "Paris")));
     }
 

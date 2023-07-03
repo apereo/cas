@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -179,10 +178,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      *
      * @return the failure in range cut off date
      */
-    protected Date getFailureInRangeCutOffDate() {
+    protected ZonedDateTime getFailureInRangeCutOffDate() {
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
-        val cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getRangeSeconds());
-        return DateTimeUtils.timestampOf(cutoff);
+        return ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getRangeSeconds());
     }
 
     /**
