@@ -11,19 +11,31 @@ If you wish to create your own auditor implementation, you will need to
 design an `AuditTrailManager` component and register it with CAS:
 
 ```java
-package org.apereo.cas;
+@Bean
+public AuditTrailExecutionPlanConfigurer myAuditConfigurer() {
+    return plan -> {
+        var mgr = new MyAuditTrailManager();
+        plan.registerAuditTrailManager(mgr);
+        
+        /*
+            Optionally, define your own action/resource resolvers 
+            for Spring beans with execution points that are tagged with @Audit annotation.
+            
+            plan.registerAuditActionResolver("MyAction", new MyAuditActionResolver());
+            plan.registerAuditResourceResolver("MyResource", new MyAuditResourceResolver());
+        */
+    };
+}
+```
 
-@AutoConfiguration
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyAuditConfiguration {
+Audit records are typically tagged and recorded with client and server IP addresses. If you need to override the default
+behavior and extract the IP addresses based on custom logic, you will need to
+design an `ClientInfoResolver` component and register it with CAS:
 
-    @Bean
-    public AuditTrailExecutionPlanConfigurer myAuditConfigurer() {
-        return plan -> {
-            var mgr = new MyAuditTrailManager();
-            plan.registerAuditTrailManager(mgr);
-        };
-    }
+```java
+@Bean
+public ClientInfoResolver casAuditClientInfoResolver() {
+    return new MyClientInfoResolver();
 }
 ```
 
