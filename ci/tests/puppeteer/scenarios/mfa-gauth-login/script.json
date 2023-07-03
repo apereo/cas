@@ -5,7 +5,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.web.exposure.include=gauthCredentialRepository",
     "--management.endpoints.enabled-by-default=true",
     
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",

@@ -18,7 +18,7 @@ const path = require("path");
     
     page = await cas.newPage(browser);
     await page.setRequestInterception(true);
-
+    await cas.screenshot(page);
     page.on('request', request => {
         let data = {
             'method': 'POST',
