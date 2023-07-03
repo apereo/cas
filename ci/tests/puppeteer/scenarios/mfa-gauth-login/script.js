@@ -20,7 +20,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#token');
     await cas.assertVisibility(page, '#login');
     await cas.assertVisibility(page, '#cancel');
-    await cas.assertVisibility(page, '#register');
+    await cas.assertVisibility(page, '#registerButton');
     await cas.assertVisibility(page, '#selectDeviceButton');
 
     await browser.close();
