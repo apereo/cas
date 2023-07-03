@@ -23,7 +23,8 @@ class AuditActionContextJsonSerializerTests {
     @Test
     void verifyOperation() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", LocalDateTime.now(Clock.systemUTC()), new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
+            "CAS", LocalDateTime.now(Clock.systemUTC()),
+            new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
         val serializer = new AuditActionContextJsonSerializer();
         val result = serializer.toString(ctx);
         assertNotNull(result);
