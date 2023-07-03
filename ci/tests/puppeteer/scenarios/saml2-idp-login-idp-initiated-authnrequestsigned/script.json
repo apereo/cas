@@ -1,5 +1,10 @@
 {
   "dependencies": "saml-idp",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "conditions": {
     "docker": "true"
   },

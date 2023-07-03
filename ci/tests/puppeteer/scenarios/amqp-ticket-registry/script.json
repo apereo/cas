@@ -1,5 +1,10 @@
 {
   "dependencies": "reports,amqp-ticket-registry,pac4j-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "conditions": {
     "docker": "true"
   },

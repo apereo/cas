@@ -1,5 +1,10 @@
 {
   "dependencies": "consul-client",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "conditions": {
     "docker": "true"
   },

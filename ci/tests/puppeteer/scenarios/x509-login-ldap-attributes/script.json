@@ -1,5 +1,10 @@
 {
   "dependencies": "x509-webflow,ldap,person-directory",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "conditions": {
     "docker": "true"
   },
