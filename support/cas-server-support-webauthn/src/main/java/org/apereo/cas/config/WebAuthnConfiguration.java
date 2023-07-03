@@ -147,6 +147,7 @@ public class WebAuthnConfiguration {
                             .useTrustRootCacheFile(fidoProperties.getTrustRootCacheFile())
                             .downloadBlob(new URL(fidoProperties.getMetadataBlobUrl()))
                             .useBlobCacheFile(fidoProperties.getBlobCacheFile())
+                            .verifyDownloadsOnly(true)
                             .clock(Clock.systemUTC())
                             .build();
 
