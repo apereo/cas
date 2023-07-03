@@ -48,7 +48,7 @@ class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottle
         request.setLocalAddr("4.5.6.7");
         request.setRemoteUser("cas");
         request.addHeader("User-Agent", "Firefox");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         throttle.recordSubmissionFailure(request);
         assertFalse(throttle.getRecords().isEmpty());

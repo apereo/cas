@@ -36,7 +36,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         request.addParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
         request.setAttribute("locale", "en");

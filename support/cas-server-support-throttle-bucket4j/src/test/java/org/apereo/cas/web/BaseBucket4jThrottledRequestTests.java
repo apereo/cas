@@ -38,7 +38,7 @@ public abstract class BaseBucket4jThrottledRequestTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.100");
         request.setLocalAddr("223.456.789.200");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test

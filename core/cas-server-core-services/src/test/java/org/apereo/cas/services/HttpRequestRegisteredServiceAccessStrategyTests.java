@@ -39,7 +39,7 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
         request.setRemoteAddr("192.861.151.163");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome/Mozilla");
         request.addHeader("CustomHeader", "abcd-12-xyz#");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test

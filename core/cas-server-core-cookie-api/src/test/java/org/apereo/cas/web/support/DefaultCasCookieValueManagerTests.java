@@ -47,7 +47,7 @@ class DefaultCasCookieValueManagerTests {
         request.setRemoteAddr(CLIENT_IP);
         request.setLocalAddr(CLIENT_IP);
         request.addHeader("User-Agent", USER_AGENT);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         cookieValueManager = getCookieValueManager(new TicketGrantingCookieProperties());
     }
@@ -63,7 +63,7 @@ class DefaultCasCookieValueManagerTests {
         request.setRemoteAddr(CLIENT_IP);
         request.setLocalAddr(CLIENT_IP);
         request.removeHeader("User-Agent");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val props = new TicketGrantingCookieProperties();
         assertThrows(IllegalStateException.class,
@@ -78,7 +78,7 @@ class DefaultCasCookieValueManagerTests {
         request.setRemoteAddr(CLIENT_IP);
         request.setLocalAddr(CLIENT_IP);
         request.addHeader("User-Agent", USER_AGENT);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val props = new TicketGrantingCookieProperties();
         props.setAllowedIpAddressesPattern("^19.*.3.1\\d\\d");
@@ -87,7 +87,7 @@ class DefaultCasCookieValueManagerTests {
         assertNotNull(value);
 
         request.setRemoteAddr("198.127.3.155");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         value = mgr.obtainCookieValue(value, request);
         assertNotNull(value);
     }

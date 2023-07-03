@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -200,12 +201,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
             resource,
             actionName,
             throttle.getAppCode(),
-            DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
-            clientInfo.getClientIpAddress(),
-            clientInfo.getServerIpAddress(),
-            clientInfo.getUserAgent(),
-            clientInfo.getGeoLocation(),
-            clientInfo.getHeaders());
+            LocalDateTime.now(ZoneOffset.UTC),
+            clientInfo);
         LOGGER.debug("Recording throttled audit action [{}]", context);
         configurationContext.getAuditTrailExecutionPlan().record(context);
     }

@@ -62,7 +62,7 @@ class CasEmbeddedContainerTomcatFiltersConfigurationTests {
 
         request.setRemoteAddr("185.81.151.11");
         request.setLocalAddr("195.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         tomcatRemoteAddressFilter.getFilter().doFilter(request, response, new MockFilterChain());
         assertEquals(401, response.getStatus());

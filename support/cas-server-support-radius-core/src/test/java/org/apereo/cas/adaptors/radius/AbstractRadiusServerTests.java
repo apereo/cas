@@ -35,7 +35,7 @@ public abstract class AbstractRadiusServerTests {
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test

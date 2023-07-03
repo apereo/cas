@@ -82,7 +82,7 @@ class CasEventsReportEndpointTests {
         request.setRemoteAddr("223.456.789.100");
         request.setLocalAddr("223.456.789.100");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test

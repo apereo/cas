@@ -27,7 +27,7 @@ class ClientInfoAuthenticationMetaDataPopulatorTests {
         request.setRemoteAddr("223.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val populator = new ClientInfoAuthenticationMetaDataPopulator();
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();

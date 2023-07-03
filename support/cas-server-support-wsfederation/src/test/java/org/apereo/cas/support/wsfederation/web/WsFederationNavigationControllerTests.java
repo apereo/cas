@@ -54,7 +54,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val config = wsFederationConfigurations.toList().get(0);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice");

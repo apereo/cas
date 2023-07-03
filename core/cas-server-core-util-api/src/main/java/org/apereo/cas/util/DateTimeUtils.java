@@ -136,7 +136,7 @@ public class DateTimeUtils {
      * @param time the time
      * @return the local date
      */
-    public static LocalDate localDateTime(final long time) {
+    public static LocalDate localDateOf(final long time) {
         return LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
     }
 

@@ -86,7 +86,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @AfterEach
@@ -139,7 +139,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         val context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         getThrottle().preHandle(request, response, getThrottle());
 
         try {

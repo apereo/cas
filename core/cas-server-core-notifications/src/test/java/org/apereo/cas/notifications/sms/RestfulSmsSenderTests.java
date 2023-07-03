@@ -62,7 +62,7 @@ class RestfulSmsSenderTests {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("185.86.151.11");
             request.setLocalAddr("185.88.151.11");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             webServer = new MockWebServer(8232,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -109,7 +109,7 @@ class RestfulSmsSenderTests {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("185.86.151.11");
             request.setLocalAddr("185.88.151.11");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             webServer = new MockWebServer(8132,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),

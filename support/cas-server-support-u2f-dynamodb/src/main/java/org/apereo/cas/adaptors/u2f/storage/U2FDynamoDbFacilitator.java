@@ -216,7 +216,7 @@ public class U2FDynamoDbFacilitator {
                         .id(id)
                         .username(username)
                         .record(record)
-                        .createdDate(DateTimeUtils.localDateTime(time))
+                        .createdDate(DateTimeUtils.localDateOf(time))
                         .build();
                 })
             .sorted(Comparator.comparing(U2FDeviceRegistration::getCreatedDate))

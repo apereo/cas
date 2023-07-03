@@ -70,7 +70,7 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("172.217.11.174");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }

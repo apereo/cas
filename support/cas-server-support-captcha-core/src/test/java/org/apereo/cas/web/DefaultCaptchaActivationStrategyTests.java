@@ -68,7 +68,7 @@ class DefaultCaptchaActivationStrategyTests {
             .setActivateForIpAddressPattern("127.+");
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         assertFalse(strategy.shouldActivate(context, properties).isPresent());
     }
 
@@ -81,7 +81,7 @@ class DefaultCaptchaActivationStrategyTests {
         val context = getRequestContext(request);
         request.setRemoteAddr("185.86.151.99");
         request.setLocalAddr("195.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());

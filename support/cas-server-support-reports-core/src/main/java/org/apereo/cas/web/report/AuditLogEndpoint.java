@@ -105,7 +105,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
         return getAuditLog(interval)
             .stream()
             .filter(e -> StringUtils.isBlank(actionPerformed) || e.getActionPerformed().matches(actionPerformed))
-            .filter(e -> StringUtils.isBlank(clientIpAddress) || e.getClientIpAddress().matches(clientIpAddress))
+            .filter(e -> StringUtils.isBlank(clientIpAddress) || e.getClientInfo().getClientIpAddress().matches(clientIpAddress))
             .filter(e -> StringUtils.isBlank(principal) || e.getPrincipal().matches(principal))
             .filter(e -> StringUtils.isBlank(resourceOperatedUpon) || e.getResourceOperatedUpon().matches(resourceOperatedUpon))
             .collect(Collectors.toSet());

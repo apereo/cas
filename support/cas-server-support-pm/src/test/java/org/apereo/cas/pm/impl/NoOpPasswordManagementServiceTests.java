@@ -41,7 +41,7 @@ class NoOpPasswordManagementServiceTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        val clientInfo = new ClientInfo(request);
+        val clientInfo = ClientInfo.from(request);
         ClientInfoHolder.setClientInfo(clientInfo);
 
         val properties = new PasswordManagementProperties();

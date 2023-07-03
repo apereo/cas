@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,11 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("RestfulApi")
 @Getter
-@SuppressWarnings("JavaUtilDate")
 class RestAuditTrailManagerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -67,7 +67,8 @@ class RestAuditTrailManagerTests {
     @Test
     void verifyGet() throws Exception {
         val audit = new AuditActionContext("casuser", "resource", "action",
-            "CAS", new Date(), "123.456.789.000", "123.456.789.000", "GoogleChrome", "London", Map.of());
+            "CAS", LocalDateTime.now(Clock.systemUTC()),
+            new ClientInfo("123.456.789.000", "123.456.789.000", "GoogleChrome", "London"));
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
 
         try (val webServer = new MockWebServer(9296,

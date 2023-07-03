@@ -73,7 +73,7 @@ public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredSe
                         .filter(header -> info.getHeaders().containsKey(header.getKey()))
                         .allMatch(header -> {
                             val headerValue = info.getHeaders().get(header.getKey());
-                            return RegexUtils.find(header.getValue(), headerValue);
+                            return RegexUtils.find(header.getValue(), headerValue.toString());
                         });
                 }
                 return match;
