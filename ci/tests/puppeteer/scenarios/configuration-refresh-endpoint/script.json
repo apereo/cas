@@ -1,5 +1,10 @@
 {
   "dependencies": "core,events-configuration",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.events.core.track-configuration-modifications=false",
 

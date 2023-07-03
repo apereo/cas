@@ -1,5 +1,10 @@
 {
   "dependencies": "json-service-registry,service-registry-stream-kafka,reports",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "properties": [
     "--logging.level.org.apereo.cas=warn",
