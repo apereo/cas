@@ -53,7 +53,7 @@ class CasGoogleAnalyticsCookieGeneratorTests {
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
 
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
     
     @Test

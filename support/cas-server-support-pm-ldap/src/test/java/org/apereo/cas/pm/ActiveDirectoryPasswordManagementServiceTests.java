@@ -46,7 +46,7 @@ class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordMana
     @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
     }
 
     @Test

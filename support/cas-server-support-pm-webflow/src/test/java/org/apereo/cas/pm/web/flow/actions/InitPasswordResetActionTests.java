@@ -32,7 +32,7 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("1.2.3.4");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val context = new MockRequestContext();

@@ -67,7 +67,7 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         val ldif = IOUtils.toString(new ClassPathResource("ldap-pac4j.ldif").getInputStream(), StandardCharsets.UTF_8)

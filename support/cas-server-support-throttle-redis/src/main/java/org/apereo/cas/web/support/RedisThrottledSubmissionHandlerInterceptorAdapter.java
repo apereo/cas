@@ -49,7 +49,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
                 .map(AuditActionContext.class::cast)
                 .filter(audit ->
                     audit.getPrincipal().equalsIgnoreCase(username)
-                    && audit.getClientIpAddress().equalsIgnoreCase(remoteAddress)
+                    && audit.getClientInfo().getClientIpAddress().equalsIgnoreCase(remoteAddress)
                     && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
                     && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
                     && audit.getWhenActionWasPerformed().compareTo(getFailureInRangeCutOffDate()) >= 0)

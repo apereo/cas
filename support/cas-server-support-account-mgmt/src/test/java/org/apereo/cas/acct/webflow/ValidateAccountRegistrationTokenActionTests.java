@@ -86,7 +86,7 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
 
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         request.addParameter("username", "casuser");
         request.addParameter("email", "cas@example.org");

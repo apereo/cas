@@ -44,7 +44,7 @@ public abstract class BaseEndpointLdapAuthenticationProviderTests {
     @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         localhost.connect("localhost", LDAP_PORT);
         localhost.bind("cn=Directory Manager", "password");

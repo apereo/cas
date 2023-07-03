@@ -63,7 +63,7 @@ public class CasMongoDbThrottlingConfiguration {
             return FunctionUtils.doUnchecked(() ->
                 MAPPER.readValue(document.toJson(JsonWriterSettings.builder()
                     .outputMode(JsonMode.RELAXED)
-                    .dateTimeConverter((value, writer) -> writer.writeString(DateTimeUtils.localDateTime(value).toString()))
+                    .dateTimeConverter((value, writer) -> writer.writeString(DateTimeUtils.localDateOf(value).toString()))
                     .build()), AuditActionContext.class));
         }
     }

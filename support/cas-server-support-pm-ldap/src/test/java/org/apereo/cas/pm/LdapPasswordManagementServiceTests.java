@@ -45,7 +45,7 @@ class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServi
 
     @BeforeAll
     public static void bootstrap() throws Exception {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,

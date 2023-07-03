@@ -86,7 +86,7 @@ class CasAuthenticationEventListenerTests {
         request.setRemoteAddr(REMOTE_ADDR_IP);
         request.setLocalAddr(LOCAL_ADDR_IP);
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
@@ -103,7 +103,7 @@ class CasAuthenticationEventListenerTests {
     @Test
     void verifyCasAuthenticationWithGeo() {
         request.addHeader("geolocation", "34,45,1,12345");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val event = new CasAuthenticationTransactionFailureEvent(this,
                 CollectionUtils.wrap("error", new FailedLoginException()),

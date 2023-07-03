@@ -1,18 +1,17 @@
 package org.apereo.cas.audit.spi;
 
-import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.FilterAndDelegateAuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,8 +39,8 @@ class FilterAndDelegateAuditTrailManagerTests {
 
     private static AuditActionContext getAuditActionContext() {
         return new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString(), "London", Map.of());
+            "CAS", LocalDateTime.now(Clock.systemUTC()),
+            new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
     }
 
     @Test
@@ -75,9 +74,8 @@ class FilterAndDelegateAuditTrailManagerTests {
     void verifyAuditRecordsSinceDate() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS",
-            DateTimeUtils.dateOf(LocalDateTime.now(ZoneOffset.UTC).plusDays(1)),
-            "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString(), "London", Map.of());
+            LocalDateTime.now(ZoneOffset.UTC).plusDays(1),
+            new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);

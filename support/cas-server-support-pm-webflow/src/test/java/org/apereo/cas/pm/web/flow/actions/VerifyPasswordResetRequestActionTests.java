@@ -55,7 +55,7 @@ class VerifyPasswordResetRequestActionTests {
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val serverPrefix = casProperties.getServer().getPrefix();
@@ -82,7 +82,7 @@ class VerifyPasswordResetRequestActionTests {
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val serverPrefix = casProperties.getServer().getPrefix();
@@ -119,7 +119,7 @@ class VerifyPasswordResetRequestActionTests {
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val tgt = new MockTicketGrantingTicket("casuser");
             ticketRegistry.addTicket(tgt);
@@ -139,7 +139,7 @@ class VerifyPasswordResetRequestActionTests {
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val serverPrefix = casProperties.getServer().getPrefix();
@@ -164,7 +164,7 @@ class VerifyPasswordResetRequestActionTests {
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("noquestions").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);

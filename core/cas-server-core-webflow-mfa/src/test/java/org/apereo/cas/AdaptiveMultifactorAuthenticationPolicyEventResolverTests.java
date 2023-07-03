@@ -73,7 +73,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     @Test
     void verifyOperationNeedsMfa() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
@@ -83,7 +83,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     void verifyOperationNeedsMfaByGeo() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());

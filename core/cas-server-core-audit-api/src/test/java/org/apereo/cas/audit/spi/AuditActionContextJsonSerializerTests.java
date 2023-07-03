@@ -2,11 +2,12 @@ package org.apereo.cas.audit.spi;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-import java.util.Map;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,13 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-@SuppressWarnings("JavaUtilDate")
 class AuditActionContextJsonSerializerTests {
     @Test
     void verifyOperation() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4", UUID.randomUUID().toString(), "USA", Map.of());
+            "CAS", LocalDateTime.now(Clock.systemUTC()), new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
         val serializer = new AuditActionContextJsonSerializer();
         val result = serializer.toString(ctx);
         assertNotNull(result);

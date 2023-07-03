@@ -87,7 +87,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
         request.setLocalAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());

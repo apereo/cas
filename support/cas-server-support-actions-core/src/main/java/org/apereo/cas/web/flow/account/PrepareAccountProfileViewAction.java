@@ -124,9 +124,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
         private final String json;
 
         AccountAuditActionContext(final AuditActionContext context) {
-            super(context.getPrincipal(), context.getResourceOperatedUpon(), context.getActionPerformed(),
-                context.getApplicationCode(), context.getWhenActionWasPerformed(), context.getClientIpAddress(),
-                context.getServerIpAddress(), context.getUserAgent(), context.getGeoLocation(), context.getHeaders());
+            super(context);
             this.json = FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
         }
     }

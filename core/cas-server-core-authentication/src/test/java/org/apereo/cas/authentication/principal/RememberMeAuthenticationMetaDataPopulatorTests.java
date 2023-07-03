@@ -61,7 +61,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties()
@@ -78,7 +78,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties()
@@ -93,7 +93,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties()

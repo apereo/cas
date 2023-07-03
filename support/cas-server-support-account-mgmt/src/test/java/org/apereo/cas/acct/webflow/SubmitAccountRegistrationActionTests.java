@@ -67,7 +67,7 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");
         request.setLocalAddr("127.0.0.1");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val context = new MockRequestContext();
         request.addParameter("username", "casuser");

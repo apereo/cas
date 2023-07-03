@@ -60,7 +60,7 @@ class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTes
         request.setLocalAddr("295.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         request.addParameter(OAuth20Constants.ACR_VALUES, TestMultifactorAuthenticationProvider.ID);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));

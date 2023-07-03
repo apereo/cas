@@ -58,7 +58,7 @@ class SendTicketGrantingTicketActionTests {
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
             request.addParameter(WebUtils.PUBLIC_WORKSTATION_ATTRIBUTE, "true");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val response = new MockHttpServletResponse();
             request.addHeader("User-Agent", "Test");
@@ -103,7 +103,7 @@ class SendTicketGrantingTicketActionTests {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val response = new MockHttpServletResponse();
             request.addHeader("User-Agent", "Test");
@@ -122,7 +122,7 @@ class SendTicketGrantingTicketActionTests {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val response = new MockHttpServletResponse();
             request.addHeader("User-Agent", "Test");
@@ -161,7 +161,7 @@ class SendTicketGrantingTicketActionTests {
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             request.setCookies(new Cookie("TGT", "test5"));
@@ -179,7 +179,7 @@ class SendTicketGrantingTicketActionTests {
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-            ClientInfoHolder.setClientInfo(new ClientInfo(request));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val svc = mock(WebApplicationService.class);
             when(svc.getId()).thenReturn("TestSsoFalse");

@@ -28,6 +28,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -99,8 +100,8 @@ class MongoDbHealthIndicatorTests {
     public void bootstrap() {
         val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
-            "action", "appcode", new Date(), "clientIp",
-            "serverIp", UUID.randomUUID().toString(), "Paris", Map.of()), "monitor");
+            "action", "appcode", new Date(),
+            new ClientInfo("clientIp", "serverIp", UUID.randomUUID().toString(), "Paris")));
     }
 
     @Test

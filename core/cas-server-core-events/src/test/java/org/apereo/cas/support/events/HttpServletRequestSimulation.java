@@ -80,7 +80,7 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
             request.setLocalAddr(IP2);
         }
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());
         applicationContext.publishEvent(event);
