@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -182,6 +183,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 .jsonFactory(getJsonFactory())
                 .build()
                 .toObjectMapper()
+                .registerModule(new JavaTimeModule())
                 .registerModule(new ParameterNamesModule());
             configureObjectMapper(objectMapper);
         }
