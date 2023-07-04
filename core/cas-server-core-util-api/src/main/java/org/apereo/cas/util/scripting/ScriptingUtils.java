@@ -56,6 +56,16 @@ public class ScriptingUtils {
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(FILE_PATTERN, "groovy"));
 
     /**
+     * Is groovy script?.
+     *
+     * @param script the script
+     * @return true/false
+     */
+    public static boolean isGroovyScript(final String script) {
+        return isInlineGroovyScript(script) || isExternalGroovyScript(script);
+    }
+
+    /**
      * Is inline groovy script ?.
      *
      * @param script the script
@@ -259,8 +269,8 @@ public class ScriptingUtils {
             if (!clazz.equals(Void.class)) {
                 return getGroovyScriptExecutionResultOrThrow(clazz, result);
             }
-        } catch (final Exception e) {
-            var cause = e instanceof InvokerInvocationException ? e.getCause() : e;
+        } catch (final Throwable e) {
+            val cause = e instanceof InvokerInvocationException ? e.getCause() : e;
             if (failOnError) {
                 throw cause;
             }
@@ -405,25 +415,6 @@ public class ScriptingUtils {
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-        }
-        return null;
-    }
-
-    /**
-     * Gets script engine name.
-     *
-     * @param scriptFile the script file
-     * @return the script engine name
-     */
-    public static String getScriptEngineName(final String scriptFile) {
-        if (scriptFile.endsWith(".py")) {
-            return "python";
-        }
-        if (scriptFile.endsWith(".js")) {
-            return "js";
-        }
-        if (scriptFile.endsWith(".groovy")) {
-            return "groovy";
         }
         return null;
     }

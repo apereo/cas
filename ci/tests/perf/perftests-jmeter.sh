@@ -80,7 +80,8 @@ if [ $retVal == 0 ]; then
 
   # -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n
   echo "Properties: ${casProperties}"
-  java -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
+  java -Dlog.console.stacktraces=true \
+      -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
       --server.ssl.key-store=${keystore} \
       --cas.service-registry.core.init-from-json=true \
       --cas.server.name=https://localhost:8443 \
@@ -90,7 +91,7 @@ if [ $retVal == 0 ]; then
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
       --management.endpoints.enabled-by-default=true \
-      --logging.level.org.apereo.cas=debug ${casProperties} &
+      --logging.level.org.apereo.cas=info ${casProperties} &
   pid=$!
   printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do

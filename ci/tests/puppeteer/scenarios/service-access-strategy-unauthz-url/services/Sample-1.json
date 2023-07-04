@@ -1,0 +1,14 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://.+github.io.*",
+  "id": 1,
+  "name": "Sample",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "unauthorizedRedirectUrl" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/UnauthzUrl.groovy",
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "super-.+-user" ] ]
+    }
+  }
+}

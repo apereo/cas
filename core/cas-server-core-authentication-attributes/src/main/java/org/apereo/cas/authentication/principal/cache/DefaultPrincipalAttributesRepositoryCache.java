@@ -40,7 +40,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
      * @return the string
      */
     private static String buildRegisteredServiceCacheKey(final RegisteredService registeredService) {
-        val key = registeredService.getId() + '@' + registeredService.getName();
+        val key = registeredService.getId() + "@" + registeredService.getName();
         return DigestUtils.sha512(key);
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,23 +10,31 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.io.Serial;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -125,7 +135,10 @@ public class JacksonObjectMapperFactory {
             .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .findAndRegisterModules();
+            .findAndRegisterModules()
+            .registerModule(getCasJacksonModule())
+            .registerModule(new JavaTimeModule())
+            .registerModule(new ParameterNamesModule());
 
         if (isDefaultTypingEnabled()) {
             obm.activateDefaultTyping(obm.getPolymorphicTypeValidator(),
@@ -142,5 +155,32 @@ public class JacksonObjectMapperFactory {
             return XmlMapper.builder((XmlFactory) jsonFactory);
         }
         return JsonMapper.builder(jsonFactory);
+    }
+
+    private static Module getCasJacksonModule() {
+        val casModule = new SimpleModule();
+        casModule.addDeserializer(URI.class, new URIDeserializer());
+        return casModule;
+    }
+
+    private static class URIDeserializer extends StdDeserializer<URI> {
+        @Serial
+        private static final long serialVersionUID = -7547162569192932415L;
+
+        URIDeserializer() {
+            this(null);
+        }
+
+        URIDeserializer(final Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public URI deserialize(final JsonParser jp, final DeserializationContext ctxt) {
+            return FunctionUtils.doUnchecked(() -> {
+                val value = SpringExpressionLanguageValueResolver.getInstance().resolve(jp.getText().trim());
+                return StringUtils.isNotBlank(value) ? new URI(value) : null;
+            });
+        }
     }
 }

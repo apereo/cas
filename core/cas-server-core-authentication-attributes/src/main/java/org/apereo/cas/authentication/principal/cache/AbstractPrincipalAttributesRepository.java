@@ -161,7 +161,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
 
     /**
      * Obtains attributes first from the repository by calling
-     * {@link IPersonAttributeDao#getPerson(String, org.apereo.services.persondir.IPersonAttributeDaoFilter)}.
+     * {@link IPersonAttributeDao#getPerson(String)}.
      *
      * @param principal the person to locate in the attribute repository
      * @return the map of attributes
