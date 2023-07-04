@@ -9,7 +9,7 @@ const assert = require("assert");
     await login(page, "https://apereo.github.io", "mfa-duo");
     await page.waitForTimeout(2000);
 
-    await login(page, "https://httpbin.org/anything/open", "mfa-duo-alt");
+    await login(page, "https://localhost:9859/anything/open", "mfa-duo-alt");
     await page.waitForTimeout(2000);
 
     await browser.close();
