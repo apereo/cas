@@ -1,5 +1,10 @@
 {
   "dependencies": "passwordless-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.use-single-line=true",
