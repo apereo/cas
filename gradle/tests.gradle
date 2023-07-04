@@ -156,6 +156,49 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     }
 }
 
+if (rootProject.tasks.findByName("puppeteerNativeScenarios") == null) {
+    rootProject.tasks.register("puppeteerNativeScenarios") {
+        description = "Display all available native puppeteer scenarios"
+
+        def puppeteerScenariosFrom = project.providers.gradleProperty("puppeteerScenariosFrom").getOrNull()
+        def puppeteerScenariosTo = project.providers.gradleProperty("puppeteerScenariosTo").getOrNull()
+        def scenariosDirectory = rootProject.file("ci/tests/puppeteer/scenarios")
+
+        doLast {
+            def scenarios = []
+            def pattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+
+            scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
+                def scriptFile = new File("ci/tests/puppeteer/scenarios/" + it.getName(), "script.json")
+                if (scriptFile.exists()) {
+                    def json = new groovy.json.JsonSlurper().parseText(scriptFile.text)
+                    if (json.requirements && json.requirements.graalvm) {
+                        if (Boolean.valueOf(json.requirements.graalvm.enabled)) {
+                            scenarios += it.getName()
+                        }
+                    }
+                }
+            }
+
+            Collections.sort(scenarios)
+            if (scenarios != null && puppeteerScenariosFrom != null && puppeteerScenariosTo != null) {
+                def fromScenario = Integer.parseInt(puppeteerScenariosFrom)
+                def toScenario = Integer.parseInt(puppeteerScenariosTo)
+                if (toScenario > scenarios.size())
+                    toScenario = scenarios.size()
+                if (scenarios.size() >= fromScenario) {
+                    scenarios = scenarios.subList(fromScenario, toScenario)
+                } else {
+                    scenarios = []
+                }
+            }
+//            println scenarios.size()
+            println(groovy.json.JsonOutput.toJson(scenarios))
+        }
+    }
+}
+
 TestCategories.values().each({ category ->
     def sourceTestDirs = project.sourceSets.test.java.srcDirs
     def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file('jacoco/jacocoTest.exec').get().asFile

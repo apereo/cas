@@ -92,11 +92,11 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-${{ github.sha }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - id: print-scenarios
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerNativeScenarios | jq
       - id: get-scenarios255
-        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
+        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerNativeScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
       - id: get-scenarios511
-        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
+        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerNativeScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
 
   ##########################################################################
   puppeteer-tests-255:
