@@ -191,6 +191,16 @@ function generateSidebarLinksForActiveVersion() {
   });
 }
 
+function toggleDarkMode() {
+    let theme = $("html").attr("data-bs-theme");
+    console.log("Current theme: " + theme);
+    if (theme === "dark") {
+      $("html").attr('data-bs-theme', 'light');
+    } else {
+      $("html").attr('data-bs-theme', 'dark');
+    }
+}
+
 function generateToolbarIcons() {
   var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
   var activeVersion = getActiveDocumentationVersionInView(true);
@@ -208,6 +218,8 @@ function generateToolbarIcons() {
   if (editablePage == "") {
     editablePage = "index.md";
   }
+
+  $('#toolbarIcons').append("<a href='javascript:toggleDarkMode()'><i class='fa fa-moon' title='See this page running on localhost'></i></a>");
 
   let href = location.href.replace("https://apereo.github.io/cas", "http://localhost:4000");
   $('#toolbarIcons').append("<a href='" + href + "'><i class='fab fa-codepen' title='See this page running on localhost'></i></a>");
