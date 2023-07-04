@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +15,10 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -178,9 +175,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      *
      * @return the failure in range cut off date
      */
-    protected ZonedDateTime getFailureInRangeCutOffDate() {
+    protected LocalDateTime getFailureInRangeCutOffDate() {
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getFailure();
-        return ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getRangeSeconds());
+        return LocalDateTime.now(ZoneOffset.UTC).minusSeconds(throttle.getRangeSeconds());
     }
 
     /**
@@ -220,7 +217,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         final AuditActionContext context) {
         return ThrottledSubmission.builder()
             .key(UUID.randomUUID().toString())
-            .value(DateTimeUtils.zonedDateTimeOf(context.getWhenActionWasPerformed()))
+            .value(context.getWhenActionWasPerformed().atZone(ZoneOffset.UTC))
             .build();
     }
 }

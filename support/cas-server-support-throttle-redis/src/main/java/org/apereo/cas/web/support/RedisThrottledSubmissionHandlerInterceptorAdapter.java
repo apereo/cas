@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("JavaUtilDate")
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final transient CasRedisTemplate<String, Object> redisTemplate;
+    private final CasRedisTemplate<String, Object> redisTemplate;
 
     private final long scanCount;
 
@@ -52,7 +52,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
                     && audit.getClientInfo().getClientIpAddress().equalsIgnoreCase(remoteAddress)
                     && audit.getActionPerformed().equalsIgnoreCase(throttle.getFailure().getCode())
                     && audit.getApplicationCode().equalsIgnoreCase(throttle.getCore().getAppCode())
-                    && audit.getWhenActionWasPerformed().isAfter(getFailureInRangeCutOffDate().toLocalDateTime()))
+                    && audit.getWhenActionWasPerformed().isAfter(getFailureInRangeCutOffDate()))
                 .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed).reversed())
                 .limit(2)
                 .map(this::toThrottledSubmission)

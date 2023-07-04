@@ -68,7 +68,7 @@ public class CasSupportMongoDbAuditConfiguration {
             return FunctionUtils.doUnchecked(() ->
                 MAPPER.readValue(document.toJson(JsonWriterSettings.builder()
                     .outputMode(JsonMode.RELAXED)
-                    .dateTimeConverter((value, writer) -> writer.writeString(DateTimeUtils.localDateOf(value).toString()))
+                    .dateTimeConverter((value, writer) -> writer.writeString(DateTimeUtils.localDateTimeOf(value).toString()))
                     .build()), AuditActionContext.class));
         }
     }
