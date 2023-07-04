@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client3",
   "clientSecret": "secret3",
-  "serviceId": "^https://httpbin.org/anything/sample3",
+  "serviceId": "^https://localhost:9859/anything/sample3",
   "name": "Sample",
   "id": 3,
   "scopes" : [ "java.util.HashSet", [ "email", "profile" ] ],

@@ -1,5 +1,8 @@
 {
   "dependencies": "core",
+  "conditions": {
+    "docker": "true"
+  },
   "requirements": {
     "graalvm": {
       "enabled": true
@@ -11,5 +14,6 @@
     "--cas.ticket.st.time-to-kill-in-seconds=45",
     "--cas.audit.engine.enabled=true",
     "--cas.service-registry.core.init-from-json=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

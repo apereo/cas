@@ -6,21 +6,21 @@ const assert = require('assert');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    let url1 = "https://httpbin.org/anything/sample1";
+    let url1 = "https://localhost:9859/anything/sample1";
     await cas.logg(`Trying with URL ${url1}`);
     let payload = await getPayload(page, url1, "client1", "secret1");
     let decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub === "CAS@EXAMPLE.ORG");
     assert(decoded["preferred_username"] === "CAS@EXAMPLE.ORG");
 
-    let url2 = "https://httpbin.org/anything/sample2";
+    let url2 = "https://localhost:9859/anything/sample2";
     await cas.logg(`Trying with URL ${url2}`);
     payload = await getPayload(page, url2, "client2", "secret2");
     decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub === "CASSSO");
     assert(decoded["preferred_username"] === "CASSSO");
 
-    let url3 = "https://httpbin.org/anything/sample3";
+    let url3 = "https://localhost:9859/anything/sample3";
     await cas.logg(`Trying with URL ${url3}`);
     payload = await getPayload(page, url3, "client3", "secret3");
     decoded = await cas.decodeJwt(payload.id_token);

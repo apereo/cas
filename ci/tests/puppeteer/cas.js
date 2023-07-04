@@ -431,18 +431,21 @@ exports.shutdownCas = async (baseUrl) => {
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
+    console.log(`Checking ${header} to start with ${value}`);
     assert(header.startsWith(value));
 };
 
 exports.assertInnerTextContains = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
+    console.log(`Checking ${header} to contain ${value}`);
     assert(header.includes(value));
 };
 
 exports.assertInnerTextDoesNotContain = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
+    console.log(`Checking ${header} to contain ${value}`);
     assert(!header.includes(value));
-}
+};
 
 exports.assertInnerText = async (page, selector, value) => {
     const header = await this.innerText(page, selector);
