@@ -5,12 +5,12 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await executeRequest(page, "https://httpbin.org/anything/1", "groupMembership1", "STUD");
-    await executeRequest(page, "https://httpbin.org/anything/2", "groupMembership2", "ADMN");
-    await executeRequest(page, "https://httpbin.org/anything/3", "groupMembership3", "FACULTY");
-    await executeRequest(page, "https://httpbin.org/anything/4", "groupMembership4", "COURSE-H101");
-    await executeRequest(page, "https://httpbin.org/anything/5", "COURSE", "CHEMISTRY-101");
-    await executeRequest(page, "https://httpbin.org/anything/6", "COURSE", "SOFTENG-101");
+    await executeRequest(page, "https://localhost:9859/anything/1", "groupMembership1", "STUD");
+    await executeRequest(page, "https://localhost:9859/anything/2", "groupMembership2", "ADMN");
+    await executeRequest(page, "https://localhost:9859/anything/3", "groupMembership3", "FACULTY");
+    await executeRequest(page, "https://localhost:9859/anything/4", "groupMembership4", "COURSE-H101");
+    await executeRequest(page, "https://localhost:9859/anything/5", "COURSE", "CHEMISTRY-101");
+    await executeRequest(page, "https://localhost:9859/anything/6", "COURSE", "SOFTENG-101");
     await browser.close();
 })();
 
