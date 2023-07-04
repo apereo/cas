@@ -82,14 +82,14 @@
 
                     <td class="mdc-data-table__cell"><code th:utext="${entry.actionPerformed}">Value</code></td>
                     <td class="mdc-data-table__cell"
-                        th:utext="${#dates.format(entry.whenActionWasPerformed, 'MMMM dd, yyyy')}">Value
+                        th:utext="${@casThymeleafTemplatesDirector.format(entry.whenActionWasPerformed, 'MMMM dd, yyyy')}">Value
                     </td>
                     <td class="mdc-data-table__cell"
                         th:utext="${entry.resourceOperatedUpon}">Value
                     </td>
-                    <td class="mdc-data-table__cell" th:utext="${entry.clientIpAddress}">Value</td>
+                    <td class="mdc-data-table__cell" th:utext="${entry.clientInfo.clientIpAddress}">Value</td>
                     <td class="mdc-data-table__cell"
-                        th:utext="${entry.userAgent}">Value
+                        th:utext="${entry.clientInfo.userAgent}">Value
                     </td>
                     <td class="mdc-data-table__cell">
                         <button type="button" class="btn btn-link" name="viewAuditEntryDetails">

@@ -11,6 +11,9 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -104,4 +107,16 @@ public class CasThymeleafTemplatesDirector {
         }
         return StringUtils.EMPTY;
     }
+
+    /**
+     * Format.
+     *
+     * @param dateTime the date time
+     * @param pattern  the pattern
+     * @return the string
+     */
+    public String format(final LocalDateTime dateTime, final String pattern) {
+        return dateTime.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
+    }
+
 }

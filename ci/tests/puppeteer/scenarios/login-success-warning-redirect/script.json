@@ -1,5 +1,13 @@
 {
   "dependencies": "core",
+  "conditions": {
+    "docker": "true"
+  },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -11,5 +19,6 @@
 
     "--spring.thymeleaf.cache=true",
     "--cas.view.template-prefixes=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/templates"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
