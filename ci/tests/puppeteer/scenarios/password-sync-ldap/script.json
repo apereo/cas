@@ -3,6 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "environmentVariables": [
     "CAS_LDAP_BIND_DN=cn=Directory Manager"
   ],

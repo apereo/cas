@@ -1,5 +1,10 @@
 {
   "dependencies": "u2f",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--logging.level.org.apereo.cas=debug",
 

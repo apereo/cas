@@ -1,5 +1,10 @@
 {
   "dependencies": "ws-idp",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.cn=CAS",
     "--cas.authn.attribute-repository.stub.attributes.givenName=casuser",

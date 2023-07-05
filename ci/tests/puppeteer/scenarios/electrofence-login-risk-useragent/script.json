@@ -34,7 +34,7 @@
     "--cas.authn.adaptive.risk.response.mail.subject=CasRiskyAuthN"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
-  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh",
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
   "SPRING_APPLICATION_JSON": {
     "cas": {
       "authn": {

@@ -1,5 +1,10 @@
 {
   "dependencies": "throttle,oauth-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
