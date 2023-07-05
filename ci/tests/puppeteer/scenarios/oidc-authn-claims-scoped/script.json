@@ -45,8 +45,5 @@
     "--cas.ticket.registry.mongo.user-id=root",
     "--cas.ticket.registry.mongo.password=secret"
   ],
-  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-
-
-

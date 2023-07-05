@@ -3,6 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
     "--cas.authn.saml-idp.core.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-gauth",

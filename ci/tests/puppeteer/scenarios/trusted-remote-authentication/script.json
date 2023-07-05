@@ -1,5 +1,10 @@
 {
   "dependencies": "trusted-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.trusted.remote-principal-header=customprincipal",
     "--cas.authn.trusted.attribute-header-patterns=ATTR_(.+)->VAL_(.+)"

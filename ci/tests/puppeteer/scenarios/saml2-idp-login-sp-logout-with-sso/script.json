@@ -3,6 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",

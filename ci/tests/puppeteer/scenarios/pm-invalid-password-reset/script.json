@@ -1,5 +1,10 @@
 {
   "dependencies": "pm-webflow",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.server.name=https://localhost:8443",

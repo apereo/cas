@@ -1,5 +1,10 @@
 {
   "dependencies": "inwebo-mfa",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.accept.users=testcaspush::password",
     "--cas.authn.mfa.inwebo.service-id=7046",
