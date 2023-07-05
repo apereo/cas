@@ -56,8 +56,8 @@ test coverage of the CAS codebase is approximately `94%`.
 
 A CAS server installation and deployment process can be tuned to build and run 
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). 
-The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) will selectively switch
-to build and verify Graal VM native images in the coming releases.
+The collection of end-to-end [browser tests based on Puppeteer](../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is also modified to support Graal VM native images.
 
@@ -84,6 +84,12 @@ GraalVM for JDK 17 and its upcoming JDK `21` version while retaining compatibili
 
 As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
 in the next few release candidates. 
+
+### Google Authenticator Device Registration
+
+When using Google Authenticator as a multifactor authentication provider, the workflow for device registration
+is slightly alterred to now require a successful authentication event before additional devices can be registered
+by the user. This change is only applicable if CAS is configured to allow multiple device registrations.
 
 ### Docker-based Integration Tests
 
@@ -114,6 +120,8 @@ that can control SSO participation on a per-application basis based on presence 
 - OpenID Connect JWKS are now able to support an arbitrary number of keys for signing operations.
 - OpenID Connect Standard claims can be individually filtered on a per relying party.
 - New CAS actuator endpoints are available to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
+- CAS documentation has switched to use a Dark Theme by default to make life slightly easier on the eyes.
+- Many small improvments around auditing facilities, making it easier internally to capture and/or tweak audited fields captured and recorded by the audit log.
 
 ## Library Upgrades
 
