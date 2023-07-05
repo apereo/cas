@@ -11,7 +11,7 @@ def run(final Object... args) {
     logger.info("Found email attribute with value [{}]", email)
     if (email.matches(".+@apereo.org")) {
         logger.info("Checking service id [{}]...", service.id)
-        if (service.id.contains("httpbin.org")) {
+        if (service.id.endsWith("/open")) {
             logger.info("Will trigger alternative Duo Security provider")
             return "mfa-duo-alt"
         }

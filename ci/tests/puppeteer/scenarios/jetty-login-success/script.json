@@ -1,4 +1,9 @@
 {
   "dependencies": "core",
-  "server": "jetty"
+  "server": "jetty",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  }
 }
