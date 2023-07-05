@@ -1,4 +1,9 @@
 {
   "dependencies": "core",
-  "server": "starter-tomcat"
+  "server": "starter-tomcat",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  }
 }

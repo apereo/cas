@@ -1,5 +1,10 @@
 {
   "dependencies": "surrogate-webflow,duo,reports",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "conditions": {
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_WEBSDK_SKEY,DUO_SECURITY_WEBSDK_IKEY,DUO_SECURITY_WEBSDK_AKEY,DUO_SECURITY_API_HOST"
   },

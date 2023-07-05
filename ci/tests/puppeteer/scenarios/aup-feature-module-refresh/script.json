@@ -1,5 +1,10 @@
 {
   "dependencies": "aup-webflow,events-configuration,reports",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.enabled-by-default=true",

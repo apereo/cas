@@ -3,6 +3,11 @@
   "conditions": {
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
     "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",

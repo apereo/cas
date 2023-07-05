@@ -434,7 +434,8 @@ codes.forEach((code) => {
   btn.className = "btn-copy-code";
   btn.setAttribute("data-clipboard-action", "copy");
   btn.setAttribute("data-clipboard-target", "#code" + countID);
-  
+  btn.setAttribute("onclick", "this.innerHTML='Copied';")
+
   let div = document.createElement('div');
   div.className = "div-code-button";
   div.appendChild(btn);
