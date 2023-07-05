@@ -1,5 +1,10 @@
 {
   "dependencies": "core",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.server.name=http://localhost:8080",
     "--cas.server.prefix=http://localhost:8080/cas",

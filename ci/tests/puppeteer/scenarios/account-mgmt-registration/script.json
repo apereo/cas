@@ -3,6 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

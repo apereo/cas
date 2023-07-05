@@ -1,3 +1,7 @@
+:root {
+  --nav-pills-background-color: #022b46;
+}
+
 .emoji.img-fluid {
   vertical-align: text-top;
 }
@@ -14,24 +18,24 @@
 
 .btn-copy-code {
   color: #fff;
-  background-color: #09679a;
+  background-color: var(--nav-pills-background-color);
   position: absolute;
   border: 0;
   padding: 5px 5px 5px 5px;
   cursor: pointer;
   border-radius: 6px;
 }
-.btn-copy-code:hover {
-  background-color: rgba(92, 185, 228, 0.774);
-}
+// .btn-copy-code:hover {
+//   background-color: rgba(92, 185, 228, 0.774);
+// }
 
-.highlight pre,
-.highlight code {
+.highlight pre, .highlight code {
   color: white;
   font-size: 12pt;
   text-align: left;
   padding-left: 6px;
   overflow-x: hidden;
+  background-color: var(--nav-pills-background-color);
 }
 
 .text-info {
@@ -39,7 +43,7 @@
 }
 
 .nav-pills .nav-link.active:hover {
-  background-color: #272822;
+  background-color: var(--nav-pills-background-color);
 }
 
 .nav-pills .nav-link.active,
@@ -47,15 +51,20 @@
 .nav-pills .nav-item.open .nav-link,
 .nav-pills .nav-item.open .nav-link:focus,
 .nav-pills .nav-item.open .nav-link:hover {
-  background-color: #272822;
+  background-color: var(--nav-pills-background-color);
   color: white;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-code,
-code.highlighter-rouge {
+code, code.highlighter-rouge {
   color: #318f7b;
+}
+
+[data-bs-theme="dark"] {
+  code, code.highlighter-rouge {
+    color: #43d4b2;
+  }
 }
 
 /**
