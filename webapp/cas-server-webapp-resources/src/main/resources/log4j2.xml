@@ -27,22 +27,27 @@ or override log42.component.properties to turn off async
         <Property name="log.stacktraceappender">casStackTraceFile</Property>
         <Property name="log.include.location">false</Property>
 
-        <Property name="logPattern">
-            %highlight{%d{HH:mm:ss}{GMT-7} %p [%-20.80c{1.}] - &lt;%m&gt;}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}%n
-        </Property>
+        <Property name="log.pattern">%highlight{%d %p [%c] - &lt;%m&gt;%n%throwable}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}</Property>
+        <!-- properties for controlling whether to actually skip the highlighting in individual appenders: -->
+        <Property name="log.pattern.disable.highlight.console">false</Property>
+        <Property name="log.pattern.disable.highlight.file">true</Property>
+
     </Properties>
     <Appenders>
         <Null name="null" />
 
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;}%n" alwaysWriteExceptions="${sys:log.console.stacktraces}"/>
+            <PatternLayout pattern="${sys:log.pattern}"
+                           alwaysWriteExceptions="${sys:log.console.stacktraces}"
+                           disableAnsi="${sys:log.pattern.disable.highlight.console}" />
         </Console>
 
         <RollingFile name="file" fileName="${sys:baseDir}/cas.log" append="true"
                      filePattern="${sys:baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log.gz"
                      immediateFlush="false">
-            <PatternLayout pattern="${logPattern}"
-                           alwaysWriteExceptions="${sys:log.file.stacktraces}" />
+            <PatternLayout pattern="${sys:log.pattern}"
+                           alwaysWriteExceptions="${sys:log.file.stacktraces}"
+                           disableAnsi="${sys:log.pattern.disable.highlight.file}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
