@@ -90,8 +90,8 @@
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
-                            let username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
-                            let disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            let username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/ "username";
+                            let disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/ false;
 
                             if (username != null && username !== '') {
                                 $('#username').val(username);
@@ -340,11 +340,10 @@
                     <script th:inline="javascript">
                         /*<![CDATA[*/
                         function x509login() {
-                            let url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
+                            let url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/ "http://example.com/x509";
                             url += window.location.search;
                             window.location.assign(url)
                         }
-
                         /*]]>*/
                     </script>
                     <a id="x509LoginLink" class="mdc-button mdc-button--raised btn btn-primary"
@@ -374,9 +373,8 @@
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
-                var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
-                var j = /*[[@{#{screen.welcome.button.login}}]]*/
-                    /*]]>*/
+                var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/ "One moment please...";
+                var j = /*[[@{#{screen.welcome.button.login}}]]*/ "Login";
                     $(window).on('pageshow', function () {
                         $(':submit').prop('disabled', false);
                         $(':submit').attr('value', j);
@@ -388,6 +386,7 @@
                         return true;
                     });
                 });
+                /*]]>*/
             </script>
         </div>
 

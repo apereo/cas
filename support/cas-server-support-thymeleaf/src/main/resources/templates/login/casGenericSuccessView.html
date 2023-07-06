@@ -143,9 +143,9 @@
 
                                         <script th:inline="javascript">
                                             /*<![CDATA[*/
-                                            let serviceId = /*[[${service.serviceId}]]*/;
+                                            let serviceId = /*[[${service.serviceId}]]*/ "http://example.com";
                                             if (isValidURL(serviceId)) {
-                                                let id = /*[[${'service' + service.id}]]*/;
+                                                let id = /*[[${'service' + service.id}]]*/ "service1";
                                                 $(`a#${id}`).attr("href", serviceId);
                                             }
                                             /*]]>*/

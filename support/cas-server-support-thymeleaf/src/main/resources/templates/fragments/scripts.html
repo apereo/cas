@@ -12,13 +12,15 @@
 </span>
 
 <script th:inline="javascript">
+    /*<![CDATA[*/
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();
     }
     $(() => {
         typeof cssVars === "function" && cssVars({onlyLegacy: true});
     });
-    let trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
+    let trackGeoLocation = /*[[${trackGeoLocation}]]*/ false;
+    /*]]>*/
 </script>
 
 <script th:replace="~{fragments/googleanalytics :: ga}"></script>
