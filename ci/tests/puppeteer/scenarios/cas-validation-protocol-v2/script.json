@@ -1,5 +1,10 @@
 {
   "dependencies": "core",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",

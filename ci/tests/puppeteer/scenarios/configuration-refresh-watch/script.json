@@ -1,5 +1,10 @@
 {
   "dependencies": "core,events-configuration",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--spring.main.lazy-initialization=false",
     

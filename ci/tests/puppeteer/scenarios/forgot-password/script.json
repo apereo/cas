@@ -3,6 +3,11 @@
   "conditions": {
     "docker": "true"
   },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.authn.pm.core.enabled=true",

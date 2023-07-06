@@ -1,5 +1,10 @@
 {
   "dependencies": "core",
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
+  },
   "properties": [
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     "--cas.service-registry.core.init-from-json=true",
