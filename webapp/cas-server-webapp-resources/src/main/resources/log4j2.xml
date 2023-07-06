@@ -21,7 +21,7 @@ or override log42.component.properties to turn off async
         <Property name="opensaml.log.level">${main:\--logging.level.org.opensaml:-warn}</Property>
         <Property name="hazelcast.log.level">${main:\--logging.level.com.hazelcast:-warn}</Property>
         
-        <Property name="log.console.stacktraces">false</Property>
+        <Property name="log.console.stacktraces">true</Property>
         <Property name="log.file.stacktraces">false</Property>
         <!-- -Dlog.stacktraceappender=null to disable stacktrace log -->
         <Property name="log.stacktraceappender">casStackTraceFile</Property>
