@@ -20,7 +20,7 @@ async function cleanUp() {
         await page.waitForTimeout(3000);
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
-        await page.waitForTimeout(4000);
+        await page.waitForTimeout(6000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
         console.log("Trying with an exising SSO session...");
@@ -29,10 +29,10 @@ async function cleanUp() {
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertCookie(page);
         await cas.goto(page, "https://localhost:9876/sp");
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(3000);
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(5000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
         await browser.close();
