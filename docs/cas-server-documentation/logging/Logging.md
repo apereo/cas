@@ -48,14 +48,14 @@ of the `log4j2.xml` file, in a property file called `log4j2.component.properties
 properties. If setting properties in a `log4j2.component.properties`, be sure to include:
 
 ```properties
-Log4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+log4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
 ```
 
 in order to keep using asynchronous logging which CAS sets by default. 
 To turn off asynchronous logging, include the following in `log4j2.component.properites` or as a system property:
 
 ```properties
-Log4jContextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector
+log4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector
 ```
 
 ## Configuration
