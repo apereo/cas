@@ -35,6 +35,7 @@ public class FileSystemOidcJsonWebKeystoreProperties implements Serializable {
      * verbaitm to this setting and CAS would load the keystore as an in-memory resource. This is relevant in scenarios where
      * the setting source is external to CAS and has no support for file systems where the value is loaded on the fly from the
      * source into this setting.
+     * Note that if the keystore files does not exist at the specified path, one will be generated for you.
      */
     @RequiredProperty
     @ExpressionLanguageCapable

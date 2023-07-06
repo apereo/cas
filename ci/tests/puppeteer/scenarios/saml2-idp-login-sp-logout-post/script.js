@@ -7,7 +7,7 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
 
     let page = await cas.newPage(browser);
-    const service = "https://example.com";
+    const service = "https://localhost:9859/anything/cas";
     await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000);
     await cas.loginWith(page, "casuser", "Mellon");
@@ -31,7 +31,7 @@ const path = require("path");
     });
 
     await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(4000);
     const content = await page.content();
     assert(content.includes('action="https://samltest.id/Shibboleth.sso/SLO/POST"'));
     assert(content.includes('<input type="hidden" name="SAMLResponse" value="'));
