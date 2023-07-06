@@ -24,15 +24,6 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casproperties.html properties="cas.authn.mfa.gauth.core" %}
 
-## Repository Cleaner
-
-A background *cleaner* process is also automatically scheduled to scan the
-repository periodically and remove expired device registration records
-based on configured parameters. In the default setting, devices
-expire after a fixed period since a user registered their device.
-
-{% include_cached casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
-
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
@@ -46,6 +37,8 @@ tokens that are successfully used to authenticate the user.
 The repository that holds registration records and tokens is periodically 
 scanned and cleaned up so that expired and previously used tokens
 may be removed.
+
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
 
 ## Registration
 
