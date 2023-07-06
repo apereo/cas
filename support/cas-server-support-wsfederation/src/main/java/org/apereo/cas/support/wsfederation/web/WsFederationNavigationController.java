@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation.web;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -48,8 +47,6 @@ public class WsFederationNavigationController {
 
     private final Collection<WsFederationConfiguration> configurations;
 
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private final String casLoginEndpoint;
@@ -79,7 +76,7 @@ public class WsFederationNavigationController {
     }
 
     private Service determineService(final HttpServletRequest request) {
-        val initialService = ObjectUtils.defaultIfNull(argumentExtractor.extractService(request), webApplicationServiceFactory.createService(casLoginEndpoint));
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(initialService);
+        return ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
+            webApplicationServiceFactory.createService(casLoginEndpoint));
     }
 }

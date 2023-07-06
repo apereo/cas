@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation.config;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -105,12 +104,10 @@ public class WsFederationAuthenticationConfiguration {
             final WsFederationCookieManager wsFederationCookieManager,
             @Qualifier("wsFederationHelper")
             final WsFederationHelper wsFederationHelper,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             return new WsFederationNavigationController(wsFederationCookieManager,
-                wsFederationHelper, wsFederationConfigurations.toList(), authenticationRequestServiceSelectionStrategies,
+                wsFederationHelper, wsFederationConfigurations.toList(),
                 webApplicationServiceFactory, casProperties.getServer().getLoginUrl(), argumentExtractor);
         }
     }
