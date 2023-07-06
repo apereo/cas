@@ -13,7 +13,7 @@ function printgreen() {
   printf "${GREEN}$1${ENDCOLOR}\n"
 }
 
-jmeterVersion=5.5
+jmeterVersion=5.6
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
@@ -78,6 +78,8 @@ if [ $retVal == 0 ]; then
   printgreen "Launching CAS web application ${webAppServerType} server with properties [${casProperties}]"
   casOutput="/tmp/cas.log"
 
+  "${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
+  
   # -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n
   echo "Properties: ${casProperties}"
   java -Dlog.console.stacktraces=true \
@@ -88,10 +90,11 @@ if [ $retVal == 0 ]; then
       --cas.server.prefix=https://localhost:8443/cas \
       --cas.audit.engine.enabled=true \
       --spring.profiles.active=none \
+      --cas.audit.slf4j.use-single-line=true \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
       --management.endpoints.enabled-by-default=true \
-      --logging.level.org.apereo.cas=debug ${casProperties} &
+      --logging.level.org.apereo.cas=info ${casProperties} &
   pid=$!
   printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
@@ -126,12 +129,15 @@ if [ $retVal == 0 ]; then
       unzip -q -d /tmp /tmp/apache-jmeter-${jmeterVersion}.zip
       printgreen "Unzipped /tmp/apache-jmeter-${jmeterVersion}.zip rc=$?"
       chmod +x /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter
+    echo "jmeter.save.saveservice.output_format=xml" >> /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter.properties
+    echo "jmeter.save.saveservice.response_data=true" >> /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter.properties
   fi
+
   clear
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
   export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"
-  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -n -t "${jmeterScript}" >results.log
+  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.jtl -n -t "${jmeterScript}" >results.log
   echo -e "***************************************************************************************"
 
   java ci/tests/perf/EvalJMeterTestResults.java ./results.log

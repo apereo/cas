@@ -147,5 +147,5 @@ jobs:
       - name: JMeter Test Results Summary
         uses: test-summary/action@v2
         with:
-          paths: ./results.log
+          paths: /tmp/jmeter-results.jtl
         if: always()
