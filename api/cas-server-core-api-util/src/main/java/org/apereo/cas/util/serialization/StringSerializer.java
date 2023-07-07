@@ -159,7 +159,7 @@ public interface StringSerializer<T> extends Serializable {
     Class<T> getTypeToSerialize();
 
     /**
-     * Read and consum the input
+     * Read and consume the input
      * and parse the result into a list/collection.
      *
      * @param json the json

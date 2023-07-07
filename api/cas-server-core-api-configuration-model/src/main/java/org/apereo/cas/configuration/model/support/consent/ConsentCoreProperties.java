@@ -40,7 +40,7 @@ public class ConsentCoreProperties implements Serializable {
 
     /**
      * Whether consent functionality should be globally
-     * applicapable to all applications and requests.
+     * applicable to all applications and requests.
      */
     private boolean active = true;
 
@@ -60,7 +60,7 @@ public class ConsentCoreProperties implements Serializable {
      * Attributes that should always and globally be excluded
      * from the list of consentable attributes. Such attributes
      * are always ignored during consent rule calculations
-     * and users will not be prmopted to consent to their release..
+     * and users will not be prompted to consent to their release..
      */
     private List<String> excludedAttributes = Stream.of("eduPersonTargetedID").toList();
 
