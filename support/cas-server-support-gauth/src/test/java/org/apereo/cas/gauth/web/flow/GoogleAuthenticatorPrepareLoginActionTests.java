@@ -68,7 +68,7 @@ class GoogleAuthenticatorPrepareLoginActionTests {
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         
         assertNull(action.execute(context));
         assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));

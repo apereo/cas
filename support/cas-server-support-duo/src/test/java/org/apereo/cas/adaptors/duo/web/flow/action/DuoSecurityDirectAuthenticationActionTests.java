@@ -64,7 +64,7 @@ class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMultifact
     @Test
     void verifyOperation() throws Exception {
         val provider = BaseDuoSecurityTests.getDuoSecurityMultifactorAuthenticationProvider();
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         val event = duoNonWebAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

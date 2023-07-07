@@ -42,8 +42,8 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());
-        assertTrue(interceptors.stream().anyMatch(interceptor -> interceptor instanceof CasLocaleChangeInterceptor));
-        assertTrue(interceptors.stream().anyMatch(interceptor -> interceptor instanceof ResourceUrlProviderExposingInterceptor));
+        assertTrue(interceptors.stream().anyMatch(CasLocaleChangeInterceptor.class::isInstance));
+        assertTrue(interceptors.stream().anyMatch(ResourceUrlProviderExposingInterceptor.class::isInstance));
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));

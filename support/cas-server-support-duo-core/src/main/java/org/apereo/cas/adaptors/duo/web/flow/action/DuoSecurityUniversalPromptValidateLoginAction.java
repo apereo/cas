@@ -16,17 +16,19 @@ import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.scope.ConversationScope;
+import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
-
+import org.springframework.webflow.scope.RequestScope;
 import java.util.Map;
 
 /**
@@ -92,14 +94,18 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
             browserSessionStore.getSessionAttributes().forEach((key, value) -> {
                 if (key.equalsIgnoreCase(FlowScope.class.getSimpleName())) {
-                    val flowAttributes = (Map) value;
-                    requestContext.getFlowScope().putAll(new LocalAttributeMap<>(flowAttributes));
+                    populateRequestContextScope(value, requestContext.getFlowScope());
+                } else if (key.equalsIgnoreCase(FlashScope.class.getSimpleName())) {
+                    populateRequestContextScope(value, requestContext.getFlashScope());
+                } else if (key.equalsIgnoreCase(RequestScope.class.getSimpleName())) {
+                    populateRequestContextScope(value, requestContext.getRequestScope());
+                } else if (key.equalsIgnoreCase(ConversationScope.class.getSimpleName())) {
+                    populateRequestContextScope(value, requestContext.getConversationScope());
                 } else {
                     requestContext.getFlowScope().put(key, value);
                 }
             });
             val authentication = (Authentication) browserSessionStore.getSessionAttributes().get(Authentication.class.getSimpleName());
-
             populateContextWithCredential(requestContext, browserSessionStore, authentication);
             populateContextWithAuthentication(requestContext, browserSessionStore);
             populateContextWithService(requestContext, browserSessionStore);
@@ -113,6 +119,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             }
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+    }
+
+    private static void populateRequestContextScope(final Object flowAttributes, final MutableAttributeMap<Object> requestContext) {
+        requestContext.putAll(new LocalAttributeMap<>((Map) flowAttributes));
     }
 
     protected void populateContextWithService(final RequestContext requestContext,

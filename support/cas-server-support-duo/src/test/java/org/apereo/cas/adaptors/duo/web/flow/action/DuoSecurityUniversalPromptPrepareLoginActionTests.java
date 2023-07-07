@@ -70,7 +70,7 @@ class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMu
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         val result = duoUniversalPromptPrepareLoginAction.execute(context);
         assertNotNull(result);
         assertNotNull(result.getAttributes().get("result"));

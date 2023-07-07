@@ -33,7 +33,7 @@ class CompositeX509KeyManagerTests {
         val km = kmf.getKeyManagers();
 
         val managers = Arrays.stream(km)
-            .filter(tm -> tm instanceof X509KeyManager)
+            .filter(X509KeyManager.class::isInstance)
             .map(X509KeyManager.class::cast)
             .collect(Collectors.toList());
 

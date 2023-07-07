@@ -52,7 +52,7 @@ class MultifactorAuthenticationAvailableActionTests {
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
             val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val event = mfaAvailableAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
@@ -83,7 +83,7 @@ class MultifactorAuthenticationAvailableActionTests {
             provider.setAvailable(false);
             provider.setFailureMode(MultifactorAuthenticationProviderFailureModes.NONE);
             provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val event = mfaAvailableAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());

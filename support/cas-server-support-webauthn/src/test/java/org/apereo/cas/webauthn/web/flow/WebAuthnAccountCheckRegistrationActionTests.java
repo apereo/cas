@@ -54,7 +54,7 @@ class WebAuthnAccountCheckRegistrationActionTests {
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());

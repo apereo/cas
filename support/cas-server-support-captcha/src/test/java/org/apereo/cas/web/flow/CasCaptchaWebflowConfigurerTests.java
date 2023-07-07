@@ -30,7 +30,7 @@ class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertNotNull(flow);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         assertTrue(Arrays.stream(state.getActionList().toArray())
-            .filter(r -> r instanceof EvaluateAction)
+            .filter(EvaluateAction.class::isInstance)
             .map(EvaluateAction.class::cast)
             .anyMatch(r -> r.toString().contains(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)));
     }

@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -24,7 +25,10 @@ import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.scope.ConversationScope;
+import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
+import org.springframework.webflow.scope.RequestScope;
 
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -46,7 +50,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getInProgressAuthentication();
-        val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProviderById(requestContext);
+        val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProvider(requestContext);
         val duoProvider = duoProviderBean.getProvider(duoSecurityIdentifier);
 
         val client = duoProvider.getDuoAuthenticationService()
@@ -65,8 +69,13 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         FunctionUtils.doIfNotNull(service, __ -> properties.put(Service.class.getSimpleName(), service));
         properties.put(DuoSecurityAuthenticationService.class.getSimpleName(), state);
 
-        val flowScope = requestContext.getFlowScope().asMap();
-        properties.put(FlowScope.class.getSimpleName(), flowScope);
+        val targetState = WebUtils.getTargetTransition(requestContext);
+        FunctionUtils.doIfNotNull(targetState, __ -> properties.put(CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION, targetState));
+
+        properties.put(FlowScope.class.getSimpleName(), requestContext.getFlowScope().asMap());
+        properties.put(FlashScope.class.getSimpleName(), requestContext.getFlashScope().asMap());
+        properties.put(ConversationScope.class.getSimpleName(), requestContext.getConversationScope().asMap());
+        properties.put(RequestScope.class.getSimpleName(), requestContext.getRequestScope().asMap());
 
         Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
             .ifPresent(registeredService -> properties.put(RegisteredService.class.getSimpleName(), registeredService));

@@ -79,7 +79,7 @@ class MultifactorAuthenticationBypassActionTests {
                 .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
 
             provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val transition = mock(Transition.class);
             when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);
@@ -132,7 +132,7 @@ class MultifactorAuthenticationBypassActionTests {
                 .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
             provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
             provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val transition = mock(Transition.class);
             when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_SUCCESS);

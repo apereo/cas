@@ -91,6 +91,12 @@ When using Google Authenticator as a multifactor authentication provider, the wo
 is slightly alterred to now require a successful authentication event before additional devices can be registered
 by the user. This change is only applicable if CAS is configured to allow multiple device registrations.
 
+### Password Reset with Multifactor Authentication
+
+Password reset operations will require and activate multifactor authentication before
+password reset instructions can be shared with the end-user. This behavior is configurable 
+and the setting is turned on by default.
+
 ### Docker-based Integration Tests
 
 The following docker containers, used for integration tests, are now upgraded:

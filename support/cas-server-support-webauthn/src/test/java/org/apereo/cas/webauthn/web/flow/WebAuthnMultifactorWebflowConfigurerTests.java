@@ -69,7 +69,7 @@ class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowCo
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
         
         val registration = (ViewState) webAuthnFlow.getState(CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_REGISTRATION);
         registration.enter(context);

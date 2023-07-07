@@ -106,27 +106,25 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 registerMultifactorProviderFailureAction(flow, mfaFlow);
 
                 val subflowState = createSubflowState(flow, providerId, providerId);
-                val subflowMappings = Stream.of(
-                        CasWebflowConstants.ATTRIBUTE_SERVICE,
-                        CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+                val subflowMappings = getDefaultAttributeMappings()
                     .map(attr -> new DefaultMapping(createExpression("flowScope." + attr), createExpression(attr)))
                     .collect(Collectors.toList());
                 subflowMappings.add(new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL),
                     createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
-                multifactorAuthenticationFlowCustomizers.forEach(c -> c.getWebflowAttributeMappings()
+
+                multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
                     .forEach(key -> subflowMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
                 val inputMapper = createFlowInputMapper(subflowMappings);
                 val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
                 subflowState.setAttributeMapper(subflowMapper);
 
-                val flowMappings = Stream.of(
-                        CasWebflowConstants.ATTRIBUTE_SERVICE,
-                        CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+                val flowMappings = getDefaultAttributeMappings()
                     .map(attr -> new DefaultMapping(createExpression(attr), createExpression("flowScope." + attr)))
                     .collect(Collectors.toList());
                 flowMappings.add(new DefaultMapping(createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)),
                     createExpression("flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
-                multifactorAuthenticationFlowCustomizers.forEach(c -> c.getWebflowAttributeMappings()
+                
+                multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
                     .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
                 createFlowInputMapper(flowMappings, mfaFlow);
 
@@ -145,10 +143,21 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             });
     }
 
+    private static Stream<String> getDefaultAttributeMappings() {
+        return Stream.of(
+            CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION,
+            CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT,
+            CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER,
+            CasWebflowConstants.ATTRIBUTE_AUTHENTICATION,
+            CasWebflowConstants.ATTRIBUTE_SERVICE,
+            CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE);
+    }
+
     private Collection<String> getCandidateStatesForMultifactorAuthentication() {
         val candidates = new LinkedHashSet<String>();
         candidates.add(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-        multifactorAuthenticationFlowCustomizers.forEach(c -> candidates.addAll(c.getCandidateStatesForMultifactorAuthentication()));
+        multifactorAuthenticationFlowCustomizers.forEach(customizer ->
+            candidates.addAll(customizer.getCandidateStatesForMultifactorAuthentication()));
         return candidates;
     }
 
@@ -162,7 +171,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 val definition = registry.getFlowDefinition(flowId);
                 if (definition != null) {
                     LOGGER.trace("Registering flow definition [{}]", flowId);
-                    this.mainFlowDefinitionRegistry.registerFlowDefinition(definition);
+                    mainFlowDefinitionRegistry.registerFlowDefinition(definition);
                 }
             }
         });
@@ -201,6 +210,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                                 CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
                             ensureEndStateTransitionExists(state, flow,
                                 CasWebflowConstants.TRANSITION_ID_DENY, CasWebflowConstants.STATE_ID_MFA_DENIED);
+                            ensureEndStateTransitionExists(state, flow,
+                                CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
                         } else {
                             LOGGER.debug("Unable to locate state definition [{}] in flow [{}]", s, flow.getId());
                         }

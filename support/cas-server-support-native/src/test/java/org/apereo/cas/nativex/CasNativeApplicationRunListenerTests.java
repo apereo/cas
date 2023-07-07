@@ -25,7 +25,7 @@ class CasNativeApplicationRunListenerTests {
         val factories = SpringFactoriesLoader.loadFactories(SpringApplicationRunListener.class, getClass().getClassLoader());
         assertFalse(factories.isEmpty());
         val listener = factories.stream()
-            .filter(lsn -> lsn instanceof CasNativeApplicationRunListener)
+            .filter(CasNativeApplicationRunListener.class::isInstance)
             .findFirst()
             .orElseThrow();
         val environment = new MockEnvironment();

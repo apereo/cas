@@ -95,8 +95,8 @@ class HazelcastHealthIndicatorTests {
         assertTrue(details.containsKey("name"));
 
         details.values().stream()
-            .filter(value -> value instanceof Map)
-            .map(value -> (Map) value)
+            .filter(Map.class::isInstance)
+            .map(Map.class::cast)
             .forEach(map -> {
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));

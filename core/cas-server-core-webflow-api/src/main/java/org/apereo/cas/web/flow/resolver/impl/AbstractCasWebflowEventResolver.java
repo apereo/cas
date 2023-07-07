@@ -5,22 +5,22 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serializable;
 import java.util.Set;
 
@@ -58,7 +58,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         val event = events.iterator().next();
         LOGGER.debug("Resolved single event [{}] via [{}] for this context",
             event.getId(), event.getSource().getClass().getName());
-        return event;
+        val targetState = WebUtils.getTargetTransition(context);
+        return FunctionUtils.doIf(StringUtils.isNotBlank(targetState) && event.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS),
+                () -> new EventFactorySupport().event(this, targetState),
+                () -> event)
+            .get();
     }
 
     /**

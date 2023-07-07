@@ -419,7 +419,7 @@ public class CasWebflowContextConfiguration {
                 .filter(BeanSupplier::isNotProxy)
                 .toList();
             val plan = new DefaultCasWebflowExecutionPlan();
-            configurers.forEach(c -> c.configureWebflowExecutionPlan(plan));
+            configurers.forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
             plan.execute();
             return plan;
         }

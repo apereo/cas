@@ -32,7 +32,7 @@ class CompositeX509TrustManagerTests {
         tmf.init((KeyStore) null);
 
         val managers = Arrays.stream(tmf.getTrustManagers())
-            .filter(tm -> tm instanceof X509TrustManager)
+            .filter(X509TrustManager.class::isInstance)
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
 
@@ -46,7 +46,7 @@ class CompositeX509TrustManagerTests {
         tmf.init((KeyStore) null);
 
         val managers = Arrays.stream(tmf.getTrustManagers())
-            .filter(tm -> tm instanceof X509TrustManager)
+            .filter(X509TrustManager.class::isInstance)
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
 

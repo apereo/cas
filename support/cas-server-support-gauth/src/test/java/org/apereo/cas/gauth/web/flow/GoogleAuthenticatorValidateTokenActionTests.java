@@ -69,7 +69,7 @@ class GoogleAuthenticatorValidateTokenActionTests {
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
 
         assertThrows(IllegalArgumentException.class, () -> action.execute(context));
         

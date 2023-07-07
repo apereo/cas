@@ -97,7 +97,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
         val event = determineDuoUserAccountAction.execute(context);

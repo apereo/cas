@@ -51,7 +51,7 @@ class YubiKeyAccountSaveRegistrationActionTests {
     @Test
     void verifyActionSuccess() throws Exception {
         val context = new MockRequestContext();
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
+        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val request = new MockHttpServletRequest();
         request.addParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_TOKEN, "yubikeyToken");
         request.addParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_ACCOUNT, UUID.randomUUID().toString());
@@ -73,7 +73,7 @@ class YubiKeyAccountSaveRegistrationActionTests {
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         val request = new MockHttpServletRequest();
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, new YubiKeyMultifactorAuthenticationProvider());
+        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val action = new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
