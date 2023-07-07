@@ -131,12 +131,17 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         val authentication = RegisteredServiceTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
+        WebUtils.putTargetTransition(context, "targetDestination");
 
         val authnResult = new DefaultAuthenticationResultBuilder()
             .collect(RegisteredServiceTestUtils.getAuthentication());
 
         WebUtils.putAuthenticationResultBuilder(authnResult, context);
+        context.getFlashScope().put("name", "value");
+        context.getConversationScope().put("name", "value");
+        context.getRequestScope().put("name", "value");
+
         val prepResult = duoUniversalPromptPrepareLoginAction.execute(context);
 
         val storage = (BrowserSessionStorage) prepResult.getAttributes().get("result");
@@ -144,19 +149,23 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
             .map(BrowserWebStorageSessionStore.class::cast)
             .orElseThrow()
             .getSessionAttributes();
-        
+
         val code = UUID.randomUUID().toString();
         request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_CODE, code);
         request.addParameter(DuoSecurityUniversalPromptValidateLoginAction.REQUEST_PARAMETER_STATE,
             attributes.get(DuoSecurityAuthenticationService.class.getSimpleName()).toString());
         request.addParameter(BrowserSessionStorage.KEY_SESSION_STORAGE, storage.getPayload());
-        
+
         val result = duoUniversalPromptValidateLoginAction.execute(context);
         assertNotNull(result);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+        assertEquals("targetDestination", result.getId());
         assertNotNull(WebUtils.getAuthentication(context));
         assertNotNull(WebUtils.getRegisteredService(context));
         assertNotNull(WebUtils.getAuthenticationResult(context));
+        assertNotNull(WebUtils.getTargetTransition(context));
+        assertNotNull(context.getFlashScope().get("name"));
+        assertNotNull(context.getConversationScope().get("name"));
+        assertNotNull(context.getRequestScope().get("name"));
     }
 
     @TestConfiguration(value = "DuoSecurityUniversalPromptValidateLoginActionTestConfiguration", proxyBeanMethods = false)

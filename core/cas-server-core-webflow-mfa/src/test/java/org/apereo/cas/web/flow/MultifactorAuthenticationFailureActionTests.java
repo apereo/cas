@@ -58,7 +58,7 @@ class MultifactorAuthenticationFailureActionTests {
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
 
-            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+            WebUtils.putMultifactorAuthenticationProvider(context, provider);
             val event = mfaFailureAction.execute(context);
             assertEquals(transitionId, event.getId());
         }

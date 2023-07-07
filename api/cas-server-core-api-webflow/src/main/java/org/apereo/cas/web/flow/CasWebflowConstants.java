@@ -55,9 +55,33 @@ public interface CasWebflowConstants {
     String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
 
     /**
+     * Attribute to indicate a password management reset request.
+     */
+    String ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY = "passwordManagementQuery";
+
+    /**
+     * Attribute that indicates the transition one must activate
+     * specially as a signal in subflows to indicate the parent calling state.
+     */
+    String ATTRIBUTE_TARGET_TRANSITION = "targetTransitionToActivate";
+
+    /**
      * Attribute to track service in the flow.
      */
     String ATTRIBUTE_SERVICE = "service";
+    /**
+     * Attribute to track authentication in the flow.
+     */
+    String ATTRIBUTE_AUTHENTICATION = "authentication";
+    /**
+     * Attribute to track authenticationn result builder in the flow.
+     */
+    String ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
+
+    /**
+     * Attribute to track authentication result in the flow.
+     */
+    String ATTRIBUTE_AUTHENTICATION_RESULT = "authenticationResult";
 
     /*
      ****************************************
@@ -74,6 +98,11 @@ public interface CasWebflowConstants {
      * The transition state 'discovery'.
      */
     String TRANSITION_ID_DISCOVERY = "discovery";
+
+    /**
+     * The transition state 'resumePasswordReset'.
+     */
+    String TRANSITION_ID_RESUME_RESET_PASSWORD = "resumePasswordReset";
 
     /**
      * The transition state 'execute'.
@@ -386,12 +415,7 @@ public interface CasWebflowConstants {
      * Transition id 'acceptedUsagePolicy'.
      */
     String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
-
-    /**
-     * Transition to determine the MFA failure mode and what action to take.
-     */
-    String TRANSITION_ID_MFA_FAILURE = "mfaFailure";
-
+    
     /*
      ****************************************
      * States.

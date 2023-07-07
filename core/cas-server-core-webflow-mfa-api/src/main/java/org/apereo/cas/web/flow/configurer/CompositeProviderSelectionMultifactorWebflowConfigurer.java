@@ -3,13 +3,11 @@ package org.apereo.cas.web.flow.configurer;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -37,8 +35,11 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
             val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
             createTransitionForState(realSubmit, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
 
-            Stream.of(getState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION),
-                    getState(flow, CasWebflowConstants.STATE_ID_WS_FEDERATION_START))
+            Stream.of(
+                    getState(flow, CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS),
+                    getState(flow, CasWebflowConstants.STATE_ID_WS_FEDERATION_START),
+                    getState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION)
+                )
                 .filter(Objects::nonNull)
                 .forEach(state -> createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE));
 

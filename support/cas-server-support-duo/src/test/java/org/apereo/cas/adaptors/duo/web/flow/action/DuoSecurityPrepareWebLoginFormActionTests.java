@@ -87,7 +87,7 @@ class DuoSecurityPrepareWebLoginFormActionTests {
 
         WebUtils.putCredential(context, new DuoSecurityCredential(authentication.getPrincipal().getId(),
             UUID.randomUUID().toString(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER));
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+        WebUtils.putMultifactorAuthenticationProvider(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
 

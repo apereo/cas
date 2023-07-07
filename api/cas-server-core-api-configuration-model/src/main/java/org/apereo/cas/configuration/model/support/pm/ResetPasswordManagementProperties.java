@@ -67,6 +67,14 @@ public class ResetPasswordManagementProperties implements Serializable {
     private boolean includeClientIpAddress = true;
 
     /**
+     * Controls whether password reset operations must activate
+     * and support a multifactor authentication flow based on the
+     * set of available MFA providers that are configured and active, before reset
+     * instructions can be shared and sent.
+     */
+    private boolean multifactorAuthenticationEnabled = true;
+
+    /**
      * How long in minutes should the password expiration link remain valid.
      */
     @DurationCapable

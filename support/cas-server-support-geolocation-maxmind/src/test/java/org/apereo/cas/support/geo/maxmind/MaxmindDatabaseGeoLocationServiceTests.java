@@ -108,9 +108,8 @@ class MaxmindDatabaseGeoLocationServiceTests {
 
     @Nonnull
     private static CountryResponse getCountryResponse() {
-        val countryResponse = new CountryResponse(new Continent(), new Country(),
+        return new CountryResponse(new Continent(), new Country(),
             new MaxMind(), new Country(),
             new RepresentedCountry(), new Traits());
-        return countryResponse;
     }
 }

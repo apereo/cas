@@ -251,8 +251,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeMultifactorAuthenticationTrigger")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrigger registeredServicePrincipalAttributeMultifactorAuthenticationTrigger(
-            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME) final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
-            @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME) final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
+            @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
+            final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(casProperties,

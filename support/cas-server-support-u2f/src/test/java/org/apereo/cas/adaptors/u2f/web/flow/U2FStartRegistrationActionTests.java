@@ -38,7 +38,7 @@ class U2FStartRegistrationActionTests extends BaseU2FWebflowActionTests {
         val response = new MockHttpServletResponse();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(id), context);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, u2fMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, u2fMultifactorAuthenticationProvider);
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, u2fStartRegistrationAction.execute(context).getId());

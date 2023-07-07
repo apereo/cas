@@ -35,8 +35,10 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
 
     @Override
     protected void doInitialize() {
+        val providerId = casProperties.getAuthn().getMfa().getGauth().getId();
+        
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            val flow = getFlow(registry, casProperties.getAuthn().getMfa().getGauth().getId());
+            val flow = getFlow(registry, providerId);
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, GoogleAuthenticatorTokenCredential.class);
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
@@ -106,8 +108,6 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             createTransitionForState(confirmTokenState, CasWebflowConstants.TRANSITION_ID_ERROR, googleLoginFormState.getId());
         });
 
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(),
-            casProperties.getAuthn().getMfa().getGauth().getId(),
-            casProperties.getAuthn().getMfa().getGauth().getId());
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), providerId, providerId);
     }
 }

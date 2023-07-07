@@ -78,7 +78,7 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
         val principal = RegisteredServiceTestUtils.getPrincipal(user,
             CollectionUtils.wrap("phone", List.of("123456789"), "mail", List.of("cas@example.org")));
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, casSimpleMultifactorAuthenticationProvider);
+        WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
         return context;
     }
 }

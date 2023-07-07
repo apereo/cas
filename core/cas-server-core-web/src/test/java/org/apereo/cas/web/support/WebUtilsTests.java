@@ -20,6 +20,7 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,12 @@ class WebUtilsTests {
         assertNotNull(WebUtils.getHttpRequestFullUrl(request));
         assertFalse(WebUtils.isGraphicalUserAuthenticationEnabled(context));
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));
+
+        WebUtils.putTargetTransition(context, "example-state");
+        assertNotNull(WebUtils.getTargetTransition(context));
+
+        WebUtils.putPasswordManagementQuery(context, null);
+        assertNull(WebUtils.getPasswordManagementQuery(context, Serializable.class));
 
         assertDoesNotThrow(() -> {
             WebUtils.putWildcardedRegisteredService(context, true);
