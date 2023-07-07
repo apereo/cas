@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,7 +17,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -105,12 +103,10 @@ public class WsFederationAuthenticationConfiguration {
             final WsFederationCookieManager wsFederationCookieManager,
             @Qualifier("wsFederationHelper")
             final WsFederationHelper wsFederationHelper,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             return new WsFederationNavigationController(wsFederationCookieManager,
-                wsFederationHelper, wsFederationConfigurations.toList(), authenticationRequestServiceSelectionStrategies,
+                wsFederationHelper, wsFederationConfigurations.toList(),
                 webApplicationServiceFactory, casProperties.getServer().getLoginUrl(), argumentExtractor);
         }
     }

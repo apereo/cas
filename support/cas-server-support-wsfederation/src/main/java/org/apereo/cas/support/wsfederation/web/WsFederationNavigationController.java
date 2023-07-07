@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation.web;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -8,7 +7,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -48,8 +45,6 @@ public class WsFederationNavigationController {
 
     private final Collection<WsFederationConfiguration> configurations;
 
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private final String casLoginEndpoint;
@@ -78,8 +73,8 @@ public class WsFederationNavigationController {
         return new RedirectView(url);
     }
 
-    private Service determineService(final HttpServletRequest request) {
-        val initialService = ObjectUtils.defaultIfNull(argumentExtractor.extractService(request), webApplicationServiceFactory.createService(casLoginEndpoint));
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(initialService);
+    protected Service determineService(final HttpServletRequest request) {
+        return ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
+            webApplicationServiceFactory.createService(casLoginEndpoint));
     }
 }
