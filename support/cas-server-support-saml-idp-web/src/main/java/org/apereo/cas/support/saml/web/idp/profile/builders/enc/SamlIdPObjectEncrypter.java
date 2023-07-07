@@ -180,14 +180,6 @@ public class SamlIdPObjectEncrypter {
         }
     }
 
-    /**
-     * Build encrypter for saml object encrypter.
-     *
-     * @param samlObject the saml object
-     * @param service    the service
-     * @param adaptor    the adaptor
-     * @return the encrypter
-     */
     protected Encrypter buildEncrypterForSamlObject(final Object samlObject,
                                                     final SamlRegisteredService service,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {

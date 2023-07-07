@@ -13,7 +13,7 @@ import java.io.Serial;
 /**
  * Base property class for cookies that can be pinned to the HTTP session.
  * Pinned cookies are ignored if they arrive on a request with different attributes, such as IP address or user-agent,
- * than what was present whent the cookie was created.
+ * than what was present when the cookie was created.
  *
  * @author Hal Deadman
  * @since 6.4.0
@@ -37,7 +37,7 @@ public class PinnableCookieProperties extends CookieProperties {
 
     /**
      * A regular expression pattern that indicates the set of allowed IP addresses,
-     * when {@link #isPinToSession()} is cofigured. In the event that there is a mismatch
+     * when {@link #isPinToSession()} is configured. In the event that there is a mismatch
      * between the cookie IP address and the current request-provided IP address (i.e. network switches, VPN, etc),
      * the cookie can still be considered valid if the new IP address matches the pattern
      * specified here.

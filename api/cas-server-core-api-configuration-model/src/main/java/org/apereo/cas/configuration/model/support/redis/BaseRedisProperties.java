@@ -93,7 +93,7 @@ public class BaseRedisProperties implements Serializable {
     private RedisClusterProperties cluster = new RedisClusterProperties();
 
     /**
-     * Redis scan count option. When and if specified, SCAN operations would be "counted" or limited by this serting.
+     * Redis scan count option. When and if specified, SCAN operations would be "counted" or limited by this setting.
      * While SCAN does not provide guarantees about the number of elements returned
      * at every iteration, it is possible to empirically adjust the behavior
      * of SCAN using the COUNT option. Basically with COUNT the user specified

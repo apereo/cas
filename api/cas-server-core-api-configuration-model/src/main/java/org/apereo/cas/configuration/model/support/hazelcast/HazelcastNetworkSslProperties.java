@@ -80,7 +80,7 @@ public class HazelcastNetworkSslProperties implements Serializable {
      * Available values are:
      * <ul>
      * <li>{@code REQUIRED} - server forces usage of a trusted client certificate</li>
-     * <li>{@code OPTIONAL} - server asks for a client certificate, but it doesn’t require it</li>
+     * <li>{@code OPTIONAL} - server asks for a client certificate, but it doesn't require it</li>
      * </ul>
      */
     private String mutualAuthentication;
