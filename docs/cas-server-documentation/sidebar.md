@@ -716,5 +716,5 @@ layout: null
     *   [Test Process](/cas/{{ version }}/developer/Test-Process.html)
 
 * [Project](#projectpolicy)
-    *   [PMC](/cas/developer/Project-Commitee.html)
+    *   [PMC](/cas/developer/Project-Committee.html)
     *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)

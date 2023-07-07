@@ -84,7 +84,7 @@ Logging support for [Google Cloud Logging](../logging/Logging-GoogleCloud.html) 
 
 ### Service Management & Indexing
 
-Registered service types are now internally indexed by the services management facility to assist with advanced and faster querying oeprations.
+Registered service types are now internally indexed by the services management facility to assist with advanced and faster querying operations.
 Changes in this area allow the underlying service management APIs to efficiently query for a service by a given field such as `clientId`
 without having to loop through all registered services. Available indexes include `id`, `name`, `serviceId`, `clientId`, etc.
 

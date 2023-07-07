@@ -63,7 +63,7 @@ As noted earlier, the `pattern` must be specified as a valid regular expression.
 
 - If the pattern used here is identical to the pattern used by the registered service itself as specified by the `serviceId`, you may be able to reuse the same
   existing regular expression here via the `useServiceId` setting.
-- The setting `exactMatch` treats the regular expression pattern as an exact liteal and turns off the evaluation of the pattern as a regular expression in
+- The setting `exactMatch` treats the regular expression pattern as an exact literal and turns off the evaluation of the pattern as a regular expression in
   favor of a literal comparison.
 - 
 {% endtab %}

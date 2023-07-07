@@ -43,7 +43,7 @@ Which CAS version should you choose for the upgrade and how often should you con
 
 There are no definitive answers here, but here are some general guidelines:
 
-- Choose a CAS version that preferrably is still under [active maintenance](../developer/Maintenance-Policy.html).
+- Choose a CAS version that preferably is still under [active maintenance](../developer/Maintenance-Policy.html).
   - ...cross-check the system and platform requirements with your available resources and skillset.
 - Make sure you understand what happens to your CAS deployment when it switches to *Security-Patch Mode*.
   - ...and review the [security vulnerability response](../developer/Sec-Vuln-Response.html) guidelines.
