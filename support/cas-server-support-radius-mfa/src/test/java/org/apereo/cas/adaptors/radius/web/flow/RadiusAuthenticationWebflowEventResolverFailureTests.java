@@ -62,8 +62,8 @@ class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCasWebflo
     public void initialize() {
         this.context = mock(RequestContext.class);
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-
         when(context.getFlowScope()).thenReturn(flowScope);
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
@@ -73,7 +73,6 @@ class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCasWebflo
             .thenReturn(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         when(context.getFlowExecutionContext()).thenReturn(
             new MockFlowExecutionContext(new MockFlowSession(new Flow("mockFlow"))));
-
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
@@ -87,7 +86,6 @@ class RadiusAuthenticationWebflowEventResolverFailureTests extends BaseCasWebflo
     @Test
     void verifyFailsOperation() {
         WebUtils.putCredential(context, new RadiusTokenCredential("token"));
-
         var event = radiusAuthenticationWebflowEventResolver.resolveSingle(this.context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertTrue(flowScope.contains(RadiusAuthenticationWebflowEventResolver.FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS));
