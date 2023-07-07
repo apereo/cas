@@ -29,7 +29,7 @@ of any kind, either express or implied. See the project license file for the spe
 - CAS adopters MAY expect a CAS release to be maintained for **six months**, starting from the [original release date](https://github.com/apereo/cas/releases).
 - Maintenance during this period includes bug fixes, security patches and general upkeep of the release. Patch releases may be expected during this period per the release schedule.
 - Afterwards, maintenance of the release is *strictly* limited to security patches and fixing vulnerabilities for another **six months** (i.e. SPM mode).
-- The lifespan of a release MAY be extended beyond a single year, to be decided by the [CAS PMC](Project-Commitee.html) and the community at large when and where reasonable, assuming sufficient availability, resources and funding.
+- The lifespan of a release MAY be extended beyond a single year, to be decided by the [CAS PMC](Project-Committee.html) and the community at large when and where reasonable, assuming sufficient availability, resources and funding.
 
 “CAS Release” is any CAS feature release. (i.e. `4.1.x`, `4.2.x`, `5.0.x`, `5.1.x`, etc).
 
@@ -44,7 +44,7 @@ On a good day, the CAS project maintains three active branches/releases at the s
 
 ## What is EOL?
 
-"End-of-life" ("EOL") is a term used to describe that a given CAS release line (i.e. `6.1.x`, `6.2.x`, etc) is in the end of its practical life (from the project's point of view), and the project stops accepting, adding and/or releasing patches of any kind once it reaches that designated date. The EOL release is considered dead and it will not receive any attention whatsoever regardless of the issue impact or severity, unless absolutely justified by the [CAS PMC](Project-Commitee.html), subject to people's availability, project interest, resources and sufficient funding.
+"End-of-life" ("EOL") is a term used to describe that a given CAS release line (i.e. `6.1.x`, `6.2.x`, etc) is in the end of its practical life (from the project's point of view), and the project stops accepting, adding and/or releasing patches of any kind once it reaches that designated date. The EOL release is considered dead and it will not receive any attention whatsoever regardless of the issue impact or severity, unless absolutely justified by the [CAS PMC](Project-Committee.html), subject to people's availability, project interest, resources and sufficient funding.
 
 <div class="alert alert-info">:information_source: <strong>Documentation</strong><p>
 The documentation maintenance and hosting efforts will cease to exist for EOL versions after some time. If you do need access to the documentation

@@ -49,7 +49,7 @@ development line looks pretty much the same from release to release with clear m
 changes. FEATURE releases may have a theme or focus that helps coordinate development.
 CAS overlays may require minor to moderate changes, some APIs may have changed or
 been deprecated, default behavior and configuration may have changed.
-While implementation APIs may change, [CAS Core APIs](https://github.com/apereo/cas/tree/master/api)
+While implementation APIs may change, [CAS APIs](https://github.com/apereo/cas/tree/master/api)
 will remain unchanged between FEATURE release versions.
 
 ## MAJOR

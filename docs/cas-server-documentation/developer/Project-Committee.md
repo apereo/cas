@@ -14,8 +14,8 @@ The current members of the PMC are:
 
 - [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
 - [Jérôme Leleu](https://github.com/leleuj) [Vice Chairman]
-- [Dmitriy Kopylenko](https://github.com/dima767)
 - [Hal Deadman](https://github.com/hdeadman)
+- [Dmitriy Kopylenko](https://github.com/dima767)
 
 Emeritus members are:
 
@@ -29,7 +29,6 @@ Emeritus members are:
 - [Julien Huon](https://github.com/julienhuon)
 - [Robert Oschwald](https://github.com/robertoschwald)
 - [Marvin Addison](https://github.com/serac)
-
 
 ## Structure
 
@@ -52,18 +51,18 @@ All PMC member votes are equal; the chair has no veto power.
 
 Does voting stop after two +1 or one -1 or is it not tallied until the voting period closes?
 
-Voting is open for at least 72h. Any measure is effectively dead with a -1 vote, so if a -1 comes in a minute after voting starts there's really no point
-in waiting any longer. The value of a 72h window is that it affords more time for dissenters. The voting process is intended to emphasize and produce consensus,
+Voting is open for at least `72h`. Any measure is effectively dead with a `-1` vote, so if a `-1` comes in a minute after voting starts there's really no point
+in waiting any longer. The value of a `72h` window is that it affords more time for dissenters. The voting process is intended to emphasize and produce consensus,
 which is the most important aspect.
 
 ## PMC Chair Nomination
 
-The nomination of a PMC chair requires a vote: a majority of +1 is required and no -1. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
+The nomination of a PMC chair requires a vote: a majority of `+1` is required and no `-1`. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
 Members who abstain from a vote are simply considered in support of the vote via lazy consensus.
 
 ## Committer Nomination
 
-The nomination of a committer requires a vote: a majority of +1 is required and no -1. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
+The nomination of a committer requires a vote: a majority of `+1` is required and no `-1`. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
 The vote is proposed by one of the current committers. All members of the community have the right to become a committer, solely and exclusively
 on the grounds of the meritocracy. Members who abstain from a vote are simply considered in support of the vote via lazy consensus.
 

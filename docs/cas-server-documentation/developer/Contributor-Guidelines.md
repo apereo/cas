@@ -271,7 +271,7 @@ Patches submitted to the codebase in form of pull requests are generally reviewe
 and most are often accepted. If you find your contribution to take longer
 than *usual* to be merged, it's possible that the proposed changeset violates one or more of the following principles:
 
-- The patch intends to fix a supposed problem and yet provides no automated, reproducable, verifiable way for one to verify the issue other than anecdotal, descriptive, manual evidence.
+- The patch intends to fix a supposed problem and yet provides no automated, reproducible, verifiable way for one to verify the issue other than anecdotal, descriptive, manual evidence.
 - The patch fails to pass automated unit or integration tests.
 - The patch fails to adhere to the project's styling guidelines.
 - The patch fails to provide adequate unit or integration tests for the proposed changes.
