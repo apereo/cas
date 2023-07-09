@@ -79,9 +79,11 @@ public class CoreSamlConfiguration {
     @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
     public OpenSamlConfigBean openSamlConfigBean(
         final ConfigurableApplicationContext applicationContext,
+        @Qualifier("shibboleth.VelocityEngine")
+        final VelocityEngine velocityEngine,
         @Qualifier("shibboleth.ParserPool")
         final ParserPool parserPool) throws Exception {
-        return new DefaultOpenSamlConfigBean(parserPool, applicationContext);
+        return new DefaultOpenSamlConfigBean(parserPool, velocityEngine, applicationContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

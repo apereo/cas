@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataCredentia
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -104,7 +104,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     @Override
     public <T extends SAMLObject> T encode(final T samlObject,
                                            final SamlRegisteredService service,
-                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                           final SamlRegisteredServiceMetadataAdaptor adaptor,
                                            final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final String binding,
@@ -166,7 +166,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      * @param service         the service
      */
     protected void prepareSecurityParametersContext(
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final SamlRegisteredServiceMetadataAdaptor adaptor,
         final MessageContext outboundContext,
         final SamlRegisteredService service) {
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
@@ -188,7 +188,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      */
     protected <T extends SAMLObject> void prepareOutboundContext(
         final T samlObject,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final SamlRegisteredServiceMetadataAdaptor adaptor,
         final MessageContext outboundContext,
         final String binding,
         final RequestAbstractType authnRequest) throws SamlException {

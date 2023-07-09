@@ -7,7 +7,7 @@ import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -98,7 +98,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
         LOGGER.trace("Located entity id [{}]", entityID);
 
         val samlRegisteredService = (SamlRegisteredService) registeredService;
-        val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService, entityID);
+        val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService, entityID);
         if (adaptorRes.isEmpty()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;

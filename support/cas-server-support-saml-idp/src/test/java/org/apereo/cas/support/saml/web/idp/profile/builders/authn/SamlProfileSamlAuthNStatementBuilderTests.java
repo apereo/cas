@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
@@ -37,7 +37,7 @@ class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfiguration
         val request = getAuthnRequestFor(UUID.randomUUID().toString());
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

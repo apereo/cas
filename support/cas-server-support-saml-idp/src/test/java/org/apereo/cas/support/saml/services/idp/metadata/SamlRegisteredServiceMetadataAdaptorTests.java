@@ -21,19 +21,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link SamlRegisteredServiceServiceProviderMetadataFacadeTests}.
+ * This is {@link SamlRegisteredServiceMetadataAdaptorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("SAMLMetadata")
-class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlIdPConfigurationTests {
+class SamlRegisteredServiceMetadataAdaptorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     void verifyResolver() {
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, authnRequest).get();
         assertNotNull(adaptor);
         assertNull(adaptor.getValidUntil());
@@ -68,7 +68,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
             .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mdr).build());
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        assertTrue(SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, authnRequest).isEmpty());
+        assertTrue(SamlRegisteredServiceMetadataAdaptor.get(resolver, service, authnRequest).isEmpty());
     }
 
     @Test
@@ -82,7 +82,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
             .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mdr).build());
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        assertTrue(SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, authnRequest).isEmpty());
+        assertTrue(SamlRegisteredServiceMetadataAdaptor.get(resolver, service, authnRequest).isEmpty());
     }
 
     @Test
@@ -96,7 +96,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
             .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mdr).build());
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        assertTrue(SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, authnRequest).isEmpty());
+        assertTrue(SamlRegisteredServiceMetadataAdaptor.get(resolver, service, authnRequest).isEmpty());
     }
 
     @Test
@@ -113,7 +113,7 @@ class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends BaseSamlId
             .thenReturn(CachedMetadataResolverResult.builder().metadataResolver(mdr).build());
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
-        assertTrue(SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, authnRequest).isEmpty());
+        assertTrue(SamlRegisteredServiceMetadataAdaptor.get(resolver, service, authnRequest).isEmpty());
     }
 
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.collect.Sets;
@@ -113,7 +113,7 @@ public class SamlObjectSignatureValidator {
      * @throws Exception the exception
      */
     public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
-                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                 final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                  final HttpServletRequest request,
                                                  final MessageContext context) throws Exception {
 

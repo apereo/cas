@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 
 import lombok.val;
@@ -33,7 +33,7 @@ class SamlProfileSamlConditionsBuilderTests extends BaseSamlIdPConfigurationTest
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setSkewAllowance(5000);
         service.setAssertionAudiences("https://www.example.com");
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

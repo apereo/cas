@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 
@@ -37,7 +37,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         registeredService.setEncryptionWhiteListedAlgorithms(CollectionUtils.wrapArrayList("includeAlg1"));
         registeredService.setWhiteListBlackListPrecedence("exclude");
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
         assertNull(samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
@@ -52,7 +52,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         registeredService.setEncryptionBlackListedAlgorithms(null);
         registeredService.setEncryptionWhiteListedAlgorithms(null);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
         assertNull(samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
@@ -64,7 +64,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         registeredService.setServiceId("https://noenc.example.org");
         registeredService.setEncryptionOptional(false);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
         assertThrows(SamlException.class,
@@ -78,7 +78,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
         registeredService.setEncryptionWhiteListedAlgorithms(CollectionUtils.wrapArrayList("includeAlg1"));
         registeredService.setWhiteListBlackListPrecedence("exclude");
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
 
@@ -96,7 +96,7 @@ class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifyDecodeEncNameIdFails() throws Exception {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
                 registeredService.getServiceId()).get();
 

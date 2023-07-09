@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -40,7 +40,7 @@ public interface SamlIdPObjectSigner {
      */
     <T extends SAMLObject> T encode(T samlObject,
                                     SamlRegisteredService service,
-                                    SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                    SamlRegisteredServiceMetadataAdaptor adaptor,
                                     HttpServletResponse response,
                                     HttpServletRequest request,
                                     String binding,

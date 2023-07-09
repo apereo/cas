@@ -14,7 +14,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -135,10 +135,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param authnRequest      the authn request
      * @return the saml metadata adaptor for service
      */
-    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(
+    protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
         final SamlRegisteredService registeredService,
         final RequestAbstractType authnRequest) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        return SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
     }
 
@@ -149,9 +149,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param entityId          the entity id
      * @return the saml metadata adaptor for service
      */
-    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(
+    protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
         final SamlRegisteredService registeredService, final String entityId) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        return SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId);
     }
 
@@ -480,7 +480,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the pair
      * @throws Exception the exception
      */
-    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> verifySamlAuthenticationRequest(
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> verifySamlAuthenticationRequest(
         final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
         final HttpServletRequest request) throws Exception {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
@@ -489,7 +489,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching SAML2 metadata adaptor for [{}]", issuer);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
 
         if (adaptor.isEmpty()) {
@@ -520,7 +520,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected void verifyAuthenticationContextSignature(final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
                                                         final HttpServletRequest request, final RequestAbstractType authnRequest,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                        final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                         final SamlRegisteredService registeredService) throws Exception {
         val ctx = authenticationContext.getValue();
         verifyAuthenticationContextSignature(ctx, request, authnRequest, adaptor, registeredService);
@@ -539,7 +539,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected void verifyAuthenticationContextSignature(final MessageContext ctx,
                                                         final HttpServletRequest request,
                                                         final RequestAbstractType authnRequest,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                        final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                         final SamlRegisteredService registeredService) throws Exception {
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.trace("The authentication context is not signed");
@@ -560,7 +560,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request the request
      * @return the registered service and facade
      */
-    protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> getRegisteredServiceAndFacade(
+    protected Pair<SamlRegisteredService, SamlRegisteredServiceMetadataAdaptor> getRegisteredServiceAndFacade(
         final AuthnRequest request) {
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(request);
         LOGGER.debug("Located issuer [{}] from authentication context", issuer);

@@ -137,7 +137,7 @@ if [ $retVal == 0 ]; then
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
   export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"
-  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.jtl -n -t "${jmeterScript}" >results.log
+  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.xml -n -t "${jmeterScript}" >results.log
   echo -e "***************************************************************************************"
 
   java ci/tests/perf/EvalJMeterTestResults.java ./results.log

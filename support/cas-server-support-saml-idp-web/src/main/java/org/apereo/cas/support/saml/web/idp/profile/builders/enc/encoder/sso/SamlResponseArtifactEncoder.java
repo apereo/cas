@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.BaseHttpServletAwareSamlObjectEncoder;
 
 import lombok.val;
@@ -29,7 +29,7 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     private final SAMLArtifactMap samlArtifactMap;
 
     public SamlResponseArtifactEncoder(final VelocityEngine velocityEngineFactory,
-                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                       final SamlRegisteredServiceMetadataAdaptor adaptor,
                                        final HttpServletRequest httpRequest,
                                        final HttpServletResponse httpResponse,
                                        final SAMLArtifactMap samlArtifactMap) {

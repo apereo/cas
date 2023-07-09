@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 
 import lombok.val;
@@ -38,7 +38,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         service.setSkipGeneratingAssertionNameId(true);
         service.setSkipGeneratingSubjectConfirmationNotOnOrAfter(true);
         service.setSkipGeneratingSubjectConfirmationNameId(true);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -65,7 +65,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setSkewAllowance(1000);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
@@ -101,7 +101,7 @@ class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
         service.setSkipGeneratingSubjectConfirmationNotOnOrAfter(false);
         service.setSkewAllowance(0);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 

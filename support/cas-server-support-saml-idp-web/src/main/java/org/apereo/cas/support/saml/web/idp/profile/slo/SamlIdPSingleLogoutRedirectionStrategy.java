@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -82,7 +82,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val samlLogoutRequest = getLogoutRequest(request).get();
 
         val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
-        val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(),
             samlRegisteredService, logoutRequestIssuer);
 
@@ -123,7 +123,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      */
     protected void handleSingleLogoutForRedirectBinding(final RequestContext context, final LogoutRequest samlLogoutRequest,
                                                         final SamlRegisteredService samlRegisteredService,
-                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                                        final SamlRegisteredServiceMetadataAdaptor adaptor) {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
         FunctionUtils.doIfNotNull(sloService,
             __ -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponseRedirect(adaptor,
@@ -140,7 +140,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      */
     protected void handleSingleLogoutForPostBinding(final RequestContext context, final LogoutRequest samlLogoutRequest,
                                                     final SamlRegisteredService samlRegisteredService,
-                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                                    final SamlRegisteredServiceMetadataAdaptor adaptor) {
         val sloService = adaptor.getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
         FunctionUtils.doIfNotNull(sloService, __ -> FunctionUtils.doUnchecked(u -> produceSamlLogoutResponsePost(adaptor,
             sloService, context, samlRegisteredService, samlLogoutRequest)));
@@ -156,7 +156,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      * @param logoutRequest     the logout request
      * @throws Exception the exception
      */
-    protected void produceSamlLogoutResponseRedirect(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    protected void produceSamlLogoutResponseRedirect(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                      final SingleLogoutService sloService,
                                                      final RequestContext context,
                                                      final SamlRegisteredService registeredService,
@@ -187,7 +187,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      * @param logoutRequest     the logout request
      * @throws Exception the exception
      */
-    protected void produceSamlLogoutResponsePost(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    protected void produceSamlLogoutResponsePost(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                  final SingleLogoutService sloService,
                                                  final RequestContext context,
                                                  final SamlRegisteredService registeredService,
@@ -224,7 +224,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
      * @return the logout response
      * @throws Exception the exception
      */
-    protected LogoutResponse buildSamlLogoutResponse(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    protected LogoutResponse buildSamlLogoutResponse(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                      final SingleLogoutService sloService,
                                                      final RequestContext requestContext,
                                                      final SamlRegisteredService registeredService,

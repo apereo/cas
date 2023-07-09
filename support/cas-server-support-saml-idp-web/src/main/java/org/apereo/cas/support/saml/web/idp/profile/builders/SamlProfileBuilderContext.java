@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class SamlProfileBuilderContext {
     private final SamlRegisteredService registeredService;
 
     @NotNull
-    private final SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
+    private final SamlRegisteredServiceMetadataAdaptor adaptor;
 
     @NotNull
     @Builder.Default

@@ -63,6 +63,13 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     }
 
     @Test
+    void verifyPostLogoutOperation() throws Exception {
+        val response = new MockHttpServletResponse();
+        val entity = endpoint.produceLogoutRequestPost(samlRegisteredService.getServiceId(), response);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+    }
+
+    @Test
     void verifyPostOperationWithoutPassword() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

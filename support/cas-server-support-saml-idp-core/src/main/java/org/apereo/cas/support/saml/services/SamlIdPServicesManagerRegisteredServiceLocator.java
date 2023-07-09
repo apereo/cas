@@ -6,7 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -48,7 +48,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                 .anyMatch(entityId -> {
                     LOGGER.trace("Resolving metadata for service [{}] via entity id [{}]", registeredService.getName(), entityId);
                     val samlService = SamlRegisteredService.class.cast(registeredService);
-                    val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, entityId);
+                    val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, entityId);
                     return adaptor.isPresent();
                 });
         });

@@ -4,7 +4,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -141,7 +141,7 @@ public class SamlIdPUtils {
      */
     public static void preparePeerEntitySamlEndpointContext(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                             final MessageContext outboundContext,
-                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                            final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                             final String binding) throws SamlException {
         val entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
@@ -166,7 +166,7 @@ public class SamlIdPUtils {
      * @return the assertion consumer service
      */
     public static Endpoint determineEndpointForRequest(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
-                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                       final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                        final String binding) {
         var endpoint = (Endpoint) null;
         val authnRequest = authnContext.getLeft();
@@ -191,7 +191,7 @@ public class SamlIdPUtils {
     }
 
     private static AssertionConsumerService determineEndpointForRequest(final RequestAbstractType authnRequest,
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                        final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                                         final String binding,
                                                                         final AssertionConsumerService acsFromRequest,
                                                                         final AssertionConsumerService acsFromMetadata,
@@ -255,10 +255,10 @@ public class SamlIdPUtils {
         val resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
             .map(SamlRegisteredService.class::cast)
-            .map(service -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, entityID))
+            .map(service -> SamlRegisteredServiceMetadataAdaptor.get(resolver, service, entityID))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .map(SamlRegisteredServiceServiceProviderMetadataFacade::metadataResolver)
+            .map(SamlRegisteredServiceMetadataAdaptor::metadataResolver)
             .collect(Collectors.toList());
 
         LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
@@ -298,7 +298,7 @@ public class SamlIdPUtils {
      * @return the role descriptor resolver
      * @throws Exception the exception
      */
-    public static RoleDescriptorResolver getRoleDescriptorResolver(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    public static RoleDescriptorResolver getRoleDescriptorResolver(final SamlRegisteredServiceMetadataAdaptor adaptor,
                                                                    final boolean requireValidMetadata) throws Exception {
         return getRoleDescriptorResolver(adaptor.metadataResolver(), requireValidMetadata);
     }
@@ -336,7 +336,7 @@ public class SamlIdPUtils {
 
     private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType request,
                                                                                    final String binding,
-                                                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adapter) {
+                                                                                   final SamlRegisteredServiceMetadataAdaptor adapter) {
         if (request instanceof AuthnRequest) {
             val authnRequest = AuthnRequest.class.cast(request);
             var acsUrl = authnRequest.getAssertionConsumerServiceURL();
