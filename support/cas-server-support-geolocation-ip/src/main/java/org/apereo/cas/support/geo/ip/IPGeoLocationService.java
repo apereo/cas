@@ -2,15 +2,11 @@ package org.apereo.cas.support.geo.ip;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
-
-import io.ipgeolocation.api.Geolocation;
 import io.ipgeolocation.api.GeolocationParams;
 import io.ipgeolocation.api.IPGeolocationAPI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.http.HttpStatus;
-
 import java.net.InetAddress;
 
 /**
@@ -26,20 +22,17 @@ public class IPGeoLocationService extends AbstractGeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
-        val geoParams = new GeolocationParams();
-        geoParams.setIPAddress(address.getHostAddress());
-        geoParams.setFields("geo");
+        val geoParams = new GeolocationParams(address.getHostAddress(), "en",
+            "geo", null, true, true, true, true, true);
         LOGGER.debug("Fetching geolocation results for [{}]", geoParams.getIPAddress());
         val geolocation = api.getGeolocation(geoParams);
         LOGGER.debug("Geolocation results for [{}] are [{}]", geoParams.getIPAddress(), geolocation);
-        val status = HttpStatus.resolve((Integer) geolocation.getOrDefault("status", HttpStatus.BAD_REQUEST.value()));
-        if (status != null && status.is2xxSuccessful()) {
+        if (geolocation != null) {
             val location = new GeoLocationResponse();
-            val response = (Geolocation) geolocation.get("response");
-            location.addAddress(response.getCity());
-            location.addAddress(response.getStateProvince());
-            location.addAddress(response.getCountryName());
-            return location;
+            return location
+                .addAddress(geolocation.getCity())
+                .addAddress(geolocation.getStateProvince())
+                .addAddress(geolocation.getCountryName());
         }
         LOGGER.warn("Unable to determine geolocation results for [{}]", geoParams.getIPAddress());
         return null;
