@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -129,7 +129,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
         issuer.setValue(service.getServiceId());
         logoutRequest.setIssuer(issuer);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         logoutRequest = samlIdPObjectSigner.encode(logoutRequest, service,
             adaptor, response, request, SAMLConstants.SAML2_REDIRECT_BINDING_URI, logoutRequest, new MessageContext());

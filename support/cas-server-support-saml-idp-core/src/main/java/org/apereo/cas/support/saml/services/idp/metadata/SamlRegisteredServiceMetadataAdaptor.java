@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -40,7 +39,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link SamlRegisteredServiceServiceProviderMetadataFacade} that acts a façade between the SAML metadata resolved
+ * This is {@link SamlRegisteredServiceMetadataAdaptor} that acts a façade between the SAML metadata resolved
  * from a metadata resource and other outer layers in CAS that need access to the bits of that
  * metadata. Once the metadata resolved for a service is adapted and parsed for a given entity id,
  * callers will be able to peek into the various configuration elements of the metadata to handle
@@ -50,7 +49,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor ssoDescriptor, EntityDescriptor entityDescriptor, @Getter MetadataResolver metadataResolver) {
+public record SamlRegisteredServiceMetadataAdaptor(SPSSODescriptor ssoDescriptor, EntityDescriptor entityDescriptor, MetadataResolver metadataResolver) {
 
     /**
      * Adapt saml metadata and parse. Acts as a facade.
@@ -60,7 +59,7 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
      * @param entityID          the entity id
      * @return the saml metadata adaptor
      */
-    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+    public static Optional<SamlRegisteredServiceMetadataAdaptor> get(
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredService registeredService,
         final String entityID) {
@@ -80,29 +79,29 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
      * @param request           the request
      * @return the saml metadata adaptor
      */
-    public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+    public static Optional<SamlRegisteredServiceMetadataAdaptor> get(
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredService registeredService,
         final RequestAbstractType request) {
         return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+    private static Optional<SamlRegisteredServiceMetadataAdaptor> get(
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredService registeredService,
         final String entityID,
-        final CriteriaSet criterions) {
+        final CriteriaSet criteriaSet) {
         try {
             LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
-            criterions.add(new EntityIdCriterion(entityID), true);
+            criteriaSet.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-            val cachedMetadataResolver = resolver.resolve(registeredService, criterions).getMetadataResolver();
+            val cachedMetadataResolver = resolver.resolve(registeredService, criteriaSet).getMetadataResolver();
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
                 registeredService.getMetadataLocation(), cachedMetadataResolver.getId(), entityID);
 
-            val entityDescriptor = cachedMetadataResolver.resolveSingle(criterions);
+            val entityDescriptor = cachedMetadataResolver.resolveSingle(criteriaSet);
             if (entityDescriptor == null) {
-                LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criterions);
+                LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criteriaSet);
                 return Optional.empty();
             }
             LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
@@ -115,14 +114,14 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
                     return Optional.empty();
                 }
             }
-            return getServiceProviderSsoDescriptor(entityID, cachedMetadataResolver, entityDescriptor);
+            return getAdaptor(entityID, cachedMetadataResolver, entityDescriptor);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
 
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(
+    private static Optional<SamlRegisteredServiceMetadataAdaptor> getAdaptor(
         final String entityID,
         final MetadataResolver chainingMetadataResolver,
         final EntityDescriptor entityDescriptor) {
@@ -138,8 +137,8 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
                     return Optional.empty();
                 }
             }
-            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
-                chainingMetadataResolver));
+            return Optional.of(new SamlRegisteredServiceMetadataAdaptor(ssoDescriptor,
+                entityDescriptor, chainingMetadataResolver));
         }
         LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
         return Optional.empty();
@@ -237,7 +236,11 @@ public record SamlRegisteredServiceServiceProviderMetadataFacade(SPSSODescriptor
      * @return the single logout service or null
      */
     public SingleLogoutService getSingleLogoutService(final String binding) {
-        return getSingleLogoutServices().stream().filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).findFirst().orElse(null);
+        return getSingleLogoutServices()
+            .stream()
+            .filter(acs -> binding.equalsIgnoreCase(acs.getBinding()))
+            .findFirst()
+            .orElse(null);
     }
 
     /**

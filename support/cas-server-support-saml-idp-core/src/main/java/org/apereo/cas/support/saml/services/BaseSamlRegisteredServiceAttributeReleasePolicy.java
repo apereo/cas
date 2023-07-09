@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -133,12 +133,12 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
      * @return the optional
      */
     @JsonIgnore
-    protected static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> determineServiceProviderMetadataFacade(
+    protected static Optional<SamlRegisteredServiceMetadataAdaptor> determineServiceProviderMetadataFacade(
         final SamlRegisteredService registeredService, final String entityId) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME,
             SamlRegisteredServiceCachingMetadataResolver.class);
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, registeredService, entityId);
+        return SamlRegisteredServiceMetadataAdaptor.get(resolver, registeredService, entityId);
     }
 
     @Override
@@ -151,7 +151,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val entityId = getEntityIdFromRequest(context.getService());
             val facade = StringUtils.isBlank(entityId)
-                ? Optional.<SamlRegisteredServiceServiceProviderMetadataFacade>empty()
+                ? Optional.<SamlRegisteredServiceMetadataAdaptor>empty()
                 : determineServiceProviderMetadataFacade(samlRegisteredService, entityId);
 
             if (facade.isEmpty()) {
@@ -181,7 +181,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         Map<String, List<Object>> attributes,
         ApplicationContext applicationContext,
         SamlRegisteredServiceCachingMetadataResolver resolver,
-        SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        SamlRegisteredServiceMetadataAdaptor facade,
         EntityDescriptor entityDescriptor,
         RegisteredServiceAttributeReleasePolicyContext context);
 }

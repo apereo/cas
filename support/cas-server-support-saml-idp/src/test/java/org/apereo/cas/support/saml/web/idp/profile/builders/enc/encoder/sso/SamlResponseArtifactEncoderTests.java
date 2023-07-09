@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +35,7 @@ class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
 
         val registeredService = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(registeredService);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest).get();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest).get();
         val encoder = new SamlResponseArtifactEncoder(velocityEngine, adaptor, request, response, samlArtifactMap);
         assertEquals(SAMLConstants.SAML2_ARTIFACT_BINDING_URI, encoder.getBinding());
 

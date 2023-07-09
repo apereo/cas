@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +35,7 @@ class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
 

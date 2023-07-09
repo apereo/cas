@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
@@ -43,7 +43,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
         service2.setEncryptAttributes(true);
         service2.setEncryptionOptional(true);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val buildContext = SamlProfileBuilderContext.builder()
@@ -67,7 +67,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
         service.setEncryptAttributes(true);
         service.setEncryptAssertions(true);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val buildContext = SamlProfileBuilderContext.builder()
@@ -91,7 +91,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(getAuthnRequestFor(service))
@@ -115,7 +115,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("*");
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())
@@ -138,7 +138,7 @@ class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseSamlIdPC
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("uid");
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(getAuthnRequestFor(service))
             .httpRequest(new MockHttpServletRequest())

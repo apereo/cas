@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.shared.xml.ParserPool;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.XMLObject;
@@ -34,6 +35,8 @@ public class DefaultOpenSamlConfigBean implements OpenSamlConfigBean {
 
     private final ParserPool parserPool;
 
+    private final VelocityEngine velocityEngine;
+
     private final XMLObjectBuilderFactory builderFactory;
 
     private final MarshallerFactory marshallerFactory;
@@ -45,8 +48,10 @@ public class DefaultOpenSamlConfigBean implements OpenSamlConfigBean {
     private final ConfigurableApplicationContext applicationContext;
 
     public DefaultOpenSamlConfigBean(final @NonNull ParserPool parserPool,
+                                     final @NonNull VelocityEngine velocityEngine,
                                      final ConfigurableApplicationContext applicationContext) {
         this.parserPool = parserPool;
+        this.velocityEngine = velocityEngine;
         this.applicationContext = applicationContext;
         
         FunctionUtils.doUnchecked(__ -> {

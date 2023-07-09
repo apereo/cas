@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
@@ -41,7 +41,7 @@ class SamlProfileSamlAssertionBuilderTests {
         @Test
         void verifyAssertionWithDefaultIssuer() throws Exception {
             val service = getSamlRegisteredServiceForTestShib();
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
             val buildContext = SamlProfileBuilderContext.builder()
@@ -74,7 +74,7 @@ class SamlProfileSamlAssertionBuilderTests {
             service.setId(1000);
             service.setName("ObjectSignerTest");
 
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            val adaptor = SamlRegisteredServiceMetadataAdaptor
                 .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
             val buildContext = SamlProfileBuilderContext.builder()

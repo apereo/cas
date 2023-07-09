@@ -51,7 +51,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -77,7 +76,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +152,8 @@ public class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
+            @Qualifier("casSamlIdPMetadataResolver")
+            final MetadataResolver casSamlIdPMetadataResolver,
             final CasConfigurationProperties casProperties,
             @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
@@ -170,11 +170,12 @@ public class SamlIdPMetadataConfiguration {
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory) {
             return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties, servicesManager,
-                authenticationSystemSupport, samlIdPServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
+                authenticationSystemSupport, samlIdPServiceFactory,
+                PrincipalFactoryUtils.newPrincipalFactory(),
                 samlProfileSamlResponseBuilder,
                 defaultSamlRegisteredServiceCachingMetadataResolver,
                 new NonInflatingSaml20ObjectBuilder(openSamlConfigBean),
-                defaultPrincipalResolver);
+                defaultPrincipalResolver, casSamlIdPMetadataResolver);
         }
 
     }

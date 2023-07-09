@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder;
 
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
@@ -37,7 +37,7 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
     /**
      * The Adaptor.
      */
-    protected final SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
+    protected final SamlRegisteredServiceMetadataAdaptor adaptor;
 
     /**
      * The Http response.

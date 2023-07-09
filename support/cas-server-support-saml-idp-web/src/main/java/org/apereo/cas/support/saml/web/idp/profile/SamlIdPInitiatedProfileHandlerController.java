@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -126,7 +126,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
     }
 
     protected String extractShire(final HttpServletRequest request, final String providerId,
-                                  final SamlRegisteredServiceServiceProviderMetadataFacade facade)
+                                  final SamlRegisteredServiceMetadataAdaptor facade)
         throws MessageDecodingException {
         var shire = request.getParameter(SamlIdPConstants.SHIRE);
         if (StringUtils.isBlank(shire)) {

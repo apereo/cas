@@ -10,7 +10,7 @@ import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -162,7 +162,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
 
     private String determineNameIdForQuery(final AttributeQuery query,
                                            final SamlRegisteredService registeredService,
-                                           final SamlRegisteredServiceServiceProviderMetadataFacade facade) {
+                                           final SamlRegisteredServiceMetadataAdaptor facade) {
         return query.getSubject().getNameID() == null
             ? getConfigurationContext().getSamlObjectEncrypter().decode(
             query.getSubject().getEncryptedID(), registeredService, facade).getValue()

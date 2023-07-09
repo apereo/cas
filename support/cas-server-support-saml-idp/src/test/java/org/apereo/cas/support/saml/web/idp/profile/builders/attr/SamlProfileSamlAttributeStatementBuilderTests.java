@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
@@ -43,7 +43,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         val service = getSamlRegisteredServiceForTestShib();
         service.getAttributeValueTypes().put("customNameId", NameIDType.PERSISTENT);
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val buildContext = SamlProfileBuilderContext.builder()
@@ -70,7 +70,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
         val service = getSamlRegisteredServiceForTestShib();
         service.getAttributeValueTypes().put("customNameId", NameIDType.class.getSimpleName());
         
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val buildContext = SamlProfileBuilderContext.builder()
@@ -95,7 +95,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
     void verifyTestAttributeDefns() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val buildContext = SamlProfileBuilderContext.builder()
@@ -120,7 +120,7 @@ class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigura
     @Test
     void verifyFriendlyNamesForKnownAttributes() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+        val adaptor = SamlRegisteredServiceMetadataAdaptor
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val buildContext = SamlProfileBuilderContext.builder()

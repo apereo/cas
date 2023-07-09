@@ -4,7 +4,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -56,7 +56,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
 
     private MessageContext samlContext;
 
-    private SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
+    private SamlRegisteredServiceMetadataAdaptor adaptor;
 
     private void setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
@@ -108,7 +108,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         service.setDescription("SAML Service");
         service.setMetadataLocation(spMetadataPath);
 
-        val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+        val facade = SamlRegisteredServiceMetadataAdaptor.get(
             samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         this.adaptor = facade.get();
     }

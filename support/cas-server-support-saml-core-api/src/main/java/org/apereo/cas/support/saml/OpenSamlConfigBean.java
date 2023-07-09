@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import net.shibboleth.shared.xml.ParserPool;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
@@ -62,6 +63,13 @@ public interface OpenSamlConfigBean {
      * @return the application context
      */
     ConfigurableApplicationContext getApplicationContext();
+
+    /**
+     * Gets velocity engine.
+     *
+     * @return the velocity engine
+     */
+    VelocityEngine getVelocityEngine();
 
     /**
      * Log object.

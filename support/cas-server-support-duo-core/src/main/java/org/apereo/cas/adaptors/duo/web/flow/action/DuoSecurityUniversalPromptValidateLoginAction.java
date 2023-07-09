@@ -12,12 +12,15 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -29,7 +32,9 @@ import org.springframework.webflow.scope.ConversationScope;
 import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.RequestScope;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link DuoSecurityUniversalPromptPrepareLoginAction}.
@@ -122,7 +127,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     private static void populateRequestContextScope(final Object flowAttributes, final MutableAttributeMap<Object> requestContext) {
-        requestContext.putAll(new LocalAttributeMap<>((Map) flowAttributes));
+        val mappedAttributes = new LinkedHashMap<>((Map) flowAttributes);
+        CollectionUtils.filter(mappedAttributes.values(), PredicateUtils.notNullPredicate());
+        requestContext.putAll(new LocalAttributeMap<>(mappedAttributes));
     }
 
     protected void populateContextWithService(final RequestContext requestContext,
@@ -150,9 +157,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     protected void populateContextWithAuthentication(final RequestContext requestContext, final BrowserWebStorageSessionStore sessionStorage) {
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes().get(AuthenticationResultBuilder.class.getSimpleName());
-        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+        FunctionUtils.doIfNotNull(authenticationResultBuilder, value -> WebUtils.putAuthenticationResultBuilder(value, requestContext));
         val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        Objects.requireNonNull(authenticationResult.getAuthentication());
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
     }
 }

@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 
 import lombok.val;
@@ -37,7 +37,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("classpath:SamlAuthnContext.groovy");
             val authnRequest = getAuthnRequestFor(service);
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
             val buildContext = SamlProfileBuilderContext.builder()
@@ -56,7 +56,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val service = getSamlRegisteredServiceForTestShib();
             service.setRequiredAuthenticationContextClass("some-context-class");
             val authnRequest = getAuthnRequestFor(service);
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
             val buildContext = SamlProfileBuilderContext.builder()
@@ -77,7 +77,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val context = mock(RequestedAuthnContext.class);
             when(context.getAuthnContextClassRefs()).thenReturn(List.of());
             authnRequest.setRequestedAuthnContext(context);
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
             val buildContext = SamlProfileBuilderContext.builder()
@@ -100,7 +100,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val context = mock(RequestedAuthnContext.class);
             when(context.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
             authnRequest.setRequestedAuthnContext(context);
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
 
             val buildContext = SamlProfileBuilderContext.builder()
@@ -128,7 +128,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val context = mock(RequestedAuthnContext.class);
             when(context.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
             authnRequest.setRequestedAuthnContext(context);
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
             val assertion = getAssertion(Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
                 TestMultifactorAuthenticationProvider.ID));
@@ -156,7 +156,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
             val assertion = getAssertion(
                 Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of("pwd", "mfa")));
@@ -176,7 +176,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
             val service = getSamlRegisteredServiceForTestShib();
             val authnRequest = getAuthnRequestFor(service);
 
-            val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            val adaptor = SamlRegisteredServiceMetadataAdaptor.get(
                 samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
             val assertion = getAssertion(Map.of());
             val buildContext = SamlProfileBuilderContext.builder()

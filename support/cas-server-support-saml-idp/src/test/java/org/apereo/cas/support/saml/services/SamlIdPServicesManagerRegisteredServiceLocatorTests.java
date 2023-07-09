@@ -6,7 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -228,11 +228,11 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
      */
     @Test
     void verifyEntityIDFilter() {
-        try (val mockFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
+        try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
             val service1 = getSamlRegisteredServiceFor(false, false, false, "urn:abc:def.+");
             service1.setEvaluationOrder(9);
             servicesManager.save(service1);
-            mockFacade.when(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), any(), anyString())).thenCallRealMethod();
+            mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString())).thenCallRealMethod();
             val entityID = "https://sp.testshib.org/shibboleth-sp";
             val service = webApplicationServiceFactory.createService(entityID);
             val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_AUTHN_REQUEST1, entityID));
@@ -241,20 +241,20 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
 
-            mockFacade.verify(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), eq(service1), anyString()), never());
+            mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), eq(service1), anyString()), never());
             val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
             service2.setEvaluationOrder(10);
             servicesManager.save(service2);
 
             val res2 = servicesManager.findServiceBy(service);
             assertNotNull(res2);
-            mockFacade.verify(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), eq(service2), eq(entityID)));
+            mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), eq(service2), eq(entityID)));
         }
     }
 
     @Test
     void verifyMatchWithEncodedParam() {
-        try (val mockFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
+        try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
 
             val service1 = getSamlRegisteredServiceFor(".*app.samlclient.edu.*/sp");
             service1.setEvaluationOrder(4);
@@ -265,7 +265,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
             service2.setEvaluationOrder(1000);
             servicesManager.save(service2);
 
-            mockFacade.when(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), any(), anyString()))
+            mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString()))
                 .thenCallRealMethod();
 
             val service = mock(WebApplicationService.class);
@@ -275,20 +275,20 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
 
-            mockFacade.verify(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), eq(service2), anyString()), never());
-            mockFacade.verify(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), eq(service1), anyString()));
+            mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), eq(service2), anyString()), never());
+            mockFacade.verify(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), eq(service1), anyString()));
         }
     }
 
     @Test
     void verifyNoSamlService() {
-        try (val mockFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
+        try (val mockFacade = mockStatic(SamlRegisteredServiceMetadataAdaptor.class)) {
 
             val service1 = RegisteredServiceTestUtils.getRegisteredService(".*app.samlclient.edu.*/sp");
             service1.setEvaluationOrder(4);
             servicesManager.save(service1);
 
-            mockFacade.when(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), any(), anyString()))
+            mockFacade.when(() -> SamlRegisteredServiceMetadataAdaptor.get(any(), any(), anyString()))
                 .thenCallRealMethod();
 
             val service = RegisteredServiceTestUtils.getService("app.samlclient.edu");

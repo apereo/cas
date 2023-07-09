@@ -5,7 +5,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -38,7 +38,7 @@ public class SamlIdPMetadataUIAction extends BaseCasWebflowAction {
             val samlService = servicesManager.findServiceBy(service, SamlRegisteredService.class);
             if (samlService != null) {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, samlService);
-                val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
+                val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, service.getId());
 
                 if (adaptor.isEmpty()) {
                     LOGGER.debug("Cannot find SAML2 metadata linked to [{}]. Skipping MDUI...", service.getId());

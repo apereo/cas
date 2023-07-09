@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 
 import lombok.val;
@@ -304,7 +304,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             val subject = (Subject) builder.buildObject();
 
             if (nameIdFormat.equals(NameIDType.ENCRYPTED)) {
-                val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(defaultSamlRegisteredServiceCachingMetadataResolver,
+                val facade = SamlRegisteredServiceMetadataAdaptor.get(defaultSamlRegisteredServiceCachingMetadataResolver,
                     samlRegisteredService, samlRegisteredService.getServiceId()).get();
                 val encryptedId = samlIdPObjectEncrypter.encode(nameId, samlRegisteredService, facade);
                 subject.setEncryptedID(encryptedId);

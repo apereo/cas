@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerController;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -65,7 +65,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
         val request = new MockHttpServletRequest();
         val authnRequest = getAuthnRequestFor(service.getServiceId());
 
-        val adaptor = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+        val adaptor = mock(SamlRegisteredServiceMetadataAdaptor.class);
         when(adaptor.isAuthnRequestsSigned()).thenReturn(true);
         val context = new MessageContext();
         context.setMessage(authnRequest);
