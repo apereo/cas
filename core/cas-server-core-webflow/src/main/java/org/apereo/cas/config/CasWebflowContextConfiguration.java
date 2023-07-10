@@ -35,12 +35,14 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -241,10 +243,10 @@ public class CasWebflowContextConfiguration {
             final FlowDefinitionRegistry logoutFlowRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val c = new DefaultLoginWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
-            c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
-            c.setOrder(Ordered.HIGHEST_PRECEDENCE);
-            return c;
+            val cfg = new DefaultLoginWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
+            cfg.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
+            cfg.setOrder(Ordered.HIGHEST_PRECEDENCE);
+            return cfg;
         }
 
         @ConditionalOnMissingBean(name = "defaultLogoutWebflowConfigurer")
@@ -260,10 +262,10 @@ public class CasWebflowContextConfiguration {
             final FlowDefinitionRegistry logoutFlowRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val c = new DefaultLogoutWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
-            c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
-            c.setOrder(Ordered.HIGHEST_PRECEDENCE);
-            return c;
+            val cfg = new DefaultLogoutWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
+            cfg.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
+            cfg.setOrder(Ordered.HIGHEST_PRECEDENCE);
+            return cfg;
         }
 
         @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
@@ -279,9 +281,9 @@ public class CasWebflowContextConfiguration {
             final FlowDefinitionRegistry logoutFlowRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val c = new GroovyWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
-            c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
-            return c;
+            val cfg = new GroovyWebflowConfigurer(flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
+            cfg.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
+            return cfg;
         }
 
         @ConditionalOnMissingBean(name = "casDefaultWebflowExecutionPlanConfigurer")
@@ -422,6 +424,12 @@ public class CasWebflowContextConfiguration {
             configurers.forEach(cfg -> cfg.configureWebflowExecutionPlan(plan));
             plan.execute();
             return plan;
+        }
+
+        @EventListener
+        public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
+            val webflowExecutionPlan = event.getApplicationContext().getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
+            webflowExecutionPlan.getWebflowConfigurers().forEach(cfg -> cfg.postInitialization(event.getApplicationContext()));
         }
     }
 }

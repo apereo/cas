@@ -1,14 +1,12 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
@@ -22,6 +20,7 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -50,19 +49,18 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     private final BrowserWebStorageSessionStore sessionStore;
 
-    private final MultifactorAuthenticationProviderBean<
-        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
+    private final ConfigurableApplicationContext applicationContext;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     public DuoSecurityUniversalPromptValidateLoginAction(
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
         final BrowserWebStorageSessionStore sessionStore,
-        final MultifactorAuthenticationProviderBean duoProviderBean,
+        final ConfigurableApplicationContext applicationContext,
         final AuthenticationSystemSupport authenticationSystemSupport) {
         super(duoAuthenticationWebflowEventResolver);
         this.sessionStore = sessionStore;
-        this.duoProviderBean = duoProviderBean;
+        this.applicationContext = applicationContext;
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
@@ -150,7 +148,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
         val duoSecurityIdentifier = (String) sessionStorage.getSessionAttributes().get("duoProviderId");
         val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
-        val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
+        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
+            .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
         credential.setProviderId(provider.getId());
         WebUtils.putCredential(requestContext, credential);
     }

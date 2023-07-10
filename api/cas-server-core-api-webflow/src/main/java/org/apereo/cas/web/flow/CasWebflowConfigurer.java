@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.RenderAction;
@@ -61,6 +62,13 @@ public interface CasWebflowConfigurer extends Ordered {
      * Initialize.
      */
     void initialize();
+
+    /**
+     * Post initialization, typically after the state of application is declared as ready.
+     *
+     * @param applicationContext the application context
+     */
+    default void postInitialization(final ConfigurableApplicationContext applicationContext) {}
 
     /**
      * Gets login flow.

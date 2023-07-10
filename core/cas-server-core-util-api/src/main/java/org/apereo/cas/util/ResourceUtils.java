@@ -286,9 +286,11 @@ public class ResourceUtils {
      * @return the input stream resource
      */
     public static InputStreamResource buildInputStreamResourceFrom(final String value, final String description) {
-        val reader = new StringReader(value);
-        val is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
-        return new InputStreamResource(is, description);
+        return FunctionUtils.doUnchecked(() -> {
+            val reader = new StringReader(value);
+            val is = ReaderInputStream.builder().setReader(reader).setCharset(StandardCharsets.UTF_8).get();
+            return new InputStreamResource(is, description);
+        });
     }
 
     /**

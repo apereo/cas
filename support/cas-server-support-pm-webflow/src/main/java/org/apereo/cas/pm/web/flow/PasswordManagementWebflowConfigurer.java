@@ -34,8 +34,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
      * Flow id for password reset.
      */
     public static final String FLOW_VAR_ID_PASSWORD = "password";
-
-
+    
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ConfigurableApplicationContext applicationContext,
@@ -47,8 +46,24 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     @Override
     protected void doInitialize() {
         val flow = getLoginFlow();
-        if (flow != null) {
-            createAccountStatusViewStates(flow);
+        createAccountStatusViewStates(flow);
+    }
+
+    @Override
+    public void postInitialization(final ConfigurableApplicationContext applicationContext) {
+        val pm = casProperties.getAuthn().getPm();
+        val flow = getLoginFlow();
+        if (pm.getCore().isEnabled()) {
+            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            val sendAccountInfoState = getState(flow, CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS, ActionState.class);
+            providerMap.forEach((id, provider) -> {
+                if (containsSubflowState(flow, provider.getId())) {
+                    val mfaSubflowState = getState(flow, provider.getId(), SubflowState.class);
+                    createTransitionForState(mfaSubflowState, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD,
+                        CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);
+                    createTransitionForState(sendAccountInfoState, provider.getId(), mfaSubflowState.getId());
+                }
+            });
         }
     }
 
@@ -118,7 +133,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         warningState.getEntryActionList().add(createEvaluateAction("flowScope.pswdChangePostLogin=true"));
         createTransitionForState(warningState, "changePassword", CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
     }
-
     
     private void createPasswordResetFlow() {
         val flow = getLoginFlow();
@@ -135,16 +149,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
             val sendAccountInfoState = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS,
                 CasWebflowConstants.ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS);
-
-            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-            providerMap.forEach((id, provider) -> {
-                if (containsSubflowState(flow, provider.getId())) {
-                    val mfaSubflowState = getState(flow, provider.getId(), SubflowState.class);
-                    createTransitionForState(mfaSubflowState, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD,
-                        CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);
-                    createTransitionForState(sendAccountInfoState, provider.getId(), mfaSubflowState.getId());
-                }
-            });
 
             createTransitionForState(sendAccountInfoState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_SENT_RESET_PASSWORD_ACCT_INFO);

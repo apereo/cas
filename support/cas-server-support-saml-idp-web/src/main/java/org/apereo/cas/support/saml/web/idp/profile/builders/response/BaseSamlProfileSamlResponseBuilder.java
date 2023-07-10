@@ -61,7 +61,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
     protected T encodeFinalResponse(final SamlProfileBuilderContext context,
                                     final T finalResponse) throws Exception {
-        val scratch = context.getMessageContext().getSubcontext(ScratchContext.class, true);
+        val scratch = context.getMessageContext().ensureSubcontext(ScratchContext.class);
         val map = (Map) Objects.requireNonNull(scratch).getMap();
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 

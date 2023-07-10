@@ -65,7 +65,7 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     }
 
     private void prepareArtifactContext(final Response samlResponse, final MessageContext ctx) {
-        val art = ctx.getSubcontext(SAMLArtifactContext.class, true);
+        val art = ctx.ensureSubcontext(SAMLArtifactContext.class);
         Objects.requireNonNull(art).setArtifactType(SAML2ArtifactType0004.TYPE_CODE);
         art.setSourceEntityId(samlResponse.getIssuer().getValue());
         val svc = adaptor.getAssertionConsumerServiceForArtifactBinding();

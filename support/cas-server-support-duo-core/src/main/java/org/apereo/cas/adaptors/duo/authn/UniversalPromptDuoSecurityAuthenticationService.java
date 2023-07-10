@@ -3,21 +3,16 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.duosecurity.Client;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,16 +36,6 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     public UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
-        final CasConfigurationProperties casProperties,
-        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
-        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties),
-            multifactorAuthenticationPrincipalResolver, userAccountCache);
-    }
-
-    UniversalPromptDuoSecurityAuthenticationService(
-        final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final HttpClient httpClient,
         final Client duoClient,
         final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
         final Cache<String, DuoSecurityUserAccount> userAccountCache) {
@@ -62,22 +47,12 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     public Optional<Object> getDuoClient() {
         return Optional.of(this.duoClient);
     }
-    
-    @SneakyThrows
-    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-                                       final CasConfigurationProperties casProperties) {
-        val resolver = SpringExpressionLanguageValueResolver.getInstance();
-        return new Client.Builder(resolver.resolve(duoProperties.getDuoIntegrationKey()),
-            resolver.resolve(duoProperties.getDuoSecretKey()),
-            resolver.resolve(duoProperties.getDuoApiHost()),
-            casProperties.getServer().getLoginUrl()).build();
-    }
 
     @Override
-    public DuoSecurityAuthenticationResult authenticateInternal(final Credential c) throws Exception {
-        val credential = (DuoSecurityUniversalPromptCredential) c;
+    public DuoSecurityAuthenticationResult authenticateInternal(final Credential credential) throws Exception {
+        val duoCredential = (DuoSecurityUniversalPromptCredential) credential;
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
-        val principal = resolvePrincipal(credential.getAuthentication().getPrincipal());
+        val principal = resolvePrincipal(duoCredential.getAuthentication().getPrincipal());
         val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principal.getId());
         LOGGER.debug("Validated Duo Security code [{}] with result [{}]", credential.getId(), result);
 

@@ -63,7 +63,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         val header = SamlUtils.newSoapObject(Header.class);
         envelope.setHeader(header);
         envelope.setBody(body);
-        val ctx = context.getMessageContext().getSubcontext(SOAP11Context.class, true);
+        val ctx = context.getMessageContext().ensureSubcontext(SOAP11Context.class);
         Objects.requireNonNull(ctx).setHTTPResponseStatus(HttpStatus.SC_OK);
         encodeFinalResponse(context, envelope);
         context.getHttpRequest().setAttribute(FaultString.class.getSimpleName(), error);

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
@@ -9,10 +8,8 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityMultifactorAuthent
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPrepareLoginAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginAction;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -25,7 +22,6 @@ import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -105,15 +101,13 @@ public class DuoSecurityConfiguration {
         public Action duoUniversalPromptPrepareLoginAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor,
-            final ConfigurableApplicationContext applicationContext,
-            @Qualifier("duoProviderBean")
-            final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean) {
+            final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(webflowCipherExecutor, duoProviderBean))
+                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(webflowCipherExecutor, applicationContext))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
@@ -132,9 +126,7 @@ public class DuoSecurityConfiguration {
             @Qualifier("duoUniversalPromptSessionStore")
             final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("duoProviderBean")
-            final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean) {
+            final AuthenticationSystemSupport authenticationSystemSupport) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -142,7 +134,7 @@ public class DuoSecurityConfiguration {
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
                         duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore,
-                        duoProviderBean, authenticationSystemSupport))
+                        applicationContext, authenticationSystemSupport))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)

@@ -6,9 +6,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -17,19 +16,18 @@ import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import com.duosecurity.Client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.scope.ConversationScope;
 import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.RequestScope;
-
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
@@ -44,19 +42,21 @@ import java.util.Optional;
 public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
     private final CipherExecutor webflowCipherExecutor;
 
-    private final MultifactorAuthenticationProviderBean<
-        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getInProgressAuthentication();
         val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProvider(requestContext);
-        val duoProvider = duoProviderBean.getProvider(duoSecurityIdentifier);
 
+        val duoProvider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
+            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
+            .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
+        
         val client = duoProvider.getDuoAuthenticationService()
             .getDuoClient()
             .map(Client.class::cast)
-            .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client"));
+            .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client for provider id " + duoSecurityIdentifier));
         val state = client.generateState();
         val service = WebUtils.getService(requestContext);
 
