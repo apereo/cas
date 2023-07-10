@@ -23,16 +23,21 @@ public class IPGeoLocationService extends AbstractGeoLocationService {
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         val geoParams = new GeolocationParams(address.getHostAddress(), "en",
-            "geo", null, true, true, true, true, true);
+            "geo", null, false, false, false, false, false);
         LOGGER.debug("Fetching geolocation results for [{}]", geoParams.getIPAddress());
         val geolocation = api.getGeolocation(geoParams);
         LOGGER.debug("Geolocation results for [{}] are [{}]", geoParams.getIPAddress(), geolocation);
         if (geolocation != null) {
             val location = new GeoLocationResponse();
             return location
+                .setLatitude(geolocation.getLatitude().doubleValue())
+                .setLongitude(geolocation.getLongitude().doubleValue())
                 .addAddress(geolocation.getCity())
                 .addAddress(geolocation.getStateProvince())
-                .addAddress(geolocation.getCountryName());
+                .addAddress(geolocation.getStateProvince())
+                .addAddress(geolocation.getCountryName())
+                .addAddress(geolocation.getCountryCode3())
+                .addAddress(geolocation.getZipCode());
         }
         LOGGER.warn("Unable to determine geolocation results for [{}]", geoParams.getIPAddress());
         return null;

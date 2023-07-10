@@ -54,6 +54,7 @@ class YubiKeyAuthenticationWebflowEventResolverTests extends BaseCasWebflowMulti
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);
+        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
