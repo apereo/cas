@@ -148,10 +148,10 @@ public class SamlIdPUtils {
             throw new SamlException("No assertion consumer service could be found for entity " + entityId);
         }
 
-        val peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        val peerEntityContext = outboundContext.ensureSubcontext(SAMLPeerEntityContext.class);
         peerEntityContext.setEntityId(entityId);
 
-        val endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+        val endpointContext = peerEntityContext.ensureSubcontext(SAMLEndpointContext.class);
         val endpoint = determineEndpointForRequest(authnContext, adaptor, binding);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);

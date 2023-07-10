@@ -41,7 +41,7 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
         val body = SamlUtils.newSoapObject(Body.class);
         val query = (AttributeQuery) context.getSamlRequest();
 
-        val scratch = context.getMessageContext().getSubcontext(ScratchContext.class, true);
+        val scratch = context.getMessageContext().ensureSubcontext(ScratchContext.class);
         val map = (Map) Objects.requireNonNull(scratch).getMap();
         map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
 

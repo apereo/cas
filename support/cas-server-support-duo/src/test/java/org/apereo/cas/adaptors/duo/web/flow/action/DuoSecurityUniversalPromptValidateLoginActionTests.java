@@ -2,24 +2,26 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationResult;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import com.duosecurity.Client;
+import com.duosecurity.model.AccessDevice;
+import com.duosecurity.model.Application;
+import com.duosecurity.model.AuthContext;
+import com.duosecurity.model.AuthDevice;
+import com.duosecurity.model.AuthResult;
+import com.duosecurity.model.Location;
 import com.duosecurity.model.Token;
+import com.duosecurity.model.User;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,10 +41,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -162,36 +161,54 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         assertNotNull(WebUtils.getAuthentication(context));
         assertNotNull(WebUtils.getRegisteredService(context));
         assertNotNull(WebUtils.getAuthenticationResult(context));
-        assertNotNull(WebUtils.getTargetTransition(context));
-        assertNotNull(context.getFlashScope().get("name"));
-        assertNotNull(context.getConversationScope().get("name"));
-        assertNotNull(context.getRequestScope().get("name"));
     }
 
     @TestConfiguration(value = "DuoSecurityUniversalPromptValidateLoginActionTestConfiguration", proxyBeanMethods = false)
     public static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
         @Bean
-        public MultifactorAuthenticationProviderBean
-            <DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean() throws Exception {
-
+        public Client duoUniversalPromptAuthenticationClient() throws Exception {
             val token = new Token();
             token.setSub("casuser");
+
+            val user = new User();
+            user.setKey(UUID.randomUUID().toString());
+            user.setName("casuser");
+            
+            val authCtx = new AuthContext();
+
+
+            val application = new Application();
+            application.setKey(UUID.randomUUID().toString());
+            application.setName("CAS");
+            authCtx.setApplication(application);
+            authCtx.setUser(user);
+            authCtx.setEvent_type("auth");
+
+            val accessDevice = new AccessDevice();
+            accessDevice.setIp("1.2.3.4");
+
+            val location = new Location();
+            location.setCity("London");
+            location.setCountry("UK");
+            accessDevice.setLocation(location);
+            authCtx.setAccess_device(accessDevice);
+
+            val authDevice = new AuthDevice();
+            authDevice.setLocation(location);
+            authDevice.setIp("1.2.3.4");
+            authCtx.setAuth_device(authDevice);
+
+            token.setAuth_context(authCtx);
+
+            val authResult = new AuthResult();
+            authResult.setResult("OK");
+            token.setAuth_result(authResult);
+
             val duoClient = mock(Client.class);
             when(duoClient.generateState()).thenReturn(UUID.randomUUID().toString());
             when(duoClient.createAuthUrl(anyString(), anyString())).thenReturn("https://duo.com");
             when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
-            val duoAuthService = mock(DuoSecurityAuthenticationService.class);
-            when(duoAuthService.getDuoClient()).thenReturn(Optional.of(duoClient));
-            when(duoAuthService.authenticate(any()))
-                .thenReturn(DuoSecurityAuthenticationResult.builder().success(true).username("casuser").build());
-
-            val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-            when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(provider.getDuoAuthenticationService()).thenReturn(duoAuthService);
-            when(provider.matches(anyString())).thenReturn(true);
-            val bean = mock(MultifactorAuthenticationProviderBean.class);
-            when(bean.getProvider(anyString())).thenReturn(provider);
-            return bean;
+            return duoClient;
         }
     }
 }

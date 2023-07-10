@@ -140,7 +140,7 @@ public class SamlObjectSignatureValidator {
                                                           final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
+        val peer = context.ensureSubcontext(SAMLPeerEntityContext.class);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
         val peerEntityId = Objects.requireNonNull(peer.getEntityId());
@@ -150,11 +150,11 @@ public class SamlObjectSignatureValidator {
             new CriteriaSet(new EntityIdCriterion(peerEntityId),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         peer.setRole(roleDescriptor.getElementQName());
-        val protocol = context.getSubcontext(SAMLProtocolContext.class, true);
+        val protocol = context.ensureSubcontext(SAMLProtocolContext.class);
         protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
         LOGGER.debug("Building security parameters context for signature validation of [{}]", peerEntityId);
-        val secCtx = context.getSubcontext(SecurityParametersContext.class, true);
+        val secCtx = context.ensureSubcontext(SecurityParametersContext.class);
         val validationParams = new SignatureValidationParameters();
 
         if (overrideBlockedSignatureAlgorithms != null && !overrideBlockedSignatureAlgorithms.isEmpty()) {

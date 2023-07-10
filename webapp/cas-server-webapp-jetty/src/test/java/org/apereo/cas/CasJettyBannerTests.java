@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebApp")
 class CasJettyBannerTests {
     @Test
-    void verifyAction() {
+    void verifyAction() throws Exception {
         val banner = new CasJettyBanner();
         val writer = new StringWriter();
-        val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
+        val out = WriterOutputStream.builder().setWriter(writer).setCharset(StandardCharsets.UTF_8).get();
         val environment = new MockEnvironment();
         try (val stream = new PrintStream(out, true, StandardCharsets.UTF_8)) {
             banner.printBanner(environment, CasJettyBanner.class, stream);

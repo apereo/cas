@@ -104,6 +104,7 @@ public class CasWebAppSecurityConfiguration {
             );
         }
 
+        @Bean
         public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             final CasConfigurationProperties casProperties) {
             val audit = casProperties.getAudit().getEngine();

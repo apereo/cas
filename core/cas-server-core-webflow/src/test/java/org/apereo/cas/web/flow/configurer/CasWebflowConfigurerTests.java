@@ -47,12 +47,16 @@ import static org.mockito.Mockito.*;
 class CasWebflowConfigurerTests {
     @Test
     void verifyNoAutoConfig() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val props = new CasConfigurationProperties();
         props.getWebflow().getAutoConfiguration().setEnabled(false);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
-            mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), props) {
+            mock(FlowDefinitionRegistry.class), applicationContext, props) {
         };
         assertDoesNotThrow(cfg::initialize);
+        assertDoesNotThrow(() -> cfg.postInitialization(applicationContext));
         assertNotNull(cfg.getName());
     }
 

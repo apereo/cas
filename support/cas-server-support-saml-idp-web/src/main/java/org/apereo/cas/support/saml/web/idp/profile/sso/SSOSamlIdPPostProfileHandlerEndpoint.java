@@ -260,7 +260,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
             return result
                 .map(Unchecked.function(adaptor -> {
                     val messageContext = new MessageContext();
-                    val scratch = messageContext.getSubcontext(ScratchContext.class, true);
+                    val scratch = messageContext.ensureSubcontext(ScratchContext.class);
                     val map = (Map) Objects.requireNonNull(scratch).getMap();
                     map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
                     val assertion = getAssertion(samlRequest);

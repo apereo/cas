@@ -88,7 +88,7 @@ in the next few release candidates.
 ### Google Authenticator Device Registration
 
 When using Google Authenticator as a multifactor authentication provider, the workflow for device registration
-is slightly alterred to now require a successful authentication event before additional devices can be registered
+is slightly altered to now require a successful authentication event before additional devices can be registered
 by the user. This change is only applicable if CAS is configured to allow multiple device registrations.
 
 ### Password Reset with Multifactor Authentication
