@@ -144,8 +144,8 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} ${{ matrix.protocols }}
-      - name: JMeter Test Results Summary
-        uses: test-summary/action@v2
-        with:
-          paths: /tmp/jmeter-results.xml
-        if: always()
+#      - name: JMeter Test Results Summary
+#        uses: test-summary/action@v2
+#        with:
+#          paths: /tmp/jmeter-results.xml
+#        if: always()

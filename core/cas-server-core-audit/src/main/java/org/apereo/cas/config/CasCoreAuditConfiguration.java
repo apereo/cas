@@ -343,37 +343,6 @@ public class CasCoreAuditConfiguration {
         }
     }
 
-    @Configuration(value = "CasCoreAuditFiltersConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class CasCoreAuditFiltersConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
-            final CasConfigurationProperties casProperties) {
-            val audit = casProperties.getAudit().getEngine();
-
-            val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
-            bean.setFilter(new ClientInfoThreadLocalFilter());
-            bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-            bean.setName("CAS Client Info Logging Filter");
-            bean.setAsyncSupported(true);
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
-
-            val initParams = new HashMap<String, String>();
-            if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
-                initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateClientAddrHeaderName());
-            }
-
-            if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {
-                initParams.put(ClientInfoThreadLocalFilter.CONST_SERVER_IP_ADDRESS_HEADER, audit.getAlternateServerAddrHeaderName());
-            }
-
-            initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
-            bean.setInitParameters(initParams);
-            return bean;
-        }
-    }
-
     @Configuration(value = "CasCoreAuditResolutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
