@@ -105,6 +105,7 @@ public class CasWebAppSecurityConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "casClientInfoLoggingFilter")
         public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             final CasConfigurationProperties casProperties) {
             val audit = casProperties.getAudit().getEngine();
