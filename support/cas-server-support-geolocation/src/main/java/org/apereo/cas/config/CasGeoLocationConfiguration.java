@@ -37,8 +37,7 @@ import java.util.List;
 public class CasGeoLocationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public GeoLocationService geoLocationService(
-        final List<GeoLocationServiceConfigurer> providers) {
+    public GeoLocationService geoLocationService(final List<GeoLocationServiceConfigurer> providers) {
         val services = providers.stream()
             .map(GeoLocationServiceConfigurer::configure)
             .filter(BeanSupplier::isNotProxy)

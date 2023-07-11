@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -28,7 +29,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.stream.Collectors;
 
 /**
@@ -99,15 +98,18 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             config.setAutoRedirectType(wsfed.getAutoRedirectType());
             config.setName(wsfed.getName());
             config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
-            config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
+            config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed, applicationContext));
             FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);
             return config;
         }
 
-        private static CasCookieBuilder getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+        private static CasCookieBuilder getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed,
+                                                                                final ConfigurableApplicationContext applicationContext) {
             val cookie = wsfed.getCookie();
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
-            return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, DefaultCookieSameSitePolicy.INSTANCE, cookie), cookie);
+            val geoLocationService = applicationContext.getBeanProvider(GeoLocationService.class);
+            return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, geoLocationService,
+                DefaultCookieSameSitePolicy.INSTANCE, cookie), cookie);
         }
 
         private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
