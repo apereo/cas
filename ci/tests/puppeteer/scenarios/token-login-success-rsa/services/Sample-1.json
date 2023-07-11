@@ -1,0 +1,32 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "https://apereo.github.io.*",
+  "name" : "Sample",
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
+  },
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "jwtSigningSecret" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "file:${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/private.key" ] ]
+    },
+    "jwtEncryptionSecret" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "file:${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/public.key" ] ]
+    },
+    "jwtSigningSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "RS256" ] ]
+    },
+    "jwtEncryptionSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "RSA-OAEP-256" ] ]
+    },
+    "jwtEncryptionSecretMethod" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "A128CBC-HS256" ] ]
+    }
+  }
+}
