@@ -555,6 +555,7 @@
         {%- endunless -%} 
         {%- unless requiredSettingsFound -%} 
             $("#linkRequiredProperties{{ casPropertiesRandomNumber }}").remove();
+            $("#requiredProperties{{ casPropertiesRandomNumber }}").remove();
         {%- endunless -%} 
         {%- if textAreaPasswordPolicyProperties == blank or textAreaPasswordPolicyProperties == '' -%} 
             $("#linkPasswordPolicy{{ casPropertiesRandomNumber }}").remove();

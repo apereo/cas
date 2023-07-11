@@ -80,7 +80,7 @@ The Spring framework `6.1.x` generation presents with the following feature them
 
 Note that Spring Framework `6.1` provides a first-class experience on JDK `21` and Jakarta EE 10 at 
 runtime while retaining a JDK `17` and Jakarta EE `9` baseline. We also embrace the latest edition of 
-GraalVM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
+Graal VM for JDK 17 and its upcoming JDK `21` version while retaining compatibility with GraalVM `22.3`.
 
 As stated above, it is likely that CAS `7` would switch to using JDK `21` as its baseline
 in the next few release candidates. 
@@ -129,6 +129,7 @@ that can control SSO participation on a per-application basis based on presence 
 - CAS documentation has switched to use a Dark Theme by default to make life slightly easier on the eyes.
 - Many small improvements around auditing facilities, making it easier internally to capture and/or tweak audited fields recorded by the audit log.
 - [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support public/private keypairs.
+- CAS is now able to conditionally geolocate client sessions when building and pinning [SSO Cookies](../authentication/Configuring-SSO-Cookie.html).
 
 ## Library Upgrades
 
