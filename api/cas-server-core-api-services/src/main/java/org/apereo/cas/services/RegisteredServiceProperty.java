@@ -294,7 +294,7 @@ public interface RegisteredServiceProperty extends Serializable {
          **/
         TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_AUTHENTICATION, RegisteredServicePropertyTypes.STRING,
-            "Jwt signing secret defined for a given service."),
+            "Jwt signing secret defined for a given service. This property supports the spring expression language and may point to an external private key file."),
         /**
          * Jwt signing secret alg defined for a given service.
          **/
@@ -306,7 +306,7 @@ public interface RegisteredServiceProperty extends Serializable {
          **/
         TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_AUTHENTICATION, RegisteredServicePropertyTypes.STRING,
-            "Jwt encryption secret defined for a given service."),
+            "Jwt encryption secret defined for a given service. This property supports the spring expression language and may point to an external public key file."),
         /**
          * Jwt encryption secret alg defined for a given service.
          **/

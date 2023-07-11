@@ -103,6 +103,10 @@ Configure the appropriate service in your service registry to hold the secrets:
 
 Note that the only required property is `jwtSigningSecret`.
 
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+
+{% include_cached registeredserviceproperties.html groups="JWT_AUTHENTICATION" %}
+
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:

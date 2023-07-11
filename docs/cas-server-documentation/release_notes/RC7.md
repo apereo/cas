@@ -127,7 +127,8 @@ that can control SSO participation on a per-application basis based on presence 
 - OpenID Connect Standard claims can be individually filtered on a per relying party.
 - New CAS actuator endpoints are available to simulate [CAS Protocol responses](../protocol/CAS-Protocol.html).
 - CAS documentation has switched to use a Dark Theme by default to make life slightly easier on the eyes.
-- Many small improvments around auditing facilities, making it easier internally to capture and/or tweak audited fields captured and recorded by the audit log.
+- Many small improvements around auditing facilities, making it easier internally to capture and/or tweak audited fields recorded by the audit log.
+- [JWT Authentication](../authentication/JWT-Authentication.html) is now able to work with and support public/private keypairs.
 
 ## Library Upgrades
 
