@@ -129,8 +129,9 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                         {%- else -%} 
                                         <i class="fab fa-codepen"></i>
                                         {%- endif -%} 
-
-                                        {{ cfg.method }} </span>
+                                        &nbsp;
+                                        {{ cfg.method }} 
+                                    </span>
                     </td>
                     <td style="border-bottom:none;"><span><code>/cas/actuator/{{ cfg.path }}</code>
                             <sup>
@@ -154,7 +155,38 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
     <div id="collapse{{key}}" class="accordion-collapse collapse {{ showClass }}" aria-labelledby="heading{{key}}"
          data-bs-parent="#{{ actuatorEndpointRandomNumber }}">
         <div class="accordion-body card card-body">
+            {% assign io="" %}
+
+            {%- if cfg.returnType.size > 0 -%}
+            {%- assign io = "Return Type: <code>" | append: cfg.returnType | append: "</code><p>" -%}
+            {%- endif -%}
+            
+            {%- if cfg.consumes.size > 0 -%}
+            {%- assign io = io | append: "Content Type: <code>" | append: cfg.consumes | append: "</code><p>" -%}
+            {%- endif -%} 
+            
+            {%- if cfg.produces.size > 0 -%}
+            {%- assign io = io | append: "Accept: <code>" | append: cfg.produces | append: "</code><p>" -%}
+            {%- endif -%} 
+
+            {%- if cfg.deprecated == true -%} 
+            {%- assign io = io | append: "Deprecated<p>" -%}
+            {%- endif -%} 
+
+            {%- assign io = io | append: "Signature: <code>" | append: cfg.signature | markdownify | append: "</code><p>" -%}
+
+            {%- assign io = io | append: "Owner: <code>" | append: cfg.owner | append: "</code><p>" -%}
+
             <p class="small text-left">
+                <a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="hover" 
+                    title="Input & Output" data-bs-html="true" data-bs-content='{{io}}'> 
+                    <i aria-hidden="true" class="fa fa-question"></i> 
+                </a>
+                <a tabindex="0" class="btn btn-sm btn-success" role="button" 
+                    data-bs-toggle="modal" data-bs-target="#{{key}}ModalConfig">
+                    <i aria-hidden="true" class="fa fa-book-open"></i> 
+                </a>
+            &nbsp;
                 {%- if cfg.summary.size > 0 -%}
                 {{cfg.summary}}
                 {%- else -%}
@@ -167,48 +199,8 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                 {%- endif -%}
             </p>
 
-            <table style="table-layout: fixed;">
-                <tr>
-                    {%- if cfg.returnType.size > 0 -%}
-                    <td><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Return Type"
-                           class="fas fa-exchange-alt"></i> <code>{{cfg.returnType}}</code></td>
-                    {%- endif -%}
-
-                    {%- if cfg.consumes.size > 0 -%}
-                    <td class="text-start"> <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                                               title="Narrows the primary mapping by media types that can be consumed by the mapped handler. Consists of one or more media types one of which must match to the request <code>Content-Type</code> header."
-                                               class="fas fa-sign-in-alt"></i> <code>{{cfg.consumes | join: "<br/>" }}</code></td>
-                    {%- endif -%} 
-
-                    {%- if cfg.produces.size > 0 -%} 
-                    <td class="text-start"><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                                              title="Narrows the primary mapping by media types that can be produced by the mapped handler. Consists of one or more media types one of which must be chosen via content negotiation against the <i>acceptable</i> media types of the request. Typically those are extracted from the <code>Accept</code> header but may be derived from query parameters, or other."
-                                              class="fas fa-sign-out-alt"></i> <code>{{cfg.produces | join: "<br/>"}}</code></td>
-                    {%- endif -%} 
-                    {%- if cfg.deprecated == true -%} 
-                    <td>
-                        <span class="badge bg-danger">
-                            <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
-                               title="This endpoint is deprecated and may be removed in future CAS releases."
-                               class="fas fa-exclamation-circle"></i> Deprecated
-                        </span>
-                    </td>
-                    {%- endif -%} 
-                </tr>
-
-                <tr>
-                    <td><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Method Signature"
-                           class="fas fa-signature"></i> <code>{{ cfg.signature | markdownify }}</code></td>
-                </tr>
-                <tr>
-                    <td><i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Endpoint Owner"
-                           class="fas fa-code"></i> <code>{{cfg.owner}}</code></td>
-                </tr>
-            </table>
-
             <p>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#{{key}}ModalConfig">Details</button>
+            
 
             <div class="modal fade" id="{{key}}ModalConfig" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
