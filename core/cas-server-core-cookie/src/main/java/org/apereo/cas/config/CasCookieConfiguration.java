@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
@@ -17,6 +19,7 @@ import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,13 +48,14 @@ public class CasCookieConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
             final CasConfigurationProperties casProperties,
             @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
-            if (casProperties.getTgc().getCrypto().isEnabled()) {
-                return new DefaultCasCookieValueManager(cookieCipherExecutor,
-                    DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc());
-            }
-            return CookieValueManager.noOp();
+            return FunctionUtils.doIf(casProperties.getTgc().getCrypto().isEnabled(),
+                () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
+                    DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc()),
+                CookieValueManager::noOp).get();
         }
 
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")

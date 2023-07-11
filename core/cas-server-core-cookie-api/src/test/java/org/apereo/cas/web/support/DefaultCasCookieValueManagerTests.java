@@ -1,11 +1,15 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -13,12 +17,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import jakarta.servlet.http.Cookie;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,19 +36,19 @@ class DefaultCasCookieValueManagerTests {
 
     private CookieValueManager cookieValueManager;
 
-    @Mock
     private Cookie cookie;
+
+    private MockHttpServletRequest httpServletRequest;
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.openMocks(this);
+        cookie = mock(Cookie.class);
 
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr(CLIENT_IP);
-        request.setLocalAddr(CLIENT_IP);
-        request.addHeader("User-Agent", USER_AGENT);
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
+        httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.setRemoteAddr(CLIENT_IP);
+        httpServletRequest.setLocalAddr(CLIENT_IP);
+        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, USER_AGENT);
+        ClientInfoHolder.setClientInfo(ClientInfo.from(httpServletRequest));
         cookieValueManager = getCookieValueManager(new TicketGrantingCookieProperties());
     }
 
@@ -59,50 +59,34 @@ class DefaultCasCookieValueManagerTests {
 
     @Test
     void verifySessionPinning() {
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr(CLIENT_IP);
-        request.setLocalAddr(CLIENT_IP);
-        request.removeHeader("User-Agent");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
-        val props = new TicketGrantingCookieProperties();
+        httpServletRequest.removeHeader(HttpRequestUtils.USER_AGENT_HEADER);
+        val props = new TicketGrantingCookieProperties().setPinToSession(true);
         assertThrows(IllegalStateException.class,
-            () -> getCookieValueManager(props).buildCookieValue(VALUE, request));
+            () -> getCookieValueManager(props).buildCookieValue(VALUE, httpServletRequest));
         props.setPinToSession(false);
-        assertNotNull(getCookieValueManager(props).buildCookieValue(VALUE, request));
+        assertNotNull(getCookieValueManager(props).buildCookieValue(VALUE, httpServletRequest));
     }
 
     @Test
     void verifySessionPinningAuthorizedOnFailure() {
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr(CLIENT_IP);
-        request.setLocalAddr(CLIENT_IP);
-        request.addHeader("User-Agent", USER_AGENT);
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-
         val props = new TicketGrantingCookieProperties();
         props.setAllowedIpAddressesPattern("^19.*.3.1\\d\\d");
         val mgr = getCookieValueManager(props);
-        var value = mgr.buildCookieValue(VALUE, request);
+        var value = mgr.buildCookieValue(VALUE, httpServletRequest);
         assertNotNull(value);
-
-        request.setRemoteAddr("198.127.3.155");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        value = mgr.obtainCookieValue(value, request);
+        httpServletRequest.setRemoteAddr("198.127.3.155");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(httpServletRequest));
+        value = mgr.obtainCookieValue(value, httpServletRequest);
         assertNotNull(value);
     }
 
     @Test
     void verifyEncodeAndDecodeCookie() {
-        val request = new MockHttpServletRequest();
-        request.setRemoteAddr(CLIENT_IP);
-        request.setLocalAddr(CLIENT_IP);
-        request.addHeader("User-Agent", USER_AGENT);
-        val encoded = cookieValueManager.buildCookieValue(VALUE, request);
+        val encoded = cookieValueManager.buildCookieValue(VALUE, httpServletRequest);
         assertEquals(String.join("@", VALUE, CLIENT_IP, USER_AGENT), encoded);
 
         when(cookie.getValue()).thenReturn(encoded);
-        val decoded = cookieValueManager.obtainCookieValue(cookie, request);
+        val decoded = cookieValueManager.obtainCookieValue(cookie, httpServletRequest);
         assertEquals(VALUE, decoded);
     }
 
@@ -111,32 +95,28 @@ class DefaultCasCookieValueManagerTests {
         val props = new TicketGrantingCookieProperties();
         props.setPinToSession(false);
         val mgr = getCookieValueManager(props);
-        assertEquals("something", mgr.obtainCookieValue("something", new MockHttpServletRequest()));
+        assertEquals(VALUE, mgr.obtainCookieValue(VALUE, new MockHttpServletRequest()));
     }
 
     @Test
     void verifyBadValue() {
         val props = new TicketGrantingCookieProperties();
         val mgr = getCookieValueManager(props);
-        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something", new MockHttpServletRequest()));
-    }
-
-    private static CookieValueManager getCookieValueManager(final TicketGrantingCookieProperties props) {
-        return new DefaultCasCookieValueManager(CipherExecutor.noOp(), DefaultCookieSameSitePolicy.INSTANCE, props);
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue(VALUE, new MockHttpServletRequest()));
     }
 
     @Test
     void verifyBadCookie() {
         val props = new TicketGrantingCookieProperties();
         val mgr = getCookieValueManager(props);
-        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@1@", new MockHttpServletRequest()));
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue(VALUE + "@1@", new MockHttpServletRequest()));
     }
 
     @Test
     void verifyBadIp() {
         val props = new TicketGrantingCookieProperties();
         val mgr = getCookieValueManager(props);
-        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@1@agent", new MockHttpServletRequest()));
+        assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue(VALUE + "@1@agent", new MockHttpServletRequest()));
     }
 
     @Test
@@ -144,7 +124,7 @@ class DefaultCasCookieValueManagerTests {
         val props = new TicketGrantingCookieProperties();
         val mgr = getCookieValueManager(props);
         assertThrows(InvalidCookieException.class,
-            () -> mgr.obtainCookieValue("something@" + ClientInfoHolder.getClientInfo().getClientIpAddress() + "@agent", new MockHttpServletRequest()));
+            () -> mgr.obtainCookieValue(VALUE + '@' + ClientInfoHolder.getClientInfo().getClientIpAddress() + "@agent", new MockHttpServletRequest()));
     }
 
     @Test
@@ -153,7 +133,37 @@ class DefaultCasCookieValueManagerTests {
         val mgr = getCookieValueManager(props);
         ClientInfoHolder.clear();
         assertThrows(InvalidCookieException.class,
-            () -> mgr.obtainCookieValue("something@" + CLIENT_IP + '@' + USER_AGENT, new MockHttpServletRequest()));
+            () -> mgr.obtainCookieValue(VALUE + '@' + CLIENT_IP + '@' + USER_AGENT, new MockHttpServletRequest()));
+    }
+
+    @Test
+    void verifySessionGeoLocated() {
+        val props = new TicketGrantingCookieProperties()
+            .setPinToSession(true)
+            .setGeoLocateClientSession(true);
+        val geo = mock(GeoLocationService.class);
+        when(geo.locate(anyString())).thenReturn(new GeoLocationResponse()
+            .addAddress("London, UK")
+            .setLatitude(156)
+            .setLongitude(34));
+        val mgr = getCookieValueManager(geo, props);
+        val encoded = mgr.buildCookieValue(VALUE, httpServletRequest);
+        when(cookie.getValue()).thenReturn(encoded);
+        val decoded = mgr.obtainCookieValue(cookie, httpServletRequest);
+        assertEquals(VALUE, decoded);
+    }
+
+    private static CookieValueManager getCookieValueManager(final PinnableCookieProperties props) {
+        return getCookieValueManager(mock(GeoLocationService.class), props);
+    }
+
+    private static CookieValueManager getCookieValueManager(
+        final GeoLocationService geoLocationService,
+        final PinnableCookieProperties props) {
+        return new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+            new DirectObjectProvider<>(geoLocationService),
+            DefaultCookieSameSitePolicy.INSTANCE,
+            props);
     }
 
 }

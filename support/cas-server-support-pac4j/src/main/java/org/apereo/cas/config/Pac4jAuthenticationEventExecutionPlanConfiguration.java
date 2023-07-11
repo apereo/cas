@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -146,14 +147,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
             final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor,
-                    DefaultCookieSameSitePolicy.INSTANCE,
-                    cookie));
+                    geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
         @ConditionalOnMissingBean(name = "clientPrincipalFactory")

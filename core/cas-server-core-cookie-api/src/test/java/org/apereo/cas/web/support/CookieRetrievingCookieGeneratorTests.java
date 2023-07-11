@@ -2,9 +2,11 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CookieRetrievingCookieGeneratorTests}.
@@ -146,6 +149,7 @@ class CookieRetrievingCookieGeneratorTests {
         ctx.setSameSitePolicy("lax");
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+            new DirectObjectProvider<>(mock(GeoLocationService.class)),
             DefaultCookieSameSitePolicy.INSTANCE, new PinnableCookieProperties().setPinToSession(false)), ctx);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

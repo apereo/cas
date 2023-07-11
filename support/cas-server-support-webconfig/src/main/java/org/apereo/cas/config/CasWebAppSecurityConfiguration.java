@@ -115,7 +115,7 @@ public class CasWebAppSecurityConfiguration {
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("CAS Client Info Logging Filter");
             bean.setAsyncSupported(true);
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
             val initParams = new HashMap<String, String>();
             if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {

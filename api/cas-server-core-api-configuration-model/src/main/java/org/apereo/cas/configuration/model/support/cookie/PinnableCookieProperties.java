@@ -44,4 +44,11 @@ public class PinnableCookieProperties extends CookieProperties {
      */
     @RegularExpressionCapable
     private String allowedIpAddressesPattern;
+
+    /**
+     * When set to {@code true} and assuming {@link #isPinToSession()} is also {@code true},
+     * client sessions (using the client IP address) are geo-located using a geolocation service when/if configured.
+     * The resulting session is either pinned to the client geolocation, or the default client address.
+     */
+    private boolean geoLocateClientSession;
 }
