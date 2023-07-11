@@ -4,7 +4,7 @@
     let googleAnalyticsTrackingId = /*[[${googleAnalyticsTrackingId}]]*/;
              
     let script = document.createElement('script');
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=' + googleAnalyticsTrackingId;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsTrackingId}`;
     document.head.appendChild(script);
 
     window.dataLayer = window.dataLayer || [];
