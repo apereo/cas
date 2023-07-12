@@ -47,7 +47,8 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
 
     private static Set<String> locateRegisteredServiceTypesSupported() {
         val subTypes = ReflectionUtils.findSubclassesInPackage(BaseRegisteredService.class, CentralAuthenticationService.NAMESPACE);
-        return subTypes.stream()
+        return subTypes
+            .stream()
             .filter(type -> !type.isInterface() && !Modifier.isAbstract(type.getModifiers()))
             .map(type -> FunctionUtils.doAndHandle(() -> {
                 val service = (RegisteredService) type.getDeclaredConstructor().newInstance();

@@ -5,7 +5,6 @@ category: Ticketing
 ---
 {% include variables.html %}
 
-
 # JWT Service Tickets
 
 [JSON Web Tokens](http://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties. 
