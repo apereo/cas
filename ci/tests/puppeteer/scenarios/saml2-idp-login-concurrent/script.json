@@ -23,6 +23,8 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
+    "--cas.authn.saml-idp.core.session-storage-type=URL_PARAMS",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=health,samlIdPRegisteredServiceMetadataCache",
     "--management.endpoint.health.show-details=always",
