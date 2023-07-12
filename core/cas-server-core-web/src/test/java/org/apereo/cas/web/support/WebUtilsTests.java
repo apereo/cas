@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaPropert
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -108,7 +109,7 @@ class WebUtilsTests {
         assertNull(WebUtils.getTicketGrantingTicket(context));
         assertThrows(IllegalArgumentException.class, () -> WebUtils.getPrincipalFromRequestContext(context, null));
 
-        request.addParameter(WebUtils.PUBLIC_WORKSTATION_ATTRIBUTE, "true");
+        request.addParameter(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, "true");
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         assertTrue(WebUtils.isAuthenticatingAtPublicWorkstation(context));
 
