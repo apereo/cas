@@ -24,5 +24,10 @@ public enum SessionStorageTypes {
      * as tickets. This state is tied to the user's agent/browser using a special cookie that would be used
      * to locate and restore that state. The cookie content may be signed and encrypted.
      */
-    TICKET_REGISTRY
+    TICKET_REGISTRY,
+    /**
+     * Authentication requests, and other session data collected as part of SAML flows and requests
+     * are passed as HTTP URL parameters.
+     */
+    URL_PARAMS
 }
