@@ -50,6 +50,12 @@ public interface CasWebflowConstants {
     String ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION = "rootCauseException";
 
     /**
+     * Flow attribute or request parameter indicating public workstation.
+     */
+    String ATTRIBUTE_PUBLIC_WORKSTATION = "publicWorkstation";
+
+
+    /**
      * Attribute to track registered service in the flow.
      */
     String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";

@@ -4,8 +4,6 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.springframework.lang.NonNull;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,12 +28,12 @@ public class ReflectionUtils {
      * @param <T>         The type of the superclass/interface.
      * @return The - possibly empty - collection of subclasses.
      */
-    @NonNull
     public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String... packageName) {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
-            .ignoreClassVisibility()
             .enableClassInfo()
+            .enableInterClassDependencies()
+            .ignoreClassVisibility()
             .removeTemporaryFilesAfterScan()
             .enableAnnotationInfo()
             .scan()) {

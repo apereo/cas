@@ -20,13 +20,6 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="registeredServices" casModule="cas-server-support-reports" %}
 
-## Service Management Web Application
-
-The service management webapp is a standalone web application that may be deployed alongside CAS that provides a GUI
-to manage service registry data. The management web application *MUST* share the same registry configuration as the 
-CAS server itself so the entire system can load the same services data. To learn more about 
-the management webapp, [please see this guide](Installing-ServicesMgmt-Webapp.html).
-
 ## Registered Services
 
 Registered services present the following metadata:

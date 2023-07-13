@@ -33,17 +33,12 @@ package org.apereo.cas.custom.config;
 @AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("someOtherBeanId")
-    private SomeBean someOtherBeanId;
-
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MyBean myBean() {
+    public MyBean myBean(
+        @Qualifier("someOtherBeanId")
+        final SomeBean someOtherBeanId,
+        final CasConfigurationProperties casProperties) {
         return new MyBean();
     }
 } 
