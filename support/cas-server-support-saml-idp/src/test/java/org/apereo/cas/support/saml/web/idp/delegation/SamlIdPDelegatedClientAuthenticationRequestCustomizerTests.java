@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.SamlIdPUtils;
-
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,10 +29,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Arrays;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -80,7 +78,8 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
         val context = Pair.of(authnRequest, messageContext);
-        SamlIdPUtils.storeSamlRequest(webContext, openSamlConfigBean, samlIdPDistributedSessionStore, context);
+        ((MockHttpServletRequest) webContext.getNativeRequest()).addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore).store(webContext, context);
     }
 
     private void setAuthnRequestFor(final JEEContext webContext,
@@ -122,6 +121,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
 
         authnRequest.setIsPassive(Boolean.TRUE);
         authnRequest.setForceAuthn(Boolean.TRUE);
+
         storeRequest(authnRequest, webContext);
     }
 }

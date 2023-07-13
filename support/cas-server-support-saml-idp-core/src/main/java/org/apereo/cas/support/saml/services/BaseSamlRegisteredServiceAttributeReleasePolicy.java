@@ -2,13 +2,13 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -77,7 +77,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val attributeValue = CollectionUtils.firstElement(samlRequest).map(Object::toString).orElseThrow();
             val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-            val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
+            val authnRequest = SamlIdPSessionManager.of(openSamlConfigBean).fetch(RequestAbstractType.class, attributeValue);
             openSamlConfigBean.logObject(authnRequest);
             val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             LOGGER.debug("Found entity id [{}] from SAML request issuer", issuer);
@@ -114,11 +114,13 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
      */
     protected static Optional<AuthnRequest> getSamlAuthnRequest(final ApplicationContext applicationContext) {
         val openSamlConfigBean = applicationContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.class);
-        val sessionStore = applicationContext.getBean(DistributedJEESessionStore.DEFAULT_BEAN_NAME, SessionStore.class);
+        val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val context = new JEEContext(request, response);
-        val result = SamlIdPUtils.retrieveSamlRequest(context, sessionStore, openSamlConfigBean, AuthnRequest.class);
+
+        val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+            .fetch(context, AuthnRequest.class);
         val authnRequest = (AuthnRequest) result
             .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"))
             .getLeft();

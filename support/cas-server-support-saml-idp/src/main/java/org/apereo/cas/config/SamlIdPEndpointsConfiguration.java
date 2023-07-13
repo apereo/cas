@@ -17,7 +17,7 @@ import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -509,7 +509,7 @@ public class SamlIdPEndpointsConfiguration {
                     DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
-        @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+        @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore samlIdPDistributedSessionStore(
@@ -524,7 +524,7 @@ public class SamlIdPEndpointsConfiguration {
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             return switch (type) {
-                case TICKET_REGISTRY -> new DistributedJEESessionStore(ticketRegistry,
+                case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry,
                     ticketFactory, samlIdPDistributedSessionCookieGenerator);
                 case BROWSER_SESSION_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor);
                 default -> JEESessionStore.INSTANCE;

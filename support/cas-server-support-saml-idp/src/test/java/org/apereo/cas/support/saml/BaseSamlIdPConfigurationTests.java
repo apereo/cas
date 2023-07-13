@@ -48,7 +48,6 @@ import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -178,7 +177,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
     @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+    @Qualifier("samlIdPDistributedSessionStore")
     protected SessionStore samlIdPDistributedSessionStore;
 
     @Autowired

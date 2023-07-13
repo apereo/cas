@@ -7,5 +7,8 @@ package org.apereo.cas.palantir;
  * @since 7.0.0
  */
 public interface PalantirConstants {
+    /**
+     * Root path.
+     */
     String URL_PATH_PALANTIR = "/palantir";
 }

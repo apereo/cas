@@ -4,31 +4,23 @@
     "docker": "true"
   },
   "properties": [
+    "--spring.main.lazy-initialization=false",
+
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
-    "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
-    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
 
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
-
+    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
-
     "--cas.http-client.host-name-verifier=none",
+
+    "--cas.audit.slf4j.use-single-line=true",
     
-    "--logging.level.org.apereo.cas=info",
-
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
-
-    "--cas.authn.saml-idp.core.session-storage-type=URL_PARAMS",
-
-    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=health,samlIdPRegisteredServiceMetadataCache",
-    "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"

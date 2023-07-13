@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.web.flow.BaseSamlIdPWebflowTests;
 
 import lombok.val;
@@ -66,9 +66,9 @@ class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTes
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
         val context = Pair.of(authnRequest, messageContext);
-        SamlIdPUtils.storeSamlRequest(new JEEContext(request, response), openSamlConfigBean,
-            samlIdPDistributedSessionStore, context);
-        
+
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
+            .store(new JEEContext(request, response), context);
         assertTrue(samlIdPMultifactorAuthenticationTrigger.supports(request, registeredService,
             RegisteredServiceTestUtils.getAuthentication(), service));
         val result = samlIdPMultifactorAuthenticationTrigger.isActivated(RegisteredServiceTestUtils.getAuthentication(),

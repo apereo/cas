@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * This is {@link DistributedJEESessionStore}.
+ * This is {@link TicketRegistrySessionStore}.
  *
  * @author Misagh Moayyed
  * @author Jerome LELEU
@@ -29,12 +29,7 @@ import java.util.UUID;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DistributedJEESessionStore implements SessionStore {
-    /**
-     * Default session store implementation bean.
-     */
-    public static final String DEFAULT_BEAN_NAME = "samlIdPDistributedSessionStore";
-
+public class TicketRegistrySessionStore implements SessionStore {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
     private final TicketRegistry ticketRegistry;

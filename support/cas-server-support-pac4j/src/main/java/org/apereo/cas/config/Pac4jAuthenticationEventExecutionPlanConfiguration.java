@@ -22,7 +22,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientAuthenticationMetaDataPopulator;
@@ -109,7 +109,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final TicketRegistry ticketRegistry) {
             val replicationProps = casProperties.getAuthn().getPac4j().getCore().getSessionReplication();
             if (replicationProps.isReplicateSessions()) {
-                return new DistributedJEESessionStore(ticketRegistry,
+                return new TicketRegistrySessionStore(ticketRegistry,
                     ticketFactory, delegatedClientDistributedSessionCookieGenerator);
             }
             return JEESessionStore.INSTANCE;

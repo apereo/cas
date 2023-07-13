@@ -10,8 +10,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.saml.*;
-import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
+import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
@@ -29,16 +32,15 @@ import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
@@ -60,7 +62,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -275,9 +276,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                final String serviceUrl, final boolean renew,
                                                final boolean gateway) {
         return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
-               + EncodingUtils.urlEncode(serviceUrl)
-               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
-               + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
+            + EncodingUtils.urlEncode(serviceUrl)
+            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+            + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
     }
 
     /**
@@ -289,83 +290,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the string
      * @throws Exception the exception
      */
-    protected String constructServiceUrl(final HttpServletRequest request,
-                                         final HttpServletResponse response,
-                                         final Pair<? extends SignableSAMLObject, MessageContext> pair)
-        throws Exception {
+    protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
+                                         final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
-        val builder = new URLBuilder(configurationContext.getCallbackService().getId());
-
-        val queryParams = builder.getQueryParams();
-
-        queryParams.add(
-            new net.shibboleth.utilities.java.support.collection.Pair<>(
-                    SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                    SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
-
-        if (isStoreSAMLContextInUrlEnabled()) {
-            val openSamlConfigBean = configurationContext.getOpenSamlConfigBean();
-            val messageContext = pair.getValue();
-            try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
-                val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-                val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
-                queryParams.add(
-                        new net.shibboleth.utilities.java.support.collection.Pair<>(
-                                SamlProtocolConstants.PARAMETER_SAML_REQUEST,
-                                samlRequest)
-                );
-                queryParams.add(
-                        new net.shibboleth.utilities.java.support.collection.Pair<>(
-                                SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
-                                SAMLBindingSupport.getRelayState(messageContext))
-                );
-                queryParams.add(
-                        new net.shibboleth.utilities.java.support.collection.Pair<>(
-                                MessageContext.class.getSimpleName(),
-                                authnContext)
-                );
-                LOGGER.debug("Including SAMLContext as as parameter");
-            }
-
-        }
-
+        val builder = new URIBuilder(configurationContext.getCallbackService().getId());
+        builder.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        builder.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         storeAuthenticationRequest(request, response, pair);
-        val url = builder.buildURL();
+        val url = builder.build().toURL().toExternalForm();
         LOGGER.trace("Built service callback url [{}]", url);
         return url;
-    }
-
-    /***
-     * Checks that the SAMLContext is passed as params.
-     * @return
-     */
-    protected boolean isStoreSAMLContextInUrlEnabled() {
-        val properties = configurationContext.getCasProperties();
-        val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        return type == SamlIdPCoreProperties.SessionStorageTypes.URL_PARAMS;
-    }
-
-    /***
-     * Extracts the SAML context {@link Pair} from HTTP request params.
-     * @param webContext
-     * @return
-     */
-    private Optional<Pair<AuthnRequest, MessageContext>> extractSAMLContextFromUrl(JEEContext webContext) {
-        val openSamlConfigBean = configurationContext.getOpenSamlConfigBean();
-        val clazz = AuthnRequest.class;
-        LOGGER.trace("Retrieving authentication request from parameters");
-        val authnContext =  webContext
-                .getRequestParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST)
-                .map(String.class::cast)
-                .map(value -> SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, clazz, value))
-                .flatMap(authnRequest -> {
-                    LOGGER.trace("AuthRequest found in parameters");
-                    return webContext
-                            .getRequestParameter(MessageContext.class.getSimpleName())
-                            .map(String.class::cast)
-                            .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest));
-                });
-        return authnContext.map(ctx -> Pair.of((AuthnRequest) ctx.getMessage(), ctx));
     }
 
     /**
@@ -705,25 +639,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             return initiateAuthenticationRequest(context, response, request);
         }, WebUtils::produceErrorView).get();
     }
-
+    
     @Synchronized
-    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(final HttpServletResponse response,
-                                                                                                      final HttpServletRequest request) {
+    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
+        final HttpServletResponse response, final HttpServletRequest request) {
+
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
-
-        if (isStoreSAMLContextInUrlEnabled()) {
-            final Optional<Pair<AuthnRequest, MessageContext>> result = extractSAMLContextFromUrl(webContext);
-            if (result.isPresent()) {
-                LOGGER.debug("Authentication request found in parameters");
-                return result.get();
-            } else {
-                LOGGER.warn("Authentication request not found in parameters.");
-            }
-        }
-
-        return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-                configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
+        return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
+            .fetch(webContext, AuthnRequest.class)
             .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
     }
 
@@ -731,8 +655,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
         val webContext = new JEEContext(request, response);
-        SamlIdPUtils.storeSamlRequest(webContext, configurationContext.getOpenSamlConfigBean(),
-            configurationContext.getSessionStore(), context);
+        SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
+            configurationContext.getSessionStore()).store(webContext, context);
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
@@ -751,4 +675,3 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return binding;
     }
 }
-
