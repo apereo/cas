@@ -17,6 +17,11 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(PalantirConstants.URL_PATH_PALANTIR)
 public class DashboardController {
 
+    /**
+     * Dashboard home.
+     *
+     * @return the model and view
+     */
     @GetMapping (path = "/dashboard", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView dashboardHome() {
         return new ModelAndView("palantir/dashboard");
