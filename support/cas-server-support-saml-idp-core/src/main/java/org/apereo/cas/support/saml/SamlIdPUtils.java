@@ -1,26 +1,20 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -39,17 +33,9 @@ import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.JEEContext;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link SamlIdPUtils}.
@@ -75,60 +61,6 @@ public class SamlIdPUtils {
         return "CAS";
     }
 
-    /**
-     * Retrieve authn request authn request.
-     *
-     * @param context            the context
-     * @param sessionStore       the session store
-     * @param openSamlConfigBean the open saml config bean
-     * @param clazz              the clazz
-     * @return the request
-     */
-    public static Optional<Pair<? extends RequestAbstractType, MessageContext>> retrieveSamlRequest(
-        final WebContext context,
-        final SessionStore sessionStore,
-        final OpenSamlConfigBean openSamlConfigBean,
-        final Class<? extends RequestAbstractType> clazz) {
-        LOGGER.trace("Retrieving authentication request from scope");
-        val authnContext = sessionStore
-            .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
-            .map(String.class::cast)
-            .map(value -> retrieveSamlRequest(openSamlConfigBean, clazz, value))
-            .flatMap(authnRequest -> sessionStore
-                .get(context, MessageContext.class.getName())
-                .map(String.class::cast)
-                .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest)));
-        return authnContext.map(ctx -> Pair.of((AuthnRequest) ctx.getMessage(), ctx));
-    }
-
-    /**
-     * Retrieve saml request.
-     *
-     * @param <T>                the type parameter
-     * @param openSamlConfigBean the open saml config bean
-     * @param clazz              the clazz
-     * @param requestValue       the request value
-     * @return the t
-     */
-    public static <T extends RequestAbstractType> T retrieveSamlRequest(final OpenSamlConfigBean openSamlConfigBean,
-                                                                        final Class<T> clazz, final String requestValue) {
-        try {
-            LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
-            val decodedBytes = Base64Support.decode(requestValue);
-            try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
-                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
-                    openSamlConfigBean.getParserPool(), is));
-            }
-        } catch (final Exception e) {
-            return FunctionUtils.doUnchecked(() -> {
-                val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-                try (val is = new ByteArrayInputStream(encodedRequest)) {
-                    return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
-                        openSamlConfigBean.getParserPool(), is));
-                }
-            });
-        }
-    }
 
     /**
      * Prepare peer entity saml endpoint.
@@ -369,30 +301,6 @@ public class SamlIdPUtils {
         return null;
     }
 
-    /**
-     * Store saml request.
-     *
-     * @param webContext         the web context
-     * @param openSamlConfigBean the open saml config bean
-     * @param sessionStore       the session store
-     * @param context            the context
-     * @throws Exception the exception
-     */
-    public static void storeSamlRequest(final JEEContext webContext,
-                                        final OpenSamlConfigBean openSamlConfigBean,
-                                        final SessionStore sessionStore,
-                                        final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
-        val authnRequest = (AuthnRequest) context.getLeft();
-        val messageContext = context.getValue();
-        try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
-            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
-            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
-
-            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
-            sessionStore.set(webContext, MessageContext.class.getName(), authnContext);
-        }
-    }
 
     /**
      * Determine name id name qualifier string.
