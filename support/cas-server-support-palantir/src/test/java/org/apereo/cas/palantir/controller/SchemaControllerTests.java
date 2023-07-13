@@ -52,7 +52,8 @@ public class SchemaControllerTests {
 
     @Test
     void verifyOperation() throws Exception {
-        mvc.perform(get("/palantir/schema/services"))
+        mvc.perform(get("/palantir/schema/services")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }

@@ -39,6 +39,8 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
+    implementation libraries.classgraph
+    implementation libraries.jsonschema
 
     testImplementation libraries.springboottomcat
     
