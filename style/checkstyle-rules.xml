@@ -488,15 +488,6 @@
         </module>
 
         <module name="RegexpSinglelineJava">
-            <property name="id" value="namedAnnotations"/>
-            <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
-            <property name="severity" value="error"/>
-            <property name="format" value="@(Configuration|Component|Controller)(\(\))*$"/>
-            <property name="message"
-                      value="You should name controller/component/configuration annotations to avoid implicit configuration"/>
-        </module>
-
-        <module name="RegexpSinglelineJava">
             <property name="id" value="singlelineComment"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Convert single-line comments into Javadocs"/>
             <property name="severity" value="error"/>

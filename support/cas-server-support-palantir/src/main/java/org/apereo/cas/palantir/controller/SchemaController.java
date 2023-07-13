@@ -8,14 +8,14 @@ import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.customProperties.HyperSchemaFactoryWrapper;
 import lombok.val;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.customProperties.HyperSchemaFactoryWrapper;
 import java.lang.reflect.Modifier;
 
 /**
@@ -30,6 +30,11 @@ public class SchemaController {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    /**
+     * Generate JSON schema for services.
+     *
+     * @return the response entity
+     */
     @GetMapping(path = "/schema/services", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity schema() {
         val jsonSchemaTypes = ReflectionUtils.findSubclassesInPackage(BaseRegisteredService.class, CentralAuthenticationService.NAMESPACE);
