@@ -57,7 +57,7 @@ class SendTicketGrantingTicketActionTests {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr(LOCALHOST_IP);
             request.setLocalAddr(LOCALHOST_IP);
-            request.addParameter(WebUtils.PUBLIC_WORKSTATION_ATTRIBUTE, "true");
+            request.addParameter(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, "true");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
             val response = new MockHttpServletResponse();

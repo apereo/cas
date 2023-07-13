@@ -69,10 +69,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class WebUtils {
-    /**
-     * Flow attribute or request parameter indicating public workstation.
-     */
-    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     /**
      * Flow attribute to indicate surrogate authn is requested..
@@ -525,7 +521,7 @@ public class WebUtils {
      * @return true if the cookie value is present
      */
     public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        if (ctx.getFlowScope().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
+        if (ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
             LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }
@@ -539,8 +535,8 @@ public class WebUtils {
      * @param context the context
      */
     public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
-        if (context.getRequestParameters().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
-            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
+        if (context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+            context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, Boolean.TRUE);
         }
     }
 
