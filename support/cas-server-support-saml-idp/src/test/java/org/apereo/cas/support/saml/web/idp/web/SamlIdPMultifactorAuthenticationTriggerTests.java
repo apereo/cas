@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.web.flow.BaseSamlIdPWebflowTests;
@@ -61,6 +62,7 @@ class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWebflowTes
         authnRequest.setRequestedAuthnContext(reqCtx);
 
         val request = new MockHttpServletRequest();
+        request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
         val response = new MockHttpServletResponse();
 
         val messageContext = new MessageContext();

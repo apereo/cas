@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
-import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -428,11 +427,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         LOGGER.debug("Built subject [{}]", subject);
         return subject;
-    }
-
-    @Override
-    public String generateSecureRandomId() {
-        return RandomUtils.generateSecureRandomId();
     }
 
     /**

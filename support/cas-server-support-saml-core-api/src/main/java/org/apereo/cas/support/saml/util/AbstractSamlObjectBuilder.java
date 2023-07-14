@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -88,8 +87,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         .useWrapperNameAsProperty(true)
         .build()
         .toObjectMapper();
-    
-    private static final int RANDOM_ID_SIZE = 16;
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
@@ -242,16 +239,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
     }
 
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-        val hex = random.getNewString();
-        return '_' + hex;
-    }
+
 
     /**
      * New attribute value.
