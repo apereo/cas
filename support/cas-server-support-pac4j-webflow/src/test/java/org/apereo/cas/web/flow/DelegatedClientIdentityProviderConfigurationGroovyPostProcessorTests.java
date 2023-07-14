@@ -57,6 +57,6 @@ class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
         assertEquals("TestTitle", clientConfig.iterator().next().getTitle());
         delegatedClientIdentityProviderConfigurationPostProcessor.destroy();
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertTrue(provider.getAutoRedirectType() == DelegationAutoRedirectTypes.CLIENT);
+        assertSame(DelegationAutoRedirectTypes.CLIENT, provider.getAutoRedirectType());
     }
 }
