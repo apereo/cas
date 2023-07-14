@@ -132,7 +132,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         val client = locateClientIdentityProvider(ticket);
         initializeClientIdentityProvider(client);
         val action = getRedirectionAction(ticket, requestContext);
-        LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
+        LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action.toString());
         if (action instanceof WithLocationAction) {
             LOGGER.debug("Redirecting client [{}] based on identifier [{}]", client.getName(), ticket.getId());
             handleIdentityProviderWithExternalRedirect(requestContext, client, action);

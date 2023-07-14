@@ -639,16 +639,19 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             return initiateAuthenticationRequest(context, response, request);
         }, WebUtils::produceErrorView).get();
     }
-    
+
     @Synchronized
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
         final HttpServletResponse response, final HttpServletRequest request) {
-
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
         return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
             .fetch(webContext, AuthnRequest.class)
-            .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
+            .orElseThrow(() -> new IllegalArgumentException("""
+                SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
+                request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
+                running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
+                """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
     }
 
     @Synchronized

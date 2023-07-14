@@ -103,6 +103,7 @@ public class SamlIdPSessionManager {
      */
     public Optional<Pair<? extends RequestAbstractType, MessageContext>> fetch(
         final WebContext context, final Class<? extends RequestAbstractType> clazz) {
+        LOGGER.trace("Attempting to fetch SAML2 authentication session from [{}]", context.getFullRequestURL());
         val currentContext = sessionStore.get(context, SamlIdPSessionEntry.class.getName());
         return currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
             .flatMap(ctx -> context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).map(ctx::get))

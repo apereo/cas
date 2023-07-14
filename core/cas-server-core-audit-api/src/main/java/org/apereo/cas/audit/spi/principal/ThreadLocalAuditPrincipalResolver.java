@@ -35,7 +35,7 @@ public class ThreadLocalAuditPrincipalResolver implements PrincipalResolver {
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
-        LOGGER.trace("Resolving principal at audit point [{}] with thrown exception [{}]", auditTarget, exception);
+        LOGGER.trace("Resolving principal at audit point [{}] with exception [{}]", auditTarget, exception.getMessage());
         return getCurrentPrincipal(auditTarget, null, exception);
     }
 
