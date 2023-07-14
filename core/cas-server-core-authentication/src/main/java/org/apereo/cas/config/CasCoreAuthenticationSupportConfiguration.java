@@ -134,8 +134,10 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
         public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
             return new RegisteredServiceAuthenticationPolicyResolver(servicesManager,
                 authenticationServiceSelectionPlan);
         }
