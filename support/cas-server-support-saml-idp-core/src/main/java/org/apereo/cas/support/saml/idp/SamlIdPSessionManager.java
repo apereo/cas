@@ -1,11 +1,15 @@
 package org.apereo.cas.support.saml.idp;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.codec.Base64Support;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
@@ -23,7 +28,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.jee.context.JEEContext;
 import java.io.ByteArrayInputStream;
 import java.io.Serial;
 import java.io.Serializable;
@@ -59,24 +64,16 @@ public class SamlIdPSessionManager {
     }
 
     /**
-     * Build the saml idp session manager.
-     *
-     * @param openSamlConfigBean the open saml config bean
-     * @return the saml id p session manager
-     */
-    public static SamlIdPSessionManager of(final OpenSamlConfigBean openSamlConfigBean) {
-        return new SamlIdPSessionManager(openSamlConfigBean, JEESessionStore.INSTANCE);
-    }
-
-    /**
      * Store saml request.
      *
      * @param webContext the web context
      * @param context    the context
+     * @return the saml id p session manager
      * @throws Exception the exception
      */
-    public void store(final WebContext webContext,
-                      final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+    @CanIgnoreReturnValue
+    public SamlIdPSessionManager store(final WebContext webContext,
+                                       final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
         val authnRequest = (AuthnRequest) context.getLeft();
         val messageContext = context.getValue();
         try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
@@ -92,6 +89,7 @@ public class SamlIdPSessionManager {
             entries.put(entry.getId(), entry);
             sessionStore.set(webContext, SamlIdPSessionEntry.class.getName(), entries);
         }
+        return this;
     }
 
     /**
@@ -106,10 +104,26 @@ public class SamlIdPSessionManager {
         LOGGER.trace("Attempting to fetch SAML2 authentication session from [{}]", context.getFullRequestURL());
         val currentContext = sessionStore.get(context, SamlIdPSessionEntry.class.getName());
         return currentContext.map(ctx -> (Map<String, SamlIdPSessionEntry>) ctx)
-            .flatMap(ctx -> context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).map(ctx::get))
-            .map(value -> {
-                val authnRequest = fetch(clazz, value.getSamlRequest());
-                val messageContext = SamlIdPAuthenticationContext.decode(value.getContext()).toMessageContext(authnRequest);
+            .flatMap(ctx -> context.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID)
+                .map(ctx::get)
+                .or(() -> {
+                    val applicationContext = openSamlConfigBean.getApplicationContext();
+                    val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
+                    val service = argumentExtractor.extractService(JEEContext.class.cast(context).getNativeRequest());
+                    return Optional.ofNullable(service).map(__ -> {
+                        val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
+                        val resolvedService = serviceSelectionPlan.resolveService(service);
+                        val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);
+                        return CollectionUtils.firstElement(authnRequestId)
+                            .map(Object::toString)
+                            .map(ctx::get)
+                            .orElse(null);
+                    });
+                }))
+            .filter(entry -> StringUtils.isNotBlank(entry.getSamlRequest()))
+            .map(entry -> {
+                val authnRequest = fetch(clazz, entry.getSamlRequest());
+                val messageContext = SamlIdPAuthenticationContext.decode(entry.getContext()).toMessageContext(authnRequest);
                 return Pair.of((AuthnRequest) messageContext.getMessage(), messageContext);
             });
     }

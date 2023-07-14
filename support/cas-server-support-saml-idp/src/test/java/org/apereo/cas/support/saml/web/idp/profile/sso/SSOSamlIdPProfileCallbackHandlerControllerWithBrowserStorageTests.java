@@ -4,17 +4,17 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketSessionTrackingPolicy;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -32,10 +32,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -72,9 +70,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
 
         val authn = getAuthnRequest();
         authn.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, getAuthnRequest()).toString();
-        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
+        storeAuthnRequest(request, response, authn);
 
         val st = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
@@ -86,14 +82,10 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
     void verifyResumeFromStorage() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
+
         val authn = getAuthnRequest();
         authn.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, getAuthnRequest()).toString();
-        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        request.getSession().setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, UUID.randomUUID().toString());
-        val context = new MessageContext();
-        context.setMessage(getAuthnRequest());
-        request.getSession().setAttribute(MessageContext.class.getName(), SamlIdPAuthenticationContext.from(context).encode());
+        storeAuthnRequest(request, response, authn);
 
         val st = getServiceTicket();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
@@ -107,10 +99,20 @@ class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests extends 
         assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
+    private void storeAuthnRequest(final MockHttpServletRequest request, final MockHttpServletResponse response,
+                                   final AuthnRequest authnRequest) throws Exception {
+        val context = new MessageContext();
+        context.setMessage(authnRequest);
+        request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore)
+            .store(new JEEContext(request, response), Pair.of(authnRequest, context));
+    }
+    
     private AuthnRequest getAuthnRequest() {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         var authnRequest = (AuthnRequest) builder.buildObject();
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) builder.buildObject();

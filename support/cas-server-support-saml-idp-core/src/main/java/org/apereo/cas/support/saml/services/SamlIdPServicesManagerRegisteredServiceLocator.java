@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +17,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +31,10 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
-    public SamlIdPServicesManagerRegisteredServiceLocator(final SamlRegisteredServiceCachingMetadataResolver resolver) {
+
+    public SamlIdPServicesManagerRegisteredServiceLocator(
+        final SamlRegisteredServiceCachingMetadataResolver resolver) {
+
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> {
             val parameterValue = getSamlParameterValue(registeredService, service);
@@ -43,6 +45,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                     LOGGER.trace("Located service attribute [{}] with value [{}]", attribute, attributeValue);
                     return attribute.getEntityIdFrom(resolver, attributeValue);
                 })
+                .filter(StringUtils::isNotBlank)
                 .filter(StringUtils::isNotBlank)
                 .filter(registeredService::matches)
                 .stream()
@@ -101,7 +104,9 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                 @Override
                 public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
                     val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-                    val authnRequest = SamlIdPSessionManager.of(resolver.getOpenSamlConfigBean())
+                    val sessionStore = openSamlConfigBean.getApplicationContext()
+                        .getBean("samlIdPDistributedSessionStore", SessionStore.class);
+                    val authnRequest = SamlIdPSessionManager.of(resolver.getOpenSamlConfigBean(), sessionStore)
                         .fetch(RequestAbstractType.class, attributeValue);
                     openSamlConfigBean.logObject(authnRequest);
                     return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);

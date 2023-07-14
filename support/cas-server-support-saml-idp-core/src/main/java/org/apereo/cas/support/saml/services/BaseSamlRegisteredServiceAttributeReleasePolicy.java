@@ -73,11 +73,14 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         if (samlRequest != null && !samlRequest.isEmpty()) {
             val applicationContext = ApplicationContextProvider.getApplicationContext();
+            val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);
+
             val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val attributeValue = CollectionUtils.firstElement(samlRequest).map(Object::toString).orElseThrow();
             val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-            val authnRequest = SamlIdPSessionManager.of(openSamlConfigBean).fetch(RequestAbstractType.class, attributeValue);
+            val authnRequest = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+                .fetch(RequestAbstractType.class, attributeValue);
             openSamlConfigBean.logObject(authnRequest);
             val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             LOGGER.debug("Found entity id [{}] from SAML request issuer", issuer);

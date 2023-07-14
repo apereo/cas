@@ -9,12 +9,12 @@ import org.apereo.cas.util.gen.HexRandomStringGenerator;
  * @since 7.0.0
  */
 public class Saml20HexRandomIdGenerator extends HexRandomStringGenerator {
-    private static final int RANDOM_ID_SIZE = 16;
-
     /**
      * Default instance of the id generator.
      */
     public static final Saml20HexRandomIdGenerator INSTANCE = new Saml20HexRandomIdGenerator();
+
+    private static final int RANDOM_ID_SIZE = 16;
 
     public Saml20HexRandomIdGenerator() {
         super(RANDOM_ID_SIZE);

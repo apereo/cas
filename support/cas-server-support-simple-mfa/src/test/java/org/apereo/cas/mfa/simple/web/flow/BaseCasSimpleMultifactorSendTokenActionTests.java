@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -9,7 +10,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -59,12 +57,16 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
 
     protected Pair<String, RequestContext> createToken(final String user) throws Exception {
         val context = buildRequestContextFor(user);
+        return executeTokenRequest(context);
+    }
+
+    private Pair<String, RequestContext> executeTokenRequest(final RequestContext context) throws Exception {
         val event = mfaSimpleMultifactorSendTokenAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         return Pair.of(event.getAttributes().getString("token"), context);
     }
 
-    protected MockRequestContext buildRequestContextFor(final String user) {
+    protected MockRequestContext buildRequestContextFor(final Principal principal) {
         val context = new MockRequestContext();
         val messageContext = (DefaultMessageContext) context.getMessageContext();
         messageContext.setMessageSource(mock(MessageSource.class));
@@ -75,10 +77,15 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
         RequestContextHolder.setRequestContext(context);
         WebUtils.putServiceIntoFlashScope(context, RegisteredServiceTestUtils.getService());
 
-        val principal = RegisteredServiceTestUtils.getPrincipal(user,
-            CollectionUtils.wrap("phone", List.of("123456789"), "mail", List.of("cas@example.org")));
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
         WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
         return context;
+    }
+
+    protected MockRequestContext buildRequestContextFor(final String user) {
+        val principal = RegisteredServiceTestUtils.getPrincipal(user,
+            CollectionUtils.wrap("phone", List.of("123456789"),
+                "mail", List.of("cas@example.org")));
+        return buildRequestContextFor(principal);
     }
 }
