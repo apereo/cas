@@ -4,6 +4,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -121,6 +122,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         } else {
             authnRequest.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         }
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         authnRequest.setForceAuthn(Boolean.FALSE);
         return authnRequest;
     }

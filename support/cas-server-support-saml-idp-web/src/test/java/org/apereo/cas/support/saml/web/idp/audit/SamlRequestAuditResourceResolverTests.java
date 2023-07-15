@@ -28,7 +28,6 @@ class SamlRequestAuditResourceResolverTests {
         assertEquals(0, result.length);
     }
 
-
     @Test
     void verifyAction() {
         val r = new SamlRequestAuditResourceResolver();

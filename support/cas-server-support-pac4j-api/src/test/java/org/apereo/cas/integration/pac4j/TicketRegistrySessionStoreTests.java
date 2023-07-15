@@ -1,7 +1,7 @@
 package org.apereo.cas.integration.pac4j;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DistributedJEESessionStoreTests}.
+ * This is {@link TicketRegistrySessionStoreTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseSessionStoreTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Web")
-class DistributedJEESessionStoreTests {
+class TicketRegistrySessionStoreTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -71,7 +71,7 @@ class DistributedJEESessionStoreTests {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
 
-        this.sessionStore = new DistributedJEESessionStore(ticketRegistry, ticketFactory, cookieGenerator);
+        this.sessionStore = new TicketRegistrySessionStore(ticketRegistry, ticketFactory, cookieGenerator);
         this.webContext = new JEEContext(request, response);
     }
 

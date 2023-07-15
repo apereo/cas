@@ -145,6 +145,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private static Stream<String> getDefaultAttributeMappings() {
         return Stream.of(
+            CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION,
             CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION,
             CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT,
             CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER,

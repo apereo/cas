@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -57,7 +58,7 @@ public class SamlResponseBuilder {
     public Response createResponse(final String serviceId, final WebApplicationService service) {
         val skew = Beans.newDuration(skewAllowance).toSeconds();
         return samlObjectBuilder.newResponse(
-            samlObjectBuilder.generateSecureRandomId(),
+            Saml20HexRandomIdGenerator.INSTANCE.getNewString(),
             ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(skew), serviceId, service);
     }
 
@@ -98,7 +99,7 @@ public class SamlResponseBuilder {
         LOGGER.debug("Built authentication statement for [{}] dated at [{}]", principal, authentication.getAuthenticationDate());
 
         val assertion = samlObjectBuilder.newAssertion(authnStatement, issuer, issuedAt,
-            samlObjectBuilder.generateSecureRandomId());
+            Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", issuer, issuedAt);
 
         val skewIssueInSeconds = Beans.newDuration(issueLength).toSeconds();

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,10 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     @Override
     public void customize(final IndirectClient client, final WebContext webContext) {
-        val result = SamlIdPUtils.retrieveSamlRequest(webContext, sessionStore, openSamlConfigBean, AuthnRequest.class)
+        val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+            .fetch(webContext, AuthnRequest.class)
             .map(Pair::getLeft)
             .map(AuthnRequest.class::cast);
-
         result.ifPresent(authnRequest -> {
             LOGGER.debug("Retrieved the SAML2 authentication request from [{}]",
                 SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
@@ -65,8 +66,8 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     @Override
     public boolean isAuthorized(final WebContext webContext, final IndirectClient client,
                                 final WebApplicationService currentService) {
-        val result = SamlIdPUtils.retrieveSamlRequest(webContext,
-            sessionStore, openSamlConfigBean, AuthnRequest.class);
+        val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+            .fetch(webContext, AuthnRequest.class);
         if (result.isEmpty()) {
             LOGGER.trace("No SAML2 authentication request found in session store");
             return true;

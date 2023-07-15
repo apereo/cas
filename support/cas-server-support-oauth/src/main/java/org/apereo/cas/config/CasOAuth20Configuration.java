@@ -18,7 +18,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -722,7 +722,7 @@ public class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties) {
             val replicate = casProperties.getAuthn().getOauth().getSessionReplication().isReplicateSessions();
             if (replicate) {
-                return new DistributedJEESessionStore(ticketRegistry,
+                return new TicketRegistrySessionStore(ticketRegistry,
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             return JEESessionStore.INSTANCE;
