@@ -665,6 +665,12 @@ public class LdapUtils {
             if (StringUtils.isNotBlank(properties.getSaslSecurityStrength())) {
                 sc.setSecurityStrength(SecurityStrength.valueOf(properties.getSaslSecurityStrength()));
             }
+            if (StringUtils.isNotBlank(properties.getBindDn())) {
+                bc.setBindDn(properties.getBindDn());
+                if (StringUtils.isNotBlank(properties.getBindCredential())) {
+                    bc.setBindCredential(new Credential(properties.getBindCredential()));
+                }
+            }
             bc.setBindSaslConfig(sc);
             cc.setConnectionInitializers(bc);
         } else if (StringUtils.equals(properties.getBindCredential(), "*") && StringUtils.equals(properties.getBindDn(), "*")) {
