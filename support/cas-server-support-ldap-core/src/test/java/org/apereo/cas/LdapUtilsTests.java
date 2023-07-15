@@ -58,7 +58,6 @@ class LdapUtilsTests {
         assertTrue(input);
     }
 
-
     @Test
     void verifyGetLong() {
         val entry = new LdapEntry();
@@ -122,14 +121,14 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyFilterByIndex() throws Exception {
+    void verifyFilterByIndex() {
         val filter = LdapUtils.newLdaptiveSearchFilter("cn={0}", List.of("casuser"));
         assertTrue(filter.getParameters().containsKey("0"));
         assertTrue(filter.getParameters().containsValue("casuser"));
     }
 
     @Test
-    void verifyLdapAuthnAnon() throws Exception {
+    void verifyLdapAuthnAnon() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -143,6 +142,7 @@ class LdapUtilsTests {
         assertThrows(IllegalArgumentException.class, () -> LdapUtils.newLdaptiveAuthenticator(ldap));
         ldap.setSearchFilter("cn=invalid-user");
         assertNotNull(LdapUtils.newLdaptiveAuthenticator(ldap));
+        assertNotNull(LdapUtils.newLdaptiveConnectionConfig(ldap));
     }
 
     @Test
@@ -162,7 +162,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyLdapAuthnActiveDirectory() throws Exception {
+    void verifyLdapAuthnActiveDirectory() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -244,8 +244,8 @@ class LdapUtilsTests {
         ldap.setBindCredential("password");
         ldap.setSearchFilter("cn=invalid-user");
 
-        Arrays.stream(AbstractLdapProperties.LdapConnectionStrategy.values()).forEach(s -> {
-            ldap.setConnectionStrategy(s.toString());
+        Arrays.stream(AbstractLdapProperties.LdapConnectionStrategy.values()).forEach(strategy -> {
+            ldap.setConnectionStrategy(strategy.toString());
             val config = LdapUtils.newLdaptiveConnectionConfig(ldap);
             assertNotNull(config);
         });
@@ -257,8 +257,8 @@ class LdapUtilsTests {
         val config = LdapUtils.newLdaptiveConnectionConfig(ldap);
         assertNotNull(config);
 
-        Arrays.stream(Mechanism.values()).forEach(m -> {
-            ldap.setSaslMechanism(m.name());
+        Arrays.stream(Mechanism.values()).forEach(mechanism -> {
+            ldap.setSaslMechanism(mechanism.name());
             ldap.setSaslRealm("cas");
             ldap.setSaslMutualAuth(Boolean.FALSE);
             ldap.setSaslAuthorizationId("123456");
