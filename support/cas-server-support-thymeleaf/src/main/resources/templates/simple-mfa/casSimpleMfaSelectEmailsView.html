@@ -15,9 +15,10 @@
     <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
         <form method="post" id="fm1" th:action="@{/login}">
             <div>
-                <h2><i class="mdi mdi-email fas fa-door-open"></i> Select Email Address</h2>
-                <span>We have found multiple email accounts for your account. Please choose the email account(s)
-                where you would like to receive the multifactor authentication token.</span>
+                <h2><i class="mdi mdi-email fas fa-door-open"></i>
+                    <span th:utext="#{cas.mfa.simple.email-selection.title}">Select Email Address</span>
+                </h2>
+                <span th:utext="#{cas.mfa.simple.email-selection.description}">We have found multiple email accounts for your account.</span>
                 <p/>
                 <span th:remove="tag" th:each="recipient : ${emailRecipients}">
                     <div class="mdc-form-field form-check">

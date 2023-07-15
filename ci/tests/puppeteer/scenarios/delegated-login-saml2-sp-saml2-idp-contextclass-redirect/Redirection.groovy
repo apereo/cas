@@ -36,7 +36,7 @@ def run(Object[] args) {
     def request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext)
     def response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext)
     def webContext = new JEEContext(request, response)
-    def sessionStore = appContext.getBean(TicketRegistrySessionStore.DEFAULT_BEAN_NAME)
+    def sessionStore = appContext.getBean("samlIdPDistributedSessionStore")
     def openSamlConfigBean = appContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
 
     /**

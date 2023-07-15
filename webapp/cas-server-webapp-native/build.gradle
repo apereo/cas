@@ -1,4 +1,4 @@
-description = "Apereo CAS Native GraalVM Web Application"
+description = "Apereo CAS Native Graal VM Web Application"
 
 apply plugin: "java"
 apply plugin: "org.springframework.boot"
@@ -18,7 +18,7 @@ configurations {
     configureEach {
         exclude(group: "org.apache.groovy", module: "groovy-templates")
         /*
-            Log4j does not support GraalVM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
+            Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
             Defining hidden classes at runtime is not supported. We use logback instead.
          */
         exclude(group: "org.apache.logging.log4j", module: "log4j-api")
