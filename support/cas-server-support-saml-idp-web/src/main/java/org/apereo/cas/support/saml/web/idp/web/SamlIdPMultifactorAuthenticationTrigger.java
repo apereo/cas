@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 
@@ -49,7 +49,8 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
                                                                    final HttpServletResponse response,
                                                                    final Service service) {
         val context = new JEEContext(request, response);
-        val result = SamlIdPUtils.retrieveSamlRequest(context, distributedSessionStore, openSamlConfigBean, AuthnRequest.class);
+        val result = SamlIdPSessionManager.of(openSamlConfigBean, distributedSessionStore)
+            .fetch(context, AuthnRequest.class);
         val mappings = getAuthenticationContextMappings();
         return result
             .map(pair -> (AuthnRequest) pair.getLeft())
@@ -75,7 +76,8 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
         if (!getAuthenticationContextMappings().isEmpty()) {
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
             val context = new JEEContext(request, response);
-            val result = SamlIdPUtils.retrieveSamlRequest(context, distributedSessionStore, openSamlConfigBean, AuthnRequest.class);
+            val result = SamlIdPSessionManager.of(openSamlConfigBean, distributedSessionStore)
+                .fetch(context, AuthnRequest.class);
             if (result.isPresent()) {
                 val authnRequest = (AuthnRequest) result.get().getLeft();
                 return authnRequest.getRequestedAuthnContext() != null

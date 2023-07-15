@@ -3,8 +3,9 @@ package org.apereo.cas.support.saml.web.idp.delegation;
 import org.apereo.cas.config.SamlIdPDelegatedAuthenticationConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,13 +64,15 @@ class SamlIdPDelegatedAuthenticationConfigurationTests extends BaseSamlIdPConfig
         authnRequest.setRequestedAuthnContext(reqCtx);
 
         val request = new MockHttpServletRequest();
+        request.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
 
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
         val context = Pair.of(authnRequest, messageContext);
-        SamlIdPUtils.storeSamlRequest(webContext, openSamlConfigBean, samlIdPDistributedSessionStore, context);
+        SamlIdPSessionManager.of(openSamlConfigBean, samlIdPDistributedSessionStore).store(webContext, context);
 
         val saml2Client = mock(SAML2Client.class);
         assertTrue(customizer.supports(saml2Client, webContext));

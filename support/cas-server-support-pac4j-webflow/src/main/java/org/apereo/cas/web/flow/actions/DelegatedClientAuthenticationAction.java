@@ -259,7 +259,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         }
         if (!isDelegatedClientAuthorizedForService(client, service, requestContext)) {
-            LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
+            LOGGER.error("Delegated client [{}] is not authorized by service [{}]", client, service);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
     }

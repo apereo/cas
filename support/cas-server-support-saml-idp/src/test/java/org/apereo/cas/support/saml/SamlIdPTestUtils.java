@@ -66,6 +66,7 @@ public class SamlIdPTestUtils {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         var authnRequest = (AuthnRequest) Objects.requireNonNull(builder).buildObject();
+        authnRequest.setID("abcdefg1234567890");
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) Objects.requireNonNull(builder).buildObject();

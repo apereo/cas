@@ -16,23 +16,21 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.OrderComparator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -107,7 +105,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 Map.of("Registered Service", registeredService.getName(), "Client ID", clientId, "State", state,
                     "Redirect URI", redirectUri, "Response Type", responseType, "Scopes", scopes));
         }
-        
+
         if (isRequestAuthenticated(manager, context, registeredService)) {
             val mv = getConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
             if (!mv.isEmpty() && mv.hasView()) {
@@ -154,11 +152,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
-    
+
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context) {
-        val profile = manager.getProfile().orElseThrow(() -> new IllegalArgumentException("Unable to locate authentication profile"));
+        val profile = verifyAndReturnAuthenticatedProfile(manager, context);
         val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
@@ -176,7 +174,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
-            
+
             val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
             return Optional.ofNullable(modelAndView)
                 .filter(ModelAndView::hasView)
@@ -188,6 +186,22 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);
         }
+    }
+
+    private UserProfile verifyAndReturnAuthenticatedProfile(final ProfileManager manager, final JEEContext context) {
+        val casProperties = getConfigurationContext().getCasProperties();
+        return manager.getProfile()
+            .orElseThrow(() -> new IllegalArgumentException("""
+                CAS is unable to locate authentication profile for this request: %s. The authentication request is expected
+                to have been verified with an authentication attempt, and yet there is no record of an authentication event.
+                This issue is typically the result of CAS misconfiguration. Please examine your CAS setup and review your
+                OIDC configuration. Your OIDC issuer is defined as %s, and your CAS server name is %s.
+                """
+                .stripIndent()
+                .formatted(
+                    context.getFullRequestURL(),
+                    casProperties.getAuthn().getOidc().getCore().getIssuer(),
+                    casProperties.getServer().getPrefix())));
     }
 
     /**

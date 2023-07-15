@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -48,7 +47,6 @@ import org.apereo.cas.config.SamlIdPMonitoringConfiguration;
 import org.apereo.cas.config.SamlIdPTicketCatalogConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -57,6 +55,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
@@ -67,7 +66,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -83,6 +81,7 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.OrganizationName;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -98,7 +97,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -113,12 +111,12 @@ import java.util.Map;
  * @since 5.1.0
  */
 @SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
-    properties = {
-        "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
-        "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
-        "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
-    })
+                properties = {
+                    "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
+                    "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
+                    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+                    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+                })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
@@ -178,7 +176,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
     @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+    @Qualifier("samlIdPDistributedSessionStore")
     protected SessionStore samlIdPDistributedSessionStore;
 
     @Autowired
@@ -247,7 +245,7 @@ public abstract class BaseSamlIdPConfigurationTests {
 
     protected AuthnRequest getAuthnRequestFor(final String service) {
         val authnRequest = samlProfileSamlResponseBuilder.newSamlObject(AuthnRequest.class);
-        authnRequest.setID("23hgbcehfgeb7843jdv1");
+        authnRequest.setID(Saml20HexRandomIdGenerator.INSTANCE.getNewString());
         val issuer = samlProfileSamlResponseBuilder.newSamlObject(Issuer.class);
         issuer.setValue(service);
         authnRequest.setIssuer(issuer);
@@ -290,23 +288,20 @@ public abstract class BaseSamlIdPConfigurationTests {
         return getSamlRegisteredServiceFor(false, false, false, entityId);
     }
 
-    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-    public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
-        @Autowired
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        private PrincipalResolver defaultPrincipalResolver;
-
-        @Autowired
-        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-        private OpenSamlConfigBean openSamlConfigBean;
-
-        @Override
-        public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver);
-        }
+    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration",
+                       proxyBeanMethods = false)
+    public static class SamlIdPMetadataTestConfiguration {
 
         @Bean
-        public SamlIdPMetadataCustomizer samlIdPMetadataCustomizer() {
+        public AuthenticationEventExecutionPlanConfigurer samlIdPTestAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final ObjectProvider<PrincipalResolver> defaultPrincipalResolver) {
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
+                new SimpleTestUsernamePasswordAuthenticationHandler(), defaultPrincipalResolver.getObject());
+        }
+        
+        @Bean
+        public SamlIdPMetadataCustomizer samlIdPMetadataCustomizer(@Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+                                                                   final OpenSamlConfigBean openSamlConfigBean) {
             return (entityDescriptor, registeredService) -> {
                 val organization = (Organization) openSamlConfigBean.getBuilderFactory()
                     .getBuilder(Organization.DEFAULT_ELEMENT_NAME).buildObject(Organization.DEFAULT_ELEMENT_NAME);

@@ -38,6 +38,8 @@ layout: null
     *   [OS Service](/cas/{{ version }}/installation/Configuring-Deployment-System-Service.html)
     *   [Troubleshooting Guide](/cas/{{ version }}/installation/Troubleshooting-Guide.html)
 
+* [Administration](/cas/{{ version }}/installation/Palantir-Admin-Dashboard.html)
+
 * [Configuration](#casconfigmgmt)
     *   [Overview](/cas/{{ version }}/configuration/Configuration-Management.html)
     *   [Configuration Management](#configserveropts)
@@ -418,7 +420,6 @@ layout: null
 
 * [Services & Applications](#service_management)
     *   [Overview](/cas/{{ version }}/services/Service-Management.html)
-    *   [Management Web Application](/cas/{{ version }}/services/Installing-ServicesMgmt-Webapp.html)
     *   [Caching & Reloading](/cas/{{ version }}/services/Service-Management-Caching-Reloading.html)
     *   [Access Strategy](#serviceaccessstrategy)
         *   [Overview](/cas/{{ version }}/services/Configuring-Service-Access-Strategy.html)

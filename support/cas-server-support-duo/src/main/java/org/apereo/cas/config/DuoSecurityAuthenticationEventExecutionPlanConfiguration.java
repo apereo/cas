@@ -58,6 +58,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -269,7 +270,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwise(BeanContainer::empty)
                 .get();
         }
-        
+
         private static DuoSecurityAuthenticationService getDuoAuthenticationService(
             final ConfigurableApplicationContext applicationContext,
             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolvers,
@@ -286,14 +287,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 if (StringUtils.isBlank(properties.getDuoApplicationKey())) {
                     LOGGER.trace("Activating universal prompt authentication service for duo security");
                     val resolver = SpringExpressionLanguageValueResolver.getInstance();
-                    val duoClient = FunctionUtils.doAndHandle(
-                        () -> applicationContext.getBean("duoUniversalPromptAuthenticationClient", Client.class),
-                        e -> new Client.Builder(
-                            resolver.resolve(properties.getDuoIntegrationKey()),
-                            resolver.resolve(properties.getDuoSecretKey()),
-                            resolver.resolve(properties.getDuoApiHost()),
-                            casProperties.getServer().getLoginUrl()).build())
-                        .get();
+                    val duoClient = applicationContext.getBeanProvider(Client.class)
+                        .getIfAvailable(Unchecked.supplier(() ->
+                            new Client.Builder(
+                                resolver.resolve(properties.getDuoIntegrationKey()),
+                                resolver.resolve(properties.getDuoSecretKey()),
+                                resolver.resolve(properties.getDuoApiHost()),
+                                casProperties.getServer().getLoginUrl()).build()));
                     return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, duoClient,
                         multifactorAuthenticationPrincipalResolvers, cache);
                 }

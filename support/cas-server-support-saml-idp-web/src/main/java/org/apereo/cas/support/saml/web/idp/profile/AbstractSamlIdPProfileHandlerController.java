@@ -11,8 +11,10 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
@@ -30,16 +32,15 @@ import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
@@ -59,10 +60,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -277,9 +276,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                final String serviceUrl, final boolean renew,
                                                final boolean gateway) {
         return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
-               + EncodingUtils.urlEncode(serviceUrl)
-               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
-               + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
+            + EncodingUtils.urlEncode(serviceUrl)
+            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+            + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
     }
 
     /**
@@ -291,18 +290,14 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the string
      * @throws Exception the exception
      */
-    protected String constructServiceUrl(final HttpServletRequest request,
-                                         final HttpServletResponse response,
-                                         final Pair<? extends SignableSAMLObject, MessageContext> pair)
-        throws Exception {
+    protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
+                                         final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
-        val builder = new URLBuilder(configurationContext.getCallbackService().getId());
-
-        builder.getQueryParams().add(
-            new net.shibboleth.shared.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
+        val builder = new URIBuilder(configurationContext.getCallbackService().getId());
+        builder.addParameter(SamlIdPConstants.AUTHN_REQUEST_ID, authnRequest.getID());
+        builder.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         storeAuthenticationRequest(request, response, pair);
-        val url = builder.buildURL();
+        val url = builder.build().toURL().toExternalForm();
         LOGGER.trace("Built service callback url [{}]", url);
         return url;
     }
@@ -646,21 +641,25 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     @Synchronized
-    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(final HttpServletResponse response,
-                                                                                                      final HttpServletRequest request) {
+    protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
+        final HttpServletResponse response, final HttpServletRequest request) {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val webContext = new JEEContext(request, response);
-        return SamlIdPUtils.retrieveSamlRequest(webContext, configurationContext.getSessionStore(),
-                configurationContext.getOpenSamlConfigBean(), AuthnRequest.class)
-            .orElseThrow(() -> new IllegalArgumentException("SAML request or context could not be determined from session store"));
+        return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
+            .fetch(webContext, AuthnRequest.class)
+            .orElseThrow(() -> new IllegalArgumentException("""
+                SAML2 authentication request cannot be determined from the CAS session store. This typically means that the original SAML2 authentication
+                request that was submitted to CAS via a SAML2 service provider cannot be retrieved and restored after an authentication attempt. If you are
+                running a multi-node CAS deployment, you may need to opt for a different session storage mechanism that what is configured now: %s
+                """.stripIndent().formatted(configurationContext.getSessionStore().getClass().getName())));
     }
 
     @Synchronized
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
         val webContext = new JEEContext(request, response);
-        SamlIdPUtils.storeSamlRequest(webContext, configurationContext.getOpenSamlConfigBean(),
-            configurationContext.getSessionStore(), context);
+        SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
+            configurationContext.getSessionStore()).store(webContext, context);
     }
 
     protected String determineProfileBinding(final Pair<? extends RequestAbstractType, MessageContext> authenticationContext) {
@@ -679,4 +678,3 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return binding;
     }
 }
-

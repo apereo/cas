@@ -7,7 +7,6 @@ import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPTicketSerializationConfiguration;
 import org.apereo.cas.config.SamlIdPWebflowConfiguration;
-import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
@@ -53,7 +52,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+    @Qualifier("samlIdPDistributedSessionStore")
     protected SessionStore samlIdPDistributedSessionStore;
     
     protected static AuthnRequest getAuthnRequestFor(final String service) {
