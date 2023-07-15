@@ -88,7 +88,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
     @Nonnull
     @Override
     @Retryable(retryFor = ResolverException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, maxDelay = 5000))
-    public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) throws ResolverException {
+    public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) {
         val filteringCriteria = determineFilteringCriteria(criteria);
         for (val filter : filteringCriteria) {
             val cacheKey = getMetadataCacheKey(filter, criteria);
