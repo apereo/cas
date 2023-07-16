@@ -38,7 +38,8 @@ layout: null
     *   [OS Service](/cas/{{ version }}/installation/Configuring-Deployment-System-Service.html)
     *   [Troubleshooting Guide](/cas/{{ version }}/installation/Troubleshooting-Guide.html)
 
-* [Administration](/cas/{{ version }}/installation/Palantir-Admin-Dashboard.html)
+* [Administration](#casdashboard)
+    *   [Overview](/cas/{{ version }}/installation/Palantir-Admin-Dashboard.html)  
 
 * [Configuration](#casconfigmgmt)
     *   [Overview](/cas/{{ version }}/configuration/Configuration-Management.html)

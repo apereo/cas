@@ -152,7 +152,7 @@ public class GoogleCloudAppender extends AbstractAppender {
         val buildMessage = logEvent.getMarker() == null
                            || !logEvent.getMarker().getName().equals(AsciiArtUtils.ASCII_ART_LOGGER_MARKER.getName());
         if (buildMessage) {
-            val messagSanitizer = ApplicationContextProvider.getMessagSanitizer().orElseGet(MessageSanitizer::disabled);
+            val messagSanitizer = ApplicationContextProvider.getMessageSanitizer().orElseGet(MessageSanitizer::disabled);
             messagePayload.put("text", messagSanitizer.sanitize(logEvent.getMessage().getFormattedMessage()));
             if (logEvent.getMessage() instanceof ObjectMessage objectMessage) {
                 if (objectMessage.getParameter() instanceof Map parameters) {

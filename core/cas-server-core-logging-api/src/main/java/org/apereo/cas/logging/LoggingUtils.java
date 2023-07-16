@@ -36,7 +36,7 @@ public class LoggingUtils {
      * @return the log event builder
      */
     public Log4jLogEvent.Builder getLogEventBuilder(final LogEvent logEvent) {
-        val messageModified = ApplicationContextProvider.getMessagSanitizer()
+        val messageModified = ApplicationContextProvider.getMessageSanitizer()
             .map(sanitizer -> sanitizer.sanitize(logEvent.getMessage().getFormattedMessage()))
             .orElseGet(() -> logEvent.getMessage().getFormattedMessage());
         val message = new SimpleMessage(messageModified);
