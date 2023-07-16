@@ -1,9 +1,10 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -14,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
+import org.springframework.context.annotation.Bean;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GroovyAuditTrailManagerTests}.
@@ -30,7 +33,8 @@ import java.util.UUID;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasCoreAuditConfiguration.class
+    CasCoreAuditConfiguration.class,
+    GroovyAuditTrailManagerTests.GroovyAuditTrailManagerTestConfiguration.class
 },
     properties = {
         "cas.audit.slf4j.enabled=false",
@@ -49,5 +53,18 @@ class GroovyAuditTrailManagerTests {
             "TEST", "TEST", "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));
         auditTrailManager.record(ctx);
+    }
+
+    @TestConfiguration(value = "GroovyAuditTrailManagerTestConfiguration", proxyBeanMethods = false)
+    public static class GroovyAuditTrailManagerTestConfiguration {
+        @Bean
+        public GeoLocationService geoLocationService() {
+            val mock = mock(GeoLocationService.class);
+            when(mock.locate(anyString())).thenReturn(new GeoLocationResponse()
+                .setLatitude(156)
+                .setLongitude(34)
+                .addAddress("London, UK"));
+            return mock;
+        }
     }
 }

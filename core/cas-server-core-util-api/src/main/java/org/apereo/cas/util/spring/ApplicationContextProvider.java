@@ -37,8 +37,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(
-        @Nonnull final ApplicationContext context) {
+    public void setApplicationContext(@Nonnull final ApplicationContext context) {
         CONTEXT = context;
     }
 
@@ -201,11 +200,11 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     /**
-     * Gets messag sanitizer.
+     * Gets message sanitizer.
      *
-     * @return the messag sanitizer
+     * @return the message sanitizer
      */
-    public static Optional<MessageSanitizer> getMessagSanitizer() {
+    public static Optional<MessageSanitizer> getMessageSanitizer() {
         if (CONTEXT != null && CONTEXT.containsBean(MessageSanitizer.BEAN_NAME)) {
             return Optional.of(CONTEXT.getBean(MessageSanitizer.BEAN_NAME, MessageSanitizer.class));
         }
