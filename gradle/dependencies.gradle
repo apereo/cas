@@ -536,6 +536,21 @@ ext.libraries = [
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                 }
         ],
+        azuremaps : [
+                dependencies.create("com.azure:azure-maps-geolocation:$azureMapsGeoLocationVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("com.azure:azure-maps-search:$azureMapsGeoLocationVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("com.azure:azure-identity:$azureIdentityVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         googlegeocoding            : [
                 dependencies.create("com.google.maps:google-maps-services:$googleMapsGeoCodingVersion") {
                     exclude(group: "com.google.guava", module: "guava")
