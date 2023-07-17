@@ -60,7 +60,7 @@ public class AzureMapsGeoLocationService extends AbstractGeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
-        val options = new ReverseSearchAddressOptions(new GeoPosition(-121.89, 37.337));
+        val options = new ReverseSearchAddressOptions(new GeoPosition(longitude, latitude));
         val searchResult = mapsSearchClient.beginReverseSearchAddressBatch(List.of(options)).getFinalResult();
         val location = new GeoLocationResponse();
         for (val item : searchResult.getBatchItems()) {
