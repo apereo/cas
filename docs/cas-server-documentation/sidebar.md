@@ -708,6 +708,7 @@ layout: null
     *   [Google Analytics](/cas/{{ version }}/integration/Configuring-Google-Analytics.html)
     *   [GeoTracking](#authngeotracking)
         *   [Overview](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
+        *   [Azure Maps](/cas/{{ version }}/authentication/GeoTracking-Authentication-AzureMaps.html)
         *   [Google Maps](/cas/{{ version }}/authentication/GeoTracking-Authentication-GoogleMaps.html)
         *   [Maxmind](/cas/{{ version }}/authentication/GeoTracking-Authentication-Maxmind.html)
         *   [Groovy](/cas/{{ version }}/authentication/GeoTracking-Authentication-Groovy.html)

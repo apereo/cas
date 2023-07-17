@@ -97,6 +97,11 @@ Password reset operations will require and activate multifactor authentication b
 password reset instructions can be shared with the end-user. This behavior is configurable 
 and the setting is turned on by default.
 
+### Azure Maps & Geotracking
+
+Initial support is now available to support Azure Maps to geolocate authentication requests.
+[See this](../authentication/GeoTracking-Authentication-AzureMaps.html) for more info.
+
 ### Docker-based Integration Tests
 
 The following docker containers, used for integration tests, are now upgraded:
