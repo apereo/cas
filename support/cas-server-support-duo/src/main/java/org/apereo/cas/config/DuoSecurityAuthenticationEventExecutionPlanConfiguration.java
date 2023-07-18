@@ -387,20 +387,18 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         public ServiceRegistryExecutionPlanConfigurer duoServiceRegistryExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return plan -> {
-                casProperties.getAuthn().getMfa().getDuo().stream()
-                    .filter(duo -> StringUtils.isNotBlank(duo.getRegistration().getRegistrationUrl()))
-                    .forEach(duo -> {
-                        val serviceId = FunctionUtils.doUnchecked(() -> new URL(duo.getRegistration().getRegistrationUrl()).getHost());
-                        val service = new CasRegisteredService();
-                        service.setId(RandomUtils.nextLong());
-                        service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-                        service.setName(service.getClass().getSimpleName());
-                        service.setDescription("Duo Security Registration URL for " + duo.getId());
-                        service.setServiceId(serviceId);
-                        plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(List.of(service), applicationContext, List.of()));
-                    });
-            };
+            return plan -> casProperties.getAuthn().getMfa().getDuo().stream()
+                .filter(duo -> StringUtils.isNotBlank(duo.getRegistration().getRegistrationUrl()))
+                .forEach(duo -> {
+                    val serviceId = FunctionUtils.doUnchecked(() -> new URL(duo.getRegistration().getRegistrationUrl()).getHost());
+                    val service = new CasRegisteredService();
+                    service.setId(RandomUtils.nextLong());
+                    service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+                    service.setName(service.getClass().getSimpleName());
+                    service.setDescription("Duo Security Registration URL for " + duo.getId());
+                    service.setServiceId(serviceId);
+                    plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(List.of(service), applicationContext, List.of()));
+                });
         }
     }
 

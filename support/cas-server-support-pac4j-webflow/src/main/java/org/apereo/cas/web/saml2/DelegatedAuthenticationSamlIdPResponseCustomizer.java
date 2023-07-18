@@ -34,16 +34,14 @@ public class DelegatedAuthenticationSamlIdPResponseCustomizer implements SamlIdP
             clientNames.forEach(clientName -> builtClients.findClient(clientName.toString())
                 .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
-                .ifPresent(client -> {
-                    assertion.getAuthnStatements().forEach(authnStatement -> {
-                        val authnContext = authnStatement.getAuthnContext();
-                        val authority = builder.newSamlObject(AuthenticatingAuthority.class);
-                        authority.setURI(client.getIdentityProviderResolvedEntityId());
-                        LOGGER.debug("Customizing SAML2 assertion to include authenticating authority [{}] linked to delegated client [{}]",
-                            client.getIdentityProviderResolvedEntityId(), clientName);
-                        authnContext.getAuthenticatingAuthorities().add(authority);
-                    });
-                }));
+                .ifPresent(client -> assertion.getAuthnStatements().forEach(authnStatement -> {
+                    val authnContext = authnStatement.getAuthnContext();
+                    val authority = builder.newSamlObject(AuthenticatingAuthority.class);
+                    authority.setURI(client.getIdentityProviderResolvedEntityId());
+                    LOGGER.debug("Customizing SAML2 assertion to include authenticating authority [{}] linked to delegated client [{}]",
+                        client.getIdentityProviderResolvedEntityId(), clientName);
+                    authnContext.getAuthenticatingAuthorities().add(authority);
+                })));
         }
     }
 }
