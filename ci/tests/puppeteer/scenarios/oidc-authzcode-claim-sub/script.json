@@ -3,11 +3,7 @@
   "conditions": {
     "docker": "true"
   },
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
   "properties": [
     "--cas.server.name=https://localhost:8443",

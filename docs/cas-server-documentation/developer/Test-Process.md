@@ -178,7 +178,8 @@ The following command-line options are supported for test execution:
 | `--hb`                                    | A combination of `--headless` and `--build`.                                             |
 | `--body`, `--bogy`, `--boyd`              | A combination of `--build`, `--debug`, `--dry-run` and Gradle's `--offline` flag.        |
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
-| `--io`, `initonly`                        | Initialize the execution of the test scenario, but do not run it.                        |
+| `--io`, `--initonly`                      | Initialize the execution of the test scenario, but do not run it.                        |
+| `--nc`, `--ncl`, `--noclear`              | Initialize the execution of the test scenario, but do not run it.                        |
 
 For example, the `login-success` test scenario may be run using: 
 
@@ -197,6 +198,7 @@ Each test scenario is composed of the following files:
 ```js
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
+const assert = require("assert");
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
@@ -217,6 +219,11 @@ A basic modest outline of the test configuration may be:
   "dependencies": "module1,module2,module3,...",
   "conditions": {
     "docker": "true"
+  },
+  "requirements": {
+    "graalvm": {
+      "enabled": true
+    }
   },
   "properties": [
     "--cas.server.something=something"

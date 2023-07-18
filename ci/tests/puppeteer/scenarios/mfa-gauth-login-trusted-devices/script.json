@@ -1,10 +1,6 @@
 {
   "dependencies": "gauth,trusted-mfa",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
     "--cas.server.name=https://localhost:8443",

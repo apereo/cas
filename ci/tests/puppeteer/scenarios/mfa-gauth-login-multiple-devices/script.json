@@ -1,10 +1,6 @@
 {
   "dependencies": "gauth",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true"

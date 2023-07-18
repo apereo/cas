@@ -1,10 +1,6 @@
 {
   "dependencies": "core",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--management.endpoints.enabled-by-default=true",
     "--management.endpoints.web.exposure.include=*",

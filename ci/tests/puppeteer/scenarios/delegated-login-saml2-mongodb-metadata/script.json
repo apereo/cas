@@ -3,11 +3,7 @@
   "conditions": {
     "docker": "true"
   },
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--CasFeatureModule.DelegatedAuthentication.saml-mongodb.enabled=true",
     

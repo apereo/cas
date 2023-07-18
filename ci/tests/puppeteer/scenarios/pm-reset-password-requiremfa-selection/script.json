@@ -3,11 +3,7 @@
   "conditions": {
     "docker": "true"
   },
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=gauthCredentialRepository",

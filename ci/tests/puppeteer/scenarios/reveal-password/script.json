@@ -1,8 +1,3 @@
 {
-  "dependencies": "core",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  }
+  "dependencies": "core"
 }

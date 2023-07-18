@@ -113,7 +113,8 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -XX:+ParallelRefProcEnabled
 ```
 
-The key point for making IntelliJ IDEA handle the project nicely is to give it lots of memory (either by specifying the `-Xmx8g` VM options or in the IDE menu `Help -> Change Memory Settings`).
+The key point for making IntelliJ IDEA handle the project nicely is to give it lots of 
+memory (either by specifying the `-Xmx8g` VM options or in the IDE menu `Help -> Change Memory Settings`).
 
 If you're still running IntelliJ with a JDK 8, you may require these options instead:
 
@@ -176,23 +177,6 @@ creating a *Run Configuration* that roughly matches the following screenshot:
 
 This setup allows the developer to run the CAS web 
 application via an [embedded servlet container](Build-Process.html#embedded-containers).
-
-### Eclipse
-
-For Eclipse, execute the following commands:
-
-```bash
-cd cas-server
-./gradlew eclipse
-```
-
-Then, import the project into Eclipse using "General\Existing Projects into Workspace" 
-and choose "Add Gradle Nature" from the "Configure" context menu of the project.
-
-<div class="alert alert-warning">:warning: <strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based 
-projects. While time changes everything and docs grow old, it is likely that you may experience issues with how Eclipse manages to 
-resolve Gradle dependencies and build the project. In the end, you're welcome to use what works best for you as the ultimate goal 
-is to find the appropriate tooling to build and contribute to CAS.</p></div>
 
 ## Testing Modules
 
@@ -340,4 +324,3 @@ alias bci='clear; cas; \
     -DskipNestedConfigMetadataGen=true \
     -DskipBootifulArtifact=true'
 ```
-

@@ -1,10 +1,6 @@
 {
   "dependencies": "oidc",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.server.tomcat.http[0].enabled=true",
     "--cas.server.tomcat.http[0].port=8282",

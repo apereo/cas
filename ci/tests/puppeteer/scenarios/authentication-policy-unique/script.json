@@ -1,10 +1,6 @@
 {
   "dependencies": "core",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.authn.policy.unique-principal.enabled=true",
     "--cas.service-registry.core.init-from-json=true"

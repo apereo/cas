@@ -1,9 +1,4 @@
 {
   "dependencies": "core",
-  "server": "undertow",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  }
+  "server": "undertow"
 }
