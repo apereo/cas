@@ -22,8 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DeferredCsrfToken;
@@ -65,8 +63,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
         "cas.monitor.endpoints.endpoint.info.access=ANONYMOUS"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-@EnableWebSecurity
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
 class WebAuthnControllerMvcTests {

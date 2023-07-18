@@ -492,17 +492,15 @@ public class WebAuthnConfiguration {
                     @CanIgnoreReturnValue
                     @SuppressWarnings("UnnecessaryMethodReference")
                     public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
-                        http.csrf(customizer -> {
-                            webAuthnCsrfTokenRepository.ifAvailable(repository -> {
-                                val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
-                                val delegate = new XorCsrfTokenRequestAttributeHandler();
-                                delegate.setSecureRandom(RandomUtils.getNativeInstance());
-                                customizer.requireCsrfProtectionMatcher(pattern)
-                                    .csrfTokenRequestHandler(delegate::handle)
-                                    .csrfTokenRepository(repository);
+                        http.csrf(customizer -> webAuthnCsrfTokenRepository.ifAvailable(repository -> {
+                            val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                            val delegate = new XorCsrfTokenRequestAttributeHandler();
+                            delegate.setSecureRandom(RandomUtils.getNativeInstance());
+                            customizer.requireCsrfProtectionMatcher(pattern)
+                                .csrfTokenRequestHandler(delegate::handle)
+                                .csrfTokenRepository(repository);
 
-                            });
-                        });
+                        }));
                         http.authorizeHttpRequests(customizer -> {
                             customizer.requestMatchers(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**")
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));

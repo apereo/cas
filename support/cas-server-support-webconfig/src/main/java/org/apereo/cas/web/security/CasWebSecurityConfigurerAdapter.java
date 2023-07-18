@@ -32,6 +32,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,9 +113,11 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
         patterns.add("/");
         patterns.add(webEndpointProperties.getBasePath());
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
+
+        val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
         web.debug(LOGGER.isDebugEnabled())
             .ignoring()
-            .requestMatchers(patterns.toArray(String[]::new));
+            .requestMatchers(matchers);
     }
 
     /**
@@ -129,9 +133,7 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
             .csrf(AbstractHttpConfigurer::disable)
             .headers(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)
-            .requiresChannel(customizer -> {
-                customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure();
-            });
+            .requiresChannel(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure());
 
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
@@ -151,7 +153,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
 
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         var requests = http.authorizeHttpRequests(customizer -> {
-            customizer.requestMatchers(patterns.toArray(String[]::new)).permitAll();
+            val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
+            customizer.requestMatchers(matchers).permitAll();
         });
         http.sessionManagement(AbstractHttpConfigurer::disable);
         http.requestCache(RequestCacheConfigurer::disable);
@@ -207,8 +210,8 @@ public class CasWebSecurityConfigurerAdapter implements DisposableBean {
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
         requests.authorizeHttpRequests(customizer -> {
             customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-            customizer.requestMatchers("/resources/**").permitAll();
-            customizer.requestMatchers("/static/**").permitAll();
+            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
+            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
         });
     }
 

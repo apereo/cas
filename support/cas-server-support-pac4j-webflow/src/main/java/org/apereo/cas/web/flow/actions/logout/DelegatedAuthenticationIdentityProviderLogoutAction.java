@@ -59,14 +59,12 @@ public class DelegatedAuthenticationIdentityProviderLogoutAction extends BaseCas
     private Event removeSsoSessionsForSessionIndexes(final HttpServletRequest request,
                                                      final HttpServletResponse response,
                                                      final LogoutRequest logoutRequest) {
-        logoutRequest.getSessionIndexes().forEach(sessionIndex -> {
-            configContext.getTicketRegistry()
-                .getSessionsWithAttributes(Map.of("sessionindex", List.of(Objects.requireNonNull(sessionIndex.getValue()))))
-                .filter(ticket -> !ticket.isExpired())
-                .map(TicketGrantingTicket.class::cast)
-                .findFirst()
-                .ifPresent(ticket -> configContext.getSingleLogoutRequestExecutor().execute(ticket.getId(), request, response));
-        });
+        logoutRequest.getSessionIndexes().forEach(sessionIndex -> configContext.getTicketRegistry()
+            .getSessionsWithAttributes(Map.of("sessionindex", List.of(Objects.requireNonNull(sessionIndex.getValue()))))
+            .filter(ticket -> !ticket.isExpired())
+            .map(TicketGrantingTicket.class::cast)
+            .findFirst()
+            .ifPresent(ticket -> configContext.getSingleLogoutRequestExecutor().execute(ticket.getId(), request, response)));
         return new Event(this, CasWebflowConstants.TRANSITION_ID_DONE);
     }
 }
