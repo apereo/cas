@@ -27,6 +27,8 @@ env:
   AZURE_AD_USER_PASSWORD: ${{ secrets.AZURE_AD_USER_PASSWORD }}
   AZURE_AD_TENANT: ${{ secrets.AZURE_AD_TENANT }}
   AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
+  AZURE_MAPS_SUBSCRIPTION_ID: ${{ secrets.AZURE_MAPS_SUBSCRIPTION_ID }}
+  AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 17
@@ -112,10 +114,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
-        run: |
-          source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
-          echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
-          echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
+        run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
@@ -140,7 +139,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
           check-latest: true
-      - name: Run Native Tests
+      - name: Build Native Tests
         uses: nick-fields/retry@v2
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
@@ -149,8 +148,17 @@ jobs:
           retry_on: error
           shell: bash
           command: |
-            export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Run Native Tests
+        uses: nick-fields/retry@v2
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          retry_on: error
+          shell: bash
+          command: |
+            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
   ##########################################################################
   puppeteer-tests-511:
     runs-on: macos-latest
@@ -166,10 +174,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
-        run: |
-          ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
-          echo "NODE_VERSION_REQUIRED=$(echo $NODE_VERSION_REQUIRED)" >> $GITHUB_ENV
-          echo "NATIVE_BUILD_ENABLED=$(echo $NATIVE_BUILD_ENABLED)" >> $GITHUB_ENV
+        run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v3
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
@@ -193,7 +198,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
-      - name: Run Native Tests
+      - name: Build Native Tests
         uses: nick-fields/retry@v2
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
@@ -204,4 +209,14 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-##########################################################################
+      - name: Run Native Tests
+        uses: nick-fields/retry@v2
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          retry_on: error
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}

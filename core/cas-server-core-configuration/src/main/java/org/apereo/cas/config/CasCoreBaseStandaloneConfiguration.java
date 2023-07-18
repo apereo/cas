@@ -77,8 +77,7 @@ public class CasCoreBaseStandaloneConfiguration {
         public static CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
             @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
             final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
-            return new DefaultCasConfigurationPropertiesSourceLocator(
-                configurationPropertiesLoaderFactory);
+            return new DefaultCasConfigurationPropertiesSourceLocator(configurationPropertiesLoaderFactory);
         }
     }
 }

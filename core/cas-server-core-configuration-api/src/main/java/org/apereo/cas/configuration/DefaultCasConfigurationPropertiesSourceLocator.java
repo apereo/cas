@@ -83,7 +83,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 compositePropertySource.addPropertySource(sourceProfiles);
             }
         } else {
-            LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
+            LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path",
+                 FunctionUtils.doIfNotNull(config, () -> config, () -> "unspecified").get());
         }
 
         val embeddedProperties = loadEmbeddedProperties(resourceLoader, environment);
@@ -102,7 +103,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      * <p>
      * Where multiple filenames with same base name and different extensions exist, the priority is yaml, yml, properties.
      */
-    private List<File> getAllPossibleExternalConfigDirFilenames(
+    private static List<File> getAllPossibleExternalConfigDirFilenames(
         final Environment environment,
         final File configDirectory,
         final List<String> profiles) {

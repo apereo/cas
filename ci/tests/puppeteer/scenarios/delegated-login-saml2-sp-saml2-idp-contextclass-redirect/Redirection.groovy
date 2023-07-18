@@ -45,7 +45,7 @@ def run(Object[] args) {
      so we may examine the requested authn context class, if any.
      */
     logger.info("Locate the SAML2 authentication request sent by the SP...")
-    SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
+    def result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
             .fetch(webContext, AuthnRequest.class)
             .map(Pair::getLeft)
             .map(AuthnRequest.class::cast)

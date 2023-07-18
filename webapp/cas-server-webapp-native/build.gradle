@@ -179,9 +179,12 @@ processAot {
 
     jvmArgs = list
     systemProperties System.properties
+
+    def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
+    println "AOT processing spring active profile: ${aotSpringActiveProfiles}"
     
     args(
-        "--spring.profiles.active=native",
+        "--spring.profiles.active=${aotSpringActiveProfiles}",
         "--spring.main.lazy-initialization=false",
         "--logging.level.org.apereo.cas=info",
         "--logging.level.org.springframework.core.env=info",
