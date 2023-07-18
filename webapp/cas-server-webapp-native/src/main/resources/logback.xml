@@ -5,6 +5,7 @@
             <Pattern>%white(%d{yyyy-MM-dd HH:mm:ss}) %highlight(%-5level) %cyan(%logger{15}) - %msg%n</Pattern>
         </layout>
     </appender>
+    <logger name="ch.qos.logback" level="off"/>
     
     <logger name="org.apereo.cas" level="info" />
     <Logger name="PROTOCOL_MESSAGE" level="info" />

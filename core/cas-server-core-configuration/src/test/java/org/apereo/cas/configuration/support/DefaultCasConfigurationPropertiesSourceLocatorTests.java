@@ -18,6 +18,7 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.mock.env.MockEnvironment;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +47,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
         System.setProperty("spring.profiles.active", CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE + ",dev");
         System.setProperty("cas.standalone.configuration-directory", "src/test/resources/directory");
         System.setProperty("cas.standalone.configuration-file", "src/test/resources/standalone.properties");
-        System.setProperty("test.overriden-by-system-property", "from-system-properties");
+        System.setProperty("test.overridden-by-system-property", "from-system-properties");
     }
 
     @Autowired
@@ -92,6 +93,15 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
+    void verifyNoneProfile() {
+        val mockEnv =new MockEnvironment();
+        mockEnv.setActiveProfiles(CasConfigurationPropertiesSourceLocator.PROFILE_NONE);
+        val source = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(mockEnv);
+        assertNull(source);
+    }
+
+
+    @Test
     void verifyGroovySlurper() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertTrue(source instanceof CompositePropertySource);
@@ -113,6 +123,6 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
         assertTrue(source instanceof CompositePropertySource);
 
         val composite = (CompositePropertySource) source;
-        assertEquals("from-system-properties", composite.getProperty("test.overriden-by-system-property"));
+        assertEquals("from-system-properties", composite.getProperty("test.overridden-by-system-property"));
     }
 }

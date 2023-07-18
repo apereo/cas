@@ -1,15 +1,14 @@
 package org.apereo.cas.configuration.api;
 
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
-
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
-
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -66,6 +65,11 @@ public interface CasConfigurationPropertiesSourceLocator {
      * and functionality should be identical.
      */
     String PROFILE_EMBEDDED = "embedded";
+    /**
+     * None configuration profile
+     * which will force CAS to ignore default CAS configuration directories.
+     */
+    String PROFILE_NONE = "none";
 
     /**
      * Locate property sources for CAS via the given environment and other resources.
@@ -83,9 +87,13 @@ public interface CasConfigurationPropertiesSourceLocator {
      * @return the standalone profile configuration directory
      */
     static File getStandaloneProfileConfigurationDirectory(final Environment environment) {
+        if (Arrays.stream(environment.getActiveProfiles()).allMatch(profile -> profile.equalsIgnoreCase(PROFILE_NONE))) {
+            LOGGER.info("Standalone configuration directory processing is skipped for profile [{}]", PROFILE_NONE);
+            return null;
+        }
+
         val values = new LinkedHashSet<>(RelaxedPropertyNames.forCamelCase(PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY).getValues());
         values.add(PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY);
-
         val file = values
             .stream()
             .map(key -> environment.getProperty(key, File.class))

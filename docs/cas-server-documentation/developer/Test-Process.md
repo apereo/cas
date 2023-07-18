@@ -180,6 +180,8 @@ The following command-line options are supported for test execution:
 | `--boy`                                   | A combination of `--build`, `--dry-run` and Gradle's `--offline` flag.                   |
 | `--io`, `--initonly`                      | Initialize the execution of the test scenario, but do not run it.                        |
 | `--nc`, `--ncl`, `--noclear`              | Initialize the execution of the test scenario, but do not run it.                        |
+| `--native`, `--graalvm`, `--nb`           | Build the test scenario and produce a native-image as the final build artifact.          |
+| `--nr`, `--native-run`                    | Run the test scenario as a native-image. Requires a native build via `--nb`.             |
 
 For example, the `login-success` test scenario may be run using: 
 
@@ -222,7 +224,7 @@ A basic modest outline of the test configuration may be:
   },
   "requirements": {
     "graalvm": {
-      "enabled": true
+      "build": true
     }
   },
   "properties": [
