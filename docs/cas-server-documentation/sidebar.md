@@ -368,6 +368,7 @@ layout: null
 
 * [Password Management](#pswmgmt)
     *   [Overview](/cas/{{ version }}/password_management/Password-Management.html)
+    *   [Password Reset](/cas/{{ version }}/password_management/Password-Management-Reset.html)
     *   [Password Sync](/cas/{{ version }}/password_management/Password-Synchronization.html)
     *   [Password History](/cas/{{ version }}/password_management/Password-Management-History.html)
     *   [Forgot Username](/cas/{{ version }}/password_management/Password-Management-ForgotUsername.html)

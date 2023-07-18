@@ -66,6 +66,9 @@ code, code.highlighter-rouge {
   code, code.highlighter-rouge {
     color: #43d4b2;
   }
+  table.dataTable tbody tr {
+    background-color: var(--bs-table-bg);
+  }
 }
 
 /**
