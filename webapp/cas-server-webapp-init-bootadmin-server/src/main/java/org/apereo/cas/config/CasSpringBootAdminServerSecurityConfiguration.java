@@ -45,8 +45,8 @@ public class CasSpringBootAdminServerSecurityConfiguration {
             })
             .csrf(customizer -> customizer.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .ignoringRequestMatchers(
-                    adminContextPath + "/instances",
-                    adminContextPath + "/actuator/**"
+                    new AntPathRequestMatcher(adminContextPath + "/instances"),
+                    new AntPathRequestMatcher(adminContextPath + "/actuator/**")
                 ));
 
         return http.build();

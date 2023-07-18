@@ -181,7 +181,7 @@ processAot {
     systemProperties System.properties
 
     def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
-    println "AOT processing spring active profile: ${aotSpringActiveProfiles}"
+    logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
     
     args(
         "--spring.profiles.active=${aotSpringActiveProfiles}",
