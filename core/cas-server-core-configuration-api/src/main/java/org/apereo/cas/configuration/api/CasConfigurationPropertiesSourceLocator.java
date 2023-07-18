@@ -87,7 +87,8 @@ public interface CasConfigurationPropertiesSourceLocator {
      * @return the standalone profile configuration directory
      */
     static File getStandaloneProfileConfigurationDirectory(final Environment environment) {
-        if (Arrays.stream(environment.getActiveProfiles()).allMatch(profile -> profile.equalsIgnoreCase(PROFILE_NONE))) {
+        if (environment.getActiveProfiles().length > 0
+            && Arrays.stream(environment.getActiveProfiles()).allMatch(profile -> profile.equalsIgnoreCase(PROFILE_NONE))) {
             LOGGER.info("Standalone configuration directory processing is skipped for profile [{}]", PROFILE_NONE);
             return null;
         }
