@@ -169,7 +169,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         final SamlRegisteredServiceMetadataAdaptor adaptor,
         final MessageContext outboundContext,
         final SamlRegisteredService service) {
-        val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
+        val secParametersContext = outboundContext.ensureSubcontext(SecurityParametersContext.class);
         val roleDesc = adaptor.ssoDescriptor();
         val signingParameters = buildSignatureSigningParameters(roleDesc, service);
         Objects.requireNonNull(secParametersContext).setSignatureSigningParameters(signingParameters);
