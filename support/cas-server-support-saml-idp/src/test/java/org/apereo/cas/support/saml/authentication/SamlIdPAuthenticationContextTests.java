@@ -23,11 +23,11 @@ class SamlIdPAuthenticationContextTests {
     @Test
     void verifyOperation() {
         val messageContext = new MessageContext();
-        messageContext.getSubcontext(SAMLBindingContext.class, true).setRelayState(UUID.randomUUID().toString());
-        messageContext.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(true);
+        messageContext.ensureSubcontext(SAMLBindingContext.class).setRelayState(UUID.randomUUID().toString());
+        messageContext.ensureSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);
 
-        messageContext.getSubcontext(SAMLProtocolContext.class, true).setProtocol(UUID.randomUUID().toString());
-        messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(UUID.randomUUID().toString());
+        messageContext.ensureSubcontext(SAMLProtocolContext.class).setProtocol(UUID.randomUUID().toString());
+        messageContext.ensureSubcontext(SAMLPeerEntityContext.class).setEntityId(UUID.randomUUID().toString());
 
         val ctx = SamlIdPAuthenticationContext.from(messageContext);
         val encoded = ctx.encode();

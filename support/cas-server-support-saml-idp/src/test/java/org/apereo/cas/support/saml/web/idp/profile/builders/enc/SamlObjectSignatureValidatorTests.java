@@ -87,7 +87,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
             new EntityIdCriterion(Objects.requireNonNull(peer.getEntityId())),
             new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
-        val self = saml2MessageContext.getMessageContext().getSubcontext(SAMLSelfEntityContext.class, true);
+        val self = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLSelfEntityContext.class);
         assertNotNull(self);
         self.setEntityId(saml2ClientConfiguration.getServiceProviderEntityId());
 
