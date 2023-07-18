@@ -1,10 +1,6 @@
 {
   "dependencies": "inwebo-mfa",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
 

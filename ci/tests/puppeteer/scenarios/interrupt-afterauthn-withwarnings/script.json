@@ -1,10 +1,6 @@
 {
   "dependencies": "generic,interrupt-webflow",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.audit.engine.enabled=false",
 

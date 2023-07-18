@@ -1,10 +1,6 @@
 {
   "dependencies": "swagger,reports",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--springdoc.show.actuator=true",
 

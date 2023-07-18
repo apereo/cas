@@ -4,7 +4,7 @@ ext {
     projectMetadata = [
             facets: ["web"],
             category: "Web Application",
-            title: "GraalVM Native Image Support",
+            title: "Graal VM Native Image Support",
             aliases: ["graalvm"]
     ]
 }

@@ -1,10 +1,6 @@
 {
   "dependencies": "pm-webflow",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.authn.pm.core.enabled=true",
 

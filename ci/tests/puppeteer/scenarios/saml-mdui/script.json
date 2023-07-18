@@ -1,10 +1,6 @@
 {
   "dependencies": "saml-mdui",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.saml-metadata-ui.resources=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/metadata.xml::,https://mdq.incommon.org/entities/::",
 

@@ -1,10 +1,6 @@
 {
   "dependencies": "pac4j-webflow",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.audit.engine.enabled=false",
 

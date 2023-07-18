@@ -1,10 +1,6 @@
 {
   "dependencies": "core,reports",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "server": "jetty",
   "properties": [
     "--cas.server.name=https://localhost:8443",

@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * This is {@link CasSpringBootAdminServerSecurityConfiguration}.
@@ -35,7 +35,9 @@ public class CasSpringBootAdminServerSecurityConfiguration {
         successHandler.setDefaultTargetUrl(adminContextPath + '/');
 
         http.authorizeHttpRequests(customizer -> customizer
-                .requestMatchers(adminContextPath + "/assets/**", adminContextPath + "/login").permitAll()
+                .requestMatchers(
+                    new AntPathRequestMatcher(adminContextPath + "/assets/**"),
+                    new AntPathRequestMatcher(adminContextPath + "/login")).permitAll()
                 .anyRequest().authenticated())
             .formLogin(customizer -> customizer.loginPage(adminContextPath + "/login").successHandler(successHandler))
             .logout(customizer -> customizer.logoutUrl(adminContextPath + "/logout"))

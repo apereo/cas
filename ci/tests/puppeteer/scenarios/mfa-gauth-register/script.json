@@ -1,8 +1,3 @@
 {
-  "dependencies": "gauth",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  }
+  "dependencies": "gauth"
 }

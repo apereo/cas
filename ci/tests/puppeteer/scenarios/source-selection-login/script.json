@@ -1,10 +1,6 @@
 {
   "dependencies": "generic",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.authn.policy.source-selection-enabled=true",
     

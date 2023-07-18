@@ -1,10 +1,6 @@
 {
   "dependencies": "reports",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.audit.engine.enabled=false",
     "--cas.service-registry.core.init-from-json=true",

@@ -3,11 +3,7 @@
   "conditions": {
     "docker": "true"
   },
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "timeout": 30,
   "properties": [
     "--cas.server.name=https://localhost:8443",

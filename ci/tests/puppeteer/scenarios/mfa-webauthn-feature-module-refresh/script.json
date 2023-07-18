@@ -1,10 +1,6 @@
 {
   "dependencies": "webauthn,events-configuration",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--logging.level.org.apereo.cas=debug",
     

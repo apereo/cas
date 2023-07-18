@@ -1,10 +1,6 @@
 {
   "dependencies": "audit-jdbc,pm-webflow",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--CasFeatureModule.AccountManagement.enabled=true",
     

@@ -1,10 +1,6 @@
 {
   "dependencies": "throttle",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.authn.throttle.core.username-parameter=username",
     "--cas.authn.throttle.failure.threshold=2",

@@ -1,10 +1,6 @@
 {
   "dependencies": "themes-collection",
-  "requirements": {
-    "graalvm": {
-      "enabled": true
-    }
-  },
+
   "properties": [
     "--cas.theme.default-theme-name=example"
   ]
