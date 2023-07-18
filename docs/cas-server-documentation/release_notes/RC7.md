@@ -159,3 +159,7 @@ that can control SSO participation on a per-application basis based on presence 
 - Google Cloud
 - Spring WS
 - Spring Framework
+- Spring Kafka
+- Spring RabbitMQ
+- Lettuce
+- Apache ZooKeeper

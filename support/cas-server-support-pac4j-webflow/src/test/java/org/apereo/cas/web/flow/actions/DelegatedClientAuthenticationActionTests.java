@@ -425,11 +425,11 @@ class DelegatedClientAuthenticationActionTests {
 
             request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
             val service = CoreAuthenticationTestUtils.getService("https://delegated3.example.org");
-            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             val client = builtClients.findClient("FacebookClient").get();
             val webContext = new JEEContext(request, new MockHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
-            request.addParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+            request.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
             val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
             accessStrategy.setEnabled(false);

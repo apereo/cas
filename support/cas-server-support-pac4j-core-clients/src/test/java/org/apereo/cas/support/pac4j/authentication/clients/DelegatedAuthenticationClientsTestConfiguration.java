@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -126,8 +127,10 @@ public class DelegatedAuthenticationClientsTestConfiguration {
 
     private static SAML2Configuration getSAML2Configuration() throws IOException {
         val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();
-        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore-" + RandomUtils.nextInt()).getCanonicalPath();
+        FileUtils.deleteQuietly(new File(keystorePath));
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata-%s.xml".formatted(RandomUtils.nextInt())).getCanonicalPath();
+        FileUtils.deleteQuietly(new File(spMetadataPath));
         val saml2Config = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
         saml2Config.setForceKeystoreGeneration(true);
         saml2Config.setForceServiceProviderMetadataGeneration(true);
