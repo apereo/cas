@@ -1,7 +1,6 @@
 package org.apereo.cas.dynamodb;
 
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,14 +15,10 @@ import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
-import software.amazon.awssdk.services.dynamodb.model.ResourceInUseException;
-import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +34,7 @@ class DynamoDbTableUtilsTests {
     void verifyCreateTable() {
         val client = mock(DynamoDbClient.class);
         when(client.createTable(any(CreateTableRequest.class)))
-            .thenThrow(ResourceInUseException.create("error", new IllegalArgumentException()));
+            .thenThrow(SdkException.create("error", new IllegalArgumentException()));
         assertFalse(DynamoDbTableUtils.createTableIfNotExists(client, CreateTableRequest.builder().build()));
     }
 
@@ -57,7 +52,7 @@ class DynamoDbTableUtilsTests {
     void verifyWaitUntilTableNotFound() {
         val client = mock(DynamoDbClient.class);
         when(client.describeTable(any(DescribeTableRequest.class)))
-            .thenThrow(ResourceNotFoundException.create("fail", new IllegalArgumentException()));
+            .thenThrow(SdkException.create("fail", new IllegalArgumentException()));
         assertThrows(SdkException.class,
             () -> DynamoDbTableUtils.waitUntilActive(client, "tableName", 1000, 1000));
 

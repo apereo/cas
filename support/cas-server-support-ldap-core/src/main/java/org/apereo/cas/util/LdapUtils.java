@@ -1097,7 +1097,8 @@ public class LdapUtils {
         @Override
         @SneakyThrows
         public String resolve(final User user) {
-            return resolvers().stream()
+            return resolvers()
+                .stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
                         () -> resolver.resolve(user),
                         throwable -> {

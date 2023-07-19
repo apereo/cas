@@ -10,17 +10,17 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.util.AbstractSamlObjectBuilder;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.UrlValidator;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
-
 import java.io.Serial;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -68,18 +67,19 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private PublicKey publicKey;
 
-    private GoogleSaml20ObjectBuilder samlObjectBuilder;
+    private final GoogleSaml20ObjectBuilder samlObjectBuilder;
 
-    private String skewAllowance;
+    private final String skewAllowance;
 
-    private String casServerPrefix;
+    private final String casServerPrefix;
 
-    @SneakyThrows
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
-                                                final String publicKeyLocation, final String keyAlgorithm,
+                                                final String publicKeyLocation,
+                                                final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                final String skewAllowance, final String casServerPrefix,
+                                                final String skewAllowance,
+                                                final String casServerPrefix,
                                                 final UrlValidator urlValidator) {
         super(servicesManager, urlValidator);
         this.privateKeyLocation = privateKeyLocation;
@@ -88,10 +88,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         this.skewAllowance = skewAllowance;
         this.samlObjectBuilder = samlObjectBuilder;
         this.casServerPrefix = casServerPrefix;
-
-        createGoogleAppsPrivateKey();
-        createGoogleAppsPublicKey();
-
+        FunctionUtils.doAndHandle(__ -> {
+            createGoogleAppsPrivateKey();
+            createGoogleAppsPublicKey();
+        });
     }
 
     @Override
@@ -100,7 +100,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         val service = (GoogleAccountsService) webApplicationService;
         val parameters = new HashMap<String, String>();
         val samlResponse = constructSamlResponse(service, authentication);
-        val signedResponse = GoogleSaml20ObjectBuilder.signSamlResponse(samlResponse, this.privateKey, publicKey);
+        val signedResponse = AbstractSamlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
         return buildPost(service, parameters);

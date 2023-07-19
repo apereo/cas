@@ -333,8 +333,7 @@ public class DynamoDbTableUtils {
          * @param desiredStatus the desired status
          */
         TableNeverTransitionedToStateException(final String tableName, final TableStatus desiredStatus) {
-            super(TableNeverTransitionedToStateException
-                .builder()
+            super(SdkClientException.builder()
                 .message("Table " + tableName + " never transitioned to desired state of " + desiredStatus.toString()));
         }
 

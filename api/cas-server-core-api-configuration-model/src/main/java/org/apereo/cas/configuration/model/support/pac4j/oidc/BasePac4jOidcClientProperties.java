@@ -131,4 +131,19 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * the access token. If not, the token format could change at any time.
      */
     private boolean includeAccessTokenClaims;
+
+    /**
+     * The preferred client authentication method
+     * that will be chosen for token requests. If none is specified,
+     * one will be chosen somewhat randomly based on what the OIDC OP supports.
+     */
+    private String clientAuthenticationMethod;
+
+    /**
+     * Control the list of supported client authentication methods
+     * that can be accepted and understood by this integration.
+     * Multiple methods may be specified and separated via a comma.
+     * Example might be {@code client_secret_basic,client_secret_post,client_secret_jwt}.
+     */
+    private String supportedClientAuthenticationMethods;
 }

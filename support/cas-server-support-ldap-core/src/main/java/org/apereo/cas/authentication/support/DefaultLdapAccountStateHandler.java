@@ -10,9 +10,9 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.auth.AccountState;
@@ -202,15 +202,16 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      *
      * @param response the authentication response.
      */
-    @SneakyThrows
     protected void handlePolicyAttributes(final AuthenticationResponse response) {
-        val attributes = response.getLdapEntry().getAttributes();
-        for (val attr : attributes) {
-            if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
-                val clazz = this.attributesToErrorMap.get(attr.getName());
-                throw clazz.getDeclaredConstructor().newInstance();
+        FunctionUtils.doAndHandle(__ -> {
+            val attributes = response.getLdapEntry().getAttributes();
+            for (val attr : attributes) {
+                if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
+                    val clazz = this.attributesToErrorMap.get(attr.getName());
+                    throw clazz.getDeclaredConstructor().newInstance();
+                }
             }
-        }
+        });
     }
 }
 
