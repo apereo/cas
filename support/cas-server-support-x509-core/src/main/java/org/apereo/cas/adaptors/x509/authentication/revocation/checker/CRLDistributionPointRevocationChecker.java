@@ -11,8 +11,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.bouncycastle.asn1.ASN1IA5String;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
@@ -92,7 +92,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
                         LOGGER.debug("Found CRL distribution point [{}].", name);
                         try {
-                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                            addURL(urls, ASN1IA5String.getInstance(name.getName()).getString());
                         } catch (final Exception e) {
                             LOGGER.warn("[{}] not supported: [{}].", pointName, e.getMessage());
                         }

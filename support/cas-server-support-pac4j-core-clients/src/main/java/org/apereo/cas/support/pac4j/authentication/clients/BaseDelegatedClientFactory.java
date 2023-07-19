@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,7 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
+import org.pac4j.oidc.metadata.OidcOpMetadataResolver;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
@@ -173,7 +175,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-
     protected Collection<IndirectClient> buildGoogleIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val google = pac4jProperties.getGoogle();
@@ -221,7 +222,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-
     protected Collection<IndirectClient> buildGitHubIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val github = pac4jProperties.getGithub();
@@ -235,7 +235,6 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         }
         return List.of();
     }
-
 
     protected Collection<IndirectClient> buildDropBoxIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
@@ -407,9 +406,9 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (clientProperties.getGeneric().isEnabled()) {
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(clientProperties.getGeneric(), OidcConfiguration.class);
-            val oc = new OidcClient(generic);
-            configureClient(oc, clientProperties.getGeneric(), casProperties);
-            return oc;
+            val oidcClient = new OidcClient(generic);
+            configureClient(oidcClient, clientProperties.getGeneric(), casProperties);
+            return oidcClient;
         }
         return null;
     }
@@ -428,8 +427,8 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         return List.of();
     }
 
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
-                                                                                 final Class<T> clazz) {
+    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+                                                                          final Class<T> clazz) {
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
         FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(oidc.getScope()));
         
@@ -449,6 +448,18 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         cfg.setAllowUnsignedIdTokens(oidc.isAllowUnsignedIdTokens());
         cfg.setIncludeAccessTokenClaimsInProfile(oidc.isIncludeAccessTokenClaims());
         cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+
+        FunctionUtils.doIfNotBlank(oidc.getSupportedClientAuthenticationMethods(), methods -> {
+            val clientMethods = org.springframework.util.StringUtils.commaDelimitedListToSet(methods)
+                .stream()
+                .map(ClientAuthenticationMethod::parse)
+                .collect(Collectors.toSet());
+            cfg.setSupportedClientAuthenticationMethods(clientMethods);
+        });
+
+        FunctionUtils.doIfNotBlank(oidc.getClientAuthenticationMethod(),
+            method -> cfg.setClientAuthenticationMethod(ClientAuthenticationMethod.parse(method)));
+
         if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
         }
@@ -459,6 +470,11 @@ public abstract class BaseDelegatedClientFactory implements DelegatedClientFacto
         if (!oidc.getMappedClaims().isEmpty()) {
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
         }
+        cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+        val opMetadataResolver = new OidcOpMetadataResolver(cfg);
+        opMetadataResolver.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+        cfg.setOpMetadataResolver(opMetadataResolver);
+
         return cfg;
     }
 

@@ -53,7 +53,7 @@ class RequestParameterPolicyEnforcementFilterTests {
 
     @BeforeEach
     public void setup() {
-        RequestParameterPolicyEnforcementFilter.setThrowOnErrors(true);
+        AbstractSecurityFilter.setThrowOnErrors(true);
     }
 
     @Test

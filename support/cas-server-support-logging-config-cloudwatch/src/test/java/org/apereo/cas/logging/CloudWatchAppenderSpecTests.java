@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogStreamRequest;
@@ -20,11 +20,9 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,17 +45,17 @@ class CloudWatchAppenderSpecTests {
 
     private static void createLogGroup(final CloudWatchLogsClient logs, final Boolean value) {
         if (value) {
-            verify(logs, atLeastOnce()).createLogGroup(Mockito.any(CreateLogGroupRequest.class));
+            verify(logs, atLeastOnce()).createLogGroup(ArgumentMatchers.any(CreateLogGroupRequest.class));
         } else {
-            verify(logs, never()).createLogGroup(Mockito.any(CreateLogGroupRequest.class));
+            verify(logs, never()).createLogGroup(ArgumentMatchers.any(CreateLogGroupRequest.class));
         }
     }
 
     private static void createLogStream(final CloudWatchLogsClient logs, final Boolean value) {
         if (value) {
-            verify(logs, atLeastOnce()).createLogStream(Mockito.any(CreateLogStreamRequest.class));
+            verify(logs, atLeastOnce()).createLogStream(ArgumentMatchers.any(CreateLogStreamRequest.class));
         } else {
-            verify(logs, never()).createLogStream(Mockito.any(CreateLogStreamRequest.class));
+            verify(logs, never()).createLogStream(ArgumentMatchers.any(CreateLogStreamRequest.class));
         }
     }
 
@@ -115,10 +113,10 @@ class CloudWatchAppenderSpecTests {
     void specTest(final TestCase tC) {
         var mock = mock(CloudWatchLogsClient.class);
         if (tC.logStreamExists) {
-            when(mock.describeLogStreams(Mockito.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
+            when(mock.describeLogStreams(ArgumentMatchers.any(DescribeLogStreamsRequest.class))).thenReturn(createDescribeLogStreamsResult());
         }
         if (tC.logGroupExists) {
-            when(mock.describeLogGroups(Mockito.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
+            when(mock.describeLogGroups(ArgumentMatchers.any(DescribeLogGroupsRequest.class))).thenReturn(createDescribeLogGroupsResult());
         }
 
         var appender = new CloudWatchAppender("test", "test", "test", "30", null,
