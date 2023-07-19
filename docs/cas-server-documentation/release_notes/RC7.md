@@ -143,6 +143,7 @@ that can control SSO participation on a per-application basis based on presence 
 - Gradle
 - Spring Boot
 - Apache Tomcat
+- Apache Shiro
 - Sentry
 - Apache CXF
 - Oshi
@@ -160,6 +161,7 @@ that can control SSO participation on a per-application basis based on presence 
 - Spring WS
 - Spring Framework
 - Spring Kafka
+- Spring Integration
 - Spring RabbitMQ
 - Lettuce
 - Apache ZooKeeper
