@@ -1,6 +1,6 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "https://httpbin.org/anything",
+  "serviceId" : "https://localhost:9859/anything",
   "name" : "Sample",
   "id" : 1,
   "evaluationOrder" : 1,

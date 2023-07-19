@@ -5,7 +5,7 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const entityId = "https://httpbin.org/anything";
+    const entityId = "https://localhost:9859/anything";
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;
     console.log(`Navigating to ${url}`);
