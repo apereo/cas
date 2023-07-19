@@ -15,9 +15,9 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,8 +90,7 @@ public class CasCoreAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authenticationTransactionManager")
         public AuthenticationTransactionManager authenticationTransactionManager(
-            @Qualifier(AuthenticationManager.BEAN_NAME)
-            final AuthenticationManager casAuthenticationManager,
+            @Qualifier(AuthenticationManager.BEAN_NAME) final AuthenticationManager casAuthenticationManager,
             final ConfigurableApplicationContext applicationContext) {
             return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
         }
@@ -103,8 +101,7 @@ public class CasCoreAuthenticationConfiguration {
         public AuthenticationManager casAuthenticationManager(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME) final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             val isFatal = casProperties.getPersonDirectory().getPrincipalResolutionFailureFatal() == TriStateBoolean.TRUE;
             return new DefaultAuthenticationManager(authenticationEventExecutionPlan, isFatal, applicationContext);
         }
@@ -118,14 +115,18 @@ public class CasCoreAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
             final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
+
             val plan = new DefaultAuthenticationEventExecutionPlan();
             val sortedConfigurers = new ArrayList<>(configurers);
+            sortedConfigurers.removeIf(BeanSupplier::isProxy);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
-
-            sortedConfigurers.forEach(Unchecked.consumer(c -> {
-                LOGGER.trace("Configuring authentication execution plan [{}]", c.getName());
-                c.configureAuthenticationExecutionPlan(plan);
-            }));
+            sortedConfigurers
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .forEach(Unchecked.consumer(configurer -> {
+                    LOGGER.trace("Configuring authentication execution plan [{}]", configurer.getName());
+                    configurer.configureAuthenticationExecutionPlan(plan);
+                }));
             return plan;
         }
     }

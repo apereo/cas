@@ -33,6 +33,11 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
     private static final long serialVersionUID = -21355975558426360L;
 
     /**
+     * Enable authentication against Azure active directory.
+     */
+    private boolean enabled = true;
+
+    /**
      * The name of the authentication handler.
      */
     private String name;
@@ -114,6 +119,12 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
     @RequiredProperty
     @ExpressionLanguageCapable
     private String tenant;
+
+    /**
+     * Scope used when fetching access tokens.
+     * Multiple scopes may be separated using a comma.
+     */
+    private String scope = "openid,email,profile,address";
 
     /**
      * Define the scope and state of this authentication handler
