@@ -15,8 +15,9 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -30,7 +31,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,33 +45,14 @@ import java.util.List;
 @AutoConfiguration
 public class AzureActiveDirectoryAuthenticationConfiguration {
 
-    @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuthenticationEventExecutionPlanConfigurer microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
-        final AuthenticationHandler handler,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
-    }
-
-    @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
-        final List<IPersonAttributeDao> repositories) {
-        return plan -> repositories.forEach(plan::registerAttributeRepository);
-    }
-
-    @Configuration(value = "AzureActiveDirectoryAuthenticationInternalConfiguration", proxyBeanMethods = false)
-    public static class AzureActiveDirectoryAuthenticationInternalConfiguration {
+    @Configuration(value = "AzureActiveDirectoryAttributeConfiguration", proxyBeanMethods = false)
+    public static class AzureActiveDirectoryAttributeConfiguration {
 
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories(final CasConfigurationProperties casProperties) {
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val list = new ArrayList<IPersonAttributeDao>();
             val attrs = casProperties.getAuthn().getAttributeRepository();
             attrs.getAzureActiveDirectory().stream()
@@ -86,18 +67,33 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
                     FunctionUtils.doIfNotNull(msft.getAttributes(), dao::setProperties);
                     FunctionUtils.doIfNotNull(msft.getResource(), dao::setResource);
                     FunctionUtils.doIfNotNull(msft.getScope(), dao::setScope);
-                    
-                    val resolver = SpringExpressionLanguageValueResolver.getInstance();
+
                     dao.setTenant(resolver.resolve(msft.getTenant()));
                     dao.setDomain(resolver.resolve(msft.getDomain()));
                     dao.setClientSecret(resolver.resolve(msft.getClientSecret()));
                     dao.setClientId(resolver.resolve(msft.getClientId()));
-                    
+
                     dao.setOrder(msft.getOrder());
                     list.add(dao);
                 });
             return list;
         }
+
+        @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
+            @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
+            final List<IPersonAttributeDao> repositories) {
+            return plan -> repositories.forEach(plan::registerAttributeRepository);
+        }
+
+    }
+
+    @Configuration(value = "AzureActiveDirectoryAuthenticationHandlerConfiguration", proxyBeanMethods = false)
+    public static class AzureActiveDirectoryAuthenticationHandlerConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.azure-active-directory.client-id")
+            .and("cas.authn.azure-active-directory.enabled").isTrue().evenIfMissing();
 
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryPrincipalFactory")
         @Bean
@@ -116,13 +112,35 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("microsoftAzureActiveDirectoryPrincipalFactory")
             final PrincipalFactory factory) {
-            val azure = casProperties.getAuthn().getAzureActiveDirectory();
-            val handler = new AzureActiveDirectoryAuthenticationHandler(servicesManager, factory, azure);
-            handler.setState(azure.getState());
-            handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
-            handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));
-            handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(azure.getCredentialCriteria()));
-            return handler;
+            return BeanSupplier.of(AuthenticationHandler.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val azure = casProperties.getAuthn().getAzureActiveDirectory();
+                    val handler = new AzureActiveDirectoryAuthenticationHandler(servicesManager, factory, azure);
+                    handler.setState(azure.getState());
+                    handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
+                    handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));
+                    handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(azure.getCredentialCriteria()));
+                    return handler;
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
+            final AuthenticationHandler handler,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver) {
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver))
+                .otherwiseProxy()
+                .get();
         }
     }
 }
