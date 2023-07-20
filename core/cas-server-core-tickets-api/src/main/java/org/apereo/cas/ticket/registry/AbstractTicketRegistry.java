@@ -22,6 +22,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -58,14 +59,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        return getTicket(ticketId, ticket -> {
+        Ticket returnTicket = getTicket(ticketId, ticket -> {
             if (ticket == null || ticket.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the ticket registry", ticketId);
+                if (ticket == null) {
+                    LOGGER.debug("Ticket [{}] not found but will be removed from the ticket registry just in case", ticketId);
+                } else {
+                    val ticketAgeSeconds = ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
+                    LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
+                        ticketId, ticket.getExpirationPolicy().getClass().getName(), ticketAgeSeconds, ticket.getCountOfUses());
+                }
                 deleteSingleTicket(ticketId);
                 return false;
             }
             return true;
         });
+        if (returnTicket != null) {
+            val ticketAgeSeconds = ZonedDateTime.now(returnTicket.getExpirationPolicy().getClock()).toEpochSecond() - returnTicket.getCreationTime().toEpochSecond();
+            if (ticketAgeSeconds < -1) {
+                LOGGER.warn("Ticket created [{}] seconds in the future. Check time synchronization on all servers", ticketAgeSeconds * -1);
+            }
+        }
+        return returnTicket;
     }
 
     @Override

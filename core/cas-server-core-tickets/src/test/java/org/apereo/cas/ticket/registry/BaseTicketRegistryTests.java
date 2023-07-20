@@ -75,6 +75,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
@@ -295,6 +296,22 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE));
+        val ticket = ticketRegistry.getTicket(ticketGrantingTicketId);
+        assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
+        assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
+    }
+
+    /**
+     * Excercise block of code in getTicket that runs when get {@code ticketRegistry.getTicket()} called.
+     * Adds 10 seconds to creation time to simulate time out of sync so warning is logged.
+     */
+    @RepeatedTest(2)
+    public void verifyGetFutureDatedTicket() throws Exception {
+        val addTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            CoreAuthenticationTestUtils.getAuthentication(),
+            NeverExpiresExpirationPolicy.INSTANCE);
+        addTicket.setCreationTime(ZonedDateTime.now(addTicket.getExpirationPolicy().getClock()).plusSeconds(10));
+        ticketRegistry.addTicket(addTicket);
         val ticket = ticketRegistry.getTicket(ticketGrantingTicketId);
         assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
         assertEquals(ticketGrantingTicketId, ticket.getId(), () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
