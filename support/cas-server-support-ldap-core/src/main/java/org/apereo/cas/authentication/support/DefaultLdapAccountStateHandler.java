@@ -10,11 +10,11 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -201,17 +201,16 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * This handles ad-hoc password policies.
      *
      * @param response the authentication response.
+     * @throws LoginException the login exception
      */
-    protected void handlePolicyAttributes(final AuthenticationResponse response) {
-        FunctionUtils.doAndHandle(__ -> {
-            val attributes = response.getLdapEntry().getAttributes();
-            for (val attr : attributes) {
-                if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
-                    val clazz = this.attributesToErrorMap.get(attr.getName());
-                    throw clazz.getDeclaredConstructor().newInstance();
-                }
+    protected void handlePolicyAttributes(final AuthenticationResponse response) throws LoginException {
+        val attributes = response.getLdapEntry().getAttributes();
+        for (val attr : attributes) {
+            if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
+                val clazz = this.attributesToErrorMap.get(attr.getName());
+                throw Unchecked.supplier(() -> clazz.getDeclaredConstructor().newInstance()).get();
             }
-        });
+        }
     }
 }
 

@@ -64,8 +64,7 @@ class DefaultLdapAccountStateHandlerTests {
         entry.addAttributes(new LdapAttribute("attr1", "true"));
         when(response.getLdapEntry()).thenReturn(entry);
 
-        assertThrows(AccountLockedException.class, () ->
-            handler.handlePolicyAttributes(response));
+        assertThrows(AccountLockedException.class, () -> handler.handlePolicyAttributes(response));
     }
 
     @Test
