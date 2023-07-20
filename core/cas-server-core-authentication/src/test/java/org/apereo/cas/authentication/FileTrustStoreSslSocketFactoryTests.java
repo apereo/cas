@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.val;
@@ -36,17 +35,14 @@ class FileTrustStoreSslSocketFactoryTests {
 
         private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");
 
-        private static SSLConnectionSocketFactory sslFactory(final Resource resource,
-                                                             final String password,
-                                                             final String trustStoreType) {
-            return FunctionUtils.doUnchecked(() -> {
-                val sslContext = new DefaultCasSSLContext(resource, password, trustStoreType,
-                    new HttpClientProperties(), NoopHostnameVerifier.INSTANCE);
-                return new SSLConnectionSocketFactory(sslContext.getSslContext());
-            });
+        private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password,
+                                                             final String trustStoreType) throws Exception {
+            val sslContext = new DefaultCasSSLContext(resource, password, trustStoreType,
+                new HttpClientProperties(), NoopHostnameVerifier.INSTANCE);
+            return new SSLConnectionSocketFactory(sslContext.getSslContext());
         }
 
-        private static SSLConnectionSocketFactory sslFactory() {
+        private static SSLConnectionSocketFactory sslFactory() throws Exception {
             return sslFactory(RESOURCE, "changeit", "JKS");
         }
 
@@ -59,7 +55,7 @@ class FileTrustStoreSslSocketFactoryTests {
         }
 
         @Test
-        void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
+        void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
             val client = getSimpleHttpClient(sslFactory());
             assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
         }
@@ -75,19 +71,19 @@ class FileTrustStoreSslSocketFactoryTests {
         }
 
         @Test
-        void verifyTrustStoreType() {
+        void verifyTrustStoreType() throws Exception {
             val client = getSimpleHttpClient(sslFactory(RESOURCE_P12, "changeit", "PKCS12"));
             assertTrue(client.isValidEndPoint("https://www.google.com"));
         }
 
         @Test
-        void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() {
+        void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
             val client = getSimpleHttpClient(sslFactory());
             assertTrue(client.isValidEndPoint("https://www.google.com"));
         }
 
         @Test
-        void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
+        void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
             val client = getSimpleHttpClient(sslFactory());
             assertTrue(client.isValidEndPoint("http://wikipedia.org"));
         }

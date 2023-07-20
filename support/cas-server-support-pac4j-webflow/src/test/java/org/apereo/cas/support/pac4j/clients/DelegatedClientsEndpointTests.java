@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "cas.authn.pac4j.oidc[0].google.id=123",
     "cas.authn.pac4j.oidc[0].google.secret=123",
-    
+
     "cas.authn.pac4j.github.id=123",
     "cas.authn.pac4j.github.secret=123",
 
@@ -48,7 +48,7 @@ class DelegatedClientsEndpointTests extends AbstractCasEndpointTests {
     private DelegatedClientsEndpoint endpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         assertFalse(endpoint.getClients().isEmpty());
         assertFalse(endpoint.reload().isEmpty());
     }
