@@ -63,10 +63,11 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         if (registeredService instanceof OidcRegisteredService oidcService) {
             val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
-                LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
+                LOGGER.warn("Access token scopes [{}] cannot identify an OpenID Connect request with a [{}] scope. "
                             + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
-                            + "CAS will not process any attribute claims and will return the authenticated principal as is.", scopes);
-                return principal;
+                            + "CAS will not process any attribute claims and will return the authenticated principal as is.",
+                    OidcConstants.StandardScopes.OPENID.getScope(), scopes);
+                return principalFactory.createPrincipal(profile.getId());
             }
 
             scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());

@@ -33,8 +33,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         val service = getOAuthRegisteredService("example", "https://example.org");
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
-        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, accessToken);
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(), original, service, accessToken);
         assertEquals(original, principal);
     }
 
@@ -43,9 +42,10 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
-        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, accessToken);
+        assertFalse(original.getAttributes().isEmpty());
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(), original, service, accessToken);
         assertEquals(original, principal);
+        assertTrue(principal.getAttributes().isEmpty());
     }
 
     @Test
