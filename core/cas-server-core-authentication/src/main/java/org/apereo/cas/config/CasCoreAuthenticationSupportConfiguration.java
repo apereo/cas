@@ -117,13 +117,14 @@ public class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier("authenticationTransactionManager") final AuthenticationTransactionManager authenticationTransactionManager,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy,
             @Qualifier("authenticationResultBuilderFactory") final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
             @Qualifier("authenticationTransactionFactory") final AuthenticationTransactionFactory authenticationTransactionFactory) {
             return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
                 principalElectionStrategy, authenticationResultBuilderFactory,
-                authenticationTransactionFactory);
+                authenticationTransactionFactory, servicesManager);
         }
     }
 
