@@ -141,7 +141,6 @@ that can control SSO participation on a per-application basis based on presence 
 - Twilio
 - Hazelcast
 - Gradle
-- Spring Boot
 - Apache Tomcat
 - Apache Shiro
 - Sentry
@@ -158,6 +157,7 @@ that can control SSO participation on a per-application basis based on presence 
 - Hibernate
 - BouncyCastle
 - Google Cloud
+- Spring Boot
 - Spring WS
 - Spring Framework
 - Spring Kafka
