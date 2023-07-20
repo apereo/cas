@@ -8,15 +8,10 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
@@ -33,7 +28,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.AuthenticationContextValidationResult;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -42,21 +36,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.support.GenericWebApplicationContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import javax.security.auth.login.LoginException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -120,7 +110,6 @@ class TicketGrantingTicketResourceTests {
             }
         };
 
-        val publisher = mock(ApplicationEventPublisher.class);
         val manager = mock(AuthenticationManager.class);
         lenient().when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
@@ -129,11 +118,7 @@ class TicketGrantingTicketResourceTests {
             .thenReturn(AuthenticationContextValidationResult.builder().success(true).build());
         lenient().when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
             .thenReturn(Optional.empty());
-
-        val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(
-            new DefaultAuthenticationTransactionManager(publisher, manager),
-            new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
-            new DefaultAuthenticationTransactionFactory());
+        val authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(manager, mock(ServicesManager.class));
         val api = new DefaultRestAuthenticationService(authenticationSystemSupport,
             httpRequestCredentialFactory,
             new WebApplicationServiceFactory(),

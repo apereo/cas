@@ -4,17 +4,11 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -23,16 +17,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.io.StringWriter;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -100,14 +91,9 @@ class RegisteredServiceResourceTests {
             .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail"))))
             .thenThrow(AuthenticationException.class);
-
-        val publisher = mock(ApplicationEventPublisher.class);
-        return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
-            new DefaultAuthenticationTransactionManager(publisher, mgmr),
-            new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
-            new DefaultAuthenticationTransactionFactory()),
-            new WebApplicationServiceFactory(), servicesManager,
-            attrName, attrValue);
+        val authSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(mgmr, servicesManager);
+        return new RegisteredServiceResource(authSystemSupport, new WebApplicationServiceFactory(),
+            servicesManager, attrName, attrValue);
     }
 
     private void runTest(final String attrName, final String attrValue, final String credentials,

@@ -6,10 +6,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -26,7 +22,6 @@ import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,10 +33,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
 import java.text.MessageFormat;
 import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.webflow.context.ExternalContextHolder.*;
@@ -53,7 +46,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-public abstract class BaseActionTests {
+public abstract class BaseInweboActionTests {
 
     protected static final String LOGIN = "jerome@casinthecloud.com";
 
@@ -105,15 +98,11 @@ public abstract class BaseActionTests {
             PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorAuthenticationProperties(), service,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class))));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
-        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan,
-            true, applicationContext);
-        val authenticationTransactionManager = new DefaultAuthenticationTransactionManager(applicationContext, authenticationManager);
-        val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(authenticationTransactionManager, new DefaultPrincipalElectionStrategy(),
-            new DefaultAuthenticationResultBuilderFactory(), new DefaultAuthenticationTransactionFactory());
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .authenticationSystemSupport(authenticationSystemSupport).build();
-        resolver = new InweboMultifactorAuthenticationWebflowEventResolver(context);
 
+        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, applicationContext);
+        val authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(authenticationManager, mock(ServicesManager.class));
+        val context = CasWebflowEventResolutionConfigurationContext.builder().authenticationSystemSupport(authenticationSystemSupport).build();
+        resolver = new InweboMultifactorAuthenticationWebflowEventResolver(context);
         setAuthenticationInContext(LOGIN);
     }
 

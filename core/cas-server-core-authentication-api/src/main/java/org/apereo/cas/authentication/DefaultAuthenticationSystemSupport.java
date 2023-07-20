@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -29,6 +30,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     private final AuthenticationTransactionFactory authenticationTransactionFactory;
 
+    private final ServicesManager servicesManager;
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,
                                                                                  final Credential credentials) {

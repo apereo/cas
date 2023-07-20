@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-class InweboCheckAuthenticationActionTests extends BaseActionTests {
+class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     private static final String OTP = "4q5dslf";
 
