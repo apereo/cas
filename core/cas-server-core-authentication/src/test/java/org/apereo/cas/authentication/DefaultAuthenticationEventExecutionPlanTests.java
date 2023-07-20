@@ -83,7 +83,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
         plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         plan.registerAuthenticationPolicyResolver(transaction -> Set.of(new AllCredentialsValidatedAuthenticationPolicy()));
         assertFalse(plan.getAuthenticationPolicies(
-            new DefaultAuthenticationTransactionFactory().newTransaction(
+            CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())).isEmpty());
     }
 
@@ -97,8 +97,8 @@ class DefaultAuthenticationEventExecutionPlanTests {
 
     @Test
     void verifyNoHandlerResolves() {
-        val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
-            List.of(mock(Credential.class)));
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), mock(Credential.class));
         val plan = new DefaultAuthenticationEventExecutionPlan();
         assertThrows(AuthenticationException.class, () -> plan.getAuthenticationHandlers(transaction));
     }
@@ -109,7 +109,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
         val input = mock(AuthenticationEventExecutionPlan.class);
         when(input.getAuthenticationHandlers()).thenReturn(Set.of());
         when(input.getAuthenticationHandlersBy(any())).thenCallRealMethod();
-        assertNotNull(input.getAuthenticationHandlersBy(authenticationHandler -> false));
+        assertNotNull(input.getAuthenticationHandlersBy(handler -> false));
     }
 
 }

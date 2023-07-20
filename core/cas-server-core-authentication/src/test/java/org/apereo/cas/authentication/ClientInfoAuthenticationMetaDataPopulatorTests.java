@@ -33,7 +33,7 @@ class ClientInfoAuthenticationMetaDataPopulatorTests {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(populator.supports(c));
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(c));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(c));
         val authn = builder.build();
         val attributes = authn.getAttributes();
         assertTrue(attributes.containsKey(ClientInfoAuthenticationMetaDataPopulator.ATTRIBUTE_CLIENT_IP_ADDRESS));

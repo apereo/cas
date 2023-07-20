@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthenticationTransactionTests {
     @Test
     void verifyHasCredentialOfTypeSingle() {
-        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertFalse(transaction.hasCredentialOfType(TestCredentialType2.class));
@@ -29,7 +29,7 @@ class AuthenticationTransactionTests {
 
     @Test
     void verifyHasCredentialOfTypeMultiple() {
-        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType2(), new TestCredentialType1());
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(new TestCredentialType2(), new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));

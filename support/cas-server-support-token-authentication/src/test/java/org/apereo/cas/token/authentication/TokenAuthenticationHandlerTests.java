@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -113,7 +112,7 @@ class TokenAuthenticationHandlerTests {
         val service = RegisteredServiceTestUtils.getService();
         val authenticationBuilder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         tokenAuthenticationPostProcessor.process(authenticationBuilder,
-            new DefaultAuthenticationTransactionFactory().newTransaction(service));
+            CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service));
         val authentication = authenticationBuilder.build();
         assertTrue(authentication.getAttributes().containsKey(TokenConstants.PARAMETER_NAME_TOKEN));
         val token = authentication.getAttributes().get(TokenConstants.PARAMETER_NAME_TOKEN).get(0).toString();

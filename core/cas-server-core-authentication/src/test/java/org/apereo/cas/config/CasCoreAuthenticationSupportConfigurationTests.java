@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -102,7 +101,7 @@ class CasCoreAuthenticationSupportConfigurationTests {
             Map.of(), CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(attributes.isEmpty());
 
-        assertThrows(AuthenticationException.class, () -> authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory()
+        assertThrows(AuthenticationException.class, () -> authenticationManager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
     }
 

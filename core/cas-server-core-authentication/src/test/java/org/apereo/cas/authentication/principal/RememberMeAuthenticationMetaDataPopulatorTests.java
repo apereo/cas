@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -40,7 +39,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
             .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (populator.supports(credential)) {
-            populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credential));
+            populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         }
         return builder;
     }

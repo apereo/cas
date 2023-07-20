@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
@@ -25,12 +26,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-public class DefaultAuthenticationTransaction implements AuthenticationTransaction {
+public class DefaultAuthenticationTransaction implements RegisteredServiceAwareAuthenticationTransaction {
 
     @Serial
     private static final long serialVersionUID = 6213904009424725484L;
 
     private final Service service;
+
+    private final RegisteredService registeredService;
 
     private final Collection<Credential> credentials;
 

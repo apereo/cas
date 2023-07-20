@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.sync;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
@@ -36,7 +35,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown123456", "password");
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
                 sync.destroy();
             });
         }
@@ -48,7 +47,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
                 val credentials = mock(Credential.class);
                 assertFalse(sync.supports(credentials));
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
                 sync.destroy();
             });
         }
@@ -67,7 +66,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casTest", "password");
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
             });
         }
     }
@@ -83,9 +82,9 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
             assertTrue(sync.supports(credentials));
             assertDoesNotThrow(() -> {
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction());
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction());
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
-                    new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+                    CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
             });
         }
     }

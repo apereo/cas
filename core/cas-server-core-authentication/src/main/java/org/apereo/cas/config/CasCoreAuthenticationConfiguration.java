@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -60,11 +61,12 @@ public class CasCoreAuthenticationConfiguration {
             return new DefaultAuthenticationResultBuilderFactory();
         }
 
-        @ConditionalOnMissingBean(name = "authenticationTransactionFactory")
+        @ConditionalOnMissingBean(name = AuthenticationTransactionFactory.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationTransactionFactory authenticationTransactionFactory() {
-            return new DefaultAuthenticationTransactionFactory();
+        public AuthenticationTransactionFactory authenticationTransactionFactory(
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            return new DefaultAuthenticationTransactionFactory(servicesManager);
         }
 
         @ConditionalOnMissingBean(name = AuthenticationAttributeReleasePolicy.BEAN_NAME)
