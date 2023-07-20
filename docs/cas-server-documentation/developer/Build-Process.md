@@ -291,8 +291,6 @@ bin/catalina.sh jpda start
 
 When you're done, create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
 
-![image](https://cloud.githubusercontent.com/assets/1205228/26517058/d09a8288-4245-11e7-962e-004bfe174a0a.png)
-
 ## Manual Submodule Testing
 
 Please [see this page](Test-Process.html) to learn more about the testing process and guidelines.
