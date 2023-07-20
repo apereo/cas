@@ -169,6 +169,7 @@ class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oidc[0].apple.response_type=code id_token",
         "cas.authn.pac4j.oidc[0].apple.response_mode=form_post",
         "cas.authn.pac4j.oidc[0].apple.scope=openid name email",
+        "cas.authn.pac4j.oidc[0].apple.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
         "cas.authn.pac4j.oidc[0].apple.id=pac4j",
         "cas.authn.pac4j.oidc[0].apple.use-nonce=true",
         "cas.authn.pac4j.oidc[0].apple.enabled=true",
@@ -193,19 +194,24 @@ class DefaultDelegatedClientFactoryTests {
         "cas.authn.pac4j.oidc[0].generic.token-expiration-advance=PT5S",
         "cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256",
         "cas.authn.pac4j.oidc[0].generic.discovery-uri=https://dev-425954.oktapreview.com/.well-known/openid-configuration",
+        "cas.authn.pac4j.oidc[0].generic.supported-client-authentication-methods=client_secret_post",
+        "cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_post",
         "cas.authn.pac4j.oidc[0].generic.mapped-claims[0]=claim1->attribute1",
 
         "cas.authn.pac4j.oidc[1].google.id=123",
         "cas.authn.pac4j.oidc[1].google.secret=123",
+        "cas.authn.pac4j.oidc[1].google.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
 
         "cas.authn.pac4j.oidc[2].azure.id=123",
         "cas.authn.pac4j.oidc[2].azure.secret=123",
         "cas.authn.pac4j.oidc[2].azure.tenant=contoso.onmicrosoft.com",
         "cas.authn.pac4j.oidc[2].azure.logout-url=https://example.logout",
+        "cas.authn.pac4j.oidc[2].azure.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
 
         "cas.authn.pac4j.oidc[3].keycloak.id=123",
         "cas.authn.pac4j.oidc[3].keycloak.secret=123",
         "cas.authn.pac4j.oidc[3].keycloak.realm=master",
+        "cas.authn.pac4j.oidc[3].keycloak.discovery-uri=https://localhost:8443/.well-known/openid-configuration",
         "cas.authn.pac4j.oidc[3].keycloak.base-uri=https://dev-425954.oktapreview.com",
 
         "cas.authn.pac4j.core.lazy-init=true"
