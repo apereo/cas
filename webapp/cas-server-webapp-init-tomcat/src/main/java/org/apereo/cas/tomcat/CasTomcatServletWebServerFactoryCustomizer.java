@@ -72,7 +72,6 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                     default -> new AjpNioProtocol();
                 };
                 if (protocolHandlerInstance instanceof AbstractAjpProtocol ajp) {
-                    val ajp = AbstractAjpProtocol.class.cast(protocolHandlerInstance);
                     ajp.setSecretRequired(proxy.isSecure());
                     ajp.setSecret(proxy.getSecret());
                 }
