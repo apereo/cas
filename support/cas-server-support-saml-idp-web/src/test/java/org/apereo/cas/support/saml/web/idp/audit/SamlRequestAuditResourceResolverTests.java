@@ -22,24 +22,23 @@ import static org.mockito.Mockito.*;
 class SamlRequestAuditResourceResolverTests {
     @Test
     void verifyActionUnknown() {
-        val r = new SamlRequestAuditResourceResolver();
-        val result = r.resolveFrom(mock(JoinPoint.class), new Object());
+        val resolver = new SamlRequestAuditResourceResolver();
+        val result = resolver.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
         assertEquals(0, result.length);
     }
 
     @Test
     void verifyAction() {
-        val r = new SamlRequestAuditResourceResolver();
+        val resolver = new SamlRequestAuditResourceResolver();
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn("ProtocolBinding");
         val pair = Pair.of(authnRequest, null);
-        val result = r.resolveFrom(mock(JoinPoint.class), pair);
-        assertNotNull(result);
-        assertTrue(result.length > 0);
+        assertTrue(resolver.resolveFrom(mock(JoinPoint.class), pair).length > 0);
+        assertTrue(resolver.resolveFrom(mock(JoinPoint.class), authnRequest).length > 0);
     }
 
     @Test
