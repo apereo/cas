@@ -21,13 +21,15 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
         if (returnValue instanceof Pair) {
-            return getAuditResourceFromSamlRequest((Pair) returnValue);
+            return getAuditResourceFromSamlRequest((XMLObject) ((Pair) returnValue).getLeft());
+        }
+        if (returnValue instanceof XMLObject) {
+            return getAuditResourceFromSamlRequest((XMLObject) returnValue);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getAuditResourceFromSamlRequest(final Pair result) {
-        val returnValue = (XMLObject) result.getLeft();
+    private String[] getAuditResourceFromSamlRequest(final XMLObject returnValue) {
         if (returnValue instanceof AuthnRequest) {
             return getAuditResourceFromSamlAuthnRequest((AuthnRequest) returnValue);
         }
@@ -47,6 +49,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         val values = new HashMap<>();
         values.put("issuer", returnValue.getIssuer().getValue());
         values.put("binding", returnValue.getProtocolBinding());
+        values.put("destination", returnValue.getDestination());
         return new String[]{auditFormat.serialize(values)};
     }
 }
