@@ -48,10 +48,10 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     @Override
     public int cleanTicket(final Ticket ticket) {
         return lockRepository.execute(ticket.getId(), Unchecked.supplier(() -> {
-            if (ticket instanceof TicketGrantingTicket) {
+            if (ticket instanceof TicketGrantingTicket tgt) {
                 LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                 logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
-                    .ticketGrantingTicket((TicketGrantingTicket) ticket)
+                    .ticketGrantingTicket(tgt)
                     .build());
             }
             LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());

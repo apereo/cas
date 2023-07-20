@@ -142,8 +142,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         if (ticket instanceof TicketGrantingTicket tgt) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             count.getAndAdd(deleteChildren(tgt));
-            if (ticket instanceof ProxyGrantingTicket) {
-                deleteProxyGrantingTicketFromParent((ProxyGrantingTicket) ticket);
+            if (ticket instanceof ProxyGrantingTicket pgt) {
+                deleteProxyGrantingTicketFromParent(pgt);
             } else {
                 deleteLinkedProxyGrantingTickets(count, tgt);
             }
@@ -263,8 +263,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
-        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket) {
-            val services = ((AuthenticatedServicesAwareTicketGrantingTicket) ticket).getServices();
+        if (ticket instanceof AuthenticatedServicesAwareTicketGrantingTicket authTicket) {
+            val services = authTicket.getServices();
             if (services != null && !services.isEmpty()) {
                 services.keySet()
                     .stream()

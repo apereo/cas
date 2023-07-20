@@ -148,8 +148,8 @@ public class CollectionUtils {
         val resultingSet = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
-        } else if (obj instanceof Collection) {
-            resultingSet.addAll((Collection<Object>) obj);
+        } else if (obj instanceof Collection values) {
+            resultingSet.addAll(values);
             LOGGER.trace("Converting multi-valued element [{}]", obj);
         } else if (obj instanceof Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
@@ -466,8 +466,8 @@ public class CollectionUtils {
     public static <T> List<T> wrap(final T source) {
         val list = new ArrayList<T>();
         if (source != null) {
-            if (source instanceof Collection) {
-                val it = ((Iterable) source).iterator();
+            if (source instanceof Collection values) {
+                val it = values.iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }

@@ -53,8 +53,8 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
 
     @Override
     public boolean supports(final Credential credential) {
-        if (credential instanceof MultifactorAuthenticationCredential) {
-            val id = ((MultifactorAuthenticationCredential) credential).getProviderId();
+        if (credential instanceof MultifactorAuthenticationCredential mfaCredential) {
+            val id = mfaCredential.getProviderId();
             return multifactorAuthenticationProvider.getObject().matches(id);
         }
         return false;

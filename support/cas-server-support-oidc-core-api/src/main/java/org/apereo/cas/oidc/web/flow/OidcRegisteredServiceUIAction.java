@@ -36,8 +36,7 @@ public class OidcRegisteredServiceUIAction extends BaseCasWebflowAction {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             LOGGER.debug("Found registered service [{}] from the context", registeredService.getServiceId());
-            if (registeredService instanceof OidcRegisteredService) {
-                val oauthService = OidcRegisteredService.class.cast(registeredService);
+            if (registeredService instanceof OidcRegisteredService oauthService) {
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }

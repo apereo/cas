@@ -46,8 +46,8 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     @Override
     public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc,
                                                 final JsonWebKey jsonWebKey) {
-        if (svc instanceof OidcRegisteredService) {
-            return OidcRegisteredService.class.cast(svc).getUserInfoSigningAlg();
+        if (svc instanceof OidcRegisteredService oidcService) {
+            return oidcService.getUserInfoSigningAlg();
         }
         return super.getJsonWebKeySigningAlgorithm(svc, jsonWebKey);
     }
@@ -96,10 +96,8 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     @Override
     protected String encryptToken(final OAuthRegisteredService service,
                                   final String innerJwt) {
-        if (service instanceof OidcRegisteredService) {
-            val svc = OidcRegisteredService.class.cast(service);
+        if (service instanceof OidcRegisteredService svc) {
             val jsonWebKey = getJsonWebKeyForEncryption(svc);
-
             return JsonWebTokenEncryptor.builder()
                 .key(jsonWebKey.getPublicKey())
                 .keyId(jsonWebKey.getKeyId())

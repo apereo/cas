@@ -26,8 +26,8 @@ public class DefaultScimV2PrincipalAttributeMapper implements ScimV2PrincipalAtt
     @Override
     public void map(final User user, final Principal principal, final Credential credential) {
         user.setUserName(principal.getId());
-        if (credential instanceof UsernamePasswordCredential) {
-            user.setPassword(UsernamePasswordCredential.class.cast(credential).toPassword());
+        if (credential instanceof UsernamePasswordCredential instance) {
+            user.setPassword(instance.toPassword());
         }
         user.setActive(Boolean.TRUE);
         user.setNickName(getPrincipalAttributeValue(principal, "nickName"));

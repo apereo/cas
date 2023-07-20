@@ -5,6 +5,7 @@ import com.yubico.webauthn.attestation.DeviceMatcher;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.exception.HexException;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
@@ -62,17 +63,16 @@ public class ExtensionMatcher implements DeviceMatcher {
         return false;
     }
 
-    private boolean matchStringValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
+    private static boolean matchStringValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
         if (value instanceof DEROctetString) {
             final String readValue = new String(((ASN1OctetString) value).getOctets(), CHARSET);
             return matchValue.asText().equals(readValue);
-        } else {
-            LOGGER.debug("Expected text string value for extension {}, was: {}", matchKey, value);
-            return false;
         }
+        LOGGER.debug("Expected text string value for extension {}, was: {}", matchKey, value);
+        return false;
     }
 
-    private boolean matchTypedValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
+    private static boolean matchTypedValue(String matchKey, JsonNode matchValue, ASN1Primitive value) {
         final String extensionValueType = matchValue.get(EXTENSION_VALUE_TYPE).textValue();
         return switch (extensionValueType) {
             case EXTENSION_VALUE_TYPE_HEX -> matchHex(matchKey, matchValue, value);
@@ -83,7 +83,7 @@ public class ExtensionMatcher implements DeviceMatcher {
         };
     }
 
-    private boolean matchHex(String matchKey, JsonNode matchValue, ASN1Primitive value) {
+    private static boolean matchHex(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
         final String matchValueString = matchValue.get(EXTENSION_VALUE_VALUE).textValue();
         final ByteArray matchBytes;
         try {
@@ -94,9 +94,9 @@ public class ExtensionMatcher implements DeviceMatcher {
         }
 
         final ASN1Primitive innerValue;
-        if (value instanceof DEROctetString) {
+        if (value instanceof DEROctetString instance) {
             try {
-                innerValue = ASN1Primitive.fromByteArray(((ASN1OctetString) value).getOctets());
+                innerValue = ASN1Primitive.fromByteArray(instance.getOctets());
             } catch (IOException e) {
                 LOGGER.debug("Failed to parse {} extension value as ASN1: {}", matchKey, value);
                 return false;
@@ -106,8 +106,8 @@ public class ExtensionMatcher implements DeviceMatcher {
             return false;
         }
 
-        if (innerValue instanceof DEROctetString) {
-            final ByteArray readBytes = new ByteArray(((ASN1OctetString) innerValue).getOctets());
+        if (innerValue instanceof DEROctetString octetString) {
+            val readBytes = new ByteArray(octetString.getOctets());
             return matchBytes.equals(readBytes);
         } else {
             LOGGER.debug("Expected nested bit string value for extension {}, was: {}", matchKey, value);

@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.metadata;
 
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
-
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
-import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-
 import java.io.Serial;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -177,12 +174,12 @@ public class ConfigurationMetadataPropertyCreator {
                 }
             } catch (final Exception e) {
                 LOGGER.error("Processing [{}]:[{}]. Error [{}]", parentClass, name, e);
-                if (exp instanceof LiteralStringValueExpr) {
-                    prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
-                } else if (exp instanceof BooleanLiteralExpr) {
-                    prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
-                } else if (exp instanceof FieldAccessExpr) {
-                    prop.setDefaultValue(((NodeWithSimpleName<FieldAccessExpr>) exp).getNameAsString());
+                if (exp instanceof LiteralStringValueExpr ex) {
+                    prop.setDefaultValue(ex.getValue());
+                } else if (exp instanceof BooleanLiteralExpr ex) {
+                    prop.setDefaultValue(ex.getValue());
+                } else if (exp instanceof FieldAccessExpr ex) {
+                    prop.setDefaultValue(ex.getNameAsString());
                 }
             }
         }

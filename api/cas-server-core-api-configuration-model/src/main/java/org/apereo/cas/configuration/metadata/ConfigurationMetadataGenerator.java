@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
@@ -19,7 +18,6 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
-import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +29,6 @@ import org.springframework.boot.configurationmetadata.Deprecation;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.ReflectionUtils;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -305,14 +302,14 @@ public class ConfigurationMetadataGenerator {
                                 var propShortName = beginIndex != -1 ? prop.getName().substring(beginIndex + 1) : prop.getName();
                                 var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
                                 if (names.contains(propShortName)) {
-                                    variable.getInitializer().ifPresent(exp -> {
+                                    variable.getInitializer().ifPresent(expression -> {
                                         var value = (Object) null;
-                                        if (exp instanceof LiteralStringValueExpr) {
-                                            value = ((LiteralStringValueExpr) exp).getValue();
-                                        } else if (exp instanceof BooleanLiteralExpr) {
-                                            value = ((BooleanLiteralExpr) exp).getValue();
-                                        } else if (exp instanceof FieldAccessExpr) {
-                                            value = ((NodeWithSimpleName<FieldAccessExpr>) exp).getNameAsString();
+                                        if (expression instanceof LiteralStringValueExpr expr) {
+                                            value = expr.getValue();
+                                        } else if (expression instanceof BooleanLiteralExpr expr) {
+                                            value = expr.getValue();
+                                        } else if (expression instanceof FieldAccessExpr expr) {
+                                            value = expr.getNameAsString();
                                         }
                                         prop.setDefaultValue(value);
                                     });

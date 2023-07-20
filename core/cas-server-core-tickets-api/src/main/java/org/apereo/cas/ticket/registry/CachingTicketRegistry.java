@@ -111,10 +111,10 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         public void onRemoval(final String key, final Ticket value, final RemovalCause cause) {
             if (cause == RemovalCause.EXPIRED) {
                 LOGGER.warn("Received removal notification for ticket [{}] with cause [{}]. Cleaning...", key, cause);
-                if (value instanceof TicketGrantingTicket) {
+                if (value instanceof TicketGrantingTicket tgt) {
                     logoutManager.ifAvailable(manager ->
                         manager.performLogout(SingleLogoutExecutionRequest.builder()
-                            .ticketGrantingTicket(TicketGrantingTicket.class.cast(value))
+                            .ticketGrantingTicket(tgt)
                             .build()));
 
                 }
