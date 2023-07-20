@@ -37,7 +37,7 @@ class MultifactorAuthenticationProviderMetadataPopulatorTests {
         assertTrue(populator.supports(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory()
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(new UsernamePasswordCredential()));
         val authn = builder.build();
         assertTrue(authn.getAttributes().containsKey("contextClass"));

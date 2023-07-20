@@ -267,7 +267,15 @@ public class CoreAuthenticationTestUtils {
             new DefaultAuthenticationTransactionManager(publisher, authenticationManager),
             new DefaultPrincipalElectionStrategy(),
             new DefaultAuthenticationResultBuilderFactory(),
-            new DefaultAuthenticationTransactionFactory(),
+            getAuthenticationTransactionFactory(servicesManager),
             servicesManager);
+    }
+
+    public static AuthenticationTransactionFactory getAuthenticationTransactionFactory(final ServicesManager servicesManager) {
+        return new DefaultAuthenticationTransactionFactory(servicesManager);
+    }
+
+    public static AuthenticationTransactionFactory getAuthenticationTransactionFactory() {
+        return new DefaultAuthenticationTransactionFactory(mock(ServicesManager.class));
     }
 }

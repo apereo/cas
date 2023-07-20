@@ -352,9 +352,9 @@ public class CasCoreAuditConfiguration {
             configurers
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
-                .forEach(c -> {
-                    LOGGER.trace("Registering audit trail manager [{}]", c.getName());
-                    c.configureAuditTrailRecordResolutionPlan(plan);
+                .forEach(configurer -> {
+                    LOGGER.trace("Registering audit trail manager [{}]", configurer.getName());
+                    configurer.configureAuditTrailRecordResolutionPlan(plan);
                 });
             return plan;
         }

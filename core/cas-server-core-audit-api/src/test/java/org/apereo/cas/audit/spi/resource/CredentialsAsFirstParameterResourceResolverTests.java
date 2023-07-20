@@ -2,7 +2,6 @@ package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 
 import lombok.val;
@@ -53,7 +52,7 @@ class CredentialsAsFirstParameterResourceResolverTests {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         when(jp.getArgs())
-            .thenReturn(new Object[]{new DefaultAuthenticationTransactionFactory().newTransaction(
+            .thenReturn(new Object[]{CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"))});
         assertNotNull(resolver.resolveFrom(jp, new Object()));
     }

@@ -26,7 +26,7 @@ class AuthenticationCredentialTypeMetaDataPopulatorTests {
     void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertEquals(
             credentials.getClass().getSimpleName(),
@@ -38,7 +38,7 @@ class AuthenticationCredentialTypeMetaDataPopulatorTests {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         IntStream.rangeClosed(1, 2)
-            .forEach(i -> populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials)));
+            .forEach(i -> populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials)));
         val auth = builder.build();
         val result = auth.getAttributes().get(Credential.CREDENTIAL_TYPE_ATTRIBUTE);
         assertNotNull(result);

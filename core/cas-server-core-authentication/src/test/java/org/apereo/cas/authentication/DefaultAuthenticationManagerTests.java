@@ -49,7 +49,7 @@ class DefaultAuthenticationManagerTests {
 
     private static final String HANDLER_B = "HandlerB";
 
-    private final AuthenticationTransaction transaction = new DefaultAuthenticationTransactionFactory()
+    private final AuthenticationTransaction transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
         .newTransaction(CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser1"),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser2"));
@@ -182,7 +182,7 @@ class DefaultAuthenticationManagerTests {
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, applicationContext);
 
-        val testTransaction = new DefaultAuthenticationTransactionFactory()
+        val testTransaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getService(), mock(Credential.class, withSettings().serializable()));
         testTransaction.collect(List.of(CoreAuthenticationTestUtils.getAuthentication()));
         assertNotNull(manager.authenticate(testTransaction));
@@ -204,7 +204,7 @@ class DefaultAuthenticationManagerTests {
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, applicationContext);
 
-        val testTransaction = new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(),
+        val testTransaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(),
             mock(Credential.class, withSettings().serializable()));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(testTransaction));
@@ -247,7 +247,7 @@ class DefaultAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             true, applicationContext);
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction()));
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction()));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 
 import lombok.val;
@@ -28,8 +28,8 @@ class WsFederationCredentialsToPrincipalResolverCasResolutionTests extends Abstr
 
     @Test
     void verifyAuth() {
-        val creds = getCredential();
-        val auth = authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction(creds));
+        val credential = getCredential();
+        val auth = authenticationManager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         assertNotNull(auth);
     }
 }

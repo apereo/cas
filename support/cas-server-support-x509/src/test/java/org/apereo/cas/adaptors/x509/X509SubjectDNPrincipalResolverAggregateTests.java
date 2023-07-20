@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.x509;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -42,7 +42,7 @@ class X509SubjectDNPrincipalResolverAggregateTests {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         val result = authenticationManager.authenticate(
-            new DefaultAuthenticationTransactionFactory().newTransaction(c));
+            CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(c));
         assertNotNull(result);
         val attributes = result.getPrincipal().getAttributes();
         assertTrue(attributes.containsKey("subjectX500Principal"));

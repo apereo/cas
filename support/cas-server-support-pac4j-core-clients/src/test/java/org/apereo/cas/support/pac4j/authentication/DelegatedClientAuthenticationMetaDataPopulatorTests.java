@@ -1,7 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.principal.ClientCredential;
 
 import lombok.val;
@@ -43,7 +42,7 @@ class DelegatedClientAuthenticationMetaDataPopulatorTests {
         val credentials = new ClientCredential(
             new UsernamePasswordCredentials("casuser", "pa$$"), "FacebookClient");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME));
 
